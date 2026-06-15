@@ -39,6 +39,8 @@ function readBarRows(name) {
 }
 
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(GOLDEN, 'wasm_manifest.json'), 'utf8'));
+// Canonical Indicator::name() per indicator, the same string every binding returns.
+const NAMES = JSON.parse(fs.readFileSync(path.join(GOLDEN, 'names.json'), 'utf8'));
 const ROWS = readCsv('input');
 
 function deriv(o, h, l, c, v) {
@@ -133,6 +135,7 @@ for (const spec of MANIFEST) {
     const Cls = W[spec.js];
     assert.ok(Cls, `missing WASM class ${spec.js}`);
     const ind = new Cls(...spec.ctor);
+    assert.equal(ind.name(), NAMES[spec.canonical], `${spec.canonical}: name()`);
     const isBars = spec.out === 'bars' || spec.out === 'footprint';
     const expected = isBars ? readBarRows('g_' + spec.canonical) : readCsv('g_' + spec.canonical);
 

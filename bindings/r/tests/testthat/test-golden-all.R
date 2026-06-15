@@ -98,6 +98,8 @@ test_that("all 514 indicators match the Rust golden fixtures", {
 
   for (spec in GOLDEN_SPECS) {
     ind <- do.call(get(spec$canon), as.list(spec$params))
+    expect_identical(name(ind), spec$name,
+      info = sprintf("%s name()", spec$canon))
     exp <- read_rows(paste0("g_", spec$canon))
     for (i in seq_along(input_rows)) {
       got <- compute(spec, ind, input_rows[[i]], i)

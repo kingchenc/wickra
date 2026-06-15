@@ -14,6 +14,9 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 G = os.path.join(ROOT, "testdata", "golden")
 HDR = open(os.path.join(ROOT, "bindings", "c", "include", "wickra.h"), encoding="utf-8").read()
 
+# Canonical core Indicator::name() per indicator, shared across every binding.
+NAMES = json.load(open(os.path.join(G, "names.json")))
+
 # canonical -> C prefix, from the R wrappers (.wk_obj first arg == C symbol prefix).
 RSRC = open(os.path.join(ROOT, "bindings", "r", "R", "indicators.R"), encoding="utf-8").read()
 PREFIX = {m.group(1): m.group(2)
@@ -113,6 +116,8 @@ def gen_check(canon):
          f'    if (!h) {{ printf("FAIL {canon}: new returned NULL\\n"); return 1; }}',
          f"    double **exp; int rows = read_fixture(\"g_{canon}\", &exp);",
          "    int fails = 0;",
+         f'    {{ const char *nm = wickra_{p}_name(h);',
+         f'      if (!nm || strcmp(nm, {json.dumps(NAMES[canon])}) != 0) {{ printf("FAIL {canon}: name %s\\n", nm ? nm : "(null)"); fails++; }} }}',
          "    for (int i = 0; i < N_INPUT; i++) {",
          "        double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];",
          "        (void)o; (void)hi; (void)lo; (void)c; (void)v;",

@@ -43,6 +43,10 @@ function readBarRows(name) {
 }
 
 const MANIFEST = JSON.parse(fs.readFileSync(path.join(GOLDEN, 'node_manifest.json'), 'utf8'));
+// Canonical Indicator::name() per indicator (the same string every binding must
+// return). Keyed by the Rust canonical; values are the core names, which may
+// differ from the registered class name (e.g. ChaikinMoneyFlow -> "CMF").
+const NAMES = JSON.parse(fs.readFileSync(path.join(GOLDEN, 'names.json'), 'utf8'));
 const ROWS = readCsv('input');
 
 function derivFields(o, h, l, c, v) {
@@ -141,6 +145,9 @@ for (const spec of MANIFEST) {
     const Cls = wickra[spec.native];
     assert.ok(Cls, `missing Node class ${spec.native}`);
     const ind = new Cls(...spec.ctor);
+    // name() must report the canonical core Indicator::name(), the same string
+    // every other binding returns for this indicator.
+    assert.equal(ind.name(), NAMES[spec.canonical], `${spec.canonical}: name()`);
     const isBars = spec.out === 'bars' || spec.out === 'footprint';
     const expected = isBars ? readBarRows('g_' + spec.canonical) : readCsv('g_' + spec.canonical);
 

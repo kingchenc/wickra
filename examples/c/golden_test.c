@@ -113,6 +113,8 @@ static int check_AbandonedBaby(void) {
     if (!h) { printf("FAIL AbandonedBaby: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AbandonedBaby", &exp);
     int fails = 0;
+    { const char *nm = wickra_abandoned_baby_name(h);
+      if (!nm || strcmp(nm, "AbandonedBaby") != 0) { printf("FAIL AbandonedBaby: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -129,6 +131,8 @@ static int check_Abcd(void) {
     if (!h) { printf("FAIL Abcd: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Abcd", &exp);
     int fails = 0;
+    { const char *nm = wickra_abcd_name(h);
+      if (!nm || strcmp(nm, "Abcd") != 0) { printf("FAIL Abcd: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -145,6 +149,8 @@ static int check_AbsoluteBreadthIndex(void) {
     if (!h) { printf("FAIL AbsoluteBreadthIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AbsoluteBreadthIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_absolute_breadth_index_name(h);
+      if (!nm || strcmp(nm, "AbsoluteBreadthIndex") != 0) { printf("FAIL AbsoluteBreadthIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -163,6 +169,8 @@ static int check_AccelerationBands(void) {
     if (!h) { printf("FAIL AccelerationBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AccelerationBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_acceleration_bands_name(h);
+      if (!nm || strcmp(nm, "AccelerationBands") != 0) { printf("FAIL AccelerationBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -186,6 +194,8 @@ static int check_AcceleratorOscillator(void) {
     if (!h) { printf("FAIL AcceleratorOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AcceleratorOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_accelerator_oscillator_name(h);
+      if (!nm || strcmp(nm, "AcceleratorOscillator") != 0) { printf("FAIL AcceleratorOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -202,6 +212,8 @@ static int check_AdOscillator(void) {
     if (!h) { printf("FAIL AdOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_ad_oscillator_name(h);
+      if (!nm || strcmp(nm, "ADOSC") != 0) { printf("FAIL AdOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -218,6 +230,8 @@ static int check_AdVolumeLine(void) {
     if (!h) { printf("FAIL AdVolumeLine: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdVolumeLine", &exp);
     int fails = 0;
+    { const char *nm = wickra_ad_volume_line_name(h);
+      if (!nm || strcmp(nm, "AdVolumeLine") != 0) { printf("FAIL AdVolumeLine: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -236,6 +250,8 @@ static int check_AdaptiveCci(void) {
     if (!h) { printf("FAIL AdaptiveCci: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdaptiveCci", &exp);
     int fails = 0;
+    { const char *nm = wickra_adaptive_cci_name(h);
+      if (!nm || strcmp(nm, "AdaptiveCci") != 0) { printf("FAIL AdaptiveCci: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -252,6 +268,8 @@ static int check_AdaptiveCycle(void) {
     if (!h) { printf("FAIL AdaptiveCycle: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdaptiveCycle", &exp);
     int fails = 0;
+    { const char *nm = wickra_adaptive_cycle_name(h);
+      if (!nm || strcmp(nm, "AdaptiveCycle") != 0) { printf("FAIL AdaptiveCycle: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -268,6 +286,8 @@ static int check_AdaptiveLaguerreFilter(void) {
     if (!h) { printf("FAIL AdaptiveLaguerreFilter: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdaptiveLaguerreFilter", &exp);
     int fails = 0;
+    { const char *nm = wickra_adaptive_laguerre_filter_name(h);
+      if (!nm || strcmp(nm, "AdaptiveLaguerre") != 0) { printf("FAIL AdaptiveLaguerreFilter: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -284,6 +304,8 @@ static int check_AdaptiveRsi(void) {
     if (!h) { printf("FAIL AdaptiveRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdaptiveRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_adaptive_rsi_name(h);
+      if (!nm || strcmp(nm, "AdaptiveRsi") != 0) { printf("FAIL AdaptiveRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -300,6 +322,8 @@ static int check_Adl(void) {
     if (!h) { printf("FAIL Adl: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Adl", &exp);
     int fails = 0;
+    { const char *nm = wickra_adl_name(h);
+      if (!nm || strcmp(nm, "ADL") != 0) { printf("FAIL Adl: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -316,6 +340,8 @@ static int check_AdvanceBlock(void) {
     if (!h) { printf("FAIL AdvanceBlock: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdvanceBlock", &exp);
     int fails = 0;
+    { const char *nm = wickra_advance_block_name(h);
+      if (!nm || strcmp(nm, "AdvanceBlock") != 0) { printf("FAIL AdvanceBlock: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -332,6 +358,8 @@ static int check_AdvanceDecline(void) {
     if (!h) { printf("FAIL AdvanceDecline: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdvanceDecline", &exp);
     int fails = 0;
+    { const char *nm = wickra_advance_decline_name(h);
+      if (!nm || strcmp(nm, "AdvanceDecline") != 0) { printf("FAIL AdvanceDecline: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -350,6 +378,8 @@ static int check_AdvanceDeclineRatio(void) {
     if (!h) { printf("FAIL AdvanceDeclineRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AdvanceDeclineRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_advance_decline_ratio_name(h);
+      if (!nm || strcmp(nm, "AdvanceDeclineRatio") != 0) { printf("FAIL AdvanceDeclineRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -368,6 +398,8 @@ static int check_Adx(void) {
     if (!h) { printf("FAIL Adx: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Adx", &exp);
     int fails = 0;
+    { const char *nm = wickra_adx_name(h);
+      if (!nm || strcmp(nm, "ADX") != 0) { printf("FAIL Adx: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -391,6 +423,8 @@ static int check_Adxr(void) {
     if (!h) { printf("FAIL Adxr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Adxr", &exp);
     int fails = 0;
+    { const char *nm = wickra_adxr_name(h);
+      if (!nm || strcmp(nm, "ADXR") != 0) { printf("FAIL Adxr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -407,6 +441,8 @@ static int check_Alligator(void) {
     if (!h) { printf("FAIL Alligator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Alligator", &exp);
     int fails = 0;
+    { const char *nm = wickra_alligator_name(h);
+      if (!nm || strcmp(nm, "Alligator") != 0) { printf("FAIL Alligator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -430,6 +466,8 @@ static int check_Alma(void) {
     if (!h) { printf("FAIL Alma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Alma", &exp);
     int fails = 0;
+    { const char *nm = wickra_alma_name(h);
+      if (!nm || strcmp(nm, "ALMA") != 0) { printf("FAIL Alma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -446,6 +484,8 @@ static int check_Alpha(void) {
     if (!h) { printf("FAIL Alpha: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Alpha", &exp);
     int fails = 0;
+    { const char *nm = wickra_alpha_name(h);
+      if (!nm || strcmp(nm, "Alpha") != 0) { printf("FAIL Alpha: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -462,6 +502,8 @@ static int check_AmihudIlliquidity(void) {
     if (!h) { printf("FAIL AmihudIlliquidity: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AmihudIlliquidity", &exp);
     int fails = 0;
+    { const char *nm = wickra_amihud_illiquidity_name(h);
+      if (!nm || strcmp(nm, "AmihudIlliquidity") != 0) { printf("FAIL AmihudIlliquidity: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -478,6 +520,8 @@ static int check_AnchoredRsi(void) {
     if (!h) { printf("FAIL AnchoredRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AnchoredRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_anchored_rsi_name(h);
+      if (!nm || strcmp(nm, "AnchoredRSI") != 0) { printf("FAIL AnchoredRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -494,6 +538,8 @@ static int check_AnchoredVwap(void) {
     if (!h) { printf("FAIL AnchoredVwap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AnchoredVwap", &exp);
     int fails = 0;
+    { const char *nm = wickra_anchored_vwap_name(h);
+      if (!nm || strcmp(nm, "AnchoredVWAP") != 0) { printf("FAIL AnchoredVwap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -510,6 +556,8 @@ static int check_AndrewsPitchfork(void) {
     if (!h) { printf("FAIL AndrewsPitchfork: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AndrewsPitchfork", &exp);
     int fails = 0;
+    { const char *nm = wickra_andrews_pitchfork_name(h);
+      if (!nm || strcmp(nm, "AndrewsPitchfork") != 0) { printf("FAIL AndrewsPitchfork: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -533,6 +581,8 @@ static int check_Apo(void) {
     if (!h) { printf("FAIL Apo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Apo", &exp);
     int fails = 0;
+    { const char *nm = wickra_apo_name(h);
+      if (!nm || strcmp(nm, "APO") != 0) { printf("FAIL Apo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -549,6 +599,8 @@ static int check_Aroon(void) {
     if (!h) { printf("FAIL Aroon: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Aroon", &exp);
     int fails = 0;
+    { const char *nm = wickra_aroon_name(h);
+      if (!nm || strcmp(nm, "Aroon") != 0) { printf("FAIL Aroon: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -571,6 +623,8 @@ static int check_AroonOscillator(void) {
     if (!h) { printf("FAIL AroonOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AroonOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_aroon_oscillator_name(h);
+      if (!nm || strcmp(nm, "AroonOscillator") != 0) { printf("FAIL AroonOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -587,6 +641,8 @@ static int check_Atr(void) {
     if (!h) { printf("FAIL Atr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Atr", &exp);
     int fails = 0;
+    { const char *nm = wickra_atr_name(h);
+      if (!nm || strcmp(nm, "ATR") != 0) { printf("FAIL Atr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -603,6 +659,8 @@ static int check_AtrBands(void) {
     if (!h) { printf("FAIL AtrBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AtrBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_atr_bands_name(h);
+      if (!nm || strcmp(nm, "AtrBands") != 0) { printf("FAIL AtrBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -626,6 +684,8 @@ static int check_AtrRatchet(void) {
     if (!h) { printf("FAIL AtrRatchet: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AtrRatchet", &exp);
     int fails = 0;
+    { const char *nm = wickra_atr_ratchet_name(h);
+      if (!nm || strcmp(nm, "AtrRatchet") != 0) { printf("FAIL AtrRatchet: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -648,6 +708,8 @@ static int check_AtrTrailingStop(void) {
     if (!h) { printf("FAIL AtrTrailingStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AtrTrailingStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_atr_trailing_stop_name(h);
+      if (!nm || strcmp(nm, "AtrTrailingStop") != 0) { printf("FAIL AtrTrailingStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -664,6 +726,8 @@ static int check_AutoFib(void) {
     if (!h) { printf("FAIL AutoFib: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AutoFib", &exp);
     int fails = 0;
+    { const char *nm = wickra_auto_fib_name(h);
+      if (!nm || strcmp(nm, "AutoFib") != 0) { printf("FAIL AutoFib: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -691,6 +755,8 @@ static int check_Autocorrelation(void) {
     if (!h) { printf("FAIL Autocorrelation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Autocorrelation", &exp);
     int fails = 0;
+    { const char *nm = wickra_autocorrelation_name(h);
+      if (!nm || strcmp(nm, "Autocorrelation") != 0) { printf("FAIL Autocorrelation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -707,6 +773,8 @@ static int check_AutocorrelationPeriodogram(void) {
     if (!h) { printf("FAIL AutocorrelationPeriodogram: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AutocorrelationPeriodogram", &exp);
     int fails = 0;
+    { const char *nm = wickra_autocorrelation_periodogram_name(h);
+      if (!nm || strcmp(nm, "AutocorrelationPeriodogram") != 0) { printf("FAIL AutocorrelationPeriodogram: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -723,6 +791,8 @@ static int check_AverageDailyRange(void) {
     if (!h) { printf("FAIL AverageDailyRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AverageDailyRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_average_daily_range_name(h);
+      if (!nm || strcmp(nm, "AverageDailyRange") != 0) { printf("FAIL AverageDailyRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -739,6 +809,8 @@ static int check_AverageDrawdown(void) {
     if (!h) { printf("FAIL AverageDrawdown: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AverageDrawdown", &exp);
     int fails = 0;
+    { const char *nm = wickra_average_drawdown_name(h);
+      if (!nm || strcmp(nm, "AverageDrawdown") != 0) { printf("FAIL AverageDrawdown: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -755,6 +827,8 @@ static int check_AvgPrice(void) {
     if (!h) { printf("FAIL AvgPrice: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AvgPrice", &exp);
     int fails = 0;
+    { const char *nm = wickra_avg_price_name(h);
+      if (!nm || strcmp(nm, "AVGPRICE") != 0) { printf("FAIL AvgPrice: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -771,6 +845,8 @@ static int check_AwesomeOscillator(void) {
     if (!h) { printf("FAIL AwesomeOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AwesomeOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_awesome_oscillator_name(h);
+      if (!nm || strcmp(nm, "AwesomeOscillator") != 0) { printf("FAIL AwesomeOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -787,6 +863,8 @@ static int check_AwesomeOscillatorHistogram(void) {
     if (!h) { printf("FAIL AwesomeOscillatorHistogram: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_AwesomeOscillatorHistogram", &exp);
     int fails = 0;
+    { const char *nm = wickra_awesome_oscillator_histogram_name(h);
+      if (!nm || strcmp(nm, "AwesomeOscillatorHistogram") != 0) { printf("FAIL AwesomeOscillatorHistogram: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -803,6 +881,8 @@ static int check_BalanceOfPower(void) {
     if (!h) { printf("FAIL BalanceOfPower: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BalanceOfPower", &exp);
     int fails = 0;
+    { const char *nm = wickra_balance_of_power_name(h);
+      if (!nm || strcmp(nm, "BalanceOfPower") != 0) { printf("FAIL BalanceOfPower: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -819,6 +899,8 @@ static int check_BandpassFilter(void) {
     if (!h) { printf("FAIL BandpassFilter: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BandpassFilter", &exp);
     int fails = 0;
+    { const char *nm = wickra_bandpass_filter_name(h);
+      if (!nm || strcmp(nm, "BandpassFilter") != 0) { printf("FAIL BandpassFilter: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -835,6 +917,8 @@ static int check_Bat(void) {
     if (!h) { printf("FAIL Bat: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Bat", &exp);
     int fails = 0;
+    { const char *nm = wickra_bat_name(h);
+      if (!nm || strcmp(nm, "Bat") != 0) { printf("FAIL Bat: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -851,6 +935,8 @@ static int check_BeltHold(void) {
     if (!h) { printf("FAIL BeltHold: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BeltHold", &exp);
     int fails = 0;
+    { const char *nm = wickra_belt_hold_name(h);
+      if (!nm || strcmp(nm, "BeltHold") != 0) { printf("FAIL BeltHold: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -867,6 +953,8 @@ static int check_Beta(void) {
     if (!h) { printf("FAIL Beta: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Beta", &exp);
     int fails = 0;
+    { const char *nm = wickra_beta_name(h);
+      if (!nm || strcmp(nm, "Beta") != 0) { printf("FAIL Beta: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -883,6 +971,8 @@ static int check_BetaNeutralSpread(void) {
     if (!h) { printf("FAIL BetaNeutralSpread: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BetaNeutralSpread", &exp);
     int fails = 0;
+    { const char *nm = wickra_beta_neutral_spread_name(h);
+      if (!nm || strcmp(nm, "BetaNeutralSpread") != 0) { printf("FAIL BetaNeutralSpread: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -899,6 +989,8 @@ static int check_BetterVolume(void) {
     if (!h) { printf("FAIL BetterVolume: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BetterVolume", &exp);
     int fails = 0;
+    { const char *nm = wickra_better_volume_name(h);
+      if (!nm || strcmp(nm, "BetterVolume") != 0) { printf("FAIL BetterVolume: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -915,6 +1007,8 @@ static int check_BipowerVariation(void) {
     if (!h) { printf("FAIL BipowerVariation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BipowerVariation", &exp);
     int fails = 0;
+    { const char *nm = wickra_bipower_variation_name(h);
+      if (!nm || strcmp(nm, "BipowerVariation") != 0) { printf("FAIL BipowerVariation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -931,6 +1025,8 @@ static int check_BodySizePct(void) {
     if (!h) { printf("FAIL BodySizePct: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BodySizePct", &exp);
     int fails = 0;
+    { const char *nm = wickra_body_size_pct_name(h);
+      if (!nm || strcmp(nm, "BodySizePct") != 0) { printf("FAIL BodySizePct: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -947,6 +1043,8 @@ static int check_BollingerBands(void) {
     if (!h) { printf("FAIL BollingerBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BollingerBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_bollinger_bands_name(h);
+      if (!nm || strcmp(nm, "BollingerBands") != 0) { printf("FAIL BollingerBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -971,6 +1069,8 @@ static int check_BollingerBandwidth(void) {
     if (!h) { printf("FAIL BollingerBandwidth: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BollingerBandwidth", &exp);
     int fails = 0;
+    { const char *nm = wickra_bollinger_bandwidth_name(h);
+      if (!nm || strcmp(nm, "BollingerBandwidth") != 0) { printf("FAIL BollingerBandwidth: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -987,6 +1087,8 @@ static int check_BomarBands(void) {
     if (!h) { printf("FAIL BomarBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BomarBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_bomar_bands_name(h);
+      if (!nm || strcmp(nm, "BomarBands") != 0) { printf("FAIL BomarBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1010,6 +1112,8 @@ static int check_BreadthThrust(void) {
     if (!h) { printf("FAIL BreadthThrust: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BreadthThrust", &exp);
     int fails = 0;
+    { const char *nm = wickra_breadth_thrust_name(h);
+      if (!nm || strcmp(nm, "BreadthThrust") != 0) { printf("FAIL BreadthThrust: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1028,6 +1132,8 @@ static int check_Breakaway(void) {
     if (!h) { printf("FAIL Breakaway: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Breakaway", &exp);
     int fails = 0;
+    { const char *nm = wickra_breakaway_name(h);
+      if (!nm || strcmp(nm, "Breakaway") != 0) { printf("FAIL Breakaway: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1044,6 +1150,8 @@ static int check_BullishPercentIndex(void) {
     if (!h) { printf("FAIL BullishPercentIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BullishPercentIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_bullish_percent_index_name(h);
+      if (!nm || strcmp(nm, "BullishPercentIndex") != 0) { printf("FAIL BullishPercentIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1062,6 +1170,8 @@ static int check_BurkeRatio(void) {
     if (!h) { printf("FAIL BurkeRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_BurkeRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_burke_ratio_name(h);
+      if (!nm || strcmp(nm, "BurkeRatio") != 0) { printf("FAIL BurkeRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1078,6 +1188,8 @@ static int check_Butterfly(void) {
     if (!h) { printf("FAIL Butterfly: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Butterfly", &exp);
     int fails = 0;
+    { const char *nm = wickra_butterfly_name(h);
+      if (!nm || strcmp(nm, "Butterfly") != 0) { printf("FAIL Butterfly: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1094,6 +1206,8 @@ static int check_CalendarSpread(void) {
     if (!h) { printf("FAIL CalendarSpread: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CalendarSpread", &exp);
     int fails = 0;
+    { const char *nm = wickra_calendar_spread_name(h);
+      if (!nm || strcmp(nm, "CalendarSpread") != 0) { printf("FAIL CalendarSpread: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1111,6 +1225,8 @@ static int check_CalmarRatio(void) {
     if (!h) { printf("FAIL CalmarRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CalmarRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_calmar_ratio_name(h);
+      if (!nm || strcmp(nm, "CalmarRatio") != 0) { printf("FAIL CalmarRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1127,6 +1243,8 @@ static int check_Camarilla(void) {
     if (!h) { printf("FAIL Camarilla: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Camarilla", &exp);
     int fails = 0;
+    { const char *nm = wickra_camarilla_name(h);
+      if (!nm || strcmp(nm, "Camarilla") != 0) { printf("FAIL Camarilla: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1156,6 +1274,8 @@ static int check_CandleVolume(void) {
     if (!h) { printf("FAIL CandleVolume: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CandleVolume", &exp);
     int fails = 0;
+    { const char *nm = wickra_candle_volume_name(h);
+      if (!nm || strcmp(nm, "CandleVolume") != 0) { printf("FAIL CandleVolume: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1178,6 +1298,8 @@ static int check_Cci(void) {
     if (!h) { printf("FAIL Cci: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Cci", &exp);
     int fails = 0;
+    { const char *nm = wickra_cci_name(h);
+      if (!nm || strcmp(nm, "CCI") != 0) { printf("FAIL Cci: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1194,6 +1316,8 @@ static int check_CenterOfGravity(void) {
     if (!h) { printf("FAIL CenterOfGravity: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CenterOfGravity", &exp);
     int fails = 0;
+    { const char *nm = wickra_center_of_gravity_name(h);
+      if (!nm || strcmp(nm, "CenterOfGravity") != 0) { printf("FAIL CenterOfGravity: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1210,6 +1334,8 @@ static int check_CentralPivotRange(void) {
     if (!h) { printf("FAIL CentralPivotRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CentralPivotRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_central_pivot_range_name(h);
+      if (!nm || strcmp(nm, "CentralPivotRange") != 0) { printf("FAIL CentralPivotRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1233,6 +1359,8 @@ static int check_Cfo(void) {
     if (!h) { printf("FAIL Cfo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Cfo", &exp);
     int fails = 0;
+    { const char *nm = wickra_cfo_name(h);
+      if (!nm || strcmp(nm, "CFO") != 0) { printf("FAIL Cfo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1249,6 +1377,8 @@ static int check_ChaikinMoneyFlow(void) {
     if (!h) { printf("FAIL ChaikinMoneyFlow: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ChaikinMoneyFlow", &exp);
     int fails = 0;
+    { const char *nm = wickra_chaikin_money_flow_name(h);
+      if (!nm || strcmp(nm, "CMF") != 0) { printf("FAIL ChaikinMoneyFlow: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1265,6 +1395,8 @@ static int check_ChaikinOscillator(void) {
     if (!h) { printf("FAIL ChaikinOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ChaikinOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_chaikin_oscillator_name(h);
+      if (!nm || strcmp(nm, "ChaikinOscillator") != 0) { printf("FAIL ChaikinOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1281,6 +1413,8 @@ static int check_ChaikinVolatility(void) {
     if (!h) { printf("FAIL ChaikinVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ChaikinVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_chaikin_volatility_name(h);
+      if (!nm || strcmp(nm, "ChaikinVolatility") != 0) { printf("FAIL ChaikinVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1297,6 +1431,8 @@ static int check_ChandeKrollStop(void) {
     if (!h) { printf("FAIL ChandeKrollStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ChandeKrollStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_chande_kroll_stop_name(h);
+      if (!nm || strcmp(nm, "ChandeKrollStop") != 0) { printf("FAIL ChandeKrollStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1319,6 +1455,8 @@ static int check_ChandelierExit(void) {
     if (!h) { printf("FAIL ChandelierExit: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ChandelierExit", &exp);
     int fails = 0;
+    { const char *nm = wickra_chandelier_exit_name(h);
+      if (!nm || strcmp(nm, "ChandelierExit") != 0) { printf("FAIL ChandelierExit: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1341,6 +1479,8 @@ static int check_ChoppinessIndex(void) {
     if (!h) { printf("FAIL ChoppinessIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ChoppinessIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_choppiness_index_name(h);
+      if (!nm || strcmp(nm, "ChoppinessIndex") != 0) { printf("FAIL ChoppinessIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1357,6 +1497,8 @@ static int check_ClassicPivots(void) {
     if (!h) { printf("FAIL ClassicPivots: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ClassicPivots", &exp);
     int fails = 0;
+    { const char *nm = wickra_classic_pivots_name(h);
+      if (!nm || strcmp(nm, "ClassicPivots") != 0) { printf("FAIL ClassicPivots: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1384,6 +1526,8 @@ static int check_CloseVsOpen(void) {
     if (!h) { printf("FAIL CloseVsOpen: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CloseVsOpen", &exp);
     int fails = 0;
+    { const char *nm = wickra_close_vs_open_name(h);
+      if (!nm || strcmp(nm, "CloseVsOpen") != 0) { printf("FAIL CloseVsOpen: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1400,6 +1544,8 @@ static int check_ClosingMarubozu(void) {
     if (!h) { printf("FAIL ClosingMarubozu: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ClosingMarubozu", &exp);
     int fails = 0;
+    { const char *nm = wickra_closing_marubozu_name(h);
+      if (!nm || strcmp(nm, "ClosingMarubozu") != 0) { printf("FAIL ClosingMarubozu: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1416,6 +1562,8 @@ static int check_Cmo(void) {
     if (!h) { printf("FAIL Cmo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Cmo", &exp);
     int fails = 0;
+    { const char *nm = wickra_cmo_name(h);
+      if (!nm || strcmp(nm, "CMO") != 0) { printf("FAIL Cmo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1432,6 +1580,8 @@ static int check_CoefficientOfVariation(void) {
     if (!h) { printf("FAIL CoefficientOfVariation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CoefficientOfVariation", &exp);
     int fails = 0;
+    { const char *nm = wickra_coefficient_of_variation_name(h);
+      if (!nm || strcmp(nm, "CoefficientOfVariation") != 0) { printf("FAIL CoefficientOfVariation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1448,6 +1598,8 @@ static int check_Cointegration(void) {
     if (!h) { printf("FAIL Cointegration: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Cointegration", &exp);
     int fails = 0;
+    { const char *nm = wickra_cointegration_name(h);
+      if (!nm || strcmp(nm, "Cointegration") != 0) { printf("FAIL Cointegration: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1471,6 +1623,8 @@ static int check_CommonSenseRatio(void) {
     if (!h) { printf("FAIL CommonSenseRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CommonSenseRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_common_sense_ratio_name(h);
+      if (!nm || strcmp(nm, "CommonSenseRatio") != 0) { printf("FAIL CommonSenseRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1487,6 +1641,8 @@ static int check_CompositeProfile(void) {
     if (!h) { printf("FAIL CompositeProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CompositeProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_composite_profile_name(h);
+      if (!nm || strcmp(nm, "CompositeProfile") != 0) { printf("FAIL CompositeProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1510,6 +1666,8 @@ static int check_ConcealingBabySwallow(void) {
     if (!h) { printf("FAIL ConcealingBabySwallow: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ConcealingBabySwallow", &exp);
     int fails = 0;
+    { const char *nm = wickra_concealing_baby_swallow_name(h);
+      if (!nm || strcmp(nm, "ConcealingBabySwallow") != 0) { printf("FAIL ConcealingBabySwallow: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1526,6 +1684,8 @@ static int check_ConditionalValueAtRisk(void) {
     if (!h) { printf("FAIL ConditionalValueAtRisk: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ConditionalValueAtRisk", &exp);
     int fails = 0;
+    { const char *nm = wickra_conditional_value_at_risk_name(h);
+      if (!nm || strcmp(nm, "ConditionalValueAtRisk") != 0) { printf("FAIL ConditionalValueAtRisk: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1542,6 +1702,8 @@ static int check_ConnorsRsi(void) {
     if (!h) { printf("FAIL ConnorsRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ConnorsRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_connors_rsi_name(h);
+      if (!nm || strcmp(nm, "ConnorsRSI") != 0) { printf("FAIL ConnorsRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1558,6 +1720,8 @@ static int check_Coppock(void) {
     if (!h) { printf("FAIL Coppock: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Coppock", &exp);
     int fails = 0;
+    { const char *nm = wickra_coppock_name(h);
+      if (!nm || strcmp(nm, "Coppock") != 0) { printf("FAIL Coppock: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1574,6 +1738,8 @@ static int check_CorrelationTrendIndicator(void) {
     if (!h) { printf("FAIL CorrelationTrendIndicator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CorrelationTrendIndicator", &exp);
     int fails = 0;
+    { const char *nm = wickra_correlation_trend_indicator_name(h);
+      if (!nm || strcmp(nm, "CorrelationTrendIndicator") != 0) { printf("FAIL CorrelationTrendIndicator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1590,6 +1756,8 @@ static int check_Counterattack(void) {
     if (!h) { printf("FAIL Counterattack: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Counterattack", &exp);
     int fails = 0;
+    { const char *nm = wickra_counterattack_name(h);
+      if (!nm || strcmp(nm, "Counterattack") != 0) { printf("FAIL Counterattack: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1606,6 +1774,8 @@ static int check_Crab(void) {
     if (!h) { printf("FAIL Crab: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Crab", &exp);
     int fails = 0;
+    { const char *nm = wickra_crab_name(h);
+      if (!nm || strcmp(nm, "Crab") != 0) { printf("FAIL Crab: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1622,6 +1792,8 @@ static int check_CumulativeVolumeDelta(void) {
     if (!h) { printf("FAIL CumulativeVolumeDelta: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CumulativeVolumeDelta", &exp);
     int fails = 0;
+    { const char *nm = wickra_cumulative_volume_delta_name(h);
+      if (!nm || strcmp(nm, "CumulativeVolumeDelta") != 0) { printf("FAIL CumulativeVolumeDelta: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1638,6 +1810,8 @@ static int check_CumulativeVolumeIndex(void) {
     if (!h) { printf("FAIL CumulativeVolumeIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CumulativeVolumeIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_cumulative_volume_index_name(h);
+      if (!nm || strcmp(nm, "CumulativeVolumeIndex") != 0) { printf("FAIL CumulativeVolumeIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1656,6 +1830,8 @@ static int check_CupAndHandle(void) {
     if (!h) { printf("FAIL CupAndHandle: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CupAndHandle", &exp);
     int fails = 0;
+    { const char *nm = wickra_cup_and_handle_name(h);
+      if (!nm || strcmp(nm, "CupAndHandle") != 0) { printf("FAIL CupAndHandle: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1672,6 +1848,8 @@ static int check_CyberneticCycle(void) {
     if (!h) { printf("FAIL CyberneticCycle: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_CyberneticCycle", &exp);
     int fails = 0;
+    { const char *nm = wickra_cybernetic_cycle_name(h);
+      if (!nm || strcmp(nm, "CyberneticCycle") != 0) { printf("FAIL CyberneticCycle: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1688,6 +1866,8 @@ static int check_Cypher(void) {
     if (!h) { printf("FAIL Cypher: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Cypher", &exp);
     int fails = 0;
+    { const char *nm = wickra_cypher_name(h);
+      if (!nm || strcmp(nm, "Cypher") != 0) { printf("FAIL Cypher: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1704,6 +1884,8 @@ static int check_DayOfWeekProfile(void) {
     if (!h) { printf("FAIL DayOfWeekProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DayOfWeekProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_day_of_week_profile_name(h);
+      if (!nm || strcmp(nm, "DayOfWeekProfile") != 0) { printf("FAIL DayOfWeekProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1723,6 +1905,8 @@ static int check_Decycler(void) {
     if (!h) { printf("FAIL Decycler: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Decycler", &exp);
     int fails = 0;
+    { const char *nm = wickra_decycler_name(h);
+      if (!nm || strcmp(nm, "Decycler") != 0) { printf("FAIL Decycler: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1739,6 +1923,8 @@ static int check_DecyclerOscillator(void) {
     if (!h) { printf("FAIL DecyclerOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DecyclerOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_decycler_oscillator_name(h);
+      if (!nm || strcmp(nm, "DecyclerOscillator") != 0) { printf("FAIL DecyclerOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1755,6 +1941,8 @@ static int check_Dema(void) {
     if (!h) { printf("FAIL Dema: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Dema", &exp);
     int fails = 0;
+    { const char *nm = wickra_dema_name(h);
+      if (!nm || strcmp(nm, "DEMA") != 0) { printf("FAIL Dema: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1771,6 +1959,8 @@ static int check_DemandIndex(void) {
     if (!h) { printf("FAIL DemandIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DemandIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_demand_index_name(h);
+      if (!nm || strcmp(nm, "DemandIndex") != 0) { printf("FAIL DemandIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1787,6 +1977,8 @@ static int check_DemarkPivots(void) {
     if (!h) { printf("FAIL DemarkPivots: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DemarkPivots", &exp);
     int fails = 0;
+    { const char *nm = wickra_demark_pivots_name(h);
+      if (!nm || strcmp(nm, "DemarkPivots") != 0) { printf("FAIL DemarkPivots: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1810,6 +2002,8 @@ static int check_DepthSlope(void) {
     if (!h) { printf("FAIL DepthSlope: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DepthSlope", &exp);
     int fails = 0;
+    { const char *nm = wickra_depth_slope_name(h);
+      if (!nm || strcmp(nm, "DepthSlope") != 0) { printf("FAIL DepthSlope: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1828,6 +2022,8 @@ static int check_DerivativeOscillator(void) {
     if (!h) { printf("FAIL DerivativeOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DerivativeOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_derivative_oscillator_name(h);
+      if (!nm || strcmp(nm, "DerivativeOscillator") != 0) { printf("FAIL DerivativeOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1844,6 +2040,8 @@ static int check_DetrendedStdDev(void) {
     if (!h) { printf("FAIL DetrendedStdDev: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DetrendedStdDev", &exp);
     int fails = 0;
+    { const char *nm = wickra_detrended_std_dev_name(h);
+      if (!nm || strcmp(nm, "DetrendedStdDev") != 0) { printf("FAIL DetrendedStdDev: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1860,6 +2058,8 @@ static int check_DisparityIndex(void) {
     if (!h) { printf("FAIL DisparityIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DisparityIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_disparity_index_name(h);
+      if (!nm || strcmp(nm, "DisparityIndex") != 0) { printf("FAIL DisparityIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1876,6 +2076,8 @@ static int check_DistanceSsd(void) {
     if (!h) { printf("FAIL DistanceSsd: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DistanceSsd", &exp);
     int fails = 0;
+    { const char *nm = wickra_distance_ssd_name(h);
+      if (!nm || strcmp(nm, "DistanceSsd") != 0) { printf("FAIL DistanceSsd: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1892,6 +2094,8 @@ static int check_Doji(void) {
     if (!h) { printf("FAIL Doji: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Doji", &exp);
     int fails = 0;
+    { const char *nm = wickra_doji_name(h);
+      if (!nm || strcmp(nm, "Doji") != 0) { printf("FAIL Doji: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1908,6 +2112,8 @@ static int check_DojiStar(void) {
     if (!h) { printf("FAIL DojiStar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DojiStar", &exp);
     int fails = 0;
+    { const char *nm = wickra_doji_star_name(h);
+      if (!nm || strcmp(nm, "DojiStar") != 0) { printf("FAIL DojiStar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1924,6 +2130,8 @@ static int check_DollarBars(void) {
     if (!h) { printf("FAIL DollarBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DollarBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_dollar_bars_name(h);
+      if (!nm || strcmp(nm, "DollarBars") != 0) { printf("FAIL DollarBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1949,6 +2157,8 @@ static int check_Donchian(void) {
     if (!h) { printf("FAIL Donchian: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Donchian", &exp);
     int fails = 0;
+    { const char *nm = wickra_donchian_name(h);
+      if (!nm || strcmp(nm, "DonchianChannels") != 0) { printf("FAIL Donchian: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1972,6 +2182,8 @@ static int check_DonchianStop(void) {
     if (!h) { printf("FAIL DonchianStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DonchianStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_donchian_stop_name(h);
+      if (!nm || strcmp(nm, "DonchianStop") != 0) { printf("FAIL DonchianStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -1994,6 +2206,8 @@ static int check_DoubleBollinger(void) {
     if (!h) { printf("FAIL DoubleBollinger: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DoubleBollinger", &exp);
     int fails = 0;
+    { const char *nm = wickra_double_bollinger_name(h);
+      if (!nm || strcmp(nm, "DoubleBollinger") != 0) { printf("FAIL DoubleBollinger: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2019,6 +2233,8 @@ static int check_DoubleTopBottom(void) {
     if (!h) { printf("FAIL DoubleTopBottom: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DoubleTopBottom", &exp);
     int fails = 0;
+    { const char *nm = wickra_double_top_bottom_name(h);
+      if (!nm || strcmp(nm, "DoubleTopBottom") != 0) { printf("FAIL DoubleTopBottom: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2035,6 +2251,8 @@ static int check_DownsideGapThreeMethods(void) {
     if (!h) { printf("FAIL DownsideGapThreeMethods: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DownsideGapThreeMethods", &exp);
     int fails = 0;
+    { const char *nm = wickra_downside_gap_three_methods_name(h);
+      if (!nm || strcmp(nm, "DownsideGapThreeMethods") != 0) { printf("FAIL DownsideGapThreeMethods: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2051,6 +2269,8 @@ static int check_Dpo(void) {
     if (!h) { printf("FAIL Dpo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Dpo", &exp);
     int fails = 0;
+    { const char *nm = wickra_dpo_name(h);
+      if (!nm || strcmp(nm, "DPO") != 0) { printf("FAIL Dpo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2067,6 +2287,8 @@ static int check_DragonflyDoji(void) {
     if (!h) { printf("FAIL DragonflyDoji: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DragonflyDoji", &exp);
     int fails = 0;
+    { const char *nm = wickra_dragonfly_doji_name(h);
+      if (!nm || strcmp(nm, "DragonflyDoji") != 0) { printf("FAIL DragonflyDoji: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2083,6 +2305,8 @@ static int check_DrawdownDuration(void) {
     if (!h) { printf("FAIL DrawdownDuration: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DrawdownDuration", &exp);
     int fails = 0;
+    { const char *nm = wickra_drawdown_duration_name(h);
+      if (!nm || strcmp(nm, "DrawdownDuration") != 0) { printf("FAIL DrawdownDuration: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2099,6 +2323,8 @@ static int check_DumplingTop(void) {
     if (!h) { printf("FAIL DumplingTop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DumplingTop", &exp);
     int fails = 0;
+    { const char *nm = wickra_dumpling_top_name(h);
+      if (!nm || strcmp(nm, "DumplingTop") != 0) { printf("FAIL DumplingTop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2115,6 +2341,8 @@ static int check_Dx(void) {
     if (!h) { printf("FAIL Dx: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Dx", &exp);
     int fails = 0;
+    { const char *nm = wickra_dx_name(h);
+      if (!nm || strcmp(nm, "DX") != 0) { printf("FAIL Dx: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2131,6 +2359,8 @@ static int check_DynamicMomentumIndex(void) {
     if (!h) { printf("FAIL DynamicMomentumIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_DynamicMomentumIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_dynamic_momentum_index_name(h);
+      if (!nm || strcmp(nm, "DynamicMomentumIndex") != 0) { printf("FAIL DynamicMomentumIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2147,6 +2377,8 @@ static int check_EaseOfMovement(void) {
     if (!h) { printf("FAIL EaseOfMovement: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EaseOfMovement", &exp);
     int fails = 0;
+    { const char *nm = wickra_ease_of_movement_name(h);
+      if (!nm || strcmp(nm, "EaseOfMovement") != 0) { printf("FAIL EaseOfMovement: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2163,6 +2395,8 @@ static int check_EffectiveSpread(void) {
     if (!h) { printf("FAIL EffectiveSpread: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EffectiveSpread", &exp);
     int fails = 0;
+    { const char *nm = wickra_effective_spread_name(h);
+      if (!nm || strcmp(nm, "EffectiveSpread") != 0) { printf("FAIL EffectiveSpread: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2179,6 +2413,8 @@ static int check_EhlersStochastic(void) {
     if (!h) { printf("FAIL EhlersStochastic: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EhlersStochastic", &exp);
     int fails = 0;
+    { const char *nm = wickra_ehlers_stochastic_name(h);
+      if (!nm || strcmp(nm, "EhlersStochastic") != 0) { printf("FAIL EhlersStochastic: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2195,6 +2431,8 @@ static int check_Ehma(void) {
     if (!h) { printf("FAIL Ehma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Ehma", &exp);
     int fails = 0;
+    { const char *nm = wickra_ehma_name(h);
+      if (!nm || strcmp(nm, "EHMA") != 0) { printf("FAIL Ehma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2211,6 +2449,8 @@ static int check_ElderImpulse(void) {
     if (!h) { printf("FAIL ElderImpulse: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ElderImpulse", &exp);
     int fails = 0;
+    { const char *nm = wickra_elder_impulse_name(h);
+      if (!nm || strcmp(nm, "ElderImpulse") != 0) { printf("FAIL ElderImpulse: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2227,6 +2467,8 @@ static int check_ElderRay(void) {
     if (!h) { printf("FAIL ElderRay: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ElderRay", &exp);
     int fails = 0;
+    { const char *nm = wickra_elder_ray_name(h);
+      if (!nm || strcmp(nm, "ElderRay") != 0) { printf("FAIL ElderRay: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2249,6 +2491,8 @@ static int check_ElderSafeZone(void) {
     if (!h) { printf("FAIL ElderSafeZone: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ElderSafeZone", &exp);
     int fails = 0;
+    { const char *nm = wickra_elder_safe_zone_name(h);
+      if (!nm || strcmp(nm, "ElderSafeZone") != 0) { printf("FAIL ElderSafeZone: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2271,6 +2515,8 @@ static int check_Ema(void) {
     if (!h) { printf("FAIL Ema: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Ema", &exp);
     int fails = 0;
+    { const char *nm = wickra_ema_name(h);
+      if (!nm || strcmp(nm, "EMA") != 0) { printf("FAIL Ema: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2287,6 +2533,8 @@ static int check_EmpiricalModeDecomposition(void) {
     if (!h) { printf("FAIL EmpiricalModeDecomposition: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EmpiricalModeDecomposition", &exp);
     int fails = 0;
+    { const char *nm = wickra_empirical_mode_decomposition_name(h);
+      if (!nm || strcmp(nm, "EmpiricalModeDecomposition") != 0) { printf("FAIL EmpiricalModeDecomposition: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2303,6 +2551,8 @@ static int check_Engulfing(void) {
     if (!h) { printf("FAIL Engulfing: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Engulfing", &exp);
     int fails = 0;
+    { const char *nm = wickra_engulfing_name(h);
+      if (!nm || strcmp(nm, "Engulfing") != 0) { printf("FAIL Engulfing: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2319,6 +2569,8 @@ static int check_Equivolume(void) {
     if (!h) { printf("FAIL Equivolume: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Equivolume", &exp);
     int fails = 0;
+    { const char *nm = wickra_equivolume_name(h);
+      if (!nm || strcmp(nm, "Equivolume") != 0) { printf("FAIL Equivolume: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2341,6 +2593,8 @@ static int check_EstimatedLeverageRatio(void) {
     if (!h) { printf("FAIL EstimatedLeverageRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EstimatedLeverageRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_estimated_leverage_ratio_name(h);
+      if (!nm || strcmp(nm, "EstimatedLeverageRatio") != 0) { printf("FAIL EstimatedLeverageRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2358,6 +2612,8 @@ static int check_EvenBetterSinewave(void) {
     if (!h) { printf("FAIL EvenBetterSinewave: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EvenBetterSinewave", &exp);
     int fails = 0;
+    { const char *nm = wickra_even_better_sinewave_name(h);
+      if (!nm || strcmp(nm, "EvenBetterSinewave") != 0) { printf("FAIL EvenBetterSinewave: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2374,6 +2630,8 @@ static int check_EveningDojiStar(void) {
     if (!h) { printf("FAIL EveningDojiStar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EveningDojiStar", &exp);
     int fails = 0;
+    { const char *nm = wickra_evening_doji_star_name(h);
+      if (!nm || strcmp(nm, "EveningDojiStar") != 0) { printf("FAIL EveningDojiStar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2390,6 +2648,8 @@ static int check_Evwma(void) {
     if (!h) { printf("FAIL Evwma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Evwma", &exp);
     int fails = 0;
+    { const char *nm = wickra_evwma_name(h);
+      if (!nm || strcmp(nm, "EVWMA") != 0) { printf("FAIL Evwma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2406,6 +2666,8 @@ static int check_EwmaVolatility(void) {
     if (!h) { printf("FAIL EwmaVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_EwmaVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_ewma_volatility_name(h);
+      if (!nm || strcmp(nm, "EwmaVolatility") != 0) { printf("FAIL EwmaVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2422,6 +2684,8 @@ static int check_Expectancy(void) {
     if (!h) { printf("FAIL Expectancy: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Expectancy", &exp);
     int fails = 0;
+    { const char *nm = wickra_expectancy_name(h);
+      if (!nm || strcmp(nm, "Expectancy") != 0) { printf("FAIL Expectancy: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2438,6 +2702,8 @@ static int check_FallingThreeMethods(void) {
     if (!h) { printf("FAIL FallingThreeMethods: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FallingThreeMethods", &exp);
     int fails = 0;
+    { const char *nm = wickra_falling_three_methods_name(h);
+      if (!nm || strcmp(nm, "FallingThreeMethods") != 0) { printf("FAIL FallingThreeMethods: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2454,6 +2720,8 @@ static int check_Fama(void) {
     if (!h) { printf("FAIL Fama: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Fama", &exp);
     int fails = 0;
+    { const char *nm = wickra_fama_name(h);
+      if (!nm || strcmp(nm, "FAMA") != 0) { printf("FAIL Fama: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2470,6 +2738,8 @@ static int check_FibArcs(void) {
     if (!h) { printf("FAIL FibArcs: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibArcs", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_arcs_name(h);
+      if (!nm || strcmp(nm, "FibArcs") != 0) { printf("FAIL FibArcs: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2493,6 +2763,8 @@ static int check_FibChannel(void) {
     if (!h) { printf("FAIL FibChannel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibChannel", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_channel_name(h);
+      if (!nm || strcmp(nm, "FibChannel") != 0) { printf("FAIL FibChannel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2517,6 +2789,8 @@ static int check_FibConfluence(void) {
     if (!h) { printf("FAIL FibConfluence: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibConfluence", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_confluence_name(h);
+      if (!nm || strcmp(nm, "FibConfluence") != 0) { printf("FAIL FibConfluence: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2539,6 +2813,8 @@ static int check_FibExtension(void) {
     if (!h) { printf("FAIL FibExtension: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibExtension", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_extension_name(h);
+      if (!nm || strcmp(nm, "FibExtension") != 0) { printf("FAIL FibExtension: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2564,6 +2840,8 @@ static int check_FibFan(void) {
     if (!h) { printf("FAIL FibFan: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibFan", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_fan_name(h);
+      if (!nm || strcmp(nm, "FibFan") != 0) { printf("FAIL FibFan: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2587,6 +2865,8 @@ static int check_FibProjection(void) {
     if (!h) { printf("FAIL FibProjection: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibProjection", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_projection_name(h);
+      if (!nm || strcmp(nm, "FibProjection") != 0) { printf("FAIL FibProjection: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2611,6 +2891,8 @@ static int check_FibRetracement(void) {
     if (!h) { printf("FAIL FibRetracement: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibRetracement", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_retracement_name(h);
+      if (!nm || strcmp(nm, "FibRetracement") != 0) { printf("FAIL FibRetracement: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2638,6 +2920,8 @@ static int check_FibTimeZones(void) {
     if (!h) { printf("FAIL FibTimeZones: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibTimeZones", &exp);
     int fails = 0;
+    { const char *nm = wickra_fib_time_zones_name(h);
+      if (!nm || strcmp(nm, "FibTimeZones") != 0) { printf("FAIL FibTimeZones: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2660,6 +2944,8 @@ static int check_FibonacciPivots(void) {
     if (!h) { printf("FAIL FibonacciPivots: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FibonacciPivots", &exp);
     int fails = 0;
+    { const char *nm = wickra_fibonacci_pivots_name(h);
+      if (!nm || strcmp(nm, "FibonacciPivots") != 0) { printf("FAIL FibonacciPivots: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2687,6 +2973,8 @@ static int check_FisherRsi(void) {
     if (!h) { printf("FAIL FisherRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FisherRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_fisher_rsi_name(h);
+      if (!nm || strcmp(nm, "FisherRSI") != 0) { printf("FAIL FisherRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2703,6 +2991,8 @@ static int check_FisherTransform(void) {
     if (!h) { printf("FAIL FisherTransform: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FisherTransform", &exp);
     int fails = 0;
+    { const char *nm = wickra_fisher_transform_name(h);
+      if (!nm || strcmp(nm, "FisherTransform") != 0) { printf("FAIL FisherTransform: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2719,6 +3009,8 @@ static int check_FlagPennant(void) {
     if (!h) { printf("FAIL FlagPennant: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FlagPennant", &exp);
     int fails = 0;
+    { const char *nm = wickra_flag_pennant_name(h);
+      if (!nm || strcmp(nm, "FlagPennant") != 0) { printf("FAIL FlagPennant: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2735,6 +3027,8 @@ static int check_Footprint(void) {
     if (!h) { printf("FAIL Footprint: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Footprint", &exp);
     int fails = 0;
+    { const char *nm = wickra_footprint_name(h);
+      if (!nm || strcmp(nm, "Footprint") != 0) { printf("FAIL Footprint: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2758,6 +3052,8 @@ static int check_ForceIndex(void) {
     if (!h) { printf("FAIL ForceIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ForceIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_force_index_name(h);
+      if (!nm || strcmp(nm, "ForceIndex") != 0) { printf("FAIL ForceIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2774,6 +3070,8 @@ static int check_FractalChaosBands(void) {
     if (!h) { printf("FAIL FractalChaosBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FractalChaosBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_fractal_chaos_bands_name(h);
+      if (!nm || strcmp(nm, "FractalChaosBands") != 0) { printf("FAIL FractalChaosBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2796,6 +3094,8 @@ static int check_Frama(void) {
     if (!h) { printf("FAIL Frama: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Frama", &exp);
     int fails = 0;
+    { const char *nm = wickra_frama_name(h);
+      if (!nm || strcmp(nm, "FRAMA") != 0) { printf("FAIL Frama: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2812,6 +3112,8 @@ static int check_FryPanBottom(void) {
     if (!h) { printf("FAIL FryPanBottom: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FryPanBottom", &exp);
     int fails = 0;
+    { const char *nm = wickra_fry_pan_bottom_name(h);
+      if (!nm || strcmp(nm, "FryPanBottom") != 0) { printf("FAIL FryPanBottom: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2828,6 +3130,8 @@ static int check_FundingBasis(void) {
     if (!h) { printf("FAIL FundingBasis: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FundingBasis", &exp);
     int fails = 0;
+    { const char *nm = wickra_funding_basis_name(h);
+      if (!nm || strcmp(nm, "FundingBasis") != 0) { printf("FAIL FundingBasis: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2845,6 +3149,8 @@ static int check_FundingImpliedApr(void) {
     if (!h) { printf("FAIL FundingImpliedApr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FundingImpliedApr", &exp);
     int fails = 0;
+    { const char *nm = wickra_funding_implied_apr_name(h);
+      if (!nm || strcmp(nm, "FundingImpliedApr") != 0) { printf("FAIL FundingImpliedApr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2862,6 +3168,8 @@ static int check_FundingRate(void) {
     if (!h) { printf("FAIL FundingRate: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FundingRate", &exp);
     int fails = 0;
+    { const char *nm = wickra_funding_rate_name(h);
+      if (!nm || strcmp(nm, "FundingRate") != 0) { printf("FAIL FundingRate: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2879,6 +3187,8 @@ static int check_FundingRateMean(void) {
     if (!h) { printf("FAIL FundingRateMean: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FundingRateMean", &exp);
     int fails = 0;
+    { const char *nm = wickra_funding_rate_mean_name(h);
+      if (!nm || strcmp(nm, "FundingRateMean") != 0) { printf("FAIL FundingRateMean: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2896,6 +3206,8 @@ static int check_FundingRateZScore(void) {
     if (!h) { printf("FAIL FundingRateZScore: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_FundingRateZScore", &exp);
     int fails = 0;
+    { const char *nm = wickra_funding_rate_z_score_name(h);
+      if (!nm || strcmp(nm, "FundingRateZScore") != 0) { printf("FAIL FundingRateZScore: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2913,6 +3225,8 @@ static int check_GainLossRatio(void) {
     if (!h) { printf("FAIL GainLossRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GainLossRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_gain_loss_ratio_name(h);
+      if (!nm || strcmp(nm, "GainLossRatio") != 0) { printf("FAIL GainLossRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2929,6 +3243,8 @@ static int check_GainToPainRatio(void) {
     if (!h) { printf("FAIL GainToPainRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GainToPainRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_gain_to_pain_ratio_name(h);
+      if (!nm || strcmp(nm, "GainToPainRatio") != 0) { printf("FAIL GainToPainRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2945,6 +3261,8 @@ static int check_GapSideBySideWhite(void) {
     if (!h) { printf("FAIL GapSideBySideWhite: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GapSideBySideWhite", &exp);
     int fails = 0;
+    { const char *nm = wickra_gap_side_by_side_white_name(h);
+      if (!nm || strcmp(nm, "GapSideBySideWhite") != 0) { printf("FAIL GapSideBySideWhite: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2961,6 +3279,8 @@ static int check_Garch11(void) {
     if (!h) { printf("FAIL Garch11: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Garch11", &exp);
     int fails = 0;
+    { const char *nm = wickra_garch11_name(h);
+      if (!nm || strcmp(nm, "Garch11") != 0) { printf("FAIL Garch11: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2977,6 +3297,8 @@ static int check_GarmanKlassVolatility(void) {
     if (!h) { printf("FAIL GarmanKlassVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GarmanKlassVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_garman_klass_volatility_name(h);
+      if (!nm || strcmp(nm, "GarmanKlassVolatility") != 0) { printf("FAIL GarmanKlassVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -2993,6 +3315,8 @@ static int check_Gartley(void) {
     if (!h) { printf("FAIL Gartley: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Gartley", &exp);
     int fails = 0;
+    { const char *nm = wickra_gartley_name(h);
+      if (!nm || strcmp(nm, "Gartley") != 0) { printf("FAIL Gartley: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3009,6 +3333,8 @@ static int check_GatorOscillator(void) {
     if (!h) { printf("FAIL GatorOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GatorOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_gator_oscillator_name(h);
+      if (!nm || strcmp(nm, "GatorOscillator") != 0) { printf("FAIL GatorOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3031,6 +3357,8 @@ static int check_GeneralizedDema(void) {
     if (!h) { printf("FAIL GeneralizedDema: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GeneralizedDema", &exp);
     int fails = 0;
+    { const char *nm = wickra_generalized_dema_name(h);
+      if (!nm || strcmp(nm, "GD") != 0) { printf("FAIL GeneralizedDema: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3047,6 +3375,8 @@ static int check_GeometricMa(void) {
     if (!h) { printf("FAIL GeometricMa: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GeometricMa", &exp);
     int fails = 0;
+    { const char *nm = wickra_geometric_ma_name(h);
+      if (!nm || strcmp(nm, "GMA") != 0) { printf("FAIL GeometricMa: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3063,6 +3393,8 @@ static int check_GoldenPocket(void) {
     if (!h) { printf("FAIL GoldenPocket: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GoldenPocket", &exp);
     int fails = 0;
+    { const char *nm = wickra_golden_pocket_name(h);
+      if (!nm || strcmp(nm, "GoldenPocket") != 0) { printf("FAIL GoldenPocket: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3086,6 +3418,8 @@ static int check_GrangerCausality(void) {
     if (!h) { printf("FAIL GrangerCausality: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GrangerCausality", &exp);
     int fails = 0;
+    { const char *nm = wickra_granger_causality_name(h);
+      if (!nm || strcmp(nm, "GrangerCausality") != 0) { printf("FAIL GrangerCausality: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3102,6 +3436,8 @@ static int check_GravestoneDoji(void) {
     if (!h) { printf("FAIL GravestoneDoji: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_GravestoneDoji", &exp);
     int fails = 0;
+    { const char *nm = wickra_gravestone_doji_name(h);
+      if (!nm || strcmp(nm, "GravestoneDoji") != 0) { printf("FAIL GravestoneDoji: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3118,6 +3454,8 @@ static int check_Hammer(void) {
     if (!h) { printf("FAIL Hammer: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Hammer", &exp);
     int fails = 0;
+    { const char *nm = wickra_hammer_name(h);
+      if (!nm || strcmp(nm, "Hammer") != 0) { printf("FAIL Hammer: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3134,6 +3472,8 @@ static int check_HangingMan(void) {
     if (!h) { printf("FAIL HangingMan: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HangingMan", &exp);
     int fails = 0;
+    { const char *nm = wickra_hanging_man_name(h);
+      if (!nm || strcmp(nm, "HangingMan") != 0) { printf("FAIL HangingMan: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3150,6 +3490,8 @@ static int check_Harami(void) {
     if (!h) { printf("FAIL Harami: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Harami", &exp);
     int fails = 0;
+    { const char *nm = wickra_harami_name(h);
+      if (!nm || strcmp(nm, "Harami") != 0) { printf("FAIL Harami: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3166,6 +3508,8 @@ static int check_HaramiCross(void) {
     if (!h) { printf("FAIL HaramiCross: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HaramiCross", &exp);
     int fails = 0;
+    { const char *nm = wickra_harami_cross_name(h);
+      if (!nm || strcmp(nm, "HaramiCross") != 0) { printf("FAIL HaramiCross: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3182,6 +3526,8 @@ static int check_HasbrouckInformationShare(void) {
     if (!h) { printf("FAIL HasbrouckInformationShare: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HasbrouckInformationShare", &exp);
     int fails = 0;
+    { const char *nm = wickra_hasbrouck_information_share_name(h);
+      if (!nm || strcmp(nm, "HasbrouckInformationShare") != 0) { printf("FAIL HasbrouckInformationShare: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3198,6 +3544,8 @@ static int check_HeadAndShoulders(void) {
     if (!h) { printf("FAIL HeadAndShoulders: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HeadAndShoulders", &exp);
     int fails = 0;
+    { const char *nm = wickra_head_and_shoulders_name(h);
+      if (!nm || strcmp(nm, "HeadAndShoulders") != 0) { printf("FAIL HeadAndShoulders: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3214,6 +3562,8 @@ static int check_HeikinAshi(void) {
     if (!h) { printf("FAIL HeikinAshi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HeikinAshi", &exp);
     int fails = 0;
+    { const char *nm = wickra_heikin_ashi_name(h);
+      if (!nm || strcmp(nm, "HeikinAshi") != 0) { printf("FAIL HeikinAshi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3238,6 +3588,8 @@ static int check_HeikinAshiOscillator(void) {
     if (!h) { printf("FAIL HeikinAshiOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HeikinAshiOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_heikin_ashi_oscillator_name(h);
+      if (!nm || strcmp(nm, "HeikinAshiOscillator") != 0) { printf("FAIL HeikinAshiOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3254,6 +3606,8 @@ static int check_HiLoActivator(void) {
     if (!h) { printf("FAIL HiLoActivator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HiLoActivator", &exp);
     int fails = 0;
+    { const char *nm = wickra_hi_lo_activator_name(h);
+      if (!nm || strcmp(nm, "HiLoActivator") != 0) { printf("FAIL HiLoActivator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3270,6 +3624,8 @@ static int check_HighLowIndex(void) {
     if (!h) { printf("FAIL HighLowIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HighLowIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_high_low_index_name(h);
+      if (!nm || strcmp(nm, "HighLowIndex") != 0) { printf("FAIL HighLowIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3288,6 +3644,8 @@ static int check_HighLowRange(void) {
     if (!h) { printf("FAIL HighLowRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HighLowRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_high_low_range_name(h);
+      if (!nm || strcmp(nm, "HighLowRange") != 0) { printf("FAIL HighLowRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3304,6 +3662,8 @@ static int check_HighLowVolumeNodes(void) {
     if (!h) { printf("FAIL HighLowVolumeNodes: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HighLowVolumeNodes", &exp);
     int fails = 0;
+    { const char *nm = wickra_high_low_volume_nodes_name(h);
+      if (!nm || strcmp(nm, "HighLowVolumeNodes") != 0) { printf("FAIL HighLowVolumeNodes: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3326,6 +3686,8 @@ static int check_HighWave(void) {
     if (!h) { printf("FAIL HighWave: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HighWave", &exp);
     int fails = 0;
+    { const char *nm = wickra_high_wave_name(h);
+      if (!nm || strcmp(nm, "HighWave") != 0) { printf("FAIL HighWave: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3342,6 +3704,8 @@ static int check_HighpassFilter(void) {
     if (!h) { printf("FAIL HighpassFilter: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HighpassFilter", &exp);
     int fails = 0;
+    { const char *nm = wickra_highpass_filter_name(h);
+      if (!nm || strcmp(nm, "HighpassFilter") != 0) { printf("FAIL HighpassFilter: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3358,6 +3722,8 @@ static int check_Hikkake(void) {
     if (!h) { printf("FAIL Hikkake: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Hikkake", &exp);
     int fails = 0;
+    { const char *nm = wickra_hikkake_name(h);
+      if (!nm || strcmp(nm, "Hikkake") != 0) { printf("FAIL Hikkake: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3374,6 +3740,8 @@ static int check_HikkakeModified(void) {
     if (!h) { printf("FAIL HikkakeModified: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HikkakeModified", &exp);
     int fails = 0;
+    { const char *nm = wickra_hikkake_modified_name(h);
+      if (!nm || strcmp(nm, "HikkakeModified") != 0) { printf("FAIL HikkakeModified: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3390,6 +3758,8 @@ static int check_HilbertDominantCycle(void) {
     if (!h) { printf("FAIL HilbertDominantCycle: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HilbertDominantCycle", &exp);
     int fails = 0;
+    { const char *nm = wickra_hilbert_dominant_cycle_name(h);
+      if (!nm || strcmp(nm, "HilbertDominantCycle") != 0) { printf("FAIL HilbertDominantCycle: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3406,6 +3776,8 @@ static int check_HistoricalVolatility(void) {
     if (!h) { printf("FAIL HistoricalVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HistoricalVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_historical_volatility_name(h);
+      if (!nm || strcmp(nm, "HistoricalVolatility") != 0) { printf("FAIL HistoricalVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3422,6 +3794,8 @@ static int check_Hma(void) {
     if (!h) { printf("FAIL Hma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Hma", &exp);
     int fails = 0;
+    { const char *nm = wickra_hma_name(h);
+      if (!nm || strcmp(nm, "HMA") != 0) { printf("FAIL Hma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3438,6 +3812,8 @@ static int check_HoltWinters(void) {
     if (!h) { printf("FAIL HoltWinters: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HoltWinters", &exp);
     int fails = 0;
+    { const char *nm = wickra_holt_winters_name(h);
+      if (!nm || strcmp(nm, "HoltWinters") != 0) { printf("FAIL HoltWinters: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3454,6 +3830,8 @@ static int check_HomingPigeon(void) {
     if (!h) { printf("FAIL HomingPigeon: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HomingPigeon", &exp);
     int fails = 0;
+    { const char *nm = wickra_homing_pigeon_name(h);
+      if (!nm || strcmp(nm, "HomingPigeon") != 0) { printf("FAIL HomingPigeon: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3470,6 +3848,8 @@ static int check_HtDcPhase(void) {
     if (!h) { printf("FAIL HtDcPhase: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HtDcPhase", &exp);
     int fails = 0;
+    { const char *nm = wickra_ht_dc_phase_name(h);
+      if (!nm || strcmp(nm, "HT_DCPHASE") != 0) { printf("FAIL HtDcPhase: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3486,6 +3866,8 @@ static int check_HtPhasor(void) {
     if (!h) { printf("FAIL HtPhasor: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HtPhasor", &exp);
     int fails = 0;
+    { const char *nm = wickra_ht_phasor_name(h);
+      if (!nm || strcmp(nm, "HT_PHASOR") != 0) { printf("FAIL HtPhasor: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3508,6 +3890,8 @@ static int check_HtTrendMode(void) {
     if (!h) { printf("FAIL HtTrendMode: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HtTrendMode", &exp);
     int fails = 0;
+    { const char *nm = wickra_ht_trend_mode_name(h);
+      if (!nm || strcmp(nm, "HT_TRENDMODE") != 0) { printf("FAIL HtTrendMode: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3524,6 +3908,8 @@ static int check_HurstChannel(void) {
     if (!h) { printf("FAIL HurstChannel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HurstChannel", &exp);
     int fails = 0;
+    { const char *nm = wickra_hurst_channel_name(h);
+      if (!nm || strcmp(nm, "HurstChannel") != 0) { printf("FAIL HurstChannel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3547,6 +3933,8 @@ static int check_HurstExponent(void) {
     if (!h) { printf("FAIL HurstExponent: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_HurstExponent", &exp);
     int fails = 0;
+    { const char *nm = wickra_hurst_exponent_name(h);
+      if (!nm || strcmp(nm, "HurstExponent") != 0) { printf("FAIL HurstExponent: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3563,6 +3951,8 @@ static int check_Ichimoku(void) {
     if (!h) { printf("FAIL Ichimoku: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Ichimoku", &exp);
     int fails = 0;
+    { const char *nm = wickra_ichimoku_name(h);
+      if (!nm || strcmp(nm, "Ichimoku") != 0) { printf("FAIL Ichimoku: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3588,6 +3978,8 @@ static int check_IdenticalThreeCrows(void) {
     if (!h) { printf("FAIL IdenticalThreeCrows: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_IdenticalThreeCrows", &exp);
     int fails = 0;
+    { const char *nm = wickra_identical_three_crows_name(h);
+      if (!nm || strcmp(nm, "IdenticalThreeCrows") != 0) { printf("FAIL IdenticalThreeCrows: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3604,6 +3996,8 @@ static int check_ImbalanceBars(void) {
     if (!h) { printf("FAIL ImbalanceBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ImbalanceBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_imbalance_bars_name(h);
+      if (!nm || strcmp(nm, "ImbalanceBars") != 0) { printf("FAIL ImbalanceBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3629,6 +4023,8 @@ static int check_InNeck(void) {
     if (!h) { printf("FAIL InNeck: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_InNeck", &exp);
     int fails = 0;
+    { const char *nm = wickra_in_neck_name(h);
+      if (!nm || strcmp(nm, "InNeck") != 0) { printf("FAIL InNeck: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3645,6 +4041,8 @@ static int check_Inertia(void) {
     if (!h) { printf("FAIL Inertia: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Inertia", &exp);
     int fails = 0;
+    { const char *nm = wickra_inertia_name(h);
+      if (!nm || strcmp(nm, "Inertia") != 0) { printf("FAIL Inertia: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3661,6 +4059,8 @@ static int check_InformationRatio(void) {
     if (!h) { printf("FAIL InformationRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_InformationRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_information_ratio_name(h);
+      if (!nm || strcmp(nm, "InformationRatio") != 0) { printf("FAIL InformationRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3677,6 +4077,8 @@ static int check_InitialBalance(void) {
     if (!h) { printf("FAIL InitialBalance: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_InitialBalance", &exp);
     int fails = 0;
+    { const char *nm = wickra_initial_balance_name(h);
+      if (!nm || strcmp(nm, "InitialBalance") != 0) { printf("FAIL InitialBalance: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3699,6 +4101,8 @@ static int check_InstantaneousTrendline(void) {
     if (!h) { printf("FAIL InstantaneousTrendline: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_InstantaneousTrendline", &exp);
     int fails = 0;
+    { const char *nm = wickra_instantaneous_trendline_name(h);
+      if (!nm || strcmp(nm, "InstantaneousTrendline") != 0) { printf("FAIL InstantaneousTrendline: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3715,6 +4119,8 @@ static int check_IntradayIntensity(void) {
     if (!h) { printf("FAIL IntradayIntensity: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_IntradayIntensity", &exp);
     int fails = 0;
+    { const char *nm = wickra_intraday_intensity_name(h);
+      if (!nm || strcmp(nm, "IntradayIntensity") != 0) { printf("FAIL IntradayIntensity: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3731,6 +4137,8 @@ static int check_IntradayMomentumIndex(void) {
     if (!h) { printf("FAIL IntradayMomentumIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_IntradayMomentumIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_intraday_momentum_index_name(h);
+      if (!nm || strcmp(nm, "IMI") != 0) { printf("FAIL IntradayMomentumIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3747,6 +4155,8 @@ static int check_IntradayVolatilityProfile(void) {
     if (!h) { printf("FAIL IntradayVolatilityProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_IntradayVolatilityProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_intraday_volatility_profile_name(h);
+      if (!nm || strcmp(nm, "IntradayVolatilityProfile") != 0) { printf("FAIL IntradayVolatilityProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3766,6 +4176,8 @@ static int check_InverseFisherTransform(void) {
     if (!h) { printf("FAIL InverseFisherTransform: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_InverseFisherTransform", &exp);
     int fails = 0;
+    { const char *nm = wickra_inverse_fisher_transform_name(h);
+      if (!nm || strcmp(nm, "InverseFisherTransform") != 0) { printf("FAIL InverseFisherTransform: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3782,6 +4194,8 @@ static int check_InvertedHammer(void) {
     if (!h) { printf("FAIL InvertedHammer: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_InvertedHammer", &exp);
     int fails = 0;
+    { const char *nm = wickra_inverted_hammer_name(h);
+      if (!nm || strcmp(nm, "InvertedHammer") != 0) { printf("FAIL InvertedHammer: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3798,6 +4212,8 @@ static int check_JarqueBera(void) {
     if (!h) { printf("FAIL JarqueBera: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_JarqueBera", &exp);
     int fails = 0;
+    { const char *nm = wickra_jarque_bera_name(h);
+      if (!nm || strcmp(nm, "JarqueBera") != 0) { printf("FAIL JarqueBera: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3814,6 +4230,8 @@ static int check_Jma(void) {
     if (!h) { printf("FAIL Jma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Jma", &exp);
     int fails = 0;
+    { const char *nm = wickra_jma_name(h);
+      if (!nm || strcmp(nm, "JMA") != 0) { printf("FAIL Jma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3830,6 +4248,8 @@ static int check_JumpIndicator(void) {
     if (!h) { printf("FAIL JumpIndicator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_JumpIndicator", &exp);
     int fails = 0;
+    { const char *nm = wickra_jump_indicator_name(h);
+      if (!nm || strcmp(nm, "JumpIndicator") != 0) { printf("FAIL JumpIndicator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3846,6 +4266,8 @@ static int check_KRatio(void) {
     if (!h) { printf("FAIL KRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_k_ratio_name(h);
+      if (!nm || strcmp(nm, "KRatio") != 0) { printf("FAIL KRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3862,6 +4284,8 @@ static int check_KagiBars(void) {
     if (!h) { printf("FAIL KagiBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KagiBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_kagi_bars_name(h);
+      if (!nm || strcmp(nm, "KagiBars") != 0) { printf("FAIL KagiBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3884,6 +4308,8 @@ static int check_KalmanHedgeRatio(void) {
     if (!h) { printf("FAIL KalmanHedgeRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KalmanHedgeRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_kalman_hedge_ratio_name(h);
+      if (!nm || strcmp(nm, "KalmanHedgeRatio") != 0) { printf("FAIL KalmanHedgeRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3907,6 +4333,8 @@ static int check_Kama(void) {
     if (!h) { printf("FAIL Kama: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Kama", &exp);
     int fails = 0;
+    { const char *nm = wickra_kama_name(h);
+      if (!nm || strcmp(nm, "KAMA") != 0) { printf("FAIL Kama: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3923,6 +4351,8 @@ static int check_KaseDevStop(void) {
     if (!h) { printf("FAIL KaseDevStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KaseDevStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_kase_dev_stop_name(h);
+      if (!nm || strcmp(nm, "KaseDevStop") != 0) { printf("FAIL KaseDevStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3945,6 +4375,8 @@ static int check_KasePermissionStochastic(void) {
     if (!h) { printf("FAIL KasePermissionStochastic: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KasePermissionStochastic", &exp);
     int fails = 0;
+    { const char *nm = wickra_kase_permission_stochastic_name(h);
+      if (!nm || strcmp(nm, "KasePermissionStochastic") != 0) { printf("FAIL KasePermissionStochastic: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3967,6 +4399,8 @@ static int check_KellyCriterion(void) {
     if (!h) { printf("FAIL KellyCriterion: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KellyCriterion", &exp);
     int fails = 0;
+    { const char *nm = wickra_kelly_criterion_name(h);
+      if (!nm || strcmp(nm, "KellyCriterion") != 0) { printf("FAIL KellyCriterion: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -3983,6 +4417,8 @@ static int check_Keltner(void) {
     if (!h) { printf("FAIL Keltner: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Keltner", &exp);
     int fails = 0;
+    { const char *nm = wickra_keltner_name(h);
+      if (!nm || strcmp(nm, "KeltnerChannels") != 0) { printf("FAIL Keltner: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4006,6 +4442,8 @@ static int check_KendallTau(void) {
     if (!h) { printf("FAIL KendallTau: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KendallTau", &exp);
     int fails = 0;
+    { const char *nm = wickra_kendall_tau_name(h);
+      if (!nm || strcmp(nm, "KendallTau") != 0) { printf("FAIL KendallTau: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4022,6 +4460,8 @@ static int check_Kicking(void) {
     if (!h) { printf("FAIL Kicking: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Kicking", &exp);
     int fails = 0;
+    { const char *nm = wickra_kicking_name(h);
+      if (!nm || strcmp(nm, "Kicking") != 0) { printf("FAIL Kicking: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4038,6 +4478,8 @@ static int check_KickingByLength(void) {
     if (!h) { printf("FAIL KickingByLength: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KickingByLength", &exp);
     int fails = 0;
+    { const char *nm = wickra_kicking_by_length_name(h);
+      if (!nm || strcmp(nm, "KickingByLength") != 0) { printf("FAIL KickingByLength: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4054,6 +4496,8 @@ static int check_Kst(void) {
     if (!h) { printf("FAIL Kst: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Kst", &exp);
     int fails = 0;
+    { const char *nm = wickra_kst_name(h);
+      if (!nm || strcmp(nm, "KST") != 0) { printf("FAIL Kst: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4076,6 +4520,8 @@ static int check_Kurtosis(void) {
     if (!h) { printf("FAIL Kurtosis: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Kurtosis", &exp);
     int fails = 0;
+    { const char *nm = wickra_kurtosis_name(h);
+      if (!nm || strcmp(nm, "Kurtosis") != 0) { printf("FAIL Kurtosis: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4092,6 +4538,8 @@ static int check_Kvo(void) {
     if (!h) { printf("FAIL Kvo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Kvo", &exp);
     int fails = 0;
+    { const char *nm = wickra_kvo_name(h);
+      if (!nm || strcmp(nm, "KVO") != 0) { printf("FAIL Kvo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4108,6 +4556,8 @@ static int check_KylesLambda(void) {
     if (!h) { printf("FAIL KylesLambda: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_KylesLambda", &exp);
     int fails = 0;
+    { const char *nm = wickra_kyles_lambda_name(h);
+      if (!nm || strcmp(nm, "KylesLambda") != 0) { printf("FAIL KylesLambda: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4124,6 +4574,8 @@ static int check_LadderBottom(void) {
     if (!h) { printf("FAIL LadderBottom: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LadderBottom", &exp);
     int fails = 0;
+    { const char *nm = wickra_ladder_bottom_name(h);
+      if (!nm || strcmp(nm, "LadderBottom") != 0) { printf("FAIL LadderBottom: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4140,6 +4592,8 @@ static int check_LaguerreRsi(void) {
     if (!h) { printf("FAIL LaguerreRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LaguerreRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_laguerre_rsi_name(h);
+      if (!nm || strcmp(nm, "LaguerreRSI") != 0) { printf("FAIL LaguerreRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4156,6 +4610,8 @@ static int check_LeadLagCrossCorrelation(void) {
     if (!h) { printf("FAIL LeadLagCrossCorrelation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LeadLagCrossCorrelation", &exp);
     int fails = 0;
+    { const char *nm = wickra_lead_lag_cross_correlation_name(h);
+      if (!nm || strcmp(nm, "LeadLagCrossCorrelation") != 0) { printf("FAIL LeadLagCrossCorrelation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4178,6 +4634,8 @@ static int check_LinRegAngle(void) {
     if (!h) { printf("FAIL LinRegAngle: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LinRegAngle", &exp);
     int fails = 0;
+    { const char *nm = wickra_lin_reg_angle_name(h);
+      if (!nm || strcmp(nm, "LinRegAngle") != 0) { printf("FAIL LinRegAngle: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4194,6 +4652,8 @@ static int check_LinRegChannel(void) {
     if (!h) { printf("FAIL LinRegChannel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LinRegChannel", &exp);
     int fails = 0;
+    { const char *nm = wickra_lin_reg_channel_name(h);
+      if (!nm || strcmp(nm, "LinRegChannel") != 0) { printf("FAIL LinRegChannel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4217,6 +4677,8 @@ static int check_LinRegIntercept(void) {
     if (!h) { printf("FAIL LinRegIntercept: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LinRegIntercept", &exp);
     int fails = 0;
+    { const char *nm = wickra_lin_reg_intercept_name(h);
+      if (!nm || strcmp(nm, "LINEARREG_INTERCEPT") != 0) { printf("FAIL LinRegIntercept: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4233,6 +4695,8 @@ static int check_LinRegSlope(void) {
     if (!h) { printf("FAIL LinRegSlope: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LinRegSlope", &exp);
     int fails = 0;
+    { const char *nm = wickra_lin_reg_slope_name(h);
+      if (!nm || strcmp(nm, "LinRegSlope") != 0) { printf("FAIL LinRegSlope: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4249,6 +4713,8 @@ static int check_LinearRegression(void) {
     if (!h) { printf("FAIL LinearRegression: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LinearRegression", &exp);
     int fails = 0;
+    { const char *nm = wickra_linear_regression_name(h);
+      if (!nm || strcmp(nm, "LinearRegression") != 0) { printf("FAIL LinearRegression: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4265,6 +4731,8 @@ static int check_LiquidationFeatures(void) {
     if (!h) { printf("FAIL LiquidationFeatures: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LiquidationFeatures", &exp);
     int fails = 0;
+    { const char *nm = wickra_liquidation_features_name(h);
+      if (!nm || strcmp(nm, "LiquidationFeatures") != 0) { printf("FAIL LiquidationFeatures: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4291,6 +4759,8 @@ static int check_LogReturn(void) {
     if (!h) { printf("FAIL LogReturn: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LogReturn", &exp);
     int fails = 0;
+    { const char *nm = wickra_log_return_name(h);
+      if (!nm || strcmp(nm, "LogReturn") != 0) { printf("FAIL LogReturn: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4307,6 +4777,8 @@ static int check_LongLeggedDoji(void) {
     if (!h) { printf("FAIL LongLeggedDoji: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LongLeggedDoji", &exp);
     int fails = 0;
+    { const char *nm = wickra_long_legged_doji_name(h);
+      if (!nm || strcmp(nm, "LongLeggedDoji") != 0) { printf("FAIL LongLeggedDoji: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4323,6 +4795,8 @@ static int check_LongLine(void) {
     if (!h) { printf("FAIL LongLine: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LongLine", &exp);
     int fails = 0;
+    { const char *nm = wickra_long_line_name(h);
+      if (!nm || strcmp(nm, "LongLine") != 0) { printf("FAIL LongLine: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4339,6 +4813,8 @@ static int check_LongShortRatio(void) {
     if (!h) { printf("FAIL LongShortRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_LongShortRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_long_short_ratio_name(h);
+      if (!nm || strcmp(nm, "LongShortRatio") != 0) { printf("FAIL LongShortRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4356,6 +4832,8 @@ static int check_M2Measure(void) {
     if (!h) { printf("FAIL M2Measure: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_M2Measure", &exp);
     int fails = 0;
+    { const char *nm = wickra_m2_measure_name(h);
+      if (!nm || strcmp(nm, "M2Measure") != 0) { printf("FAIL M2Measure: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4372,6 +4850,8 @@ static int check_MaEnvelope(void) {
     if (!h) { printf("FAIL MaEnvelope: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MaEnvelope", &exp);
     int fails = 0;
+    { const char *nm = wickra_ma_envelope_name(h);
+      if (!nm || strcmp(nm, "MaEnvelope") != 0) { printf("FAIL MaEnvelope: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4395,6 +4875,8 @@ static int check_MacdExt(void) {
     if (!h) { printf("FAIL MacdExt: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MacdExt", &exp);
     int fails = 0;
+    { const char *nm = wickra_macd_ext_name(h);
+      if (!nm || strcmp(nm, "MACDEXT") != 0) { printf("FAIL MacdExt: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4418,6 +4900,8 @@ static int check_MacdFix(void) {
     if (!h) { printf("FAIL MacdFix: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MacdFix", &exp);
     int fails = 0;
+    { const char *nm = wickra_macd_fix_name(h);
+      if (!nm || strcmp(nm, "MACDFIX") != 0) { printf("FAIL MacdFix: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4441,6 +4925,8 @@ static int check_MacdHistogram(void) {
     if (!h) { printf("FAIL MacdHistogram: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MacdHistogram", &exp);
     int fails = 0;
+    { const char *nm = wickra_macd_histogram_name(h);
+      if (!nm || strcmp(nm, "MacdHistogram") != 0) { printf("FAIL MacdHistogram: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4457,6 +4943,8 @@ static int check_MacdIndicator(void) {
     if (!h) { printf("FAIL MacdIndicator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MacdIndicator", &exp);
     int fails = 0;
+    { const char *nm = wickra_macd_indicator_name(h);
+      if (!nm || strcmp(nm, "MACD") != 0) { printf("FAIL MacdIndicator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4480,6 +4968,8 @@ static int check_Mama(void) {
     if (!h) { printf("FAIL Mama: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Mama", &exp);
     int fails = 0;
+    { const char *nm = wickra_mama_name(h);
+      if (!nm || strcmp(nm, "MAMA") != 0) { printf("FAIL Mama: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4502,6 +4992,8 @@ static int check_MarketFacilitationIndex(void) {
     if (!h) { printf("FAIL MarketFacilitationIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MarketFacilitationIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_market_facilitation_index_name(h);
+      if (!nm || strcmp(nm, "MarketFacilitationIndex") != 0) { printf("FAIL MarketFacilitationIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4518,6 +5010,8 @@ static int check_MartinRatio(void) {
     if (!h) { printf("FAIL MartinRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MartinRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_martin_ratio_name(h);
+      if (!nm || strcmp(nm, "MartinRatio") != 0) { printf("FAIL MartinRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4534,6 +5028,8 @@ static int check_Marubozu(void) {
     if (!h) { printf("FAIL Marubozu: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Marubozu", &exp);
     int fails = 0;
+    { const char *nm = wickra_marubozu_name(h);
+      if (!nm || strcmp(nm, "Marubozu") != 0) { printf("FAIL Marubozu: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4550,6 +5046,8 @@ static int check_MassIndex(void) {
     if (!h) { printf("FAIL MassIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MassIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_mass_index_name(h);
+      if (!nm || strcmp(nm, "MassIndex") != 0) { printf("FAIL MassIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4566,6 +5064,8 @@ static int check_MatHold(void) {
     if (!h) { printf("FAIL MatHold: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MatHold", &exp);
     int fails = 0;
+    { const char *nm = wickra_mat_hold_name(h);
+      if (!nm || strcmp(nm, "MatHold") != 0) { printf("FAIL MatHold: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4582,6 +5082,8 @@ static int check_MatchingLow(void) {
     if (!h) { printf("FAIL MatchingLow: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MatchingLow", &exp);
     int fails = 0;
+    { const char *nm = wickra_matching_low_name(h);
+      if (!nm || strcmp(nm, "MatchingLow") != 0) { printf("FAIL MatchingLow: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4598,6 +5100,8 @@ static int check_MaxDrawdown(void) {
     if (!h) { printf("FAIL MaxDrawdown: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MaxDrawdown", &exp);
     int fails = 0;
+    { const char *nm = wickra_max_drawdown_name(h);
+      if (!nm || strcmp(nm, "MaxDrawdown") != 0) { printf("FAIL MaxDrawdown: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4614,6 +5118,8 @@ static int check_McClellanOscillator(void) {
     if (!h) { printf("FAIL McClellanOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_McClellanOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_mc_clellan_oscillator_name(h);
+      if (!nm || strcmp(nm, "McClellanOscillator") != 0) { printf("FAIL McClellanOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4632,6 +5138,8 @@ static int check_McClellanSummationIndex(void) {
     if (!h) { printf("FAIL McClellanSummationIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_McClellanSummationIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_mc_clellan_summation_index_name(h);
+      if (!nm || strcmp(nm, "McClellanSummationIndex") != 0) { printf("FAIL McClellanSummationIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4650,6 +5158,8 @@ static int check_McGinleyDynamic(void) {
     if (!h) { printf("FAIL McGinleyDynamic: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_McGinleyDynamic", &exp);
     int fails = 0;
+    { const char *nm = wickra_mc_ginley_dynamic_name(h);
+      if (!nm || strcmp(nm, "McGinleyDynamic") != 0) { printf("FAIL McGinleyDynamic: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4666,6 +5176,8 @@ static int check_MedianAbsoluteDeviation(void) {
     if (!h) { printf("FAIL MedianAbsoluteDeviation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MedianAbsoluteDeviation", &exp);
     int fails = 0;
+    { const char *nm = wickra_median_absolute_deviation_name(h);
+      if (!nm || strcmp(nm, "MedianAbsoluteDeviation") != 0) { printf("FAIL MedianAbsoluteDeviation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4682,6 +5194,8 @@ static int check_MedianChannel(void) {
     if (!h) { printf("FAIL MedianChannel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MedianChannel", &exp);
     int fails = 0;
+    { const char *nm = wickra_median_channel_name(h);
+      if (!nm || strcmp(nm, "MedianChannel") != 0) { printf("FAIL MedianChannel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4705,6 +5219,8 @@ static int check_MedianMa(void) {
     if (!h) { printf("FAIL MedianMa: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MedianMa", &exp);
     int fails = 0;
+    { const char *nm = wickra_median_ma_name(h);
+      if (!nm || strcmp(nm, "MedianMA") != 0) { printf("FAIL MedianMa: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4721,6 +5237,8 @@ static int check_MedianPrice(void) {
     if (!h) { printf("FAIL MedianPrice: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MedianPrice", &exp);
     int fails = 0;
+    { const char *nm = wickra_median_price_name(h);
+      if (!nm || strcmp(nm, "MedianPrice") != 0) { printf("FAIL MedianPrice: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4737,6 +5255,8 @@ static int check_Mfi(void) {
     if (!h) { printf("FAIL Mfi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Mfi", &exp);
     int fails = 0;
+    { const char *nm = wickra_mfi_name(h);
+      if (!nm || strcmp(nm, "MFI") != 0) { printf("FAIL Mfi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4753,6 +5273,8 @@ static int check_Microprice(void) {
     if (!h) { printf("FAIL Microprice: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Microprice", &exp);
     int fails = 0;
+    { const char *nm = wickra_microprice_name(h);
+      if (!nm || strcmp(nm, "Microprice") != 0) { printf("FAIL Microprice: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4771,6 +5293,8 @@ static int check_MidPoint(void) {
     if (!h) { printf("FAIL MidPoint: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MidPoint", &exp);
     int fails = 0;
+    { const char *nm = wickra_mid_point_name(h);
+      if (!nm || strcmp(nm, "MIDPOINT") != 0) { printf("FAIL MidPoint: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4787,6 +5311,8 @@ static int check_MidPrice(void) {
     if (!h) { printf("FAIL MidPrice: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MidPrice", &exp);
     int fails = 0;
+    { const char *nm = wickra_mid_price_name(h);
+      if (!nm || strcmp(nm, "MIDPRICE") != 0) { printf("FAIL MidPrice: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4803,6 +5329,8 @@ static int check_MinusDi(void) {
     if (!h) { printf("FAIL MinusDi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MinusDi", &exp);
     int fails = 0;
+    { const char *nm = wickra_minus_di_name(h);
+      if (!nm || strcmp(nm, "MINUS_DI") != 0) { printf("FAIL MinusDi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4819,6 +5347,8 @@ static int check_MinusDm(void) {
     if (!h) { printf("FAIL MinusDm: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MinusDm", &exp);
     int fails = 0;
+    { const char *nm = wickra_minus_dm_name(h);
+      if (!nm || strcmp(nm, "MINUS_DM") != 0) { printf("FAIL MinusDm: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4835,6 +5365,8 @@ static int check_ModifiedMaStop(void) {
     if (!h) { printf("FAIL ModifiedMaStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ModifiedMaStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_modified_ma_stop_name(h);
+      if (!nm || strcmp(nm, "ModifiedMaStop") != 0) { printf("FAIL ModifiedMaStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4857,6 +5389,8 @@ static int check_Mom(void) {
     if (!h) { printf("FAIL Mom: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Mom", &exp);
     int fails = 0;
+    { const char *nm = wickra_mom_name(h);
+      if (!nm || strcmp(nm, "MOM") != 0) { printf("FAIL Mom: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4873,6 +5407,8 @@ static int check_MorningDojiStar(void) {
     if (!h) { printf("FAIL MorningDojiStar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MorningDojiStar", &exp);
     int fails = 0;
+    { const char *nm = wickra_morning_doji_star_name(h);
+      if (!nm || strcmp(nm, "MorningDojiStar") != 0) { printf("FAIL MorningDojiStar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4889,6 +5425,8 @@ static int check_MorningEveningStar(void) {
     if (!h) { printf("FAIL MorningEveningStar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MorningEveningStar", &exp);
     int fails = 0;
+    { const char *nm = wickra_morning_evening_star_name(h);
+      if (!nm || strcmp(nm, "MorningEveningStar") != 0) { printf("FAIL MorningEveningStar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4905,6 +5443,8 @@ static int check_MurreyMathLines(void) {
     if (!h) { printf("FAIL MurreyMathLines: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_MurreyMathLines", &exp);
     int fails = 0;
+    { const char *nm = wickra_murrey_math_lines_name(h);
+      if (!nm || strcmp(nm, "MurreyMathLines") != 0) { printf("FAIL MurreyMathLines: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4934,6 +5474,8 @@ static int check_NakedPoc(void) {
     if (!h) { printf("FAIL NakedPoc: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_NakedPoc", &exp);
     int fails = 0;
+    { const char *nm = wickra_naked_poc_name(h);
+      if (!nm || strcmp(nm, "NakedPoc") != 0) { printf("FAIL NakedPoc: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4950,6 +5492,8 @@ static int check_Natr(void) {
     if (!h) { printf("FAIL Natr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Natr", &exp);
     int fails = 0;
+    { const char *nm = wickra_natr_name(h);
+      if (!nm || strcmp(nm, "NATR") != 0) { printf("FAIL Natr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4966,6 +5510,8 @@ static int check_NewHighsNewLows(void) {
     if (!h) { printf("FAIL NewHighsNewLows: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_NewHighsNewLows", &exp);
     int fails = 0;
+    { const char *nm = wickra_new_highs_new_lows_name(h);
+      if (!nm || strcmp(nm, "NewHighsNewLows") != 0) { printf("FAIL NewHighsNewLows: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -4984,6 +5530,8 @@ static int check_NewPriceLines(void) {
     if (!h) { printf("FAIL NewPriceLines: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_NewPriceLines", &exp);
     int fails = 0;
+    { const char *nm = wickra_new_price_lines_name(h);
+      if (!nm || strcmp(nm, "NewPriceLines") != 0) { printf("FAIL NewPriceLines: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5000,6 +5548,8 @@ static int check_Nrtr(void) {
     if (!h) { printf("FAIL Nrtr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Nrtr", &exp);
     int fails = 0;
+    { const char *nm = wickra_nrtr_name(h);
+      if (!nm || strcmp(nm, "Nrtr") != 0) { printf("FAIL Nrtr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5022,6 +5572,8 @@ static int check_Nvi(void) {
     if (!h) { printf("FAIL Nvi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Nvi", &exp);
     int fails = 0;
+    { const char *nm = wickra_nvi_name(h);
+      if (!nm || strcmp(nm, "NVI") != 0) { printf("FAIL Nvi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5038,6 +5590,8 @@ static int check_OIPriceDivergence(void) {
     if (!h) { printf("FAIL OIPriceDivergence: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OIPriceDivergence", &exp);
     int fails = 0;
+    { const char *nm = wickra_oi_price_divergence_name(h);
+      if (!nm || strcmp(nm, "OIPriceDivergence") != 0) { printf("FAIL OIPriceDivergence: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5055,6 +5609,8 @@ static int check_OIWeighted(void) {
     if (!h) { printf("FAIL OIWeighted: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OIWeighted", &exp);
     int fails = 0;
+    { const char *nm = wickra_oi_weighted_name(h);
+      if (!nm || strcmp(nm, "OIWeighted") != 0) { printf("FAIL OIWeighted: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5072,6 +5628,8 @@ static int check_Obv(void) {
     if (!h) { printf("FAIL Obv: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Obv", &exp);
     int fails = 0;
+    { const char *nm = wickra_obv_name(h);
+      if (!nm || strcmp(nm, "OBV") != 0) { printf("FAIL Obv: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5088,6 +5646,8 @@ static int check_OiToVolumeRatio(void) {
     if (!h) { printf("FAIL OiToVolumeRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OiToVolumeRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_oi_to_volume_ratio_name(h);
+      if (!nm || strcmp(nm, "OiToVolumeRatio") != 0) { printf("FAIL OiToVolumeRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5105,6 +5665,8 @@ static int check_OmegaRatio(void) {
     if (!h) { printf("FAIL OmegaRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OmegaRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_omega_ratio_name(h);
+      if (!nm || strcmp(nm, "OmegaRatio") != 0) { printf("FAIL OmegaRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5121,6 +5683,8 @@ static int check_OnNeck(void) {
     if (!h) { printf("FAIL OnNeck: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OnNeck", &exp);
     int fails = 0;
+    { const char *nm = wickra_on_neck_name(h);
+      if (!nm || strcmp(nm, "OnNeck") != 0) { printf("FAIL OnNeck: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5137,6 +5701,8 @@ static int check_OpenInterestDelta(void) {
     if (!h) { printf("FAIL OpenInterestDelta: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OpenInterestDelta", &exp);
     int fails = 0;
+    { const char *nm = wickra_open_interest_delta_name(h);
+      if (!nm || strcmp(nm, "OpenInterestDelta") != 0) { printf("FAIL OpenInterestDelta: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5154,6 +5720,8 @@ static int check_OpenInterestMomentum(void) {
     if (!h) { printf("FAIL OpenInterestMomentum: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OpenInterestMomentum", &exp);
     int fails = 0;
+    { const char *nm = wickra_open_interest_momentum_name(h);
+      if (!nm || strcmp(nm, "OpenInterestMomentum") != 0) { printf("FAIL OpenInterestMomentum: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5171,6 +5739,8 @@ static int check_OpeningMarubozu(void) {
     if (!h) { printf("FAIL OpeningMarubozu: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OpeningMarubozu", &exp);
     int fails = 0;
+    { const char *nm = wickra_opening_marubozu_name(h);
+      if (!nm || strcmp(nm, "OpeningMarubozu") != 0) { printf("FAIL OpeningMarubozu: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5187,6 +5757,8 @@ static int check_OpeningRange(void) {
     if (!h) { printf("FAIL OpeningRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OpeningRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_opening_range_name(h);
+      if (!nm || strcmp(nm, "OpeningRange") != 0) { printf("FAIL OpeningRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5210,6 +5782,8 @@ static int check_OrderBookImbalanceFull(void) {
     if (!h) { printf("FAIL OrderBookImbalanceFull: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OrderBookImbalanceFull", &exp);
     int fails = 0;
+    { const char *nm = wickra_order_book_imbalance_full_name(h);
+      if (!nm || strcmp(nm, "OrderBookImbalanceFull") != 0) { printf("FAIL OrderBookImbalanceFull: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5228,6 +5802,8 @@ static int check_OrderBookImbalanceTop1(void) {
     if (!h) { printf("FAIL OrderBookImbalanceTop1: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OrderBookImbalanceTop1", &exp);
     int fails = 0;
+    { const char *nm = wickra_order_book_imbalance_top1_name(h);
+      if (!nm || strcmp(nm, "OrderBookImbalanceTop1") != 0) { printf("FAIL OrderBookImbalanceTop1: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5246,6 +5822,8 @@ static int check_OrderBookImbalanceTopN(void) {
     if (!h) { printf("FAIL OrderBookImbalanceTopN: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OrderBookImbalanceTopN", &exp);
     int fails = 0;
+    { const char *nm = wickra_order_book_imbalance_top_n_name(h);
+      if (!nm || strcmp(nm, "OrderBookImbalanceTopN") != 0) { printf("FAIL OrderBookImbalanceTopN: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5264,6 +5842,8 @@ static int check_OrderFlowImbalance(void) {
     if (!h) { printf("FAIL OrderFlowImbalance: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OrderFlowImbalance", &exp);
     int fails = 0;
+    { const char *nm = wickra_order_flow_imbalance_name(h);
+      if (!nm || strcmp(nm, "OrderFlowImbalance") != 0) { printf("FAIL OrderFlowImbalance: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5282,6 +5862,8 @@ static int check_OuHalfLife(void) {
     if (!h) { printf("FAIL OuHalfLife: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OuHalfLife", &exp);
     int fails = 0;
+    { const char *nm = wickra_ou_half_life_name(h);
+      if (!nm || strcmp(nm, "OuHalfLife") != 0) { printf("FAIL OuHalfLife: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5298,6 +5880,8 @@ static int check_OvernightGap(void) {
     if (!h) { printf("FAIL OvernightGap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OvernightGap", &exp);
     int fails = 0;
+    { const char *nm = wickra_overnight_gap_name(h);
+      if (!nm || strcmp(nm, "OvernightGap") != 0) { printf("FAIL OvernightGap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5314,6 +5898,8 @@ static int check_OvernightIntradayReturn(void) {
     if (!h) { printf("FAIL OvernightIntradayReturn: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_OvernightIntradayReturn", &exp);
     int fails = 0;
+    { const char *nm = wickra_overnight_intraday_return_name(h);
+      if (!nm || strcmp(nm, "OvernightIntradayReturn") != 0) { printf("FAIL OvernightIntradayReturn: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5336,6 +5922,8 @@ static int check_PainIndex(void) {
     if (!h) { printf("FAIL PainIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PainIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_pain_index_name(h);
+      if (!nm || strcmp(nm, "PainIndex") != 0) { printf("FAIL PainIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5352,6 +5940,8 @@ static int check_PairSpreadZScore(void) {
     if (!h) { printf("FAIL PairSpreadZScore: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PairSpreadZScore", &exp);
     int fails = 0;
+    { const char *nm = wickra_pair_spread_z_score_name(h);
+      if (!nm || strcmp(nm, "PairSpreadZScore") != 0) { printf("FAIL PairSpreadZScore: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5368,6 +5958,8 @@ static int check_PairwiseBeta(void) {
     if (!h) { printf("FAIL PairwiseBeta: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PairwiseBeta", &exp);
     int fails = 0;
+    { const char *nm = wickra_pairwise_beta_name(h);
+      if (!nm || strcmp(nm, "PairwiseBeta") != 0) { printf("FAIL PairwiseBeta: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5384,6 +5976,8 @@ static int check_ParkinsonVolatility(void) {
     if (!h) { printf("FAIL ParkinsonVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ParkinsonVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_parkinson_volatility_name(h);
+      if (!nm || strcmp(nm, "ParkinsonVolatility") != 0) { printf("FAIL ParkinsonVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5400,6 +5994,8 @@ static int check_PearsonCorrelation(void) {
     if (!h) { printf("FAIL PearsonCorrelation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PearsonCorrelation", &exp);
     int fails = 0;
+    { const char *nm = wickra_pearson_correlation_name(h);
+      if (!nm || strcmp(nm, "PearsonCorrelation") != 0) { printf("FAIL PearsonCorrelation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5416,6 +6012,8 @@ static int check_PercentAboveMa(void) {
     if (!h) { printf("FAIL PercentAboveMa: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PercentAboveMa", &exp);
     int fails = 0;
+    { const char *nm = wickra_percent_above_ma_name(h);
+      if (!nm || strcmp(nm, "PercentAboveMa") != 0) { printf("FAIL PercentAboveMa: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5434,6 +6032,8 @@ static int check_PercentB(void) {
     if (!h) { printf("FAIL PercentB: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PercentB", &exp);
     int fails = 0;
+    { const char *nm = wickra_percent_b_name(h);
+      if (!nm || strcmp(nm, "PercentB") != 0) { printf("FAIL PercentB: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5450,6 +6050,8 @@ static int check_PercentageTrailingStop(void) {
     if (!h) { printf("FAIL PercentageTrailingStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PercentageTrailingStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_percentage_trailing_stop_name(h);
+      if (!nm || strcmp(nm, "PercentageTrailingStop") != 0) { printf("FAIL PercentageTrailingStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5466,6 +6068,8 @@ static int check_PerpetualPremiumIndex(void) {
     if (!h) { printf("FAIL PerpetualPremiumIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PerpetualPremiumIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_perpetual_premium_index_name(h);
+      if (!nm || strcmp(nm, "PerpetualPremiumIndex") != 0) { printf("FAIL PerpetualPremiumIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5483,6 +6087,8 @@ static int check_Pgo(void) {
     if (!h) { printf("FAIL Pgo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Pgo", &exp);
     int fails = 0;
+    { const char *nm = wickra_pgo_name(h);
+      if (!nm || strcmp(nm, "PGO") != 0) { printf("FAIL Pgo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5499,6 +6105,8 @@ static int check_PiercingDarkCloud(void) {
     if (!h) { printf("FAIL PiercingDarkCloud: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PiercingDarkCloud", &exp);
     int fails = 0;
+    { const char *nm = wickra_piercing_dark_cloud_name(h);
+      if (!nm || strcmp(nm, "PiercingDarkCloud") != 0) { printf("FAIL PiercingDarkCloud: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5515,6 +6123,8 @@ static int check_Pin(void) {
     if (!h) { printf("FAIL Pin: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Pin", &exp);
     int fails = 0;
+    { const char *nm = wickra_pin_name(h);
+      if (!nm || strcmp(nm, "PIN") != 0) { printf("FAIL Pin: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5531,6 +6141,8 @@ static int check_PivotReversal(void) {
     if (!h) { printf("FAIL PivotReversal: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PivotReversal", &exp);
     int fails = 0;
+    { const char *nm = wickra_pivot_reversal_name(h);
+      if (!nm || strcmp(nm, "PivotReversal") != 0) { printf("FAIL PivotReversal: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5547,6 +6159,8 @@ static int check_PlusDi(void) {
     if (!h) { printf("FAIL PlusDi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PlusDi", &exp);
     int fails = 0;
+    { const char *nm = wickra_plus_di_name(h);
+      if (!nm || strcmp(nm, "PLUS_DI") != 0) { printf("FAIL PlusDi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5563,6 +6177,8 @@ static int check_PlusDm(void) {
     if (!h) { printf("FAIL PlusDm: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PlusDm", &exp);
     int fails = 0;
+    { const char *nm = wickra_plus_dm_name(h);
+      if (!nm || strcmp(nm, "PLUS_DM") != 0) { printf("FAIL PlusDm: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5579,6 +6195,8 @@ static int check_Pmo(void) {
     if (!h) { printf("FAIL Pmo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Pmo", &exp);
     int fails = 0;
+    { const char *nm = wickra_pmo_name(h);
+      if (!nm || strcmp(nm, "PMO") != 0) { printf("FAIL Pmo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5595,6 +6213,8 @@ static int check_PointAndFigureBars(void) {
     if (!h) { printf("FAIL PointAndFigureBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PointAndFigureBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_point_and_figure_bars_name(h);
+      if (!nm || strcmp(nm, "PointAndFigureBars") != 0) { printf("FAIL PointAndFigureBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5617,6 +6237,8 @@ static int check_PolarizedFractalEfficiency(void) {
     if (!h) { printf("FAIL PolarizedFractalEfficiency: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PolarizedFractalEfficiency", &exp);
     int fails = 0;
+    { const char *nm = wickra_polarized_fractal_efficiency_name(h);
+      if (!nm || strcmp(nm, "PolarizedFractalEfficiency") != 0) { printf("FAIL PolarizedFractalEfficiency: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5633,6 +6255,8 @@ static int check_Ppo(void) {
     if (!h) { printf("FAIL Ppo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Ppo", &exp);
     int fails = 0;
+    { const char *nm = wickra_ppo_name(h);
+      if (!nm || strcmp(nm, "PPO") != 0) { printf("FAIL Ppo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5649,6 +6273,8 @@ static int check_PpoHistogram(void) {
     if (!h) { printf("FAIL PpoHistogram: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_PpoHistogram", &exp);
     int fails = 0;
+    { const char *nm = wickra_ppo_histogram_name(h);
+      if (!nm || strcmp(nm, "PpoHistogram") != 0) { printf("FAIL PpoHistogram: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5665,6 +6291,8 @@ static int check_ProfileShape(void) {
     if (!h) { printf("FAIL ProfileShape: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ProfileShape", &exp);
     int fails = 0;
+    { const char *nm = wickra_profile_shape_name(h);
+      if (!nm || strcmp(nm, "ProfileShape") != 0) { printf("FAIL ProfileShape: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5681,6 +6309,8 @@ static int check_ProfitFactor(void) {
     if (!h) { printf("FAIL ProfitFactor: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ProfitFactor", &exp);
     int fails = 0;
+    { const char *nm = wickra_profit_factor_name(h);
+      if (!nm || strcmp(nm, "ProfitFactor") != 0) { printf("FAIL ProfitFactor: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5697,6 +6327,8 @@ static int check_ProjectionBands(void) {
     if (!h) { printf("FAIL ProjectionBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ProjectionBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_projection_bands_name(h);
+      if (!nm || strcmp(nm, "ProjectionBands") != 0) { printf("FAIL ProjectionBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5720,6 +6352,8 @@ static int check_ProjectionOscillator(void) {
     if (!h) { printf("FAIL ProjectionOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ProjectionOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_projection_oscillator_name(h);
+      if (!nm || strcmp(nm, "ProjectionOscillator") != 0) { printf("FAIL ProjectionOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5736,6 +6370,8 @@ static int check_Psar(void) {
     if (!h) { printf("FAIL Psar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Psar", &exp);
     int fails = 0;
+    { const char *nm = wickra_psar_name(h);
+      if (!nm || strcmp(nm, "PSAR") != 0) { printf("FAIL Psar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5752,6 +6388,8 @@ static int check_Pvi(void) {
     if (!h) { printf("FAIL Pvi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Pvi", &exp);
     int fails = 0;
+    { const char *nm = wickra_pvi_name(h);
+      if (!nm || strcmp(nm, "PVI") != 0) { printf("FAIL Pvi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5768,6 +6406,8 @@ static int check_Qqe(void) {
     if (!h) { printf("FAIL Qqe: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Qqe", &exp);
     int fails = 0;
+    { const char *nm = wickra_qqe_name(h);
+      if (!nm || strcmp(nm, "QQE") != 0) { printf("FAIL Qqe: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5790,6 +6430,8 @@ static int check_Qstick(void) {
     if (!h) { printf("FAIL Qstick: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Qstick", &exp);
     int fails = 0;
+    { const char *nm = wickra_qstick_name(h);
+      if (!nm || strcmp(nm, "Qstick") != 0) { printf("FAIL Qstick: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5806,6 +6448,8 @@ static int check_QuartileBands(void) {
     if (!h) { printf("FAIL QuartileBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_QuartileBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_quartile_bands_name(h);
+      if (!nm || strcmp(nm, "QuartileBands") != 0) { printf("FAIL QuartileBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5829,6 +6473,8 @@ static int check_QuotedSpread(void) {
     if (!h) { printf("FAIL QuotedSpread: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_QuotedSpread", &exp);
     int fails = 0;
+    { const char *nm = wickra_quoted_spread_name(h);
+      if (!nm || strcmp(nm, "QuotedSpread") != 0) { printf("FAIL QuotedSpread: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5847,6 +6493,8 @@ static int check_RSquared(void) {
     if (!h) { printf("FAIL RSquared: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RSquared", &exp);
     int fails = 0;
+    { const char *nm = wickra_r_squared_name(h);
+      if (!nm || strcmp(nm, "RSquared") != 0) { printf("FAIL RSquared: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5863,6 +6511,8 @@ static int check_RangeBars(void) {
     if (!h) { printf("FAIL RangeBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RangeBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_range_bars_name(h);
+      if (!nm || strcmp(nm, "RangeBars") != 0) { printf("FAIL RangeBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5885,6 +6535,8 @@ static int check_RealizedSpread(void) {
     if (!h) { printf("FAIL RealizedSpread: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RealizedSpread", &exp);
     int fails = 0;
+    { const char *nm = wickra_realized_spread_name(h);
+      if (!nm || strcmp(nm, "RealizedSpread") != 0) { printf("FAIL RealizedSpread: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5901,6 +6553,8 @@ static int check_RealizedVolatility(void) {
     if (!h) { printf("FAIL RealizedVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RealizedVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_realized_volatility_name(h);
+      if (!nm || strcmp(nm, "RealizedVolatility") != 0) { printf("FAIL RealizedVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5917,6 +6571,8 @@ static int check_RecoveryFactor(void) {
     if (!h) { printf("FAIL RecoveryFactor: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RecoveryFactor", &exp);
     int fails = 0;
+    { const char *nm = wickra_recovery_factor_name(h);
+      if (!nm || strcmp(nm, "RecoveryFactor") != 0) { printf("FAIL RecoveryFactor: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5933,6 +6589,8 @@ static int check_RectangleRange(void) {
     if (!h) { printf("FAIL RectangleRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RectangleRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_rectangle_range_name(h);
+      if (!nm || strcmp(nm, "RectangleRange") != 0) { printf("FAIL RectangleRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5949,6 +6607,8 @@ static int check_Reflex(void) {
     if (!h) { printf("FAIL Reflex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Reflex", &exp);
     int fails = 0;
+    { const char *nm = wickra_reflex_name(h);
+      if (!nm || strcmp(nm, "Reflex") != 0) { printf("FAIL Reflex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5965,6 +6625,8 @@ static int check_RegimeLabel(void) {
     if (!h) { printf("FAIL RegimeLabel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RegimeLabel", &exp);
     int fails = 0;
+    { const char *nm = wickra_regime_label_name(h);
+      if (!nm || strcmp(nm, "RegimeLabel") != 0) { printf("FAIL RegimeLabel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -5981,6 +6643,8 @@ static int check_RelativeStrengthAB(void) {
     if (!h) { printf("FAIL RelativeStrengthAB: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RelativeStrengthAB", &exp);
     int fails = 0;
+    { const char *nm = wickra_relative_strength_ab_name(h);
+      if (!nm || strcmp(nm, "RelativeStrengthAB") != 0) { printf("FAIL RelativeStrengthAB: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6004,6 +6668,8 @@ static int check_RenkoBars(void) {
     if (!h) { printf("FAIL RenkoBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RenkoBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_renko_bars_name(h);
+      if (!nm || strcmp(nm, "RenkoBars") != 0) { printf("FAIL RenkoBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6026,6 +6692,8 @@ static int check_RenkoTrailingStop(void) {
     if (!h) { printf("FAIL RenkoTrailingStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RenkoTrailingStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_renko_trailing_stop_name(h);
+      if (!nm || strcmp(nm, "RenkoTrailingStop") != 0) { printf("FAIL RenkoTrailingStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6042,6 +6710,8 @@ static int check_RickshawMan(void) {
     if (!h) { printf("FAIL RickshawMan: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RickshawMan", &exp);
     int fails = 0;
+    { const char *nm = wickra_rickshaw_man_name(h);
+      if (!nm || strcmp(nm, "RickshawMan") != 0) { printf("FAIL RickshawMan: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6058,6 +6728,8 @@ static int check_RisingThreeMethods(void) {
     if (!h) { printf("FAIL RisingThreeMethods: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RisingThreeMethods", &exp);
     int fails = 0;
+    { const char *nm = wickra_rising_three_methods_name(h);
+      if (!nm || strcmp(nm, "RisingThreeMethods") != 0) { printf("FAIL RisingThreeMethods: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6074,6 +6746,8 @@ static int check_Rmi(void) {
     if (!h) { printf("FAIL Rmi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rmi", &exp);
     int fails = 0;
+    { const char *nm = wickra_rmi_name(h);
+      if (!nm || strcmp(nm, "RMI") != 0) { printf("FAIL Rmi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6090,6 +6764,8 @@ static int check_Roc(void) {
     if (!h) { printf("FAIL Roc: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Roc", &exp);
     int fails = 0;
+    { const char *nm = wickra_roc_name(h);
+      if (!nm || strcmp(nm, "ROC") != 0) { printf("FAIL Roc: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6106,6 +6782,8 @@ static int check_Rocp(void) {
     if (!h) { printf("FAIL Rocp: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rocp", &exp);
     int fails = 0;
+    { const char *nm = wickra_rocp_name(h);
+      if (!nm || strcmp(nm, "ROCP") != 0) { printf("FAIL Rocp: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6122,6 +6800,8 @@ static int check_Rocr(void) {
     if (!h) { printf("FAIL Rocr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rocr", &exp);
     int fails = 0;
+    { const char *nm = wickra_rocr_name(h);
+      if (!nm || strcmp(nm, "ROCR") != 0) { printf("FAIL Rocr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6138,6 +6818,8 @@ static int check_Rocr100(void) {
     if (!h) { printf("FAIL Rocr100: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rocr100", &exp);
     int fails = 0;
+    { const char *nm = wickra_rocr100_name(h);
+      if (!nm || strcmp(nm, "ROCR100") != 0) { printf("FAIL Rocr100: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6154,6 +6836,8 @@ static int check_RogersSatchellVolatility(void) {
     if (!h) { printf("FAIL RogersSatchellVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RogersSatchellVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_rogers_satchell_volatility_name(h);
+      if (!nm || strcmp(nm, "RogersSatchellVolatility") != 0) { printf("FAIL RogersSatchellVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6170,6 +6854,8 @@ static int check_RollMeasure(void) {
     if (!h) { printf("FAIL RollMeasure: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollMeasure", &exp);
     int fails = 0;
+    { const char *nm = wickra_roll_measure_name(h);
+      if (!nm || strcmp(nm, "RollMeasure") != 0) { printf("FAIL RollMeasure: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6186,6 +6872,8 @@ static int check_RollingCorrelation(void) {
     if (!h) { printf("FAIL RollingCorrelation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingCorrelation", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_correlation_name(h);
+      if (!nm || strcmp(nm, "RollingCorrelation") != 0) { printf("FAIL RollingCorrelation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6202,6 +6890,8 @@ static int check_RollingCovariance(void) {
     if (!h) { printf("FAIL RollingCovariance: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingCovariance", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_covariance_name(h);
+      if (!nm || strcmp(nm, "RollingCovariance") != 0) { printf("FAIL RollingCovariance: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6218,6 +6908,8 @@ static int check_RollingIqr(void) {
     if (!h) { printf("FAIL RollingIqr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingIqr", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_iqr_name(h);
+      if (!nm || strcmp(nm, "RollingIqr") != 0) { printf("FAIL RollingIqr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6234,6 +6926,8 @@ static int check_RollingMinMaxScaler(void) {
     if (!h) { printf("FAIL RollingMinMaxScaler: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingMinMaxScaler", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_min_max_scaler_name(h);
+      if (!nm || strcmp(nm, "RollingMinMaxScaler") != 0) { printf("FAIL RollingMinMaxScaler: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6250,6 +6944,8 @@ static int check_RollingPercentileRank(void) {
     if (!h) { printf("FAIL RollingPercentileRank: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingPercentileRank", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_percentile_rank_name(h);
+      if (!nm || strcmp(nm, "RollingPercentileRank") != 0) { printf("FAIL RollingPercentileRank: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6266,6 +6962,8 @@ static int check_RollingQuantile(void) {
     if (!h) { printf("FAIL RollingQuantile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingQuantile", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_quantile_name(h);
+      if (!nm || strcmp(nm, "RollingQuantile") != 0) { printf("FAIL RollingQuantile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6282,6 +6980,8 @@ static int check_RollingVwap(void) {
     if (!h) { printf("FAIL RollingVwap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RollingVwap", &exp);
     int fails = 0;
+    { const char *nm = wickra_rolling_vwap_name(h);
+      if (!nm || strcmp(nm, "RollingVWAP") != 0) { printf("FAIL RollingVwap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6298,6 +6998,8 @@ static int check_RoofingFilter(void) {
     if (!h) { printf("FAIL RoofingFilter: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RoofingFilter", &exp);
     int fails = 0;
+    { const char *nm = wickra_roofing_filter_name(h);
+      if (!nm || strcmp(nm, "RoofingFilter") != 0) { printf("FAIL RoofingFilter: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6314,6 +7016,8 @@ static int check_Rsi(void) {
     if (!h) { printf("FAIL Rsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_rsi_name(h);
+      if (!nm || strcmp(nm, "RSI") != 0) { printf("FAIL Rsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6330,6 +7034,8 @@ static int check_Rsx(void) {
     if (!h) { printf("FAIL Rsx: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rsx", &exp);
     int fails = 0;
+    { const char *nm = wickra_rsx_name(h);
+      if (!nm || strcmp(nm, "RSX") != 0) { printf("FAIL Rsx: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6346,6 +7052,8 @@ static int check_RunBars(void) {
     if (!h) { printf("FAIL RunBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RunBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_run_bars_name(h);
+      if (!nm || strcmp(nm, "RunBars") != 0) { printf("FAIL RunBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6371,6 +7079,8 @@ static int check_Rvi(void) {
     if (!h) { printf("FAIL Rvi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rvi", &exp);
     int fails = 0;
+    { const char *nm = wickra_rvi_name(h);
+      if (!nm || strcmp(nm, "RVI") != 0) { printf("FAIL Rvi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6387,6 +7097,8 @@ static int check_RviVolatility(void) {
     if (!h) { printf("FAIL RviVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_RviVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_rvi_volatility_name(h);
+      if (!nm || strcmp(nm, "RVIVolatility") != 0) { printf("FAIL RviVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6403,6 +7115,8 @@ static int check_Rwi(void) {
     if (!h) { printf("FAIL Rwi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Rwi", &exp);
     int fails = 0;
+    { const char *nm = wickra_rwi_name(h);
+      if (!nm || strcmp(nm, "RWI") != 0) { printf("FAIL Rwi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6425,6 +7139,8 @@ static int check_SampleEntropy(void) {
     if (!h) { printf("FAIL SampleEntropy: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SampleEntropy", &exp);
     int fails = 0;
+    { const char *nm = wickra_sample_entropy_name(h);
+      if (!nm || strcmp(nm, "SampleEntropy") != 0) { printf("FAIL SampleEntropy: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6441,6 +7157,8 @@ static int check_SarExt(void) {
     if (!h) { printf("FAIL SarExt: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SarExt", &exp);
     int fails = 0;
+    { const char *nm = wickra_sar_ext_name(h);
+      if (!nm || strcmp(nm, "SAREXT") != 0) { printf("FAIL SarExt: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6457,6 +7175,8 @@ static int check_SeasonalZScore(void) {
     if (!h) { printf("FAIL SeasonalZScore: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SeasonalZScore", &exp);
     int fails = 0;
+    { const char *nm = wickra_seasonal_z_score_name(h);
+      if (!nm || strcmp(nm, "SeasonalZScore") != 0) { printf("FAIL SeasonalZScore: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6473,6 +7193,8 @@ static int check_SeparatingLines(void) {
     if (!h) { printf("FAIL SeparatingLines: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SeparatingLines", &exp);
     int fails = 0;
+    { const char *nm = wickra_separating_lines_name(h);
+      if (!nm || strcmp(nm, "SeparatingLines") != 0) { printf("FAIL SeparatingLines: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6489,6 +7211,8 @@ static int check_SessionHighLow(void) {
     if (!h) { printf("FAIL SessionHighLow: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SessionHighLow", &exp);
     int fails = 0;
+    { const char *nm = wickra_session_high_low_name(h);
+      if (!nm || strcmp(nm, "SessionHighLow") != 0) { printf("FAIL SessionHighLow: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6511,6 +7235,8 @@ static int check_SessionRange(void) {
     if (!h) { printf("FAIL SessionRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SessionRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_session_range_name(h);
+      if (!nm || strcmp(nm, "SessionRange") != 0) { printf("FAIL SessionRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6534,6 +7260,8 @@ static int check_SessionVwap(void) {
     if (!h) { printf("FAIL SessionVwap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SessionVwap", &exp);
     int fails = 0;
+    { const char *nm = wickra_session_vwap_name(h);
+      if (!nm || strcmp(nm, "SessionVwap") != 0) { printf("FAIL SessionVwap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6550,6 +7278,8 @@ static int check_ShannonEntropy(void) {
     if (!h) { printf("FAIL ShannonEntropy: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ShannonEntropy", &exp);
     int fails = 0;
+    { const char *nm = wickra_shannon_entropy_name(h);
+      if (!nm || strcmp(nm, "ShannonEntropy") != 0) { printf("FAIL ShannonEntropy: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6566,6 +7296,8 @@ static int check_Shark(void) {
     if (!h) { printf("FAIL Shark: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Shark", &exp);
     int fails = 0;
+    { const char *nm = wickra_shark_name(h);
+      if (!nm || strcmp(nm, "Shark") != 0) { printf("FAIL Shark: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6582,6 +7314,8 @@ static int check_SharpeRatio(void) {
     if (!h) { printf("FAIL SharpeRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SharpeRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_sharpe_ratio_name(h);
+      if (!nm || strcmp(nm, "SharpeRatio") != 0) { printf("FAIL SharpeRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6598,6 +7332,8 @@ static int check_ShootingStar(void) {
     if (!h) { printf("FAIL ShootingStar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ShootingStar", &exp);
     int fails = 0;
+    { const char *nm = wickra_shooting_star_name(h);
+      if (!nm || strcmp(nm, "ShootingStar") != 0) { printf("FAIL ShootingStar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6614,6 +7350,8 @@ static int check_ShortLine(void) {
     if (!h) { printf("FAIL ShortLine: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ShortLine", &exp);
     int fails = 0;
+    { const char *nm = wickra_short_line_name(h);
+      if (!nm || strcmp(nm, "ShortLine") != 0) { printf("FAIL ShortLine: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6630,6 +7368,8 @@ static int check_SignedVolume(void) {
     if (!h) { printf("FAIL SignedVolume: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SignedVolume", &exp);
     int fails = 0;
+    { const char *nm = wickra_signed_volume_name(h);
+      if (!nm || strcmp(nm, "SignedVolume") != 0) { printf("FAIL SignedVolume: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6646,6 +7386,8 @@ static int check_SineWave(void) {
     if (!h) { printf("FAIL SineWave: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SineWave", &exp);
     int fails = 0;
+    { const char *nm = wickra_sine_wave_name(h);
+      if (!nm || strcmp(nm, "SineWave") != 0) { printf("FAIL SineWave: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6662,6 +7404,8 @@ static int check_SineWeightedMa(void) {
     if (!h) { printf("FAIL SineWeightedMa: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SineWeightedMa", &exp);
     int fails = 0;
+    { const char *nm = wickra_sine_weighted_ma_name(h);
+      if (!nm || strcmp(nm, "SWMA") != 0) { printf("FAIL SineWeightedMa: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6678,6 +7422,8 @@ static int check_SinglePrints(void) {
     if (!h) { printf("FAIL SinglePrints: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SinglePrints", &exp);
     int fails = 0;
+    { const char *nm = wickra_single_prints_name(h);
+      if (!nm || strcmp(nm, "SinglePrints") != 0) { printf("FAIL SinglePrints: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6694,6 +7440,8 @@ static int check_Skewness(void) {
     if (!h) { printf("FAIL Skewness: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Skewness", &exp);
     int fails = 0;
+    { const char *nm = wickra_skewness_name(h);
+      if (!nm || strcmp(nm, "Skewness") != 0) { printf("FAIL Skewness: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6710,6 +7458,8 @@ static int check_Sma(void) {
     if (!h) { printf("FAIL Sma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Sma", &exp);
     int fails = 0;
+    { const char *nm = wickra_sma_name(h);
+      if (!nm || strcmp(nm, "SMA") != 0) { printf("FAIL Sma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6726,6 +7476,8 @@ static int check_Smi(void) {
     if (!h) { printf("FAIL Smi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Smi", &exp);
     int fails = 0;
+    { const char *nm = wickra_smi_name(h);
+      if (!nm || strcmp(nm, "SMI") != 0) { printf("FAIL Smi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6742,6 +7494,8 @@ static int check_Smma(void) {
     if (!h) { printf("FAIL Smma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Smma", &exp);
     int fails = 0;
+    { const char *nm = wickra_smma_name(h);
+      if (!nm || strcmp(nm, "SMMA") != 0) { printf("FAIL Smma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6758,6 +7512,8 @@ static int check_SmoothedHeikinAshi(void) {
     if (!h) { printf("FAIL SmoothedHeikinAshi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SmoothedHeikinAshi", &exp);
     int fails = 0;
+    { const char *nm = wickra_smoothed_heikin_ashi_name(h);
+      if (!nm || strcmp(nm, "SmoothedHeikinAshi") != 0) { printf("FAIL SmoothedHeikinAshi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6782,6 +7538,8 @@ static int check_SortinoRatio(void) {
     if (!h) { printf("FAIL SortinoRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SortinoRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_sortino_ratio_name(h);
+      if (!nm || strcmp(nm, "SortinoRatio") != 0) { printf("FAIL SortinoRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6798,6 +7556,8 @@ static int check_SpearmanCorrelation(void) {
     if (!h) { printf("FAIL SpearmanCorrelation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SpearmanCorrelation", &exp);
     int fails = 0;
+    { const char *nm = wickra_spearman_correlation_name(h);
+      if (!nm || strcmp(nm, "SpearmanCorrelation") != 0) { printf("FAIL SpearmanCorrelation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6814,6 +7574,8 @@ static int check_SpinningTop(void) {
     if (!h) { printf("FAIL SpinningTop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SpinningTop", &exp);
     int fails = 0;
+    { const char *nm = wickra_spinning_top_name(h);
+      if (!nm || strcmp(nm, "SpinningTop") != 0) { printf("FAIL SpinningTop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6830,6 +7592,8 @@ static int check_SpreadAr1Coefficient(void) {
     if (!h) { printf("FAIL SpreadAr1Coefficient: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SpreadAr1Coefficient", &exp);
     int fails = 0;
+    { const char *nm = wickra_spread_ar1_coefficient_name(h);
+      if (!nm || strcmp(nm, "SpreadAr1Coefficient") != 0) { printf("FAIL SpreadAr1Coefficient: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6846,6 +7610,8 @@ static int check_SpreadBollingerBands(void) {
     if (!h) { printf("FAIL SpreadBollingerBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SpreadBollingerBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_spread_bollinger_bands_name(h);
+      if (!nm || strcmp(nm, "SpreadBollingerBands") != 0) { printf("FAIL SpreadBollingerBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6870,6 +7636,8 @@ static int check_SpreadHurst(void) {
     if (!h) { printf("FAIL SpreadHurst: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SpreadHurst", &exp);
     int fails = 0;
+    { const char *nm = wickra_spread_hurst_name(h);
+      if (!nm || strcmp(nm, "SpreadHurst") != 0) { printf("FAIL SpreadHurst: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6886,6 +7654,8 @@ static int check_StalledPattern(void) {
     if (!h) { printf("FAIL StalledPattern: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StalledPattern", &exp);
     int fails = 0;
+    { const char *nm = wickra_stalled_pattern_name(h);
+      if (!nm || strcmp(nm, "StalledPattern") != 0) { printf("FAIL StalledPattern: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6902,6 +7672,8 @@ static int check_StandardError(void) {
     if (!h) { printf("FAIL StandardError: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StandardError", &exp);
     int fails = 0;
+    { const char *nm = wickra_standard_error_name(h);
+      if (!nm || strcmp(nm, "StandardError") != 0) { printf("FAIL StandardError: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6918,6 +7690,8 @@ static int check_StandardErrorBands(void) {
     if (!h) { printf("FAIL StandardErrorBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StandardErrorBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_standard_error_bands_name(h);
+      if (!nm || strcmp(nm, "StandardErrorBands") != 0) { printf("FAIL StandardErrorBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6941,6 +7715,8 @@ static int check_StarcBands(void) {
     if (!h) { printf("FAIL StarcBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StarcBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_starc_bands_name(h);
+      if (!nm || strcmp(nm, "StarcBands") != 0) { printf("FAIL StarcBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6964,6 +7740,8 @@ static int check_Stc(void) {
     if (!h) { printf("FAIL Stc: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Stc", &exp);
     int fails = 0;
+    { const char *nm = wickra_stc_name(h);
+      if (!nm || strcmp(nm, "STC") != 0) { printf("FAIL Stc: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6980,6 +7758,8 @@ static int check_StdDev(void) {
     if (!h) { printf("FAIL StdDev: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StdDev", &exp);
     int fails = 0;
+    { const char *nm = wickra_std_dev_name(h);
+      if (!nm || strcmp(nm, "StdDev") != 0) { printf("FAIL StdDev: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -6996,6 +7776,8 @@ static int check_StepTrailingStop(void) {
     if (!h) { printf("FAIL StepTrailingStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StepTrailingStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_step_trailing_stop_name(h);
+      if (!nm || strcmp(nm, "StepTrailingStop") != 0) { printf("FAIL StepTrailingStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7012,6 +7794,8 @@ static int check_SterlingRatio(void) {
     if (!h) { printf("FAIL SterlingRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SterlingRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_sterling_ratio_name(h);
+      if (!nm || strcmp(nm, "SterlingRatio") != 0) { printf("FAIL SterlingRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7028,6 +7812,8 @@ static int check_StickSandwich(void) {
     if (!h) { printf("FAIL StickSandwich: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StickSandwich", &exp);
     int fails = 0;
+    { const char *nm = wickra_stick_sandwich_name(h);
+      if (!nm || strcmp(nm, "StickSandwich") != 0) { printf("FAIL StickSandwich: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7044,6 +7830,8 @@ static int check_StochRsi(void) {
     if (!h) { printf("FAIL StochRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StochRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_stoch_rsi_name(h);
+      if (!nm || strcmp(nm, "StochRSI") != 0) { printf("FAIL StochRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7060,6 +7848,8 @@ static int check_Stochastic(void) {
     if (!h) { printf("FAIL Stochastic: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Stochastic", &exp);
     int fails = 0;
+    { const char *nm = wickra_stochastic_name(h);
+      if (!nm || strcmp(nm, "Stochastic") != 0) { printf("FAIL Stochastic: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7082,6 +7872,8 @@ static int check_StochasticCci(void) {
     if (!h) { printf("FAIL StochasticCci: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_StochasticCci", &exp);
     int fails = 0;
+    { const char *nm = wickra_stochastic_cci_name(h);
+      if (!nm || strcmp(nm, "StochasticCCI") != 0) { printf("FAIL StochasticCci: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7098,6 +7890,8 @@ static int check_SuperSmoother(void) {
     if (!h) { printf("FAIL SuperSmoother: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SuperSmoother", &exp);
     int fails = 0;
+    { const char *nm = wickra_super_smoother_name(h);
+      if (!nm || strcmp(nm, "SuperSmoother") != 0) { printf("FAIL SuperSmoother: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7114,6 +7908,8 @@ static int check_SuperTrend(void) {
     if (!h) { printf("FAIL SuperTrend: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_SuperTrend", &exp);
     int fails = 0;
+    { const char *nm = wickra_super_trend_name(h);
+      if (!nm || strcmp(nm, "SuperTrend") != 0) { printf("FAIL SuperTrend: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7136,6 +7932,8 @@ static int check_T3(void) {
     if (!h) { printf("FAIL T3: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_T3", &exp);
     int fails = 0;
+    { const char *nm = wickra_t3_name(h);
+      if (!nm || strcmp(nm, "T3") != 0) { printf("FAIL T3: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7152,6 +7950,8 @@ static int check_TailRatio(void) {
     if (!h) { printf("FAIL TailRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TailRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_tail_ratio_name(h);
+      if (!nm || strcmp(nm, "TailRatio") != 0) { printf("FAIL TailRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7168,6 +7968,8 @@ static int check_TakerBuySellRatio(void) {
     if (!h) { printf("FAIL TakerBuySellRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TakerBuySellRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_taker_buy_sell_ratio_name(h);
+      if (!nm || strcmp(nm, "TakerBuySellRatio") != 0) { printf("FAIL TakerBuySellRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7185,6 +7987,8 @@ static int check_Takuri(void) {
     if (!h) { printf("FAIL Takuri: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Takuri", &exp);
     int fails = 0;
+    { const char *nm = wickra_takuri_name(h);
+      if (!nm || strcmp(nm, "Takuri") != 0) { printf("FAIL Takuri: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7201,6 +8005,8 @@ static int check_TasukiGap(void) {
     if (!h) { printf("FAIL TasukiGap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TasukiGap", &exp);
     int fails = 0;
+    { const char *nm = wickra_tasuki_gap_name(h);
+      if (!nm || strcmp(nm, "TasukiGap") != 0) { printf("FAIL TasukiGap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7217,6 +8023,8 @@ static int check_TdCamouflage(void) {
     if (!h) { printf("FAIL TdCamouflage: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdCamouflage", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_camouflage_name(h);
+      if (!nm || strcmp(nm, "TDCamouflage") != 0) { printf("FAIL TdCamouflage: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7233,6 +8041,8 @@ static int check_TdClop(void) {
     if (!h) { printf("FAIL TdClop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdClop", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_clop_name(h);
+      if (!nm || strcmp(nm, "TDClop") != 0) { printf("FAIL TdClop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7249,6 +8059,8 @@ static int check_TdClopwin(void) {
     if (!h) { printf("FAIL TdClopwin: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdClopwin", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_clopwin_name(h);
+      if (!nm || strcmp(nm, "TDClopwin") != 0) { printf("FAIL TdClopwin: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7265,6 +8077,8 @@ static int check_TdCombo(void) {
     if (!h) { printf("FAIL TdCombo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdCombo", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_combo_name(h);
+      if (!nm || strcmp(nm, "TDCombo") != 0) { printf("FAIL TdCombo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7281,6 +8095,8 @@ static int check_TdCountdown(void) {
     if (!h) { printf("FAIL TdCountdown: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdCountdown", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_countdown_name(h);
+      if (!nm || strcmp(nm, "TDCountdown") != 0) { printf("FAIL TdCountdown: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7297,6 +8113,8 @@ static int check_TdDWave(void) {
     if (!h) { printf("FAIL TdDWave: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdDWave", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_d_wave_name(h);
+      if (!nm || strcmp(nm, "TDDWave") != 0) { printf("FAIL TdDWave: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7313,6 +8131,8 @@ static int check_TdDeMarker(void) {
     if (!h) { printf("FAIL TdDeMarker: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdDeMarker", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_de_marker_name(h);
+      if (!nm || strcmp(nm, "TDDeMarker") != 0) { printf("FAIL TdDeMarker: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7329,6 +8149,8 @@ static int check_TdDifferential(void) {
     if (!h) { printf("FAIL TdDifferential: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdDifferential", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_differential_name(h);
+      if (!nm || strcmp(nm, "TDDifferential") != 0) { printf("FAIL TdDifferential: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7345,6 +8167,8 @@ static int check_TdLines(void) {
     if (!h) { printf("FAIL TdLines: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdLines", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_lines_name(h);
+      if (!nm || strcmp(nm, "TDLines") != 0) { printf("FAIL TdLines: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7367,6 +8191,8 @@ static int check_TdMovingAverage(void) {
     if (!h) { printf("FAIL TdMovingAverage: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdMovingAverage", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_moving_average_name(h);
+      if (!nm || strcmp(nm, "TDMovingAverage") != 0) { printf("FAIL TdMovingAverage: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7389,6 +8215,8 @@ static int check_TdOpen(void) {
     if (!h) { printf("FAIL TdOpen: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdOpen", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_open_name(h);
+      if (!nm || strcmp(nm, "TDOpen") != 0) { printf("FAIL TdOpen: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7405,6 +8233,8 @@ static int check_TdPressure(void) {
     if (!h) { printf("FAIL TdPressure: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdPressure", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_pressure_name(h);
+      if (!nm || strcmp(nm, "TDPressure") != 0) { printf("FAIL TdPressure: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7421,6 +8251,8 @@ static int check_TdPropulsion(void) {
     if (!h) { printf("FAIL TdPropulsion: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdPropulsion", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_propulsion_name(h);
+      if (!nm || strcmp(nm, "TDPropulsion") != 0) { printf("FAIL TdPropulsion: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7437,6 +8269,8 @@ static int check_TdRangeProjection(void) {
     if (!h) { printf("FAIL TdRangeProjection: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdRangeProjection", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_range_projection_name(h);
+      if (!nm || strcmp(nm, "TDRangeProjection") != 0) { printf("FAIL TdRangeProjection: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7459,6 +8293,8 @@ static int check_TdRei(void) {
     if (!h) { printf("FAIL TdRei: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdRei", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_rei_name(h);
+      if (!nm || strcmp(nm, "TDREI") != 0) { printf("FAIL TdRei: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7475,6 +8311,8 @@ static int check_TdRiskLevel(void) {
     if (!h) { printf("FAIL TdRiskLevel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdRiskLevel", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_risk_level_name(h);
+      if (!nm || strcmp(nm, "TDRiskLevel") != 0) { printf("FAIL TdRiskLevel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7497,6 +8335,8 @@ static int check_TdSequential(void) {
     if (!h) { printf("FAIL TdSequential: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdSequential", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_sequential_name(h);
+      if (!nm || strcmp(nm, "TDSequential") != 0) { printf("FAIL TdSequential: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7520,6 +8360,8 @@ static int check_TdSetup(void) {
     if (!h) { printf("FAIL TdSetup: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdSetup", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_setup_name(h);
+      if (!nm || strcmp(nm, "TDSetup") != 0) { printf("FAIL TdSetup: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7536,6 +8378,8 @@ static int check_TdTrap(void) {
     if (!h) { printf("FAIL TdTrap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TdTrap", &exp);
     int fails = 0;
+    { const char *nm = wickra_td_trap_name(h);
+      if (!nm || strcmp(nm, "TDTrap") != 0) { printf("FAIL TdTrap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7552,6 +8396,8 @@ static int check_Tema(void) {
     if (!h) { printf("FAIL Tema: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tema", &exp);
     int fails = 0;
+    { const char *nm = wickra_tema_name(h);
+      if (!nm || strcmp(nm, "TEMA") != 0) { printf("FAIL Tema: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7568,6 +8414,8 @@ static int check_TermStructureBasis(void) {
     if (!h) { printf("FAIL TermStructureBasis: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TermStructureBasis", &exp);
     int fails = 0;
+    { const char *nm = wickra_term_structure_basis_name(h);
+      if (!nm || strcmp(nm, "TermStructureBasis") != 0) { printf("FAIL TermStructureBasis: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7585,6 +8433,8 @@ static int check_ThreeDrives(void) {
     if (!h) { printf("FAIL ThreeDrives: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeDrives", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_drives_name(h);
+      if (!nm || strcmp(nm, "ThreeDrives") != 0) { printf("FAIL ThreeDrives: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7601,6 +8451,8 @@ static int check_ThreeInside(void) {
     if (!h) { printf("FAIL ThreeInside: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeInside", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_inside_name(h);
+      if (!nm || strcmp(nm, "ThreeInside") != 0) { printf("FAIL ThreeInside: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7617,6 +8469,8 @@ static int check_ThreeLineBreak(void) {
     if (!h) { printf("FAIL ThreeLineBreak: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeLineBreak", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_line_break_name(h);
+      if (!nm || strcmp(nm, "ThreeLineBreak") != 0) { printf("FAIL ThreeLineBreak: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7633,6 +8487,8 @@ static int check_ThreeLineBreakBars(void) {
     if (!h) { printf("FAIL ThreeLineBreakBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeLineBreakBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_line_break_bars_name(h);
+      if (!nm || strcmp(nm, "ThreeLineBreakBars") != 0) { printf("FAIL ThreeLineBreakBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7655,6 +8511,8 @@ static int check_ThreeLineStrike(void) {
     if (!h) { printf("FAIL ThreeLineStrike: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeLineStrike", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_line_strike_name(h);
+      if (!nm || strcmp(nm, "ThreeLineStrike") != 0) { printf("FAIL ThreeLineStrike: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7671,6 +8529,8 @@ static int check_ThreeOutside(void) {
     if (!h) { printf("FAIL ThreeOutside: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeOutside", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_outside_name(h);
+      if (!nm || strcmp(nm, "ThreeOutside") != 0) { printf("FAIL ThreeOutside: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7687,6 +8547,8 @@ static int check_ThreeSoldiersOrCrows(void) {
     if (!h) { printf("FAIL ThreeSoldiersOrCrows: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeSoldiersOrCrows", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_soldiers_or_crows_name(h);
+      if (!nm || strcmp(nm, "ThreeSoldiersOrCrows") != 0) { printf("FAIL ThreeSoldiersOrCrows: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7703,6 +8565,8 @@ static int check_ThreeStarsInSouth(void) {
     if (!h) { printf("FAIL ThreeStarsInSouth: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ThreeStarsInSouth", &exp);
     int fails = 0;
+    { const char *nm = wickra_three_stars_in_south_name(h);
+      if (!nm || strcmp(nm, "ThreeStarsInSouth") != 0) { printf("FAIL ThreeStarsInSouth: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7719,6 +8583,8 @@ static int check_Thrusting(void) {
     if (!h) { printf("FAIL Thrusting: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Thrusting", &exp);
     int fails = 0;
+    { const char *nm = wickra_thrusting_name(h);
+      if (!nm || strcmp(nm, "Thrusting") != 0) { printf("FAIL Thrusting: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7735,6 +8601,8 @@ static int check_TickBars(void) {
     if (!h) { printf("FAIL TickBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TickBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_tick_bars_name(h);
+      if (!nm || strcmp(nm, "TickBars") != 0) { printf("FAIL TickBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7759,6 +8627,8 @@ static int check_TickIndex(void) {
     if (!h) { printf("FAIL TickIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TickIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_tick_index_name(h);
+      if (!nm || strcmp(nm, "TickIndex") != 0) { printf("FAIL TickIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7777,6 +8647,8 @@ static int check_Tii(void) {
     if (!h) { printf("FAIL Tii: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tii", &exp);
     int fails = 0;
+    { const char *nm = wickra_tii_name(h);
+      if (!nm || strcmp(nm, "TII") != 0) { printf("FAIL Tii: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7793,6 +8665,8 @@ static int check_TimeBasedStop(void) {
     if (!h) { printf("FAIL TimeBasedStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TimeBasedStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_time_based_stop_name(h);
+      if (!nm || strcmp(nm, "TimeBasedStop") != 0) { printf("FAIL TimeBasedStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7809,6 +8683,8 @@ static int check_TimeOfDayReturnProfile(void) {
     if (!h) { printf("FAIL TimeOfDayReturnProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TimeOfDayReturnProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_time_of_day_return_profile_name(h);
+      if (!nm || strcmp(nm, "TimeOfDayReturnProfile") != 0) { printf("FAIL TimeOfDayReturnProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7828,6 +8704,8 @@ static int check_TowerTopBottom(void) {
     if (!h) { printf("FAIL TowerTopBottom: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TowerTopBottom", &exp);
     int fails = 0;
+    { const char *nm = wickra_tower_top_bottom_name(h);
+      if (!nm || strcmp(nm, "TowerTopBottom") != 0) { printf("FAIL TowerTopBottom: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7844,6 +8722,8 @@ static int check_TpoProfile(void) {
     if (!h) { printf("FAIL TpoProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TpoProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_tpo_profile_name(h);
+      if (!nm || strcmp(nm, "TpoProfile") != 0) { printf("FAIL TpoProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7865,6 +8745,8 @@ static int check_TradeImbalance(void) {
     if (!h) { printf("FAIL TradeImbalance: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TradeImbalance", &exp);
     int fails = 0;
+    { const char *nm = wickra_trade_imbalance_name(h);
+      if (!nm || strcmp(nm, "TradeImbalance") != 0) { printf("FAIL TradeImbalance: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7881,6 +8763,8 @@ static int check_TradeSignAutocorrelation(void) {
     if (!h) { printf("FAIL TradeSignAutocorrelation: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TradeSignAutocorrelation", &exp);
     int fails = 0;
+    { const char *nm = wickra_trade_sign_autocorrelation_name(h);
+      if (!nm || strcmp(nm, "TradeSignAutocorrelation") != 0) { printf("FAIL TradeSignAutocorrelation: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7897,6 +8781,8 @@ static int check_TradeVolumeIndex(void) {
     if (!h) { printf("FAIL TradeVolumeIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TradeVolumeIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_trade_volume_index_name(h);
+      if (!nm || strcmp(nm, "TradeVolumeIndex") != 0) { printf("FAIL TradeVolumeIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7913,6 +8799,8 @@ static int check_TrendLabel(void) {
     if (!h) { printf("FAIL TrendLabel: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TrendLabel", &exp);
     int fails = 0;
+    { const char *nm = wickra_trend_label_name(h);
+      if (!nm || strcmp(nm, "TrendLabel") != 0) { printf("FAIL TrendLabel: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7929,6 +8817,8 @@ static int check_TrendStrengthIndex(void) {
     if (!h) { printf("FAIL TrendStrengthIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TrendStrengthIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_trend_strength_index_name(h);
+      if (!nm || strcmp(nm, "TrendStrengthIndex") != 0) { printf("FAIL TrendStrengthIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7945,6 +8835,8 @@ static int check_Trendflex(void) {
     if (!h) { printf("FAIL Trendflex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Trendflex", &exp);
     int fails = 0;
+    { const char *nm = wickra_trendflex_name(h);
+      if (!nm || strcmp(nm, "Trendflex") != 0) { printf("FAIL Trendflex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7961,6 +8853,8 @@ static int check_TreynorRatio(void) {
     if (!h) { printf("FAIL TreynorRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TreynorRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_treynor_ratio_name(h);
+      if (!nm || strcmp(nm, "TreynorRatio") != 0) { printf("FAIL TreynorRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7977,6 +8871,8 @@ static int check_Triangle(void) {
     if (!h) { printf("FAIL Triangle: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Triangle", &exp);
     int fails = 0;
+    { const char *nm = wickra_triangle_name(h);
+      if (!nm || strcmp(nm, "Triangle") != 0) { printf("FAIL Triangle: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -7993,6 +8889,8 @@ static int check_Trima(void) {
     if (!h) { printf("FAIL Trima: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Trima", &exp);
     int fails = 0;
+    { const char *nm = wickra_trima_name(h);
+      if (!nm || strcmp(nm, "TRIMA") != 0) { printf("FAIL Trima: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8009,6 +8907,8 @@ static int check_Trin(void) {
     if (!h) { printf("FAIL Trin: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Trin", &exp);
     int fails = 0;
+    { const char *nm = wickra_trin_name(h);
+      if (!nm || strcmp(nm, "Trin") != 0) { printf("FAIL Trin: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8027,6 +8927,8 @@ static int check_TripleTopBottom(void) {
     if (!h) { printf("FAIL TripleTopBottom: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TripleTopBottom", &exp);
     int fails = 0;
+    { const char *nm = wickra_triple_top_bottom_name(h);
+      if (!nm || strcmp(nm, "TripleTopBottom") != 0) { printf("FAIL TripleTopBottom: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8043,6 +8945,8 @@ static int check_Tristar(void) {
     if (!h) { printf("FAIL Tristar: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tristar", &exp);
     int fails = 0;
+    { const char *nm = wickra_tristar_name(h);
+      if (!nm || strcmp(nm, "Tristar") != 0) { printf("FAIL Tristar: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8059,6 +8963,8 @@ static int check_Trix(void) {
     if (!h) { printf("FAIL Trix: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Trix", &exp);
     int fails = 0;
+    { const char *nm = wickra_trix_name(h);
+      if (!nm || strcmp(nm, "TRIX") != 0) { printf("FAIL Trix: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8075,6 +8981,8 @@ static int check_TrueRange(void) {
     if (!h) { printf("FAIL TrueRange: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TrueRange", &exp);
     int fails = 0;
+    { const char *nm = wickra_true_range_name(h);
+      if (!nm || strcmp(nm, "TrueRange") != 0) { printf("FAIL TrueRange: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8091,6 +8999,8 @@ static int check_Tsf(void) {
     if (!h) { printf("FAIL Tsf: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tsf", &exp);
     int fails = 0;
+    { const char *nm = wickra_tsf_name(h);
+      if (!nm || strcmp(nm, "TSF") != 0) { printf("FAIL Tsf: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8107,6 +9017,8 @@ static int check_TsfOscillator(void) {
     if (!h) { printf("FAIL TsfOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TsfOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_tsf_oscillator_name(h);
+      if (!nm || strcmp(nm, "TsfOscillator") != 0) { printf("FAIL TsfOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8123,6 +9035,8 @@ static int check_Tsi(void) {
     if (!h) { printf("FAIL Tsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_tsi_name(h);
+      if (!nm || strcmp(nm, "TSI") != 0) { printf("FAIL Tsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8139,6 +9053,8 @@ static int check_Tsv(void) {
     if (!h) { printf("FAIL Tsv: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tsv", &exp);
     int fails = 0;
+    { const char *nm = wickra_tsv_name(h);
+      if (!nm || strcmp(nm, "TSV") != 0) { printf("FAIL Tsv: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8155,6 +9071,8 @@ static int check_TtmSqueeze(void) {
     if (!h) { printf("FAIL TtmSqueeze: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TtmSqueeze", &exp);
     int fails = 0;
+    { const char *nm = wickra_ttm_squeeze_name(h);
+      if (!nm || strcmp(nm, "TtmSqueeze") != 0) { printf("FAIL TtmSqueeze: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8177,6 +9095,8 @@ static int check_TtmTrend(void) {
     if (!h) { printf("FAIL TtmTrend: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TtmTrend", &exp);
     int fails = 0;
+    { const char *nm = wickra_ttm_trend_name(h);
+      if (!nm || strcmp(nm, "TtmTrend") != 0) { printf("FAIL TtmTrend: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8193,6 +9113,8 @@ static int check_TurnOfMonth(void) {
     if (!h) { printf("FAIL TurnOfMonth: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TurnOfMonth", &exp);
     int fails = 0;
+    { const char *nm = wickra_turn_of_month_name(h);
+      if (!nm || strcmp(nm, "TurnOfMonth") != 0) { printf("FAIL TurnOfMonth: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8209,6 +9131,8 @@ static int check_Tweezer(void) {
     if (!h) { printf("FAIL Tweezer: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Tweezer", &exp);
     int fails = 0;
+    { const char *nm = wickra_tweezer_name(h);
+      if (!nm || strcmp(nm, "Tweezer") != 0) { printf("FAIL Tweezer: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8225,6 +9149,8 @@ static int check_TwiggsMoneyFlow(void) {
     if (!h) { printf("FAIL TwiggsMoneyFlow: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TwiggsMoneyFlow", &exp);
     int fails = 0;
+    { const char *nm = wickra_twiggs_money_flow_name(h);
+      if (!nm || strcmp(nm, "TwiggsMoneyFlow") != 0) { printf("FAIL TwiggsMoneyFlow: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8241,6 +9167,8 @@ static int check_TwoCrows(void) {
     if (!h) { printf("FAIL TwoCrows: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TwoCrows", &exp);
     int fails = 0;
+    { const char *nm = wickra_two_crows_name(h);
+      if (!nm || strcmp(nm, "TwoCrows") != 0) { printf("FAIL TwoCrows: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8257,6 +9185,8 @@ static int check_TypicalPrice(void) {
     if (!h) { printf("FAIL TypicalPrice: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_TypicalPrice", &exp);
     int fails = 0;
+    { const char *nm = wickra_typical_price_name(h);
+      if (!nm || strcmp(nm, "TypicalPrice") != 0) { printf("FAIL TypicalPrice: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8273,6 +9203,8 @@ static int check_UlcerIndex(void) {
     if (!h) { printf("FAIL UlcerIndex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UlcerIndex", &exp);
     int fails = 0;
+    { const char *nm = wickra_ulcer_index_name(h);
+      if (!nm || strcmp(nm, "UlcerIndex") != 0) { printf("FAIL UlcerIndex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8289,6 +9221,8 @@ static int check_UltimateOscillator(void) {
     if (!h) { printf("FAIL UltimateOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UltimateOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_ultimate_oscillator_name(h);
+      if (!nm || strcmp(nm, "UltimateOscillator") != 0) { printf("FAIL UltimateOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8305,6 +9239,8 @@ static int check_UniqueThreeRiver(void) {
     if (!h) { printf("FAIL UniqueThreeRiver: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UniqueThreeRiver", &exp);
     int fails = 0;
+    { const char *nm = wickra_unique_three_river_name(h);
+      if (!nm || strcmp(nm, "UniqueThreeRiver") != 0) { printf("FAIL UniqueThreeRiver: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8321,6 +9257,8 @@ static int check_UniversalOscillator(void) {
     if (!h) { printf("FAIL UniversalOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UniversalOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_universal_oscillator_name(h);
+      if (!nm || strcmp(nm, "UniversalOscillator") != 0) { printf("FAIL UniversalOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8337,6 +9275,8 @@ static int check_UpDownVolumeRatio(void) {
     if (!h) { printf("FAIL UpDownVolumeRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UpDownVolumeRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_up_down_volume_ratio_name(h);
+      if (!nm || strcmp(nm, "UpDownVolumeRatio") != 0) { printf("FAIL UpDownVolumeRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8355,6 +9295,8 @@ static int check_UpsideGapThreeMethods(void) {
     if (!h) { printf("FAIL UpsideGapThreeMethods: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UpsideGapThreeMethods", &exp);
     int fails = 0;
+    { const char *nm = wickra_upside_gap_three_methods_name(h);
+      if (!nm || strcmp(nm, "UpsideGapThreeMethods") != 0) { printf("FAIL UpsideGapThreeMethods: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8371,6 +9313,8 @@ static int check_UpsideGapTwoCrows(void) {
     if (!h) { printf("FAIL UpsideGapTwoCrows: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UpsideGapTwoCrows", &exp);
     int fails = 0;
+    { const char *nm = wickra_upside_gap_two_crows_name(h);
+      if (!nm || strcmp(nm, "UpsideGapTwoCrows") != 0) { printf("FAIL UpsideGapTwoCrows: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8387,6 +9331,8 @@ static int check_UpsidePotentialRatio(void) {
     if (!h) { printf("FAIL UpsidePotentialRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_UpsidePotentialRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_upside_potential_ratio_name(h);
+      if (!nm || strcmp(nm, "UpsidePotentialRatio") != 0) { printf("FAIL UpsidePotentialRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8403,6 +9349,8 @@ static int check_ValueArea(void) {
     if (!h) { printf("FAIL ValueArea: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ValueArea", &exp);
     int fails = 0;
+    { const char *nm = wickra_value_area_name(h);
+      if (!nm || strcmp(nm, "ValueArea") != 0) { printf("FAIL ValueArea: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8426,6 +9374,8 @@ static int check_ValueAtRisk(void) {
     if (!h) { printf("FAIL ValueAtRisk: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ValueAtRisk", &exp);
     int fails = 0;
+    { const char *nm = wickra_value_at_risk_name(h);
+      if (!nm || strcmp(nm, "ValueAtRisk") != 0) { printf("FAIL ValueAtRisk: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8442,6 +9392,8 @@ static int check_Variance(void) {
     if (!h) { printf("FAIL Variance: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Variance", &exp);
     int fails = 0;
+    { const char *nm = wickra_variance_name(h);
+      if (!nm || strcmp(nm, "Variance") != 0) { printf("FAIL Variance: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8458,6 +9410,8 @@ static int check_VarianceRatio(void) {
     if (!h) { printf("FAIL VarianceRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VarianceRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_variance_ratio_name(h);
+      if (!nm || strcmp(nm, "VarianceRatio") != 0) { printf("FAIL VarianceRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8474,6 +9428,8 @@ static int check_VerticalHorizontalFilter(void) {
     if (!h) { printf("FAIL VerticalHorizontalFilter: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VerticalHorizontalFilter", &exp);
     int fails = 0;
+    { const char *nm = wickra_vertical_horizontal_filter_name(h);
+      if (!nm || strcmp(nm, "VerticalHorizontalFilter") != 0) { printf("FAIL VerticalHorizontalFilter: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8490,6 +9446,8 @@ static int check_Vidya(void) {
     if (!h) { printf("FAIL Vidya: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Vidya", &exp);
     int fails = 0;
+    { const char *nm = wickra_vidya_name(h);
+      if (!nm || strcmp(nm, "VIDYA") != 0) { printf("FAIL Vidya: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8506,6 +9464,8 @@ static int check_VolatilityCone(void) {
     if (!h) { printf("FAIL VolatilityCone: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolatilityCone", &exp);
     int fails = 0;
+    { const char *nm = wickra_volatility_cone_name(h);
+      if (!nm || strcmp(nm, "VolatilityCone") != 0) { printf("FAIL VolatilityCone: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8531,6 +9491,8 @@ static int check_VolatilityOfVolatility(void) {
     if (!h) { printf("FAIL VolatilityOfVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolatilityOfVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_volatility_of_volatility_name(h);
+      if (!nm || strcmp(nm, "VolatilityOfVolatility") != 0) { printf("FAIL VolatilityOfVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8547,6 +9509,8 @@ static int check_VolatilityRatio(void) {
     if (!h) { printf("FAIL VolatilityRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolatilityRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_volatility_ratio_name(h);
+      if (!nm || strcmp(nm, "VolatilityRatio") != 0) { printf("FAIL VolatilityRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8563,6 +9527,8 @@ static int check_VoltyStop(void) {
     if (!h) { printf("FAIL VoltyStop: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VoltyStop", &exp);
     int fails = 0;
+    { const char *nm = wickra_volty_stop_name(h);
+      if (!nm || strcmp(nm, "VoltyStop") != 0) { printf("FAIL VoltyStop: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8579,6 +9545,8 @@ static int check_VolumeBars(void) {
     if (!h) { printf("FAIL VolumeBars: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeBars", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_bars_name(h);
+      if (!nm || strcmp(nm, "VolumeBars") != 0) { printf("FAIL VolumeBars: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8603,6 +9571,8 @@ static int check_VolumeByTimeProfile(void) {
     if (!h) { printf("FAIL VolumeByTimeProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeByTimeProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_by_time_profile_name(h);
+      if (!nm || strcmp(nm, "VolumeByTimeProfile") != 0) { printf("FAIL VolumeByTimeProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8622,6 +9592,8 @@ static int check_VolumeOscillator(void) {
     if (!h) { printf("FAIL VolumeOscillator: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeOscillator", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_oscillator_name(h);
+      if (!nm || strcmp(nm, "VolumeOscillator") != 0) { printf("FAIL VolumeOscillator: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8638,6 +9610,8 @@ static int check_VolumePriceTrend(void) {
     if (!h) { printf("FAIL VolumePriceTrend: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumePriceTrend", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_price_trend_name(h);
+      if (!nm || strcmp(nm, "VPT") != 0) { printf("FAIL VolumePriceTrend: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8654,6 +9628,8 @@ static int check_VolumeProfile(void) {
     if (!h) { printf("FAIL VolumeProfile: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeProfile", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_profile_name(h);
+      if (!nm || strcmp(nm, "VolumeProfile") != 0) { printf("FAIL VolumeProfile: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8675,6 +9651,8 @@ static int check_VolumeRsi(void) {
     if (!h) { printf("FAIL VolumeRsi: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeRsi", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_rsi_name(h);
+      if (!nm || strcmp(nm, "VolumeRsi") != 0) { printf("FAIL VolumeRsi: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8691,6 +9669,8 @@ static int check_VolumeWeightedMacd(void) {
     if (!h) { printf("FAIL VolumeWeightedMacd: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeWeightedMacd", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_weighted_macd_name(h);
+      if (!nm || strcmp(nm, "VolumeWeightedMacd") != 0) { printf("FAIL VolumeWeightedMacd: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8714,6 +9694,8 @@ static int check_VolumeWeightedSr(void) {
     if (!h) { printf("FAIL VolumeWeightedSr: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VolumeWeightedSr", &exp);
     int fails = 0;
+    { const char *nm = wickra_volume_weighted_sr_name(h);
+      if (!nm || strcmp(nm, "VolumeWeightedSr") != 0) { printf("FAIL VolumeWeightedSr: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8736,6 +9718,8 @@ static int check_Vortex(void) {
     if (!h) { printf("FAIL Vortex: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Vortex", &exp);
     int fails = 0;
+    { const char *nm = wickra_vortex_name(h);
+      if (!nm || strcmp(nm, "Vortex") != 0) { printf("FAIL Vortex: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8758,6 +9742,8 @@ static int check_Vpin(void) {
     if (!h) { printf("FAIL Vpin: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Vpin", &exp);
     int fails = 0;
+    { const char *nm = wickra_vpin_name(h);
+      if (!nm || strcmp(nm, "Vpin") != 0) { printf("FAIL Vpin: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8774,6 +9760,8 @@ static int check_Vwap(void) {
     if (!h) { printf("FAIL Vwap: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Vwap", &exp);
     int fails = 0;
+    { const char *nm = wickra_vwap_name(h);
+      if (!nm || strcmp(nm, "VWAP") != 0) { printf("FAIL Vwap: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8790,6 +9778,8 @@ static int check_VwapStdDevBands(void) {
     if (!h) { printf("FAIL VwapStdDevBands: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_VwapStdDevBands", &exp);
     int fails = 0;
+    { const char *nm = wickra_vwap_std_dev_bands_name(h);
+      if (!nm || strcmp(nm, "VwapStdDevBands") != 0) { printf("FAIL VwapStdDevBands: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8814,6 +9804,8 @@ static int check_Vwma(void) {
     if (!h) { printf("FAIL Vwma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Vwma", &exp);
     int fails = 0;
+    { const char *nm = wickra_vwma_name(h);
+      if (!nm || strcmp(nm, "VWMA") != 0) { printf("FAIL Vwma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8830,6 +9822,8 @@ static int check_Vzo(void) {
     if (!h) { printf("FAIL Vzo: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Vzo", &exp);
     int fails = 0;
+    { const char *nm = wickra_vzo_name(h);
+      if (!nm || strcmp(nm, "VZO") != 0) { printf("FAIL Vzo: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8846,6 +9840,8 @@ static int check_Wad(void) {
     if (!h) { printf("FAIL Wad: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Wad", &exp);
     int fails = 0;
+    { const char *nm = wickra_wad_name(h);
+      if (!nm || strcmp(nm, "Wad") != 0) { printf("FAIL Wad: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8862,6 +9858,8 @@ static int check_WavePm(void) {
     if (!h) { printf("FAIL WavePm: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WavePm", &exp);
     int fails = 0;
+    { const char *nm = wickra_wave_pm_name(h);
+      if (!nm || strcmp(nm, "WavePm") != 0) { printf("FAIL WavePm: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8878,6 +9876,8 @@ static int check_WaveTrend(void) {
     if (!h) { printf("FAIL WaveTrend: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WaveTrend", &exp);
     int fails = 0;
+    { const char *nm = wickra_wave_trend_name(h);
+      if (!nm || strcmp(nm, "WaveTrend") != 0) { printf("FAIL WaveTrend: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8900,6 +9900,8 @@ static int check_Wedge(void) {
     if (!h) { printf("FAIL Wedge: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Wedge", &exp);
     int fails = 0;
+    { const char *nm = wickra_wedge_name(h);
+      if (!nm || strcmp(nm, "Wedge") != 0) { printf("FAIL Wedge: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8916,6 +9918,8 @@ static int check_WeightedClose(void) {
     if (!h) { printf("FAIL WeightedClose: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WeightedClose", &exp);
     int fails = 0;
+    { const char *nm = wickra_weighted_close_name(h);
+      if (!nm || strcmp(nm, "WeightedClose") != 0) { printf("FAIL WeightedClose: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8932,6 +9936,8 @@ static int check_WickRatio(void) {
     if (!h) { printf("FAIL WickRatio: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WickRatio", &exp);
     int fails = 0;
+    { const char *nm = wickra_wick_ratio_name(h);
+      if (!nm || strcmp(nm, "WickRatio") != 0) { printf("FAIL WickRatio: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8948,6 +9954,8 @@ static int check_WilliamsFractals(void) {
     if (!h) { printf("FAIL WilliamsFractals: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WilliamsFractals", &exp);
     int fails = 0;
+    { const char *nm = wickra_williams_fractals_name(h);
+      if (!nm || strcmp(nm, "WilliamsFractals") != 0) { printf("FAIL WilliamsFractals: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8970,6 +9978,8 @@ static int check_WilliamsR(void) {
     if (!h) { printf("FAIL WilliamsR: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WilliamsR", &exp);
     int fails = 0;
+    { const char *nm = wickra_williams_r_name(h);
+      if (!nm || strcmp(nm, "WilliamsR") != 0) { printf("FAIL WilliamsR: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -8986,6 +9996,8 @@ static int check_WinRate(void) {
     if (!h) { printf("FAIL WinRate: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WinRate", &exp);
     int fails = 0;
+    { const char *nm = wickra_win_rate_name(h);
+      if (!nm || strcmp(nm, "WinRate") != 0) { printf("FAIL WinRate: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9002,6 +10014,8 @@ static int check_Wma(void) {
     if (!h) { printf("FAIL Wma: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Wma", &exp);
     int fails = 0;
+    { const char *nm = wickra_wma_name(h);
+      if (!nm || strcmp(nm, "WMA") != 0) { printf("FAIL Wma: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9018,6 +10032,8 @@ static int check_WoodiePivots(void) {
     if (!h) { printf("FAIL WoodiePivots: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_WoodiePivots", &exp);
     int fails = 0;
+    { const char *nm = wickra_woodie_pivots_name(h);
+      if (!nm || strcmp(nm, "WoodiePivots") != 0) { printf("FAIL WoodiePivots: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9043,6 +10059,8 @@ static int check_YangZhangVolatility(void) {
     if (!h) { printf("FAIL YangZhangVolatility: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_YangZhangVolatility", &exp);
     int fails = 0;
+    { const char *nm = wickra_yang_zhang_volatility_name(h);
+      if (!nm || strcmp(nm, "YangZhangVolatility") != 0) { printf("FAIL YangZhangVolatility: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9059,6 +10077,8 @@ static int check_YoyoExit(void) {
     if (!h) { printf("FAIL YoyoExit: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_YoyoExit", &exp);
     int fails = 0;
+    { const char *nm = wickra_yoyo_exit_name(h);
+      if (!nm || strcmp(nm, "YoyoExit") != 0) { printf("FAIL YoyoExit: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9075,6 +10095,8 @@ static int check_ZScore(void) {
     if (!h) { printf("FAIL ZScore: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ZScore", &exp);
     int fails = 0;
+    { const char *nm = wickra_z_score_name(h);
+      if (!nm || strcmp(nm, "ZScore") != 0) { printf("FAIL ZScore: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9091,6 +10113,8 @@ static int check_ZeroLagMacd(void) {
     if (!h) { printf("FAIL ZeroLagMacd: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ZeroLagMacd", &exp);
     int fails = 0;
+    { const char *nm = wickra_zero_lag_macd_name(h);
+      if (!nm || strcmp(nm, "ZeroLagMACD") != 0) { printf("FAIL ZeroLagMacd: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9114,6 +10138,8 @@ static int check_ZigZag(void) {
     if (!h) { printf("FAIL ZigZag: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_ZigZag", &exp);
     int fails = 0;
+    { const char *nm = wickra_zig_zag_name(h);
+      if (!nm || strcmp(nm, "ZigZag") != 0) { printf("FAIL ZigZag: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;
@@ -9136,6 +10162,8 @@ static int check_Zlema(void) {
     if (!h) { printf("FAIL Zlema: new returned NULL\n"); return 1; }
     double **exp; int rows = read_fixture("g_Zlema", &exp);
     int fails = 0;
+    { const char *nm = wickra_zlema_name(h);
+      if (!nm || strcmp(nm, "ZLEMA") != 0) { printf("FAIL Zlema: name %s\n", nm ? nm : "(null)"); fails++; } }
     for (int i = 0; i < N_INPUT; i++) {
         double o = IN[i][0], hi = IN[i][1], lo = IN[i][2], c = IN[i][3], v = IN[i][4];
         (void)o; (void)hi; (void)lo; (void)c; (void)v;

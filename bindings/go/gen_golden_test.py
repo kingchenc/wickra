@@ -13,6 +13,9 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 G = os.path.join(ROOT, "testdata", "golden")
 GEN = open(os.path.join(ROOT, "bindings", "go", "indicators_gen.go"), encoding="utf-8").read()
 
+# Canonical core Indicator::name() per indicator, shared across every binding.
+NAMES = json.load(open(os.path.join(G, "names.json")))
+
 # Go constructor parameter types, keyed by canonical (== Go type name).
 ctor_types = {}
 for m in re.finditer(r"func New(\w+)\(([^)]*)\)\s*\(\*\w+, error\)", GEN):
@@ -80,6 +83,9 @@ def block(canon):
     lines.append(f"\t\tind, err := {ctor}")
     lines.append('\t\tif err != nil {')
     lines.append(f'\t\t\tt.Fatalf("new {canon}: %v", err)')
+    lines.append("\t\t}")
+    lines.append(f'\t\tif n := ind.Name(); n != {json.dumps(NAMES[canon])} {{')
+    lines.append(f'\t\t\tt.Errorf("name: got %q want %q", n, {json.dumps(NAMES[canon])})')
     lines.append("\t\t}")
     lines.append("\t\tgot := make([][]float64, len(rows))")
     lines.append("\t\tfor i, r := range rows {")
