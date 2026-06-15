@@ -4143,3 +4143,40 @@ Zlema <- function(period) {
   .wk_obj("zlema", ptr, "Zlema")
 }
 
+#' Connect to a live Binance kline feed
+#'
+#' Opens a live Binance kline stream for one or more comma-separated `symbols`
+#' (case-insensitive) at the given `interval` code (an integer `0:15`, the same
+#' order as the other bindings: 0 = 1s, 1 = 1m, ... 12 = 1d, 13 = 3d, 14 = 1w,
+#' 15 = 1M). `base_url` overrides the endpoint (`NULL` = production). Not
+#' available in the wasm (r-universe/webR) build, which has no raw sockets.
+#'
+#' @keywords internal
+#' @export
+BinanceFeed <- function(symbols, interval, base_url = NULL) {
+  ptr <- .Call("wk_binance_connect", symbols, as.integer(interval), base_url,
+               PACKAGE = "wickra")
+  structure(list(ptr = ptr), class = "wickra_binance_feed")
+}
+
+#' Poll a Binance feed for the next kline event
+#'
+#' Waits up to `timeout_ms` milliseconds. Returns a named list (`symbol`, `open`,
+#' `high`, `low`, `close`, `volume`, `open_time`, `is_closed`) when an event
+#' arrives, or `NULL` on timeout. Errors once the stream is closed.
+#'
+#' @keywords internal
+#' @export
+binance_next <- function(feed, timeout_ms = 1000) {
+  .Call("wk_binance_next", feed$ptr, as.numeric(timeout_ms), PACKAGE = "wickra")
+}
+
+#' Close a Binance feed
+#'
+#' @keywords internal
+#' @export
+binance_close <- function(feed) {
+  .Call("wk_binance_close", feed$ptr, PACKAGE = "wickra")
+  invisible(NULL)
+}
+

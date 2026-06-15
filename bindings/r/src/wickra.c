@@ -22660,6 +22660,55 @@ SEXP wk_zlema_reset(SEXP e) {
   return R_NilValue;
 }
 
+/* Live Binance kline feed (feature `live-binance`). Gated out of the
+ * Emscripten/wasm build (r-universe/webR), which has no raw TCP/TLS sockets. */
+#ifndef __EMSCRIPTEN__
+static void binance_fin(SEXP e) {
+  struct BinanceStream *h = (struct BinanceStream *)R_ExternalPtrAddr(e);
+  if (h) wickra_binance_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_binance_connect(SEXP symbols, SEXP interval, SEXP base_url) {
+  const char *url = (base_url == R_NilValue || Rf_xlength(base_url) == 0)
+    ? NULL : CHAR(STRING_ELT(base_url, 0));
+  struct BinanceStream *h = wickra_binance_connect(
+    CHAR(STRING_ELT(symbols, 0)), (uint8_t)Rf_asInteger(interval), url);
+  if (!h) Rf_error("invalid BinanceFeed parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, binance_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_binance_next(SEXP e, SEXP timeout_ms) {
+  struct BinanceStream *h = (struct BinanceStream *)R_ExternalPtrAddr(e);
+  struct WickraKlineEvent ev;
+  int code = wickra_binance_next(h, &ev, (int64_t)Rf_asReal(timeout_ms));
+  if (code == 0) return R_NilValue;
+  if (code != 1) Rf_error("binance feed closed");
+  const char *names[] = {"symbol", "open", "high", "low", "close", "volume",
+                         "open_time", "is_closed"};
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 8));
+  SET_VECTOR_ELT(out, 0, Rf_mkString((const char *)ev.symbol));
+  SET_VECTOR_ELT(out, 1, Rf_ScalarReal(ev.open));
+  SET_VECTOR_ELT(out, 2, Rf_ScalarReal(ev.high));
+  SET_VECTOR_ELT(out, 3, Rf_ScalarReal(ev.low));
+  SET_VECTOR_ELT(out, 4, Rf_ScalarReal(ev.close));
+  SET_VECTOR_ELT(out, 5, Rf_ScalarReal(ev.volume));
+  SET_VECTOR_ELT(out, 6, Rf_ScalarReal((double)ev.open_time));
+  SET_VECTOR_ELT(out, 7, Rf_ScalarLogical(ev.is_closed));
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 8));
+  for (int i = 0; i < 8; i++) SET_STRING_ELT(nm, i, Rf_mkChar(names[i]));
+  Rf_setAttrib(out, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return out;
+}
+SEXP wk_binance_close(SEXP e) {
+  struct BinanceStream *h = (struct BinanceStream *)R_ExternalPtrAddr(e);
+  wickra_binance_close(h);
+  return R_NilValue;
+}
+#endif
+
 static const R_CallMethodDef CallEntries[] = {
   {"wk_abandoned_baby_new", (DL_FUNC)&wk_abandoned_baby_new, 0},
   {"wk_abandoned_baby_update", (DL_FUNC)&wk_abandoned_baby_update, 7},
@@ -26088,6 +26137,11 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_zlema_is_ready", (DL_FUNC)&wk_zlema_is_ready, 1},
   {"wk_zlema_name", (DL_FUNC)&wk_zlema_name, 1},
   {"wk_zlema_reset", (DL_FUNC)&wk_zlema_reset, 1},
+#ifndef __EMSCRIPTEN__
+  {"wk_binance_connect", (DL_FUNC)&wk_binance_connect, 3},
+  {"wk_binance_next", (DL_FUNC)&wk_binance_next, 2},
+  {"wk_binance_close", (DL_FUNC)&wk_binance_close, 1},
+#endif
   {NULL, NULL, 0}
 };
 
