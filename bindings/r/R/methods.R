@@ -118,3 +118,23 @@ is_ready <- function(object) {
 is_ready.wickra_indicator <- function(object) {
   .Call(paste0("wk_", object$prefix, "_is_ready"), object$ptr, PACKAGE = "wickra")
 }
+
+#' Canonical name of an indicator
+#'
+#' Returns the stable, human-readable name of the indicator (the same name
+#' reported by every other Wickra binding), e.g. `"SMA"` for [Sma()].
+#'
+#' @param object A `wickra_indicator`.
+#' @return A single character string.
+#' @examples
+#' name(Sma(14)) # "SMA"
+#' @export
+name <- function(object) {
+  UseMethod("name")
+}
+
+#' @rdname name
+#' @export
+name.wickra_indicator <- function(object) {
+  .Call(paste0("wk_", object$prefix, "_name"), object$ptr, PACKAGE = "wickra")
+}

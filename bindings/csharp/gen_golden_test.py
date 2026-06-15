@@ -13,6 +13,9 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 G = os.path.join(ROOT, "testdata", "golden")
 GEN = open(os.path.join(ROOT, "bindings", "csharp", "Wickra", "Generated", "Indicators.g.cs"), encoding="utf-8").read()
 
+# Canonical core Indicator::name() per indicator, shared across every binding.
+NAMES = json.load(open(os.path.join(G, "names.json")))
+
 # C# constructor parameter types per class.
 ctor_types = {}
 cur = None
@@ -81,6 +84,7 @@ def block(canon):
     a = s["arch"]
     L = [f"    [Fact]", f"    public void Golden_{canon}()", "    {"]
     L.append(f"        using var ind = {ctor_call(canon)};")
+    L.append(f"        Assert.Equal({json.dumps(NAMES[canon])}, ind.Name());")
     L.append("        var got = new List<double[]>();")
     L.append("        for (var i = 0; i < Rows.Length; i++)")
     L.append("        {")

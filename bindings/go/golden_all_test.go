@@ -191,6 +191,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AbandonedBaby: %v", err)
 		}
+		if n := ind.Name(); n != "AbandonedBaby" {
+			t.Errorf("name: got %q want %q", n, "AbandonedBaby")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -202,6 +205,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Abcd: %v", err)
 		}
+		if n := ind.Name(); n != "Abcd" {
+			t.Errorf("name: got %q want %q", n, "Abcd")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -212,6 +218,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAbsoluteBreadthIndex()
 		if err != nil {
 			t.Fatalf("new AbsoluteBreadthIndex: %v", err)
+		}
+		if n := ind.Name(); n != "AbsoluteBreadthIndex" {
+			t.Errorf("name: got %q want %q", n, "AbsoluteBreadthIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -225,6 +234,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AccelerationBands: %v", err)
 		}
+		if n := ind.Name(); n != "AccelerationBands" {
+			t.Errorf("name: got %q want %q", n, "AccelerationBands")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -237,6 +249,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AcceleratorOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "AcceleratorOscillator" {
+			t.Errorf("name: got %q want %q", n, "AcceleratorOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -248,6 +263,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AdOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "ADOSC" {
+			t.Errorf("name: got %q want %q", n, "ADOSC")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -258,6 +276,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAdVolumeLine()
 		if err != nil {
 			t.Fatalf("new AdVolumeLine: %v", err)
+		}
+		if n := ind.Name(); n != "AdVolumeLine" {
+			t.Errorf("name: got %q want %q", n, "AdVolumeLine")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -271,6 +292,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AdaptiveCci: %v", err)
 		}
+		if n := ind.Name(); n != "AdaptiveCci" {
+			t.Errorf("name: got %q want %q", n, "AdaptiveCci")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -281,6 +305,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAdaptiveCycle()
 		if err != nil {
 			t.Fatalf("new AdaptiveCycle: %v", err)
+		}
+		if n := ind.Name(); n != "AdaptiveCycle" {
+			t.Errorf("name: got %q want %q", n, "AdaptiveCycle")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -293,6 +320,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AdaptiveLaguerreFilter: %v", err)
 		}
+		if n := ind.Name(); n != "AdaptiveLaguerre" {
+			t.Errorf("name: got %q want %q", n, "AdaptiveLaguerre")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -303,6 +333,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAdaptiveRsi(14)
 		if err != nil {
 			t.Fatalf("new AdaptiveRsi: %v", err)
+		}
+		if n := ind.Name(); n != "AdaptiveRsi" {
+			t.Errorf("name: got %q want %q", n, "AdaptiveRsi")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -315,6 +348,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Adl: %v", err)
 		}
+		if n := ind.Name(); n != "ADL" {
+			t.Errorf("name: got %q want %q", n, "ADL")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -326,6 +362,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AdvanceBlock: %v", err)
 		}
+		if n := ind.Name(); n != "AdvanceBlock" {
+			t.Errorf("name: got %q want %q", n, "AdvanceBlock")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -336,6 +375,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAdvanceDecline()
 		if err != nil {
 			t.Fatalf("new AdvanceDecline: %v", err)
+		}
+		if n := ind.Name(); n != "AdvanceDecline" {
+			t.Errorf("name: got %q want %q", n, "AdvanceDecline")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -349,6 +391,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AdvanceDeclineRatio: %v", err)
 		}
+		if n := ind.Name(); n != "AdvanceDeclineRatio" {
+			t.Errorf("name: got %q want %q", n, "AdvanceDeclineRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			ch, vo, nh, nl, am, ob_ := crossLists(r)
@@ -360,6 +405,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAdx(14)
 		if err != nil {
 			t.Fatalf("new Adx: %v", err)
+		}
+		if n := ind.Name(); n != "ADX" {
+			t.Errorf("name: got %q want %q", n, "ADX")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -373,6 +421,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Adxr: %v", err)
 		}
+		if n := ind.Name(); n != "ADXR" {
+			t.Errorf("name: got %q want %q", n, "ADXR")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -383,6 +434,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAlligator(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new Alligator: %v", err)
+		}
+		if n := ind.Name(); n != "Alligator" {
+			t.Errorf("name: got %q want %q", n, "Alligator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -396,6 +450,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Alma: %v", err)
 		}
+		if n := ind.Name(); n != "ALMA" {
+			t.Errorf("name: got %q want %q", n, "ALMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -406,6 +463,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAlpha(14, 2.0)
 		if err != nil {
 			t.Fatalf("new Alpha: %v", err)
+		}
+		if n := ind.Name(); n != "Alpha" {
+			t.Errorf("name: got %q want %q", n, "Alpha")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -418,6 +478,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AmihudIlliquidity: %v", err)
 		}
+		if n := ind.Name(); n != "AmihudIlliquidity" {
+			t.Errorf("name: got %q want %q", n, "AmihudIlliquidity")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -428,6 +491,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAnchoredRsi()
 		if err != nil {
 			t.Fatalf("new AnchoredRsi: %v", err)
+		}
+		if n := ind.Name(); n != "AnchoredRSI" {
+			t.Errorf("name: got %q want %q", n, "AnchoredRSI")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -440,6 +506,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AnchoredVwap: %v", err)
 		}
+		if n := ind.Name(); n != "AnchoredVWAP" {
+			t.Errorf("name: got %q want %q", n, "AnchoredVWAP")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -450,6 +519,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAndrewsPitchfork(14)
 		if err != nil {
 			t.Fatalf("new AndrewsPitchfork: %v", err)
+		}
+		if n := ind.Name(); n != "AndrewsPitchfork" {
+			t.Errorf("name: got %q want %q", n, "AndrewsPitchfork")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -463,6 +535,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Apo: %v", err)
 		}
+		if n := ind.Name(); n != "APO" {
+			t.Errorf("name: got %q want %q", n, "APO")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -473,6 +548,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAroon(14)
 		if err != nil {
 			t.Fatalf("new Aroon: %v", err)
+		}
+		if n := ind.Name(); n != "Aroon" {
+			t.Errorf("name: got %q want %q", n, "Aroon")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -486,6 +564,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AroonOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "AroonOscillator" {
+			t.Errorf("name: got %q want %q", n, "AroonOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -497,6 +578,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Atr: %v", err)
 		}
+		if n := ind.Name(); n != "ATR" {
+			t.Errorf("name: got %q want %q", n, "ATR")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -507,6 +591,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAtrBands(14, 2.0)
 		if err != nil {
 			t.Fatalf("new AtrBands: %v", err)
+		}
+		if n := ind.Name(); n != "AtrBands" {
+			t.Errorf("name: got %q want %q", n, "AtrBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -520,6 +607,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AtrRatchet: %v", err)
 		}
+		if n := ind.Name(); n != "AtrRatchet" {
+			t.Errorf("name: got %q want %q", n, "AtrRatchet")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -532,6 +622,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AtrTrailingStop: %v", err)
 		}
+		if n := ind.Name(); n != "AtrTrailingStop" {
+			t.Errorf("name: got %q want %q", n, "AtrTrailingStop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -542,6 +635,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAutoFib()
 		if err != nil {
 			t.Fatalf("new AutoFib: %v", err)
+		}
+		if n := ind.Name(); n != "AutoFib" {
+			t.Errorf("name: got %q want %q", n, "AutoFib")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -555,6 +651,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Autocorrelation: %v", err)
 		}
+		if n := ind.Name(); n != "Autocorrelation" {
+			t.Errorf("name: got %q want %q", n, "Autocorrelation")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -565,6 +664,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAutocorrelationPeriodogram(10, 48)
 		if err != nil {
 			t.Fatalf("new AutocorrelationPeriodogram: %v", err)
+		}
+		if n := ind.Name(); n != "AutocorrelationPeriodogram" {
+			t.Errorf("name: got %q want %q", n, "AutocorrelationPeriodogram")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -577,6 +679,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AverageDailyRange: %v", err)
 		}
+		if n := ind.Name(); n != "AverageDailyRange" {
+			t.Errorf("name: got %q want %q", n, "AverageDailyRange")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -587,6 +692,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAverageDrawdown(14)
 		if err != nil {
 			t.Fatalf("new AverageDrawdown: %v", err)
+		}
+		if n := ind.Name(); n != "AverageDrawdown" {
+			t.Errorf("name: got %q want %q", n, "AverageDrawdown")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -599,6 +707,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AvgPrice: %v", err)
 		}
+		if n := ind.Name(); n != "AVGPRICE" {
+			t.Errorf("name: got %q want %q", n, "AVGPRICE")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -609,6 +720,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewAwesomeOscillator(3, 7)
 		if err != nil {
 			t.Fatalf("new AwesomeOscillator: %v", err)
+		}
+		if n := ind.Name(); n != "AwesomeOscillator" {
+			t.Errorf("name: got %q want %q", n, "AwesomeOscillator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -621,6 +735,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new AwesomeOscillatorHistogram: %v", err)
 		}
+		if n := ind.Name(); n != "AwesomeOscillatorHistogram" {
+			t.Errorf("name: got %q want %q", n, "AwesomeOscillatorHistogram")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -631,6 +748,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBalanceOfPower()
 		if err != nil {
 			t.Fatalf("new BalanceOfPower: %v", err)
+		}
+		if n := ind.Name(); n != "BalanceOfPower" {
+			t.Errorf("name: got %q want %q", n, "BalanceOfPower")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -643,6 +763,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BandpassFilter: %v", err)
 		}
+		if n := ind.Name(); n != "BandpassFilter" {
+			t.Errorf("name: got %q want %q", n, "BandpassFilter")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -653,6 +776,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBat()
 		if err != nil {
 			t.Fatalf("new Bat: %v", err)
+		}
+		if n := ind.Name(); n != "Bat" {
+			t.Errorf("name: got %q want %q", n, "Bat")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -665,6 +791,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BeltHold: %v", err)
 		}
+		if n := ind.Name(); n != "BeltHold" {
+			t.Errorf("name: got %q want %q", n, "BeltHold")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -675,6 +804,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBeta(14)
 		if err != nil {
 			t.Fatalf("new Beta: %v", err)
+		}
+		if n := ind.Name(); n != "Beta" {
+			t.Errorf("name: got %q want %q", n, "Beta")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -687,6 +819,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BetaNeutralSpread: %v", err)
 		}
+		if n := ind.Name(); n != "BetaNeutralSpread" {
+			t.Errorf("name: got %q want %q", n, "BetaNeutralSpread")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -697,6 +832,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBetterVolume(14)
 		if err != nil {
 			t.Fatalf("new BetterVolume: %v", err)
+		}
+		if n := ind.Name(); n != "BetterVolume" {
+			t.Errorf("name: got %q want %q", n, "BetterVolume")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -709,6 +847,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BipowerVariation: %v", err)
 		}
+		if n := ind.Name(); n != "BipowerVariation" {
+			t.Errorf("name: got %q want %q", n, "BipowerVariation")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -720,6 +861,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BodySizePct: %v", err)
 		}
+		if n := ind.Name(); n != "BodySizePct" {
+			t.Errorf("name: got %q want %q", n, "BodySizePct")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -730,6 +874,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBollingerBands(20, 2.0)
 		if err != nil {
 			t.Fatalf("new BollingerBands: %v", err)
+		}
+		if n := ind.Name(); n != "BollingerBands" {
+			t.Errorf("name: got %q want %q", n, "BollingerBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -743,6 +890,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BollingerBandwidth: %v", err)
 		}
+		if n := ind.Name(); n != "BollingerBandwidth" {
+			t.Errorf("name: got %q want %q", n, "BollingerBandwidth")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -753,6 +903,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBomarBands(4, 0.85)
 		if err != nil {
 			t.Fatalf("new BomarBands: %v", err)
+		}
+		if n := ind.Name(); n != "BomarBands" {
+			t.Errorf("name: got %q want %q", n, "BomarBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -766,6 +919,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BreadthThrust: %v", err)
 		}
+		if n := ind.Name(); n != "BreadthThrust" {
+			t.Errorf("name: got %q want %q", n, "BreadthThrust")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			ch, vo, nh, nl, am, ob_ := crossLists(r)
@@ -778,6 +934,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Breakaway: %v", err)
 		}
+		if n := ind.Name(); n != "Breakaway" {
+			t.Errorf("name: got %q want %q", n, "Breakaway")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -788,6 +947,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewBullishPercentIndex()
 		if err != nil {
 			t.Fatalf("new BullishPercentIndex: %v", err)
+		}
+		if n := ind.Name(); n != "BullishPercentIndex" {
+			t.Errorf("name: got %q want %q", n, "BullishPercentIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -801,6 +963,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new BurkeRatio: %v", err)
 		}
+		if n := ind.Name(); n != "BurkeRatio" {
+			t.Errorf("name: got %q want %q", n, "BurkeRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -812,6 +977,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Butterfly: %v", err)
 		}
+		if n := ind.Name(); n != "Butterfly" {
+			t.Errorf("name: got %q want %q", n, "Butterfly")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -822,6 +990,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCalendarSpread()
 		if err != nil {
 			t.Fatalf("new CalendarSpread: %v", err)
+		}
+		if n := ind.Name(); n != "CalendarSpread" {
+			t.Errorf("name: got %q want %q", n, "CalendarSpread")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -835,6 +1006,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CalmarRatio: %v", err)
 		}
+		if n := ind.Name(); n != "CalmarRatio" {
+			t.Errorf("name: got %q want %q", n, "CalmarRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -845,6 +1019,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCamarilla()
 		if err != nil {
 			t.Fatalf("new Camarilla: %v", err)
+		}
+		if n := ind.Name(); n != "Camarilla" {
+			t.Errorf("name: got %q want %q", n, "Camarilla")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -858,6 +1035,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CandleVolume: %v", err)
 		}
+		if n := ind.Name(); n != "CandleVolume" {
+			t.Errorf("name: got %q want %q", n, "CandleVolume")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -870,6 +1050,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Cci: %v", err)
 		}
+		if n := ind.Name(); n != "CCI" {
+			t.Errorf("name: got %q want %q", n, "CCI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -881,6 +1064,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CenterOfGravity: %v", err)
 		}
+		if n := ind.Name(); n != "CenterOfGravity" {
+			t.Errorf("name: got %q want %q", n, "CenterOfGravity")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -891,6 +1077,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCentralPivotRange()
 		if err != nil {
 			t.Fatalf("new CentralPivotRange: %v", err)
+		}
+		if n := ind.Name(); n != "CentralPivotRange" {
+			t.Errorf("name: got %q want %q", n, "CentralPivotRange")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -904,6 +1093,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Cfo: %v", err)
 		}
+		if n := ind.Name(); n != "CFO" {
+			t.Errorf("name: got %q want %q", n, "CFO")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -914,6 +1106,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewChaikinMoneyFlow(20)
 		if err != nil {
 			t.Fatalf("new ChaikinMoneyFlow: %v", err)
+		}
+		if n := ind.Name(); n != "CMF" {
+			t.Errorf("name: got %q want %q", n, "CMF")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -926,6 +1121,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ChaikinOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "ChaikinOscillator" {
+			t.Errorf("name: got %q want %q", n, "ChaikinOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -937,6 +1135,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ChaikinVolatility: %v", err)
 		}
+		if n := ind.Name(); n != "ChaikinVolatility" {
+			t.Errorf("name: got %q want %q", n, "ChaikinVolatility")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -947,6 +1148,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewChandeKrollStop(3, 2.0, 7)
 		if err != nil {
 			t.Fatalf("new ChandeKrollStop: %v", err)
+		}
+		if n := ind.Name(); n != "ChandeKrollStop" {
+			t.Errorf("name: got %q want %q", n, "ChandeKrollStop")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -960,6 +1164,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ChandelierExit: %v", err)
 		}
+		if n := ind.Name(); n != "ChandelierExit" {
+			t.Errorf("name: got %q want %q", n, "ChandelierExit")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -972,6 +1179,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ChoppinessIndex: %v", err)
 		}
+		if n := ind.Name(); n != "ChoppinessIndex" {
+			t.Errorf("name: got %q want %q", n, "ChoppinessIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -982,6 +1192,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewClassicPivots()
 		if err != nil {
 			t.Fatalf("new ClassicPivots: %v", err)
+		}
+		if n := ind.Name(); n != "ClassicPivots" {
+			t.Errorf("name: got %q want %q", n, "ClassicPivots")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -995,6 +1208,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CloseVsOpen: %v", err)
 		}
+		if n := ind.Name(); n != "CloseVsOpen" {
+			t.Errorf("name: got %q want %q", n, "CloseVsOpen")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1005,6 +1221,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewClosingMarubozu()
 		if err != nil {
 			t.Fatalf("new ClosingMarubozu: %v", err)
+		}
+		if n := ind.Name(); n != "ClosingMarubozu" {
+			t.Errorf("name: got %q want %q", n, "ClosingMarubozu")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1017,6 +1236,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Cmo: %v", err)
 		}
+		if n := ind.Name(); n != "CMO" {
+			t.Errorf("name: got %q want %q", n, "CMO")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1028,6 +1250,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CoefficientOfVariation: %v", err)
 		}
+		if n := ind.Name(); n != "CoefficientOfVariation" {
+			t.Errorf("name: got %q want %q", n, "CoefficientOfVariation")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1038,6 +1263,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCointegration(40, 1)
 		if err != nil {
 			t.Fatalf("new Cointegration: %v", err)
+		}
+		if n := ind.Name(); n != "Cointegration" {
+			t.Errorf("name: got %q want %q", n, "Cointegration")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1051,6 +1279,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CommonSenseRatio: %v", err)
 		}
+		if n := ind.Name(); n != "CommonSenseRatio" {
+			t.Errorf("name: got %q want %q", n, "CommonSenseRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1061,6 +1292,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCompositeProfile(20, 24, 0.7)
 		if err != nil {
 			t.Fatalf("new CompositeProfile: %v", err)
+		}
+		if n := ind.Name(); n != "CompositeProfile" {
+			t.Errorf("name: got %q want %q", n, "CompositeProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1074,6 +1308,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ConcealingBabySwallow: %v", err)
 		}
+		if n := ind.Name(); n != "ConcealingBabySwallow" {
+			t.Errorf("name: got %q want %q", n, "ConcealingBabySwallow")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1084,6 +1321,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewConditionalValueAtRisk(20, 0.95)
 		if err != nil {
 			t.Fatalf("new ConditionalValueAtRisk: %v", err)
+		}
+		if n := ind.Name(); n != "ConditionalValueAtRisk" {
+			t.Errorf("name: got %q want %q", n, "ConditionalValueAtRisk")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1096,6 +1336,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ConnorsRsi: %v", err)
 		}
+		if n := ind.Name(); n != "ConnorsRSI" {
+			t.Errorf("name: got %q want %q", n, "ConnorsRSI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1106,6 +1349,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCoppock(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new Coppock: %v", err)
+		}
+		if n := ind.Name(); n != "Coppock" {
+			t.Errorf("name: got %q want %q", n, "Coppock")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1118,6 +1364,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CorrelationTrendIndicator: %v", err)
 		}
+		if n := ind.Name(); n != "CorrelationTrendIndicator" {
+			t.Errorf("name: got %q want %q", n, "CorrelationTrendIndicator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1128,6 +1377,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCounterattack()
 		if err != nil {
 			t.Fatalf("new Counterattack: %v", err)
+		}
+		if n := ind.Name(); n != "Counterattack" {
+			t.Errorf("name: got %q want %q", n, "Counterattack")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1140,6 +1392,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Crab: %v", err)
 		}
+		if n := ind.Name(); n != "Crab" {
+			t.Errorf("name: got %q want %q", n, "Crab")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1151,6 +1406,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CumulativeVolumeDelta: %v", err)
 		}
+		if n := ind.Name(); n != "CumulativeVolumeDelta" {
+			t.Errorf("name: got %q want %q", n, "CumulativeVolumeDelta")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -1161,6 +1419,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCumulativeVolumeIndex()
 		if err != nil {
 			t.Fatalf("new CumulativeVolumeIndex: %v", err)
+		}
+		if n := ind.Name(); n != "CumulativeVolumeIndex" {
+			t.Errorf("name: got %q want %q", n, "CumulativeVolumeIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1174,6 +1435,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new CupAndHandle: %v", err)
 		}
+		if n := ind.Name(); n != "CupAndHandle" {
+			t.Errorf("name: got %q want %q", n, "CupAndHandle")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1184,6 +1448,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewCyberneticCycle(14)
 		if err != nil {
 			t.Fatalf("new CyberneticCycle: %v", err)
+		}
+		if n := ind.Name(); n != "CyberneticCycle" {
+			t.Errorf("name: got %q want %q", n, "CyberneticCycle")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1196,6 +1463,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Cypher: %v", err)
 		}
+		if n := ind.Name(); n != "Cypher" {
+			t.Errorf("name: got %q want %q", n, "Cypher")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1206,6 +1476,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDayOfWeekProfile(0)
 		if err != nil {
 			t.Fatalf("new DayOfWeekProfile: %v", err)
+		}
+		if n := ind.Name(); n != "DayOfWeekProfile" {
+			t.Errorf("name: got %q want %q", n, "DayOfWeekProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1223,6 +1496,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Decycler: %v", err)
 		}
+		if n := ind.Name(); n != "Decycler" {
+			t.Errorf("name: got %q want %q", n, "Decycler")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1233,6 +1509,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDecyclerOscillator(3, 7)
 		if err != nil {
 			t.Fatalf("new DecyclerOscillator: %v", err)
+		}
+		if n := ind.Name(); n != "DecyclerOscillator" {
+			t.Errorf("name: got %q want %q", n, "DecyclerOscillator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1245,6 +1524,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Dema: %v", err)
 		}
+		if n := ind.Name(); n != "DEMA" {
+			t.Errorf("name: got %q want %q", n, "DEMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1256,6 +1538,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DemandIndex: %v", err)
 		}
+		if n := ind.Name(); n != "DemandIndex" {
+			t.Errorf("name: got %q want %q", n, "DemandIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1266,6 +1551,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDemarkPivots()
 		if err != nil {
 			t.Fatalf("new DemarkPivots: %v", err)
+		}
+		if n := ind.Name(); n != "DemarkPivots" {
+			t.Errorf("name: got %q want %q", n, "DemarkPivots")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1279,6 +1567,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DepthSlope: %v", err)
 		}
+		if n := ind.Name(); n != "DepthSlope" {
+			t.Errorf("name: got %q want %q", n, "DepthSlope")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bp, bs, ap, as_ := obLists(r)
@@ -1291,6 +1582,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DerivativeOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "DerivativeOscillator" {
+			t.Errorf("name: got %q want %q", n, "DerivativeOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1301,6 +1595,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDetrendedStdDev(14)
 		if err != nil {
 			t.Fatalf("new DetrendedStdDev: %v", err)
+		}
+		if n := ind.Name(); n != "DetrendedStdDev" {
+			t.Errorf("name: got %q want %q", n, "DetrendedStdDev")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1313,6 +1610,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DisparityIndex: %v", err)
 		}
+		if n := ind.Name(); n != "DisparityIndex" {
+			t.Errorf("name: got %q want %q", n, "DisparityIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1323,6 +1623,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDistanceSsd(14)
 		if err != nil {
 			t.Fatalf("new DistanceSsd: %v", err)
+		}
+		if n := ind.Name(); n != "DistanceSsd" {
+			t.Errorf("name: got %q want %q", n, "DistanceSsd")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1335,6 +1638,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Doji: %v", err)
 		}
+		if n := ind.Name(); n != "Doji" {
+			t.Errorf("name: got %q want %q", n, "Doji")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1345,6 +1651,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDojiStar()
 		if err != nil {
 			t.Fatalf("new DojiStar: %v", err)
+		}
+		if n := ind.Name(); n != "DojiStar" {
+			t.Errorf("name: got %q want %q", n, "DojiStar")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1357,6 +1666,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DollarBars: %v", err)
 		}
+		if n := ind.Name(); n != "DollarBars" {
+			t.Errorf("name: got %q want %q", n, "DollarBars")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0))
@@ -1367,6 +1679,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDonchian(14)
 		if err != nil {
 			t.Fatalf("new Donchian: %v", err)
+		}
+		if n := ind.Name(); n != "DonchianChannels" {
+			t.Errorf("name: got %q want %q", n, "DonchianChannels")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1380,6 +1695,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DonchianStop: %v", err)
 		}
+		if n := ind.Name(); n != "DonchianStop" {
+			t.Errorf("name: got %q want %q", n, "DonchianStop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -1391,6 +1709,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDoubleBollinger(20, 1.0, 2.0)
 		if err != nil {
 			t.Fatalf("new DoubleBollinger: %v", err)
+		}
+		if n := ind.Name(); n != "DoubleBollinger" {
+			t.Errorf("name: got %q want %q", n, "DoubleBollinger")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1404,6 +1725,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DoubleTopBottom: %v", err)
 		}
+		if n := ind.Name(); n != "DoubleTopBottom" {
+			t.Errorf("name: got %q want %q", n, "DoubleTopBottom")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1414,6 +1738,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDownsideGapThreeMethods()
 		if err != nil {
 			t.Fatalf("new DownsideGapThreeMethods: %v", err)
+		}
+		if n := ind.Name(); n != "DownsideGapThreeMethods" {
+			t.Errorf("name: got %q want %q", n, "DownsideGapThreeMethods")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1426,6 +1753,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Dpo: %v", err)
 		}
+		if n := ind.Name(); n != "DPO" {
+			t.Errorf("name: got %q want %q", n, "DPO")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1436,6 +1766,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDragonflyDoji()
 		if err != nil {
 			t.Fatalf("new DragonflyDoji: %v", err)
+		}
+		if n := ind.Name(); n != "DragonflyDoji" {
+			t.Errorf("name: got %q want %q", n, "DragonflyDoji")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1448,6 +1781,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new DrawdownDuration: %v", err)
 		}
+		if n := ind.Name(); n != "DrawdownDuration" {
+			t.Errorf("name: got %q want %q", n, "DrawdownDuration")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1458,6 +1794,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDumplingTop(14)
 		if err != nil {
 			t.Fatalf("new DumplingTop: %v", err)
+		}
+		if n := ind.Name(); n != "DumplingTop" {
+			t.Errorf("name: got %q want %q", n, "DumplingTop")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1470,6 +1809,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Dx: %v", err)
 		}
+		if n := ind.Name(); n != "DX" {
+			t.Errorf("name: got %q want %q", n, "DX")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1480,6 +1822,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewDynamicMomentumIndex(14)
 		if err != nil {
 			t.Fatalf("new DynamicMomentumIndex: %v", err)
+		}
+		if n := ind.Name(); n != "DynamicMomentumIndex" {
+			t.Errorf("name: got %q want %q", n, "DynamicMomentumIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1492,6 +1837,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new EaseOfMovement: %v", err)
 		}
+		if n := ind.Name(); n != "EaseOfMovement" {
+			t.Errorf("name: got %q want %q", n, "EaseOfMovement")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1502,6 +1850,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewEffectiveSpread()
 		if err != nil {
 			t.Fatalf("new EffectiveSpread: %v", err)
+		}
+		if n := ind.Name(); n != "EffectiveSpread" {
+			t.Errorf("name: got %q want %q", n, "EffectiveSpread")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1514,6 +1865,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new EhlersStochastic: %v", err)
 		}
+		if n := ind.Name(); n != "EhlersStochastic" {
+			t.Errorf("name: got %q want %q", n, "EhlersStochastic")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1524,6 +1878,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewEhma(14)
 		if err != nil {
 			t.Fatalf("new Ehma: %v", err)
+		}
+		if n := ind.Name(); n != "EHMA" {
+			t.Errorf("name: got %q want %q", n, "EHMA")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1536,6 +1893,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ElderImpulse: %v", err)
 		}
+		if n := ind.Name(); n != "ElderImpulse" {
+			t.Errorf("name: got %q want %q", n, "ElderImpulse")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1546,6 +1906,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewElderRay(14)
 		if err != nil {
 			t.Fatalf("new ElderRay: %v", err)
+		}
+		if n := ind.Name(); n != "ElderRay" {
+			t.Errorf("name: got %q want %q", n, "ElderRay")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1559,6 +1922,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ElderSafeZone: %v", err)
 		}
+		if n := ind.Name(); n != "ElderSafeZone" {
+			t.Errorf("name: got %q want %q", n, "ElderSafeZone")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -1571,6 +1937,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Ema: %v", err)
 		}
+		if n := ind.Name(); n != "EMA" {
+			t.Errorf("name: got %q want %q", n, "EMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1581,6 +1950,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewEmpiricalModeDecomposition(20, 0.1)
 		if err != nil {
 			t.Fatalf("new EmpiricalModeDecomposition: %v", err)
+		}
+		if n := ind.Name(); n != "EmpiricalModeDecomposition" {
+			t.Errorf("name: got %q want %q", n, "EmpiricalModeDecomposition")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1593,6 +1965,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Engulfing: %v", err)
 		}
+		if n := ind.Name(); n != "Engulfing" {
+			t.Errorf("name: got %q want %q", n, "Engulfing")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1603,6 +1978,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewEquivolume(14)
 		if err != nil {
 			t.Fatalf("new Equivolume: %v", err)
+		}
+		if n := ind.Name(); n != "Equivolume" {
+			t.Errorf("name: got %q want %q", n, "Equivolume")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1616,6 +1994,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new EstimatedLeverageRatio: %v", err)
 		}
+		if n := ind.Name(); n != "EstimatedLeverageRatio" {
+			t.Errorf("name: got %q want %q", n, "EstimatedLeverageRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			d := derivFields(r)
@@ -1628,6 +2009,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new EvenBetterSinewave: %v", err)
 		}
+		if n := ind.Name(); n != "EvenBetterSinewave" {
+			t.Errorf("name: got %q want %q", n, "EvenBetterSinewave")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1638,6 +2022,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewEveningDojiStar()
 		if err != nil {
 			t.Fatalf("new EveningDojiStar: %v", err)
+		}
+		if n := ind.Name(); n != "EveningDojiStar" {
+			t.Errorf("name: got %q want %q", n, "EveningDojiStar")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1650,6 +2037,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Evwma: %v", err)
 		}
+		if n := ind.Name(); n != "EVWMA" {
+			t.Errorf("name: got %q want %q", n, "EVWMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1660,6 +2050,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewEwmaVolatility(0.94)
 		if err != nil {
 			t.Fatalf("new EwmaVolatility: %v", err)
+		}
+		if n := ind.Name(); n != "EwmaVolatility" {
+			t.Errorf("name: got %q want %q", n, "EwmaVolatility")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1672,6 +2065,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Expectancy: %v", err)
 		}
+		if n := ind.Name(); n != "Expectancy" {
+			t.Errorf("name: got %q want %q", n, "Expectancy")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1682,6 +2078,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFallingThreeMethods()
 		if err != nil {
 			t.Fatalf("new FallingThreeMethods: %v", err)
+		}
+		if n := ind.Name(); n != "FallingThreeMethods" {
+			t.Errorf("name: got %q want %q", n, "FallingThreeMethods")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1694,6 +2093,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Fama: %v", err)
 		}
+		if n := ind.Name(); n != "FAMA" {
+			t.Errorf("name: got %q want %q", n, "FAMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1704,6 +2106,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFibArcs()
 		if err != nil {
 			t.Fatalf("new FibArcs: %v", err)
+		}
+		if n := ind.Name(); n != "FibArcs" {
+			t.Errorf("name: got %q want %q", n, "FibArcs")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1717,6 +2122,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FibChannel: %v", err)
 		}
+		if n := ind.Name(); n != "FibChannel" {
+			t.Errorf("name: got %q want %q", n, "FibChannel")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -1728,6 +2136,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFibConfluence()
 		if err != nil {
 			t.Fatalf("new FibConfluence: %v", err)
+		}
+		if n := ind.Name(); n != "FibConfluence" {
+			t.Errorf("name: got %q want %q", n, "FibConfluence")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1741,6 +2152,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FibExtension: %v", err)
 		}
+		if n := ind.Name(); n != "FibExtension" {
+			t.Errorf("name: got %q want %q", n, "FibExtension")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -1752,6 +2166,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFibFan()
 		if err != nil {
 			t.Fatalf("new FibFan: %v", err)
+		}
+		if n := ind.Name(); n != "FibFan" {
+			t.Errorf("name: got %q want %q", n, "FibFan")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1765,6 +2182,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FibProjection: %v", err)
 		}
+		if n := ind.Name(); n != "FibProjection" {
+			t.Errorf("name: got %q want %q", n, "FibProjection")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -1776,6 +2196,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFibRetracement()
 		if err != nil {
 			t.Fatalf("new FibRetracement: %v", err)
+		}
+		if n := ind.Name(); n != "FibRetracement" {
+			t.Errorf("name: got %q want %q", n, "FibRetracement")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1789,6 +2212,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FibTimeZones: %v", err)
 		}
+		if n := ind.Name(); n != "FibTimeZones" {
+			t.Errorf("name: got %q want %q", n, "FibTimeZones")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -1800,6 +2226,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFibonacciPivots()
 		if err != nil {
 			t.Fatalf("new FibonacciPivots: %v", err)
+		}
+		if n := ind.Name(); n != "FibonacciPivots" {
+			t.Errorf("name: got %q want %q", n, "FibonacciPivots")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1813,6 +2242,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FisherRsi: %v", err)
 		}
+		if n := ind.Name(); n != "FisherRSI" {
+			t.Errorf("name: got %q want %q", n, "FisherRSI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1823,6 +2255,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFisherTransform(14)
 		if err != nil {
 			t.Fatalf("new FisherTransform: %v", err)
+		}
+		if n := ind.Name(); n != "FisherTransform" {
+			t.Errorf("name: got %q want %q", n, "FisherTransform")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1835,6 +2270,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FlagPennant: %v", err)
 		}
+		if n := ind.Name(); n != "FlagPennant" {
+			t.Errorf("name: got %q want %q", n, "FlagPennant")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1845,6 +2283,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFootprint(1.0)
 		if err != nil {
 			t.Fatalf("new Footprint: %v", err)
+		}
+		if n := ind.Name(); n != "Footprint" {
+			t.Errorf("name: got %q want %q", n, "Footprint")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1857,6 +2298,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ForceIndex: %v", err)
 		}
+		if n := ind.Name(); n != "ForceIndex" {
+			t.Errorf("name: got %q want %q", n, "ForceIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1867,6 +2311,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFractalChaosBands(14)
 		if err != nil {
 			t.Fatalf("new FractalChaosBands: %v", err)
+		}
+		if n := ind.Name(); n != "FractalChaosBands" {
+			t.Errorf("name: got %q want %q", n, "FractalChaosBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1880,6 +2327,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Frama: %v", err)
 		}
+		if n := ind.Name(); n != "FRAMA" {
+			t.Errorf("name: got %q want %q", n, "FRAMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1891,6 +2341,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FryPanBottom: %v", err)
 		}
+		if n := ind.Name(); n != "FryPanBottom" {
+			t.Errorf("name: got %q want %q", n, "FryPanBottom")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1901,6 +2354,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFundingBasis()
 		if err != nil {
 			t.Fatalf("new FundingBasis: %v", err)
+		}
+		if n := ind.Name(); n != "FundingBasis" {
+			t.Errorf("name: got %q want %q", n, "FundingBasis")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1914,6 +2370,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FundingImpliedApr: %v", err)
 		}
+		if n := ind.Name(); n != "FundingImpliedApr" {
+			t.Errorf("name: got %q want %q", n, "FundingImpliedApr")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			d := derivFields(r)
@@ -1925,6 +2384,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFundingRate()
 		if err != nil {
 			t.Fatalf("new FundingRate: %v", err)
+		}
+		if n := ind.Name(); n != "FundingRate" {
+			t.Errorf("name: got %q want %q", n, "FundingRate")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1938,6 +2400,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new FundingRateMean: %v", err)
 		}
+		if n := ind.Name(); n != "FundingRateMean" {
+			t.Errorf("name: got %q want %q", n, "FundingRateMean")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			d := derivFields(r)
@@ -1949,6 +2414,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewFundingRateZScore(20)
 		if err != nil {
 			t.Fatalf("new FundingRateZScore: %v", err)
+		}
+		if n := ind.Name(); n != "FundingRateZScore" {
+			t.Errorf("name: got %q want %q", n, "FundingRateZScore")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1962,6 +2430,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new GainLossRatio: %v", err)
 		}
+		if n := ind.Name(); n != "GainLossRatio" {
+			t.Errorf("name: got %q want %q", n, "GainLossRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -1972,6 +2443,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewGainToPainRatio(14)
 		if err != nil {
 			t.Fatalf("new GainToPainRatio: %v", err)
+		}
+		if n := ind.Name(); n != "GainToPainRatio" {
+			t.Errorf("name: got %q want %q", n, "GainToPainRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -1984,6 +2458,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new GapSideBySideWhite: %v", err)
 		}
+		if n := ind.Name(); n != "GapSideBySideWhite" {
+			t.Errorf("name: got %q want %q", n, "GapSideBySideWhite")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -1994,6 +2471,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewGarch11(2e-06, 0.1, 0.88)
 		if err != nil {
 			t.Fatalf("new Garch11: %v", err)
+		}
+		if n := ind.Name(); n != "Garch11" {
+			t.Errorf("name: got %q want %q", n, "Garch11")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2006,6 +2486,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new GarmanKlassVolatility: %v", err)
 		}
+		if n := ind.Name(); n != "GarmanKlassVolatility" {
+			t.Errorf("name: got %q want %q", n, "GarmanKlassVolatility")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2017,6 +2500,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Gartley: %v", err)
 		}
+		if n := ind.Name(); n != "Gartley" {
+			t.Errorf("name: got %q want %q", n, "Gartley")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2027,6 +2513,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewGatorOscillator(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new GatorOscillator: %v", err)
+		}
+		if n := ind.Name(); n != "GatorOscillator" {
+			t.Errorf("name: got %q want %q", n, "GatorOscillator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2040,6 +2529,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new GeneralizedDema: %v", err)
 		}
+		if n := ind.Name(); n != "GD" {
+			t.Errorf("name: got %q want %q", n, "GD")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2051,6 +2543,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new GeometricMa: %v", err)
 		}
+		if n := ind.Name(); n != "GMA" {
+			t.Errorf("name: got %q want %q", n, "GMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2061,6 +2556,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewGoldenPocket()
 		if err != nil {
 			t.Fatalf("new GoldenPocket: %v", err)
+		}
+		if n := ind.Name(); n != "GoldenPocket" {
+			t.Errorf("name: got %q want %q", n, "GoldenPocket")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2074,6 +2572,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new GrangerCausality: %v", err)
 		}
+		if n := ind.Name(); n != "GrangerCausality" {
+			t.Errorf("name: got %q want %q", n, "GrangerCausality")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -2084,6 +2585,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewGravestoneDoji()
 		if err != nil {
 			t.Fatalf("new GravestoneDoji: %v", err)
+		}
+		if n := ind.Name(); n != "GravestoneDoji" {
+			t.Errorf("name: got %q want %q", n, "GravestoneDoji")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2096,6 +2600,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Hammer: %v", err)
 		}
+		if n := ind.Name(); n != "Hammer" {
+			t.Errorf("name: got %q want %q", n, "Hammer")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2106,6 +2613,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHangingMan()
 		if err != nil {
 			t.Fatalf("new HangingMan: %v", err)
+		}
+		if n := ind.Name(); n != "HangingMan" {
+			t.Errorf("name: got %q want %q", n, "HangingMan")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2118,6 +2628,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Harami: %v", err)
 		}
+		if n := ind.Name(); n != "Harami" {
+			t.Errorf("name: got %q want %q", n, "Harami")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2128,6 +2641,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHaramiCross()
 		if err != nil {
 			t.Fatalf("new HaramiCross: %v", err)
+		}
+		if n := ind.Name(); n != "HaramiCross" {
+			t.Errorf("name: got %q want %q", n, "HaramiCross")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2140,6 +2656,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HasbrouckInformationShare: %v", err)
 		}
+		if n := ind.Name(); n != "HasbrouckInformationShare" {
+			t.Errorf("name: got %q want %q", n, "HasbrouckInformationShare")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -2151,6 +2670,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HeadAndShoulders: %v", err)
 		}
+		if n := ind.Name(); n != "HeadAndShoulders" {
+			t.Errorf("name: got %q want %q", n, "HeadAndShoulders")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2161,6 +2683,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHeikinAshi()
 		if err != nil {
 			t.Fatalf("new HeikinAshi: %v", err)
+		}
+		if n := ind.Name(); n != "HeikinAshi" {
+			t.Errorf("name: got %q want %q", n, "HeikinAshi")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2174,6 +2699,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HeikinAshiOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "HeikinAshiOscillator" {
+			t.Errorf("name: got %q want %q", n, "HeikinAshiOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2185,6 +2713,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HiLoActivator: %v", err)
 		}
+		if n := ind.Name(); n != "HiLoActivator" {
+			t.Errorf("name: got %q want %q", n, "HiLoActivator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2195,6 +2726,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHighLowIndex(10)
 		if err != nil {
 			t.Fatalf("new HighLowIndex: %v", err)
+		}
+		if n := ind.Name(); n != "HighLowIndex" {
+			t.Errorf("name: got %q want %q", n, "HighLowIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2208,6 +2742,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HighLowRange: %v", err)
 		}
+		if n := ind.Name(); n != "HighLowRange" {
+			t.Errorf("name: got %q want %q", n, "HighLowRange")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2218,6 +2755,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHighLowVolumeNodes(3, 7)
 		if err != nil {
 			t.Fatalf("new HighLowVolumeNodes: %v", err)
+		}
+		if n := ind.Name(); n != "HighLowVolumeNodes" {
+			t.Errorf("name: got %q want %q", n, "HighLowVolumeNodes")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2231,6 +2771,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HighWave: %v", err)
 		}
+		if n := ind.Name(); n != "HighWave" {
+			t.Errorf("name: got %q want %q", n, "HighWave")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2241,6 +2784,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHighpassFilter(14)
 		if err != nil {
 			t.Fatalf("new HighpassFilter: %v", err)
+		}
+		if n := ind.Name(); n != "HighpassFilter" {
+			t.Errorf("name: got %q want %q", n, "HighpassFilter")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2253,6 +2799,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Hikkake: %v", err)
 		}
+		if n := ind.Name(); n != "Hikkake" {
+			t.Errorf("name: got %q want %q", n, "Hikkake")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2263,6 +2812,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHikkakeModified()
 		if err != nil {
 			t.Fatalf("new HikkakeModified: %v", err)
+		}
+		if n := ind.Name(); n != "HikkakeModified" {
+			t.Errorf("name: got %q want %q", n, "HikkakeModified")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2275,6 +2827,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HilbertDominantCycle: %v", err)
 		}
+		if n := ind.Name(); n != "HilbertDominantCycle" {
+			t.Errorf("name: got %q want %q", n, "HilbertDominantCycle")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2285,6 +2840,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHistoricalVolatility(3, 7)
 		if err != nil {
 			t.Fatalf("new HistoricalVolatility: %v", err)
+		}
+		if n := ind.Name(); n != "HistoricalVolatility" {
+			t.Errorf("name: got %q want %q", n, "HistoricalVolatility")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2297,6 +2855,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Hma: %v", err)
 		}
+		if n := ind.Name(); n != "HMA" {
+			t.Errorf("name: got %q want %q", n, "HMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2307,6 +2868,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHoltWinters(0.5, 0.1)
 		if err != nil {
 			t.Fatalf("new HoltWinters: %v", err)
+		}
+		if n := ind.Name(); n != "HoltWinters" {
+			t.Errorf("name: got %q want %q", n, "HoltWinters")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2319,6 +2883,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HomingPigeon: %v", err)
 		}
+		if n := ind.Name(); n != "HomingPigeon" {
+			t.Errorf("name: got %q want %q", n, "HomingPigeon")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2330,6 +2897,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HtDcPhase: %v", err)
 		}
+		if n := ind.Name(); n != "HT_DCPHASE" {
+			t.Errorf("name: got %q want %q", n, "HT_DCPHASE")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2340,6 +2910,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHtPhasor()
 		if err != nil {
 			t.Fatalf("new HtPhasor: %v", err)
+		}
+		if n := ind.Name(); n != "HT_PHASOR" {
+			t.Errorf("name: got %q want %q", n, "HT_PHASOR")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2353,6 +2926,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HtTrendMode: %v", err)
 		}
+		if n := ind.Name(); n != "HT_TRENDMODE" {
+			t.Errorf("name: got %q want %q", n, "HT_TRENDMODE")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2363,6 +2939,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewHurstChannel(14, 2.0)
 		if err != nil {
 			t.Fatalf("new HurstChannel: %v", err)
+		}
+		if n := ind.Name(); n != "HurstChannel" {
+			t.Errorf("name: got %q want %q", n, "HurstChannel")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2376,6 +2955,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new HurstExponent: %v", err)
 		}
+		if n := ind.Name(); n != "HurstExponent" {
+			t.Errorf("name: got %q want %q", n, "HurstExponent")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2386,6 +2968,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewIchimoku(9, 26, 52, 26)
 		if err != nil {
 			t.Fatalf("new Ichimoku: %v", err)
+		}
+		if n := ind.Name(); n != "Ichimoku" {
+			t.Errorf("name: got %q want %q", n, "Ichimoku")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2399,6 +2984,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new IdenticalThreeCrows: %v", err)
 		}
+		if n := ind.Name(); n != "IdenticalThreeCrows" {
+			t.Errorf("name: got %q want %q", n, "IdenticalThreeCrows")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2409,6 +2997,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewImbalanceBars(5.0)
 		if err != nil {
 			t.Fatalf("new ImbalanceBars: %v", err)
+		}
+		if n := ind.Name(); n != "ImbalanceBars" {
+			t.Errorf("name: got %q want %q", n, "ImbalanceBars")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2421,6 +3012,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new InNeck: %v", err)
 		}
+		if n := ind.Name(); n != "InNeck" {
+			t.Errorf("name: got %q want %q", n, "InNeck")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2431,6 +3025,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewInertia(3, 7)
 		if err != nil {
 			t.Fatalf("new Inertia: %v", err)
+		}
+		if n := ind.Name(); n != "Inertia" {
+			t.Errorf("name: got %q want %q", n, "Inertia")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2443,6 +3040,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new InformationRatio: %v", err)
 		}
+		if n := ind.Name(); n != "InformationRatio" {
+			t.Errorf("name: got %q want %q", n, "InformationRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -2453,6 +3053,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewInitialBalance(14)
 		if err != nil {
 			t.Fatalf("new InitialBalance: %v", err)
+		}
+		if n := ind.Name(); n != "InitialBalance" {
+			t.Errorf("name: got %q want %q", n, "InitialBalance")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2466,6 +3069,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new InstantaneousTrendline: %v", err)
 		}
+		if n := ind.Name(); n != "InstantaneousTrendline" {
+			t.Errorf("name: got %q want %q", n, "InstantaneousTrendline")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2476,6 +3082,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewIntradayIntensity()
 		if err != nil {
 			t.Fatalf("new IntradayIntensity: %v", err)
+		}
+		if n := ind.Name(); n != "IntradayIntensity" {
+			t.Errorf("name: got %q want %q", n, "IntradayIntensity")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2488,6 +3097,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new IntradayMomentumIndex: %v", err)
 		}
+		if n := ind.Name(); n != "IMI" {
+			t.Errorf("name: got %q want %q", n, "IMI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2498,6 +3110,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewIntradayVolatilityProfile(24, 0)
 		if err != nil {
 			t.Fatalf("new IntradayVolatilityProfile: %v", err)
+		}
+		if n := ind.Name(); n != "IntradayVolatilityProfile" {
+			t.Errorf("name: got %q want %q", n, "IntradayVolatilityProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2515,6 +3130,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new InverseFisherTransform: %v", err)
 		}
+		if n := ind.Name(); n != "InverseFisherTransform" {
+			t.Errorf("name: got %q want %q", n, "InverseFisherTransform")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2525,6 +3143,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewInvertedHammer()
 		if err != nil {
 			t.Fatalf("new InvertedHammer: %v", err)
+		}
+		if n := ind.Name(); n != "InvertedHammer" {
+			t.Errorf("name: got %q want %q", n, "InvertedHammer")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2537,6 +3158,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new JarqueBera: %v", err)
 		}
+		if n := ind.Name(); n != "JarqueBera" {
+			t.Errorf("name: got %q want %q", n, "JarqueBera")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2547,6 +3171,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewJma(7, 0.0, 2.0)
 		if err != nil {
 			t.Fatalf("new Jma: %v", err)
+		}
+		if n := ind.Name(); n != "JMA" {
+			t.Errorf("name: got %q want %q", n, "JMA")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2559,6 +3186,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new JumpIndicator: %v", err)
 		}
+		if n := ind.Name(); n != "JumpIndicator" {
+			t.Errorf("name: got %q want %q", n, "JumpIndicator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2569,6 +3199,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKRatio(14)
 		if err != nil {
 			t.Fatalf("new KRatio: %v", err)
+		}
+		if n := ind.Name(); n != "KRatio" {
+			t.Errorf("name: got %q want %q", n, "KRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2581,6 +3214,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new KagiBars: %v", err)
 		}
+		if n := ind.Name(); n != "KagiBars" {
+			t.Errorf("name: got %q want %q", n, "KagiBars")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
@@ -2591,6 +3227,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKalmanHedgeRatio(0.01, 0.001)
 		if err != nil {
 			t.Fatalf("new KalmanHedgeRatio: %v", err)
+		}
+		if n := ind.Name(); n != "KalmanHedgeRatio" {
+			t.Errorf("name: got %q want %q", n, "KalmanHedgeRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2604,6 +3243,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Kama: %v", err)
 		}
+		if n := ind.Name(); n != "KAMA" {
+			t.Errorf("name: got %q want %q", n, "KAMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2614,6 +3256,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKaseDevStop(14, 2.0)
 		if err != nil {
 			t.Fatalf("new KaseDevStop: %v", err)
+		}
+		if n := ind.Name(); n != "KaseDevStop" {
+			t.Errorf("name: got %q want %q", n, "KaseDevStop")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2627,6 +3272,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new KasePermissionStochastic: %v", err)
 		}
+		if n := ind.Name(); n != "KasePermissionStochastic" {
+			t.Errorf("name: got %q want %q", n, "KasePermissionStochastic")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -2639,6 +3287,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new KellyCriterion: %v", err)
 		}
+		if n := ind.Name(); n != "KellyCriterion" {
+			t.Errorf("name: got %q want %q", n, "KellyCriterion")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2649,6 +3300,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKeltner(3, 7, 2.0)
 		if err != nil {
 			t.Fatalf("new Keltner: %v", err)
+		}
+		if n := ind.Name(); n != "KeltnerChannels" {
+			t.Errorf("name: got %q want %q", n, "KeltnerChannels")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2662,6 +3316,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new KendallTau: %v", err)
 		}
+		if n := ind.Name(); n != "KendallTau" {
+			t.Errorf("name: got %q want %q", n, "KendallTau")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -2672,6 +3329,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKicking()
 		if err != nil {
 			t.Fatalf("new Kicking: %v", err)
+		}
+		if n := ind.Name(); n != "Kicking" {
+			t.Errorf("name: got %q want %q", n, "Kicking")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2684,6 +3344,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new KickingByLength: %v", err)
 		}
+		if n := ind.Name(); n != "KickingByLength" {
+			t.Errorf("name: got %q want %q", n, "KickingByLength")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2694,6 +3357,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKst(3, 7, 14, 28, 35, 42, 56, 63, 70)
 		if err != nil {
 			t.Fatalf("new Kst: %v", err)
+		}
+		if n := ind.Name(); n != "KST" {
+			t.Errorf("name: got %q want %q", n, "KST")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2707,6 +3373,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Kurtosis: %v", err)
 		}
+		if n := ind.Name(); n != "Kurtosis" {
+			t.Errorf("name: got %q want %q", n, "Kurtosis")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2717,6 +3386,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewKvo(3, 7)
 		if err != nil {
 			t.Fatalf("new Kvo: %v", err)
+		}
+		if n := ind.Name(); n != "KVO" {
+			t.Errorf("name: got %q want %q", n, "KVO")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2729,6 +3401,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new KylesLambda: %v", err)
 		}
+		if n := ind.Name(); n != "KylesLambda" {
+			t.Errorf("name: got %q want %q", n, "KylesLambda")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i), (r[1]+r[2])/2)}
@@ -2739,6 +3414,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLadderBottom()
 		if err != nil {
 			t.Fatalf("new LadderBottom: %v", err)
+		}
+		if n := ind.Name(); n != "LadderBottom" {
+			t.Errorf("name: got %q want %q", n, "LadderBottom")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2751,6 +3429,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new LaguerreRsi: %v", err)
 		}
+		if n := ind.Name(); n != "LaguerreRSI" {
+			t.Errorf("name: got %q want %q", n, "LaguerreRSI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2761,6 +3442,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLeadLagCrossCorrelation(20, 10)
 		if err != nil {
 			t.Fatalf("new LeadLagCrossCorrelation: %v", err)
+		}
+		if n := ind.Name(); n != "LeadLagCrossCorrelation" {
+			t.Errorf("name: got %q want %q", n, "LeadLagCrossCorrelation")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2774,6 +3458,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new LinRegAngle: %v", err)
 		}
+		if n := ind.Name(); n != "LinRegAngle" {
+			t.Errorf("name: got %q want %q", n, "LinRegAngle")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2784,6 +3471,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLinRegChannel(14, 2.0)
 		if err != nil {
 			t.Fatalf("new LinRegChannel: %v", err)
+		}
+		if n := ind.Name(); n != "LinRegChannel" {
+			t.Errorf("name: got %q want %q", n, "LinRegChannel")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2797,6 +3487,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new LinRegIntercept: %v", err)
 		}
+		if n := ind.Name(); n != "LINEARREG_INTERCEPT" {
+			t.Errorf("name: got %q want %q", n, "LINEARREG_INTERCEPT")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2807,6 +3500,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLinRegSlope(14)
 		if err != nil {
 			t.Fatalf("new LinRegSlope: %v", err)
+		}
+		if n := ind.Name(); n != "LinRegSlope" {
+			t.Errorf("name: got %q want %q", n, "LinRegSlope")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2819,6 +3515,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new LinearRegression: %v", err)
 		}
+		if n := ind.Name(); n != "LinearRegression" {
+			t.Errorf("name: got %q want %q", n, "LinearRegression")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2829,6 +3528,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLiquidationFeatures()
 		if err != nil {
 			t.Fatalf("new LiquidationFeatures: %v", err)
+		}
+		if n := ind.Name(); n != "LiquidationFeatures" {
+			t.Errorf("name: got %q want %q", n, "LiquidationFeatures")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2843,6 +3545,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new LogReturn: %v", err)
 		}
+		if n := ind.Name(); n != "LogReturn" {
+			t.Errorf("name: got %q want %q", n, "LogReturn")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2853,6 +3558,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLongLeggedDoji()
 		if err != nil {
 			t.Fatalf("new LongLeggedDoji: %v", err)
+		}
+		if n := ind.Name(); n != "LongLeggedDoji" {
+			t.Errorf("name: got %q want %q", n, "LongLeggedDoji")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2865,6 +3573,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new LongLine: %v", err)
 		}
+		if n := ind.Name(); n != "LongLine" {
+			t.Errorf("name: got %q want %q", n, "LongLine")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2875,6 +3586,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewLongShortRatio()
 		if err != nil {
 			t.Fatalf("new LongShortRatio: %v", err)
+		}
+		if n := ind.Name(); n != "LongShortRatio" {
+			t.Errorf("name: got %q want %q", n, "LongShortRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2888,6 +3602,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new M2Measure: %v", err)
 		}
+		if n := ind.Name(); n != "M2Measure" {
+			t.Errorf("name: got %q want %q", n, "M2Measure")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2898,6 +3615,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMaEnvelope(14, 2.0)
 		if err != nil {
 			t.Fatalf("new MaEnvelope: %v", err)
+		}
+		if n := ind.Name(); n != "MaEnvelope" {
+			t.Errorf("name: got %q want %q", n, "MaEnvelope")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2911,6 +3631,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MacdExt: %v", err)
 		}
+		if n := ind.Name(); n != "MACDEXT" {
+			t.Errorf("name: got %q want %q", n, "MACDEXT")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[3])
@@ -2922,6 +3645,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMacdFix(9)
 		if err != nil {
 			t.Fatalf("new MacdFix: %v", err)
+		}
+		if n := ind.Name(); n != "MACDFIX" {
+			t.Errorf("name: got %q want %q", n, "MACDFIX")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2935,6 +3661,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MacdHistogram: %v", err)
 		}
+		if n := ind.Name(); n != "MacdHistogram" {
+			t.Errorf("name: got %q want %q", n, "MacdHistogram")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -2945,6 +3674,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMacdIndicator(12, 26, 9)
 		if err != nil {
 			t.Fatalf("new MacdIndicator: %v", err)
+		}
+		if n := ind.Name(); n != "MACD" {
+			t.Errorf("name: got %q want %q", n, "MACD")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2958,6 +3690,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Mama: %v", err)
 		}
+		if n := ind.Name(); n != "MAMA" {
+			t.Errorf("name: got %q want %q", n, "MAMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[3])
@@ -2970,6 +3705,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MarketFacilitationIndex: %v", err)
 		}
+		if n := ind.Name(); n != "MarketFacilitationIndex" {
+			t.Errorf("name: got %q want %q", n, "MarketFacilitationIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -2980,6 +3718,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMartinRatio(14)
 		if err != nil {
 			t.Fatalf("new MartinRatio: %v", err)
+		}
+		if n := ind.Name(); n != "MartinRatio" {
+			t.Errorf("name: got %q want %q", n, "MartinRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -2992,6 +3733,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Marubozu: %v", err)
 		}
+		if n := ind.Name(); n != "Marubozu" {
+			t.Errorf("name: got %q want %q", n, "Marubozu")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3002,6 +3746,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMassIndex(3, 7)
 		if err != nil {
 			t.Fatalf("new MassIndex: %v", err)
+		}
+		if n := ind.Name(); n != "MassIndex" {
+			t.Errorf("name: got %q want %q", n, "MassIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3014,6 +3761,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MatHold: %v", err)
 		}
+		if n := ind.Name(); n != "MatHold" {
+			t.Errorf("name: got %q want %q", n, "MatHold")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3024,6 +3774,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMatchingLow()
 		if err != nil {
 			t.Fatalf("new MatchingLow: %v", err)
+		}
+		if n := ind.Name(); n != "MatchingLow" {
+			t.Errorf("name: got %q want %q", n, "MatchingLow")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3036,6 +3789,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MaxDrawdown: %v", err)
 		}
+		if n := ind.Name(); n != "MaxDrawdown" {
+			t.Errorf("name: got %q want %q", n, "MaxDrawdown")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3046,6 +3802,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMcClellanOscillator()
 		if err != nil {
 			t.Fatalf("new McClellanOscillator: %v", err)
+		}
+		if n := ind.Name(); n != "McClellanOscillator" {
+			t.Errorf("name: got %q want %q", n, "McClellanOscillator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3059,6 +3818,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new McClellanSummationIndex: %v", err)
 		}
+		if n := ind.Name(); n != "McClellanSummationIndex" {
+			t.Errorf("name: got %q want %q", n, "McClellanSummationIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			ch, vo, nh, nl, am, ob_ := crossLists(r)
@@ -3071,6 +3833,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new McGinleyDynamic: %v", err)
 		}
+		if n := ind.Name(); n != "McGinleyDynamic" {
+			t.Errorf("name: got %q want %q", n, "McGinleyDynamic")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3082,6 +3847,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MedianAbsoluteDeviation: %v", err)
 		}
+		if n := ind.Name(); n != "MedianAbsoluteDeviation" {
+			t.Errorf("name: got %q want %q", n, "MedianAbsoluteDeviation")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3092,6 +3860,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMedianChannel(14, 2.0)
 		if err != nil {
 			t.Fatalf("new MedianChannel: %v", err)
+		}
+		if n := ind.Name(); n != "MedianChannel" {
+			t.Errorf("name: got %q want %q", n, "MedianChannel")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3105,6 +3876,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MedianMa: %v", err)
 		}
+		if n := ind.Name(); n != "MedianMA" {
+			t.Errorf("name: got %q want %q", n, "MedianMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3115,6 +3889,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMedianPrice()
 		if err != nil {
 			t.Fatalf("new MedianPrice: %v", err)
+		}
+		if n := ind.Name(); n != "MedianPrice" {
+			t.Errorf("name: got %q want %q", n, "MedianPrice")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3127,6 +3904,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Mfi: %v", err)
 		}
+		if n := ind.Name(); n != "MFI" {
+			t.Errorf("name: got %q want %q", n, "MFI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3137,6 +3917,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMicroprice()
 		if err != nil {
 			t.Fatalf("new Microprice: %v", err)
+		}
+		if n := ind.Name(); n != "Microprice" {
+			t.Errorf("name: got %q want %q", n, "Microprice")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3150,6 +3933,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MidPoint: %v", err)
 		}
+		if n := ind.Name(); n != "MIDPOINT" {
+			t.Errorf("name: got %q want %q", n, "MIDPOINT")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3160,6 +3946,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMidPrice(14)
 		if err != nil {
 			t.Fatalf("new MidPrice: %v", err)
+		}
+		if n := ind.Name(); n != "MIDPRICE" {
+			t.Errorf("name: got %q want %q", n, "MIDPRICE")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3172,6 +3961,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MinusDi: %v", err)
 		}
+		if n := ind.Name(); n != "MINUS_DI" {
+			t.Errorf("name: got %q want %q", n, "MINUS_DI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3183,6 +3975,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MinusDm: %v", err)
 		}
+		if n := ind.Name(); n != "MINUS_DM" {
+			t.Errorf("name: got %q want %q", n, "MINUS_DM")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3193,6 +3988,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewModifiedMaStop(14)
 		if err != nil {
 			t.Fatalf("new ModifiedMaStop: %v", err)
+		}
+		if n := ind.Name(); n != "ModifiedMaStop" {
+			t.Errorf("name: got %q want %q", n, "ModifiedMaStop")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3206,6 +4004,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Mom: %v", err)
 		}
+		if n := ind.Name(); n != "MOM" {
+			t.Errorf("name: got %q want %q", n, "MOM")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3216,6 +4017,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMorningDojiStar()
 		if err != nil {
 			t.Fatalf("new MorningDojiStar: %v", err)
+		}
+		if n := ind.Name(); n != "MorningDojiStar" {
+			t.Errorf("name: got %q want %q", n, "MorningDojiStar")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3228,6 +4032,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new MorningEveningStar: %v", err)
 		}
+		if n := ind.Name(); n != "MorningEveningStar" {
+			t.Errorf("name: got %q want %q", n, "MorningEveningStar")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3238,6 +4045,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewMurreyMathLines(14)
 		if err != nil {
 			t.Fatalf("new MurreyMathLines: %v", err)
+		}
+		if n := ind.Name(); n != "MurreyMathLines" {
+			t.Errorf("name: got %q want %q", n, "MurreyMathLines")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3251,6 +4061,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new NakedPoc: %v", err)
 		}
+		if n := ind.Name(); n != "NakedPoc" {
+			t.Errorf("name: got %q want %q", n, "NakedPoc")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3262,6 +4075,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Natr: %v", err)
 		}
+		if n := ind.Name(); n != "NATR" {
+			t.Errorf("name: got %q want %q", n, "NATR")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3272,6 +4088,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewNewHighsNewLows()
 		if err != nil {
 			t.Fatalf("new NewHighsNewLows: %v", err)
+		}
+		if n := ind.Name(); n != "NewHighsNewLows" {
+			t.Errorf("name: got %q want %q", n, "NewHighsNewLows")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3285,6 +4104,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new NewPriceLines: %v", err)
 		}
+		if n := ind.Name(); n != "NewPriceLines" {
+			t.Errorf("name: got %q want %q", n, "NewPriceLines")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3295,6 +4117,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewNrtr(2.0)
 		if err != nil {
 			t.Fatalf("new Nrtr: %v", err)
+		}
+		if n := ind.Name(); n != "Nrtr" {
+			t.Errorf("name: got %q want %q", n, "Nrtr")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3308,6 +4133,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Nvi: %v", err)
 		}
+		if n := ind.Name(); n != "NVI" {
+			t.Errorf("name: got %q want %q", n, "NVI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3318,6 +4146,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOIPriceDivergence(20)
 		if err != nil {
 			t.Fatalf("new OIPriceDivergence: %v", err)
+		}
+		if n := ind.Name(); n != "OIPriceDivergence" {
+			t.Errorf("name: got %q want %q", n, "OIPriceDivergence")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3331,6 +4162,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OIWeighted: %v", err)
 		}
+		if n := ind.Name(); n != "OIWeighted" {
+			t.Errorf("name: got %q want %q", n, "OIWeighted")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			d := derivFields(r)
@@ -3343,6 +4177,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Obv: %v", err)
 		}
+		if n := ind.Name(); n != "OBV" {
+			t.Errorf("name: got %q want %q", n, "OBV")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3353,6 +4190,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOiToVolumeRatio()
 		if err != nil {
 			t.Fatalf("new OiToVolumeRatio: %v", err)
+		}
+		if n := ind.Name(); n != "OiToVolumeRatio" {
+			t.Errorf("name: got %q want %q", n, "OiToVolumeRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3366,6 +4206,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OmegaRatio: %v", err)
 		}
+		if n := ind.Name(); n != "OmegaRatio" {
+			t.Errorf("name: got %q want %q", n, "OmegaRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3377,6 +4220,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OnNeck: %v", err)
 		}
+		if n := ind.Name(); n != "OnNeck" {
+			t.Errorf("name: got %q want %q", n, "OnNeck")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3387,6 +4233,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOpenInterestDelta()
 		if err != nil {
 			t.Fatalf("new OpenInterestDelta: %v", err)
+		}
+		if n := ind.Name(); n != "OpenInterestDelta" {
+			t.Errorf("name: got %q want %q", n, "OpenInterestDelta")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3400,6 +4249,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OpenInterestMomentum: %v", err)
 		}
+		if n := ind.Name(); n != "OpenInterestMomentum" {
+			t.Errorf("name: got %q want %q", n, "OpenInterestMomentum")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			d := derivFields(r)
@@ -3412,6 +4264,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OpeningMarubozu: %v", err)
 		}
+		if n := ind.Name(); n != "OpeningMarubozu" {
+			t.Errorf("name: got %q want %q", n, "OpeningMarubozu")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3422,6 +4277,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOpeningRange(14)
 		if err != nil {
 			t.Fatalf("new OpeningRange: %v", err)
+		}
+		if n := ind.Name(); n != "OpeningRange" {
+			t.Errorf("name: got %q want %q", n, "OpeningRange")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3435,6 +4293,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OrderBookImbalanceFull: %v", err)
 		}
+		if n := ind.Name(); n != "OrderBookImbalanceFull" {
+			t.Errorf("name: got %q want %q", n, "OrderBookImbalanceFull")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bp, bs, ap, as_ := obLists(r)
@@ -3446,6 +4307,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOrderBookImbalanceTop1()
 		if err != nil {
 			t.Fatalf("new OrderBookImbalanceTop1: %v", err)
+		}
+		if n := ind.Name(); n != "OrderBookImbalanceTop1" {
+			t.Errorf("name: got %q want %q", n, "OrderBookImbalanceTop1")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3459,6 +4323,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OrderBookImbalanceTopN: %v", err)
 		}
+		if n := ind.Name(); n != "OrderBookImbalanceTopN" {
+			t.Errorf("name: got %q want %q", n, "OrderBookImbalanceTopN")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bp, bs, ap, as_ := obLists(r)
@@ -3470,6 +4337,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOrderFlowImbalance(20)
 		if err != nil {
 			t.Fatalf("new OrderFlowImbalance: %v", err)
+		}
+		if n := ind.Name(); n != "OrderFlowImbalance" {
+			t.Errorf("name: got %q want %q", n, "OrderFlowImbalance")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3483,6 +4353,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OuHalfLife: %v", err)
 		}
+		if n := ind.Name(); n != "OuHalfLife" {
+			t.Errorf("name: got %q want %q", n, "OuHalfLife")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -3494,6 +4367,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new OvernightGap: %v", err)
 		}
+		if n := ind.Name(); n != "OvernightGap" {
+			t.Errorf("name: got %q want %q", n, "OvernightGap")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3504,6 +4380,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewOvernightIntradayReturn(14)
 		if err != nil {
 			t.Fatalf("new OvernightIntradayReturn: %v", err)
+		}
+		if n := ind.Name(); n != "OvernightIntradayReturn" {
+			t.Errorf("name: got %q want %q", n, "OvernightIntradayReturn")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3517,6 +4396,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PainIndex: %v", err)
 		}
+		if n := ind.Name(); n != "PainIndex" {
+			t.Errorf("name: got %q want %q", n, "PainIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3527,6 +4409,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPairSpreadZScore(20, 20)
 		if err != nil {
 			t.Fatalf("new PairSpreadZScore: %v", err)
+		}
+		if n := ind.Name(); n != "PairSpreadZScore" {
+			t.Errorf("name: got %q want %q", n, "PairSpreadZScore")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3539,6 +4424,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PairwiseBeta: %v", err)
 		}
+		if n := ind.Name(); n != "PairwiseBeta" {
+			t.Errorf("name: got %q want %q", n, "PairwiseBeta")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -3549,6 +4437,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewParkinsonVolatility(20, 252)
 		if err != nil {
 			t.Fatalf("new ParkinsonVolatility: %v", err)
+		}
+		if n := ind.Name(); n != "ParkinsonVolatility" {
+			t.Errorf("name: got %q want %q", n, "ParkinsonVolatility")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3561,6 +4452,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PearsonCorrelation: %v", err)
 		}
+		if n := ind.Name(); n != "PearsonCorrelation" {
+			t.Errorf("name: got %q want %q", n, "PearsonCorrelation")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -3571,6 +4465,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPercentAboveMa()
 		if err != nil {
 			t.Fatalf("new PercentAboveMa: %v", err)
+		}
+		if n := ind.Name(); n != "PercentAboveMa" {
+			t.Errorf("name: got %q want %q", n, "PercentAboveMa")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3584,6 +4481,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PercentB: %v", err)
 		}
+		if n := ind.Name(); n != "PercentB" {
+			t.Errorf("name: got %q want %q", n, "PercentB")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3595,6 +4495,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PercentageTrailingStop: %v", err)
 		}
+		if n := ind.Name(); n != "PercentageTrailingStop" {
+			t.Errorf("name: got %q want %q", n, "PercentageTrailingStop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3605,6 +4508,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPerpetualPremiumIndex()
 		if err != nil {
 			t.Fatalf("new PerpetualPremiumIndex: %v", err)
+		}
+		if n := ind.Name(); n != "PerpetualPremiumIndex" {
+			t.Errorf("name: got %q want %q", n, "PerpetualPremiumIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3618,6 +4524,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Pgo: %v", err)
 		}
+		if n := ind.Name(); n != "PGO" {
+			t.Errorf("name: got %q want %q", n, "PGO")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3628,6 +4537,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPiercingDarkCloud()
 		if err != nil {
 			t.Fatalf("new PiercingDarkCloud: %v", err)
+		}
+		if n := ind.Name(); n != "PiercingDarkCloud" {
+			t.Errorf("name: got %q want %q", n, "PiercingDarkCloud")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3640,6 +4552,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Pin: %v", err)
 		}
+		if n := ind.Name(); n != "PIN" {
+			t.Errorf("name: got %q want %q", n, "PIN")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -3650,6 +4565,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPivotReversal(3, 7)
 		if err != nil {
 			t.Fatalf("new PivotReversal: %v", err)
+		}
+		if n := ind.Name(); n != "PivotReversal" {
+			t.Errorf("name: got %q want %q", n, "PivotReversal")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3662,6 +4580,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PlusDi: %v", err)
 		}
+		if n := ind.Name(); n != "PLUS_DI" {
+			t.Errorf("name: got %q want %q", n, "PLUS_DI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3672,6 +4593,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPlusDm(14)
 		if err != nil {
 			t.Fatalf("new PlusDm: %v", err)
+		}
+		if n := ind.Name(); n != "PLUS_DM" {
+			t.Errorf("name: got %q want %q", n, "PLUS_DM")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3684,6 +4608,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Pmo: %v", err)
 		}
+		if n := ind.Name(); n != "PMO" {
+			t.Errorf("name: got %q want %q", n, "PMO")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3694,6 +4621,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPointAndFigureBars(2.0, 3)
 		if err != nil {
 			t.Fatalf("new PointAndFigureBars: %v", err)
+		}
+		if n := ind.Name(); n != "PointAndFigureBars" {
+			t.Errorf("name: got %q want %q", n, "PointAndFigureBars")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3706,6 +4636,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PolarizedFractalEfficiency: %v", err)
 		}
+		if n := ind.Name(); n != "PolarizedFractalEfficiency" {
+			t.Errorf("name: got %q want %q", n, "PolarizedFractalEfficiency")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3716,6 +4649,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPpo(3, 7)
 		if err != nil {
 			t.Fatalf("new Ppo: %v", err)
+		}
+		if n := ind.Name(); n != "PPO" {
+			t.Errorf("name: got %q want %q", n, "PPO")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3728,6 +4664,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new PpoHistogram: %v", err)
 		}
+		if n := ind.Name(); n != "PpoHistogram" {
+			t.Errorf("name: got %q want %q", n, "PpoHistogram")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3738,6 +4677,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewProfileShape(3, 7)
 		if err != nil {
 			t.Fatalf("new ProfileShape: %v", err)
+		}
+		if n := ind.Name(); n != "ProfileShape" {
+			t.Errorf("name: got %q want %q", n, "ProfileShape")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3750,6 +4692,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ProfitFactor: %v", err)
 		}
+		if n := ind.Name(); n != "ProfitFactor" {
+			t.Errorf("name: got %q want %q", n, "ProfitFactor")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3760,6 +4705,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewProjectionBands(14)
 		if err != nil {
 			t.Fatalf("new ProjectionBands: %v", err)
+		}
+		if n := ind.Name(); n != "ProjectionBands" {
+			t.Errorf("name: got %q want %q", n, "ProjectionBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3773,6 +4721,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ProjectionOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "ProjectionOscillator" {
+			t.Errorf("name: got %q want %q", n, "ProjectionOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3783,6 +4734,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewPsar(0.02, 0.02, 0.2)
 		if err != nil {
 			t.Fatalf("new Psar: %v", err)
+		}
+		if n := ind.Name(); n != "PSAR" {
+			t.Errorf("name: got %q want %q", n, "PSAR")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3795,6 +4749,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Pvi: %v", err)
 		}
+		if n := ind.Name(); n != "PVI" {
+			t.Errorf("name: got %q want %q", n, "PVI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3805,6 +4762,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewQqe(3, 7, 2.0)
 		if err != nil {
 			t.Fatalf("new Qqe: %v", err)
+		}
+		if n := ind.Name(); n != "QQE" {
+			t.Errorf("name: got %q want %q", n, "QQE")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3818,6 +4778,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Qstick: %v", err)
 		}
+		if n := ind.Name(); n != "Qstick" {
+			t.Errorf("name: got %q want %q", n, "Qstick")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3828,6 +4791,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewQuartileBands(14)
 		if err != nil {
 			t.Fatalf("new QuartileBands: %v", err)
+		}
+		if n := ind.Name(); n != "QuartileBands" {
+			t.Errorf("name: got %q want %q", n, "QuartileBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3841,6 +4807,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new QuotedSpread: %v", err)
 		}
+		if n := ind.Name(); n != "QuotedSpread" {
+			t.Errorf("name: got %q want %q", n, "QuotedSpread")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bp, bs, ap, as_ := obLists(r)
@@ -3853,6 +4822,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RSquared: %v", err)
 		}
+		if n := ind.Name(); n != "RSquared" {
+			t.Errorf("name: got %q want %q", n, "RSquared")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3863,6 +4835,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRangeBars(2.0)
 		if err != nil {
 			t.Fatalf("new RangeBars: %v", err)
+		}
+		if n := ind.Name(); n != "RangeBars" {
+			t.Errorf("name: got %q want %q", n, "RangeBars")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3875,6 +4850,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RealizedSpread: %v", err)
 		}
+		if n := ind.Name(); n != "RealizedSpread" {
+			t.Errorf("name: got %q want %q", n, "RealizedSpread")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i), (r[1]+r[2])/2)}
@@ -3885,6 +4863,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRealizedVolatility(14)
 		if err != nil {
 			t.Fatalf("new RealizedVolatility: %v", err)
+		}
+		if n := ind.Name(); n != "RealizedVolatility" {
+			t.Errorf("name: got %q want %q", n, "RealizedVolatility")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3897,6 +4878,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RecoveryFactor: %v", err)
 		}
+		if n := ind.Name(); n != "RecoveryFactor" {
+			t.Errorf("name: got %q want %q", n, "RecoveryFactor")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3907,6 +4891,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRectangleRange()
 		if err != nil {
 			t.Fatalf("new RectangleRange: %v", err)
+		}
+		if n := ind.Name(); n != "RectangleRange" {
+			t.Errorf("name: got %q want %q", n, "RectangleRange")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3919,6 +4906,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Reflex: %v", err)
 		}
+		if n := ind.Name(); n != "Reflex" {
+			t.Errorf("name: got %q want %q", n, "Reflex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3930,6 +4920,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RegimeLabel: %v", err)
 		}
+		if n := ind.Name(); n != "RegimeLabel" {
+			t.Errorf("name: got %q want %q", n, "RegimeLabel")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -3940,6 +4933,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRelativeStrengthAB(14, 14)
 		if err != nil {
 			t.Fatalf("new RelativeStrengthAB: %v", err)
+		}
+		if n := ind.Name(); n != "RelativeStrengthAB" {
+			t.Errorf("name: got %q want %q", n, "RelativeStrengthAB")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3953,6 +4949,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RenkoBars: %v", err)
 		}
+		if n := ind.Name(); n != "RenkoBars" {
+			t.Errorf("name: got %q want %q", n, "RenkoBars")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
@@ -3963,6 +4962,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRenkoTrailingStop(2.0)
 		if err != nil {
 			t.Fatalf("new RenkoTrailingStop: %v", err)
+		}
+		if n := ind.Name(); n != "RenkoTrailingStop" {
+			t.Errorf("name: got %q want %q", n, "RenkoTrailingStop")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3975,6 +4977,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RickshawMan: %v", err)
 		}
+		if n := ind.Name(); n != "RickshawMan" {
+			t.Errorf("name: got %q want %q", n, "RickshawMan")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -3985,6 +4990,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRisingThreeMethods()
 		if err != nil {
 			t.Fatalf("new RisingThreeMethods: %v", err)
+		}
+		if n := ind.Name(); n != "RisingThreeMethods" {
+			t.Errorf("name: got %q want %q", n, "RisingThreeMethods")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -3997,6 +5005,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Rmi: %v", err)
 		}
+		if n := ind.Name(); n != "RMI" {
+			t.Errorf("name: got %q want %q", n, "RMI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4007,6 +5018,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRoc(14)
 		if err != nil {
 			t.Fatalf("new Roc: %v", err)
+		}
+		if n := ind.Name(); n != "ROC" {
+			t.Errorf("name: got %q want %q", n, "ROC")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4019,6 +5033,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Rocp: %v", err)
 		}
+		if n := ind.Name(); n != "ROCP" {
+			t.Errorf("name: got %q want %q", n, "ROCP")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4029,6 +5046,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRocr(14)
 		if err != nil {
 			t.Fatalf("new Rocr: %v", err)
+		}
+		if n := ind.Name(); n != "ROCR" {
+			t.Errorf("name: got %q want %q", n, "ROCR")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4041,6 +5061,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Rocr100: %v", err)
 		}
+		if n := ind.Name(); n != "ROCR100" {
+			t.Errorf("name: got %q want %q", n, "ROCR100")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4051,6 +5074,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRogersSatchellVolatility(20, 252)
 		if err != nil {
 			t.Fatalf("new RogersSatchellVolatility: %v", err)
+		}
+		if n := ind.Name(); n != "RogersSatchellVolatility" {
+			t.Errorf("name: got %q want %q", n, "RogersSatchellVolatility")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4063,6 +5089,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RollMeasure: %v", err)
 		}
+		if n := ind.Name(); n != "RollMeasure" {
+			t.Errorf("name: got %q want %q", n, "RollMeasure")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -4073,6 +5102,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRollingCorrelation(14)
 		if err != nil {
 			t.Fatalf("new RollingCorrelation: %v", err)
+		}
+		if n := ind.Name(); n != "RollingCorrelation" {
+			t.Errorf("name: got %q want %q", n, "RollingCorrelation")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4085,6 +5117,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RollingCovariance: %v", err)
 		}
+		if n := ind.Name(); n != "RollingCovariance" {
+			t.Errorf("name: got %q want %q", n, "RollingCovariance")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -4095,6 +5130,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRollingIqr(14)
 		if err != nil {
 			t.Fatalf("new RollingIqr: %v", err)
+		}
+		if n := ind.Name(); n != "RollingIqr" {
+			t.Errorf("name: got %q want %q", n, "RollingIqr")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4107,6 +5145,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RollingMinMaxScaler: %v", err)
 		}
+		if n := ind.Name(); n != "RollingMinMaxScaler" {
+			t.Errorf("name: got %q want %q", n, "RollingMinMaxScaler")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4117,6 +5158,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRollingPercentileRank(14)
 		if err != nil {
 			t.Fatalf("new RollingPercentileRank: %v", err)
+		}
+		if n := ind.Name(); n != "RollingPercentileRank" {
+			t.Errorf("name: got %q want %q", n, "RollingPercentileRank")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4129,6 +5173,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RollingQuantile: %v", err)
 		}
+		if n := ind.Name(); n != "RollingQuantile" {
+			t.Errorf("name: got %q want %q", n, "RollingQuantile")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4139,6 +5186,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRollingVwap(14)
 		if err != nil {
 			t.Fatalf("new RollingVwap: %v", err)
+		}
+		if n := ind.Name(); n != "RollingVWAP" {
+			t.Errorf("name: got %q want %q", n, "RollingVWAP")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4151,6 +5201,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RoofingFilter: %v", err)
 		}
+		if n := ind.Name(); n != "RoofingFilter" {
+			t.Errorf("name: got %q want %q", n, "RoofingFilter")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4161,6 +5214,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRsi(14)
 		if err != nil {
 			t.Fatalf("new Rsi: %v", err)
+		}
+		if n := ind.Name(); n != "RSI" {
+			t.Errorf("name: got %q want %q", n, "RSI")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4173,6 +5229,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Rsx: %v", err)
 		}
+		if n := ind.Name(); n != "RSX" {
+			t.Errorf("name: got %q want %q", n, "RSX")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4183,6 +5242,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRunBars(3)
 		if err != nil {
 			t.Fatalf("new RunBars: %v", err)
+		}
+		if n := ind.Name(); n != "RunBars" {
+			t.Errorf("name: got %q want %q", n, "RunBars")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4195,6 +5257,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Rvi: %v", err)
 		}
+		if n := ind.Name(); n != "RVI" {
+			t.Errorf("name: got %q want %q", n, "RVI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4206,6 +5271,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new RviVolatility: %v", err)
 		}
+		if n := ind.Name(); n != "RVIVolatility" {
+			t.Errorf("name: got %q want %q", n, "RVIVolatility")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4216,6 +5284,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewRwi(14)
 		if err != nil {
 			t.Fatalf("new Rwi: %v", err)
+		}
+		if n := ind.Name(); n != "RWI" {
+			t.Errorf("name: got %q want %q", n, "RWI")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4229,6 +5300,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SampleEntropy: %v", err)
 		}
+		if n := ind.Name(); n != "SampleEntropy" {
+			t.Errorf("name: got %q want %q", n, "SampleEntropy")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4239,6 +5313,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
 		if err != nil {
 			t.Fatalf("new SarExt: %v", err)
+		}
+		if n := ind.Name(); n != "SAREXT" {
+			t.Errorf("name: got %q want %q", n, "SAREXT")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4251,6 +5328,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SeasonalZScore: %v", err)
 		}
+		if n := ind.Name(); n != "SeasonalZScore" {
+			t.Errorf("name: got %q want %q", n, "SeasonalZScore")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4262,6 +5342,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SeparatingLines: %v", err)
 		}
+		if n := ind.Name(); n != "SeparatingLines" {
+			t.Errorf("name: got %q want %q", n, "SeparatingLines")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4272,6 +5355,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSessionHighLow(14)
 		if err != nil {
 			t.Fatalf("new SessionHighLow: %v", err)
+		}
+		if n := ind.Name(); n != "SessionHighLow" {
+			t.Errorf("name: got %q want %q", n, "SessionHighLow")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4285,6 +5371,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SessionRange: %v", err)
 		}
+		if n := ind.Name(); n != "SessionRange" {
+			t.Errorf("name: got %q want %q", n, "SessionRange")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -4297,6 +5386,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SessionVwap: %v", err)
 		}
+		if n := ind.Name(); n != "SessionVwap" {
+			t.Errorf("name: got %q want %q", n, "SessionVwap")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4307,6 +5399,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewShannonEntropy(3, 7)
 		if err != nil {
 			t.Fatalf("new ShannonEntropy: %v", err)
+		}
+		if n := ind.Name(); n != "ShannonEntropy" {
+			t.Errorf("name: got %q want %q", n, "ShannonEntropy")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4319,6 +5414,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Shark: %v", err)
 		}
+		if n := ind.Name(); n != "Shark" {
+			t.Errorf("name: got %q want %q", n, "Shark")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4329,6 +5427,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSharpeRatio(14, 2.0)
 		if err != nil {
 			t.Fatalf("new SharpeRatio: %v", err)
+		}
+		if n := ind.Name(); n != "SharpeRatio" {
+			t.Errorf("name: got %q want %q", n, "SharpeRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4341,6 +5442,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ShootingStar: %v", err)
 		}
+		if n := ind.Name(); n != "ShootingStar" {
+			t.Errorf("name: got %q want %q", n, "ShootingStar")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4351,6 +5455,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewShortLine()
 		if err != nil {
 			t.Fatalf("new ShortLine: %v", err)
+		}
+		if n := ind.Name(); n != "ShortLine" {
+			t.Errorf("name: got %q want %q", n, "ShortLine")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4363,6 +5470,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SignedVolume: %v", err)
 		}
+		if n := ind.Name(); n != "SignedVolume" {
+			t.Errorf("name: got %q want %q", n, "SignedVolume")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -4373,6 +5483,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSineWave()
 		if err != nil {
 			t.Fatalf("new SineWave: %v", err)
+		}
+		if n := ind.Name(); n != "SineWave" {
+			t.Errorf("name: got %q want %q", n, "SineWave")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4385,6 +5498,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SineWeightedMa: %v", err)
 		}
+		if n := ind.Name(); n != "SWMA" {
+			t.Errorf("name: got %q want %q", n, "SWMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4395,6 +5511,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSinglePrints(3, 7)
 		if err != nil {
 			t.Fatalf("new SinglePrints: %v", err)
+		}
+		if n := ind.Name(); n != "SinglePrints" {
+			t.Errorf("name: got %q want %q", n, "SinglePrints")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4407,6 +5526,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Skewness: %v", err)
 		}
+		if n := ind.Name(); n != "Skewness" {
+			t.Errorf("name: got %q want %q", n, "Skewness")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4417,6 +5539,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSma(14)
 		if err != nil {
 			t.Fatalf("new Sma: %v", err)
+		}
+		if n := ind.Name(); n != "SMA" {
+			t.Errorf("name: got %q want %q", n, "SMA")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4429,6 +5554,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Smi: %v", err)
 		}
+		if n := ind.Name(); n != "SMI" {
+			t.Errorf("name: got %q want %q", n, "SMI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4440,6 +5568,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Smma: %v", err)
 		}
+		if n := ind.Name(); n != "SMMA" {
+			t.Errorf("name: got %q want %q", n, "SMMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4450,6 +5581,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSmoothedHeikinAshi(14)
 		if err != nil {
 			t.Fatalf("new SmoothedHeikinAshi: %v", err)
+		}
+		if n := ind.Name(); n != "SmoothedHeikinAshi" {
+			t.Errorf("name: got %q want %q", n, "SmoothedHeikinAshi")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4463,6 +5597,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SortinoRatio: %v", err)
 		}
+		if n := ind.Name(); n != "SortinoRatio" {
+			t.Errorf("name: got %q want %q", n, "SortinoRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4473,6 +5610,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSpearmanCorrelation(14)
 		if err != nil {
 			t.Fatalf("new SpearmanCorrelation: %v", err)
+		}
+		if n := ind.Name(); n != "SpearmanCorrelation" {
+			t.Errorf("name: got %q want %q", n, "SpearmanCorrelation")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4485,6 +5625,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SpinningTop: %v", err)
 		}
+		if n := ind.Name(); n != "SpinningTop" {
+			t.Errorf("name: got %q want %q", n, "SpinningTop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4496,6 +5639,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SpreadAr1Coefficient: %v", err)
 		}
+		if n := ind.Name(); n != "SpreadAr1Coefficient" {
+			t.Errorf("name: got %q want %q", n, "SpreadAr1Coefficient")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -4506,6 +5652,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSpreadBollingerBands(14, 2.0)
 		if err != nil {
 			t.Fatalf("new SpreadBollingerBands: %v", err)
+		}
+		if n := ind.Name(); n != "SpreadBollingerBands" {
+			t.Errorf("name: got %q want %q", n, "SpreadBollingerBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4519,6 +5668,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SpreadHurst: %v", err)
 		}
+		if n := ind.Name(); n != "SpreadHurst" {
+			t.Errorf("name: got %q want %q", n, "SpreadHurst")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -4529,6 +5681,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewStalledPattern()
 		if err != nil {
 			t.Fatalf("new StalledPattern: %v", err)
+		}
+		if n := ind.Name(); n != "StalledPattern" {
+			t.Errorf("name: got %q want %q", n, "StalledPattern")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4541,6 +5696,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new StandardError: %v", err)
 		}
+		if n := ind.Name(); n != "StandardError" {
+			t.Errorf("name: got %q want %q", n, "StandardError")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4551,6 +5709,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewStandardErrorBands(14, 2.0)
 		if err != nil {
 			t.Fatalf("new StandardErrorBands: %v", err)
+		}
+		if n := ind.Name(); n != "StandardErrorBands" {
+			t.Errorf("name: got %q want %q", n, "StandardErrorBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4564,6 +5725,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new StarcBands: %v", err)
 		}
+		if n := ind.Name(); n != "StarcBands" {
+			t.Errorf("name: got %q want %q", n, "StarcBands")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -4576,6 +5740,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Stc: %v", err)
 		}
+		if n := ind.Name(); n != "STC" {
+			t.Errorf("name: got %q want %q", n, "STC")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4586,6 +5753,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewStdDev(14)
 		if err != nil {
 			t.Fatalf("new StdDev: %v", err)
+		}
+		if n := ind.Name(); n != "StdDev" {
+			t.Errorf("name: got %q want %q", n, "StdDev")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4598,6 +5768,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new StepTrailingStop: %v", err)
 		}
+		if n := ind.Name(); n != "StepTrailingStop" {
+			t.Errorf("name: got %q want %q", n, "StepTrailingStop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4608,6 +5781,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSterlingRatio(14)
 		if err != nil {
 			t.Fatalf("new SterlingRatio: %v", err)
+		}
+		if n := ind.Name(); n != "SterlingRatio" {
+			t.Errorf("name: got %q want %q", n, "SterlingRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4620,6 +5796,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new StickSandwich: %v", err)
 		}
+		if n := ind.Name(); n != "StickSandwich" {
+			t.Errorf("name: got %q want %q", n, "StickSandwich")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4631,6 +5810,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new StochRsi: %v", err)
 		}
+		if n := ind.Name(); n != "StochRSI" {
+			t.Errorf("name: got %q want %q", n, "StochRSI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4641,6 +5823,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewStochastic(3, 7)
 		if err != nil {
 			t.Fatalf("new Stochastic: %v", err)
+		}
+		if n := ind.Name(); n != "Stochastic" {
+			t.Errorf("name: got %q want %q", n, "Stochastic")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4654,6 +5839,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new StochasticCci: %v", err)
 		}
+		if n := ind.Name(); n != "StochasticCCI" {
+			t.Errorf("name: got %q want %q", n, "StochasticCCI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4665,6 +5853,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new SuperSmoother: %v", err)
 		}
+		if n := ind.Name(); n != "SuperSmoother" {
+			t.Errorf("name: got %q want %q", n, "SuperSmoother")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4675,6 +5866,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewSuperTrend(14, 2.0)
 		if err != nil {
 			t.Fatalf("new SuperTrend: %v", err)
+		}
+		if n := ind.Name(); n != "SuperTrend" {
+			t.Errorf("name: got %q want %q", n, "SuperTrend")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4688,6 +5882,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new T3: %v", err)
 		}
+		if n := ind.Name(); n != "T3" {
+			t.Errorf("name: got %q want %q", n, "T3")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4699,6 +5896,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TailRatio: %v", err)
 		}
+		if n := ind.Name(); n != "TailRatio" {
+			t.Errorf("name: got %q want %q", n, "TailRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4709,6 +5909,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTakerBuySellRatio()
 		if err != nil {
 			t.Fatalf("new TakerBuySellRatio: %v", err)
+		}
+		if n := ind.Name(); n != "TakerBuySellRatio" {
+			t.Errorf("name: got %q want %q", n, "TakerBuySellRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4722,6 +5925,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Takuri: %v", err)
 		}
+		if n := ind.Name(); n != "Takuri" {
+			t.Errorf("name: got %q want %q", n, "Takuri")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4732,6 +5938,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTasukiGap()
 		if err != nil {
 			t.Fatalf("new TasukiGap: %v", err)
+		}
+		if n := ind.Name(); n != "TasukiGap" {
+			t.Errorf("name: got %q want %q", n, "TasukiGap")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4744,6 +5953,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdCamouflage: %v", err)
 		}
+		if n := ind.Name(); n != "TDCamouflage" {
+			t.Errorf("name: got %q want %q", n, "TDCamouflage")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4754,6 +5966,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdClop()
 		if err != nil {
 			t.Fatalf("new TdClop: %v", err)
+		}
+		if n := ind.Name(); n != "TDClop" {
+			t.Errorf("name: got %q want %q", n, "TDClop")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4766,6 +5981,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdClopwin: %v", err)
 		}
+		if n := ind.Name(); n != "TDClopwin" {
+			t.Errorf("name: got %q want %q", n, "TDClopwin")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4776,6 +5994,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdCombo(3, 7, 14, 28)
 		if err != nil {
 			t.Fatalf("new TdCombo: %v", err)
+		}
+		if n := ind.Name(); n != "TDCombo" {
+			t.Errorf("name: got %q want %q", n, "TDCombo")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4788,6 +6009,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdCountdown: %v", err)
 		}
+		if n := ind.Name(); n != "TDCountdown" {
+			t.Errorf("name: got %q want %q", n, "TDCountdown")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4798,6 +6022,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdDWave(2)
 		if err != nil {
 			t.Fatalf("new TdDWave: %v", err)
+		}
+		if n := ind.Name(); n != "TDDWave" {
+			t.Errorf("name: got %q want %q", n, "TDDWave")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4810,6 +6037,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdDeMarker: %v", err)
 		}
+		if n := ind.Name(); n != "TDDeMarker" {
+			t.Errorf("name: got %q want %q", n, "TDDeMarker")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4821,6 +6051,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdDifferential: %v", err)
 		}
+		if n := ind.Name(); n != "TDDifferential" {
+			t.Errorf("name: got %q want %q", n, "TDDifferential")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4831,6 +6064,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdLines(3, 7)
 		if err != nil {
 			t.Fatalf("new TdLines: %v", err)
+		}
+		if n := ind.Name(); n != "TDLines" {
+			t.Errorf("name: got %q want %q", n, "TDLines")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4844,6 +6080,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdMovingAverage: %v", err)
 		}
+		if n := ind.Name(); n != "TDMovingAverage" {
+			t.Errorf("name: got %q want %q", n, "TDMovingAverage")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -4856,6 +6095,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdOpen: %v", err)
 		}
+		if n := ind.Name(); n != "TDOpen" {
+			t.Errorf("name: got %q want %q", n, "TDOpen")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4866,6 +6108,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdPressure(14)
 		if err != nil {
 			t.Fatalf("new TdPressure: %v", err)
+		}
+		if n := ind.Name(); n != "TDPressure" {
+			t.Errorf("name: got %q want %q", n, "TDPressure")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4878,6 +6123,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdPropulsion: %v", err)
 		}
+		if n := ind.Name(); n != "TDPropulsion" {
+			t.Errorf("name: got %q want %q", n, "TDPropulsion")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4888,6 +6136,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdRangeProjection()
 		if err != nil {
 			t.Fatalf("new TdRangeProjection: %v", err)
+		}
+		if n := ind.Name(); n != "TDRangeProjection" {
+			t.Errorf("name: got %q want %q", n, "TDRangeProjection")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4901,6 +6152,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdRei: %v", err)
 		}
+		if n := ind.Name(); n != "TDREI" {
+			t.Errorf("name: got %q want %q", n, "TDREI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4911,6 +6165,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdRiskLevel(3, 7)
 		if err != nil {
 			t.Fatalf("new TdRiskLevel: %v", err)
+		}
+		if n := ind.Name(); n != "TDRiskLevel" {
+			t.Errorf("name: got %q want %q", n, "TDRiskLevel")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4924,6 +6181,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdSequential: %v", err)
 		}
+		if n := ind.Name(); n != "TDSequential" {
+			t.Errorf("name: got %q want %q", n, "TDSequential")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -4936,6 +6196,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TdSetup: %v", err)
 		}
+		if n := ind.Name(); n != "TDSetup" {
+			t.Errorf("name: got %q want %q", n, "TDSetup")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4946,6 +6209,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTdTrap()
 		if err != nil {
 			t.Fatalf("new TdTrap: %v", err)
+		}
+		if n := ind.Name(); n != "TDTrap" {
+			t.Errorf("name: got %q want %q", n, "TDTrap")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4958,6 +6224,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Tema: %v", err)
 		}
+		if n := ind.Name(); n != "TEMA" {
+			t.Errorf("name: got %q want %q", n, "TEMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -4968,6 +6237,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTermStructureBasis()
 		if err != nil {
 			t.Fatalf("new TermStructureBasis: %v", err)
+		}
+		if n := ind.Name(); n != "TermStructureBasis" {
+			t.Errorf("name: got %q want %q", n, "TermStructureBasis")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -4981,6 +6253,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ThreeDrives: %v", err)
 		}
+		if n := ind.Name(); n != "ThreeDrives" {
+			t.Errorf("name: got %q want %q", n, "ThreeDrives")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -4991,6 +6266,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewThreeInside()
 		if err != nil {
 			t.Fatalf("new ThreeInside: %v", err)
+		}
+		if n := ind.Name(); n != "ThreeInside" {
+			t.Errorf("name: got %q want %q", n, "ThreeInside")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5003,6 +6281,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ThreeLineBreak: %v", err)
 		}
+		if n := ind.Name(); n != "ThreeLineBreak" {
+			t.Errorf("name: got %q want %q", n, "ThreeLineBreak")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5013,6 +6294,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewThreeLineBreakBars(3)
 		if err != nil {
 			t.Fatalf("new ThreeLineBreakBars: %v", err)
+		}
+		if n := ind.Name(); n != "ThreeLineBreakBars" {
+			t.Errorf("name: got %q want %q", n, "ThreeLineBreakBars")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5025,6 +6309,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ThreeLineStrike: %v", err)
 		}
+		if n := ind.Name(); n != "ThreeLineStrike" {
+			t.Errorf("name: got %q want %q", n, "ThreeLineStrike")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5035,6 +6322,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewThreeOutside()
 		if err != nil {
 			t.Fatalf("new ThreeOutside: %v", err)
+		}
+		if n := ind.Name(); n != "ThreeOutside" {
+			t.Errorf("name: got %q want %q", n, "ThreeOutside")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5047,6 +6337,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ThreeSoldiersOrCrows: %v", err)
 		}
+		if n := ind.Name(); n != "ThreeSoldiersOrCrows" {
+			t.Errorf("name: got %q want %q", n, "ThreeSoldiersOrCrows")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5057,6 +6350,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewThreeStarsInSouth()
 		if err != nil {
 			t.Fatalf("new ThreeStarsInSouth: %v", err)
+		}
+		if n := ind.Name(); n != "ThreeStarsInSouth" {
+			t.Errorf("name: got %q want %q", n, "ThreeStarsInSouth")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5069,6 +6365,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Thrusting: %v", err)
 		}
+		if n := ind.Name(); n != "Thrusting" {
+			t.Errorf("name: got %q want %q", n, "Thrusting")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5080,6 +6379,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TickBars: %v", err)
 		}
+		if n := ind.Name(); n != "TickBars" {
+			t.Errorf("name: got %q want %q", n, "TickBars")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0))
@@ -5090,6 +6392,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTickIndex()
 		if err != nil {
 			t.Fatalf("new TickIndex: %v", err)
+		}
+		if n := ind.Name(); n != "TickIndex" {
+			t.Errorf("name: got %q want %q", n, "TickIndex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5103,6 +6408,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Tii: %v", err)
 		}
+		if n := ind.Name(); n != "TII" {
+			t.Errorf("name: got %q want %q", n, "TII")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5114,6 +6422,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TimeBasedStop: %v", err)
 		}
+		if n := ind.Name(); n != "TimeBasedStop" {
+			t.Errorf("name: got %q want %q", n, "TimeBasedStop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5124,6 +6435,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTimeOfDayReturnProfile(24, 0)
 		if err != nil {
 			t.Fatalf("new TimeOfDayReturnProfile: %v", err)
+		}
+		if n := ind.Name(); n != "TimeOfDayReturnProfile" {
+			t.Errorf("name: got %q want %q", n, "TimeOfDayReturnProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5141,6 +6455,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TowerTopBottom: %v", err)
 		}
+		if n := ind.Name(); n != "TowerTopBottom" {
+			t.Errorf("name: got %q want %q", n, "TowerTopBottom")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5151,6 +6468,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTpoProfile(30, 50)
 		if err != nil {
 			t.Fatalf("new TpoProfile: %v", err)
+		}
+		if n := ind.Name(); n != "TpoProfile" {
+			t.Errorf("name: got %q want %q", n, "TpoProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5164,6 +6484,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TradeImbalance: %v", err)
 		}
+		if n := ind.Name(); n != "TradeImbalance" {
+			t.Errorf("name: got %q want %q", n, "TradeImbalance")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -5174,6 +6497,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTradeSignAutocorrelation(20)
 		if err != nil {
 			t.Fatalf("new TradeSignAutocorrelation: %v", err)
+		}
+		if n := ind.Name(); n != "TradeSignAutocorrelation" {
+			t.Errorf("name: got %q want %q", n, "TradeSignAutocorrelation")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5186,6 +6512,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TradeVolumeIndex: %v", err)
 		}
+		if n := ind.Name(); n != "TradeVolumeIndex" {
+			t.Errorf("name: got %q want %q", n, "TradeVolumeIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5196,6 +6525,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTrendLabel(14)
 		if err != nil {
 			t.Fatalf("new TrendLabel: %v", err)
+		}
+		if n := ind.Name(); n != "TrendLabel" {
+			t.Errorf("name: got %q want %q", n, "TrendLabel")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5208,6 +6540,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TrendStrengthIndex: %v", err)
 		}
+		if n := ind.Name(); n != "TrendStrengthIndex" {
+			t.Errorf("name: got %q want %q", n, "TrendStrengthIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5218,6 +6553,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTrendflex(14)
 		if err != nil {
 			t.Fatalf("new Trendflex: %v", err)
+		}
+		if n := ind.Name(); n != "Trendflex" {
+			t.Errorf("name: got %q want %q", n, "Trendflex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5230,6 +6568,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TreynorRatio: %v", err)
 		}
+		if n := ind.Name(); n != "TreynorRatio" {
+			t.Errorf("name: got %q want %q", n, "TreynorRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -5240,6 +6581,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTriangle()
 		if err != nil {
 			t.Fatalf("new Triangle: %v", err)
+		}
+		if n := ind.Name(); n != "Triangle" {
+			t.Errorf("name: got %q want %q", n, "Triangle")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5252,6 +6596,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Trima: %v", err)
 		}
+		if n := ind.Name(); n != "TRIMA" {
+			t.Errorf("name: got %q want %q", n, "TRIMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5262,6 +6609,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTrin()
 		if err != nil {
 			t.Fatalf("new Trin: %v", err)
+		}
+		if n := ind.Name(); n != "Trin" {
+			t.Errorf("name: got %q want %q", n, "Trin")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5275,6 +6625,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TripleTopBottom: %v", err)
 		}
+		if n := ind.Name(); n != "TripleTopBottom" {
+			t.Errorf("name: got %q want %q", n, "TripleTopBottom")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5285,6 +6638,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTristar()
 		if err != nil {
 			t.Fatalf("new Tristar: %v", err)
+		}
+		if n := ind.Name(); n != "Tristar" {
+			t.Errorf("name: got %q want %q", n, "Tristar")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5297,6 +6653,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Trix: %v", err)
 		}
+		if n := ind.Name(); n != "TRIX" {
+			t.Errorf("name: got %q want %q", n, "TRIX")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5307,6 +6666,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTrueRange()
 		if err != nil {
 			t.Fatalf("new TrueRange: %v", err)
+		}
+		if n := ind.Name(); n != "TrueRange" {
+			t.Errorf("name: got %q want %q", n, "TrueRange")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5319,6 +6681,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Tsf: %v", err)
 		}
+		if n := ind.Name(); n != "TSF" {
+			t.Errorf("name: got %q want %q", n, "TSF")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5329,6 +6694,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTsfOscillator(14)
 		if err != nil {
 			t.Fatalf("new TsfOscillator: %v", err)
+		}
+		if n := ind.Name(); n != "TsfOscillator" {
+			t.Errorf("name: got %q want %q", n, "TsfOscillator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5341,6 +6709,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Tsi: %v", err)
 		}
+		if n := ind.Name(); n != "TSI" {
+			t.Errorf("name: got %q want %q", n, "TSI")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5352,6 +6723,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Tsv: %v", err)
 		}
+		if n := ind.Name(); n != "TSV" {
+			t.Errorf("name: got %q want %q", n, "TSV")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5362,6 +6736,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTtmSqueeze(14, 2.0, 0.5)
 		if err != nil {
 			t.Fatalf("new TtmSqueeze: %v", err)
+		}
+		if n := ind.Name(); n != "TtmSqueeze" {
+			t.Errorf("name: got %q want %q", n, "TtmSqueeze")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5375,6 +6752,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TtmTrend: %v", err)
 		}
+		if n := ind.Name(); n != "TtmTrend" {
+			t.Errorf("name: got %q want %q", n, "TtmTrend")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5385,6 +6765,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTurnOfMonth(3.0, 3.0, 0)
 		if err != nil {
 			t.Fatalf("new TurnOfMonth: %v", err)
+		}
+		if n := ind.Name(); n != "TurnOfMonth" {
+			t.Errorf("name: got %q want %q", n, "TurnOfMonth")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5397,6 +6780,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Tweezer: %v", err)
 		}
+		if n := ind.Name(); n != "Tweezer" {
+			t.Errorf("name: got %q want %q", n, "Tweezer")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5407,6 +6793,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTwiggsMoneyFlow(14)
 		if err != nil {
 			t.Fatalf("new TwiggsMoneyFlow: %v", err)
+		}
+		if n := ind.Name(); n != "TwiggsMoneyFlow" {
+			t.Errorf("name: got %q want %q", n, "TwiggsMoneyFlow")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5419,6 +6808,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new TwoCrows: %v", err)
 		}
+		if n := ind.Name(); n != "TwoCrows" {
+			t.Errorf("name: got %q want %q", n, "TwoCrows")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5429,6 +6821,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewTypicalPrice()
 		if err != nil {
 			t.Fatalf("new TypicalPrice: %v", err)
+		}
+		if n := ind.Name(); n != "TypicalPrice" {
+			t.Errorf("name: got %q want %q", n, "TypicalPrice")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5441,6 +6836,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new UlcerIndex: %v", err)
 		}
+		if n := ind.Name(); n != "UlcerIndex" {
+			t.Errorf("name: got %q want %q", n, "UlcerIndex")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5451,6 +6849,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewUltimateOscillator(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new UltimateOscillator: %v", err)
+		}
+		if n := ind.Name(); n != "UltimateOscillator" {
+			t.Errorf("name: got %q want %q", n, "UltimateOscillator")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5463,6 +6864,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new UniqueThreeRiver: %v", err)
 		}
+		if n := ind.Name(); n != "UniqueThreeRiver" {
+			t.Errorf("name: got %q want %q", n, "UniqueThreeRiver")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5474,6 +6878,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new UniversalOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "UniversalOscillator" {
+			t.Errorf("name: got %q want %q", n, "UniversalOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5484,6 +6891,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewUpDownVolumeRatio()
 		if err != nil {
 			t.Fatalf("new UpDownVolumeRatio: %v", err)
+		}
+		if n := ind.Name(); n != "UpDownVolumeRatio" {
+			t.Errorf("name: got %q want %q", n, "UpDownVolumeRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5497,6 +6907,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new UpsideGapThreeMethods: %v", err)
 		}
+		if n := ind.Name(); n != "UpsideGapThreeMethods" {
+			t.Errorf("name: got %q want %q", n, "UpsideGapThreeMethods")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5507,6 +6920,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewUpsideGapTwoCrows()
 		if err != nil {
 			t.Fatalf("new UpsideGapTwoCrows: %v", err)
+		}
+		if n := ind.Name(); n != "UpsideGapTwoCrows" {
+			t.Errorf("name: got %q want %q", n, "UpsideGapTwoCrows")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5519,6 +6935,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new UpsidePotentialRatio: %v", err)
 		}
+		if n := ind.Name(); n != "UpsidePotentialRatio" {
+			t.Errorf("name: got %q want %q", n, "UpsidePotentialRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5529,6 +6948,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewValueArea(20, 50, 0.7)
 		if err != nil {
 			t.Fatalf("new ValueArea: %v", err)
+		}
+		if n := ind.Name(); n != "ValueArea" {
+			t.Errorf("name: got %q want %q", n, "ValueArea")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5542,6 +6964,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ValueAtRisk: %v", err)
 		}
+		if n := ind.Name(); n != "ValueAtRisk" {
+			t.Errorf("name: got %q want %q", n, "ValueAtRisk")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5552,6 +6977,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVariance(14)
 		if err != nil {
 			t.Fatalf("new Variance: %v", err)
+		}
+		if n := ind.Name(); n != "Variance" {
+			t.Errorf("name: got %q want %q", n, "Variance")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5564,6 +6992,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VarianceRatio: %v", err)
 		}
+		if n := ind.Name(); n != "VarianceRatio" {
+			t.Errorf("name: got %q want %q", n, "VarianceRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[0])}
@@ -5574,6 +7005,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVerticalHorizontalFilter(14)
 		if err != nil {
 			t.Fatalf("new VerticalHorizontalFilter: %v", err)
+		}
+		if n := ind.Name(); n != "VerticalHorizontalFilter" {
+			t.Errorf("name: got %q want %q", n, "VerticalHorizontalFilter")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5586,6 +7020,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Vidya: %v", err)
 		}
+		if n := ind.Name(); n != "VIDYA" {
+			t.Errorf("name: got %q want %q", n, "VIDYA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5596,6 +7033,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVolatilityCone(3, 7)
 		if err != nil {
 			t.Fatalf("new VolatilityCone: %v", err)
+		}
+		if n := ind.Name(); n != "VolatilityCone" {
+			t.Errorf("name: got %q want %q", n, "VolatilityCone")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5609,6 +7049,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VolatilityOfVolatility: %v", err)
 		}
+		if n := ind.Name(); n != "VolatilityOfVolatility" {
+			t.Errorf("name: got %q want %q", n, "VolatilityOfVolatility")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5619,6 +7062,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVolatilityRatio(14)
 		if err != nil {
 			t.Fatalf("new VolatilityRatio: %v", err)
+		}
+		if n := ind.Name(); n != "VolatilityRatio" {
+			t.Errorf("name: got %q want %q", n, "VolatilityRatio")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5631,6 +7077,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VoltyStop: %v", err)
 		}
+		if n := ind.Name(); n != "VoltyStop" {
+			t.Errorf("name: got %q want %q", n, "VoltyStop")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5642,6 +7091,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VolumeBars: %v", err)
 		}
+		if n := ind.Name(); n != "VolumeBars" {
+			t.Errorf("name: got %q want %q", n, "VolumeBars")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0))
@@ -5652,6 +7104,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVolumeByTimeProfile(24, 0)
 		if err != nil {
 			t.Fatalf("new VolumeByTimeProfile: %v", err)
+		}
+		if n := ind.Name(); n != "VolumeByTimeProfile" {
+			t.Errorf("name: got %q want %q", n, "VolumeByTimeProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5669,6 +7124,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VolumeOscillator: %v", err)
 		}
+		if n := ind.Name(); n != "VolumeOscillator" {
+			t.Errorf("name: got %q want %q", n, "VolumeOscillator")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5680,6 +7138,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VolumePriceTrend: %v", err)
 		}
+		if n := ind.Name(); n != "VPT" {
+			t.Errorf("name: got %q want %q", n, "VPT")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5690,6 +7151,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVolumeProfile(20, 50)
 		if err != nil {
 			t.Fatalf("new VolumeProfile: %v", err)
+		}
+		if n := ind.Name(); n != "VolumeProfile" {
+			t.Errorf("name: got %q want %q", n, "VolumeProfile")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5703,6 +7167,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VolumeRsi: %v", err)
 		}
+		if n := ind.Name(); n != "VolumeRsi" {
+			t.Errorf("name: got %q want %q", n, "VolumeRsi")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5713,6 +7180,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVolumeWeightedMacd(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new VolumeWeightedMacd: %v", err)
+		}
+		if n := ind.Name(); n != "VolumeWeightedMacd" {
+			t.Errorf("name: got %q want %q", n, "VolumeWeightedMacd")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5726,6 +7196,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new VolumeWeightedSr: %v", err)
 		}
+		if n := ind.Name(); n != "VolumeWeightedSr" {
+			t.Errorf("name: got %q want %q", n, "VolumeWeightedSr")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -5737,6 +7210,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVortex(14)
 		if err != nil {
 			t.Fatalf("new Vortex: %v", err)
+		}
+		if n := ind.Name(); n != "Vortex" {
+			t.Errorf("name: got %q want %q", n, "Vortex")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5750,6 +7226,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Vpin: %v", err)
 		}
+		if n := ind.Name(); n != "Vpin" {
+			t.Errorf("name: got %q want %q", n, "Vpin")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
@@ -5761,6 +7240,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Vwap: %v", err)
 		}
+		if n := ind.Name(); n != "VWAP" {
+			t.Errorf("name: got %q want %q", n, "VWAP")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5771,6 +7253,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVwapStdDevBands(2.0)
 		if err != nil {
 			t.Fatalf("new VwapStdDevBands: %v", err)
+		}
+		if n := ind.Name(); n != "VwapStdDevBands" {
+			t.Errorf("name: got %q want %q", n, "VwapStdDevBands")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5784,6 +7269,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Vwma: %v", err)
 		}
+		if n := ind.Name(); n != "VWMA" {
+			t.Errorf("name: got %q want %q", n, "VWMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5794,6 +7282,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewVzo(14)
 		if err != nil {
 			t.Fatalf("new Vzo: %v", err)
+		}
+		if n := ind.Name(); n != "VZO" {
+			t.Errorf("name: got %q want %q", n, "VZO")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5806,6 +7297,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Wad: %v", err)
 		}
+		if n := ind.Name(); n != "Wad" {
+			t.Errorf("name: got %q want %q", n, "Wad")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5817,6 +7311,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new WavePm: %v", err)
 		}
+		if n := ind.Name(); n != "WavePm" {
+			t.Errorf("name: got %q want %q", n, "WavePm")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5827,6 +7324,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewWaveTrend(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new WaveTrend: %v", err)
+		}
+		if n := ind.Name(); n != "WaveTrend" {
+			t.Errorf("name: got %q want %q", n, "WaveTrend")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5840,6 +7340,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Wedge: %v", err)
 		}
+		if n := ind.Name(); n != "Wedge" {
+			t.Errorf("name: got %q want %q", n, "Wedge")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5850,6 +7353,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewWeightedClose()
 		if err != nil {
 			t.Fatalf("new WeightedClose: %v", err)
+		}
+		if n := ind.Name(); n != "WeightedClose" {
+			t.Errorf("name: got %q want %q", n, "WeightedClose")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5862,6 +7368,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new WickRatio: %v", err)
 		}
+		if n := ind.Name(); n != "WickRatio" {
+			t.Errorf("name: got %q want %q", n, "WickRatio")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5872,6 +7381,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewWilliamsFractals()
 		if err != nil {
 			t.Fatalf("new WilliamsFractals: %v", err)
+		}
+		if n := ind.Name(); n != "WilliamsFractals" {
+			t.Errorf("name: got %q want %q", n, "WilliamsFractals")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5885,6 +7397,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new WilliamsR: %v", err)
 		}
+		if n := ind.Name(); n != "WilliamsR" {
+			t.Errorf("name: got %q want %q", n, "WilliamsR")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5895,6 +7410,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewWinRate(14)
 		if err != nil {
 			t.Fatalf("new WinRate: %v", err)
+		}
+		if n := ind.Name(); n != "WinRate" {
+			t.Errorf("name: got %q want %q", n, "WinRate")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5907,6 +7425,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new Wma: %v", err)
 		}
+		if n := ind.Name(); n != "WMA" {
+			t.Errorf("name: got %q want %q", n, "WMA")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5917,6 +7438,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewWoodiePivots()
 		if err != nil {
 			t.Fatalf("new WoodiePivots: %v", err)
+		}
+		if n := ind.Name(); n != "WoodiePivots" {
+			t.Errorf("name: got %q want %q", n, "WoodiePivots")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5930,6 +7454,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new YangZhangVolatility: %v", err)
 		}
+		if n := ind.Name(); n != "YangZhangVolatility" {
+			t.Errorf("name: got %q want %q", n, "YangZhangVolatility")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
@@ -5940,6 +7467,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewYoyoExit(14, 2.0)
 		if err != nil {
 			t.Fatalf("new YoyoExit: %v", err)
+		}
+		if n := ind.Name(); n != "YoyoExit" {
+			t.Errorf("name: got %q want %q", n, "YoyoExit")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5952,6 +7482,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ZScore: %v", err)
 		}
+		if n := ind.Name(); n != "ZScore" {
+			t.Errorf("name: got %q want %q", n, "ZScore")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
@@ -5962,6 +7495,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewZeroLagMacd(3, 7, 14)
 		if err != nil {
 			t.Fatalf("new ZeroLagMacd: %v", err)
+		}
+		if n := ind.Name(); n != "ZeroLagMACD" {
+			t.Errorf("name: got %q want %q", n, "ZeroLagMACD")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
@@ -5975,6 +7511,9 @@ func TestGoldenAll(t *testing.T) {
 		if err != nil {
 			t.Fatalf("new ZigZag: %v", err)
 		}
+		if n := ind.Name(); n != "ZigZag" {
+			t.Errorf("name: got %q want %q", n, "ZigZag")
+		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
@@ -5986,6 +7525,9 @@ func TestGoldenAll(t *testing.T) {
 		ind, err := NewZlema(14)
 		if err != nil {
 			t.Fatalf("new Zlema: %v", err)
+		}
+		if n := ind.Name(); n != "ZLEMA" {
+			t.Errorf("name: got %q want %q", n, "ZLEMA")
 		}
 		got := make([][]float64, len(rows))
 		for i, r := range rows {

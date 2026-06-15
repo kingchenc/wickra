@@ -159,6 +159,7 @@ public class GoldenAllTests
     public void Golden_AbandonedBaby()
     {
         using var ind = new Wickra.AbandonedBaby();
+        Assert.Equal("AbandonedBaby", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -171,6 +172,7 @@ public class GoldenAllTests
     public void Golden_Abcd()
     {
         using var ind = new Wickra.Abcd();
+        Assert.Equal("Abcd", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -183,6 +185,7 @@ public class GoldenAllTests
     public void Golden_AbsoluteBreadthIndex()
     {
         using var ind = new Wickra.AbsoluteBreadthIndex();
+        Assert.Equal("AbsoluteBreadthIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -196,6 +199,7 @@ public class GoldenAllTests
     public void Golden_AccelerationBands()
     {
         using var ind = new Wickra.AccelerationBands(14, 2.0);
+        Assert.Equal("AccelerationBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -208,6 +212,7 @@ public class GoldenAllTests
     public void Golden_AcceleratorOscillator()
     {
         using var ind = new Wickra.AcceleratorOscillator(3, 7, 14);
+        Assert.Equal("AcceleratorOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -220,6 +225,7 @@ public class GoldenAllTests
     public void Golden_AdOscillator()
     {
         using var ind = new Wickra.AdOscillator();
+        Assert.Equal("ADOSC", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -232,6 +238,7 @@ public class GoldenAllTests
     public void Golden_AdVolumeLine()
     {
         using var ind = new Wickra.AdVolumeLine();
+        Assert.Equal("AdVolumeLine", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -245,6 +252,7 @@ public class GoldenAllTests
     public void Golden_AdaptiveCci()
     {
         using var ind = new Wickra.AdaptiveCci(14);
+        Assert.Equal("AdaptiveCci", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -257,6 +265,7 @@ public class GoldenAllTests
     public void Golden_AdaptiveCycle()
     {
         using var ind = new Wickra.AdaptiveCycle();
+        Assert.Equal("AdaptiveCycle", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -269,6 +278,7 @@ public class GoldenAllTests
     public void Golden_AdaptiveLaguerreFilter()
     {
         using var ind = new Wickra.AdaptiveLaguerreFilter(20);
+        Assert.Equal("AdaptiveLaguerre", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -281,6 +291,7 @@ public class GoldenAllTests
     public void Golden_AdaptiveRsi()
     {
         using var ind = new Wickra.AdaptiveRsi(14);
+        Assert.Equal("AdaptiveRsi", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -293,6 +304,7 @@ public class GoldenAllTests
     public void Golden_Adl()
     {
         using var ind = new Wickra.Adl();
+        Assert.Equal("ADL", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -305,6 +317,7 @@ public class GoldenAllTests
     public void Golden_AdvanceBlock()
     {
         using var ind = new Wickra.AdvanceBlock();
+        Assert.Equal("AdvanceBlock", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -317,6 +330,7 @@ public class GoldenAllTests
     public void Golden_AdvanceDecline()
     {
         using var ind = new Wickra.AdvanceDecline();
+        Assert.Equal("AdvanceDecline", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -330,6 +344,7 @@ public class GoldenAllTests
     public void Golden_AdvanceDeclineRatio()
     {
         using var ind = new Wickra.AdvanceDeclineRatio();
+        Assert.Equal("AdvanceDeclineRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -343,6 +358,7 @@ public class GoldenAllTests
     public void Golden_Adx()
     {
         using var ind = new Wickra.Adx(14);
+        Assert.Equal("ADX", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -355,6 +371,7 @@ public class GoldenAllTests
     public void Golden_Adxr()
     {
         using var ind = new Wickra.Adxr(14);
+        Assert.Equal("ADXR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -367,6 +384,7 @@ public class GoldenAllTests
     public void Golden_Alligator()
     {
         using var ind = new Wickra.Alligator(3, 7, 14);
+        Assert.Equal("Alligator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -379,6 +397,7 @@ public class GoldenAllTests
     public void Golden_Alma()
     {
         using var ind = new Wickra.Alma(9, 0.85, 6.0);
+        Assert.Equal("ALMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -391,6 +410,7 @@ public class GoldenAllTests
     public void Golden_Alpha()
     {
         using var ind = new Wickra.Alpha(14, 2.0);
+        Assert.Equal("Alpha", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -403,6 +423,7 @@ public class GoldenAllTests
     public void Golden_AmihudIlliquidity()
     {
         using var ind = new Wickra.AmihudIlliquidity(20);
+        Assert.Equal("AmihudIlliquidity", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -415,6 +436,7 @@ public class GoldenAllTests
     public void Golden_AnchoredRsi()
     {
         using var ind = new Wickra.AnchoredRsi();
+        Assert.Equal("AnchoredRSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -427,6 +449,7 @@ public class GoldenAllTests
     public void Golden_AnchoredVwap()
     {
         using var ind = new Wickra.AnchoredVwap();
+        Assert.Equal("AnchoredVWAP", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -439,6 +462,7 @@ public class GoldenAllTests
     public void Golden_AndrewsPitchfork()
     {
         using var ind = new Wickra.AndrewsPitchfork(14);
+        Assert.Equal("AndrewsPitchfork", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -451,6 +475,7 @@ public class GoldenAllTests
     public void Golden_Apo()
     {
         using var ind = new Wickra.Apo(3, 7);
+        Assert.Equal("APO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -463,6 +488,7 @@ public class GoldenAllTests
     public void Golden_Aroon()
     {
         using var ind = new Wickra.Aroon(14);
+        Assert.Equal("Aroon", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -475,6 +501,7 @@ public class GoldenAllTests
     public void Golden_AroonOscillator()
     {
         using var ind = new Wickra.AroonOscillator(14);
+        Assert.Equal("AroonOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -487,6 +514,7 @@ public class GoldenAllTests
     public void Golden_Atr()
     {
         using var ind = new Wickra.Atr(14);
+        Assert.Equal("ATR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -499,6 +527,7 @@ public class GoldenAllTests
     public void Golden_AtrBands()
     {
         using var ind = new Wickra.AtrBands(14, 2.0);
+        Assert.Equal("AtrBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -511,6 +540,7 @@ public class GoldenAllTests
     public void Golden_AtrRatchet()
     {
         using var ind = new Wickra.AtrRatchet(14, 2.0, 0.5);
+        Assert.Equal("AtrRatchet", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -523,6 +553,7 @@ public class GoldenAllTests
     public void Golden_AtrTrailingStop()
     {
         using var ind = new Wickra.AtrTrailingStop(14, 2.0);
+        Assert.Equal("AtrTrailingStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -535,6 +566,7 @@ public class GoldenAllTests
     public void Golden_AutoFib()
     {
         using var ind = new Wickra.AutoFib();
+        Assert.Equal("AutoFib", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -547,6 +579,7 @@ public class GoldenAllTests
     public void Golden_Autocorrelation()
     {
         using var ind = new Wickra.Autocorrelation(10, 1);
+        Assert.Equal("Autocorrelation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -559,6 +592,7 @@ public class GoldenAllTests
     public void Golden_AutocorrelationPeriodogram()
     {
         using var ind = new Wickra.AutocorrelationPeriodogram(10, 48);
+        Assert.Equal("AutocorrelationPeriodogram", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -571,6 +605,7 @@ public class GoldenAllTests
     public void Golden_AverageDailyRange()
     {
         using var ind = new Wickra.AverageDailyRange(14, 0);
+        Assert.Equal("AverageDailyRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -583,6 +618,7 @@ public class GoldenAllTests
     public void Golden_AverageDrawdown()
     {
         using var ind = new Wickra.AverageDrawdown(14);
+        Assert.Equal("AverageDrawdown", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -595,6 +631,7 @@ public class GoldenAllTests
     public void Golden_AvgPrice()
     {
         using var ind = new Wickra.AvgPrice();
+        Assert.Equal("AVGPRICE", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -607,6 +644,7 @@ public class GoldenAllTests
     public void Golden_AwesomeOscillator()
     {
         using var ind = new Wickra.AwesomeOscillator(3, 7);
+        Assert.Equal("AwesomeOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -619,6 +657,7 @@ public class GoldenAllTests
     public void Golden_AwesomeOscillatorHistogram()
     {
         using var ind = new Wickra.AwesomeOscillatorHistogram(3, 7, 14);
+        Assert.Equal("AwesomeOscillatorHistogram", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -631,6 +670,7 @@ public class GoldenAllTests
     public void Golden_BalanceOfPower()
     {
         using var ind = new Wickra.BalanceOfPower();
+        Assert.Equal("BalanceOfPower", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -643,6 +683,7 @@ public class GoldenAllTests
     public void Golden_BandpassFilter()
     {
         using var ind = new Wickra.BandpassFilter(20, 0.3);
+        Assert.Equal("BandpassFilter", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -655,6 +696,7 @@ public class GoldenAllTests
     public void Golden_Bat()
     {
         using var ind = new Wickra.Bat();
+        Assert.Equal("Bat", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -667,6 +709,7 @@ public class GoldenAllTests
     public void Golden_BeltHold()
     {
         using var ind = new Wickra.BeltHold();
+        Assert.Equal("BeltHold", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -679,6 +722,7 @@ public class GoldenAllTests
     public void Golden_Beta()
     {
         using var ind = new Wickra.Beta(14);
+        Assert.Equal("Beta", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -691,6 +735,7 @@ public class GoldenAllTests
     public void Golden_BetaNeutralSpread()
     {
         using var ind = new Wickra.BetaNeutralSpread(14);
+        Assert.Equal("BetaNeutralSpread", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -703,6 +748,7 @@ public class GoldenAllTests
     public void Golden_BetterVolume()
     {
         using var ind = new Wickra.BetterVolume(14);
+        Assert.Equal("BetterVolume", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -715,6 +761,7 @@ public class GoldenAllTests
     public void Golden_BipowerVariation()
     {
         using var ind = new Wickra.BipowerVariation(14);
+        Assert.Equal("BipowerVariation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -727,6 +774,7 @@ public class GoldenAllTests
     public void Golden_BodySizePct()
     {
         using var ind = new Wickra.BodySizePct();
+        Assert.Equal("BodySizePct", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -739,6 +787,7 @@ public class GoldenAllTests
     public void Golden_BollingerBands()
     {
         using var ind = new Wickra.BollingerBands(20, 2.0);
+        Assert.Equal("BollingerBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -751,6 +800,7 @@ public class GoldenAllTests
     public void Golden_BollingerBandwidth()
     {
         using var ind = new Wickra.BollingerBandwidth(14, 2.0);
+        Assert.Equal("BollingerBandwidth", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -763,6 +813,7 @@ public class GoldenAllTests
     public void Golden_BomarBands()
     {
         using var ind = new Wickra.BomarBands(4, 0.85);
+        Assert.Equal("BomarBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -775,6 +826,7 @@ public class GoldenAllTests
     public void Golden_BreadthThrust()
     {
         using var ind = new Wickra.BreadthThrust(10);
+        Assert.Equal("BreadthThrust", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -788,6 +840,7 @@ public class GoldenAllTests
     public void Golden_Breakaway()
     {
         using var ind = new Wickra.Breakaway();
+        Assert.Equal("Breakaway", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -800,6 +853,7 @@ public class GoldenAllTests
     public void Golden_BullishPercentIndex()
     {
         using var ind = new Wickra.BullishPercentIndex();
+        Assert.Equal("BullishPercentIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -813,6 +867,7 @@ public class GoldenAllTests
     public void Golden_BurkeRatio()
     {
         using var ind = new Wickra.BurkeRatio(14);
+        Assert.Equal("BurkeRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -825,6 +880,7 @@ public class GoldenAllTests
     public void Golden_Butterfly()
     {
         using var ind = new Wickra.Butterfly();
+        Assert.Equal("Butterfly", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -837,6 +893,7 @@ public class GoldenAllTests
     public void Golden_CalendarSpread()
     {
         using var ind = new Wickra.CalendarSpread();
+        Assert.Equal("CalendarSpread", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -850,6 +907,7 @@ public class GoldenAllTests
     public void Golden_CalmarRatio()
     {
         using var ind = new Wickra.CalmarRatio(14);
+        Assert.Equal("CalmarRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -862,6 +920,7 @@ public class GoldenAllTests
     public void Golden_Camarilla()
     {
         using var ind = new Wickra.Camarilla();
+        Assert.Equal("Camarilla", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -874,6 +933,7 @@ public class GoldenAllTests
     public void Golden_CandleVolume()
     {
         using var ind = new Wickra.CandleVolume(14);
+        Assert.Equal("CandleVolume", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -886,6 +946,7 @@ public class GoldenAllTests
     public void Golden_Cci()
     {
         using var ind = new Wickra.Cci(14);
+        Assert.Equal("CCI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -898,6 +959,7 @@ public class GoldenAllTests
     public void Golden_CenterOfGravity()
     {
         using var ind = new Wickra.CenterOfGravity(14);
+        Assert.Equal("CenterOfGravity", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -910,6 +972,7 @@ public class GoldenAllTests
     public void Golden_CentralPivotRange()
     {
         using var ind = new Wickra.CentralPivotRange();
+        Assert.Equal("CentralPivotRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -922,6 +985,7 @@ public class GoldenAllTests
     public void Golden_Cfo()
     {
         using var ind = new Wickra.Cfo(14);
+        Assert.Equal("CFO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -934,6 +998,7 @@ public class GoldenAllTests
     public void Golden_ChaikinMoneyFlow()
     {
         using var ind = new Wickra.ChaikinMoneyFlow(20);
+        Assert.Equal("CMF", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -946,6 +1011,7 @@ public class GoldenAllTests
     public void Golden_ChaikinOscillator()
     {
         using var ind = new Wickra.ChaikinOscillator(3, 7);
+        Assert.Equal("ChaikinOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -958,6 +1024,7 @@ public class GoldenAllTests
     public void Golden_ChaikinVolatility()
     {
         using var ind = new Wickra.ChaikinVolatility(3, 7);
+        Assert.Equal("ChaikinVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -970,6 +1037,7 @@ public class GoldenAllTests
     public void Golden_ChandeKrollStop()
     {
         using var ind = new Wickra.ChandeKrollStop(3, 2.0, 7);
+        Assert.Equal("ChandeKrollStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -982,6 +1050,7 @@ public class GoldenAllTests
     public void Golden_ChandelierExit()
     {
         using var ind = new Wickra.ChandelierExit(14, 2.0);
+        Assert.Equal("ChandelierExit", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -994,6 +1063,7 @@ public class GoldenAllTests
     public void Golden_ChoppinessIndex()
     {
         using var ind = new Wickra.ChoppinessIndex(14);
+        Assert.Equal("ChoppinessIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1006,6 +1076,7 @@ public class GoldenAllTests
     public void Golden_ClassicPivots()
     {
         using var ind = new Wickra.ClassicPivots();
+        Assert.Equal("ClassicPivots", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1018,6 +1089,7 @@ public class GoldenAllTests
     public void Golden_CloseVsOpen()
     {
         using var ind = new Wickra.CloseVsOpen();
+        Assert.Equal("CloseVsOpen", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1030,6 +1102,7 @@ public class GoldenAllTests
     public void Golden_ClosingMarubozu()
     {
         using var ind = new Wickra.ClosingMarubozu();
+        Assert.Equal("ClosingMarubozu", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1042,6 +1115,7 @@ public class GoldenAllTests
     public void Golden_Cmo()
     {
         using var ind = new Wickra.Cmo(14);
+        Assert.Equal("CMO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1054,6 +1128,7 @@ public class GoldenAllTests
     public void Golden_CoefficientOfVariation()
     {
         using var ind = new Wickra.CoefficientOfVariation(14);
+        Assert.Equal("CoefficientOfVariation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1066,6 +1141,7 @@ public class GoldenAllTests
     public void Golden_Cointegration()
     {
         using var ind = new Wickra.Cointegration(40, 1);
+        Assert.Equal("Cointegration", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1078,6 +1154,7 @@ public class GoldenAllTests
     public void Golden_CommonSenseRatio()
     {
         using var ind = new Wickra.CommonSenseRatio(14);
+        Assert.Equal("CommonSenseRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1090,6 +1167,7 @@ public class GoldenAllTests
     public void Golden_CompositeProfile()
     {
         using var ind = new Wickra.CompositeProfile(20, 24, 0.7);
+        Assert.Equal("CompositeProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1102,6 +1180,7 @@ public class GoldenAllTests
     public void Golden_ConcealingBabySwallow()
     {
         using var ind = new Wickra.ConcealingBabySwallow();
+        Assert.Equal("ConcealingBabySwallow", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1114,6 +1193,7 @@ public class GoldenAllTests
     public void Golden_ConditionalValueAtRisk()
     {
         using var ind = new Wickra.ConditionalValueAtRisk(20, 0.95);
+        Assert.Equal("ConditionalValueAtRisk", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1126,6 +1206,7 @@ public class GoldenAllTests
     public void Golden_ConnorsRsi()
     {
         using var ind = new Wickra.ConnorsRsi(3, 7, 14);
+        Assert.Equal("ConnorsRSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1138,6 +1219,7 @@ public class GoldenAllTests
     public void Golden_Coppock()
     {
         using var ind = new Wickra.Coppock(3, 7, 14);
+        Assert.Equal("Coppock", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1150,6 +1232,7 @@ public class GoldenAllTests
     public void Golden_CorrelationTrendIndicator()
     {
         using var ind = new Wickra.CorrelationTrendIndicator(14);
+        Assert.Equal("CorrelationTrendIndicator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1162,6 +1245,7 @@ public class GoldenAllTests
     public void Golden_Counterattack()
     {
         using var ind = new Wickra.Counterattack();
+        Assert.Equal("Counterattack", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1174,6 +1258,7 @@ public class GoldenAllTests
     public void Golden_Crab()
     {
         using var ind = new Wickra.Crab();
+        Assert.Equal("Crab", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1186,6 +1271,7 @@ public class GoldenAllTests
     public void Golden_CumulativeVolumeDelta()
     {
         using var ind = new Wickra.CumulativeVolumeDelta();
+        Assert.Equal("CumulativeVolumeDelta", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1198,6 +1284,7 @@ public class GoldenAllTests
     public void Golden_CumulativeVolumeIndex()
     {
         using var ind = new Wickra.CumulativeVolumeIndex();
+        Assert.Equal("CumulativeVolumeIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1211,6 +1298,7 @@ public class GoldenAllTests
     public void Golden_CupAndHandle()
     {
         using var ind = new Wickra.CupAndHandle();
+        Assert.Equal("CupAndHandle", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1223,6 +1311,7 @@ public class GoldenAllTests
     public void Golden_CyberneticCycle()
     {
         using var ind = new Wickra.CyberneticCycle(14);
+        Assert.Equal("CyberneticCycle", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1235,6 +1324,7 @@ public class GoldenAllTests
     public void Golden_Cypher()
     {
         using var ind = new Wickra.Cypher();
+        Assert.Equal("Cypher", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1247,6 +1337,7 @@ public class GoldenAllTests
     public void Golden_DayOfWeekProfile()
     {
         using var ind = new Wickra.DayOfWeekProfile(0);
+        Assert.Equal("DayOfWeekProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1260,6 +1351,7 @@ public class GoldenAllTests
     public void Golden_Decycler()
     {
         using var ind = new Wickra.Decycler(14);
+        Assert.Equal("Decycler", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1272,6 +1364,7 @@ public class GoldenAllTests
     public void Golden_DecyclerOscillator()
     {
         using var ind = new Wickra.DecyclerOscillator(3, 7);
+        Assert.Equal("DecyclerOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1284,6 +1377,7 @@ public class GoldenAllTests
     public void Golden_Dema()
     {
         using var ind = new Wickra.Dema(14);
+        Assert.Equal("DEMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1296,6 +1390,7 @@ public class GoldenAllTests
     public void Golden_DemandIndex()
     {
         using var ind = new Wickra.DemandIndex(14);
+        Assert.Equal("DemandIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1308,6 +1403,7 @@ public class GoldenAllTests
     public void Golden_DemarkPivots()
     {
         using var ind = new Wickra.DemarkPivots();
+        Assert.Equal("DemarkPivots", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1320,6 +1416,7 @@ public class GoldenAllTests
     public void Golden_DepthSlope()
     {
         using var ind = new Wickra.DepthSlope();
+        Assert.Equal("DepthSlope", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1333,6 +1430,7 @@ public class GoldenAllTests
     public void Golden_DerivativeOscillator()
     {
         using var ind = new Wickra.DerivativeOscillator(3, 7, 14, 28);
+        Assert.Equal("DerivativeOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1345,6 +1443,7 @@ public class GoldenAllTests
     public void Golden_DetrendedStdDev()
     {
         using var ind = new Wickra.DetrendedStdDev(14);
+        Assert.Equal("DetrendedStdDev", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1357,6 +1456,7 @@ public class GoldenAllTests
     public void Golden_DisparityIndex()
     {
         using var ind = new Wickra.DisparityIndex(14);
+        Assert.Equal("DisparityIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1369,6 +1469,7 @@ public class GoldenAllTests
     public void Golden_DistanceSsd()
     {
         using var ind = new Wickra.DistanceSsd(14);
+        Assert.Equal("DistanceSsd", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1381,6 +1482,7 @@ public class GoldenAllTests
     public void Golden_Doji()
     {
         using var ind = new Wickra.Doji();
+        Assert.Equal("Doji", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1393,6 +1495,7 @@ public class GoldenAllTests
     public void Golden_DojiStar()
     {
         using var ind = new Wickra.DojiStar();
+        Assert.Equal("DojiStar", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1405,6 +1508,7 @@ public class GoldenAllTests
     public void Golden_DollarBars()
     {
         using var ind = new Wickra.DollarBars(50000.0);
+        Assert.Equal("DollarBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1417,6 +1521,7 @@ public class GoldenAllTests
     public void Golden_Donchian()
     {
         using var ind = new Wickra.Donchian(14);
+        Assert.Equal("DonchianChannels", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1429,6 +1534,7 @@ public class GoldenAllTests
     public void Golden_DonchianStop()
     {
         using var ind = new Wickra.DonchianStop(14);
+        Assert.Equal("DonchianStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1441,6 +1547,7 @@ public class GoldenAllTests
     public void Golden_DoubleBollinger()
     {
         using var ind = new Wickra.DoubleBollinger(20, 1.0, 2.0);
+        Assert.Equal("DoubleBollinger", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1453,6 +1560,7 @@ public class GoldenAllTests
     public void Golden_DoubleTopBottom()
     {
         using var ind = new Wickra.DoubleTopBottom();
+        Assert.Equal("DoubleTopBottom", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1465,6 +1573,7 @@ public class GoldenAllTests
     public void Golden_DownsideGapThreeMethods()
     {
         using var ind = new Wickra.DownsideGapThreeMethods();
+        Assert.Equal("DownsideGapThreeMethods", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1477,6 +1586,7 @@ public class GoldenAllTests
     public void Golden_Dpo()
     {
         using var ind = new Wickra.Dpo(14);
+        Assert.Equal("DPO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1489,6 +1599,7 @@ public class GoldenAllTests
     public void Golden_DragonflyDoji()
     {
         using var ind = new Wickra.DragonflyDoji();
+        Assert.Equal("DragonflyDoji", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1501,6 +1612,7 @@ public class GoldenAllTests
     public void Golden_DrawdownDuration()
     {
         using var ind = new Wickra.DrawdownDuration();
+        Assert.Equal("DrawdownDuration", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1513,6 +1625,7 @@ public class GoldenAllTests
     public void Golden_DumplingTop()
     {
         using var ind = new Wickra.DumplingTop(14);
+        Assert.Equal("DumplingTop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1525,6 +1638,7 @@ public class GoldenAllTests
     public void Golden_Dx()
     {
         using var ind = new Wickra.Dx(14);
+        Assert.Equal("DX", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1537,6 +1651,7 @@ public class GoldenAllTests
     public void Golden_DynamicMomentumIndex()
     {
         using var ind = new Wickra.DynamicMomentumIndex(14);
+        Assert.Equal("DynamicMomentumIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1549,6 +1664,7 @@ public class GoldenAllTests
     public void Golden_EaseOfMovement()
     {
         using var ind = new Wickra.EaseOfMovement(14);
+        Assert.Equal("EaseOfMovement", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1561,6 +1677,7 @@ public class GoldenAllTests
     public void Golden_EffectiveSpread()
     {
         using var ind = new Wickra.EffectiveSpread();
+        Assert.Equal("EffectiveSpread", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1573,6 +1690,7 @@ public class GoldenAllTests
     public void Golden_EhlersStochastic()
     {
         using var ind = new Wickra.EhlersStochastic(14);
+        Assert.Equal("EhlersStochastic", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1585,6 +1703,7 @@ public class GoldenAllTests
     public void Golden_Ehma()
     {
         using var ind = new Wickra.Ehma(14);
+        Assert.Equal("EHMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1597,6 +1716,7 @@ public class GoldenAllTests
     public void Golden_ElderImpulse()
     {
         using var ind = new Wickra.ElderImpulse(3, 7, 14, 28);
+        Assert.Equal("ElderImpulse", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1609,6 +1729,7 @@ public class GoldenAllTests
     public void Golden_ElderRay()
     {
         using var ind = new Wickra.ElderRay(14);
+        Assert.Equal("ElderRay", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1621,6 +1742,7 @@ public class GoldenAllTests
     public void Golden_ElderSafeZone()
     {
         using var ind = new Wickra.ElderSafeZone(10, 2.0);
+        Assert.Equal("ElderSafeZone", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1633,6 +1755,7 @@ public class GoldenAllTests
     public void Golden_Ema()
     {
         using var ind = new Wickra.Ema(14);
+        Assert.Equal("EMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1645,6 +1768,7 @@ public class GoldenAllTests
     public void Golden_EmpiricalModeDecomposition()
     {
         using var ind = new Wickra.EmpiricalModeDecomposition(20, 0.1);
+        Assert.Equal("EmpiricalModeDecomposition", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1657,6 +1781,7 @@ public class GoldenAllTests
     public void Golden_Engulfing()
     {
         using var ind = new Wickra.Engulfing();
+        Assert.Equal("Engulfing", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1669,6 +1794,7 @@ public class GoldenAllTests
     public void Golden_Equivolume()
     {
         using var ind = new Wickra.Equivolume(14);
+        Assert.Equal("Equivolume", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1681,6 +1807,7 @@ public class GoldenAllTests
     public void Golden_EstimatedLeverageRatio()
     {
         using var ind = new Wickra.EstimatedLeverageRatio();
+        Assert.Equal("EstimatedLeverageRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1694,6 +1821,7 @@ public class GoldenAllTests
     public void Golden_EvenBetterSinewave()
     {
         using var ind = new Wickra.EvenBetterSinewave(40, 10);
+        Assert.Equal("EvenBetterSinewave", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1706,6 +1834,7 @@ public class GoldenAllTests
     public void Golden_EveningDojiStar()
     {
         using var ind = new Wickra.EveningDojiStar();
+        Assert.Equal("EveningDojiStar", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1718,6 +1847,7 @@ public class GoldenAllTests
     public void Golden_Evwma()
     {
         using var ind = new Wickra.Evwma(14);
+        Assert.Equal("EVWMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1730,6 +1860,7 @@ public class GoldenAllTests
     public void Golden_EwmaVolatility()
     {
         using var ind = new Wickra.EwmaVolatility(0.94);
+        Assert.Equal("EwmaVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1742,6 +1873,7 @@ public class GoldenAllTests
     public void Golden_Expectancy()
     {
         using var ind = new Wickra.Expectancy(14);
+        Assert.Equal("Expectancy", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1754,6 +1886,7 @@ public class GoldenAllTests
     public void Golden_FallingThreeMethods()
     {
         using var ind = new Wickra.FallingThreeMethods();
+        Assert.Equal("FallingThreeMethods", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1766,6 +1899,7 @@ public class GoldenAllTests
     public void Golden_Fama()
     {
         using var ind = new Wickra.Fama(0.5, 0.05);
+        Assert.Equal("FAMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1778,6 +1912,7 @@ public class GoldenAllTests
     public void Golden_FibArcs()
     {
         using var ind = new Wickra.FibArcs();
+        Assert.Equal("FibArcs", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1790,6 +1925,7 @@ public class GoldenAllTests
     public void Golden_FibChannel()
     {
         using var ind = new Wickra.FibChannel();
+        Assert.Equal("FibChannel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1802,6 +1938,7 @@ public class GoldenAllTests
     public void Golden_FibConfluence()
     {
         using var ind = new Wickra.FibConfluence();
+        Assert.Equal("FibConfluence", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1814,6 +1951,7 @@ public class GoldenAllTests
     public void Golden_FibExtension()
     {
         using var ind = new Wickra.FibExtension();
+        Assert.Equal("FibExtension", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1826,6 +1964,7 @@ public class GoldenAllTests
     public void Golden_FibFan()
     {
         using var ind = new Wickra.FibFan();
+        Assert.Equal("FibFan", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1838,6 +1977,7 @@ public class GoldenAllTests
     public void Golden_FibProjection()
     {
         using var ind = new Wickra.FibProjection();
+        Assert.Equal("FibProjection", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1850,6 +1990,7 @@ public class GoldenAllTests
     public void Golden_FibRetracement()
     {
         using var ind = new Wickra.FibRetracement();
+        Assert.Equal("FibRetracement", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1862,6 +2003,7 @@ public class GoldenAllTests
     public void Golden_FibTimeZones()
     {
         using var ind = new Wickra.FibTimeZones();
+        Assert.Equal("FibTimeZones", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1874,6 +2016,7 @@ public class GoldenAllTests
     public void Golden_FibonacciPivots()
     {
         using var ind = new Wickra.FibonacciPivots();
+        Assert.Equal("FibonacciPivots", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1886,6 +2029,7 @@ public class GoldenAllTests
     public void Golden_FisherRsi()
     {
         using var ind = new Wickra.FisherRsi(14);
+        Assert.Equal("FisherRSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1898,6 +2042,7 @@ public class GoldenAllTests
     public void Golden_FisherTransform()
     {
         using var ind = new Wickra.FisherTransform(14);
+        Assert.Equal("FisherTransform", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1910,6 +2055,7 @@ public class GoldenAllTests
     public void Golden_FlagPennant()
     {
         using var ind = new Wickra.FlagPennant();
+        Assert.Equal("FlagPennant", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1922,6 +2068,7 @@ public class GoldenAllTests
     public void Golden_Footprint()
     {
         using var ind = new Wickra.Footprint(1.0);
+        Assert.Equal("Footprint", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1934,6 +2081,7 @@ public class GoldenAllTests
     public void Golden_ForceIndex()
     {
         using var ind = new Wickra.ForceIndex(14);
+        Assert.Equal("ForceIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1946,6 +2094,7 @@ public class GoldenAllTests
     public void Golden_FractalChaosBands()
     {
         using var ind = new Wickra.FractalChaosBands(14);
+        Assert.Equal("FractalChaosBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1958,6 +2107,7 @@ public class GoldenAllTests
     public void Golden_Frama()
     {
         using var ind = new Wickra.Frama(14);
+        Assert.Equal("FRAMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1970,6 +2120,7 @@ public class GoldenAllTests
     public void Golden_FryPanBottom()
     {
         using var ind = new Wickra.FryPanBottom(14);
+        Assert.Equal("FryPanBottom", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1982,6 +2133,7 @@ public class GoldenAllTests
     public void Golden_FundingBasis()
     {
         using var ind = new Wickra.FundingBasis();
+        Assert.Equal("FundingBasis", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1995,6 +2147,7 @@ public class GoldenAllTests
     public void Golden_FundingImpliedApr()
     {
         using var ind = new Wickra.FundingImpliedApr(1095.0);
+        Assert.Equal("FundingImpliedApr", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2008,6 +2161,7 @@ public class GoldenAllTests
     public void Golden_FundingRate()
     {
         using var ind = new Wickra.FundingRate();
+        Assert.Equal("FundingRate", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2021,6 +2175,7 @@ public class GoldenAllTests
     public void Golden_FundingRateMean()
     {
         using var ind = new Wickra.FundingRateMean(20);
+        Assert.Equal("FundingRateMean", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2034,6 +2189,7 @@ public class GoldenAllTests
     public void Golden_FundingRateZScore()
     {
         using var ind = new Wickra.FundingRateZScore(20);
+        Assert.Equal("FundingRateZScore", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2047,6 +2203,7 @@ public class GoldenAllTests
     public void Golden_GainLossRatio()
     {
         using var ind = new Wickra.GainLossRatio(14);
+        Assert.Equal("GainLossRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2059,6 +2216,7 @@ public class GoldenAllTests
     public void Golden_GainToPainRatio()
     {
         using var ind = new Wickra.GainToPainRatio(14);
+        Assert.Equal("GainToPainRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2071,6 +2229,7 @@ public class GoldenAllTests
     public void Golden_GapSideBySideWhite()
     {
         using var ind = new Wickra.GapSideBySideWhite();
+        Assert.Equal("GapSideBySideWhite", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2083,6 +2242,7 @@ public class GoldenAllTests
     public void Golden_Garch11()
     {
         using var ind = new Wickra.Garch11(2e-06, 0.1, 0.88);
+        Assert.Equal("Garch11", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2095,6 +2255,7 @@ public class GoldenAllTests
     public void Golden_GarmanKlassVolatility()
     {
         using var ind = new Wickra.GarmanKlassVolatility(20, 252);
+        Assert.Equal("GarmanKlassVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2107,6 +2268,7 @@ public class GoldenAllTests
     public void Golden_Gartley()
     {
         using var ind = new Wickra.Gartley();
+        Assert.Equal("Gartley", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2119,6 +2281,7 @@ public class GoldenAllTests
     public void Golden_GatorOscillator()
     {
         using var ind = new Wickra.GatorOscillator(3, 7, 14);
+        Assert.Equal("GatorOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2131,6 +2294,7 @@ public class GoldenAllTests
     public void Golden_GeneralizedDema()
     {
         using var ind = new Wickra.GeneralizedDema(5, 0.7);
+        Assert.Equal("GD", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2143,6 +2307,7 @@ public class GoldenAllTests
     public void Golden_GeometricMa()
     {
         using var ind = new Wickra.GeometricMa(14);
+        Assert.Equal("GMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2155,6 +2320,7 @@ public class GoldenAllTests
     public void Golden_GoldenPocket()
     {
         using var ind = new Wickra.GoldenPocket();
+        Assert.Equal("GoldenPocket", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2167,6 +2333,7 @@ public class GoldenAllTests
     public void Golden_GrangerCausality()
     {
         using var ind = new Wickra.GrangerCausality(60, 1);
+        Assert.Equal("GrangerCausality", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2179,6 +2346,7 @@ public class GoldenAllTests
     public void Golden_GravestoneDoji()
     {
         using var ind = new Wickra.GravestoneDoji();
+        Assert.Equal("GravestoneDoji", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2191,6 +2359,7 @@ public class GoldenAllTests
     public void Golden_Hammer()
     {
         using var ind = new Wickra.Hammer();
+        Assert.Equal("Hammer", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2203,6 +2372,7 @@ public class GoldenAllTests
     public void Golden_HangingMan()
     {
         using var ind = new Wickra.HangingMan();
+        Assert.Equal("HangingMan", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2215,6 +2385,7 @@ public class GoldenAllTests
     public void Golden_Harami()
     {
         using var ind = new Wickra.Harami();
+        Assert.Equal("Harami", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2227,6 +2398,7 @@ public class GoldenAllTests
     public void Golden_HaramiCross()
     {
         using var ind = new Wickra.HaramiCross();
+        Assert.Equal("HaramiCross", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2239,6 +2411,7 @@ public class GoldenAllTests
     public void Golden_HasbrouckInformationShare()
     {
         using var ind = new Wickra.HasbrouckInformationShare(14);
+        Assert.Equal("HasbrouckInformationShare", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2251,6 +2424,7 @@ public class GoldenAllTests
     public void Golden_HeadAndShoulders()
     {
         using var ind = new Wickra.HeadAndShoulders();
+        Assert.Equal("HeadAndShoulders", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2263,6 +2437,7 @@ public class GoldenAllTests
     public void Golden_HeikinAshi()
     {
         using var ind = new Wickra.HeikinAshi();
+        Assert.Equal("HeikinAshi", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2275,6 +2450,7 @@ public class GoldenAllTests
     public void Golden_HeikinAshiOscillator()
     {
         using var ind = new Wickra.HeikinAshiOscillator(14);
+        Assert.Equal("HeikinAshiOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2287,6 +2463,7 @@ public class GoldenAllTests
     public void Golden_HiLoActivator()
     {
         using var ind = new Wickra.HiLoActivator(14);
+        Assert.Equal("HiLoActivator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2299,6 +2476,7 @@ public class GoldenAllTests
     public void Golden_HighLowIndex()
     {
         using var ind = new Wickra.HighLowIndex(10);
+        Assert.Equal("HighLowIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2312,6 +2490,7 @@ public class GoldenAllTests
     public void Golden_HighLowRange()
     {
         using var ind = new Wickra.HighLowRange();
+        Assert.Equal("HighLowRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2324,6 +2503,7 @@ public class GoldenAllTests
     public void Golden_HighLowVolumeNodes()
     {
         using var ind = new Wickra.HighLowVolumeNodes(3, 7);
+        Assert.Equal("HighLowVolumeNodes", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2336,6 +2516,7 @@ public class GoldenAllTests
     public void Golden_HighWave()
     {
         using var ind = new Wickra.HighWave();
+        Assert.Equal("HighWave", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2348,6 +2529,7 @@ public class GoldenAllTests
     public void Golden_HighpassFilter()
     {
         using var ind = new Wickra.HighpassFilter(14);
+        Assert.Equal("HighpassFilter", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2360,6 +2542,7 @@ public class GoldenAllTests
     public void Golden_Hikkake()
     {
         using var ind = new Wickra.Hikkake();
+        Assert.Equal("Hikkake", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2372,6 +2555,7 @@ public class GoldenAllTests
     public void Golden_HikkakeModified()
     {
         using var ind = new Wickra.HikkakeModified();
+        Assert.Equal("HikkakeModified", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2384,6 +2568,7 @@ public class GoldenAllTests
     public void Golden_HilbertDominantCycle()
     {
         using var ind = new Wickra.HilbertDominantCycle();
+        Assert.Equal("HilbertDominantCycle", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2396,6 +2581,7 @@ public class GoldenAllTests
     public void Golden_HistoricalVolatility()
     {
         using var ind = new Wickra.HistoricalVolatility(3, 7);
+        Assert.Equal("HistoricalVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2408,6 +2594,7 @@ public class GoldenAllTests
     public void Golden_Hma()
     {
         using var ind = new Wickra.Hma(14);
+        Assert.Equal("HMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2420,6 +2607,7 @@ public class GoldenAllTests
     public void Golden_HoltWinters()
     {
         using var ind = new Wickra.HoltWinters(0.5, 0.1);
+        Assert.Equal("HoltWinters", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2432,6 +2620,7 @@ public class GoldenAllTests
     public void Golden_HomingPigeon()
     {
         using var ind = new Wickra.HomingPigeon();
+        Assert.Equal("HomingPigeon", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2444,6 +2633,7 @@ public class GoldenAllTests
     public void Golden_HtDcPhase()
     {
         using var ind = new Wickra.HtDcPhase();
+        Assert.Equal("HT_DCPHASE", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2456,6 +2646,7 @@ public class GoldenAllTests
     public void Golden_HtPhasor()
     {
         using var ind = new Wickra.HtPhasor();
+        Assert.Equal("HT_PHASOR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2468,6 +2659,7 @@ public class GoldenAllTests
     public void Golden_HtTrendMode()
     {
         using var ind = new Wickra.HtTrendMode();
+        Assert.Equal("HT_TRENDMODE", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2480,6 +2672,7 @@ public class GoldenAllTests
     public void Golden_HurstChannel()
     {
         using var ind = new Wickra.HurstChannel(14, 2.0);
+        Assert.Equal("HurstChannel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2492,6 +2685,7 @@ public class GoldenAllTests
     public void Golden_HurstExponent()
     {
         using var ind = new Wickra.HurstExponent(100, 4);
+        Assert.Equal("HurstExponent", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2504,6 +2698,7 @@ public class GoldenAllTests
     public void Golden_Ichimoku()
     {
         using var ind = new Wickra.Ichimoku(9, 26, 52, 26);
+        Assert.Equal("Ichimoku", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2516,6 +2711,7 @@ public class GoldenAllTests
     public void Golden_IdenticalThreeCrows()
     {
         using var ind = new Wickra.IdenticalThreeCrows();
+        Assert.Equal("IdenticalThreeCrows", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2528,6 +2724,7 @@ public class GoldenAllTests
     public void Golden_ImbalanceBars()
     {
         using var ind = new Wickra.ImbalanceBars(5.0);
+        Assert.Equal("ImbalanceBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2540,6 +2737,7 @@ public class GoldenAllTests
     public void Golden_InNeck()
     {
         using var ind = new Wickra.InNeck();
+        Assert.Equal("InNeck", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2552,6 +2750,7 @@ public class GoldenAllTests
     public void Golden_Inertia()
     {
         using var ind = new Wickra.Inertia(3, 7);
+        Assert.Equal("Inertia", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2564,6 +2763,7 @@ public class GoldenAllTests
     public void Golden_InformationRatio()
     {
         using var ind = new Wickra.InformationRatio(14);
+        Assert.Equal("InformationRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2576,6 +2776,7 @@ public class GoldenAllTests
     public void Golden_InitialBalance()
     {
         using var ind = new Wickra.InitialBalance(14);
+        Assert.Equal("InitialBalance", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2588,6 +2789,7 @@ public class GoldenAllTests
     public void Golden_InstantaneousTrendline()
     {
         using var ind = new Wickra.InstantaneousTrendline(14);
+        Assert.Equal("InstantaneousTrendline", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2600,6 +2802,7 @@ public class GoldenAllTests
     public void Golden_IntradayIntensity()
     {
         using var ind = new Wickra.IntradayIntensity();
+        Assert.Equal("IntradayIntensity", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2612,6 +2815,7 @@ public class GoldenAllTests
     public void Golden_IntradayMomentumIndex()
     {
         using var ind = new Wickra.IntradayMomentumIndex(14);
+        Assert.Equal("IMI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2624,6 +2828,7 @@ public class GoldenAllTests
     public void Golden_IntradayVolatilityProfile()
     {
         using var ind = new Wickra.IntradayVolatilityProfile(24, 0);
+        Assert.Equal("IntradayVolatilityProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2637,6 +2842,7 @@ public class GoldenAllTests
     public void Golden_InverseFisherTransform()
     {
         using var ind = new Wickra.InverseFisherTransform(2.0);
+        Assert.Equal("InverseFisherTransform", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2649,6 +2855,7 @@ public class GoldenAllTests
     public void Golden_InvertedHammer()
     {
         using var ind = new Wickra.InvertedHammer();
+        Assert.Equal("InvertedHammer", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2661,6 +2868,7 @@ public class GoldenAllTests
     public void Golden_JarqueBera()
     {
         using var ind = new Wickra.JarqueBera(14);
+        Assert.Equal("JarqueBera", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2673,6 +2881,7 @@ public class GoldenAllTests
     public void Golden_Jma()
     {
         using var ind = new Wickra.Jma(7, 0.0, 2u);
+        Assert.Equal("JMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2685,6 +2894,7 @@ public class GoldenAllTests
     public void Golden_JumpIndicator()
     {
         using var ind = new Wickra.JumpIndicator(14, 2.0);
+        Assert.Equal("JumpIndicator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2697,6 +2907,7 @@ public class GoldenAllTests
     public void Golden_KRatio()
     {
         using var ind = new Wickra.KRatio(14);
+        Assert.Equal("KRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2709,6 +2920,7 @@ public class GoldenAllTests
     public void Golden_KagiBars()
     {
         using var ind = new Wickra.KagiBars(2.0);
+        Assert.Equal("KagiBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2721,6 +2933,7 @@ public class GoldenAllTests
     public void Golden_KalmanHedgeRatio()
     {
         using var ind = new Wickra.KalmanHedgeRatio(0.01, 0.001);
+        Assert.Equal("KalmanHedgeRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2733,6 +2946,7 @@ public class GoldenAllTests
     public void Golden_Kama()
     {
         using var ind = new Wickra.Kama(3, 7, 14);
+        Assert.Equal("KAMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2745,6 +2959,7 @@ public class GoldenAllTests
     public void Golden_KaseDevStop()
     {
         using var ind = new Wickra.KaseDevStop(14, 2.0);
+        Assert.Equal("KaseDevStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2757,6 +2972,7 @@ public class GoldenAllTests
     public void Golden_KasePermissionStochastic()
     {
         using var ind = new Wickra.KasePermissionStochastic(3, 7);
+        Assert.Equal("KasePermissionStochastic", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2769,6 +2985,7 @@ public class GoldenAllTests
     public void Golden_KellyCriterion()
     {
         using var ind = new Wickra.KellyCriterion(14);
+        Assert.Equal("KellyCriterion", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2781,6 +2998,7 @@ public class GoldenAllTests
     public void Golden_Keltner()
     {
         using var ind = new Wickra.Keltner(3, 7, 2.0);
+        Assert.Equal("KeltnerChannels", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2793,6 +3011,7 @@ public class GoldenAllTests
     public void Golden_KendallTau()
     {
         using var ind = new Wickra.KendallTau(14);
+        Assert.Equal("KendallTau", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2805,6 +3024,7 @@ public class GoldenAllTests
     public void Golden_Kicking()
     {
         using var ind = new Wickra.Kicking();
+        Assert.Equal("Kicking", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2817,6 +3037,7 @@ public class GoldenAllTests
     public void Golden_KickingByLength()
     {
         using var ind = new Wickra.KickingByLength();
+        Assert.Equal("KickingByLength", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2829,6 +3050,7 @@ public class GoldenAllTests
     public void Golden_Kst()
     {
         using var ind = new Wickra.Kst(3, 7, 14, 28, 35, 42, 56, 63, 70);
+        Assert.Equal("KST", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2841,6 +3063,7 @@ public class GoldenAllTests
     public void Golden_Kurtosis()
     {
         using var ind = new Wickra.Kurtosis(14);
+        Assert.Equal("Kurtosis", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2853,6 +3076,7 @@ public class GoldenAllTests
     public void Golden_Kvo()
     {
         using var ind = new Wickra.Kvo(3, 7);
+        Assert.Equal("KVO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2865,6 +3089,7 @@ public class GoldenAllTests
     public void Golden_KylesLambda()
     {
         using var ind = new Wickra.KylesLambda(20);
+        Assert.Equal("KylesLambda", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2877,6 +3102,7 @@ public class GoldenAllTests
     public void Golden_LadderBottom()
     {
         using var ind = new Wickra.LadderBottom();
+        Assert.Equal("LadderBottom", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2889,6 +3115,7 @@ public class GoldenAllTests
     public void Golden_LaguerreRsi()
     {
         using var ind = new Wickra.LaguerreRsi(0.5);
+        Assert.Equal("LaguerreRSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2901,6 +3128,7 @@ public class GoldenAllTests
     public void Golden_LeadLagCrossCorrelation()
     {
         using var ind = new Wickra.LeadLagCrossCorrelation(20, 10);
+        Assert.Equal("LeadLagCrossCorrelation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2913,6 +3141,7 @@ public class GoldenAllTests
     public void Golden_LinRegAngle()
     {
         using var ind = new Wickra.LinRegAngle(14);
+        Assert.Equal("LinRegAngle", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2925,6 +3154,7 @@ public class GoldenAllTests
     public void Golden_LinRegChannel()
     {
         using var ind = new Wickra.LinRegChannel(14, 2.0);
+        Assert.Equal("LinRegChannel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2937,6 +3167,7 @@ public class GoldenAllTests
     public void Golden_LinRegIntercept()
     {
         using var ind = new Wickra.LinRegIntercept(14);
+        Assert.Equal("LINEARREG_INTERCEPT", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2949,6 +3180,7 @@ public class GoldenAllTests
     public void Golden_LinRegSlope()
     {
         using var ind = new Wickra.LinRegSlope(14);
+        Assert.Equal("LinRegSlope", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2961,6 +3193,7 @@ public class GoldenAllTests
     public void Golden_LinearRegression()
     {
         using var ind = new Wickra.LinearRegression(14);
+        Assert.Equal("LinearRegression", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2973,6 +3206,7 @@ public class GoldenAllTests
     public void Golden_LiquidationFeatures()
     {
         using var ind = new Wickra.LiquidationFeatures();
+        Assert.Equal("LiquidationFeatures", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2986,6 +3220,7 @@ public class GoldenAllTests
     public void Golden_LogReturn()
     {
         using var ind = new Wickra.LogReturn(14);
+        Assert.Equal("LogReturn", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2998,6 +3233,7 @@ public class GoldenAllTests
     public void Golden_LongLeggedDoji()
     {
         using var ind = new Wickra.LongLeggedDoji();
+        Assert.Equal("LongLeggedDoji", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3010,6 +3246,7 @@ public class GoldenAllTests
     public void Golden_LongLine()
     {
         using var ind = new Wickra.LongLine();
+        Assert.Equal("LongLine", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3022,6 +3259,7 @@ public class GoldenAllTests
     public void Golden_LongShortRatio()
     {
         using var ind = new Wickra.LongShortRatio();
+        Assert.Equal("LongShortRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3035,6 +3273,7 @@ public class GoldenAllTests
     public void Golden_M2Measure()
     {
         using var ind = new Wickra.M2Measure(14, 2.0, 0.5);
+        Assert.Equal("M2Measure", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3047,6 +3286,7 @@ public class GoldenAllTests
     public void Golden_MaEnvelope()
     {
         using var ind = new Wickra.MaEnvelope(14, 2.0);
+        Assert.Equal("MaEnvelope", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3059,6 +3299,7 @@ public class GoldenAllTests
     public void Golden_MacdExt()
     {
         using var ind = new Wickra.MacdExt(12, (byte)0, 26, (byte)0, 9, (byte)0);
+        Assert.Equal("MACDEXT", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3071,6 +3312,7 @@ public class GoldenAllTests
     public void Golden_MacdFix()
     {
         using var ind = new Wickra.MacdFix(9);
+        Assert.Equal("MACDFIX", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3083,6 +3325,7 @@ public class GoldenAllTests
     public void Golden_MacdHistogram()
     {
         using var ind = new Wickra.MacdHistogram(3, 7, 14);
+        Assert.Equal("MacdHistogram", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3095,6 +3338,7 @@ public class GoldenAllTests
     public void Golden_MacdIndicator()
     {
         using var ind = new Wickra.MacdIndicator(12, 26, 9);
+        Assert.Equal("MACD", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3107,6 +3351,7 @@ public class GoldenAllTests
     public void Golden_Mama()
     {
         using var ind = new Wickra.Mama(0.5, 0.05);
+        Assert.Equal("MAMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3119,6 +3364,7 @@ public class GoldenAllTests
     public void Golden_MarketFacilitationIndex()
     {
         using var ind = new Wickra.MarketFacilitationIndex();
+        Assert.Equal("MarketFacilitationIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3131,6 +3377,7 @@ public class GoldenAllTests
     public void Golden_MartinRatio()
     {
         using var ind = new Wickra.MartinRatio(14);
+        Assert.Equal("MartinRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3143,6 +3390,7 @@ public class GoldenAllTests
     public void Golden_Marubozu()
     {
         using var ind = new Wickra.Marubozu();
+        Assert.Equal("Marubozu", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3155,6 +3403,7 @@ public class GoldenAllTests
     public void Golden_MassIndex()
     {
         using var ind = new Wickra.MassIndex(3, 7);
+        Assert.Equal("MassIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3167,6 +3416,7 @@ public class GoldenAllTests
     public void Golden_MatHold()
     {
         using var ind = new Wickra.MatHold();
+        Assert.Equal("MatHold", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3179,6 +3429,7 @@ public class GoldenAllTests
     public void Golden_MatchingLow()
     {
         using var ind = new Wickra.MatchingLow();
+        Assert.Equal("MatchingLow", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3191,6 +3442,7 @@ public class GoldenAllTests
     public void Golden_MaxDrawdown()
     {
         using var ind = new Wickra.MaxDrawdown(14);
+        Assert.Equal("MaxDrawdown", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3203,6 +3455,7 @@ public class GoldenAllTests
     public void Golden_McClellanOscillator()
     {
         using var ind = new Wickra.McClellanOscillator();
+        Assert.Equal("McClellanOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3216,6 +3469,7 @@ public class GoldenAllTests
     public void Golden_McClellanSummationIndex()
     {
         using var ind = new Wickra.McClellanSummationIndex();
+        Assert.Equal("McClellanSummationIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3229,6 +3483,7 @@ public class GoldenAllTests
     public void Golden_McGinleyDynamic()
     {
         using var ind = new Wickra.McGinleyDynamic(14);
+        Assert.Equal("McGinleyDynamic", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3241,6 +3496,7 @@ public class GoldenAllTests
     public void Golden_MedianAbsoluteDeviation()
     {
         using var ind = new Wickra.MedianAbsoluteDeviation(14);
+        Assert.Equal("MedianAbsoluteDeviation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3253,6 +3509,7 @@ public class GoldenAllTests
     public void Golden_MedianChannel()
     {
         using var ind = new Wickra.MedianChannel(14, 2.0);
+        Assert.Equal("MedianChannel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3265,6 +3522,7 @@ public class GoldenAllTests
     public void Golden_MedianMa()
     {
         using var ind = new Wickra.MedianMa(14);
+        Assert.Equal("MedianMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3277,6 +3535,7 @@ public class GoldenAllTests
     public void Golden_MedianPrice()
     {
         using var ind = new Wickra.MedianPrice();
+        Assert.Equal("MedianPrice", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3289,6 +3548,7 @@ public class GoldenAllTests
     public void Golden_Mfi()
     {
         using var ind = new Wickra.Mfi(14);
+        Assert.Equal("MFI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3301,6 +3561,7 @@ public class GoldenAllTests
     public void Golden_Microprice()
     {
         using var ind = new Wickra.Microprice();
+        Assert.Equal("Microprice", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3314,6 +3575,7 @@ public class GoldenAllTests
     public void Golden_MidPoint()
     {
         using var ind = new Wickra.MidPoint(14);
+        Assert.Equal("MIDPOINT", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3326,6 +3588,7 @@ public class GoldenAllTests
     public void Golden_MidPrice()
     {
         using var ind = new Wickra.MidPrice(14);
+        Assert.Equal("MIDPRICE", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3338,6 +3601,7 @@ public class GoldenAllTests
     public void Golden_MinusDi()
     {
         using var ind = new Wickra.MinusDi(14);
+        Assert.Equal("MINUS_DI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3350,6 +3614,7 @@ public class GoldenAllTests
     public void Golden_MinusDm()
     {
         using var ind = new Wickra.MinusDm(14);
+        Assert.Equal("MINUS_DM", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3362,6 +3627,7 @@ public class GoldenAllTests
     public void Golden_ModifiedMaStop()
     {
         using var ind = new Wickra.ModifiedMaStop(14);
+        Assert.Equal("ModifiedMaStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3374,6 +3640,7 @@ public class GoldenAllTests
     public void Golden_Mom()
     {
         using var ind = new Wickra.Mom(14);
+        Assert.Equal("MOM", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3386,6 +3653,7 @@ public class GoldenAllTests
     public void Golden_MorningDojiStar()
     {
         using var ind = new Wickra.MorningDojiStar();
+        Assert.Equal("MorningDojiStar", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3398,6 +3666,7 @@ public class GoldenAllTests
     public void Golden_MorningEveningStar()
     {
         using var ind = new Wickra.MorningEveningStar();
+        Assert.Equal("MorningEveningStar", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3410,6 +3679,7 @@ public class GoldenAllTests
     public void Golden_MurreyMathLines()
     {
         using var ind = new Wickra.MurreyMathLines(14);
+        Assert.Equal("MurreyMathLines", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3422,6 +3692,7 @@ public class GoldenAllTests
     public void Golden_NakedPoc()
     {
         using var ind = new Wickra.NakedPoc(3, 7);
+        Assert.Equal("NakedPoc", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3434,6 +3705,7 @@ public class GoldenAllTests
     public void Golden_Natr()
     {
         using var ind = new Wickra.Natr(14);
+        Assert.Equal("NATR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3446,6 +3718,7 @@ public class GoldenAllTests
     public void Golden_NewHighsNewLows()
     {
         using var ind = new Wickra.NewHighsNewLows();
+        Assert.Equal("NewHighsNewLows", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3459,6 +3732,7 @@ public class GoldenAllTests
     public void Golden_NewPriceLines()
     {
         using var ind = new Wickra.NewPriceLines(14);
+        Assert.Equal("NewPriceLines", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3471,6 +3745,7 @@ public class GoldenAllTests
     public void Golden_Nrtr()
     {
         using var ind = new Wickra.Nrtr(2.0);
+        Assert.Equal("Nrtr", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3483,6 +3758,7 @@ public class GoldenAllTests
     public void Golden_Nvi()
     {
         using var ind = new Wickra.Nvi();
+        Assert.Equal("NVI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3495,6 +3771,7 @@ public class GoldenAllTests
     public void Golden_OIPriceDivergence()
     {
         using var ind = new Wickra.OIPriceDivergence(20);
+        Assert.Equal("OIPriceDivergence", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3508,6 +3785,7 @@ public class GoldenAllTests
     public void Golden_OIWeighted()
     {
         using var ind = new Wickra.OIWeighted();
+        Assert.Equal("OIWeighted", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3521,6 +3799,7 @@ public class GoldenAllTests
     public void Golden_Obv()
     {
         using var ind = new Wickra.Obv();
+        Assert.Equal("OBV", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3533,6 +3812,7 @@ public class GoldenAllTests
     public void Golden_OiToVolumeRatio()
     {
         using var ind = new Wickra.OiToVolumeRatio();
+        Assert.Equal("OiToVolumeRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3546,6 +3826,7 @@ public class GoldenAllTests
     public void Golden_OmegaRatio()
     {
         using var ind = new Wickra.OmegaRatio(14, 2.0);
+        Assert.Equal("OmegaRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3558,6 +3839,7 @@ public class GoldenAllTests
     public void Golden_OnNeck()
     {
         using var ind = new Wickra.OnNeck();
+        Assert.Equal("OnNeck", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3570,6 +3852,7 @@ public class GoldenAllTests
     public void Golden_OpenInterestDelta()
     {
         using var ind = new Wickra.OpenInterestDelta();
+        Assert.Equal("OpenInterestDelta", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3583,6 +3866,7 @@ public class GoldenAllTests
     public void Golden_OpenInterestMomentum()
     {
         using var ind = new Wickra.OpenInterestMomentum(10);
+        Assert.Equal("OpenInterestMomentum", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3596,6 +3880,7 @@ public class GoldenAllTests
     public void Golden_OpeningMarubozu()
     {
         using var ind = new Wickra.OpeningMarubozu();
+        Assert.Equal("OpeningMarubozu", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3608,6 +3893,7 @@ public class GoldenAllTests
     public void Golden_OpeningRange()
     {
         using var ind = new Wickra.OpeningRange(14);
+        Assert.Equal("OpeningRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3620,6 +3906,7 @@ public class GoldenAllTests
     public void Golden_OrderBookImbalanceFull()
     {
         using var ind = new Wickra.OrderBookImbalanceFull();
+        Assert.Equal("OrderBookImbalanceFull", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3633,6 +3920,7 @@ public class GoldenAllTests
     public void Golden_OrderBookImbalanceTop1()
     {
         using var ind = new Wickra.OrderBookImbalanceTop1();
+        Assert.Equal("OrderBookImbalanceTop1", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3646,6 +3934,7 @@ public class GoldenAllTests
     public void Golden_OrderBookImbalanceTopN()
     {
         using var ind = new Wickra.OrderBookImbalanceTopN(5);
+        Assert.Equal("OrderBookImbalanceTopN", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3659,6 +3948,7 @@ public class GoldenAllTests
     public void Golden_OrderFlowImbalance()
     {
         using var ind = new Wickra.OrderFlowImbalance(20);
+        Assert.Equal("OrderFlowImbalance", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3672,6 +3962,7 @@ public class GoldenAllTests
     public void Golden_OuHalfLife()
     {
         using var ind = new Wickra.OuHalfLife(14);
+        Assert.Equal("OuHalfLife", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3684,6 +3975,7 @@ public class GoldenAllTests
     public void Golden_OvernightGap()
     {
         using var ind = new Wickra.OvernightGap(0);
+        Assert.Equal("OvernightGap", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3696,6 +3988,7 @@ public class GoldenAllTests
     public void Golden_OvernightIntradayReturn()
     {
         using var ind = new Wickra.OvernightIntradayReturn(14);
+        Assert.Equal("OvernightIntradayReturn", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3708,6 +4001,7 @@ public class GoldenAllTests
     public void Golden_PainIndex()
     {
         using var ind = new Wickra.PainIndex(14);
+        Assert.Equal("PainIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3720,6 +4014,7 @@ public class GoldenAllTests
     public void Golden_PairSpreadZScore()
     {
         using var ind = new Wickra.PairSpreadZScore(20, 20);
+        Assert.Equal("PairSpreadZScore", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3732,6 +4027,7 @@ public class GoldenAllTests
     public void Golden_PairwiseBeta()
     {
         using var ind = new Wickra.PairwiseBeta(14);
+        Assert.Equal("PairwiseBeta", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3744,6 +4040,7 @@ public class GoldenAllTests
     public void Golden_ParkinsonVolatility()
     {
         using var ind = new Wickra.ParkinsonVolatility(20, 252);
+        Assert.Equal("ParkinsonVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3756,6 +4053,7 @@ public class GoldenAllTests
     public void Golden_PearsonCorrelation()
     {
         using var ind = new Wickra.PearsonCorrelation(14);
+        Assert.Equal("PearsonCorrelation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3768,6 +4066,7 @@ public class GoldenAllTests
     public void Golden_PercentAboveMa()
     {
         using var ind = new Wickra.PercentAboveMa();
+        Assert.Equal("PercentAboveMa", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3781,6 +4080,7 @@ public class GoldenAllTests
     public void Golden_PercentB()
     {
         using var ind = new Wickra.PercentB(14, 2.0);
+        Assert.Equal("PercentB", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3793,6 +4093,7 @@ public class GoldenAllTests
     public void Golden_PercentageTrailingStop()
     {
         using var ind = new Wickra.PercentageTrailingStop(2.0);
+        Assert.Equal("PercentageTrailingStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3805,6 +4106,7 @@ public class GoldenAllTests
     public void Golden_PerpetualPremiumIndex()
     {
         using var ind = new Wickra.PerpetualPremiumIndex();
+        Assert.Equal("PerpetualPremiumIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3818,6 +4120,7 @@ public class GoldenAllTests
     public void Golden_Pgo()
     {
         using var ind = new Wickra.Pgo(14);
+        Assert.Equal("PGO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3830,6 +4133,7 @@ public class GoldenAllTests
     public void Golden_PiercingDarkCloud()
     {
         using var ind = new Wickra.PiercingDarkCloud();
+        Assert.Equal("PiercingDarkCloud", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3842,6 +4146,7 @@ public class GoldenAllTests
     public void Golden_Pin()
     {
         using var ind = new Wickra.Pin(20);
+        Assert.Equal("PIN", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3854,6 +4159,7 @@ public class GoldenAllTests
     public void Golden_PivotReversal()
     {
         using var ind = new Wickra.PivotReversal(3, 7);
+        Assert.Equal("PivotReversal", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3866,6 +4172,7 @@ public class GoldenAllTests
     public void Golden_PlusDi()
     {
         using var ind = new Wickra.PlusDi(14);
+        Assert.Equal("PLUS_DI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3878,6 +4185,7 @@ public class GoldenAllTests
     public void Golden_PlusDm()
     {
         using var ind = new Wickra.PlusDm(14);
+        Assert.Equal("PLUS_DM", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3890,6 +4198,7 @@ public class GoldenAllTests
     public void Golden_Pmo()
     {
         using var ind = new Wickra.Pmo(3, 7);
+        Assert.Equal("PMO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3902,6 +4211,7 @@ public class GoldenAllTests
     public void Golden_PointAndFigureBars()
     {
         using var ind = new Wickra.PointAndFigureBars(2.0, 3);
+        Assert.Equal("PointAndFigureBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3914,6 +4224,7 @@ public class GoldenAllTests
     public void Golden_PolarizedFractalEfficiency()
     {
         using var ind = new Wickra.PolarizedFractalEfficiency(10, 5);
+        Assert.Equal("PolarizedFractalEfficiency", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3926,6 +4237,7 @@ public class GoldenAllTests
     public void Golden_Ppo()
     {
         using var ind = new Wickra.Ppo(3, 7);
+        Assert.Equal("PPO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3938,6 +4250,7 @@ public class GoldenAllTests
     public void Golden_PpoHistogram()
     {
         using var ind = new Wickra.PpoHistogram(3, 7, 14);
+        Assert.Equal("PpoHistogram", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3950,6 +4263,7 @@ public class GoldenAllTests
     public void Golden_ProfileShape()
     {
         using var ind = new Wickra.ProfileShape(3, 7);
+        Assert.Equal("ProfileShape", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3962,6 +4276,7 @@ public class GoldenAllTests
     public void Golden_ProfitFactor()
     {
         using var ind = new Wickra.ProfitFactor(14);
+        Assert.Equal("ProfitFactor", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3974,6 +4289,7 @@ public class GoldenAllTests
     public void Golden_ProjectionBands()
     {
         using var ind = new Wickra.ProjectionBands(14);
+        Assert.Equal("ProjectionBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3986,6 +4302,7 @@ public class GoldenAllTests
     public void Golden_ProjectionOscillator()
     {
         using var ind = new Wickra.ProjectionOscillator(14);
+        Assert.Equal("ProjectionOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3998,6 +4315,7 @@ public class GoldenAllTests
     public void Golden_Psar()
     {
         using var ind = new Wickra.Psar(0.02, 0.02, 0.2);
+        Assert.Equal("PSAR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4010,6 +4328,7 @@ public class GoldenAllTests
     public void Golden_Pvi()
     {
         using var ind = new Wickra.Pvi();
+        Assert.Equal("PVI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4022,6 +4341,7 @@ public class GoldenAllTests
     public void Golden_Qqe()
     {
         using var ind = new Wickra.Qqe(3, 7, 2.0);
+        Assert.Equal("QQE", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4034,6 +4354,7 @@ public class GoldenAllTests
     public void Golden_Qstick()
     {
         using var ind = new Wickra.Qstick(14);
+        Assert.Equal("Qstick", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4046,6 +4367,7 @@ public class GoldenAllTests
     public void Golden_QuartileBands()
     {
         using var ind = new Wickra.QuartileBands(14);
+        Assert.Equal("QuartileBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4058,6 +4380,7 @@ public class GoldenAllTests
     public void Golden_QuotedSpread()
     {
         using var ind = new Wickra.QuotedSpread();
+        Assert.Equal("QuotedSpread", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4071,6 +4394,7 @@ public class GoldenAllTests
     public void Golden_RSquared()
     {
         using var ind = new Wickra.RSquared(14);
+        Assert.Equal("RSquared", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4083,6 +4407,7 @@ public class GoldenAllTests
     public void Golden_RangeBars()
     {
         using var ind = new Wickra.RangeBars(2.0);
+        Assert.Equal("RangeBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4095,6 +4420,7 @@ public class GoldenAllTests
     public void Golden_RealizedSpread()
     {
         using var ind = new Wickra.RealizedSpread(20);
+        Assert.Equal("RealizedSpread", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4107,6 +4433,7 @@ public class GoldenAllTests
     public void Golden_RealizedVolatility()
     {
         using var ind = new Wickra.RealizedVolatility(14);
+        Assert.Equal("RealizedVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4119,6 +4446,7 @@ public class GoldenAllTests
     public void Golden_RecoveryFactor()
     {
         using var ind = new Wickra.RecoveryFactor();
+        Assert.Equal("RecoveryFactor", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4131,6 +4459,7 @@ public class GoldenAllTests
     public void Golden_RectangleRange()
     {
         using var ind = new Wickra.RectangleRange();
+        Assert.Equal("RectangleRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4143,6 +4472,7 @@ public class GoldenAllTests
     public void Golden_Reflex()
     {
         using var ind = new Wickra.Reflex(14);
+        Assert.Equal("Reflex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4155,6 +4485,7 @@ public class GoldenAllTests
     public void Golden_RegimeLabel()
     {
         using var ind = new Wickra.RegimeLabel(3, 7);
+        Assert.Equal("RegimeLabel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4167,6 +4498,7 @@ public class GoldenAllTests
     public void Golden_RelativeStrengthAB()
     {
         using var ind = new Wickra.RelativeStrengthAB(14, 14);
+        Assert.Equal("RelativeStrengthAB", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4179,6 +4511,7 @@ public class GoldenAllTests
     public void Golden_RenkoBars()
     {
         using var ind = new Wickra.RenkoBars(2.0);
+        Assert.Equal("RenkoBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4191,6 +4524,7 @@ public class GoldenAllTests
     public void Golden_RenkoTrailingStop()
     {
         using var ind = new Wickra.RenkoTrailingStop(2.0);
+        Assert.Equal("RenkoTrailingStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4203,6 +4537,7 @@ public class GoldenAllTests
     public void Golden_RickshawMan()
     {
         using var ind = new Wickra.RickshawMan();
+        Assert.Equal("RickshawMan", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4215,6 +4550,7 @@ public class GoldenAllTests
     public void Golden_RisingThreeMethods()
     {
         using var ind = new Wickra.RisingThreeMethods();
+        Assert.Equal("RisingThreeMethods", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4227,6 +4563,7 @@ public class GoldenAllTests
     public void Golden_Rmi()
     {
         using var ind = new Wickra.Rmi(3, 7);
+        Assert.Equal("RMI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4239,6 +4576,7 @@ public class GoldenAllTests
     public void Golden_Roc()
     {
         using var ind = new Wickra.Roc(14);
+        Assert.Equal("ROC", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4251,6 +4589,7 @@ public class GoldenAllTests
     public void Golden_Rocp()
     {
         using var ind = new Wickra.Rocp(14);
+        Assert.Equal("ROCP", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4263,6 +4602,7 @@ public class GoldenAllTests
     public void Golden_Rocr()
     {
         using var ind = new Wickra.Rocr(14);
+        Assert.Equal("ROCR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4275,6 +4615,7 @@ public class GoldenAllTests
     public void Golden_Rocr100()
     {
         using var ind = new Wickra.Rocr100(14);
+        Assert.Equal("ROCR100", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4287,6 +4628,7 @@ public class GoldenAllTests
     public void Golden_RogersSatchellVolatility()
     {
         using var ind = new Wickra.RogersSatchellVolatility(20, 252);
+        Assert.Equal("RogersSatchellVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4299,6 +4641,7 @@ public class GoldenAllTests
     public void Golden_RollMeasure()
     {
         using var ind = new Wickra.RollMeasure(20);
+        Assert.Equal("RollMeasure", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4311,6 +4654,7 @@ public class GoldenAllTests
     public void Golden_RollingCorrelation()
     {
         using var ind = new Wickra.RollingCorrelation(14);
+        Assert.Equal("RollingCorrelation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4323,6 +4667,7 @@ public class GoldenAllTests
     public void Golden_RollingCovariance()
     {
         using var ind = new Wickra.RollingCovariance(14);
+        Assert.Equal("RollingCovariance", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4335,6 +4680,7 @@ public class GoldenAllTests
     public void Golden_RollingIqr()
     {
         using var ind = new Wickra.RollingIqr(14);
+        Assert.Equal("RollingIqr", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4347,6 +4693,7 @@ public class GoldenAllTests
     public void Golden_RollingMinMaxScaler()
     {
         using var ind = new Wickra.RollingMinMaxScaler(14);
+        Assert.Equal("RollingMinMaxScaler", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4359,6 +4706,7 @@ public class GoldenAllTests
     public void Golden_RollingPercentileRank()
     {
         using var ind = new Wickra.RollingPercentileRank(14);
+        Assert.Equal("RollingPercentileRank", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4371,6 +4719,7 @@ public class GoldenAllTests
     public void Golden_RollingQuantile()
     {
         using var ind = new Wickra.RollingQuantile(20, 0.5);
+        Assert.Equal("RollingQuantile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4383,6 +4732,7 @@ public class GoldenAllTests
     public void Golden_RollingVwap()
     {
         using var ind = new Wickra.RollingVwap(14);
+        Assert.Equal("RollingVWAP", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4395,6 +4745,7 @@ public class GoldenAllTests
     public void Golden_RoofingFilter()
     {
         using var ind = new Wickra.RoofingFilter(3, 7);
+        Assert.Equal("RoofingFilter", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4407,6 +4758,7 @@ public class GoldenAllTests
     public void Golden_Rsi()
     {
         using var ind = new Wickra.Rsi(14);
+        Assert.Equal("RSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4419,6 +4771,7 @@ public class GoldenAllTests
     public void Golden_Rsx()
     {
         using var ind = new Wickra.Rsx(14);
+        Assert.Equal("RSX", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4431,6 +4784,7 @@ public class GoldenAllTests
     public void Golden_RunBars()
     {
         using var ind = new Wickra.RunBars(3);
+        Assert.Equal("RunBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4443,6 +4797,7 @@ public class GoldenAllTests
     public void Golden_Rvi()
     {
         using var ind = new Wickra.Rvi(14);
+        Assert.Equal("RVI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4455,6 +4810,7 @@ public class GoldenAllTests
     public void Golden_RviVolatility()
     {
         using var ind = new Wickra.RviVolatility(14);
+        Assert.Equal("RVIVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4467,6 +4823,7 @@ public class GoldenAllTests
     public void Golden_Rwi()
     {
         using var ind = new Wickra.Rwi(14);
+        Assert.Equal("RWI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4479,6 +4836,7 @@ public class GoldenAllTests
     public void Golden_SampleEntropy()
     {
         using var ind = new Wickra.SampleEntropy(20, 2, 0.2);
+        Assert.Equal("SampleEntropy", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4491,6 +4849,7 @@ public class GoldenAllTests
     public void Golden_SarExt()
     {
         using var ind = new Wickra.SarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5);
+        Assert.Equal("SAREXT", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4503,6 +4862,7 @@ public class GoldenAllTests
     public void Golden_SeasonalZScore()
     {
         using var ind = new Wickra.SeasonalZScore(14);
+        Assert.Equal("SeasonalZScore", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4515,6 +4875,7 @@ public class GoldenAllTests
     public void Golden_SeparatingLines()
     {
         using var ind = new Wickra.SeparatingLines();
+        Assert.Equal("SeparatingLines", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4527,6 +4888,7 @@ public class GoldenAllTests
     public void Golden_SessionHighLow()
     {
         using var ind = new Wickra.SessionHighLow(14);
+        Assert.Equal("SessionHighLow", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4539,6 +4901,7 @@ public class GoldenAllTests
     public void Golden_SessionRange()
     {
         using var ind = new Wickra.SessionRange(14);
+        Assert.Equal("SessionRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4551,6 +4914,7 @@ public class GoldenAllTests
     public void Golden_SessionVwap()
     {
         using var ind = new Wickra.SessionVwap(14);
+        Assert.Equal("SessionVwap", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4563,6 +4927,7 @@ public class GoldenAllTests
     public void Golden_ShannonEntropy()
     {
         using var ind = new Wickra.ShannonEntropy(3, 7);
+        Assert.Equal("ShannonEntropy", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4575,6 +4940,7 @@ public class GoldenAllTests
     public void Golden_Shark()
     {
         using var ind = new Wickra.Shark();
+        Assert.Equal("Shark", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4587,6 +4953,7 @@ public class GoldenAllTests
     public void Golden_SharpeRatio()
     {
         using var ind = new Wickra.SharpeRatio(14, 2.0);
+        Assert.Equal("SharpeRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4599,6 +4966,7 @@ public class GoldenAllTests
     public void Golden_ShootingStar()
     {
         using var ind = new Wickra.ShootingStar();
+        Assert.Equal("ShootingStar", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4611,6 +4979,7 @@ public class GoldenAllTests
     public void Golden_ShortLine()
     {
         using var ind = new Wickra.ShortLine();
+        Assert.Equal("ShortLine", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4623,6 +4992,7 @@ public class GoldenAllTests
     public void Golden_SignedVolume()
     {
         using var ind = new Wickra.SignedVolume();
+        Assert.Equal("SignedVolume", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4635,6 +5005,7 @@ public class GoldenAllTests
     public void Golden_SineWave()
     {
         using var ind = new Wickra.SineWave();
+        Assert.Equal("SineWave", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4647,6 +5018,7 @@ public class GoldenAllTests
     public void Golden_SineWeightedMa()
     {
         using var ind = new Wickra.SineWeightedMa(14);
+        Assert.Equal("SWMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4659,6 +5031,7 @@ public class GoldenAllTests
     public void Golden_SinglePrints()
     {
         using var ind = new Wickra.SinglePrints(3, 7);
+        Assert.Equal("SinglePrints", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4671,6 +5044,7 @@ public class GoldenAllTests
     public void Golden_Skewness()
     {
         using var ind = new Wickra.Skewness(14);
+        Assert.Equal("Skewness", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4683,6 +5057,7 @@ public class GoldenAllTests
     public void Golden_Sma()
     {
         using var ind = new Wickra.Sma(14);
+        Assert.Equal("SMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4695,6 +5070,7 @@ public class GoldenAllTests
     public void Golden_Smi()
     {
         using var ind = new Wickra.Smi(3, 7, 14);
+        Assert.Equal("SMI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4707,6 +5083,7 @@ public class GoldenAllTests
     public void Golden_Smma()
     {
         using var ind = new Wickra.Smma(14);
+        Assert.Equal("SMMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4719,6 +5096,7 @@ public class GoldenAllTests
     public void Golden_SmoothedHeikinAshi()
     {
         using var ind = new Wickra.SmoothedHeikinAshi(14);
+        Assert.Equal("SmoothedHeikinAshi", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4731,6 +5109,7 @@ public class GoldenAllTests
     public void Golden_SortinoRatio()
     {
         using var ind = new Wickra.SortinoRatio(14, 2.0);
+        Assert.Equal("SortinoRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4743,6 +5122,7 @@ public class GoldenAllTests
     public void Golden_SpearmanCorrelation()
     {
         using var ind = new Wickra.SpearmanCorrelation(14);
+        Assert.Equal("SpearmanCorrelation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4755,6 +5135,7 @@ public class GoldenAllTests
     public void Golden_SpinningTop()
     {
         using var ind = new Wickra.SpinningTop();
+        Assert.Equal("SpinningTop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4767,6 +5148,7 @@ public class GoldenAllTests
     public void Golden_SpreadAr1Coefficient()
     {
         using var ind = new Wickra.SpreadAr1Coefficient(14);
+        Assert.Equal("SpreadAr1Coefficient", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4779,6 +5161,7 @@ public class GoldenAllTests
     public void Golden_SpreadBollingerBands()
     {
         using var ind = new Wickra.SpreadBollingerBands(14, 2.0);
+        Assert.Equal("SpreadBollingerBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4791,6 +5174,7 @@ public class GoldenAllTests
     public void Golden_SpreadHurst()
     {
         using var ind = new Wickra.SpreadHurst(14);
+        Assert.Equal("SpreadHurst", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4803,6 +5187,7 @@ public class GoldenAllTests
     public void Golden_StalledPattern()
     {
         using var ind = new Wickra.StalledPattern();
+        Assert.Equal("StalledPattern", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4815,6 +5200,7 @@ public class GoldenAllTests
     public void Golden_StandardError()
     {
         using var ind = new Wickra.StandardError(14);
+        Assert.Equal("StandardError", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4827,6 +5213,7 @@ public class GoldenAllTests
     public void Golden_StandardErrorBands()
     {
         using var ind = new Wickra.StandardErrorBands(14, 2.0);
+        Assert.Equal("StandardErrorBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4839,6 +5226,7 @@ public class GoldenAllTests
     public void Golden_StarcBands()
     {
         using var ind = new Wickra.StarcBands(3, 7, 2.0);
+        Assert.Equal("StarcBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4851,6 +5239,7 @@ public class GoldenAllTests
     public void Golden_Stc()
     {
         using var ind = new Wickra.Stc(10, 23, 10, 0.5);
+        Assert.Equal("STC", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4863,6 +5252,7 @@ public class GoldenAllTests
     public void Golden_StdDev()
     {
         using var ind = new Wickra.StdDev(14);
+        Assert.Equal("StdDev", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4875,6 +5265,7 @@ public class GoldenAllTests
     public void Golden_StepTrailingStop()
     {
         using var ind = new Wickra.StepTrailingStop(2.0);
+        Assert.Equal("StepTrailingStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4887,6 +5278,7 @@ public class GoldenAllTests
     public void Golden_SterlingRatio()
     {
         using var ind = new Wickra.SterlingRatio(14);
+        Assert.Equal("SterlingRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4899,6 +5291,7 @@ public class GoldenAllTests
     public void Golden_StickSandwich()
     {
         using var ind = new Wickra.StickSandwich();
+        Assert.Equal("StickSandwich", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4911,6 +5304,7 @@ public class GoldenAllTests
     public void Golden_StochRsi()
     {
         using var ind = new Wickra.StochRsi(3, 7);
+        Assert.Equal("StochRSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4923,6 +5317,7 @@ public class GoldenAllTests
     public void Golden_Stochastic()
     {
         using var ind = new Wickra.Stochastic(3, 7);
+        Assert.Equal("Stochastic", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4935,6 +5330,7 @@ public class GoldenAllTests
     public void Golden_StochasticCci()
     {
         using var ind = new Wickra.StochasticCci(14);
+        Assert.Equal("StochasticCCI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4947,6 +5343,7 @@ public class GoldenAllTests
     public void Golden_SuperSmoother()
     {
         using var ind = new Wickra.SuperSmoother(14);
+        Assert.Equal("SuperSmoother", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4959,6 +5356,7 @@ public class GoldenAllTests
     public void Golden_SuperTrend()
     {
         using var ind = new Wickra.SuperTrend(14, 2.0);
+        Assert.Equal("SuperTrend", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4971,6 +5369,7 @@ public class GoldenAllTests
     public void Golden_T3()
     {
         using var ind = new Wickra.T3(5, 0.7);
+        Assert.Equal("T3", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4983,6 +5382,7 @@ public class GoldenAllTests
     public void Golden_TailRatio()
     {
         using var ind = new Wickra.TailRatio(14);
+        Assert.Equal("TailRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4995,6 +5395,7 @@ public class GoldenAllTests
     public void Golden_TakerBuySellRatio()
     {
         using var ind = new Wickra.TakerBuySellRatio();
+        Assert.Equal("TakerBuySellRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5008,6 +5409,7 @@ public class GoldenAllTests
     public void Golden_Takuri()
     {
         using var ind = new Wickra.Takuri();
+        Assert.Equal("Takuri", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5020,6 +5422,7 @@ public class GoldenAllTests
     public void Golden_TasukiGap()
     {
         using var ind = new Wickra.TasukiGap();
+        Assert.Equal("TasukiGap", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5032,6 +5435,7 @@ public class GoldenAllTests
     public void Golden_TdCamouflage()
     {
         using var ind = new Wickra.TdCamouflage();
+        Assert.Equal("TDCamouflage", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5044,6 +5448,7 @@ public class GoldenAllTests
     public void Golden_TdClop()
     {
         using var ind = new Wickra.TdClop();
+        Assert.Equal("TDClop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5056,6 +5461,7 @@ public class GoldenAllTests
     public void Golden_TdClopwin()
     {
         using var ind = new Wickra.TdClopwin();
+        Assert.Equal("TDClopwin", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5068,6 +5474,7 @@ public class GoldenAllTests
     public void Golden_TdCombo()
     {
         using var ind = new Wickra.TdCombo(3, 7, 14, 28);
+        Assert.Equal("TDCombo", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5080,6 +5487,7 @@ public class GoldenAllTests
     public void Golden_TdCountdown()
     {
         using var ind = new Wickra.TdCountdown(3, 7, 14, 28);
+        Assert.Equal("TDCountdown", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5092,6 +5500,7 @@ public class GoldenAllTests
     public void Golden_TdDWave()
     {
         using var ind = new Wickra.TdDWave(2);
+        Assert.Equal("TDDWave", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5104,6 +5513,7 @@ public class GoldenAllTests
     public void Golden_TdDeMarker()
     {
         using var ind = new Wickra.TdDeMarker(14);
+        Assert.Equal("TDDeMarker", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5116,6 +5526,7 @@ public class GoldenAllTests
     public void Golden_TdDifferential()
     {
         using var ind = new Wickra.TdDifferential();
+        Assert.Equal("TDDifferential", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5128,6 +5539,7 @@ public class GoldenAllTests
     public void Golden_TdLines()
     {
         using var ind = new Wickra.TdLines(3, 7);
+        Assert.Equal("TDLines", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5140,6 +5552,7 @@ public class GoldenAllTests
     public void Golden_TdMovingAverage()
     {
         using var ind = new Wickra.TdMovingAverage(3, 7);
+        Assert.Equal("TDMovingAverage", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5152,6 +5565,7 @@ public class GoldenAllTests
     public void Golden_TdOpen()
     {
         using var ind = new Wickra.TdOpen();
+        Assert.Equal("TDOpen", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5164,6 +5578,7 @@ public class GoldenAllTests
     public void Golden_TdPressure()
     {
         using var ind = new Wickra.TdPressure(14);
+        Assert.Equal("TDPressure", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5176,6 +5591,7 @@ public class GoldenAllTests
     public void Golden_TdPropulsion()
     {
         using var ind = new Wickra.TdPropulsion();
+        Assert.Equal("TDPropulsion", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5188,6 +5604,7 @@ public class GoldenAllTests
     public void Golden_TdRangeProjection()
     {
         using var ind = new Wickra.TdRangeProjection();
+        Assert.Equal("TDRangeProjection", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5200,6 +5617,7 @@ public class GoldenAllTests
     public void Golden_TdRei()
     {
         using var ind = new Wickra.TdRei(14);
+        Assert.Equal("TDREI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5212,6 +5630,7 @@ public class GoldenAllTests
     public void Golden_TdRiskLevel()
     {
         using var ind = new Wickra.TdRiskLevel(3, 7);
+        Assert.Equal("TDRiskLevel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5224,6 +5643,7 @@ public class GoldenAllTests
     public void Golden_TdSequential()
     {
         using var ind = new Wickra.TdSequential(3, 7, 14, 28);
+        Assert.Equal("TDSequential", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5236,6 +5656,7 @@ public class GoldenAllTests
     public void Golden_TdSetup()
     {
         using var ind = new Wickra.TdSetup(3, 7);
+        Assert.Equal("TDSetup", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5248,6 +5669,7 @@ public class GoldenAllTests
     public void Golden_TdTrap()
     {
         using var ind = new Wickra.TdTrap();
+        Assert.Equal("TDTrap", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5260,6 +5682,7 @@ public class GoldenAllTests
     public void Golden_Tema()
     {
         using var ind = new Wickra.Tema(14);
+        Assert.Equal("TEMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5272,6 +5695,7 @@ public class GoldenAllTests
     public void Golden_TermStructureBasis()
     {
         using var ind = new Wickra.TermStructureBasis();
+        Assert.Equal("TermStructureBasis", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5285,6 +5709,7 @@ public class GoldenAllTests
     public void Golden_ThreeDrives()
     {
         using var ind = new Wickra.ThreeDrives();
+        Assert.Equal("ThreeDrives", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5297,6 +5722,7 @@ public class GoldenAllTests
     public void Golden_ThreeInside()
     {
         using var ind = new Wickra.ThreeInside();
+        Assert.Equal("ThreeInside", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5309,6 +5735,7 @@ public class GoldenAllTests
     public void Golden_ThreeLineBreak()
     {
         using var ind = new Wickra.ThreeLineBreak(14);
+        Assert.Equal("ThreeLineBreak", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5321,6 +5748,7 @@ public class GoldenAllTests
     public void Golden_ThreeLineBreakBars()
     {
         using var ind = new Wickra.ThreeLineBreakBars(3);
+        Assert.Equal("ThreeLineBreakBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5333,6 +5761,7 @@ public class GoldenAllTests
     public void Golden_ThreeLineStrike()
     {
         using var ind = new Wickra.ThreeLineStrike();
+        Assert.Equal("ThreeLineStrike", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5345,6 +5774,7 @@ public class GoldenAllTests
     public void Golden_ThreeOutside()
     {
         using var ind = new Wickra.ThreeOutside();
+        Assert.Equal("ThreeOutside", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5357,6 +5787,7 @@ public class GoldenAllTests
     public void Golden_ThreeSoldiersOrCrows()
     {
         using var ind = new Wickra.ThreeSoldiersOrCrows();
+        Assert.Equal("ThreeSoldiersOrCrows", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5369,6 +5800,7 @@ public class GoldenAllTests
     public void Golden_ThreeStarsInSouth()
     {
         using var ind = new Wickra.ThreeStarsInSouth();
+        Assert.Equal("ThreeStarsInSouth", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5381,6 +5813,7 @@ public class GoldenAllTests
     public void Golden_Thrusting()
     {
         using var ind = new Wickra.Thrusting();
+        Assert.Equal("Thrusting", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5393,6 +5826,7 @@ public class GoldenAllTests
     public void Golden_TickBars()
     {
         using var ind = new Wickra.TickBars(2);
+        Assert.Equal("TickBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5405,6 +5839,7 @@ public class GoldenAllTests
     public void Golden_TickIndex()
     {
         using var ind = new Wickra.TickIndex();
+        Assert.Equal("TickIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5418,6 +5853,7 @@ public class GoldenAllTests
     public void Golden_Tii()
     {
         using var ind = new Wickra.Tii(3, 7);
+        Assert.Equal("TII", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5430,6 +5866,7 @@ public class GoldenAllTests
     public void Golden_TimeBasedStop()
     {
         using var ind = new Wickra.TimeBasedStop(14);
+        Assert.Equal("TimeBasedStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5442,6 +5879,7 @@ public class GoldenAllTests
     public void Golden_TimeOfDayReturnProfile()
     {
         using var ind = new Wickra.TimeOfDayReturnProfile(24, 0);
+        Assert.Equal("TimeOfDayReturnProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5455,6 +5893,7 @@ public class GoldenAllTests
     public void Golden_TowerTopBottom()
     {
         using var ind = new Wickra.TowerTopBottom();
+        Assert.Equal("TowerTopBottom", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5467,6 +5906,7 @@ public class GoldenAllTests
     public void Golden_TpoProfile()
     {
         using var ind = new Wickra.TpoProfile(30, 50);
+        Assert.Equal("TpoProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5479,6 +5919,7 @@ public class GoldenAllTests
     public void Golden_TradeImbalance()
     {
         using var ind = new Wickra.TradeImbalance(20);
+        Assert.Equal("TradeImbalance", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5491,6 +5932,7 @@ public class GoldenAllTests
     public void Golden_TradeSignAutocorrelation()
     {
         using var ind = new Wickra.TradeSignAutocorrelation(20);
+        Assert.Equal("TradeSignAutocorrelation", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5503,6 +5945,7 @@ public class GoldenAllTests
     public void Golden_TradeVolumeIndex()
     {
         using var ind = new Wickra.TradeVolumeIndex(2.0);
+        Assert.Equal("TradeVolumeIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5515,6 +5958,7 @@ public class GoldenAllTests
     public void Golden_TrendLabel()
     {
         using var ind = new Wickra.TrendLabel(14);
+        Assert.Equal("TrendLabel", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5527,6 +5971,7 @@ public class GoldenAllTests
     public void Golden_TrendStrengthIndex()
     {
         using var ind = new Wickra.TrendStrengthIndex(14);
+        Assert.Equal("TrendStrengthIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5539,6 +5984,7 @@ public class GoldenAllTests
     public void Golden_Trendflex()
     {
         using var ind = new Wickra.Trendflex(14);
+        Assert.Equal("Trendflex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5551,6 +5997,7 @@ public class GoldenAllTests
     public void Golden_TreynorRatio()
     {
         using var ind = new Wickra.TreynorRatio(14, 2.0);
+        Assert.Equal("TreynorRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5563,6 +6010,7 @@ public class GoldenAllTests
     public void Golden_Triangle()
     {
         using var ind = new Wickra.Triangle();
+        Assert.Equal("Triangle", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5575,6 +6023,7 @@ public class GoldenAllTests
     public void Golden_Trima()
     {
         using var ind = new Wickra.Trima(14);
+        Assert.Equal("TRIMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5587,6 +6036,7 @@ public class GoldenAllTests
     public void Golden_Trin()
     {
         using var ind = new Wickra.Trin();
+        Assert.Equal("Trin", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5600,6 +6050,7 @@ public class GoldenAllTests
     public void Golden_TripleTopBottom()
     {
         using var ind = new Wickra.TripleTopBottom();
+        Assert.Equal("TripleTopBottom", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5612,6 +6063,7 @@ public class GoldenAllTests
     public void Golden_Tristar()
     {
         using var ind = new Wickra.Tristar();
+        Assert.Equal("Tristar", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5624,6 +6076,7 @@ public class GoldenAllTests
     public void Golden_Trix()
     {
         using var ind = new Wickra.Trix(14);
+        Assert.Equal("TRIX", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5636,6 +6089,7 @@ public class GoldenAllTests
     public void Golden_TrueRange()
     {
         using var ind = new Wickra.TrueRange();
+        Assert.Equal("TrueRange", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5648,6 +6102,7 @@ public class GoldenAllTests
     public void Golden_Tsf()
     {
         using var ind = new Wickra.Tsf(14);
+        Assert.Equal("TSF", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5660,6 +6115,7 @@ public class GoldenAllTests
     public void Golden_TsfOscillator()
     {
         using var ind = new Wickra.TsfOscillator(14);
+        Assert.Equal("TsfOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5672,6 +6128,7 @@ public class GoldenAllTests
     public void Golden_Tsi()
     {
         using var ind = new Wickra.Tsi(3, 7);
+        Assert.Equal("TSI", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5684,6 +6141,7 @@ public class GoldenAllTests
     public void Golden_Tsv()
     {
         using var ind = new Wickra.Tsv(14);
+        Assert.Equal("TSV", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5696,6 +6154,7 @@ public class GoldenAllTests
     public void Golden_TtmSqueeze()
     {
         using var ind = new Wickra.TtmSqueeze(14, 2.0, 0.5);
+        Assert.Equal("TtmSqueeze", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5708,6 +6167,7 @@ public class GoldenAllTests
     public void Golden_TtmTrend()
     {
         using var ind = new Wickra.TtmTrend(14);
+        Assert.Equal("TtmTrend", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5720,6 +6180,7 @@ public class GoldenAllTests
     public void Golden_TurnOfMonth()
     {
         using var ind = new Wickra.TurnOfMonth(3u, 3u, 0);
+        Assert.Equal("TurnOfMonth", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5732,6 +6193,7 @@ public class GoldenAllTests
     public void Golden_Tweezer()
     {
         using var ind = new Wickra.Tweezer();
+        Assert.Equal("Tweezer", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5744,6 +6206,7 @@ public class GoldenAllTests
     public void Golden_TwiggsMoneyFlow()
     {
         using var ind = new Wickra.TwiggsMoneyFlow(14);
+        Assert.Equal("TwiggsMoneyFlow", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5756,6 +6219,7 @@ public class GoldenAllTests
     public void Golden_TwoCrows()
     {
         using var ind = new Wickra.TwoCrows();
+        Assert.Equal("TwoCrows", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5768,6 +6232,7 @@ public class GoldenAllTests
     public void Golden_TypicalPrice()
     {
         using var ind = new Wickra.TypicalPrice();
+        Assert.Equal("TypicalPrice", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5780,6 +6245,7 @@ public class GoldenAllTests
     public void Golden_UlcerIndex()
     {
         using var ind = new Wickra.UlcerIndex(14);
+        Assert.Equal("UlcerIndex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5792,6 +6258,7 @@ public class GoldenAllTests
     public void Golden_UltimateOscillator()
     {
         using var ind = new Wickra.UltimateOscillator(3, 7, 14);
+        Assert.Equal("UltimateOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5804,6 +6271,7 @@ public class GoldenAllTests
     public void Golden_UniqueThreeRiver()
     {
         using var ind = new Wickra.UniqueThreeRiver();
+        Assert.Equal("UniqueThreeRiver", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5816,6 +6284,7 @@ public class GoldenAllTests
     public void Golden_UniversalOscillator()
     {
         using var ind = new Wickra.UniversalOscillator(14);
+        Assert.Equal("UniversalOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5828,6 +6297,7 @@ public class GoldenAllTests
     public void Golden_UpDownVolumeRatio()
     {
         using var ind = new Wickra.UpDownVolumeRatio();
+        Assert.Equal("UpDownVolumeRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5841,6 +6311,7 @@ public class GoldenAllTests
     public void Golden_UpsideGapThreeMethods()
     {
         using var ind = new Wickra.UpsideGapThreeMethods();
+        Assert.Equal("UpsideGapThreeMethods", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5853,6 +6324,7 @@ public class GoldenAllTests
     public void Golden_UpsideGapTwoCrows()
     {
         using var ind = new Wickra.UpsideGapTwoCrows();
+        Assert.Equal("UpsideGapTwoCrows", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5865,6 +6337,7 @@ public class GoldenAllTests
     public void Golden_UpsidePotentialRatio()
     {
         using var ind = new Wickra.UpsidePotentialRatio(14, 2.0);
+        Assert.Equal("UpsidePotentialRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5877,6 +6350,7 @@ public class GoldenAllTests
     public void Golden_ValueArea()
     {
         using var ind = new Wickra.ValueArea(20, 50, 0.7);
+        Assert.Equal("ValueArea", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5889,6 +6363,7 @@ public class GoldenAllTests
     public void Golden_ValueAtRisk()
     {
         using var ind = new Wickra.ValueAtRisk(20, 0.95);
+        Assert.Equal("ValueAtRisk", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5901,6 +6376,7 @@ public class GoldenAllTests
     public void Golden_Variance()
     {
         using var ind = new Wickra.Variance(14);
+        Assert.Equal("Variance", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5913,6 +6389,7 @@ public class GoldenAllTests
     public void Golden_VarianceRatio()
     {
         using var ind = new Wickra.VarianceRatio(60, 2);
+        Assert.Equal("VarianceRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5925,6 +6402,7 @@ public class GoldenAllTests
     public void Golden_VerticalHorizontalFilter()
     {
         using var ind = new Wickra.VerticalHorizontalFilter(14);
+        Assert.Equal("VerticalHorizontalFilter", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5937,6 +6415,7 @@ public class GoldenAllTests
     public void Golden_Vidya()
     {
         using var ind = new Wickra.Vidya(3, 7);
+        Assert.Equal("VIDYA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5949,6 +6428,7 @@ public class GoldenAllTests
     public void Golden_VolatilityCone()
     {
         using var ind = new Wickra.VolatilityCone(3, 7);
+        Assert.Equal("VolatilityCone", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5961,6 +6441,7 @@ public class GoldenAllTests
     public void Golden_VolatilityOfVolatility()
     {
         using var ind = new Wickra.VolatilityOfVolatility(3, 7);
+        Assert.Equal("VolatilityOfVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5973,6 +6454,7 @@ public class GoldenAllTests
     public void Golden_VolatilityRatio()
     {
         using var ind = new Wickra.VolatilityRatio(14);
+        Assert.Equal("VolatilityRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5985,6 +6467,7 @@ public class GoldenAllTests
     public void Golden_VoltyStop()
     {
         using var ind = new Wickra.VoltyStop(14, 2.0);
+        Assert.Equal("VoltyStop", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5997,6 +6480,7 @@ public class GoldenAllTests
     public void Golden_VolumeBars()
     {
         using var ind = new Wickra.VolumeBars(500.0);
+        Assert.Equal("VolumeBars", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6009,6 +6493,7 @@ public class GoldenAllTests
     public void Golden_VolumeByTimeProfile()
     {
         using var ind = new Wickra.VolumeByTimeProfile(24, 0);
+        Assert.Equal("VolumeByTimeProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6022,6 +6507,7 @@ public class GoldenAllTests
     public void Golden_VolumeOscillator()
     {
         using var ind = new Wickra.VolumeOscillator(3, 7);
+        Assert.Equal("VolumeOscillator", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6034,6 +6520,7 @@ public class GoldenAllTests
     public void Golden_VolumePriceTrend()
     {
         using var ind = new Wickra.VolumePriceTrend();
+        Assert.Equal("VPT", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6046,6 +6533,7 @@ public class GoldenAllTests
     public void Golden_VolumeProfile()
     {
         using var ind = new Wickra.VolumeProfile(20, 50);
+        Assert.Equal("VolumeProfile", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6058,6 +6546,7 @@ public class GoldenAllTests
     public void Golden_VolumeRsi()
     {
         using var ind = new Wickra.VolumeRsi(14);
+        Assert.Equal("VolumeRsi", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6070,6 +6559,7 @@ public class GoldenAllTests
     public void Golden_VolumeWeightedMacd()
     {
         using var ind = new Wickra.VolumeWeightedMacd(3, 7, 14);
+        Assert.Equal("VolumeWeightedMacd", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6082,6 +6572,7 @@ public class GoldenAllTests
     public void Golden_VolumeWeightedSr()
     {
         using var ind = new Wickra.VolumeWeightedSr(14);
+        Assert.Equal("VolumeWeightedSr", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6094,6 +6585,7 @@ public class GoldenAllTests
     public void Golden_Vortex()
     {
         using var ind = new Wickra.Vortex(14);
+        Assert.Equal("Vortex", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6106,6 +6598,7 @@ public class GoldenAllTests
     public void Golden_Vpin()
     {
         using var ind = new Wickra.Vpin(5000.0, 10);
+        Assert.Equal("Vpin", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6118,6 +6611,7 @@ public class GoldenAllTests
     public void Golden_Vwap()
     {
         using var ind = new Wickra.Vwap();
+        Assert.Equal("VWAP", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6130,6 +6624,7 @@ public class GoldenAllTests
     public void Golden_VwapStdDevBands()
     {
         using var ind = new Wickra.VwapStdDevBands(2.0);
+        Assert.Equal("VwapStdDevBands", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6142,6 +6637,7 @@ public class GoldenAllTests
     public void Golden_Vwma()
     {
         using var ind = new Wickra.Vwma(14);
+        Assert.Equal("VWMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6154,6 +6650,7 @@ public class GoldenAllTests
     public void Golden_Vzo()
     {
         using var ind = new Wickra.Vzo(14);
+        Assert.Equal("VZO", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6166,6 +6663,7 @@ public class GoldenAllTests
     public void Golden_Wad()
     {
         using var ind = new Wickra.Wad();
+        Assert.Equal("Wad", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6178,6 +6676,7 @@ public class GoldenAllTests
     public void Golden_WavePm()
     {
         using var ind = new Wickra.WavePm(3, 7);
+        Assert.Equal("WavePm", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6190,6 +6689,7 @@ public class GoldenAllTests
     public void Golden_WaveTrend()
     {
         using var ind = new Wickra.WaveTrend(3, 7, 14);
+        Assert.Equal("WaveTrend", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6202,6 +6702,7 @@ public class GoldenAllTests
     public void Golden_Wedge()
     {
         using var ind = new Wickra.Wedge();
+        Assert.Equal("Wedge", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6214,6 +6715,7 @@ public class GoldenAllTests
     public void Golden_WeightedClose()
     {
         using var ind = new Wickra.WeightedClose();
+        Assert.Equal("WeightedClose", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6226,6 +6728,7 @@ public class GoldenAllTests
     public void Golden_WickRatio()
     {
         using var ind = new Wickra.WickRatio();
+        Assert.Equal("WickRatio", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6238,6 +6741,7 @@ public class GoldenAllTests
     public void Golden_WilliamsFractals()
     {
         using var ind = new Wickra.WilliamsFractals();
+        Assert.Equal("WilliamsFractals", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6250,6 +6754,7 @@ public class GoldenAllTests
     public void Golden_WilliamsR()
     {
         using var ind = new Wickra.WilliamsR(14);
+        Assert.Equal("WilliamsR", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6262,6 +6767,7 @@ public class GoldenAllTests
     public void Golden_WinRate()
     {
         using var ind = new Wickra.WinRate(14);
+        Assert.Equal("WinRate", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6274,6 +6780,7 @@ public class GoldenAllTests
     public void Golden_Wma()
     {
         using var ind = new Wickra.Wma(14);
+        Assert.Equal("WMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6286,6 +6793,7 @@ public class GoldenAllTests
     public void Golden_WoodiePivots()
     {
         using var ind = new Wickra.WoodiePivots();
+        Assert.Equal("WoodiePivots", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6298,6 +6806,7 @@ public class GoldenAllTests
     public void Golden_YangZhangVolatility()
     {
         using var ind = new Wickra.YangZhangVolatility(20, 252);
+        Assert.Equal("YangZhangVolatility", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6310,6 +6819,7 @@ public class GoldenAllTests
     public void Golden_YoyoExit()
     {
         using var ind = new Wickra.YoyoExit(14, 2.0);
+        Assert.Equal("YoyoExit", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6322,6 +6832,7 @@ public class GoldenAllTests
     public void Golden_ZScore()
     {
         using var ind = new Wickra.ZScore(14);
+        Assert.Equal("ZScore", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6334,6 +6845,7 @@ public class GoldenAllTests
     public void Golden_ZeroLagMacd()
     {
         using var ind = new Wickra.ZeroLagMacd(3, 7, 14);
+        Assert.Equal("ZeroLagMACD", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6346,6 +6858,7 @@ public class GoldenAllTests
     public void Golden_ZigZag()
     {
         using var ind = new Wickra.ZigZag(0.02);
+        Assert.Equal("ZigZag", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6358,6 +6871,7 @@ public class GoldenAllTests
     public void Golden_Zlema()
     {
         using var ind = new Wickra.Zlema(14);
+        Assert.Equal("ZLEMA", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {

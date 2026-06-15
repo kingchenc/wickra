@@ -61,6 +61,11 @@ macro_rules! node_scalar_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -145,6 +150,11 @@ impl RviVolatilityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -284,6 +294,11 @@ impl UpsidePotentialRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -320,6 +335,11 @@ impl M2MeasureNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -354,6 +374,11 @@ impl BandpassFilterNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -391,6 +416,11 @@ impl EvenBetterSinewaveNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -426,6 +456,11 @@ impl AutocorrelationPeriodogramNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -465,6 +500,11 @@ impl ShannonEntropyNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -501,6 +541,11 @@ impl SampleEntropyNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -535,6 +580,11 @@ impl EwmaVolatilityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -571,6 +621,11 @@ impl Garch11Node {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -606,6 +661,11 @@ impl VolatilityOfVolatilityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -688,6 +748,11 @@ impl VolatilityConeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -722,6 +787,11 @@ impl JumpIndicatorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -758,6 +828,11 @@ impl RegimeLabelNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -792,6 +867,11 @@ impl RollingQuantileNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -830,6 +910,11 @@ impl AutocorrelationNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -866,6 +951,11 @@ impl HurstExponentNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -917,6 +1007,11 @@ macro_rules! node_pair_indicator {
             #[napi]
             pub fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
             }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
@@ -1014,6 +1109,11 @@ impl PairSpreadZScoreNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1079,6 +1179,11 @@ impl LeadLagCrossCorrelationNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -1150,6 +1255,11 @@ impl CointegrationNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1220,6 +1330,11 @@ impl RelativeStrengthABNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1271,6 +1386,11 @@ impl VarianceRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1321,6 +1441,11 @@ impl GrangerCausalityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -1390,6 +1515,11 @@ impl KalmanHedgeRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -1466,6 +1596,11 @@ impl SpreadBollingerBandsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1527,6 +1662,11 @@ impl MacdNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1575,6 +1715,11 @@ impl MacdFixNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -1642,6 +1787,11 @@ impl MacdExtNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1704,6 +1854,11 @@ impl BollingerNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1763,6 +1918,11 @@ impl AtrNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1815,6 +1975,11 @@ impl PlusDmNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -1869,6 +2034,11 @@ impl MinusDmNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1921,6 +2091,11 @@ impl PlusDiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -1975,6 +2150,11 @@ impl MinusDiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2028,6 +2208,11 @@ impl DxNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2080,6 +2265,11 @@ impl MidPriceNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -2146,6 +2336,11 @@ impl AvgPriceNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -2220,6 +2415,11 @@ impl SarExtNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2278,6 +2478,11 @@ impl HtPhasorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -2344,6 +2549,11 @@ impl CloseVsOpenNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2408,6 +2618,11 @@ impl BodySizePctNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -2474,6 +2689,11 @@ impl WickRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2539,6 +2759,11 @@ impl HighLowRangeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2591,6 +2816,11 @@ impl StochasticCciNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -2653,6 +2883,11 @@ impl ImiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2704,6 +2939,11 @@ impl QqeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -2775,6 +3015,11 @@ impl ElderRayNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2828,6 +3073,11 @@ impl TtmTrendNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2880,6 +3130,11 @@ impl QstickNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2916,6 +3171,11 @@ impl PolarizedFractalEfficiencyNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2950,6 +3210,11 @@ impl WavePmNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3026,6 +3291,11 @@ impl GatorOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3097,6 +3367,11 @@ impl KasePermissionStochasticNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3149,6 +3424,11 @@ impl VolatilityRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3203,6 +3483,11 @@ impl ProjectionOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3256,6 +3541,11 @@ impl TimeBasedStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3308,6 +3598,11 @@ impl AdaptiveCciNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3371,6 +3666,11 @@ impl StochNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3424,6 +3724,11 @@ impl ObvNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3495,6 +3800,11 @@ impl AdxNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3547,6 +3857,11 @@ impl AdxrNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3572,6 +3887,11 @@ impl CciNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3625,6 +3945,11 @@ impl WilliamsRNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3676,6 +4001,11 @@ impl MfiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3736,6 +4066,11 @@ impl PsarNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3795,6 +4130,11 @@ impl KeltnerNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3868,6 +4208,11 @@ impl DonchianNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3927,6 +4272,11 @@ impl VwapNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -3991,6 +4341,11 @@ impl RollingVwapNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4050,6 +4405,11 @@ impl AoNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4102,6 +4462,11 @@ impl AroonNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4196,6 +4561,11 @@ impl InertiaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4235,6 +4605,11 @@ impl ConnorsRsiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4268,6 +4643,11 @@ impl LaguerreRsiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4321,6 +4701,11 @@ impl SmiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4401,6 +4786,11 @@ impl KstNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4452,6 +4842,11 @@ impl PgoNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4512,6 +4907,11 @@ impl RviNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4564,6 +4964,11 @@ impl AwesomeOscillatorHistogramNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4598,6 +5003,11 @@ impl StcNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4643,6 +5053,11 @@ impl ElderImpulseNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4699,6 +5114,11 @@ impl ZeroLagMacdNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4732,6 +5152,11 @@ impl CfoNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4767,6 +5192,11 @@ impl ApoNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4793,6 +5223,11 @@ impl KamaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4851,6 +5286,11 @@ impl EvwmaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4886,6 +5326,11 @@ impl AlligatorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -4944,6 +5389,11 @@ impl JmaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4980,6 +5430,11 @@ impl VidyaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5015,6 +5470,11 @@ impl AlmaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5061,6 +5521,11 @@ impl T3Node {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5097,6 +5562,11 @@ impl GeneralizedDemaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5135,6 +5605,11 @@ impl HoltWintersNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5171,6 +5646,11 @@ impl RmiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5220,6 +5700,11 @@ impl DerivativeOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5257,6 +5742,11 @@ impl MacdHistogramNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5296,6 +5786,11 @@ impl PpoHistogramNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5333,6 +5828,11 @@ impl TsiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5369,6 +5869,11 @@ impl PmoNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5408,6 +5913,11 @@ impl TiiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5477,6 +5987,11 @@ impl AdlNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5532,6 +6047,11 @@ impl VolumePriceTrendNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5595,6 +6115,11 @@ impl ChaikinMoneyFlowNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5657,6 +6182,11 @@ impl ChaikinOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5706,6 +6236,11 @@ impl ForceIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5757,6 +6292,11 @@ impl NviNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5807,6 +6347,11 @@ impl PviNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5851,6 +6396,11 @@ impl VolumeOscillatorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -5914,6 +6464,11 @@ impl KvoNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5970,6 +6525,11 @@ impl AdOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6011,6 +6571,11 @@ impl AnchoredRsiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6079,6 +6644,11 @@ impl AnchoredVwapNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6141,6 +6711,11 @@ impl DemandIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6191,6 +6766,11 @@ impl TsvNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6240,6 +6820,11 @@ impl VzoNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6297,6 +6882,11 @@ impl MarketFacilitationIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6351,6 +6941,11 @@ impl EaseOfMovementNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6426,6 +7021,11 @@ impl SuperTrendNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6499,6 +7099,11 @@ impl ChandelierExitNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6579,6 +7184,11 @@ impl ChandeKrollStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6633,6 +7243,11 @@ impl AtrTrailingStopNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6689,6 +7304,11 @@ impl HiLoActivatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6744,6 +7364,11 @@ impl VoltyStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6798,6 +7423,11 @@ impl YoyoExitNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6867,6 +7497,11 @@ impl DonchianStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6903,6 +7538,11 @@ impl PercentageTrailingStopNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -6941,6 +7581,11 @@ impl StepTrailingStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6977,6 +7622,11 @@ impl RenkoTrailingStopNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7052,6 +7702,11 @@ impl KaseDevStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7125,6 +7780,11 @@ impl ElderSafeZoneNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7201,6 +7861,11 @@ impl AtrRatchetNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7269,6 +7934,11 @@ impl NrtrNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7344,6 +8014,11 @@ impl ModifiedMaStopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7405,6 +8080,11 @@ impl TypicalPriceNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7460,6 +8140,11 @@ impl MedianPriceNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7522,6 +8207,11 @@ impl WeightedCloseNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7559,6 +8249,11 @@ impl LinearRegressionNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7595,6 +8290,11 @@ impl LinRegSlopeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7650,6 +8350,11 @@ impl AcceleratorOscillatorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7718,6 +8423,11 @@ impl BalanceOfPowerNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7772,6 +8482,11 @@ impl ChoppinessIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7834,6 +8549,11 @@ impl TrueRangeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7884,6 +8604,11 @@ impl ChaikinVolatilityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -7948,6 +8673,11 @@ impl YangZhangVolatilityNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8010,6 +8740,11 @@ impl RogersSatchellVolatilityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8074,6 +8809,11 @@ impl GarmanKlassVolatilityNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8125,6 +8865,11 @@ impl ParkinsonVolatilityNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8161,6 +8906,11 @@ impl LinRegAngleNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8199,6 +8949,11 @@ impl BollingerBandwidthNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8235,6 +8990,11 @@ impl PercentBNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8291,6 +9051,11 @@ impl NatrNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8328,6 +9093,11 @@ impl HistoricalVolatilityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8378,6 +9148,11 @@ impl AroonOscillatorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8477,6 +9252,11 @@ impl WaveTrendNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8536,6 +9316,11 @@ impl RwiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8597,6 +9382,11 @@ impl VortexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8647,6 +9437,11 @@ impl MassIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8684,6 +9479,11 @@ impl StochRsiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8741,6 +9541,11 @@ impl UltimateOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8777,6 +9582,11 @@ impl PpoNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8815,6 +9625,11 @@ impl CoppockNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8863,6 +9678,11 @@ impl VwmaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8921,6 +9741,11 @@ impl MaEnvelopeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -8996,6 +9821,11 @@ impl AccelerationBandsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9073,6 +9903,11 @@ impl StarcBandsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9147,6 +9982,11 @@ impl AtrBandsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9223,6 +10063,11 @@ impl HurstChannelNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9278,6 +10123,11 @@ impl LinRegChannelNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9335,6 +10185,11 @@ impl StandardErrorBandsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9390,6 +10245,11 @@ impl QuartileBandsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9447,6 +10307,11 @@ impl BomarBandsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9502,6 +10367,11 @@ impl MedianChannelNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9567,6 +10437,11 @@ impl ProjectionBandsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9648,6 +10523,11 @@ impl CentralPivotRangeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9741,6 +10621,11 @@ impl MurreyMathLinesNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9805,6 +10690,11 @@ impl AndrewsPitchforkNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9878,6 +10768,11 @@ impl VolumeWeightedSrNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9932,6 +10827,11 @@ impl PivotReversalNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -9999,6 +10899,11 @@ impl DoubleBollingerNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -10073,6 +10978,11 @@ impl TtmSqueezeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10135,6 +11045,11 @@ impl FractalChaosBandsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -10219,6 +11134,11 @@ impl VwapStdDevBandsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -10305,6 +11225,11 @@ impl ClassicPivotsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -10396,6 +11321,11 @@ impl FibonacciPivotsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -10494,6 +11424,11 @@ impl CamarillaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10579,6 +11514,11 @@ impl WoodiePivotsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10660,6 +11600,11 @@ impl DemarkPivotsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10732,6 +11677,11 @@ impl WilliamsFractalsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10802,6 +11752,11 @@ impl ZigZagNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10855,6 +11810,11 @@ impl TdSetupNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -10944,6 +11904,11 @@ impl TdSequentialNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10994,6 +11959,11 @@ impl TdDeMarkerNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11043,6 +12013,11 @@ impl TdReiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11111,6 +12086,11 @@ impl TdPressureNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11177,6 +12157,11 @@ impl TdComboNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11231,6 +12216,11 @@ impl TdDWaveNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11294,6 +12284,11 @@ impl TdMovingAverageNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11360,6 +12355,11 @@ impl TdCountdownNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11434,6 +12434,11 @@ impl TdLinesNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11517,6 +12522,11 @@ impl TdRangeProjectionNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11577,6 +12587,11 @@ impl TdDifferentialNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11644,6 +12659,11 @@ impl TdOpenNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11720,6 +12740,11 @@ impl TdRiskLevelNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11757,6 +12782,11 @@ impl InverseFisherTransformNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11791,6 +12821,11 @@ impl DecyclerOscillatorNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11828,6 +12863,11 @@ impl RoofingFilterNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11863,6 +12903,11 @@ impl EmpiricalModeDecompositionNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11905,6 +12950,11 @@ impl HtDcPhaseNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11945,6 +12995,11 @@ impl HtTrendModeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -11987,6 +13042,11 @@ impl HilbertDominantCycleNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12027,6 +13087,11 @@ impl AdaptiveCycleNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -12072,6 +13137,11 @@ impl SineWaveNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -12125,6 +13195,11 @@ impl MamaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12159,6 +13234,11 @@ impl FamaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -12268,6 +13348,11 @@ impl IchimokuNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12354,6 +13439,11 @@ impl HeikinAshiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12414,6 +13504,11 @@ impl HeikinAshiOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12468,6 +13563,11 @@ impl ThreeLineBreakNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -12548,6 +13648,11 @@ impl SmoothedHeikinAshiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12619,6 +13724,11 @@ impl EquivolumeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -12695,6 +13805,11 @@ impl CandleVolumeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12749,6 +13864,11 @@ impl FryPanBottomNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -12805,6 +13925,11 @@ impl DumplingTopNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12860,6 +13985,11 @@ impl NewPriceLinesNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12895,6 +14025,11 @@ impl ValueAreaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13007,6 +14142,11 @@ impl NakedPocNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13059,6 +14199,11 @@ impl SinglePrintsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13120,6 +14265,11 @@ impl ProfileShapeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13194,6 +14344,11 @@ impl HighLowVolumeNodesNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13272,6 +14427,11 @@ impl CompositeProfileNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13297,6 +14457,11 @@ impl VolumeProfileNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13377,6 +14542,11 @@ impl TpoProfileNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13444,6 +14614,11 @@ impl InitialBalanceNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13510,6 +14685,11 @@ impl OpeningRangeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13627,6 +14807,11 @@ macro_rules! node_candle_pattern {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -13698,6 +14883,11 @@ impl DojiNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -13940,6 +15130,11 @@ macro_rules! node_ob_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -14003,6 +15198,11 @@ impl OrderBookImbalanceTopNNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -14082,6 +15282,11 @@ macro_rules! node_trade_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -14142,6 +15347,11 @@ impl TradeImbalanceNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14192,6 +15402,11 @@ impl TradeSignAutocorrelationNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -14244,6 +15459,11 @@ impl PinNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14291,6 +15511,11 @@ impl OrderFlowImbalanceNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -14343,6 +15568,11 @@ impl VpinNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14394,6 +15624,11 @@ impl AmihudIlliquidityNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14444,6 +15679,11 @@ impl RollMeasureNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -14532,6 +15772,11 @@ macro_rules! node_trade_quote_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -14596,6 +15841,11 @@ impl RealizedSpreadNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14655,6 +15905,11 @@ impl KylesLambdaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -14743,6 +15998,11 @@ impl FootprintNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -14994,6 +16254,11 @@ impl FundingRateNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15033,6 +16298,11 @@ impl FundingRateMeanNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15071,6 +16341,11 @@ impl FundingRateZScoreNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15126,6 +16401,11 @@ impl FundingBasisNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15170,6 +16450,11 @@ impl OpenInterestDeltaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15222,6 +16507,11 @@ impl OIPriceDivergenceNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15281,6 +16571,11 @@ impl OIWeightedNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15334,6 +16629,11 @@ impl LongShortRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15398,6 +16698,11 @@ impl TakerBuySellRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15487,6 +16792,11 @@ impl LiquidationFeaturesNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15547,6 +16857,11 @@ impl TermStructureBasisNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15606,6 +16921,11 @@ impl CalendarSpreadNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15677,6 +16997,11 @@ impl EstimatedLeverageRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15754,6 +17079,11 @@ impl OiToVolumeRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15809,6 +17139,11 @@ impl PerpetualPremiumIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15849,6 +17184,11 @@ impl FundingImpliedAprNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15888,6 +17228,11 @@ impl OpenInterestMomentumNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -15982,6 +17327,11 @@ impl AdvanceDeclineNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16113,6 +17463,11 @@ impl AdvanceDeclineRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16180,6 +17535,11 @@ impl AdVolumeLineNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16249,6 +17609,11 @@ impl McClellanOscillatorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16316,6 +17681,11 @@ impl McClellanSummationIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16385,6 +17755,11 @@ impl TrinNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16446,6 +17821,11 @@ impl BreadthThrustNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16515,6 +17895,11 @@ impl NewHighsNewLowsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16576,6 +17961,11 @@ impl HighLowIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16655,6 +18045,11 @@ impl PercentAboveMaNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16722,6 +18117,11 @@ impl UpDownVolumeRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16805,6 +18205,11 @@ impl BullishPercentIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16872,6 +18277,11 @@ impl CumulativeVolumeIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -16941,6 +18351,11 @@ impl AbsoluteBreadthIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17009,6 +18424,11 @@ impl TickIndexNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17050,6 +18470,11 @@ impl SharpeRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17084,6 +18509,11 @@ impl SortinoRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17120,6 +18550,11 @@ impl CalmarRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17154,6 +18589,11 @@ impl OmegaRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17190,6 +18630,11 @@ impl MaxDrawdownNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17224,6 +18669,11 @@ impl AverageDrawdownNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17269,6 +18719,11 @@ impl DrawdownDurationNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17303,6 +18758,11 @@ impl PainIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17339,6 +18799,11 @@ impl ValueAtRiskNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17373,6 +18838,11 @@ impl ConditionalValueAtRiskNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17409,6 +18879,11 @@ impl ProfitFactorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17443,6 +18918,11 @@ impl GainLossRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17485,6 +18965,11 @@ impl RecoveryFactorNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17519,6 +19004,11 @@ impl KellyCriterionNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17576,6 +19066,11 @@ impl TreynorRatioNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17623,6 +19118,11 @@ impl InformationRatioNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -17696,6 +19196,11 @@ impl RenkoBarsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[napi(object)]
@@ -17753,6 +19258,11 @@ impl KagiBarsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -17816,6 +19326,11 @@ impl PointAndFigureBarsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[napi(object)]
@@ -17873,6 +19388,11 @@ impl RangeBarsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -17962,6 +19482,11 @@ impl TickBarsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[napi(object)]
@@ -18049,6 +19574,11 @@ impl VolumeBarsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -18141,6 +19671,11 @@ impl DollarBarsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[napi(object)]
@@ -18225,6 +19760,11 @@ impl ImbalanceBarsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -18311,6 +19851,11 @@ impl RunBarsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[napi(object)]
@@ -18369,6 +19914,11 @@ impl ThreeLineBreakBarsNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[napi(js_name = "Alpha")]
@@ -18408,6 +19958,11 @@ impl AlphaNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -18506,6 +20061,11 @@ macro_rules! node_seasonality_offset_scalar {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -18581,6 +20141,11 @@ macro_rules! node_seasonality_bucket_profile {
             #[napi]
             pub fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
             }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
@@ -18660,6 +20225,11 @@ macro_rules! node_seasonality_offset_profile {
             #[napi]
             pub fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            #[napi]
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
             }
             #[napi(js_name = "isReady")]
             pub fn is_ready(&self) -> bool {
@@ -18749,6 +20319,11 @@ impl AverageDailyRangeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18804,6 +20379,11 @@ impl TurnOfMonthNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -18875,6 +20455,11 @@ impl SessionHighLowNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -18950,6 +20535,11 @@ impl SessionRangeNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19020,6 +20610,11 @@ impl OvernightIntradayReturnNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -19104,6 +20699,11 @@ impl FibRetracementNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19173,6 +20773,11 @@ impl FibExtensionNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19238,6 +20843,11 @@ impl FibProjectionNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -19314,6 +20924,11 @@ impl AutoFibNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19377,6 +20992,11 @@ impl GoldenPocketNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19436,6 +21056,11 @@ impl FibConfluenceNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -19536,6 +21161,11 @@ impl FibFanNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19604,6 +21234,11 @@ impl FibArcsNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -19677,6 +21312,11 @@ impl FibChannelNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19743,6 +21383,11 @@ impl FibTimeZonesNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19799,6 +21444,11 @@ impl VolumeRsiNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19853,6 +21503,11 @@ impl WadNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -19922,6 +21577,11 @@ impl TwiggsMoneyFlowNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19971,6 +21631,11 @@ impl TradeVolumeIndexNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -20033,6 +21698,11 @@ impl IntradayIntensityNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -20101,6 +21771,11 @@ impl BetterVolumeNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
@@ -20175,6 +21850,11 @@ impl VolumeWeightedMacdNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    #[napi]
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {

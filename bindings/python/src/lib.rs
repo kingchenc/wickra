@@ -156,6 +156,10 @@ impl PySma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -211,6 +215,10 @@ impl PyEma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -261,6 +269,10 @@ impl PyWma {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -313,6 +325,10 @@ impl PyRsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -370,6 +386,10 @@ impl PyMacd {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -435,6 +455,10 @@ impl PyBb {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -548,6 +572,10 @@ impl PyAtr {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -615,6 +643,10 @@ impl PyPlusDm {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -684,6 +716,10 @@ impl PyMinusDm {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -751,6 +787,10 @@ impl PyPlusDi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -820,6 +860,10 @@ impl PyMinusDi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -887,6 +931,10 @@ impl PyDx {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -956,6 +1004,10 @@ impl PyMidPrice {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1003,6 +1055,10 @@ impl PyMidPoint {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1071,6 +1127,10 @@ impl PyAvgPrice {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1118,6 +1178,10 @@ impl PyRocp {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1167,6 +1231,10 @@ impl PyRocr {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1214,6 +1282,10 @@ impl PyRocr100 {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1267,6 +1339,10 @@ impl PyLinRegIntercept {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1314,6 +1390,10 @@ impl PyTsf {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1378,6 +1458,10 @@ impl PyMacdFix {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1472,6 +1556,10 @@ impl PySarExt {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1556,6 +1644,10 @@ impl PyMacdExt {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1612,6 +1704,10 @@ impl PyHtPhasor {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1659,6 +1755,10 @@ impl PyLogReturn {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1712,6 +1812,10 @@ impl PyRealizedVolatility {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -1759,6 +1863,10 @@ impl PyRollingIqr {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1811,6 +1919,10 @@ impl PyRollingPercentileRank {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1867,6 +1979,10 @@ impl PyRollingQuantile {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1939,6 +2055,10 @@ impl PyCloseVsOpen {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2005,6 +2125,10 @@ impl PyBodySizePct {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2073,6 +2197,10 @@ impl PyWickRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2140,6 +2268,10 @@ impl PyHighLowRange {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2187,6 +2319,10 @@ impl PyTrendLabel {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2239,6 +2375,10 @@ impl PyJumpIndicator {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2293,6 +2433,10 @@ impl PyRegimeLabel {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2342,6 +2486,10 @@ impl PyWinRate {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2389,6 +2537,10 @@ impl PyExpectancy {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2438,6 +2590,10 @@ impl PySineWeightedMa {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2485,6 +2641,10 @@ impl PyGeometricMa {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2534,6 +2694,10 @@ impl PyEhma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2581,6 +2745,10 @@ impl PyMedianMa {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2634,6 +2802,10 @@ impl PyAdaptiveLaguerreFilter {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2686,6 +2858,10 @@ impl PyDisparityIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2734,6 +2910,10 @@ impl PyFisherRsi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2781,6 +2961,10 @@ impl PyRsx {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2833,6 +3017,10 @@ impl PyDynamicMomentumIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -2902,6 +3090,10 @@ impl PyStochasticCci {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -2970,6 +3162,10 @@ impl PyTtmTrend {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3021,6 +3217,10 @@ impl PyTrendStrengthIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3087,6 +3287,10 @@ impl PyQstick {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3140,6 +3344,10 @@ impl PyPolarizedFractalEfficiency {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3188,6 +3396,10 @@ impl PyWavePm {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3262,6 +3474,10 @@ impl PyGatorOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3334,6 +3550,10 @@ impl PyKasePermissionStochastic {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3379,6 +3599,10 @@ impl PyTsfOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3422,6 +3646,10 @@ impl PyMacdHistogram {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3467,6 +3695,10 @@ impl PyPpoHistogram {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3520,6 +3752,10 @@ impl PyBipowerVariation {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3593,6 +3829,10 @@ impl PyVolatilityRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3665,6 +3905,10 @@ impl PyProjectionOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3734,6 +3978,10 @@ impl PyTimeBasedStop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3781,6 +4029,10 @@ impl PyJarqueBera {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3830,6 +4082,10 @@ impl PyRollingMinMaxScaler {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3877,6 +4133,10 @@ impl PyHighpassFilter {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -3926,6 +4186,10 @@ impl PyReflex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -3973,6 +4237,10 @@ impl PyTrendflex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4022,6 +4290,10 @@ impl PyCorrelationTrendIndicator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4070,6 +4342,10 @@ impl PyAdaptiveRsi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4117,6 +4393,10 @@ impl PyUniversalOscillator {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4186,6 +4466,10 @@ impl PyAdaptiveCci {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4233,6 +4517,10 @@ impl PySterlingRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4282,6 +4570,10 @@ impl PyBurkeRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4329,6 +4621,10 @@ impl PyMartinRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4378,6 +4674,10 @@ impl PyTailRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4425,6 +4725,10 @@ impl PyKRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4478,6 +4782,10 @@ impl PyCommonSenseRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4529,6 +4837,10 @@ impl PyGainToPainRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4602,6 +4914,10 @@ impl PyImi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4659,6 +4975,10 @@ impl PyQqe {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4730,6 +5050,10 @@ impl PyElderRay {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4799,6 +5123,10 @@ impl PyStoch {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4863,6 +5191,10 @@ impl PyObv {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -4909,6 +5241,10 @@ impl PyDema {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4957,6 +5293,10 @@ impl PyTema {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5004,6 +5344,10 @@ impl PyHma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5047,6 +5391,10 @@ impl PyKama {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5115,6 +5463,10 @@ impl PyInertia {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5159,6 +5511,10 @@ impl PyConnorsRsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5208,6 +5564,10 @@ impl PyLaguerreRsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5271,6 +5631,10 @@ impl PySmi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5345,6 +5709,10 @@ impl PyKst {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5411,6 +5779,10 @@ impl PyPgo {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5483,6 +5855,10 @@ impl PyRvi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5530,6 +5906,10 @@ impl PyFrama {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5593,6 +5973,10 @@ impl PyEvwma {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5658,6 +6042,10 @@ impl PyAlligator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5703,6 +6091,10 @@ impl PyJma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5747,6 +6139,10 @@ impl PyVidya {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5800,6 +6196,10 @@ impl PyMcGinleyDynamic {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5856,6 +6256,10 @@ impl PyAlma {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5923,6 +6327,10 @@ impl PyAoHist {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -5967,6 +6375,10 @@ impl PyStc {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6018,6 +6430,10 @@ impl PyElderImpulse {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6077,6 +6493,10 @@ impl PyZeroLagMacd {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6126,6 +6546,10 @@ impl PyCfo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6169,6 +6593,10 @@ impl PyApo {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6238,6 +6666,10 @@ impl PyCci {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6285,6 +6717,10 @@ impl PyRoc {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6348,6 +6784,10 @@ impl PyWilliamsR {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6417,6 +6857,10 @@ impl PyAdx {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6489,6 +6933,10 @@ impl PyAdxr {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6556,6 +7004,10 @@ impl PyMfi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6596,6 +7048,10 @@ impl PyTrix {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6656,6 +7112,10 @@ impl PyPsar {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6726,6 +7186,10 @@ impl PyKeltner {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6786,6 +7250,10 @@ impl PyDonchian {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6849,6 +7317,10 @@ impl PyVwap {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6917,6 +7389,10 @@ impl PyRollingVwap {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -6978,6 +7454,10 @@ impl PyAo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7037,6 +7517,10 @@ impl PyAroon {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7106,6 +7590,10 @@ impl PyAdl {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7173,6 +7661,10 @@ impl PyVolumePriceTrend {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7233,6 +7725,10 @@ impl PyBollingerBandwidth {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7292,6 +7788,10 @@ impl PyPercentB {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7369,6 +7869,10 @@ impl PyNatr {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7421,6 +7925,10 @@ impl PyStdDev {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7472,6 +7980,10 @@ impl PyUlcerIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7528,6 +8040,10 @@ impl PyHistoricalVolatility {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7599,6 +8115,10 @@ impl PyAroonOscillator {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7675,6 +8195,10 @@ impl PyVortex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7749,6 +8273,10 @@ impl PyRwi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7830,6 +8358,10 @@ impl PyWaveTrend {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7897,6 +8429,10 @@ impl PyMassIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -7949,6 +8485,10 @@ impl PyPpo {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8007,6 +8547,10 @@ impl PyDpo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8058,6 +8602,10 @@ impl PyCoppock {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8111,6 +8659,10 @@ impl PyStochRsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8189,6 +8741,10 @@ impl PyUltimateOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8242,6 +8798,10 @@ impl PyMom {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8294,6 +8854,10 @@ impl PyCmo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8345,6 +8909,10 @@ impl PyTsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8399,6 +8967,10 @@ impl PyPmo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8451,6 +9023,10 @@ impl PyTii {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8508,6 +9084,10 @@ impl PyZlema {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8564,6 +9144,10 @@ impl PyT3 {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8619,6 +9203,10 @@ impl PyGeneralizedDema {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8688,6 +9276,10 @@ impl PyHoltWinters {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8743,6 +9335,10 @@ impl PyRmi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8801,6 +9397,10 @@ impl PyDerivativeOscillator {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8866,6 +9466,10 @@ impl PyVwma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8917,6 +9521,10 @@ impl PySmma {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -8967,6 +9575,10 @@ impl PyTrima {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9044,6 +9656,10 @@ impl PyChaikinMoneyFlow {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9120,6 +9736,10 @@ impl PyChaikinOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9185,6 +9805,10 @@ impl PyForceIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9245,6 +9869,10 @@ impl PyNvi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9304,6 +9932,10 @@ impl PyPvi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9362,6 +9994,10 @@ impl PyVolumeOscillator {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9436,6 +10072,10 @@ impl PyKvo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9500,6 +10140,10 @@ impl PyAdOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9551,6 +10195,10 @@ impl PyAnchoredRsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9622,6 +10270,10 @@ impl PyAnchoredVwap {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9695,6 +10347,10 @@ impl PyDemandIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9759,6 +10415,10 @@ impl PyTsv {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -9822,6 +10482,10 @@ impl PyVzo {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9889,6 +10553,10 @@ impl PyMarketFacilitationIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9965,6 +10633,10 @@ impl PyEaseOfMovement {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10045,6 +10717,10 @@ impl PySuperTrend {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10124,6 +10800,10 @@ impl PyChandelierExit {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10206,6 +10886,10 @@ impl PyChandeKrollStop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10281,6 +10965,10 @@ impl PyAtrTrailingStop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10349,6 +11037,10 @@ impl PyHiLoActivator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10415,6 +11107,10 @@ impl PyVoltyStop {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10488,6 +11184,10 @@ impl PyYoyoExit {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10556,6 +11256,10 @@ impl PyDonchianStop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10607,6 +11311,10 @@ impl PyPercentageTrailingStop {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10660,6 +11368,10 @@ impl PyStepTrailingStop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10711,6 +11423,10 @@ impl PyRenkoTrailingStop {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10786,6 +11502,10 @@ impl PyKaseDevStop {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10863,6 +11583,10 @@ impl PyElderSafeZone {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -10938,6 +11662,10 @@ impl PyAtrRatchet {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11016,6 +11744,10 @@ impl PyNrtr {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11096,6 +11828,10 @@ impl PyModifiedMaStop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11159,6 +11895,10 @@ impl PyTypicalPrice {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11215,6 +11955,10 @@ impl PyMedianPrice {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11279,6 +12023,10 @@ impl PyWeightedClose {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11331,6 +12079,10 @@ impl PyLinearRegression {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11378,6 +12130,10 @@ impl PyLinRegSlope {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11445,6 +12201,10 @@ impl PyAcceleratorOscillator {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11518,6 +12278,10 @@ impl PyBalanceOfPower {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11590,6 +12354,10 @@ impl PyChoppinessIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11641,6 +12409,10 @@ impl PyVerticalHorizontalFilter {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11704,6 +12476,10 @@ impl PyTrueRange {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11771,6 +12547,10 @@ impl PyChaikinVolatility {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11820,6 +12600,10 @@ impl PyZScore {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -11867,6 +12651,10 @@ impl PyLinRegAngle {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11946,6 +12734,10 @@ impl PyYangZhangVolatility {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12022,6 +12814,10 @@ impl PyRogersSatchellVolatility {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12100,6 +12896,10 @@ impl PyGarmanKlassVolatility {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12167,6 +12967,10 @@ impl PyParkinsonVolatility {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12223,6 +13027,10 @@ impl PyRviVolatility {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12282,6 +13090,10 @@ impl PyMaEnvelope {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12354,6 +13166,10 @@ impl PyAccelerationBands {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12420,6 +13236,10 @@ impl PyStarcBands {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12488,6 +13308,10 @@ impl PyAtrBands {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12555,6 +13379,10 @@ impl PyHurstChannel {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12608,6 +13436,10 @@ impl PyLinRegChannel {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12667,6 +13499,10 @@ impl PyStandardErrorBands {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12720,6 +13556,10 @@ impl PyQuartileBands {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12775,6 +13615,10 @@ impl PyBomarBands {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -12828,6 +13672,10 @@ impl PyMedianChannel {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12893,6 +13741,10 @@ impl PyProjectionBands {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12964,6 +13816,10 @@ impl PyCentralPivotRange {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13045,6 +13901,10 @@ impl PyMurreyMathLines {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -13110,6 +13970,10 @@ impl PyAndrewsPitchfork {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13182,6 +14046,10 @@ impl PyVolumeWeightedSr {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -13242,6 +14110,10 @@ impl PyPivotReversal {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13312,6 +14184,10 @@ impl PyDoubleBollinger {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -13381,6 +14257,10 @@ impl PyTtmSqueeze {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -13446,6 +14326,10 @@ impl PyFractalChaosBands {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13529,6 +14413,10 @@ impl PyVwapStdDevBands {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -13604,6 +14492,10 @@ impl PyClassicPivots {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13681,6 +14573,10 @@ impl PyFibonacciPivots {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13764,6 +14660,10 @@ impl PyCamarilla {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -13834,6 +14734,10 @@ impl PyWoodiePivots {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13907,6 +14811,10 @@ impl PyDemarkPivots {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13984,6 +14892,10 @@ impl PyWilliamsFractals {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14052,6 +14964,10 @@ impl PyZigZag {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14110,6 +15026,10 @@ impl PyTdSetup {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14202,6 +15122,10 @@ impl PyTdSequential {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14263,6 +15187,10 @@ impl PyTdDeMarker {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14328,6 +15256,10 @@ impl PyTdRei {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14409,6 +15341,10 @@ impl PyTdPressure {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14483,6 +15419,10 @@ impl PyTdCombo {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14542,6 +15482,10 @@ impl PyTdDWave {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14607,6 +15551,10 @@ impl PyTdMovingAverage {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14679,6 +15627,10 @@ impl PyTdCountdown {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14747,6 +15699,10 @@ impl PyTdLines {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14823,6 +15779,10 @@ impl PyTdRangeProjection {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14886,6 +15846,10 @@ impl PyTdDifferential {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -14948,6 +15912,10 @@ impl PyTdOpen {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15018,6 +15986,10 @@ impl PyTdRiskLevel {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15067,6 +16039,10 @@ macro_rules! py_scalar_one_period {
             }
             fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
             }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -15138,6 +16114,10 @@ impl PyInverseFisherTransform {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15189,6 +16169,10 @@ impl PyDecyclerOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15237,6 +16221,10 @@ impl PyRoofingFilter {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15295,6 +16283,10 @@ impl PyEmd {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15347,6 +16339,10 @@ macro_rules! py_no_params_scalar {
             }
             fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
             }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -15410,6 +16406,10 @@ impl PySineWave {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15470,6 +16470,10 @@ impl PyMama {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15522,6 +16526,10 @@ impl PyFama {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15624,6 +16632,10 @@ impl PyIchimoku {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15705,6 +16717,10 @@ impl PyHeikinAshi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15750,6 +16766,10 @@ impl PyVariance {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15822,6 +16842,10 @@ impl PyHeikinAshiOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -15885,6 +16909,10 @@ impl PyThreeLineBreak {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -15966,6 +16994,10 @@ impl PySmoothedHeikinAshi {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16032,6 +17064,10 @@ impl PyEquivolume {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16102,6 +17138,10 @@ impl PyCandleVolume {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16161,6 +17201,10 @@ impl PyFryPanBottom {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16222,6 +17266,10 @@ impl PyDumplingTop {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16282,6 +17330,10 @@ impl PyNewPriceLines {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16331,6 +17383,10 @@ impl PyCoefficientOfVariation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16378,6 +17434,10 @@ impl PySkewness {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16427,6 +17487,10 @@ impl PyKurtosis {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16474,6 +17538,10 @@ impl PyStandardError {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16527,6 +17595,10 @@ impl PyDetrendedStdDev {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16574,6 +17646,10 @@ impl PyRSquared {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16631,6 +17707,10 @@ impl PyAutocorrelation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16687,6 +17767,10 @@ impl PyMedianAbsoluteDeviation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16738,6 +17822,10 @@ impl PyHurstExponent {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16807,6 +17895,10 @@ impl PyPearsonCorrelation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16869,6 +17961,10 @@ impl PyBeta {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -16928,6 +18024,10 @@ impl PyPairwiseBeta {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -16992,6 +18092,10 @@ impl PySpreadAr1Coefficient {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17060,6 +18164,10 @@ impl PyPairSpreadZScore {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17142,6 +18250,10 @@ impl PyLeadLagCrossCorrelation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -17221,6 +18333,10 @@ impl PyCointegration {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17306,6 +18422,10 @@ impl PyRelativeStrengthAB {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -17374,6 +18494,10 @@ impl PyRollingCorrelation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -17437,6 +18561,10 @@ impl PyHasbrouckInformationShare {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17502,6 +18630,10 @@ impl PyRollingCovariance {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -17561,6 +18693,10 @@ impl PyOuHalfLife {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17622,6 +18758,10 @@ impl PySpreadHurst {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -17681,6 +18821,10 @@ impl PyDistanceSsd {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17746,6 +18890,10 @@ impl PyBetaNeutralSpread {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -17809,6 +18957,10 @@ impl PyVarianceRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17881,6 +19033,10 @@ impl PyGrangerCausality {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -17965,6 +19121,10 @@ impl PyKalmanHedgeRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18051,6 +19211,10 @@ impl PySpreadBollingerBands {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -18118,6 +19282,10 @@ impl PySpearmanCorrelation {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18196,6 +19364,10 @@ impl PyValueArea {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18291,6 +19463,10 @@ impl PyVolumeProfile {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -18374,6 +19550,10 @@ impl PyTpoProfile {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -18451,6 +19631,10 @@ impl PyInitialBalance {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18534,6 +19718,10 @@ impl PyOpeningRange {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -18601,6 +19789,10 @@ impl PyNakedPoc {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -18659,6 +19851,10 @@ impl PySinglePrints {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18724,6 +19920,10 @@ impl PyProfileShape {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18799,6 +19999,10 @@ impl PyHighLowVolumeNodes {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -18876,6 +20080,10 @@ impl PyCompositeProfile {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -18951,6 +20159,10 @@ macro_rules! candle_pattern_no_param {
             fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
+            }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
             }
@@ -19022,6 +20234,10 @@ impl PyDoji {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19250,6 +20466,10 @@ macro_rules! py_ob_indicator {
             fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
+            }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
             }
@@ -19322,6 +20542,10 @@ impl PyOrderBookImbalanceTopN {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -19389,6 +20613,10 @@ macro_rules! py_trade_indicator {
             fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
+            }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
             }
@@ -19453,6 +20681,10 @@ impl PyTradeImbalance {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -19508,6 +20740,10 @@ impl PyTradeSignAutocorrelation {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -19558,6 +20794,10 @@ impl PyPin {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19616,6 +20856,10 @@ impl PyOrderFlowImbalance {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -19666,6 +20910,10 @@ impl PyVpin {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19723,6 +20971,10 @@ impl PyAmihudIlliquidity {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -19773,6 +21025,10 @@ impl PyRollMeasure {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -19850,6 +21106,10 @@ macro_rules! py_trade_quote_indicator {
             fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
+            }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
             }
@@ -19912,6 +21172,10 @@ impl PyRealizedSpread {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -19965,6 +21229,10 @@ impl PyKylesLambda {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20052,6 +21320,10 @@ impl PyFootprint {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20302,6 +21574,10 @@ impl PyFundingRate {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -20349,6 +21625,10 @@ impl PyFundingRateMean {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -20395,6 +21675,10 @@ impl PyFundingRateZScore {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20449,6 +21733,10 @@ impl PyFundingBasis {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -20495,6 +21783,10 @@ impl PyOpenInterestDelta {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20554,6 +21846,10 @@ impl PyOIPriceDivergence {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -20606,6 +21902,10 @@ impl PyOIWeighted {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20663,6 +21963,10 @@ impl PyLongShortRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20723,6 +22027,10 @@ impl PyTakerBuySellRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20802,6 +22110,10 @@ impl PyLiquidationFeatures {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -20862,6 +22174,10 @@ impl PyTermStructureBasis {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -20920,6 +22236,10 @@ impl PyCalendarSpread {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -20989,6 +22309,10 @@ impl PyEstimatedLeverageRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21063,6 +22387,10 @@ impl PyOiToVolumeRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21120,6 +22448,10 @@ impl PyPerpetualPremiumIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21166,6 +22498,10 @@ impl PyFundingImpliedApr {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21216,6 +22552,10 @@ impl PyOpenInterestMomentum {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21311,6 +22651,10 @@ impl PyAdvanceDecline {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21440,6 +22784,10 @@ impl PyAdvanceDeclineRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21501,6 +22849,10 @@ impl PyAdVolumeLine {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21568,6 +22920,10 @@ impl PyMcClellanOscillator {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21634,6 +22990,10 @@ impl PyMcClellanSummationIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21696,6 +23056,10 @@ impl PyTrin {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21757,6 +23121,10 @@ impl PyBreadthThrust {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21824,6 +23192,10 @@ impl PyNewHighsNewLows {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -21885,6 +23257,10 @@ impl PyHighLowIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -21961,6 +23337,10 @@ impl PyPercentAboveMa {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22026,6 +23406,10 @@ impl PyUpDownVolumeRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22106,6 +23490,10 @@ impl PyBullishPercentIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22171,6 +23559,10 @@ impl PyCumulativeVolumeIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22238,6 +23630,10 @@ impl PyAbsoluteBreadthIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22300,6 +23696,10 @@ impl PyTickIndex {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22355,6 +23755,10 @@ impl PyUpsidePotentialRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22414,6 +23818,10 @@ impl PyM2Measure {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22469,6 +23877,10 @@ impl PySharpeRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22523,6 +23935,10 @@ impl PySortinoRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22571,6 +23987,10 @@ impl PyCalmarRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22622,6 +24042,10 @@ impl PyOmegaRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22671,6 +24095,10 @@ impl PyMaxDrawdown {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22719,6 +24147,10 @@ impl PyAverageDrawdown {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22771,6 +24203,10 @@ impl PyDrawdownDuration {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22815,6 +24251,10 @@ impl PyPainIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22865,6 +24305,10 @@ impl PyValueAtRisk {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -22924,6 +24368,10 @@ impl PyConditionalValueAtRisk {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -22973,6 +24421,10 @@ impl PyProfitFactor {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -23018,6 +24470,10 @@ impl PyGainLossRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -23062,6 +24518,10 @@ impl PyRecoveryFactor {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -23111,6 +24571,10 @@ impl PyKellyCriterion {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -23176,6 +24640,10 @@ impl PyTreynorRatio {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -23243,6 +24711,10 @@ impl PyInformationRatio {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -23305,6 +24777,10 @@ impl PyAlpha {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -23382,6 +24858,10 @@ impl PyRenkoBars {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn __repr__(&self) -> String {
         format!("RenkoBars(box_size={})", self.inner.box_size())
     }
@@ -23441,6 +24921,10 @@ impl PyKagiBars {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn __repr__(&self) -> String {
         format!("KagiBars(reversal={})", self.inner.reversal())
@@ -23511,6 +24995,10 @@ impl PyPointAndFigureBars {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn __repr__(&self) -> String {
         format!(
             "PointAndFigureBars(box_size={}, reversal={})",
@@ -23574,6 +25062,10 @@ impl PyRangeBars {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn __repr__(&self) -> String {
         format!("RangeBars(range={})", self.inner.range())
@@ -23643,6 +25135,10 @@ impl PyTickBars {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn __repr__(&self) -> String {
         format!("TickBars(ticks={})", self.inner.ticks())
     }
@@ -23711,6 +25207,10 @@ impl PyVolumeBars {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn __repr__(&self) -> String {
         format!("VolumeBars(volume_per_bar={})", self.inner.volume_per_bar())
     }
@@ -23778,6 +25278,10 @@ impl PyDollarBars {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn __repr__(&self) -> String {
         format!("DollarBars(dollar_per_bar={})", self.inner.dollar_per_bar())
@@ -23853,6 +25357,10 @@ impl PyImbalanceBars {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn __repr__(&self) -> String {
         format!("ImbalanceBars(threshold={})", self.inner.threshold())
@@ -23930,6 +25438,10 @@ impl PyRunBars {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn __repr__(&self) -> String {
         format!("RunBars(run_length={})", self.inner.run_length())
     }
@@ -23994,6 +25506,10 @@ impl PyThreeLineBreakBars {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn __repr__(&self) -> String {
         format!("ThreeLineBreakBars(lines={})", self.inner.lines())
@@ -24095,6 +25611,10 @@ macro_rules! py_seasonality_offset_scalar {
             fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
+            }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
             }
@@ -24170,6 +25690,10 @@ macro_rules! py_seasonality_bucket_profile {
             fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
+            }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
             }
@@ -24241,6 +25765,10 @@ macro_rules! py_seasonality_offset_profile {
             }
             fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            fn name(&self) -> &'static str {
+                self.inner.name()
             }
             fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -24325,6 +25853,10 @@ impl PyAverageDailyRange {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -24378,6 +25910,10 @@ impl PyTurnOfMonth {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -24444,6 +25980,10 @@ impl PySessionHighLow {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -24507,6 +26047,10 @@ impl PySessionRange {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -24574,6 +26118,10 @@ impl PyOvernightIntradayReturn {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -24671,6 +26219,10 @@ impl PyFibRetracement {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -24746,6 +26298,10 @@ impl PyFibExtension {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -24814,6 +26370,10 @@ impl PyFibProjection {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -24894,6 +26454,10 @@ impl PyAutoFib {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -24959,6 +26523,10 @@ impl PyGoldenPocket {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25022,6 +26590,10 @@ impl PyFibConfluence {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -25091,6 +26663,10 @@ impl PyFibFan {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25158,6 +26734,10 @@ impl PyFibArcs {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -25228,6 +26808,10 @@ impl PyFibChannel {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25292,6 +26876,10 @@ impl PyFibTimeZones {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25348,6 +26936,10 @@ impl PyEwmaVolatility {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25401,6 +26993,10 @@ impl PyGarch11 {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25453,6 +27049,10 @@ impl PyVolatilityOfVolatility {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -25534,6 +27134,10 @@ impl PyVolatilityCone {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25594,6 +27198,10 @@ impl PyVolumeRsi {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -25657,6 +27265,10 @@ impl PyWad {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -25734,6 +27346,10 @@ impl PyTwiggsMoneyFlow {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25801,6 +27417,10 @@ impl PyTradeVolumeIndex {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -25873,6 +27493,10 @@ impl PyIntradayIntensity {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -25944,6 +27568,10 @@ impl PyBetterVolume {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -26024,6 +27652,10 @@ impl PyVolumeWeightedMacd {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -26077,6 +27709,10 @@ impl PyShannonEntropy {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -26129,6 +27765,10 @@ impl PySampleEntropy {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -26195,6 +27835,10 @@ impl PyKendallTau {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -26246,6 +27890,10 @@ impl PyBandpassFilter {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -26304,6 +27952,10 @@ impl PyEvenBetterSinewave {
     fn reset(&mut self) {
         self.inner.reset();
     }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
+    }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
@@ -26356,6 +28008,10 @@ impl PyAutocorrelationPeriodogram {
     }
     fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    fn name(&self) -> &'static str {
+        self.inner.name()
     }
     fn is_ready(&self) -> bool {
         self.inner.is_ready()

@@ -1692,6 +1692,8 @@ uintptr_t wickra_adaptive_cycle_warmup_period(struct AdaptiveCycle *handle);
 
 bool wickra_adaptive_cycle_is_ready(struct AdaptiveCycle *handle);
 
+const char *wickra_adaptive_cycle_name(struct AdaptiveCycle *handle);
+
 void wickra_adaptive_cycle_reset(struct AdaptiveCycle *handle);
 
 void wickra_adaptive_cycle_free(struct AdaptiveCycle *handle);
@@ -1708,6 +1710,8 @@ void wickra_adaptive_laguerre_filter_batch(struct AdaptiveLaguerreFilter *handle
 uintptr_t wickra_adaptive_laguerre_filter_warmup_period(struct AdaptiveLaguerreFilter *handle);
 
 bool wickra_adaptive_laguerre_filter_is_ready(struct AdaptiveLaguerreFilter *handle);
+
+const char *wickra_adaptive_laguerre_filter_name(struct AdaptiveLaguerreFilter *handle);
 
 void wickra_adaptive_laguerre_filter_reset(struct AdaptiveLaguerreFilter *handle);
 
@@ -1726,6 +1730,8 @@ uintptr_t wickra_adaptive_rsi_warmup_period(struct AdaptiveRsi *handle);
 
 bool wickra_adaptive_rsi_is_ready(struct AdaptiveRsi *handle);
 
+const char *wickra_adaptive_rsi_name(struct AdaptiveRsi *handle);
+
 void wickra_adaptive_rsi_reset(struct AdaptiveRsi *handle);
 
 void wickra_adaptive_rsi_free(struct AdaptiveRsi *handle);
@@ -1739,6 +1745,8 @@ void wickra_alma_batch(struct Alma *handle, const double *input, double *out, ui
 uintptr_t wickra_alma_warmup_period(struct Alma *handle);
 
 bool wickra_alma_is_ready(struct Alma *handle);
+
+const char *wickra_alma_name(struct Alma *handle);
 
 void wickra_alma_reset(struct Alma *handle);
 
@@ -1757,6 +1765,8 @@ uintptr_t wickra_anchored_rsi_warmup_period(struct AnchoredRsi *handle);
 
 bool wickra_anchored_rsi_is_ready(struct AnchoredRsi *handle);
 
+const char *wickra_anchored_rsi_name(struct AnchoredRsi *handle);
+
 void wickra_anchored_rsi_reset(struct AnchoredRsi *handle);
 
 void wickra_anchored_rsi_free(struct AnchoredRsi *handle);
@@ -1770,6 +1780,8 @@ void wickra_apo_batch(struct Apo *handle, const double *input, double *out, uint
 uintptr_t wickra_apo_warmup_period(struct Apo *handle);
 
 bool wickra_apo_is_ready(struct Apo *handle);
+
+const char *wickra_apo_name(struct Apo *handle);
 
 void wickra_apo_reset(struct Apo *handle);
 
@@ -1787,6 +1799,8 @@ void wickra_autocorrelation_batch(struct Autocorrelation *handle,
 uintptr_t wickra_autocorrelation_warmup_period(struct Autocorrelation *handle);
 
 bool wickra_autocorrelation_is_ready(struct Autocorrelation *handle);
+
+const char *wickra_autocorrelation_name(struct Autocorrelation *handle);
 
 void wickra_autocorrelation_reset(struct Autocorrelation *handle);
 
@@ -1807,6 +1821,8 @@ uintptr_t wickra_autocorrelation_periodogram_warmup_period(struct Autocorrelatio
 
 bool wickra_autocorrelation_periodogram_is_ready(struct AutocorrelationPeriodogram *handle);
 
+const char *wickra_autocorrelation_periodogram_name(struct AutocorrelationPeriodogram *handle);
+
 void wickra_autocorrelation_periodogram_reset(struct AutocorrelationPeriodogram *handle);
 
 void wickra_autocorrelation_periodogram_free(struct AutocorrelationPeriodogram *handle);
@@ -1823,6 +1839,8 @@ void wickra_average_drawdown_batch(struct AverageDrawdown *handle,
 uintptr_t wickra_average_drawdown_warmup_period(struct AverageDrawdown *handle);
 
 bool wickra_average_drawdown_is_ready(struct AverageDrawdown *handle);
+
+const char *wickra_average_drawdown_name(struct AverageDrawdown *handle);
 
 void wickra_average_drawdown_reset(struct AverageDrawdown *handle);
 
@@ -1841,6 +1859,8 @@ uintptr_t wickra_bandpass_filter_warmup_period(struct BandpassFilter *handle);
 
 bool wickra_bandpass_filter_is_ready(struct BandpassFilter *handle);
 
+const char *wickra_bandpass_filter_name(struct BandpassFilter *handle);
+
 void wickra_bandpass_filter_reset(struct BandpassFilter *handle);
 
 void wickra_bandpass_filter_free(struct BandpassFilter *handle);
@@ -1857,6 +1877,8 @@ void wickra_bipower_variation_batch(struct BipowerVariation *handle,
 uintptr_t wickra_bipower_variation_warmup_period(struct BipowerVariation *handle);
 
 bool wickra_bipower_variation_is_ready(struct BipowerVariation *handle);
+
+const char *wickra_bipower_variation_name(struct BipowerVariation *handle);
 
 void wickra_bipower_variation_reset(struct BipowerVariation *handle);
 
@@ -1875,6 +1897,8 @@ uintptr_t wickra_bollinger_bandwidth_warmup_period(struct BollingerBandwidth *ha
 
 bool wickra_bollinger_bandwidth_is_ready(struct BollingerBandwidth *handle);
 
+const char *wickra_bollinger_bandwidth_name(struct BollingerBandwidth *handle);
+
 void wickra_bollinger_bandwidth_reset(struct BollingerBandwidth *handle);
 
 void wickra_bollinger_bandwidth_free(struct BollingerBandwidth *handle);
@@ -1891,6 +1915,8 @@ void wickra_burke_ratio_batch(struct BurkeRatio *handle,
 uintptr_t wickra_burke_ratio_warmup_period(struct BurkeRatio *handle);
 
 bool wickra_burke_ratio_is_ready(struct BurkeRatio *handle);
+
+const char *wickra_burke_ratio_name(struct BurkeRatio *handle);
 
 void wickra_burke_ratio_reset(struct BurkeRatio *handle);
 
@@ -1909,6 +1935,8 @@ uintptr_t wickra_calmar_ratio_warmup_period(struct CalmarRatio *handle);
 
 bool wickra_calmar_ratio_is_ready(struct CalmarRatio *handle);
 
+const char *wickra_calmar_ratio_name(struct CalmarRatio *handle);
+
 void wickra_calmar_ratio_reset(struct CalmarRatio *handle);
 
 void wickra_calmar_ratio_free(struct CalmarRatio *handle);
@@ -1926,6 +1954,8 @@ uintptr_t wickra_center_of_gravity_warmup_period(struct CenterOfGravity *handle)
 
 bool wickra_center_of_gravity_is_ready(struct CenterOfGravity *handle);
 
+const char *wickra_center_of_gravity_name(struct CenterOfGravity *handle);
+
 void wickra_center_of_gravity_reset(struct CenterOfGravity *handle);
 
 void wickra_center_of_gravity_free(struct CenterOfGravity *handle);
@@ -1940,6 +1970,8 @@ uintptr_t wickra_cfo_warmup_period(struct Cfo *handle);
 
 bool wickra_cfo_is_ready(struct Cfo *handle);
 
+const char *wickra_cfo_name(struct Cfo *handle);
+
 void wickra_cfo_reset(struct Cfo *handle);
 
 void wickra_cfo_free(struct Cfo *handle);
@@ -1953,6 +1985,8 @@ void wickra_cmo_batch(struct Cmo *handle, const double *input, double *out, uint
 uintptr_t wickra_cmo_warmup_period(struct Cmo *handle);
 
 bool wickra_cmo_is_ready(struct Cmo *handle);
+
+const char *wickra_cmo_name(struct Cmo *handle);
 
 void wickra_cmo_reset(struct Cmo *handle);
 
@@ -1971,6 +2005,8 @@ uintptr_t wickra_coefficient_of_variation_warmup_period(struct CoefficientOfVari
 
 bool wickra_coefficient_of_variation_is_ready(struct CoefficientOfVariation *handle);
 
+const char *wickra_coefficient_of_variation_name(struct CoefficientOfVariation *handle);
+
 void wickra_coefficient_of_variation_reset(struct CoefficientOfVariation *handle);
 
 void wickra_coefficient_of_variation_free(struct CoefficientOfVariation *handle);
@@ -1987,6 +2023,8 @@ void wickra_common_sense_ratio_batch(struct CommonSenseRatio *handle,
 uintptr_t wickra_common_sense_ratio_warmup_period(struct CommonSenseRatio *handle);
 
 bool wickra_common_sense_ratio_is_ready(struct CommonSenseRatio *handle);
+
+const char *wickra_common_sense_ratio_name(struct CommonSenseRatio *handle);
 
 void wickra_common_sense_ratio_reset(struct CommonSenseRatio *handle);
 
@@ -2005,6 +2043,8 @@ void wickra_conditional_value_at_risk_batch(struct ConditionalValueAtRisk *handl
 uintptr_t wickra_conditional_value_at_risk_warmup_period(struct ConditionalValueAtRisk *handle);
 
 bool wickra_conditional_value_at_risk_is_ready(struct ConditionalValueAtRisk *handle);
+
+const char *wickra_conditional_value_at_risk_name(struct ConditionalValueAtRisk *handle);
 
 void wickra_conditional_value_at_risk_reset(struct ConditionalValueAtRisk *handle);
 
@@ -2025,6 +2065,8 @@ uintptr_t wickra_connors_rsi_warmup_period(struct ConnorsRsi *handle);
 
 bool wickra_connors_rsi_is_ready(struct ConnorsRsi *handle);
 
+const char *wickra_connors_rsi_name(struct ConnorsRsi *handle);
+
 void wickra_connors_rsi_reset(struct ConnorsRsi *handle);
 
 void wickra_connors_rsi_free(struct ConnorsRsi *handle);
@@ -2040,6 +2082,8 @@ void wickra_coppock_batch(struct Coppock *handle, const double *input, double *o
 uintptr_t wickra_coppock_warmup_period(struct Coppock *handle);
 
 bool wickra_coppock_is_ready(struct Coppock *handle);
+
+const char *wickra_coppock_name(struct Coppock *handle);
 
 void wickra_coppock_reset(struct Coppock *handle);
 
@@ -2059,6 +2103,8 @@ uintptr_t wickra_correlation_trend_indicator_warmup_period(struct CorrelationTre
 
 bool wickra_correlation_trend_indicator_is_ready(struct CorrelationTrendIndicator *handle);
 
+const char *wickra_correlation_trend_indicator_name(struct CorrelationTrendIndicator *handle);
+
 void wickra_correlation_trend_indicator_reset(struct CorrelationTrendIndicator *handle);
 
 void wickra_correlation_trend_indicator_free(struct CorrelationTrendIndicator *handle);
@@ -2076,6 +2122,8 @@ uintptr_t wickra_cybernetic_cycle_warmup_period(struct CyberneticCycle *handle);
 
 bool wickra_cybernetic_cycle_is_ready(struct CyberneticCycle *handle);
 
+const char *wickra_cybernetic_cycle_name(struct CyberneticCycle *handle);
+
 void wickra_cybernetic_cycle_reset(struct CyberneticCycle *handle);
 
 void wickra_cybernetic_cycle_free(struct CyberneticCycle *handle);
@@ -2089,6 +2137,8 @@ void wickra_decycler_batch(struct Decycler *handle, const double *input, double 
 uintptr_t wickra_decycler_warmup_period(struct Decycler *handle);
 
 bool wickra_decycler_is_ready(struct Decycler *handle);
+
+const char *wickra_decycler_name(struct Decycler *handle);
 
 void wickra_decycler_reset(struct Decycler *handle);
 
@@ -2107,6 +2157,8 @@ uintptr_t wickra_decycler_oscillator_warmup_period(struct DecyclerOscillator *ha
 
 bool wickra_decycler_oscillator_is_ready(struct DecyclerOscillator *handle);
 
+const char *wickra_decycler_oscillator_name(struct DecyclerOscillator *handle);
+
 void wickra_decycler_oscillator_reset(struct DecyclerOscillator *handle);
 
 void wickra_decycler_oscillator_free(struct DecyclerOscillator *handle);
@@ -2120,6 +2172,8 @@ void wickra_dema_batch(struct Dema *handle, const double *input, double *out, ui
 uintptr_t wickra_dema_warmup_period(struct Dema *handle);
 
 bool wickra_dema_is_ready(struct Dema *handle);
+
+const char *wickra_dema_name(struct Dema *handle);
 
 void wickra_dema_reset(struct Dema *handle);
 
@@ -2141,6 +2195,8 @@ uintptr_t wickra_derivative_oscillator_warmup_period(struct DerivativeOscillator
 
 bool wickra_derivative_oscillator_is_ready(struct DerivativeOscillator *handle);
 
+const char *wickra_derivative_oscillator_name(struct DerivativeOscillator *handle);
+
 void wickra_derivative_oscillator_reset(struct DerivativeOscillator *handle);
 
 void wickra_derivative_oscillator_free(struct DerivativeOscillator *handle);
@@ -2157,6 +2213,8 @@ void wickra_detrended_std_dev_batch(struct DetrendedStdDev *handle,
 uintptr_t wickra_detrended_std_dev_warmup_period(struct DetrendedStdDev *handle);
 
 bool wickra_detrended_std_dev_is_ready(struct DetrendedStdDev *handle);
+
+const char *wickra_detrended_std_dev_name(struct DetrendedStdDev *handle);
 
 void wickra_detrended_std_dev_reset(struct DetrendedStdDev *handle);
 
@@ -2175,6 +2233,8 @@ uintptr_t wickra_disparity_index_warmup_period(struct DisparityIndex *handle);
 
 bool wickra_disparity_index_is_ready(struct DisparityIndex *handle);
 
+const char *wickra_disparity_index_name(struct DisparityIndex *handle);
+
 void wickra_disparity_index_reset(struct DisparityIndex *handle);
 
 void wickra_disparity_index_free(struct DisparityIndex *handle);
@@ -2188,6 +2248,8 @@ void wickra_dpo_batch(struct Dpo *handle, const double *input, double *out, uint
 uintptr_t wickra_dpo_warmup_period(struct Dpo *handle);
 
 bool wickra_dpo_is_ready(struct Dpo *handle);
+
+const char *wickra_dpo_name(struct Dpo *handle);
 
 void wickra_dpo_reset(struct Dpo *handle);
 
@@ -2206,6 +2268,8 @@ uintptr_t wickra_drawdown_duration_warmup_period(struct DrawdownDuration *handle
 
 bool wickra_drawdown_duration_is_ready(struct DrawdownDuration *handle);
 
+const char *wickra_drawdown_duration_name(struct DrawdownDuration *handle);
+
 void wickra_drawdown_duration_reset(struct DrawdownDuration *handle);
 
 void wickra_drawdown_duration_free(struct DrawdownDuration *handle);
@@ -2222,6 +2286,8 @@ void wickra_dynamic_momentum_index_batch(struct DynamicMomentumIndex *handle,
 uintptr_t wickra_dynamic_momentum_index_warmup_period(struct DynamicMomentumIndex *handle);
 
 bool wickra_dynamic_momentum_index_is_ready(struct DynamicMomentumIndex *handle);
+
+const char *wickra_dynamic_momentum_index_name(struct DynamicMomentumIndex *handle);
 
 void wickra_dynamic_momentum_index_reset(struct DynamicMomentumIndex *handle);
 
@@ -2240,6 +2306,8 @@ uintptr_t wickra_ehlers_stochastic_warmup_period(struct EhlersStochastic *handle
 
 bool wickra_ehlers_stochastic_is_ready(struct EhlersStochastic *handle);
 
+const char *wickra_ehlers_stochastic_name(struct EhlersStochastic *handle);
+
 void wickra_ehlers_stochastic_reset(struct EhlersStochastic *handle);
 
 void wickra_ehlers_stochastic_free(struct EhlersStochastic *handle);
@@ -2253,6 +2321,8 @@ void wickra_ehma_batch(struct Ehma *handle, const double *input, double *out, ui
 uintptr_t wickra_ehma_warmup_period(struct Ehma *handle);
 
 bool wickra_ehma_is_ready(struct Ehma *handle);
+
+const char *wickra_ehma_name(struct Ehma *handle);
 
 void wickra_ehma_reset(struct Ehma *handle);
 
@@ -2274,6 +2344,8 @@ uintptr_t wickra_elder_impulse_warmup_period(struct ElderImpulse *handle);
 
 bool wickra_elder_impulse_is_ready(struct ElderImpulse *handle);
 
+const char *wickra_elder_impulse_name(struct ElderImpulse *handle);
+
 void wickra_elder_impulse_reset(struct ElderImpulse *handle);
 
 void wickra_elder_impulse_free(struct ElderImpulse *handle);
@@ -2287,6 +2359,8 @@ void wickra_ema_batch(struct Ema *handle, const double *input, double *out, uint
 uintptr_t wickra_ema_warmup_period(struct Ema *handle);
 
 bool wickra_ema_is_ready(struct Ema *handle);
+
+const char *wickra_ema_name(struct Ema *handle);
 
 void wickra_ema_reset(struct Ema *handle);
 
@@ -2307,6 +2381,8 @@ uintptr_t wickra_empirical_mode_decomposition_warmup_period(struct EmpiricalMode
 
 bool wickra_empirical_mode_decomposition_is_ready(struct EmpiricalModeDecomposition *handle);
 
+const char *wickra_empirical_mode_decomposition_name(struct EmpiricalModeDecomposition *handle);
+
 void wickra_empirical_mode_decomposition_reset(struct EmpiricalModeDecomposition *handle);
 
 void wickra_empirical_mode_decomposition_free(struct EmpiricalModeDecomposition *handle);
@@ -2325,6 +2401,8 @@ uintptr_t wickra_even_better_sinewave_warmup_period(struct EvenBetterSinewave *h
 
 bool wickra_even_better_sinewave_is_ready(struct EvenBetterSinewave *handle);
 
+const char *wickra_even_better_sinewave_name(struct EvenBetterSinewave *handle);
+
 void wickra_even_better_sinewave_reset(struct EvenBetterSinewave *handle);
 
 void wickra_even_better_sinewave_free(struct EvenBetterSinewave *handle);
@@ -2341,6 +2419,8 @@ void wickra_ewma_volatility_batch(struct EwmaVolatility *handle,
 uintptr_t wickra_ewma_volatility_warmup_period(struct EwmaVolatility *handle);
 
 bool wickra_ewma_volatility_is_ready(struct EwmaVolatility *handle);
+
+const char *wickra_ewma_volatility_name(struct EwmaVolatility *handle);
 
 void wickra_ewma_volatility_reset(struct EwmaVolatility *handle);
 
@@ -2359,6 +2439,8 @@ uintptr_t wickra_expectancy_warmup_period(struct Expectancy *handle);
 
 bool wickra_expectancy_is_ready(struct Expectancy *handle);
 
+const char *wickra_expectancy_name(struct Expectancy *handle);
+
 void wickra_expectancy_reset(struct Expectancy *handle);
 
 void wickra_expectancy_free(struct Expectancy *handle);
@@ -2372,6 +2454,8 @@ void wickra_fama_batch(struct Fama *handle, const double *input, double *out, ui
 uintptr_t wickra_fama_warmup_period(struct Fama *handle);
 
 bool wickra_fama_is_ready(struct Fama *handle);
+
+const char *wickra_fama_name(struct Fama *handle);
 
 void wickra_fama_reset(struct Fama *handle);
 
@@ -2390,6 +2474,8 @@ uintptr_t wickra_fisher_rsi_warmup_period(struct FisherRsi *handle);
 
 bool wickra_fisher_rsi_is_ready(struct FisherRsi *handle);
 
+const char *wickra_fisher_rsi_name(struct FisherRsi *handle);
+
 void wickra_fisher_rsi_reset(struct FisherRsi *handle);
 
 void wickra_fisher_rsi_free(struct FisherRsi *handle);
@@ -2407,6 +2493,8 @@ uintptr_t wickra_fisher_transform_warmup_period(struct FisherTransform *handle);
 
 bool wickra_fisher_transform_is_ready(struct FisherTransform *handle);
 
+const char *wickra_fisher_transform_name(struct FisherTransform *handle);
+
 void wickra_fisher_transform_reset(struct FisherTransform *handle);
 
 void wickra_fisher_transform_free(struct FisherTransform *handle);
@@ -2420,6 +2508,8 @@ void wickra_frama_batch(struct Frama *handle, const double *input, double *out, 
 uintptr_t wickra_frama_warmup_period(struct Frama *handle);
 
 bool wickra_frama_is_ready(struct Frama *handle);
+
+const char *wickra_frama_name(struct Frama *handle);
 
 void wickra_frama_reset(struct Frama *handle);
 
@@ -2438,6 +2528,8 @@ uintptr_t wickra_gain_loss_ratio_warmup_period(struct GainLossRatio *handle);
 
 bool wickra_gain_loss_ratio_is_ready(struct GainLossRatio *handle);
 
+const char *wickra_gain_loss_ratio_name(struct GainLossRatio *handle);
+
 void wickra_gain_loss_ratio_reset(struct GainLossRatio *handle);
 
 void wickra_gain_loss_ratio_free(struct GainLossRatio *handle);
@@ -2455,6 +2547,8 @@ uintptr_t wickra_gain_to_pain_ratio_warmup_period(struct GainToPainRatio *handle
 
 bool wickra_gain_to_pain_ratio_is_ready(struct GainToPainRatio *handle);
 
+const char *wickra_gain_to_pain_ratio_name(struct GainToPainRatio *handle);
+
 void wickra_gain_to_pain_ratio_reset(struct GainToPainRatio *handle);
 
 void wickra_gain_to_pain_ratio_free(struct GainToPainRatio *handle);
@@ -2468,6 +2562,8 @@ void wickra_garch11_batch(struct Garch11 *handle, const double *input, double *o
 uintptr_t wickra_garch11_warmup_period(struct Garch11 *handle);
 
 bool wickra_garch11_is_ready(struct Garch11 *handle);
+
+const char *wickra_garch11_name(struct Garch11 *handle);
 
 void wickra_garch11_reset(struct Garch11 *handle);
 
@@ -2486,6 +2582,8 @@ uintptr_t wickra_generalized_dema_warmup_period(struct GeneralizedDema *handle);
 
 bool wickra_generalized_dema_is_ready(struct GeneralizedDema *handle);
 
+const char *wickra_generalized_dema_name(struct GeneralizedDema *handle);
+
 void wickra_generalized_dema_reset(struct GeneralizedDema *handle);
 
 void wickra_generalized_dema_free(struct GeneralizedDema *handle);
@@ -2502,6 +2600,8 @@ void wickra_geometric_ma_batch(struct GeometricMa *handle,
 uintptr_t wickra_geometric_ma_warmup_period(struct GeometricMa *handle);
 
 bool wickra_geometric_ma_is_ready(struct GeometricMa *handle);
+
+const char *wickra_geometric_ma_name(struct GeometricMa *handle);
 
 void wickra_geometric_ma_reset(struct GeometricMa *handle);
 
@@ -2520,6 +2620,8 @@ uintptr_t wickra_highpass_filter_warmup_period(struct HighpassFilter *handle);
 
 bool wickra_highpass_filter_is_ready(struct HighpassFilter *handle);
 
+const char *wickra_highpass_filter_name(struct HighpassFilter *handle);
+
 void wickra_highpass_filter_reset(struct HighpassFilter *handle);
 
 void wickra_highpass_filter_free(struct HighpassFilter *handle);
@@ -2536,6 +2638,8 @@ void wickra_hilbert_dominant_cycle_batch(struct HilbertDominantCycle *handle,
 uintptr_t wickra_hilbert_dominant_cycle_warmup_period(struct HilbertDominantCycle *handle);
 
 bool wickra_hilbert_dominant_cycle_is_ready(struct HilbertDominantCycle *handle);
+
+const char *wickra_hilbert_dominant_cycle_name(struct HilbertDominantCycle *handle);
 
 void wickra_hilbert_dominant_cycle_reset(struct HilbertDominantCycle *handle);
 
@@ -2555,6 +2659,8 @@ uintptr_t wickra_historical_volatility_warmup_period(struct HistoricalVolatility
 
 bool wickra_historical_volatility_is_ready(struct HistoricalVolatility *handle);
 
+const char *wickra_historical_volatility_name(struct HistoricalVolatility *handle);
+
 void wickra_historical_volatility_reset(struct HistoricalVolatility *handle);
 
 void wickra_historical_volatility_free(struct HistoricalVolatility *handle);
@@ -2568,6 +2674,8 @@ void wickra_hma_batch(struct Hma *handle, const double *input, double *out, uint
 uintptr_t wickra_hma_warmup_period(struct Hma *handle);
 
 bool wickra_hma_is_ready(struct Hma *handle);
+
+const char *wickra_hma_name(struct Hma *handle);
 
 void wickra_hma_reset(struct Hma *handle);
 
@@ -2586,6 +2694,8 @@ uintptr_t wickra_holt_winters_warmup_period(struct HoltWinters *handle);
 
 bool wickra_holt_winters_is_ready(struct HoltWinters *handle);
 
+const char *wickra_holt_winters_name(struct HoltWinters *handle);
+
 void wickra_holt_winters_reset(struct HoltWinters *handle);
 
 void wickra_holt_winters_free(struct HoltWinters *handle);
@@ -2602,6 +2712,8 @@ void wickra_ht_dc_phase_batch(struct HtDcPhase *handle,
 uintptr_t wickra_ht_dc_phase_warmup_period(struct HtDcPhase *handle);
 
 bool wickra_ht_dc_phase_is_ready(struct HtDcPhase *handle);
+
+const char *wickra_ht_dc_phase_name(struct HtDcPhase *handle);
 
 void wickra_ht_dc_phase_reset(struct HtDcPhase *handle);
 
@@ -2620,6 +2732,8 @@ uintptr_t wickra_ht_trend_mode_warmup_period(struct HtTrendMode *handle);
 
 bool wickra_ht_trend_mode_is_ready(struct HtTrendMode *handle);
 
+const char *wickra_ht_trend_mode_name(struct HtTrendMode *handle);
+
 void wickra_ht_trend_mode_reset(struct HtTrendMode *handle);
 
 void wickra_ht_trend_mode_free(struct HtTrendMode *handle);
@@ -2636,6 +2750,8 @@ void wickra_hurst_exponent_batch(struct HurstExponent *handle,
 uintptr_t wickra_hurst_exponent_warmup_period(struct HurstExponent *handle);
 
 bool wickra_hurst_exponent_is_ready(struct HurstExponent *handle);
+
+const char *wickra_hurst_exponent_name(struct HurstExponent *handle);
 
 void wickra_hurst_exponent_reset(struct HurstExponent *handle);
 
@@ -2654,6 +2770,8 @@ uintptr_t wickra_instantaneous_trendline_warmup_period(struct InstantaneousTrend
 
 bool wickra_instantaneous_trendline_is_ready(struct InstantaneousTrendline *handle);
 
+const char *wickra_instantaneous_trendline_name(struct InstantaneousTrendline *handle);
+
 void wickra_instantaneous_trendline_reset(struct InstantaneousTrendline *handle);
 
 void wickra_instantaneous_trendline_free(struct InstantaneousTrendline *handle);
@@ -2670,6 +2788,8 @@ void wickra_inverse_fisher_transform_batch(struct InverseFisherTransform *handle
 uintptr_t wickra_inverse_fisher_transform_warmup_period(struct InverseFisherTransform *handle);
 
 bool wickra_inverse_fisher_transform_is_ready(struct InverseFisherTransform *handle);
+
+const char *wickra_inverse_fisher_transform_name(struct InverseFisherTransform *handle);
 
 void wickra_inverse_fisher_transform_reset(struct InverseFisherTransform *handle);
 
@@ -2688,6 +2808,8 @@ uintptr_t wickra_jarque_bera_warmup_period(struct JarqueBera *handle);
 
 bool wickra_jarque_bera_is_ready(struct JarqueBera *handle);
 
+const char *wickra_jarque_bera_name(struct JarqueBera *handle);
+
 void wickra_jarque_bera_reset(struct JarqueBera *handle);
 
 void wickra_jarque_bera_free(struct JarqueBera *handle);
@@ -2701,6 +2823,8 @@ void wickra_jma_batch(struct Jma *handle, const double *input, double *out, uint
 uintptr_t wickra_jma_warmup_period(struct Jma *handle);
 
 bool wickra_jma_is_ready(struct Jma *handle);
+
+const char *wickra_jma_name(struct Jma *handle);
 
 void wickra_jma_reset(struct Jma *handle);
 
@@ -2719,6 +2843,8 @@ uintptr_t wickra_jump_indicator_warmup_period(struct JumpIndicator *handle);
 
 bool wickra_jump_indicator_is_ready(struct JumpIndicator *handle);
 
+const char *wickra_jump_indicator_name(struct JumpIndicator *handle);
+
 void wickra_jump_indicator_reset(struct JumpIndicator *handle);
 
 void wickra_jump_indicator_free(struct JumpIndicator *handle);
@@ -2733,6 +2859,8 @@ uintptr_t wickra_k_ratio_warmup_period(struct KRatio *handle);
 
 bool wickra_k_ratio_is_ready(struct KRatio *handle);
 
+const char *wickra_k_ratio_name(struct KRatio *handle);
+
 void wickra_k_ratio_reset(struct KRatio *handle);
 
 void wickra_k_ratio_free(struct KRatio *handle);
@@ -2746,6 +2874,8 @@ void wickra_kama_batch(struct Kama *handle, const double *input, double *out, ui
 uintptr_t wickra_kama_warmup_period(struct Kama *handle);
 
 bool wickra_kama_is_ready(struct Kama *handle);
+
+const char *wickra_kama_name(struct Kama *handle);
 
 void wickra_kama_reset(struct Kama *handle);
 
@@ -2764,6 +2894,8 @@ uintptr_t wickra_kelly_criterion_warmup_period(struct KellyCriterion *handle);
 
 bool wickra_kelly_criterion_is_ready(struct KellyCriterion *handle);
 
+const char *wickra_kelly_criterion_name(struct KellyCriterion *handle);
+
 void wickra_kelly_criterion_reset(struct KellyCriterion *handle);
 
 void wickra_kelly_criterion_free(struct KellyCriterion *handle);
@@ -2777,6 +2909,8 @@ void wickra_kurtosis_batch(struct Kurtosis *handle, const double *input, double 
 uintptr_t wickra_kurtosis_warmup_period(struct Kurtosis *handle);
 
 bool wickra_kurtosis_is_ready(struct Kurtosis *handle);
+
+const char *wickra_kurtosis_name(struct Kurtosis *handle);
 
 void wickra_kurtosis_reset(struct Kurtosis *handle);
 
@@ -2795,6 +2929,8 @@ uintptr_t wickra_laguerre_rsi_warmup_period(struct LaguerreRsi *handle);
 
 bool wickra_laguerre_rsi_is_ready(struct LaguerreRsi *handle);
 
+const char *wickra_laguerre_rsi_name(struct LaguerreRsi *handle);
+
 void wickra_laguerre_rsi_reset(struct LaguerreRsi *handle);
 
 void wickra_laguerre_rsi_free(struct LaguerreRsi *handle);
@@ -2811,6 +2947,8 @@ void wickra_linear_regression_batch(struct LinearRegression *handle,
 uintptr_t wickra_linear_regression_warmup_period(struct LinearRegression *handle);
 
 bool wickra_linear_regression_is_ready(struct LinearRegression *handle);
+
+const char *wickra_linear_regression_name(struct LinearRegression *handle);
 
 void wickra_linear_regression_reset(struct LinearRegression *handle);
 
@@ -2829,6 +2967,8 @@ uintptr_t wickra_lin_reg_angle_warmup_period(struct LinRegAngle *handle);
 
 bool wickra_lin_reg_angle_is_ready(struct LinRegAngle *handle);
 
+const char *wickra_lin_reg_angle_name(struct LinRegAngle *handle);
+
 void wickra_lin_reg_angle_reset(struct LinRegAngle *handle);
 
 void wickra_lin_reg_angle_free(struct LinRegAngle *handle);
@@ -2845,6 +2985,8 @@ void wickra_lin_reg_intercept_batch(struct LinRegIntercept *handle,
 uintptr_t wickra_lin_reg_intercept_warmup_period(struct LinRegIntercept *handle);
 
 bool wickra_lin_reg_intercept_is_ready(struct LinRegIntercept *handle);
+
+const char *wickra_lin_reg_intercept_name(struct LinRegIntercept *handle);
 
 void wickra_lin_reg_intercept_reset(struct LinRegIntercept *handle);
 
@@ -2863,6 +3005,8 @@ uintptr_t wickra_lin_reg_slope_warmup_period(struct LinRegSlope *handle);
 
 bool wickra_lin_reg_slope_is_ready(struct LinRegSlope *handle);
 
+const char *wickra_lin_reg_slope_name(struct LinRegSlope *handle);
+
 void wickra_lin_reg_slope_reset(struct LinRegSlope *handle);
 
 void wickra_lin_reg_slope_free(struct LinRegSlope *handle);
@@ -2879,6 +3023,8 @@ void wickra_log_return_batch(struct LogReturn *handle,
 uintptr_t wickra_log_return_warmup_period(struct LogReturn *handle);
 
 bool wickra_log_return_is_ready(struct LogReturn *handle);
+
+const char *wickra_log_return_name(struct LogReturn *handle);
 
 void wickra_log_return_reset(struct LogReturn *handle);
 
@@ -2899,6 +3045,8 @@ uintptr_t wickra_m2_measure_warmup_period(struct M2Measure *handle);
 
 bool wickra_m2_measure_is_ready(struct M2Measure *handle);
 
+const char *wickra_m2_measure_name(struct M2Measure *handle);
+
 void wickra_m2_measure_reset(struct M2Measure *handle);
 
 void wickra_m2_measure_free(struct M2Measure *handle);
@@ -2915,6 +3063,8 @@ void wickra_macd_histogram_batch(struct MacdHistogram *handle,
 uintptr_t wickra_macd_histogram_warmup_period(struct MacdHistogram *handle);
 
 bool wickra_macd_histogram_is_ready(struct MacdHistogram *handle);
+
+const char *wickra_macd_histogram_name(struct MacdHistogram *handle);
 
 void wickra_macd_histogram_reset(struct MacdHistogram *handle);
 
@@ -2933,6 +3083,8 @@ uintptr_t wickra_martin_ratio_warmup_period(struct MartinRatio *handle);
 
 bool wickra_martin_ratio_is_ready(struct MartinRatio *handle);
 
+const char *wickra_martin_ratio_name(struct MartinRatio *handle);
+
 void wickra_martin_ratio_reset(struct MartinRatio *handle);
 
 void wickra_martin_ratio_free(struct MartinRatio *handle);
@@ -2950,6 +3102,8 @@ uintptr_t wickra_max_drawdown_warmup_period(struct MaxDrawdown *handle);
 
 bool wickra_max_drawdown_is_ready(struct MaxDrawdown *handle);
 
+const char *wickra_max_drawdown_name(struct MaxDrawdown *handle);
+
 void wickra_max_drawdown_reset(struct MaxDrawdown *handle);
 
 void wickra_max_drawdown_free(struct MaxDrawdown *handle);
@@ -2966,6 +3120,8 @@ void wickra_mc_ginley_dynamic_batch(struct McGinleyDynamic *handle,
 uintptr_t wickra_mc_ginley_dynamic_warmup_period(struct McGinleyDynamic *handle);
 
 bool wickra_mc_ginley_dynamic_is_ready(struct McGinleyDynamic *handle);
+
+const char *wickra_mc_ginley_dynamic_name(struct McGinleyDynamic *handle);
 
 void wickra_mc_ginley_dynamic_reset(struct McGinleyDynamic *handle);
 
@@ -2985,6 +3141,8 @@ uintptr_t wickra_median_absolute_deviation_warmup_period(struct MedianAbsoluteDe
 
 bool wickra_median_absolute_deviation_is_ready(struct MedianAbsoluteDeviation *handle);
 
+const char *wickra_median_absolute_deviation_name(struct MedianAbsoluteDeviation *handle);
+
 void wickra_median_absolute_deviation_reset(struct MedianAbsoluteDeviation *handle);
 
 void wickra_median_absolute_deviation_free(struct MedianAbsoluteDeviation *handle);
@@ -2998,6 +3156,8 @@ void wickra_median_ma_batch(struct MedianMa *handle, const double *input, double
 uintptr_t wickra_median_ma_warmup_period(struct MedianMa *handle);
 
 bool wickra_median_ma_is_ready(struct MedianMa *handle);
+
+const char *wickra_median_ma_name(struct MedianMa *handle);
 
 void wickra_median_ma_reset(struct MedianMa *handle);
 
@@ -3013,6 +3173,8 @@ uintptr_t wickra_mid_point_warmup_period(struct MidPoint *handle);
 
 bool wickra_mid_point_is_ready(struct MidPoint *handle);
 
+const char *wickra_mid_point_name(struct MidPoint *handle);
+
 void wickra_mid_point_reset(struct MidPoint *handle);
 
 void wickra_mid_point_free(struct MidPoint *handle);
@@ -3026,6 +3188,8 @@ void wickra_mom_batch(struct Mom *handle, const double *input, double *out, uint
 uintptr_t wickra_mom_warmup_period(struct Mom *handle);
 
 bool wickra_mom_is_ready(struct Mom *handle);
+
+const char *wickra_mom_name(struct Mom *handle);
 
 void wickra_mom_reset(struct Mom *handle);
 
@@ -3044,6 +3208,8 @@ uintptr_t wickra_omega_ratio_warmup_period(struct OmegaRatio *handle);
 
 bool wickra_omega_ratio_is_ready(struct OmegaRatio *handle);
 
+const char *wickra_omega_ratio_name(struct OmegaRatio *handle);
+
 void wickra_omega_ratio_reset(struct OmegaRatio *handle);
 
 void wickra_omega_ratio_free(struct OmegaRatio *handle);
@@ -3061,6 +3227,8 @@ uintptr_t wickra_pain_index_warmup_period(struct PainIndex *handle);
 
 bool wickra_pain_index_is_ready(struct PainIndex *handle);
 
+const char *wickra_pain_index_name(struct PainIndex *handle);
+
 void wickra_pain_index_reset(struct PainIndex *handle);
 
 void wickra_pain_index_free(struct PainIndex *handle);
@@ -3074,6 +3242,8 @@ void wickra_percent_b_batch(struct PercentB *handle, const double *input, double
 uintptr_t wickra_percent_b_warmup_period(struct PercentB *handle);
 
 bool wickra_percent_b_is_ready(struct PercentB *handle);
+
+const char *wickra_percent_b_name(struct PercentB *handle);
 
 void wickra_percent_b_reset(struct PercentB *handle);
 
@@ -3092,6 +3262,8 @@ uintptr_t wickra_percentage_trailing_stop_warmup_period(struct PercentageTrailin
 
 bool wickra_percentage_trailing_stop_is_ready(struct PercentageTrailingStop *handle);
 
+const char *wickra_percentage_trailing_stop_name(struct PercentageTrailingStop *handle);
+
 void wickra_percentage_trailing_stop_reset(struct PercentageTrailingStop *handle);
 
 void wickra_percentage_trailing_stop_free(struct PercentageTrailingStop *handle);
@@ -3105,6 +3277,8 @@ void wickra_pmo_batch(struct Pmo *handle, const double *input, double *out, uint
 uintptr_t wickra_pmo_warmup_period(struct Pmo *handle);
 
 bool wickra_pmo_is_ready(struct Pmo *handle);
+
+const char *wickra_pmo_name(struct Pmo *handle);
 
 void wickra_pmo_reset(struct Pmo *handle);
 
@@ -3125,6 +3299,8 @@ uintptr_t wickra_polarized_fractal_efficiency_warmup_period(struct PolarizedFrac
 
 bool wickra_polarized_fractal_efficiency_is_ready(struct PolarizedFractalEfficiency *handle);
 
+const char *wickra_polarized_fractal_efficiency_name(struct PolarizedFractalEfficiency *handle);
+
 void wickra_polarized_fractal_efficiency_reset(struct PolarizedFractalEfficiency *handle);
 
 void wickra_polarized_fractal_efficiency_free(struct PolarizedFractalEfficiency *handle);
@@ -3138,6 +3314,8 @@ void wickra_ppo_batch(struct Ppo *handle, const double *input, double *out, uint
 uintptr_t wickra_ppo_warmup_period(struct Ppo *handle);
 
 bool wickra_ppo_is_ready(struct Ppo *handle);
+
+const char *wickra_ppo_name(struct Ppo *handle);
 
 void wickra_ppo_reset(struct Ppo *handle);
 
@@ -3156,6 +3334,8 @@ uintptr_t wickra_ppo_histogram_warmup_period(struct PpoHistogram *handle);
 
 bool wickra_ppo_histogram_is_ready(struct PpoHistogram *handle);
 
+const char *wickra_ppo_histogram_name(struct PpoHistogram *handle);
+
 void wickra_ppo_histogram_reset(struct PpoHistogram *handle);
 
 void wickra_ppo_histogram_free(struct PpoHistogram *handle);
@@ -3173,6 +3353,8 @@ uintptr_t wickra_profit_factor_warmup_period(struct ProfitFactor *handle);
 
 bool wickra_profit_factor_is_ready(struct ProfitFactor *handle);
 
+const char *wickra_profit_factor_name(struct ProfitFactor *handle);
+
 void wickra_profit_factor_reset(struct ProfitFactor *handle);
 
 void wickra_profit_factor_free(struct ProfitFactor *handle);
@@ -3186,6 +3368,8 @@ void wickra_r_squared_batch(struct RSquared *handle, const double *input, double
 uintptr_t wickra_r_squared_warmup_period(struct RSquared *handle);
 
 bool wickra_r_squared_is_ready(struct RSquared *handle);
+
+const char *wickra_r_squared_name(struct RSquared *handle);
 
 void wickra_r_squared_reset(struct RSquared *handle);
 
@@ -3204,6 +3388,8 @@ uintptr_t wickra_realized_volatility_warmup_period(struct RealizedVolatility *ha
 
 bool wickra_realized_volatility_is_ready(struct RealizedVolatility *handle);
 
+const char *wickra_realized_volatility_name(struct RealizedVolatility *handle);
+
 void wickra_realized_volatility_reset(struct RealizedVolatility *handle);
 
 void wickra_realized_volatility_free(struct RealizedVolatility *handle);
@@ -3221,6 +3407,8 @@ uintptr_t wickra_recovery_factor_warmup_period(struct RecoveryFactor *handle);
 
 bool wickra_recovery_factor_is_ready(struct RecoveryFactor *handle);
 
+const char *wickra_recovery_factor_name(struct RecoveryFactor *handle);
+
 void wickra_recovery_factor_reset(struct RecoveryFactor *handle);
 
 void wickra_recovery_factor_free(struct RecoveryFactor *handle);
@@ -3234,6 +3422,8 @@ void wickra_reflex_batch(struct Reflex *handle, const double *input, double *out
 uintptr_t wickra_reflex_warmup_period(struct Reflex *handle);
 
 bool wickra_reflex_is_ready(struct Reflex *handle);
+
+const char *wickra_reflex_name(struct Reflex *handle);
 
 void wickra_reflex_reset(struct Reflex *handle);
 
@@ -3252,6 +3442,8 @@ uintptr_t wickra_regime_label_warmup_period(struct RegimeLabel *handle);
 
 bool wickra_regime_label_is_ready(struct RegimeLabel *handle);
 
+const char *wickra_regime_label_name(struct RegimeLabel *handle);
+
 void wickra_regime_label_reset(struct RegimeLabel *handle);
 
 void wickra_regime_label_free(struct RegimeLabel *handle);
@@ -3269,6 +3461,8 @@ uintptr_t wickra_renko_trailing_stop_warmup_period(struct RenkoTrailingStop *han
 
 bool wickra_renko_trailing_stop_is_ready(struct RenkoTrailingStop *handle);
 
+const char *wickra_renko_trailing_stop_name(struct RenkoTrailingStop *handle);
+
 void wickra_renko_trailing_stop_reset(struct RenkoTrailingStop *handle);
 
 void wickra_renko_trailing_stop_free(struct RenkoTrailingStop *handle);
@@ -3282,6 +3476,8 @@ void wickra_rmi_batch(struct Rmi *handle, const double *input, double *out, uint
 uintptr_t wickra_rmi_warmup_period(struct Rmi *handle);
 
 bool wickra_rmi_is_ready(struct Rmi *handle);
+
+const char *wickra_rmi_name(struct Rmi *handle);
 
 void wickra_rmi_reset(struct Rmi *handle);
 
@@ -3297,6 +3493,8 @@ uintptr_t wickra_roc_warmup_period(struct Roc *handle);
 
 bool wickra_roc_is_ready(struct Roc *handle);
 
+const char *wickra_roc_name(struct Roc *handle);
+
 void wickra_roc_reset(struct Roc *handle);
 
 void wickra_roc_free(struct Roc *handle);
@@ -3310,6 +3508,8 @@ void wickra_rocp_batch(struct Rocp *handle, const double *input, double *out, ui
 uintptr_t wickra_rocp_warmup_period(struct Rocp *handle);
 
 bool wickra_rocp_is_ready(struct Rocp *handle);
+
+const char *wickra_rocp_name(struct Rocp *handle);
 
 void wickra_rocp_reset(struct Rocp *handle);
 
@@ -3325,6 +3525,8 @@ uintptr_t wickra_rocr_warmup_period(struct Rocr *handle);
 
 bool wickra_rocr_is_ready(struct Rocr *handle);
 
+const char *wickra_rocr_name(struct Rocr *handle);
+
 void wickra_rocr_reset(struct Rocr *handle);
 
 void wickra_rocr_free(struct Rocr *handle);
@@ -3338,6 +3540,8 @@ void wickra_rocr100_batch(struct Rocr100 *handle, const double *input, double *o
 uintptr_t wickra_rocr100_warmup_period(struct Rocr100 *handle);
 
 bool wickra_rocr100_is_ready(struct Rocr100 *handle);
+
+const char *wickra_rocr100_name(struct Rocr100 *handle);
 
 void wickra_rocr100_reset(struct Rocr100 *handle);
 
@@ -3356,6 +3560,8 @@ uintptr_t wickra_rolling_iqr_warmup_period(struct RollingIqr *handle);
 
 bool wickra_rolling_iqr_is_ready(struct RollingIqr *handle);
 
+const char *wickra_rolling_iqr_name(struct RollingIqr *handle);
+
 void wickra_rolling_iqr_reset(struct RollingIqr *handle);
 
 void wickra_rolling_iqr_free(struct RollingIqr *handle);
@@ -3372,6 +3578,8 @@ void wickra_rolling_min_max_scaler_batch(struct RollingMinMaxScaler *handle,
 uintptr_t wickra_rolling_min_max_scaler_warmup_period(struct RollingMinMaxScaler *handle);
 
 bool wickra_rolling_min_max_scaler_is_ready(struct RollingMinMaxScaler *handle);
+
+const char *wickra_rolling_min_max_scaler_name(struct RollingMinMaxScaler *handle);
 
 void wickra_rolling_min_max_scaler_reset(struct RollingMinMaxScaler *handle);
 
@@ -3390,6 +3598,8 @@ uintptr_t wickra_rolling_percentile_rank_warmup_period(struct RollingPercentileR
 
 bool wickra_rolling_percentile_rank_is_ready(struct RollingPercentileRank *handle);
 
+const char *wickra_rolling_percentile_rank_name(struct RollingPercentileRank *handle);
+
 void wickra_rolling_percentile_rank_reset(struct RollingPercentileRank *handle);
 
 void wickra_rolling_percentile_rank_free(struct RollingPercentileRank *handle);
@@ -3406,6 +3616,8 @@ void wickra_rolling_quantile_batch(struct RollingQuantile *handle,
 uintptr_t wickra_rolling_quantile_warmup_period(struct RollingQuantile *handle);
 
 bool wickra_rolling_quantile_is_ready(struct RollingQuantile *handle);
+
+const char *wickra_rolling_quantile_name(struct RollingQuantile *handle);
 
 void wickra_rolling_quantile_reset(struct RollingQuantile *handle);
 
@@ -3424,6 +3636,8 @@ uintptr_t wickra_roofing_filter_warmup_period(struct RoofingFilter *handle);
 
 bool wickra_roofing_filter_is_ready(struct RoofingFilter *handle);
 
+const char *wickra_roofing_filter_name(struct RoofingFilter *handle);
+
 void wickra_roofing_filter_reset(struct RoofingFilter *handle);
 
 void wickra_roofing_filter_free(struct RoofingFilter *handle);
@@ -3438,6 +3652,8 @@ uintptr_t wickra_rsi_warmup_period(struct Rsi *handle);
 
 bool wickra_rsi_is_ready(struct Rsi *handle);
 
+const char *wickra_rsi_name(struct Rsi *handle);
+
 void wickra_rsi_reset(struct Rsi *handle);
 
 void wickra_rsi_free(struct Rsi *handle);
@@ -3451,6 +3667,8 @@ void wickra_rsx_batch(struct Rsx *handle, const double *input, double *out, uint
 uintptr_t wickra_rsx_warmup_period(struct Rsx *handle);
 
 bool wickra_rsx_is_ready(struct Rsx *handle);
+
+const char *wickra_rsx_name(struct Rsx *handle);
 
 void wickra_rsx_reset(struct Rsx *handle);
 
@@ -3469,6 +3687,8 @@ uintptr_t wickra_rvi_volatility_warmup_period(struct RviVolatility *handle);
 
 bool wickra_rvi_volatility_is_ready(struct RviVolatility *handle);
 
+const char *wickra_rvi_volatility_name(struct RviVolatility *handle);
+
 void wickra_rvi_volatility_reset(struct RviVolatility *handle);
 
 void wickra_rvi_volatility_free(struct RviVolatility *handle);
@@ -3485,6 +3705,8 @@ void wickra_sample_entropy_batch(struct SampleEntropy *handle,
 uintptr_t wickra_sample_entropy_warmup_period(struct SampleEntropy *handle);
 
 bool wickra_sample_entropy_is_ready(struct SampleEntropy *handle);
+
+const char *wickra_sample_entropy_name(struct SampleEntropy *handle);
 
 void wickra_sample_entropy_reset(struct SampleEntropy *handle);
 
@@ -3503,6 +3725,8 @@ uintptr_t wickra_shannon_entropy_warmup_period(struct ShannonEntropy *handle);
 
 bool wickra_shannon_entropy_is_ready(struct ShannonEntropy *handle);
 
+const char *wickra_shannon_entropy_name(struct ShannonEntropy *handle);
+
 void wickra_shannon_entropy_reset(struct ShannonEntropy *handle);
 
 void wickra_shannon_entropy_free(struct ShannonEntropy *handle);
@@ -3520,6 +3744,8 @@ uintptr_t wickra_sharpe_ratio_warmup_period(struct SharpeRatio *handle);
 
 bool wickra_sharpe_ratio_is_ready(struct SharpeRatio *handle);
 
+const char *wickra_sharpe_ratio_name(struct SharpeRatio *handle);
+
 void wickra_sharpe_ratio_reset(struct SharpeRatio *handle);
 
 void wickra_sharpe_ratio_free(struct SharpeRatio *handle);
@@ -3533,6 +3759,8 @@ void wickra_sine_wave_batch(struct SineWave *handle, const double *input, double
 uintptr_t wickra_sine_wave_warmup_period(struct SineWave *handle);
 
 bool wickra_sine_wave_is_ready(struct SineWave *handle);
+
+const char *wickra_sine_wave_name(struct SineWave *handle);
 
 void wickra_sine_wave_reset(struct SineWave *handle);
 
@@ -3551,6 +3779,8 @@ uintptr_t wickra_sine_weighted_ma_warmup_period(struct SineWeightedMa *handle);
 
 bool wickra_sine_weighted_ma_is_ready(struct SineWeightedMa *handle);
 
+const char *wickra_sine_weighted_ma_name(struct SineWeightedMa *handle);
+
 void wickra_sine_weighted_ma_reset(struct SineWeightedMa *handle);
 
 void wickra_sine_weighted_ma_free(struct SineWeightedMa *handle);
@@ -3564,6 +3794,8 @@ void wickra_skewness_batch(struct Skewness *handle, const double *input, double 
 uintptr_t wickra_skewness_warmup_period(struct Skewness *handle);
 
 bool wickra_skewness_is_ready(struct Skewness *handle);
+
+const char *wickra_skewness_name(struct Skewness *handle);
 
 void wickra_skewness_reset(struct Skewness *handle);
 
@@ -3579,6 +3811,8 @@ uintptr_t wickra_sma_warmup_period(struct Sma *handle);
 
 bool wickra_sma_is_ready(struct Sma *handle);
 
+const char *wickra_sma_name(struct Sma *handle);
+
 void wickra_sma_reset(struct Sma *handle);
 
 void wickra_sma_free(struct Sma *handle);
@@ -3592,6 +3826,8 @@ void wickra_smma_batch(struct Smma *handle, const double *input, double *out, ui
 uintptr_t wickra_smma_warmup_period(struct Smma *handle);
 
 bool wickra_smma_is_ready(struct Smma *handle);
+
+const char *wickra_smma_name(struct Smma *handle);
 
 void wickra_smma_reset(struct Smma *handle);
 
@@ -3610,6 +3846,8 @@ uintptr_t wickra_sortino_ratio_warmup_period(struct SortinoRatio *handle);
 
 bool wickra_sortino_ratio_is_ready(struct SortinoRatio *handle);
 
+const char *wickra_sortino_ratio_name(struct SortinoRatio *handle);
+
 void wickra_sortino_ratio_reset(struct SortinoRatio *handle);
 
 void wickra_sortino_ratio_free(struct SortinoRatio *handle);
@@ -3627,6 +3865,8 @@ uintptr_t wickra_standard_error_warmup_period(struct StandardError *handle);
 
 bool wickra_standard_error_is_ready(struct StandardError *handle);
 
+const char *wickra_standard_error_name(struct StandardError *handle);
+
 void wickra_standard_error_reset(struct StandardError *handle);
 
 void wickra_standard_error_free(struct StandardError *handle);
@@ -3641,6 +3881,8 @@ uintptr_t wickra_stc_warmup_period(struct Stc *handle);
 
 bool wickra_stc_is_ready(struct Stc *handle);
 
+const char *wickra_stc_name(struct Stc *handle);
+
 void wickra_stc_reset(struct Stc *handle);
 
 void wickra_stc_free(struct Stc *handle);
@@ -3654,6 +3896,8 @@ void wickra_std_dev_batch(struct StdDev *handle, const double *input, double *ou
 uintptr_t wickra_std_dev_warmup_period(struct StdDev *handle);
 
 bool wickra_std_dev_is_ready(struct StdDev *handle);
+
+const char *wickra_std_dev_name(struct StdDev *handle);
 
 void wickra_std_dev_reset(struct StdDev *handle);
 
@@ -3672,6 +3916,8 @@ uintptr_t wickra_step_trailing_stop_warmup_period(struct StepTrailingStop *handl
 
 bool wickra_step_trailing_stop_is_ready(struct StepTrailingStop *handle);
 
+const char *wickra_step_trailing_stop_name(struct StepTrailingStop *handle);
+
 void wickra_step_trailing_stop_reset(struct StepTrailingStop *handle);
 
 void wickra_step_trailing_stop_free(struct StepTrailingStop *handle);
@@ -3689,6 +3935,8 @@ uintptr_t wickra_sterling_ratio_warmup_period(struct SterlingRatio *handle);
 
 bool wickra_sterling_ratio_is_ready(struct SterlingRatio *handle);
 
+const char *wickra_sterling_ratio_name(struct SterlingRatio *handle);
+
 void wickra_sterling_ratio_reset(struct SterlingRatio *handle);
 
 void wickra_sterling_ratio_free(struct SterlingRatio *handle);
@@ -3702,6 +3950,8 @@ void wickra_stoch_rsi_batch(struct StochRsi *handle, const double *input, double
 uintptr_t wickra_stoch_rsi_warmup_period(struct StochRsi *handle);
 
 bool wickra_stoch_rsi_is_ready(struct StochRsi *handle);
+
+const char *wickra_stoch_rsi_name(struct StochRsi *handle);
 
 void wickra_stoch_rsi_reset(struct StochRsi *handle);
 
@@ -3720,6 +3970,8 @@ uintptr_t wickra_super_smoother_warmup_period(struct SuperSmoother *handle);
 
 bool wickra_super_smoother_is_ready(struct SuperSmoother *handle);
 
+const char *wickra_super_smoother_name(struct SuperSmoother *handle);
+
 void wickra_super_smoother_reset(struct SuperSmoother *handle);
 
 void wickra_super_smoother_free(struct SuperSmoother *handle);
@@ -3733,6 +3985,8 @@ void wickra_t3_batch(struct T3 *handle, const double *input, double *out, uintpt
 uintptr_t wickra_t3_warmup_period(struct T3 *handle);
 
 bool wickra_t3_is_ready(struct T3 *handle);
+
+const char *wickra_t3_name(struct T3 *handle);
 
 void wickra_t3_reset(struct T3 *handle);
 
@@ -3751,6 +4005,8 @@ uintptr_t wickra_tail_ratio_warmup_period(struct TailRatio *handle);
 
 bool wickra_tail_ratio_is_ready(struct TailRatio *handle);
 
+const char *wickra_tail_ratio_name(struct TailRatio *handle);
+
 void wickra_tail_ratio_reset(struct TailRatio *handle);
 
 void wickra_tail_ratio_free(struct TailRatio *handle);
@@ -3765,6 +4021,8 @@ uintptr_t wickra_tema_warmup_period(struct Tema *handle);
 
 bool wickra_tema_is_ready(struct Tema *handle);
 
+const char *wickra_tema_name(struct Tema *handle);
+
 void wickra_tema_reset(struct Tema *handle);
 
 void wickra_tema_free(struct Tema *handle);
@@ -3778,6 +4036,8 @@ void wickra_tii_batch(struct Tii *handle, const double *input, double *out, uint
 uintptr_t wickra_tii_warmup_period(struct Tii *handle);
 
 bool wickra_tii_is_ready(struct Tii *handle);
+
+const char *wickra_tii_name(struct Tii *handle);
 
 void wickra_tii_reset(struct Tii *handle);
 
@@ -3796,6 +4056,8 @@ uintptr_t wickra_trend_label_warmup_period(struct TrendLabel *handle);
 
 bool wickra_trend_label_is_ready(struct TrendLabel *handle);
 
+const char *wickra_trend_label_name(struct TrendLabel *handle);
+
 void wickra_trend_label_reset(struct TrendLabel *handle);
 
 void wickra_trend_label_free(struct TrendLabel *handle);
@@ -3812,6 +4074,8 @@ void wickra_trend_strength_index_batch(struct TrendStrengthIndex *handle,
 uintptr_t wickra_trend_strength_index_warmup_period(struct TrendStrengthIndex *handle);
 
 bool wickra_trend_strength_index_is_ready(struct TrendStrengthIndex *handle);
+
+const char *wickra_trend_strength_index_name(struct TrendStrengthIndex *handle);
 
 void wickra_trend_strength_index_reset(struct TrendStrengthIndex *handle);
 
@@ -3830,6 +4094,8 @@ uintptr_t wickra_trendflex_warmup_period(struct Trendflex *handle);
 
 bool wickra_trendflex_is_ready(struct Trendflex *handle);
 
+const char *wickra_trendflex_name(struct Trendflex *handle);
+
 void wickra_trendflex_reset(struct Trendflex *handle);
 
 void wickra_trendflex_free(struct Trendflex *handle);
@@ -3843,6 +4109,8 @@ void wickra_trima_batch(struct Trima *handle, const double *input, double *out, 
 uintptr_t wickra_trima_warmup_period(struct Trima *handle);
 
 bool wickra_trima_is_ready(struct Trima *handle);
+
+const char *wickra_trima_name(struct Trima *handle);
 
 void wickra_trima_reset(struct Trima *handle);
 
@@ -3858,6 +4126,8 @@ uintptr_t wickra_trix_warmup_period(struct Trix *handle);
 
 bool wickra_trix_is_ready(struct Trix *handle);
 
+const char *wickra_trix_name(struct Trix *handle);
+
 void wickra_trix_reset(struct Trix *handle);
 
 void wickra_trix_free(struct Trix *handle);
@@ -3871,6 +4141,8 @@ void wickra_tsf_batch(struct Tsf *handle, const double *input, double *out, uint
 uintptr_t wickra_tsf_warmup_period(struct Tsf *handle);
 
 bool wickra_tsf_is_ready(struct Tsf *handle);
+
+const char *wickra_tsf_name(struct Tsf *handle);
 
 void wickra_tsf_reset(struct Tsf *handle);
 
@@ -3889,6 +4161,8 @@ uintptr_t wickra_tsf_oscillator_warmup_period(struct TsfOscillator *handle);
 
 bool wickra_tsf_oscillator_is_ready(struct TsfOscillator *handle);
 
+const char *wickra_tsf_oscillator_name(struct TsfOscillator *handle);
+
 void wickra_tsf_oscillator_reset(struct TsfOscillator *handle);
 
 void wickra_tsf_oscillator_free(struct TsfOscillator *handle);
@@ -3902,6 +4176,8 @@ void wickra_tsi_batch(struct Tsi *handle, const double *input, double *out, uint
 uintptr_t wickra_tsi_warmup_period(struct Tsi *handle);
 
 bool wickra_tsi_is_ready(struct Tsi *handle);
+
+const char *wickra_tsi_name(struct Tsi *handle);
 
 void wickra_tsi_reset(struct Tsi *handle);
 
@@ -3920,6 +4196,8 @@ uintptr_t wickra_ulcer_index_warmup_period(struct UlcerIndex *handle);
 
 bool wickra_ulcer_index_is_ready(struct UlcerIndex *handle);
 
+const char *wickra_ulcer_index_name(struct UlcerIndex *handle);
+
 void wickra_ulcer_index_reset(struct UlcerIndex *handle);
 
 void wickra_ulcer_index_free(struct UlcerIndex *handle);
@@ -3936,6 +4214,8 @@ void wickra_universal_oscillator_batch(struct UniversalOscillator *handle,
 uintptr_t wickra_universal_oscillator_warmup_period(struct UniversalOscillator *handle);
 
 bool wickra_universal_oscillator_is_ready(struct UniversalOscillator *handle);
+
+const char *wickra_universal_oscillator_name(struct UniversalOscillator *handle);
 
 void wickra_universal_oscillator_reset(struct UniversalOscillator *handle);
 
@@ -3954,6 +4234,8 @@ uintptr_t wickra_upside_potential_ratio_warmup_period(struct UpsidePotentialRati
 
 bool wickra_upside_potential_ratio_is_ready(struct UpsidePotentialRatio *handle);
 
+const char *wickra_upside_potential_ratio_name(struct UpsidePotentialRatio *handle);
+
 void wickra_upside_potential_ratio_reset(struct UpsidePotentialRatio *handle);
 
 void wickra_upside_potential_ratio_free(struct UpsidePotentialRatio *handle);
@@ -3971,6 +4253,8 @@ uintptr_t wickra_value_at_risk_warmup_period(struct ValueAtRisk *handle);
 
 bool wickra_value_at_risk_is_ready(struct ValueAtRisk *handle);
 
+const char *wickra_value_at_risk_name(struct ValueAtRisk *handle);
+
 void wickra_value_at_risk_reset(struct ValueAtRisk *handle);
 
 void wickra_value_at_risk_free(struct ValueAtRisk *handle);
@@ -3984,6 +4268,8 @@ void wickra_variance_batch(struct Variance *handle, const double *input, double 
 uintptr_t wickra_variance_warmup_period(struct Variance *handle);
 
 bool wickra_variance_is_ready(struct Variance *handle);
+
+const char *wickra_variance_name(struct Variance *handle);
 
 void wickra_variance_reset(struct Variance *handle);
 
@@ -4003,6 +4289,8 @@ uintptr_t wickra_vertical_horizontal_filter_warmup_period(struct VerticalHorizon
 
 bool wickra_vertical_horizontal_filter_is_ready(struct VerticalHorizontalFilter *handle);
 
+const char *wickra_vertical_horizontal_filter_name(struct VerticalHorizontalFilter *handle);
+
 void wickra_vertical_horizontal_filter_reset(struct VerticalHorizontalFilter *handle);
 
 void wickra_vertical_horizontal_filter_free(struct VerticalHorizontalFilter *handle);
@@ -4016,6 +4304,8 @@ void wickra_vidya_batch(struct Vidya *handle, const double *input, double *out, 
 uintptr_t wickra_vidya_warmup_period(struct Vidya *handle);
 
 bool wickra_vidya_is_ready(struct Vidya *handle);
+
+const char *wickra_vidya_name(struct Vidya *handle);
 
 void wickra_vidya_reset(struct Vidya *handle);
 
@@ -4035,6 +4325,8 @@ uintptr_t wickra_volatility_of_volatility_warmup_period(struct VolatilityOfVolat
 
 bool wickra_volatility_of_volatility_is_ready(struct VolatilityOfVolatility *handle);
 
+const char *wickra_volatility_of_volatility_name(struct VolatilityOfVolatility *handle);
+
 void wickra_volatility_of_volatility_reset(struct VolatilityOfVolatility *handle);
 
 void wickra_volatility_of_volatility_free(struct VolatilityOfVolatility *handle);
@@ -4048,6 +4340,8 @@ void wickra_wave_pm_batch(struct WavePm *handle, const double *input, double *ou
 uintptr_t wickra_wave_pm_warmup_period(struct WavePm *handle);
 
 bool wickra_wave_pm_is_ready(struct WavePm *handle);
+
+const char *wickra_wave_pm_name(struct WavePm *handle);
 
 void wickra_wave_pm_reset(struct WavePm *handle);
 
@@ -4063,6 +4357,8 @@ uintptr_t wickra_win_rate_warmup_period(struct WinRate *handle);
 
 bool wickra_win_rate_is_ready(struct WinRate *handle);
 
+const char *wickra_win_rate_name(struct WinRate *handle);
+
 void wickra_win_rate_reset(struct WinRate *handle);
 
 void wickra_win_rate_free(struct WinRate *handle);
@@ -4076,6 +4372,8 @@ void wickra_wma_batch(struct Wma *handle, const double *input, double *out, uint
 uintptr_t wickra_wma_warmup_period(struct Wma *handle);
 
 bool wickra_wma_is_ready(struct Wma *handle);
+
+const char *wickra_wma_name(struct Wma *handle);
 
 void wickra_wma_reset(struct Wma *handle);
 
@@ -4091,6 +4389,8 @@ uintptr_t wickra_z_score_warmup_period(struct ZScore *handle);
 
 bool wickra_z_score_is_ready(struct ZScore *handle);
 
+const char *wickra_z_score_name(struct ZScore *handle);
+
 void wickra_z_score_reset(struct ZScore *handle);
 
 void wickra_z_score_free(struct ZScore *handle);
@@ -4104,6 +4404,8 @@ void wickra_zlema_batch(struct Zlema *handle, const double *input, double *out, 
 uintptr_t wickra_zlema_warmup_period(struct Zlema *handle);
 
 bool wickra_zlema_is_ready(struct Zlema *handle);
+
+const char *wickra_zlema_name(struct Zlema *handle);
 
 void wickra_zlema_reset(struct Zlema *handle);
 
@@ -4123,6 +4425,8 @@ uintptr_t wickra_alpha_warmup_period(struct Alpha *handle);
 
 bool wickra_alpha_is_ready(struct Alpha *handle);
 
+const char *wickra_alpha_name(struct Alpha *handle);
+
 void wickra_alpha_reset(struct Alpha *handle);
 
 void wickra_alpha_free(struct Alpha *handle);
@@ -4140,6 +4444,8 @@ void wickra_beta_batch(struct Beta *handle,
 uintptr_t wickra_beta_warmup_period(struct Beta *handle);
 
 bool wickra_beta_is_ready(struct Beta *handle);
+
+const char *wickra_beta_name(struct Beta *handle);
 
 void wickra_beta_reset(struct Beta *handle);
 
@@ -4159,6 +4465,8 @@ uintptr_t wickra_beta_neutral_spread_warmup_period(struct BetaNeutralSpread *han
 
 bool wickra_beta_neutral_spread_is_ready(struct BetaNeutralSpread *handle);
 
+const char *wickra_beta_neutral_spread_name(struct BetaNeutralSpread *handle);
+
 void wickra_beta_neutral_spread_reset(struct BetaNeutralSpread *handle);
 
 void wickra_beta_neutral_spread_free(struct BetaNeutralSpread *handle);
@@ -4177,6 +4485,8 @@ uintptr_t wickra_distance_ssd_warmup_period(struct DistanceSsd *handle);
 
 bool wickra_distance_ssd_is_ready(struct DistanceSsd *handle);
 
+const char *wickra_distance_ssd_name(struct DistanceSsd *handle);
+
 void wickra_distance_ssd_reset(struct DistanceSsd *handle);
 
 void wickra_distance_ssd_free(struct DistanceSsd *handle);
@@ -4194,6 +4504,8 @@ void wickra_granger_causality_batch(struct GrangerCausality *handle,
 uintptr_t wickra_granger_causality_warmup_period(struct GrangerCausality *handle);
 
 bool wickra_granger_causality_is_ready(struct GrangerCausality *handle);
+
+const char *wickra_granger_causality_name(struct GrangerCausality *handle);
 
 void wickra_granger_causality_reset(struct GrangerCausality *handle);
 
@@ -4215,6 +4527,8 @@ uintptr_t wickra_hasbrouck_information_share_warmup_period(struct HasbrouckInfor
 
 bool wickra_hasbrouck_information_share_is_ready(struct HasbrouckInformationShare *handle);
 
+const char *wickra_hasbrouck_information_share_name(struct HasbrouckInformationShare *handle);
+
 void wickra_hasbrouck_information_share_reset(struct HasbrouckInformationShare *handle);
 
 void wickra_hasbrouck_information_share_free(struct HasbrouckInformationShare *handle);
@@ -4232,6 +4546,8 @@ void wickra_information_ratio_batch(struct InformationRatio *handle,
 uintptr_t wickra_information_ratio_warmup_period(struct InformationRatio *handle);
 
 bool wickra_information_ratio_is_ready(struct InformationRatio *handle);
+
+const char *wickra_information_ratio_name(struct InformationRatio *handle);
 
 void wickra_information_ratio_reset(struct InformationRatio *handle);
 
@@ -4251,6 +4567,8 @@ uintptr_t wickra_kendall_tau_warmup_period(struct KendallTau *handle);
 
 bool wickra_kendall_tau_is_ready(struct KendallTau *handle);
 
+const char *wickra_kendall_tau_name(struct KendallTau *handle);
+
 void wickra_kendall_tau_reset(struct KendallTau *handle);
 
 void wickra_kendall_tau_free(struct KendallTau *handle);
@@ -4268,6 +4586,8 @@ void wickra_ou_half_life_batch(struct OuHalfLife *handle,
 uintptr_t wickra_ou_half_life_warmup_period(struct OuHalfLife *handle);
 
 bool wickra_ou_half_life_is_ready(struct OuHalfLife *handle);
+
+const char *wickra_ou_half_life_name(struct OuHalfLife *handle);
 
 void wickra_ou_half_life_reset(struct OuHalfLife *handle);
 
@@ -4287,6 +4607,8 @@ uintptr_t wickra_pair_spread_z_score_warmup_period(struct PairSpreadZScore *hand
 
 bool wickra_pair_spread_z_score_is_ready(struct PairSpreadZScore *handle);
 
+const char *wickra_pair_spread_z_score_name(struct PairSpreadZScore *handle);
+
 void wickra_pair_spread_z_score_reset(struct PairSpreadZScore *handle);
 
 void wickra_pair_spread_z_score_free(struct PairSpreadZScore *handle);
@@ -4304,6 +4626,8 @@ void wickra_pairwise_beta_batch(struct PairwiseBeta *handle,
 uintptr_t wickra_pairwise_beta_warmup_period(struct PairwiseBeta *handle);
 
 bool wickra_pairwise_beta_is_ready(struct PairwiseBeta *handle);
+
+const char *wickra_pairwise_beta_name(struct PairwiseBeta *handle);
 
 void wickra_pairwise_beta_reset(struct PairwiseBeta *handle);
 
@@ -4323,6 +4647,8 @@ uintptr_t wickra_pearson_correlation_warmup_period(struct PearsonCorrelation *ha
 
 bool wickra_pearson_correlation_is_ready(struct PearsonCorrelation *handle);
 
+const char *wickra_pearson_correlation_name(struct PearsonCorrelation *handle);
+
 void wickra_pearson_correlation_reset(struct PearsonCorrelation *handle);
 
 void wickra_pearson_correlation_free(struct PearsonCorrelation *handle);
@@ -4340,6 +4666,8 @@ void wickra_rolling_correlation_batch(struct RollingCorrelation *handle,
 uintptr_t wickra_rolling_correlation_warmup_period(struct RollingCorrelation *handle);
 
 bool wickra_rolling_correlation_is_ready(struct RollingCorrelation *handle);
+
+const char *wickra_rolling_correlation_name(struct RollingCorrelation *handle);
 
 void wickra_rolling_correlation_reset(struct RollingCorrelation *handle);
 
@@ -4359,6 +4687,8 @@ uintptr_t wickra_rolling_covariance_warmup_period(struct RollingCovariance *hand
 
 bool wickra_rolling_covariance_is_ready(struct RollingCovariance *handle);
 
+const char *wickra_rolling_covariance_name(struct RollingCovariance *handle);
+
 void wickra_rolling_covariance_reset(struct RollingCovariance *handle);
 
 void wickra_rolling_covariance_free(struct RollingCovariance *handle);
@@ -4376,6 +4706,8 @@ void wickra_spearman_correlation_batch(struct SpearmanCorrelation *handle,
 uintptr_t wickra_spearman_correlation_warmup_period(struct SpearmanCorrelation *handle);
 
 bool wickra_spearman_correlation_is_ready(struct SpearmanCorrelation *handle);
+
+const char *wickra_spearman_correlation_name(struct SpearmanCorrelation *handle);
 
 void wickra_spearman_correlation_reset(struct SpearmanCorrelation *handle);
 
@@ -4397,6 +4729,8 @@ uintptr_t wickra_spread_ar1_coefficient_warmup_period(struct SpreadAr1Coefficien
 
 bool wickra_spread_ar1_coefficient_is_ready(struct SpreadAr1Coefficient *handle);
 
+const char *wickra_spread_ar1_coefficient_name(struct SpreadAr1Coefficient *handle);
+
 void wickra_spread_ar1_coefficient_reset(struct SpreadAr1Coefficient *handle);
 
 void wickra_spread_ar1_coefficient_free(struct SpreadAr1Coefficient *handle);
@@ -4414,6 +4748,8 @@ void wickra_spread_hurst_batch(struct SpreadHurst *handle,
 uintptr_t wickra_spread_hurst_warmup_period(struct SpreadHurst *handle);
 
 bool wickra_spread_hurst_is_ready(struct SpreadHurst *handle);
+
+const char *wickra_spread_hurst_name(struct SpreadHurst *handle);
 
 void wickra_spread_hurst_reset(struct SpreadHurst *handle);
 
@@ -4433,6 +4769,8 @@ uintptr_t wickra_treynor_ratio_warmup_period(struct TreynorRatio *handle);
 
 bool wickra_treynor_ratio_is_ready(struct TreynorRatio *handle);
 
+const char *wickra_treynor_ratio_name(struct TreynorRatio *handle);
+
 void wickra_treynor_ratio_reset(struct TreynorRatio *handle);
 
 void wickra_treynor_ratio_free(struct TreynorRatio *handle);
@@ -4450,6 +4788,8 @@ void wickra_variance_ratio_batch(struct VarianceRatio *handle,
 uintptr_t wickra_variance_ratio_warmup_period(struct VarianceRatio *handle);
 
 bool wickra_variance_ratio_is_ready(struct VarianceRatio *handle);
+
+const char *wickra_variance_ratio_name(struct VarianceRatio *handle);
 
 void wickra_variance_ratio_reset(struct VarianceRatio *handle);
 
@@ -4479,6 +4819,8 @@ uintptr_t wickra_abandoned_baby_warmup_period(struct AbandonedBaby *handle);
 
 bool wickra_abandoned_baby_is_ready(struct AbandonedBaby *handle);
 
+const char *wickra_abandoned_baby_name(struct AbandonedBaby *handle);
+
 void wickra_abandoned_baby_reset(struct AbandonedBaby *handle);
 
 void wickra_abandoned_baby_free(struct AbandonedBaby *handle);
@@ -4506,6 +4848,8 @@ void wickra_abcd_batch(struct Abcd *handle,
 uintptr_t wickra_abcd_warmup_period(struct Abcd *handle);
 
 bool wickra_abcd_is_ready(struct Abcd *handle);
+
+const char *wickra_abcd_name(struct Abcd *handle);
 
 void wickra_abcd_reset(struct Abcd *handle);
 
@@ -4537,6 +4881,8 @@ uintptr_t wickra_accelerator_oscillator_warmup_period(struct AcceleratorOscillat
 
 bool wickra_accelerator_oscillator_is_ready(struct AcceleratorOscillator *handle);
 
+const char *wickra_accelerator_oscillator_name(struct AcceleratorOscillator *handle);
+
 void wickra_accelerator_oscillator_reset(struct AcceleratorOscillator *handle);
 
 void wickra_accelerator_oscillator_free(struct AcceleratorOscillator *handle);
@@ -4564,6 +4910,8 @@ void wickra_ad_oscillator_batch(struct AdOscillator *handle,
 uintptr_t wickra_ad_oscillator_warmup_period(struct AdOscillator *handle);
 
 bool wickra_ad_oscillator_is_ready(struct AdOscillator *handle);
+
+const char *wickra_ad_oscillator_name(struct AdOscillator *handle);
 
 void wickra_ad_oscillator_reset(struct AdOscillator *handle);
 
@@ -4593,6 +4941,8 @@ uintptr_t wickra_adaptive_cci_warmup_period(struct AdaptiveCci *handle);
 
 bool wickra_adaptive_cci_is_ready(struct AdaptiveCci *handle);
 
+const char *wickra_adaptive_cci_name(struct AdaptiveCci *handle);
+
 void wickra_adaptive_cci_reset(struct AdaptiveCci *handle);
 
 void wickra_adaptive_cci_free(struct AdaptiveCci *handle);
@@ -4620,6 +4970,8 @@ void wickra_adl_batch(struct Adl *handle,
 uintptr_t wickra_adl_warmup_period(struct Adl *handle);
 
 bool wickra_adl_is_ready(struct Adl *handle);
+
+const char *wickra_adl_name(struct Adl *handle);
 
 void wickra_adl_reset(struct Adl *handle);
 
@@ -4649,6 +5001,8 @@ uintptr_t wickra_advance_block_warmup_period(struct AdvanceBlock *handle);
 
 bool wickra_advance_block_is_ready(struct AdvanceBlock *handle);
 
+const char *wickra_advance_block_name(struct AdvanceBlock *handle);
+
 void wickra_advance_block_reset(struct AdvanceBlock *handle);
 
 void wickra_advance_block_free(struct AdvanceBlock *handle);
@@ -4676,6 +5030,8 @@ void wickra_adxr_batch(struct Adxr *handle,
 uintptr_t wickra_adxr_warmup_period(struct Adxr *handle);
 
 bool wickra_adxr_is_ready(struct Adxr *handle);
+
+const char *wickra_adxr_name(struct Adxr *handle);
 
 void wickra_adxr_reset(struct Adxr *handle);
 
@@ -4705,6 +5061,8 @@ uintptr_t wickra_anchored_vwap_warmup_period(struct AnchoredVwap *handle);
 
 bool wickra_anchored_vwap_is_ready(struct AnchoredVwap *handle);
 
+const char *wickra_anchored_vwap_name(struct AnchoredVwap *handle);
+
 void wickra_anchored_vwap_reset(struct AnchoredVwap *handle);
 
 void wickra_anchored_vwap_free(struct AnchoredVwap *handle);
@@ -4732,6 +5090,8 @@ void wickra_aroon_oscillator_batch(struct AroonOscillator *handle,
 uintptr_t wickra_aroon_oscillator_warmup_period(struct AroonOscillator *handle);
 
 bool wickra_aroon_oscillator_is_ready(struct AroonOscillator *handle);
+
+const char *wickra_aroon_oscillator_name(struct AroonOscillator *handle);
 
 void wickra_aroon_oscillator_reset(struct AroonOscillator *handle);
 
@@ -4761,6 +5121,8 @@ uintptr_t wickra_atr_warmup_period(struct Atr *handle);
 
 bool wickra_atr_is_ready(struct Atr *handle);
 
+const char *wickra_atr_name(struct Atr *handle);
+
 void wickra_atr_reset(struct Atr *handle);
 
 void wickra_atr_free(struct Atr *handle);
@@ -4788,6 +5150,8 @@ void wickra_atr_trailing_stop_batch(struct AtrTrailingStop *handle,
 uintptr_t wickra_atr_trailing_stop_warmup_period(struct AtrTrailingStop *handle);
 
 bool wickra_atr_trailing_stop_is_ready(struct AtrTrailingStop *handle);
+
+const char *wickra_atr_trailing_stop_name(struct AtrTrailingStop *handle);
 
 void wickra_atr_trailing_stop_reset(struct AtrTrailingStop *handle);
 
@@ -4818,6 +5182,8 @@ uintptr_t wickra_average_daily_range_warmup_period(struct AverageDailyRange *han
 
 bool wickra_average_daily_range_is_ready(struct AverageDailyRange *handle);
 
+const char *wickra_average_daily_range_name(struct AverageDailyRange *handle);
+
 void wickra_average_daily_range_reset(struct AverageDailyRange *handle);
 
 void wickra_average_daily_range_free(struct AverageDailyRange *handle);
@@ -4845,6 +5211,8 @@ void wickra_avg_price_batch(struct AvgPrice *handle,
 uintptr_t wickra_avg_price_warmup_period(struct AvgPrice *handle);
 
 bool wickra_avg_price_is_ready(struct AvgPrice *handle);
+
+const char *wickra_avg_price_name(struct AvgPrice *handle);
 
 void wickra_avg_price_reset(struct AvgPrice *handle);
 
@@ -4874,13 +5242,15 @@ uintptr_t wickra_awesome_oscillator_warmup_period(struct AwesomeOscillator *hand
 
 bool wickra_awesome_oscillator_is_ready(struct AwesomeOscillator *handle);
 
+const char *wickra_awesome_oscillator_name(struct AwesomeOscillator *handle);
+
 void wickra_awesome_oscillator_reset(struct AwesomeOscillator *handle);
 
 void wickra_awesome_oscillator_free(struct AwesomeOscillator *handle);
 
 struct AwesomeOscillatorHistogram *wickra_awesome_oscillator_histogram_new(uintptr_t fast,
                                                                            uintptr_t slow,
-                                                                           uintptr_t sma_period);
+                                                                           uintptr_t lookback);
 
 double wickra_awesome_oscillator_histogram_update(struct AwesomeOscillatorHistogram *handle,
                                                   double open,
@@ -4903,6 +5273,8 @@ void wickra_awesome_oscillator_histogram_batch(struct AwesomeOscillatorHistogram
 uintptr_t wickra_awesome_oscillator_histogram_warmup_period(struct AwesomeOscillatorHistogram *handle);
 
 bool wickra_awesome_oscillator_histogram_is_ready(struct AwesomeOscillatorHistogram *handle);
+
+const char *wickra_awesome_oscillator_histogram_name(struct AwesomeOscillatorHistogram *handle);
 
 void wickra_awesome_oscillator_histogram_reset(struct AwesomeOscillatorHistogram *handle);
 
@@ -4932,6 +5304,8 @@ uintptr_t wickra_balance_of_power_warmup_period(struct BalanceOfPower *handle);
 
 bool wickra_balance_of_power_is_ready(struct BalanceOfPower *handle);
 
+const char *wickra_balance_of_power_name(struct BalanceOfPower *handle);
+
 void wickra_balance_of_power_reset(struct BalanceOfPower *handle);
 
 void wickra_balance_of_power_free(struct BalanceOfPower *handle);
@@ -4959,6 +5333,8 @@ void wickra_bat_batch(struct Bat *handle,
 uintptr_t wickra_bat_warmup_period(struct Bat *handle);
 
 bool wickra_bat_is_ready(struct Bat *handle);
+
+const char *wickra_bat_name(struct Bat *handle);
 
 void wickra_bat_reset(struct Bat *handle);
 
@@ -4988,6 +5364,8 @@ uintptr_t wickra_belt_hold_warmup_period(struct BeltHold *handle);
 
 bool wickra_belt_hold_is_ready(struct BeltHold *handle);
 
+const char *wickra_belt_hold_name(struct BeltHold *handle);
+
 void wickra_belt_hold_reset(struct BeltHold *handle);
 
 void wickra_belt_hold_free(struct BeltHold *handle);
@@ -5015,6 +5393,8 @@ void wickra_better_volume_batch(struct BetterVolume *handle,
 uintptr_t wickra_better_volume_warmup_period(struct BetterVolume *handle);
 
 bool wickra_better_volume_is_ready(struct BetterVolume *handle);
+
+const char *wickra_better_volume_name(struct BetterVolume *handle);
 
 void wickra_better_volume_reset(struct BetterVolume *handle);
 
@@ -5044,6 +5424,8 @@ uintptr_t wickra_body_size_pct_warmup_period(struct BodySizePct *handle);
 
 bool wickra_body_size_pct_is_ready(struct BodySizePct *handle);
 
+const char *wickra_body_size_pct_name(struct BodySizePct *handle);
+
 void wickra_body_size_pct_reset(struct BodySizePct *handle);
 
 void wickra_body_size_pct_free(struct BodySizePct *handle);
@@ -5071,6 +5453,8 @@ void wickra_breakaway_batch(struct Breakaway *handle,
 uintptr_t wickra_breakaway_warmup_period(struct Breakaway *handle);
 
 bool wickra_breakaway_is_ready(struct Breakaway *handle);
+
+const char *wickra_breakaway_name(struct Breakaway *handle);
 
 void wickra_breakaway_reset(struct Breakaway *handle);
 
@@ -5100,6 +5484,8 @@ uintptr_t wickra_butterfly_warmup_period(struct Butterfly *handle);
 
 bool wickra_butterfly_is_ready(struct Butterfly *handle);
 
+const char *wickra_butterfly_name(struct Butterfly *handle);
+
 void wickra_butterfly_reset(struct Butterfly *handle);
 
 void wickra_butterfly_free(struct Butterfly *handle);
@@ -5127,6 +5513,8 @@ void wickra_cci_batch(struct Cci *handle,
 uintptr_t wickra_cci_warmup_period(struct Cci *handle);
 
 bool wickra_cci_is_ready(struct Cci *handle);
+
+const char *wickra_cci_name(struct Cci *handle);
 
 void wickra_cci_reset(struct Cci *handle);
 
@@ -5156,6 +5544,8 @@ uintptr_t wickra_chaikin_oscillator_warmup_period(struct ChaikinOscillator *hand
 
 bool wickra_chaikin_oscillator_is_ready(struct ChaikinOscillator *handle);
 
+const char *wickra_chaikin_oscillator_name(struct ChaikinOscillator *handle);
+
 void wickra_chaikin_oscillator_reset(struct ChaikinOscillator *handle);
 
 void wickra_chaikin_oscillator_free(struct ChaikinOscillator *handle);
@@ -5183,6 +5573,8 @@ void wickra_chaikin_volatility_batch(struct ChaikinVolatility *handle,
 uintptr_t wickra_chaikin_volatility_warmup_period(struct ChaikinVolatility *handle);
 
 bool wickra_chaikin_volatility_is_ready(struct ChaikinVolatility *handle);
+
+const char *wickra_chaikin_volatility_name(struct ChaikinVolatility *handle);
 
 void wickra_chaikin_volatility_reset(struct ChaikinVolatility *handle);
 
@@ -5212,6 +5604,8 @@ uintptr_t wickra_choppiness_index_warmup_period(struct ChoppinessIndex *handle);
 
 bool wickra_choppiness_index_is_ready(struct ChoppinessIndex *handle);
 
+const char *wickra_choppiness_index_name(struct ChoppinessIndex *handle);
+
 void wickra_choppiness_index_reset(struct ChoppinessIndex *handle);
 
 void wickra_choppiness_index_free(struct ChoppinessIndex *handle);
@@ -5239,6 +5633,8 @@ void wickra_close_vs_open_batch(struct CloseVsOpen *handle,
 uintptr_t wickra_close_vs_open_warmup_period(struct CloseVsOpen *handle);
 
 bool wickra_close_vs_open_is_ready(struct CloseVsOpen *handle);
+
+const char *wickra_close_vs_open_name(struct CloseVsOpen *handle);
 
 void wickra_close_vs_open_reset(struct CloseVsOpen *handle);
 
@@ -5268,6 +5664,8 @@ uintptr_t wickra_closing_marubozu_warmup_period(struct ClosingMarubozu *handle);
 
 bool wickra_closing_marubozu_is_ready(struct ClosingMarubozu *handle);
 
+const char *wickra_closing_marubozu_name(struct ClosingMarubozu *handle);
+
 void wickra_closing_marubozu_reset(struct ClosingMarubozu *handle);
 
 void wickra_closing_marubozu_free(struct ClosingMarubozu *handle);
@@ -5295,6 +5693,8 @@ void wickra_chaikin_money_flow_batch(struct ChaikinMoneyFlow *handle,
 uintptr_t wickra_chaikin_money_flow_warmup_period(struct ChaikinMoneyFlow *handle);
 
 bool wickra_chaikin_money_flow_is_ready(struct ChaikinMoneyFlow *handle);
+
+const char *wickra_chaikin_money_flow_name(struct ChaikinMoneyFlow *handle);
 
 void wickra_chaikin_money_flow_reset(struct ChaikinMoneyFlow *handle);
 
@@ -5324,6 +5724,8 @@ uintptr_t wickra_concealing_baby_swallow_warmup_period(struct ConcealingBabySwal
 
 bool wickra_concealing_baby_swallow_is_ready(struct ConcealingBabySwallow *handle);
 
+const char *wickra_concealing_baby_swallow_name(struct ConcealingBabySwallow *handle);
+
 void wickra_concealing_baby_swallow_reset(struct ConcealingBabySwallow *handle);
 
 void wickra_concealing_baby_swallow_free(struct ConcealingBabySwallow *handle);
@@ -5351,6 +5753,8 @@ void wickra_counterattack_batch(struct Counterattack *handle,
 uintptr_t wickra_counterattack_warmup_period(struct Counterattack *handle);
 
 bool wickra_counterattack_is_ready(struct Counterattack *handle);
+
+const char *wickra_counterattack_name(struct Counterattack *handle);
 
 void wickra_counterattack_reset(struct Counterattack *handle);
 
@@ -5380,6 +5784,8 @@ uintptr_t wickra_crab_warmup_period(struct Crab *handle);
 
 bool wickra_crab_is_ready(struct Crab *handle);
 
+const char *wickra_crab_name(struct Crab *handle);
+
 void wickra_crab_reset(struct Crab *handle);
 
 void wickra_crab_free(struct Crab *handle);
@@ -5407,6 +5813,8 @@ void wickra_cup_and_handle_batch(struct CupAndHandle *handle,
 uintptr_t wickra_cup_and_handle_warmup_period(struct CupAndHandle *handle);
 
 bool wickra_cup_and_handle_is_ready(struct CupAndHandle *handle);
+
+const char *wickra_cup_and_handle_name(struct CupAndHandle *handle);
 
 void wickra_cup_and_handle_reset(struct CupAndHandle *handle);
 
@@ -5436,6 +5844,8 @@ uintptr_t wickra_cypher_warmup_period(struct Cypher *handle);
 
 bool wickra_cypher_is_ready(struct Cypher *handle);
 
+const char *wickra_cypher_name(struct Cypher *handle);
+
 void wickra_cypher_reset(struct Cypher *handle);
 
 void wickra_cypher_free(struct Cypher *handle);
@@ -5463,6 +5873,8 @@ void wickra_demand_index_batch(struct DemandIndex *handle,
 uintptr_t wickra_demand_index_warmup_period(struct DemandIndex *handle);
 
 bool wickra_demand_index_is_ready(struct DemandIndex *handle);
+
+const char *wickra_demand_index_name(struct DemandIndex *handle);
 
 void wickra_demand_index_reset(struct DemandIndex *handle);
 
@@ -5492,6 +5904,8 @@ uintptr_t wickra_doji_warmup_period(struct Doji *handle);
 
 bool wickra_doji_is_ready(struct Doji *handle);
 
+const char *wickra_doji_name(struct Doji *handle);
+
 void wickra_doji_reset(struct Doji *handle);
 
 void wickra_doji_free(struct Doji *handle);
@@ -5519,6 +5933,8 @@ void wickra_doji_star_batch(struct DojiStar *handle,
 uintptr_t wickra_doji_star_warmup_period(struct DojiStar *handle);
 
 bool wickra_doji_star_is_ready(struct DojiStar *handle);
+
+const char *wickra_doji_star_name(struct DojiStar *handle);
 
 void wickra_doji_star_reset(struct DojiStar *handle);
 
@@ -5548,6 +5964,8 @@ uintptr_t wickra_double_top_bottom_warmup_period(struct DoubleTopBottom *handle)
 
 bool wickra_double_top_bottom_is_ready(struct DoubleTopBottom *handle);
 
+const char *wickra_double_top_bottom_name(struct DoubleTopBottom *handle);
+
 void wickra_double_top_bottom_reset(struct DoubleTopBottom *handle);
 
 void wickra_double_top_bottom_free(struct DoubleTopBottom *handle);
@@ -5575,6 +5993,8 @@ void wickra_downside_gap_three_methods_batch(struct DownsideGapThreeMethods *han
 uintptr_t wickra_downside_gap_three_methods_warmup_period(struct DownsideGapThreeMethods *handle);
 
 bool wickra_downside_gap_three_methods_is_ready(struct DownsideGapThreeMethods *handle);
+
+const char *wickra_downside_gap_three_methods_name(struct DownsideGapThreeMethods *handle);
 
 void wickra_downside_gap_three_methods_reset(struct DownsideGapThreeMethods *handle);
 
@@ -5604,6 +6024,8 @@ uintptr_t wickra_dragonfly_doji_warmup_period(struct DragonflyDoji *handle);
 
 bool wickra_dragonfly_doji_is_ready(struct DragonflyDoji *handle);
 
+const char *wickra_dragonfly_doji_name(struct DragonflyDoji *handle);
+
 void wickra_dragonfly_doji_reset(struct DragonflyDoji *handle);
 
 void wickra_dragonfly_doji_free(struct DragonflyDoji *handle);
@@ -5631,6 +6053,8 @@ void wickra_dumpling_top_batch(struct DumplingTop *handle,
 uintptr_t wickra_dumpling_top_warmup_period(struct DumplingTop *handle);
 
 bool wickra_dumpling_top_is_ready(struct DumplingTop *handle);
+
+const char *wickra_dumpling_top_name(struct DumplingTop *handle);
 
 void wickra_dumpling_top_reset(struct DumplingTop *handle);
 
@@ -5660,6 +6084,8 @@ uintptr_t wickra_dx_warmup_period(struct Dx *handle);
 
 bool wickra_dx_is_ready(struct Dx *handle);
 
+const char *wickra_dx_name(struct Dx *handle);
+
 void wickra_dx_reset(struct Dx *handle);
 
 void wickra_dx_free(struct Dx *handle);
@@ -5687,6 +6113,8 @@ void wickra_ease_of_movement_batch(struct EaseOfMovement *handle,
 uintptr_t wickra_ease_of_movement_warmup_period(struct EaseOfMovement *handle);
 
 bool wickra_ease_of_movement_is_ready(struct EaseOfMovement *handle);
+
+const char *wickra_ease_of_movement_name(struct EaseOfMovement *handle);
 
 void wickra_ease_of_movement_reset(struct EaseOfMovement *handle);
 
@@ -5716,6 +6144,8 @@ uintptr_t wickra_engulfing_warmup_period(struct Engulfing *handle);
 
 bool wickra_engulfing_is_ready(struct Engulfing *handle);
 
+const char *wickra_engulfing_name(struct Engulfing *handle);
+
 void wickra_engulfing_reset(struct Engulfing *handle);
 
 void wickra_engulfing_free(struct Engulfing *handle);
@@ -5743,6 +6173,8 @@ void wickra_evening_doji_star_batch(struct EveningDojiStar *handle,
 uintptr_t wickra_evening_doji_star_warmup_period(struct EveningDojiStar *handle);
 
 bool wickra_evening_doji_star_is_ready(struct EveningDojiStar *handle);
+
+const char *wickra_evening_doji_star_name(struct EveningDojiStar *handle);
 
 void wickra_evening_doji_star_reset(struct EveningDojiStar *handle);
 
@@ -5772,6 +6204,8 @@ uintptr_t wickra_evwma_warmup_period(struct Evwma *handle);
 
 bool wickra_evwma_is_ready(struct Evwma *handle);
 
+const char *wickra_evwma_name(struct Evwma *handle);
+
 void wickra_evwma_reset(struct Evwma *handle);
 
 void wickra_evwma_free(struct Evwma *handle);
@@ -5799,6 +6233,8 @@ void wickra_falling_three_methods_batch(struct FallingThreeMethods *handle,
 uintptr_t wickra_falling_three_methods_warmup_period(struct FallingThreeMethods *handle);
 
 bool wickra_falling_three_methods_is_ready(struct FallingThreeMethods *handle);
+
+const char *wickra_falling_three_methods_name(struct FallingThreeMethods *handle);
 
 void wickra_falling_three_methods_reset(struct FallingThreeMethods *handle);
 
@@ -5828,6 +6264,8 @@ uintptr_t wickra_flag_pennant_warmup_period(struct FlagPennant *handle);
 
 bool wickra_flag_pennant_is_ready(struct FlagPennant *handle);
 
+const char *wickra_flag_pennant_name(struct FlagPennant *handle);
+
 void wickra_flag_pennant_reset(struct FlagPennant *handle);
 
 void wickra_flag_pennant_free(struct FlagPennant *handle);
@@ -5855,6 +6293,8 @@ void wickra_force_index_batch(struct ForceIndex *handle,
 uintptr_t wickra_force_index_warmup_period(struct ForceIndex *handle);
 
 bool wickra_force_index_is_ready(struct ForceIndex *handle);
+
+const char *wickra_force_index_name(struct ForceIndex *handle);
 
 void wickra_force_index_reset(struct ForceIndex *handle);
 
@@ -5884,6 +6324,8 @@ uintptr_t wickra_fry_pan_bottom_warmup_period(struct FryPanBottom *handle);
 
 bool wickra_fry_pan_bottom_is_ready(struct FryPanBottom *handle);
 
+const char *wickra_fry_pan_bottom_name(struct FryPanBottom *handle);
+
 void wickra_fry_pan_bottom_reset(struct FryPanBottom *handle);
 
 void wickra_fry_pan_bottom_free(struct FryPanBottom *handle);
@@ -5911,6 +6353,8 @@ void wickra_gap_side_by_side_white_batch(struct GapSideBySideWhite *handle,
 uintptr_t wickra_gap_side_by_side_white_warmup_period(struct GapSideBySideWhite *handle);
 
 bool wickra_gap_side_by_side_white_is_ready(struct GapSideBySideWhite *handle);
+
+const char *wickra_gap_side_by_side_white_name(struct GapSideBySideWhite *handle);
 
 void wickra_gap_side_by_side_white_reset(struct GapSideBySideWhite *handle);
 
@@ -5941,6 +6385,8 @@ uintptr_t wickra_garman_klass_volatility_warmup_period(struct GarmanKlassVolatil
 
 bool wickra_garman_klass_volatility_is_ready(struct GarmanKlassVolatility *handle);
 
+const char *wickra_garman_klass_volatility_name(struct GarmanKlassVolatility *handle);
+
 void wickra_garman_klass_volatility_reset(struct GarmanKlassVolatility *handle);
 
 void wickra_garman_klass_volatility_free(struct GarmanKlassVolatility *handle);
@@ -5968,6 +6414,8 @@ void wickra_gartley_batch(struct Gartley *handle,
 uintptr_t wickra_gartley_warmup_period(struct Gartley *handle);
 
 bool wickra_gartley_is_ready(struct Gartley *handle);
+
+const char *wickra_gartley_name(struct Gartley *handle);
 
 void wickra_gartley_reset(struct Gartley *handle);
 
@@ -5997,6 +6445,8 @@ uintptr_t wickra_gravestone_doji_warmup_period(struct GravestoneDoji *handle);
 
 bool wickra_gravestone_doji_is_ready(struct GravestoneDoji *handle);
 
+const char *wickra_gravestone_doji_name(struct GravestoneDoji *handle);
+
 void wickra_gravestone_doji_reset(struct GravestoneDoji *handle);
 
 void wickra_gravestone_doji_free(struct GravestoneDoji *handle);
@@ -6024,6 +6474,8 @@ void wickra_hammer_batch(struct Hammer *handle,
 uintptr_t wickra_hammer_warmup_period(struct Hammer *handle);
 
 bool wickra_hammer_is_ready(struct Hammer *handle);
+
+const char *wickra_hammer_name(struct Hammer *handle);
 
 void wickra_hammer_reset(struct Hammer *handle);
 
@@ -6053,6 +6505,8 @@ uintptr_t wickra_hanging_man_warmup_period(struct HangingMan *handle);
 
 bool wickra_hanging_man_is_ready(struct HangingMan *handle);
 
+const char *wickra_hanging_man_name(struct HangingMan *handle);
+
 void wickra_hanging_man_reset(struct HangingMan *handle);
 
 void wickra_hanging_man_free(struct HangingMan *handle);
@@ -6080,6 +6534,8 @@ void wickra_harami_batch(struct Harami *handle,
 uintptr_t wickra_harami_warmup_period(struct Harami *handle);
 
 bool wickra_harami_is_ready(struct Harami *handle);
+
+const char *wickra_harami_name(struct Harami *handle);
 
 void wickra_harami_reset(struct Harami *handle);
 
@@ -6109,6 +6565,8 @@ uintptr_t wickra_harami_cross_warmup_period(struct HaramiCross *handle);
 
 bool wickra_harami_cross_is_ready(struct HaramiCross *handle);
 
+const char *wickra_harami_cross_name(struct HaramiCross *handle);
+
 void wickra_harami_cross_reset(struct HaramiCross *handle);
 
 void wickra_harami_cross_free(struct HaramiCross *handle);
@@ -6136,6 +6594,8 @@ void wickra_head_and_shoulders_batch(struct HeadAndShoulders *handle,
 uintptr_t wickra_head_and_shoulders_warmup_period(struct HeadAndShoulders *handle);
 
 bool wickra_head_and_shoulders_is_ready(struct HeadAndShoulders *handle);
+
+const char *wickra_head_and_shoulders_name(struct HeadAndShoulders *handle);
 
 void wickra_head_and_shoulders_reset(struct HeadAndShoulders *handle);
 
@@ -6165,6 +6625,8 @@ uintptr_t wickra_heikin_ashi_oscillator_warmup_period(struct HeikinAshiOscillato
 
 bool wickra_heikin_ashi_oscillator_is_ready(struct HeikinAshiOscillator *handle);
 
+const char *wickra_heikin_ashi_oscillator_name(struct HeikinAshiOscillator *handle);
+
 void wickra_heikin_ashi_oscillator_reset(struct HeikinAshiOscillator *handle);
 
 void wickra_heikin_ashi_oscillator_free(struct HeikinAshiOscillator *handle);
@@ -6192,6 +6654,8 @@ void wickra_high_low_range_batch(struct HighLowRange *handle,
 uintptr_t wickra_high_low_range_warmup_period(struct HighLowRange *handle);
 
 bool wickra_high_low_range_is_ready(struct HighLowRange *handle);
+
+const char *wickra_high_low_range_name(struct HighLowRange *handle);
 
 void wickra_high_low_range_reset(struct HighLowRange *handle);
 
@@ -6221,6 +6685,8 @@ uintptr_t wickra_high_wave_warmup_period(struct HighWave *handle);
 
 bool wickra_high_wave_is_ready(struct HighWave *handle);
 
+const char *wickra_high_wave_name(struct HighWave *handle);
+
 void wickra_high_wave_reset(struct HighWave *handle);
 
 void wickra_high_wave_free(struct HighWave *handle);
@@ -6248,6 +6714,8 @@ void wickra_hikkake_batch(struct Hikkake *handle,
 uintptr_t wickra_hikkake_warmup_period(struct Hikkake *handle);
 
 bool wickra_hikkake_is_ready(struct Hikkake *handle);
+
+const char *wickra_hikkake_name(struct Hikkake *handle);
 
 void wickra_hikkake_reset(struct Hikkake *handle);
 
@@ -6277,6 +6745,8 @@ uintptr_t wickra_hikkake_modified_warmup_period(struct HikkakeModified *handle);
 
 bool wickra_hikkake_modified_is_ready(struct HikkakeModified *handle);
 
+const char *wickra_hikkake_modified_name(struct HikkakeModified *handle);
+
 void wickra_hikkake_modified_reset(struct HikkakeModified *handle);
 
 void wickra_hikkake_modified_free(struct HikkakeModified *handle);
@@ -6304,6 +6774,8 @@ void wickra_hi_lo_activator_batch(struct HiLoActivator *handle,
 uintptr_t wickra_hi_lo_activator_warmup_period(struct HiLoActivator *handle);
 
 bool wickra_hi_lo_activator_is_ready(struct HiLoActivator *handle);
+
+const char *wickra_hi_lo_activator_name(struct HiLoActivator *handle);
 
 void wickra_hi_lo_activator_reset(struct HiLoActivator *handle);
 
@@ -6333,6 +6805,8 @@ uintptr_t wickra_homing_pigeon_warmup_period(struct HomingPigeon *handle);
 
 bool wickra_homing_pigeon_is_ready(struct HomingPigeon *handle);
 
+const char *wickra_homing_pigeon_name(struct HomingPigeon *handle);
+
 void wickra_homing_pigeon_reset(struct HomingPigeon *handle);
 
 void wickra_homing_pigeon_free(struct HomingPigeon *handle);
@@ -6360,6 +6834,8 @@ void wickra_identical_three_crows_batch(struct IdenticalThreeCrows *handle,
 uintptr_t wickra_identical_three_crows_warmup_period(struct IdenticalThreeCrows *handle);
 
 bool wickra_identical_three_crows_is_ready(struct IdenticalThreeCrows *handle);
+
+const char *wickra_identical_three_crows_name(struct IdenticalThreeCrows *handle);
 
 void wickra_identical_three_crows_reset(struct IdenticalThreeCrows *handle);
 
@@ -6389,6 +6865,8 @@ uintptr_t wickra_in_neck_warmup_period(struct InNeck *handle);
 
 bool wickra_in_neck_is_ready(struct InNeck *handle);
 
+const char *wickra_in_neck_name(struct InNeck *handle);
+
 void wickra_in_neck_reset(struct InNeck *handle);
 
 void wickra_in_neck_free(struct InNeck *handle);
@@ -6416,6 +6894,8 @@ void wickra_inertia_batch(struct Inertia *handle,
 uintptr_t wickra_inertia_warmup_period(struct Inertia *handle);
 
 bool wickra_inertia_is_ready(struct Inertia *handle);
+
+const char *wickra_inertia_name(struct Inertia *handle);
 
 void wickra_inertia_reset(struct Inertia *handle);
 
@@ -6445,6 +6925,8 @@ uintptr_t wickra_intraday_intensity_warmup_period(struct IntradayIntensity *hand
 
 bool wickra_intraday_intensity_is_ready(struct IntradayIntensity *handle);
 
+const char *wickra_intraday_intensity_name(struct IntradayIntensity *handle);
+
 void wickra_intraday_intensity_reset(struct IntradayIntensity *handle);
 
 void wickra_intraday_intensity_free(struct IntradayIntensity *handle);
@@ -6472,6 +6954,8 @@ void wickra_intraday_momentum_index_batch(struct IntradayMomentumIndex *handle,
 uintptr_t wickra_intraday_momentum_index_warmup_period(struct IntradayMomentumIndex *handle);
 
 bool wickra_intraday_momentum_index_is_ready(struct IntradayMomentumIndex *handle);
+
+const char *wickra_intraday_momentum_index_name(struct IntradayMomentumIndex *handle);
 
 void wickra_intraday_momentum_index_reset(struct IntradayMomentumIndex *handle);
 
@@ -6501,6 +6985,8 @@ uintptr_t wickra_inverted_hammer_warmup_period(struct InvertedHammer *handle);
 
 bool wickra_inverted_hammer_is_ready(struct InvertedHammer *handle);
 
+const char *wickra_inverted_hammer_name(struct InvertedHammer *handle);
+
 void wickra_inverted_hammer_reset(struct InvertedHammer *handle);
 
 void wickra_inverted_hammer_free(struct InvertedHammer *handle);
@@ -6528,6 +7014,8 @@ void wickra_kicking_batch(struct Kicking *handle,
 uintptr_t wickra_kicking_warmup_period(struct Kicking *handle);
 
 bool wickra_kicking_is_ready(struct Kicking *handle);
+
+const char *wickra_kicking_name(struct Kicking *handle);
 
 void wickra_kicking_reset(struct Kicking *handle);
 
@@ -6557,6 +7045,8 @@ uintptr_t wickra_kicking_by_length_warmup_period(struct KickingByLength *handle)
 
 bool wickra_kicking_by_length_is_ready(struct KickingByLength *handle);
 
+const char *wickra_kicking_by_length_name(struct KickingByLength *handle);
+
 void wickra_kicking_by_length_reset(struct KickingByLength *handle);
 
 void wickra_kicking_by_length_free(struct KickingByLength *handle);
@@ -6584,6 +7074,8 @@ void wickra_kvo_batch(struct Kvo *handle,
 uintptr_t wickra_kvo_warmup_period(struct Kvo *handle);
 
 bool wickra_kvo_is_ready(struct Kvo *handle);
+
+const char *wickra_kvo_name(struct Kvo *handle);
 
 void wickra_kvo_reset(struct Kvo *handle);
 
@@ -6613,6 +7105,8 @@ uintptr_t wickra_ladder_bottom_warmup_period(struct LadderBottom *handle);
 
 bool wickra_ladder_bottom_is_ready(struct LadderBottom *handle);
 
+const char *wickra_ladder_bottom_name(struct LadderBottom *handle);
+
 void wickra_ladder_bottom_reset(struct LadderBottom *handle);
 
 void wickra_ladder_bottom_free(struct LadderBottom *handle);
@@ -6640,6 +7134,8 @@ void wickra_long_legged_doji_batch(struct LongLeggedDoji *handle,
 uintptr_t wickra_long_legged_doji_warmup_period(struct LongLeggedDoji *handle);
 
 bool wickra_long_legged_doji_is_ready(struct LongLeggedDoji *handle);
+
+const char *wickra_long_legged_doji_name(struct LongLeggedDoji *handle);
 
 void wickra_long_legged_doji_reset(struct LongLeggedDoji *handle);
 
@@ -6669,6 +7165,8 @@ uintptr_t wickra_long_line_warmup_period(struct LongLine *handle);
 
 bool wickra_long_line_is_ready(struct LongLine *handle);
 
+const char *wickra_long_line_name(struct LongLine *handle);
+
 void wickra_long_line_reset(struct LongLine *handle);
 
 void wickra_long_line_free(struct LongLine *handle);
@@ -6696,6 +7194,8 @@ void wickra_market_facilitation_index_batch(struct MarketFacilitationIndex *hand
 uintptr_t wickra_market_facilitation_index_warmup_period(struct MarketFacilitationIndex *handle);
 
 bool wickra_market_facilitation_index_is_ready(struct MarketFacilitationIndex *handle);
+
+const char *wickra_market_facilitation_index_name(struct MarketFacilitationIndex *handle);
 
 void wickra_market_facilitation_index_reset(struct MarketFacilitationIndex *handle);
 
@@ -6725,6 +7225,8 @@ uintptr_t wickra_marubozu_warmup_period(struct Marubozu *handle);
 
 bool wickra_marubozu_is_ready(struct Marubozu *handle);
 
+const char *wickra_marubozu_name(struct Marubozu *handle);
+
 void wickra_marubozu_reset(struct Marubozu *handle);
 
 void wickra_marubozu_free(struct Marubozu *handle);
@@ -6752,6 +7254,8 @@ void wickra_mass_index_batch(struct MassIndex *handle,
 uintptr_t wickra_mass_index_warmup_period(struct MassIndex *handle);
 
 bool wickra_mass_index_is_ready(struct MassIndex *handle);
+
+const char *wickra_mass_index_name(struct MassIndex *handle);
 
 void wickra_mass_index_reset(struct MassIndex *handle);
 
@@ -6781,6 +7285,8 @@ uintptr_t wickra_mat_hold_warmup_period(struct MatHold *handle);
 
 bool wickra_mat_hold_is_ready(struct MatHold *handle);
 
+const char *wickra_mat_hold_name(struct MatHold *handle);
+
 void wickra_mat_hold_reset(struct MatHold *handle);
 
 void wickra_mat_hold_free(struct MatHold *handle);
@@ -6808,6 +7314,8 @@ void wickra_matching_low_batch(struct MatchingLow *handle,
 uintptr_t wickra_matching_low_warmup_period(struct MatchingLow *handle);
 
 bool wickra_matching_low_is_ready(struct MatchingLow *handle);
+
+const char *wickra_matching_low_name(struct MatchingLow *handle);
 
 void wickra_matching_low_reset(struct MatchingLow *handle);
 
@@ -6837,6 +7345,8 @@ uintptr_t wickra_median_price_warmup_period(struct MedianPrice *handle);
 
 bool wickra_median_price_is_ready(struct MedianPrice *handle);
 
+const char *wickra_median_price_name(struct MedianPrice *handle);
+
 void wickra_median_price_reset(struct MedianPrice *handle);
 
 void wickra_median_price_free(struct MedianPrice *handle);
@@ -6864,6 +7374,8 @@ void wickra_mfi_batch(struct Mfi *handle,
 uintptr_t wickra_mfi_warmup_period(struct Mfi *handle);
 
 bool wickra_mfi_is_ready(struct Mfi *handle);
+
+const char *wickra_mfi_name(struct Mfi *handle);
 
 void wickra_mfi_reset(struct Mfi *handle);
 
@@ -6893,6 +7405,8 @@ uintptr_t wickra_mid_price_warmup_period(struct MidPrice *handle);
 
 bool wickra_mid_price_is_ready(struct MidPrice *handle);
 
+const char *wickra_mid_price_name(struct MidPrice *handle);
+
 void wickra_mid_price_reset(struct MidPrice *handle);
 
 void wickra_mid_price_free(struct MidPrice *handle);
@@ -6920,6 +7434,8 @@ void wickra_minus_di_batch(struct MinusDi *handle,
 uintptr_t wickra_minus_di_warmup_period(struct MinusDi *handle);
 
 bool wickra_minus_di_is_ready(struct MinusDi *handle);
+
+const char *wickra_minus_di_name(struct MinusDi *handle);
 
 void wickra_minus_di_reset(struct MinusDi *handle);
 
@@ -6949,6 +7465,8 @@ uintptr_t wickra_minus_dm_warmup_period(struct MinusDm *handle);
 
 bool wickra_minus_dm_is_ready(struct MinusDm *handle);
 
+const char *wickra_minus_dm_name(struct MinusDm *handle);
+
 void wickra_minus_dm_reset(struct MinusDm *handle);
 
 void wickra_minus_dm_free(struct MinusDm *handle);
@@ -6976,6 +7494,8 @@ void wickra_morning_doji_star_batch(struct MorningDojiStar *handle,
 uintptr_t wickra_morning_doji_star_warmup_period(struct MorningDojiStar *handle);
 
 bool wickra_morning_doji_star_is_ready(struct MorningDojiStar *handle);
+
+const char *wickra_morning_doji_star_name(struct MorningDojiStar *handle);
 
 void wickra_morning_doji_star_reset(struct MorningDojiStar *handle);
 
@@ -7005,6 +7525,8 @@ uintptr_t wickra_morning_evening_star_warmup_period(struct MorningEveningStar *h
 
 bool wickra_morning_evening_star_is_ready(struct MorningEveningStar *handle);
 
+const char *wickra_morning_evening_star_name(struct MorningEveningStar *handle);
+
 void wickra_morning_evening_star_reset(struct MorningEveningStar *handle);
 
 void wickra_morning_evening_star_free(struct MorningEveningStar *handle);
@@ -7032,6 +7554,8 @@ void wickra_naked_poc_batch(struct NakedPoc *handle,
 uintptr_t wickra_naked_poc_warmup_period(struct NakedPoc *handle);
 
 bool wickra_naked_poc_is_ready(struct NakedPoc *handle);
+
+const char *wickra_naked_poc_name(struct NakedPoc *handle);
 
 void wickra_naked_poc_reset(struct NakedPoc *handle);
 
@@ -7061,6 +7585,8 @@ uintptr_t wickra_natr_warmup_period(struct Natr *handle);
 
 bool wickra_natr_is_ready(struct Natr *handle);
 
+const char *wickra_natr_name(struct Natr *handle);
+
 void wickra_natr_reset(struct Natr *handle);
 
 void wickra_natr_free(struct Natr *handle);
@@ -7088,6 +7614,8 @@ void wickra_new_price_lines_batch(struct NewPriceLines *handle,
 uintptr_t wickra_new_price_lines_warmup_period(struct NewPriceLines *handle);
 
 bool wickra_new_price_lines_is_ready(struct NewPriceLines *handle);
+
+const char *wickra_new_price_lines_name(struct NewPriceLines *handle);
 
 void wickra_new_price_lines_reset(struct NewPriceLines *handle);
 
@@ -7117,6 +7645,8 @@ uintptr_t wickra_nvi_warmup_period(struct Nvi *handle);
 
 bool wickra_nvi_is_ready(struct Nvi *handle);
 
+const char *wickra_nvi_name(struct Nvi *handle);
+
 void wickra_nvi_reset(struct Nvi *handle);
 
 void wickra_nvi_free(struct Nvi *handle);
@@ -7144,6 +7674,8 @@ void wickra_obv_batch(struct Obv *handle,
 uintptr_t wickra_obv_warmup_period(struct Obv *handle);
 
 bool wickra_obv_is_ready(struct Obv *handle);
+
+const char *wickra_obv_name(struct Obv *handle);
 
 void wickra_obv_reset(struct Obv *handle);
 
@@ -7173,6 +7705,8 @@ uintptr_t wickra_on_neck_warmup_period(struct OnNeck *handle);
 
 bool wickra_on_neck_is_ready(struct OnNeck *handle);
 
+const char *wickra_on_neck_name(struct OnNeck *handle);
+
 void wickra_on_neck_reset(struct OnNeck *handle);
 
 void wickra_on_neck_free(struct OnNeck *handle);
@@ -7201,6 +7735,8 @@ uintptr_t wickra_opening_marubozu_warmup_period(struct OpeningMarubozu *handle);
 
 bool wickra_opening_marubozu_is_ready(struct OpeningMarubozu *handle);
 
+const char *wickra_opening_marubozu_name(struct OpeningMarubozu *handle);
+
 void wickra_opening_marubozu_reset(struct OpeningMarubozu *handle);
 
 void wickra_opening_marubozu_free(struct OpeningMarubozu *handle);
@@ -7228,6 +7764,8 @@ void wickra_overnight_gap_batch(struct OvernightGap *handle,
 uintptr_t wickra_overnight_gap_warmup_period(struct OvernightGap *handle);
 
 bool wickra_overnight_gap_is_ready(struct OvernightGap *handle);
+
+const char *wickra_overnight_gap_name(struct OvernightGap *handle);
 
 void wickra_overnight_gap_reset(struct OvernightGap *handle);
 
@@ -7258,6 +7796,8 @@ uintptr_t wickra_parkinson_volatility_warmup_period(struct ParkinsonVolatility *
 
 bool wickra_parkinson_volatility_is_ready(struct ParkinsonVolatility *handle);
 
+const char *wickra_parkinson_volatility_name(struct ParkinsonVolatility *handle);
+
 void wickra_parkinson_volatility_reset(struct ParkinsonVolatility *handle);
 
 void wickra_parkinson_volatility_free(struct ParkinsonVolatility *handle);
@@ -7285,6 +7825,8 @@ void wickra_pgo_batch(struct Pgo *handle,
 uintptr_t wickra_pgo_warmup_period(struct Pgo *handle);
 
 bool wickra_pgo_is_ready(struct Pgo *handle);
+
+const char *wickra_pgo_name(struct Pgo *handle);
 
 void wickra_pgo_reset(struct Pgo *handle);
 
@@ -7314,6 +7856,8 @@ uintptr_t wickra_piercing_dark_cloud_warmup_period(struct PiercingDarkCloud *han
 
 bool wickra_piercing_dark_cloud_is_ready(struct PiercingDarkCloud *handle);
 
+const char *wickra_piercing_dark_cloud_name(struct PiercingDarkCloud *handle);
+
 void wickra_piercing_dark_cloud_reset(struct PiercingDarkCloud *handle);
 
 void wickra_piercing_dark_cloud_free(struct PiercingDarkCloud *handle);
@@ -7341,6 +7885,8 @@ void wickra_pivot_reversal_batch(struct PivotReversal *handle,
 uintptr_t wickra_pivot_reversal_warmup_period(struct PivotReversal *handle);
 
 bool wickra_pivot_reversal_is_ready(struct PivotReversal *handle);
+
+const char *wickra_pivot_reversal_name(struct PivotReversal *handle);
 
 void wickra_pivot_reversal_reset(struct PivotReversal *handle);
 
@@ -7370,6 +7916,8 @@ uintptr_t wickra_plus_di_warmup_period(struct PlusDi *handle);
 
 bool wickra_plus_di_is_ready(struct PlusDi *handle);
 
+const char *wickra_plus_di_name(struct PlusDi *handle);
+
 void wickra_plus_di_reset(struct PlusDi *handle);
 
 void wickra_plus_di_free(struct PlusDi *handle);
@@ -7397,6 +7945,8 @@ void wickra_plus_dm_batch(struct PlusDm *handle,
 uintptr_t wickra_plus_dm_warmup_period(struct PlusDm *handle);
 
 bool wickra_plus_dm_is_ready(struct PlusDm *handle);
+
+const char *wickra_plus_dm_name(struct PlusDm *handle);
 
 void wickra_plus_dm_reset(struct PlusDm *handle);
 
@@ -7426,6 +7976,8 @@ uintptr_t wickra_profile_shape_warmup_period(struct ProfileShape *handle);
 
 bool wickra_profile_shape_is_ready(struct ProfileShape *handle);
 
+const char *wickra_profile_shape_name(struct ProfileShape *handle);
+
 void wickra_profile_shape_reset(struct ProfileShape *handle);
 
 void wickra_profile_shape_free(struct ProfileShape *handle);
@@ -7453,6 +8005,8 @@ void wickra_projection_oscillator_batch(struct ProjectionOscillator *handle,
 uintptr_t wickra_projection_oscillator_warmup_period(struct ProjectionOscillator *handle);
 
 bool wickra_projection_oscillator_is_ready(struct ProjectionOscillator *handle);
+
+const char *wickra_projection_oscillator_name(struct ProjectionOscillator *handle);
 
 void wickra_projection_oscillator_reset(struct ProjectionOscillator *handle);
 
@@ -7482,6 +8036,8 @@ uintptr_t wickra_psar_warmup_period(struct Psar *handle);
 
 bool wickra_psar_is_ready(struct Psar *handle);
 
+const char *wickra_psar_name(struct Psar *handle);
+
 void wickra_psar_reset(struct Psar *handle);
 
 void wickra_psar_free(struct Psar *handle);
@@ -7509,6 +8065,8 @@ void wickra_pvi_batch(struct Pvi *handle,
 uintptr_t wickra_pvi_warmup_period(struct Pvi *handle);
 
 bool wickra_pvi_is_ready(struct Pvi *handle);
+
+const char *wickra_pvi_name(struct Pvi *handle);
 
 void wickra_pvi_reset(struct Pvi *handle);
 
@@ -7538,6 +8096,8 @@ uintptr_t wickra_qstick_warmup_period(struct Qstick *handle);
 
 bool wickra_qstick_is_ready(struct Qstick *handle);
 
+const char *wickra_qstick_name(struct Qstick *handle);
+
 void wickra_qstick_reset(struct Qstick *handle);
 
 void wickra_qstick_free(struct Qstick *handle);
@@ -7565,6 +8125,8 @@ void wickra_rectangle_range_batch(struct RectangleRange *handle,
 uintptr_t wickra_rectangle_range_warmup_period(struct RectangleRange *handle);
 
 bool wickra_rectangle_range_is_ready(struct RectangleRange *handle);
+
+const char *wickra_rectangle_range_name(struct RectangleRange *handle);
 
 void wickra_rectangle_range_reset(struct RectangleRange *handle);
 
@@ -7594,6 +8156,8 @@ uintptr_t wickra_rickshaw_man_warmup_period(struct RickshawMan *handle);
 
 bool wickra_rickshaw_man_is_ready(struct RickshawMan *handle);
 
+const char *wickra_rickshaw_man_name(struct RickshawMan *handle);
+
 void wickra_rickshaw_man_reset(struct RickshawMan *handle);
 
 void wickra_rickshaw_man_free(struct RickshawMan *handle);
@@ -7621,6 +8185,8 @@ void wickra_rising_three_methods_batch(struct RisingThreeMethods *handle,
 uintptr_t wickra_rising_three_methods_warmup_period(struct RisingThreeMethods *handle);
 
 bool wickra_rising_three_methods_is_ready(struct RisingThreeMethods *handle);
+
+const char *wickra_rising_three_methods_name(struct RisingThreeMethods *handle);
 
 void wickra_rising_three_methods_reset(struct RisingThreeMethods *handle);
 
@@ -7651,6 +8217,8 @@ uintptr_t wickra_rogers_satchell_volatility_warmup_period(struct RogersSatchellV
 
 bool wickra_rogers_satchell_volatility_is_ready(struct RogersSatchellVolatility *handle);
 
+const char *wickra_rogers_satchell_volatility_name(struct RogersSatchellVolatility *handle);
+
 void wickra_rogers_satchell_volatility_reset(struct RogersSatchellVolatility *handle);
 
 void wickra_rogers_satchell_volatility_free(struct RogersSatchellVolatility *handle);
@@ -7678,6 +8246,8 @@ void wickra_rvi_batch(struct Rvi *handle,
 uintptr_t wickra_rvi_warmup_period(struct Rvi *handle);
 
 bool wickra_rvi_is_ready(struct Rvi *handle);
+
+const char *wickra_rvi_name(struct Rvi *handle);
 
 void wickra_rvi_reset(struct Rvi *handle);
 
@@ -7714,6 +8284,8 @@ uintptr_t wickra_sar_ext_warmup_period(struct SarExt *handle);
 
 bool wickra_sar_ext_is_ready(struct SarExt *handle);
 
+const char *wickra_sar_ext_name(struct SarExt *handle);
+
 void wickra_sar_ext_reset(struct SarExt *handle);
 
 void wickra_sar_ext_free(struct SarExt *handle);
@@ -7741,6 +8313,8 @@ void wickra_seasonal_z_score_batch(struct SeasonalZScore *handle,
 uintptr_t wickra_seasonal_z_score_warmup_period(struct SeasonalZScore *handle);
 
 bool wickra_seasonal_z_score_is_ready(struct SeasonalZScore *handle);
+
+const char *wickra_seasonal_z_score_name(struct SeasonalZScore *handle);
 
 void wickra_seasonal_z_score_reset(struct SeasonalZScore *handle);
 
@@ -7770,6 +8344,8 @@ uintptr_t wickra_separating_lines_warmup_period(struct SeparatingLines *handle);
 
 bool wickra_separating_lines_is_ready(struct SeparatingLines *handle);
 
+const char *wickra_separating_lines_name(struct SeparatingLines *handle);
+
 void wickra_separating_lines_reset(struct SeparatingLines *handle);
 
 void wickra_separating_lines_free(struct SeparatingLines *handle);
@@ -7797,6 +8373,8 @@ void wickra_session_vwap_batch(struct SessionVwap *handle,
 uintptr_t wickra_session_vwap_warmup_period(struct SessionVwap *handle);
 
 bool wickra_session_vwap_is_ready(struct SessionVwap *handle);
+
+const char *wickra_session_vwap_name(struct SessionVwap *handle);
 
 void wickra_session_vwap_reset(struct SessionVwap *handle);
 
@@ -7826,6 +8404,8 @@ uintptr_t wickra_shark_warmup_period(struct Shark *handle);
 
 bool wickra_shark_is_ready(struct Shark *handle);
 
+const char *wickra_shark_name(struct Shark *handle);
+
 void wickra_shark_reset(struct Shark *handle);
 
 void wickra_shark_free(struct Shark *handle);
@@ -7853,6 +8433,8 @@ void wickra_shooting_star_batch(struct ShootingStar *handle,
 uintptr_t wickra_shooting_star_warmup_period(struct ShootingStar *handle);
 
 bool wickra_shooting_star_is_ready(struct ShootingStar *handle);
+
+const char *wickra_shooting_star_name(struct ShootingStar *handle);
 
 void wickra_shooting_star_reset(struct ShootingStar *handle);
 
@@ -7882,6 +8464,8 @@ uintptr_t wickra_short_line_warmup_period(struct ShortLine *handle);
 
 bool wickra_short_line_is_ready(struct ShortLine *handle);
 
+const char *wickra_short_line_name(struct ShortLine *handle);
+
 void wickra_short_line_reset(struct ShortLine *handle);
 
 void wickra_short_line_free(struct ShortLine *handle);
@@ -7909,6 +8493,8 @@ void wickra_single_prints_batch(struct SinglePrints *handle,
 uintptr_t wickra_single_prints_warmup_period(struct SinglePrints *handle);
 
 bool wickra_single_prints_is_ready(struct SinglePrints *handle);
+
+const char *wickra_single_prints_name(struct SinglePrints *handle);
 
 void wickra_single_prints_reset(struct SinglePrints *handle);
 
@@ -7938,6 +8524,8 @@ uintptr_t wickra_smi_warmup_period(struct Smi *handle);
 
 bool wickra_smi_is_ready(struct Smi *handle);
 
+const char *wickra_smi_name(struct Smi *handle);
+
 void wickra_smi_reset(struct Smi *handle);
 
 void wickra_smi_free(struct Smi *handle);
@@ -7965,6 +8553,8 @@ void wickra_spinning_top_batch(struct SpinningTop *handle,
 uintptr_t wickra_spinning_top_warmup_period(struct SpinningTop *handle);
 
 bool wickra_spinning_top_is_ready(struct SpinningTop *handle);
+
+const char *wickra_spinning_top_name(struct SpinningTop *handle);
 
 void wickra_spinning_top_reset(struct SpinningTop *handle);
 
@@ -7994,6 +8584,8 @@ uintptr_t wickra_stalled_pattern_warmup_period(struct StalledPattern *handle);
 
 bool wickra_stalled_pattern_is_ready(struct StalledPattern *handle);
 
+const char *wickra_stalled_pattern_name(struct StalledPattern *handle);
+
 void wickra_stalled_pattern_reset(struct StalledPattern *handle);
 
 void wickra_stalled_pattern_free(struct StalledPattern *handle);
@@ -8021,6 +8613,8 @@ void wickra_stick_sandwich_batch(struct StickSandwich *handle,
 uintptr_t wickra_stick_sandwich_warmup_period(struct StickSandwich *handle);
 
 bool wickra_stick_sandwich_is_ready(struct StickSandwich *handle);
+
+const char *wickra_stick_sandwich_name(struct StickSandwich *handle);
 
 void wickra_stick_sandwich_reset(struct StickSandwich *handle);
 
@@ -8050,6 +8644,8 @@ uintptr_t wickra_stochastic_cci_warmup_period(struct StochasticCci *handle);
 
 bool wickra_stochastic_cci_is_ready(struct StochasticCci *handle);
 
+const char *wickra_stochastic_cci_name(struct StochasticCci *handle);
+
 void wickra_stochastic_cci_reset(struct StochasticCci *handle);
 
 void wickra_stochastic_cci_free(struct StochasticCci *handle);
@@ -8077,6 +8673,8 @@ void wickra_takuri_batch(struct Takuri *handle,
 uintptr_t wickra_takuri_warmup_period(struct Takuri *handle);
 
 bool wickra_takuri_is_ready(struct Takuri *handle);
+
+const char *wickra_takuri_name(struct Takuri *handle);
 
 void wickra_takuri_reset(struct Takuri *handle);
 
@@ -8106,6 +8704,8 @@ uintptr_t wickra_tasuki_gap_warmup_period(struct TasukiGap *handle);
 
 bool wickra_tasuki_gap_is_ready(struct TasukiGap *handle);
 
+const char *wickra_tasuki_gap_name(struct TasukiGap *handle);
+
 void wickra_tasuki_gap_reset(struct TasukiGap *handle);
 
 void wickra_tasuki_gap_free(struct TasukiGap *handle);
@@ -8133,6 +8733,8 @@ void wickra_td_camouflage_batch(struct TdCamouflage *handle,
 uintptr_t wickra_td_camouflage_warmup_period(struct TdCamouflage *handle);
 
 bool wickra_td_camouflage_is_ready(struct TdCamouflage *handle);
+
+const char *wickra_td_camouflage_name(struct TdCamouflage *handle);
 
 void wickra_td_camouflage_reset(struct TdCamouflage *handle);
 
@@ -8162,6 +8764,8 @@ uintptr_t wickra_td_clop_warmup_period(struct TdClop *handle);
 
 bool wickra_td_clop_is_ready(struct TdClop *handle);
 
+const char *wickra_td_clop_name(struct TdClop *handle);
+
 void wickra_td_clop_reset(struct TdClop *handle);
 
 void wickra_td_clop_free(struct TdClop *handle);
@@ -8189,6 +8793,8 @@ void wickra_td_clopwin_batch(struct TdClopwin *handle,
 uintptr_t wickra_td_clopwin_warmup_period(struct TdClopwin *handle);
 
 bool wickra_td_clopwin_is_ready(struct TdClopwin *handle);
+
+const char *wickra_td_clopwin_name(struct TdClopwin *handle);
 
 void wickra_td_clopwin_reset(struct TdClopwin *handle);
 
@@ -8221,6 +8827,8 @@ uintptr_t wickra_td_combo_warmup_period(struct TdCombo *handle);
 
 bool wickra_td_combo_is_ready(struct TdCombo *handle);
 
+const char *wickra_td_combo_name(struct TdCombo *handle);
+
 void wickra_td_combo_reset(struct TdCombo *handle);
 
 void wickra_td_combo_free(struct TdCombo *handle);
@@ -8252,6 +8860,8 @@ uintptr_t wickra_td_countdown_warmup_period(struct TdCountdown *handle);
 
 bool wickra_td_countdown_is_ready(struct TdCountdown *handle);
 
+const char *wickra_td_countdown_name(struct TdCountdown *handle);
+
 void wickra_td_countdown_reset(struct TdCountdown *handle);
 
 void wickra_td_countdown_free(struct TdCountdown *handle);
@@ -8279,6 +8889,8 @@ void wickra_td_de_marker_batch(struct TdDeMarker *handle,
 uintptr_t wickra_td_de_marker_warmup_period(struct TdDeMarker *handle);
 
 bool wickra_td_de_marker_is_ready(struct TdDeMarker *handle);
+
+const char *wickra_td_de_marker_name(struct TdDeMarker *handle);
 
 void wickra_td_de_marker_reset(struct TdDeMarker *handle);
 
@@ -8308,6 +8920,8 @@ uintptr_t wickra_td_differential_warmup_period(struct TdDifferential *handle);
 
 bool wickra_td_differential_is_ready(struct TdDifferential *handle);
 
+const char *wickra_td_differential_name(struct TdDifferential *handle);
+
 void wickra_td_differential_reset(struct TdDifferential *handle);
 
 void wickra_td_differential_free(struct TdDifferential *handle);
@@ -8335,6 +8949,8 @@ void wickra_td_d_wave_batch(struct TdDWave *handle,
 uintptr_t wickra_td_d_wave_warmup_period(struct TdDWave *handle);
 
 bool wickra_td_d_wave_is_ready(struct TdDWave *handle);
+
+const char *wickra_td_d_wave_name(struct TdDWave *handle);
 
 void wickra_td_d_wave_reset(struct TdDWave *handle);
 
@@ -8364,6 +8980,8 @@ uintptr_t wickra_td_open_warmup_period(struct TdOpen *handle);
 
 bool wickra_td_open_is_ready(struct TdOpen *handle);
 
+const char *wickra_td_open_name(struct TdOpen *handle);
+
 void wickra_td_open_reset(struct TdOpen *handle);
 
 void wickra_td_open_free(struct TdOpen *handle);
@@ -8391,6 +9009,8 @@ void wickra_td_pressure_batch(struct TdPressure *handle,
 uintptr_t wickra_td_pressure_warmup_period(struct TdPressure *handle);
 
 bool wickra_td_pressure_is_ready(struct TdPressure *handle);
+
+const char *wickra_td_pressure_name(struct TdPressure *handle);
 
 void wickra_td_pressure_reset(struct TdPressure *handle);
 
@@ -8420,6 +9040,8 @@ uintptr_t wickra_td_propulsion_warmup_period(struct TdPropulsion *handle);
 
 bool wickra_td_propulsion_is_ready(struct TdPropulsion *handle);
 
+const char *wickra_td_propulsion_name(struct TdPropulsion *handle);
+
 void wickra_td_propulsion_reset(struct TdPropulsion *handle);
 
 void wickra_td_propulsion_free(struct TdPropulsion *handle);
@@ -8447,6 +9069,8 @@ void wickra_td_rei_batch(struct TdRei *handle,
 uintptr_t wickra_td_rei_warmup_period(struct TdRei *handle);
 
 bool wickra_td_rei_is_ready(struct TdRei *handle);
+
+const char *wickra_td_rei_name(struct TdRei *handle);
 
 void wickra_td_rei_reset(struct TdRei *handle);
 
@@ -8476,6 +9100,8 @@ uintptr_t wickra_td_setup_warmup_period(struct TdSetup *handle);
 
 bool wickra_td_setup_is_ready(struct TdSetup *handle);
 
+const char *wickra_td_setup_name(struct TdSetup *handle);
+
 void wickra_td_setup_reset(struct TdSetup *handle);
 
 void wickra_td_setup_free(struct TdSetup *handle);
@@ -8503,6 +9129,8 @@ void wickra_td_trap_batch(struct TdTrap *handle,
 uintptr_t wickra_td_trap_warmup_period(struct TdTrap *handle);
 
 bool wickra_td_trap_is_ready(struct TdTrap *handle);
+
+const char *wickra_td_trap_name(struct TdTrap *handle);
 
 void wickra_td_trap_reset(struct TdTrap *handle);
 
@@ -8532,6 +9160,8 @@ uintptr_t wickra_three_drives_warmup_period(struct ThreeDrives *handle);
 
 bool wickra_three_drives_is_ready(struct ThreeDrives *handle);
 
+const char *wickra_three_drives_name(struct ThreeDrives *handle);
+
 void wickra_three_drives_reset(struct ThreeDrives *handle);
 
 void wickra_three_drives_free(struct ThreeDrives *handle);
@@ -8559,6 +9189,8 @@ void wickra_three_inside_batch(struct ThreeInside *handle,
 uintptr_t wickra_three_inside_warmup_period(struct ThreeInside *handle);
 
 bool wickra_three_inside_is_ready(struct ThreeInside *handle);
+
+const char *wickra_three_inside_name(struct ThreeInside *handle);
 
 void wickra_three_inside_reset(struct ThreeInside *handle);
 
@@ -8588,6 +9220,8 @@ uintptr_t wickra_three_line_break_warmup_period(struct ThreeLineBreak *handle);
 
 bool wickra_three_line_break_is_ready(struct ThreeLineBreak *handle);
 
+const char *wickra_three_line_break_name(struct ThreeLineBreak *handle);
+
 void wickra_three_line_break_reset(struct ThreeLineBreak *handle);
 
 void wickra_three_line_break_free(struct ThreeLineBreak *handle);
@@ -8615,6 +9249,8 @@ void wickra_three_line_strike_batch(struct ThreeLineStrike *handle,
 uintptr_t wickra_three_line_strike_warmup_period(struct ThreeLineStrike *handle);
 
 bool wickra_three_line_strike_is_ready(struct ThreeLineStrike *handle);
+
+const char *wickra_three_line_strike_name(struct ThreeLineStrike *handle);
 
 void wickra_three_line_strike_reset(struct ThreeLineStrike *handle);
 
@@ -8644,6 +9280,8 @@ uintptr_t wickra_three_outside_warmup_period(struct ThreeOutside *handle);
 
 bool wickra_three_outside_is_ready(struct ThreeOutside *handle);
 
+const char *wickra_three_outside_name(struct ThreeOutside *handle);
+
 void wickra_three_outside_reset(struct ThreeOutside *handle);
 
 void wickra_three_outside_free(struct ThreeOutside *handle);
@@ -8671,6 +9309,8 @@ void wickra_three_soldiers_or_crows_batch(struct ThreeSoldiersOrCrows *handle,
 uintptr_t wickra_three_soldiers_or_crows_warmup_period(struct ThreeSoldiersOrCrows *handle);
 
 bool wickra_three_soldiers_or_crows_is_ready(struct ThreeSoldiersOrCrows *handle);
+
+const char *wickra_three_soldiers_or_crows_name(struct ThreeSoldiersOrCrows *handle);
 
 void wickra_three_soldiers_or_crows_reset(struct ThreeSoldiersOrCrows *handle);
 
@@ -8700,6 +9340,8 @@ uintptr_t wickra_three_stars_in_south_warmup_period(struct ThreeStarsInSouth *ha
 
 bool wickra_three_stars_in_south_is_ready(struct ThreeStarsInSouth *handle);
 
+const char *wickra_three_stars_in_south_name(struct ThreeStarsInSouth *handle);
+
 void wickra_three_stars_in_south_reset(struct ThreeStarsInSouth *handle);
 
 void wickra_three_stars_in_south_free(struct ThreeStarsInSouth *handle);
@@ -8727,6 +9369,8 @@ void wickra_thrusting_batch(struct Thrusting *handle,
 uintptr_t wickra_thrusting_warmup_period(struct Thrusting *handle);
 
 bool wickra_thrusting_is_ready(struct Thrusting *handle);
+
+const char *wickra_thrusting_name(struct Thrusting *handle);
 
 void wickra_thrusting_reset(struct Thrusting *handle);
 
@@ -8756,6 +9400,8 @@ uintptr_t wickra_time_based_stop_warmup_period(struct TimeBasedStop *handle);
 
 bool wickra_time_based_stop_is_ready(struct TimeBasedStop *handle);
 
+const char *wickra_time_based_stop_name(struct TimeBasedStop *handle);
+
 void wickra_time_based_stop_reset(struct TimeBasedStop *handle);
 
 void wickra_time_based_stop_free(struct TimeBasedStop *handle);
@@ -8783,6 +9429,8 @@ void wickra_tower_top_bottom_batch(struct TowerTopBottom *handle,
 uintptr_t wickra_tower_top_bottom_warmup_period(struct TowerTopBottom *handle);
 
 bool wickra_tower_top_bottom_is_ready(struct TowerTopBottom *handle);
+
+const char *wickra_tower_top_bottom_name(struct TowerTopBottom *handle);
 
 void wickra_tower_top_bottom_reset(struct TowerTopBottom *handle);
 
@@ -8812,6 +9460,8 @@ uintptr_t wickra_trade_volume_index_warmup_period(struct TradeVolumeIndex *handl
 
 bool wickra_trade_volume_index_is_ready(struct TradeVolumeIndex *handle);
 
+const char *wickra_trade_volume_index_name(struct TradeVolumeIndex *handle);
+
 void wickra_trade_volume_index_reset(struct TradeVolumeIndex *handle);
 
 void wickra_trade_volume_index_free(struct TradeVolumeIndex *handle);
@@ -8839,6 +9489,8 @@ void wickra_triangle_batch(struct Triangle *handle,
 uintptr_t wickra_triangle_warmup_period(struct Triangle *handle);
 
 bool wickra_triangle_is_ready(struct Triangle *handle);
+
+const char *wickra_triangle_name(struct Triangle *handle);
 
 void wickra_triangle_reset(struct Triangle *handle);
 
@@ -8868,6 +9520,8 @@ uintptr_t wickra_triple_top_bottom_warmup_period(struct TripleTopBottom *handle)
 
 bool wickra_triple_top_bottom_is_ready(struct TripleTopBottom *handle);
 
+const char *wickra_triple_top_bottom_name(struct TripleTopBottom *handle);
+
 void wickra_triple_top_bottom_reset(struct TripleTopBottom *handle);
 
 void wickra_triple_top_bottom_free(struct TripleTopBottom *handle);
@@ -8895,6 +9549,8 @@ void wickra_tristar_batch(struct Tristar *handle,
 uintptr_t wickra_tristar_warmup_period(struct Tristar *handle);
 
 bool wickra_tristar_is_ready(struct Tristar *handle);
+
+const char *wickra_tristar_name(struct Tristar *handle);
 
 void wickra_tristar_reset(struct Tristar *handle);
 
@@ -8924,6 +9580,8 @@ uintptr_t wickra_true_range_warmup_period(struct TrueRange *handle);
 
 bool wickra_true_range_is_ready(struct TrueRange *handle);
 
+const char *wickra_true_range_name(struct TrueRange *handle);
+
 void wickra_true_range_reset(struct TrueRange *handle);
 
 void wickra_true_range_free(struct TrueRange *handle);
@@ -8952,6 +9610,8 @@ uintptr_t wickra_tsv_warmup_period(struct Tsv *handle);
 
 bool wickra_tsv_is_ready(struct Tsv *handle);
 
+const char *wickra_tsv_name(struct Tsv *handle);
+
 void wickra_tsv_reset(struct Tsv *handle);
 
 void wickra_tsv_free(struct Tsv *handle);
@@ -8979,6 +9639,8 @@ void wickra_ttm_trend_batch(struct TtmTrend *handle,
 uintptr_t wickra_ttm_trend_warmup_period(struct TtmTrend *handle);
 
 bool wickra_ttm_trend_is_ready(struct TtmTrend *handle);
+
+const char *wickra_ttm_trend_name(struct TtmTrend *handle);
 
 void wickra_ttm_trend_reset(struct TtmTrend *handle);
 
@@ -9010,6 +9672,8 @@ uintptr_t wickra_turn_of_month_warmup_period(struct TurnOfMonth *handle);
 
 bool wickra_turn_of_month_is_ready(struct TurnOfMonth *handle);
 
+const char *wickra_turn_of_month_name(struct TurnOfMonth *handle);
+
 void wickra_turn_of_month_reset(struct TurnOfMonth *handle);
 
 void wickra_turn_of_month_free(struct TurnOfMonth *handle);
@@ -9037,6 +9701,8 @@ void wickra_tweezer_batch(struct Tweezer *handle,
 uintptr_t wickra_tweezer_warmup_period(struct Tweezer *handle);
 
 bool wickra_tweezer_is_ready(struct Tweezer *handle);
+
+const char *wickra_tweezer_name(struct Tweezer *handle);
 
 void wickra_tweezer_reset(struct Tweezer *handle);
 
@@ -9066,6 +9732,8 @@ uintptr_t wickra_twiggs_money_flow_warmup_period(struct TwiggsMoneyFlow *handle)
 
 bool wickra_twiggs_money_flow_is_ready(struct TwiggsMoneyFlow *handle);
 
+const char *wickra_twiggs_money_flow_name(struct TwiggsMoneyFlow *handle);
+
 void wickra_twiggs_money_flow_reset(struct TwiggsMoneyFlow *handle);
 
 void wickra_twiggs_money_flow_free(struct TwiggsMoneyFlow *handle);
@@ -9094,6 +9762,8 @@ uintptr_t wickra_two_crows_warmup_period(struct TwoCrows *handle);
 
 bool wickra_two_crows_is_ready(struct TwoCrows *handle);
 
+const char *wickra_two_crows_name(struct TwoCrows *handle);
+
 void wickra_two_crows_reset(struct TwoCrows *handle);
 
 void wickra_two_crows_free(struct TwoCrows *handle);
@@ -9121,6 +9791,8 @@ void wickra_typical_price_batch(struct TypicalPrice *handle,
 uintptr_t wickra_typical_price_warmup_period(struct TypicalPrice *handle);
 
 bool wickra_typical_price_is_ready(struct TypicalPrice *handle);
+
+const char *wickra_typical_price_name(struct TypicalPrice *handle);
 
 void wickra_typical_price_reset(struct TypicalPrice *handle);
 
@@ -9152,6 +9824,8 @@ uintptr_t wickra_ultimate_oscillator_warmup_period(struct UltimateOscillator *ha
 
 bool wickra_ultimate_oscillator_is_ready(struct UltimateOscillator *handle);
 
+const char *wickra_ultimate_oscillator_name(struct UltimateOscillator *handle);
+
 void wickra_ultimate_oscillator_reset(struct UltimateOscillator *handle);
 
 void wickra_ultimate_oscillator_free(struct UltimateOscillator *handle);
@@ -9179,6 +9853,8 @@ void wickra_unique_three_river_batch(struct UniqueThreeRiver *handle,
 uintptr_t wickra_unique_three_river_warmup_period(struct UniqueThreeRiver *handle);
 
 bool wickra_unique_three_river_is_ready(struct UniqueThreeRiver *handle);
+
+const char *wickra_unique_three_river_name(struct UniqueThreeRiver *handle);
 
 void wickra_unique_three_river_reset(struct UniqueThreeRiver *handle);
 
@@ -9208,6 +9884,8 @@ uintptr_t wickra_upside_gap_three_methods_warmup_period(struct UpsideGapThreeMet
 
 bool wickra_upside_gap_three_methods_is_ready(struct UpsideGapThreeMethods *handle);
 
+const char *wickra_upside_gap_three_methods_name(struct UpsideGapThreeMethods *handle);
+
 void wickra_upside_gap_three_methods_reset(struct UpsideGapThreeMethods *handle);
 
 void wickra_upside_gap_three_methods_free(struct UpsideGapThreeMethods *handle);
@@ -9235,6 +9913,8 @@ void wickra_upside_gap_two_crows_batch(struct UpsideGapTwoCrows *handle,
 uintptr_t wickra_upside_gap_two_crows_warmup_period(struct UpsideGapTwoCrows *handle);
 
 bool wickra_upside_gap_two_crows_is_ready(struct UpsideGapTwoCrows *handle);
+
+const char *wickra_upside_gap_two_crows_name(struct UpsideGapTwoCrows *handle);
 
 void wickra_upside_gap_two_crows_reset(struct UpsideGapTwoCrows *handle);
 
@@ -9264,6 +9944,8 @@ uintptr_t wickra_volatility_ratio_warmup_period(struct VolatilityRatio *handle);
 
 bool wickra_volatility_ratio_is_ready(struct VolatilityRatio *handle);
 
+const char *wickra_volatility_ratio_name(struct VolatilityRatio *handle);
+
 void wickra_volatility_ratio_reset(struct VolatilityRatio *handle);
 
 void wickra_volatility_ratio_free(struct VolatilityRatio *handle);
@@ -9291,6 +9973,8 @@ void wickra_volty_stop_batch(struct VoltyStop *handle,
 uintptr_t wickra_volty_stop_warmup_period(struct VoltyStop *handle);
 
 bool wickra_volty_stop_is_ready(struct VoltyStop *handle);
+
+const char *wickra_volty_stop_name(struct VoltyStop *handle);
 
 void wickra_volty_stop_reset(struct VoltyStop *handle);
 
@@ -9320,6 +10004,8 @@ uintptr_t wickra_volume_oscillator_warmup_period(struct VolumeOscillator *handle
 
 bool wickra_volume_oscillator_is_ready(struct VolumeOscillator *handle);
 
+const char *wickra_volume_oscillator_name(struct VolumeOscillator *handle);
+
 void wickra_volume_oscillator_reset(struct VolumeOscillator *handle);
 
 void wickra_volume_oscillator_free(struct VolumeOscillator *handle);
@@ -9347,6 +10033,8 @@ void wickra_volume_rsi_batch(struct VolumeRsi *handle,
 uintptr_t wickra_volume_rsi_warmup_period(struct VolumeRsi *handle);
 
 bool wickra_volume_rsi_is_ready(struct VolumeRsi *handle);
+
+const char *wickra_volume_rsi_name(struct VolumeRsi *handle);
 
 void wickra_volume_rsi_reset(struct VolumeRsi *handle);
 
@@ -9376,6 +10064,8 @@ uintptr_t wickra_volume_price_trend_warmup_period(struct VolumePriceTrend *handl
 
 bool wickra_volume_price_trend_is_ready(struct VolumePriceTrend *handle);
 
+const char *wickra_volume_price_trend_name(struct VolumePriceTrend *handle);
+
 void wickra_volume_price_trend_reset(struct VolumePriceTrend *handle);
 
 void wickra_volume_price_trend_free(struct VolumePriceTrend *handle);
@@ -9403,6 +10093,8 @@ void wickra_vwap_batch(struct Vwap *handle,
 uintptr_t wickra_vwap_warmup_period(struct Vwap *handle);
 
 bool wickra_vwap_is_ready(struct Vwap *handle);
+
+const char *wickra_vwap_name(struct Vwap *handle);
 
 void wickra_vwap_reset(struct Vwap *handle);
 
@@ -9432,6 +10124,8 @@ uintptr_t wickra_rolling_vwap_warmup_period(struct RollingVwap *handle);
 
 bool wickra_rolling_vwap_is_ready(struct RollingVwap *handle);
 
+const char *wickra_rolling_vwap_name(struct RollingVwap *handle);
+
 void wickra_rolling_vwap_reset(struct RollingVwap *handle);
 
 void wickra_rolling_vwap_free(struct RollingVwap *handle);
@@ -9459,6 +10153,8 @@ void wickra_vwma_batch(struct Vwma *handle,
 uintptr_t wickra_vwma_warmup_period(struct Vwma *handle);
 
 bool wickra_vwma_is_ready(struct Vwma *handle);
+
+const char *wickra_vwma_name(struct Vwma *handle);
 
 void wickra_vwma_reset(struct Vwma *handle);
 
@@ -9488,6 +10184,8 @@ uintptr_t wickra_vzo_warmup_period(struct Vzo *handle);
 
 bool wickra_vzo_is_ready(struct Vzo *handle);
 
+const char *wickra_vzo_name(struct Vzo *handle);
+
 void wickra_vzo_reset(struct Vzo *handle);
 
 void wickra_vzo_free(struct Vzo *handle);
@@ -9515,6 +10213,8 @@ void wickra_wad_batch(struct Wad *handle,
 uintptr_t wickra_wad_warmup_period(struct Wad *handle);
 
 bool wickra_wad_is_ready(struct Wad *handle);
+
+const char *wickra_wad_name(struct Wad *handle);
 
 void wickra_wad_reset(struct Wad *handle);
 
@@ -9544,6 +10244,8 @@ uintptr_t wickra_wedge_warmup_period(struct Wedge *handle);
 
 bool wickra_wedge_is_ready(struct Wedge *handle);
 
+const char *wickra_wedge_name(struct Wedge *handle);
+
 void wickra_wedge_reset(struct Wedge *handle);
 
 void wickra_wedge_free(struct Wedge *handle);
@@ -9571,6 +10273,8 @@ void wickra_weighted_close_batch(struct WeightedClose *handle,
 uintptr_t wickra_weighted_close_warmup_period(struct WeightedClose *handle);
 
 bool wickra_weighted_close_is_ready(struct WeightedClose *handle);
+
+const char *wickra_weighted_close_name(struct WeightedClose *handle);
 
 void wickra_weighted_close_reset(struct WeightedClose *handle);
 
@@ -9600,6 +10304,8 @@ uintptr_t wickra_wick_ratio_warmup_period(struct WickRatio *handle);
 
 bool wickra_wick_ratio_is_ready(struct WickRatio *handle);
 
+const char *wickra_wick_ratio_name(struct WickRatio *handle);
+
 void wickra_wick_ratio_reset(struct WickRatio *handle);
 
 void wickra_wick_ratio_free(struct WickRatio *handle);
@@ -9627,6 +10333,8 @@ void wickra_williams_r_batch(struct WilliamsR *handle,
 uintptr_t wickra_williams_r_warmup_period(struct WilliamsR *handle);
 
 bool wickra_williams_r_is_ready(struct WilliamsR *handle);
+
+const char *wickra_williams_r_name(struct WilliamsR *handle);
 
 void wickra_williams_r_reset(struct WilliamsR *handle);
 
@@ -9657,6 +10365,8 @@ uintptr_t wickra_yang_zhang_volatility_warmup_period(struct YangZhangVolatility 
 
 bool wickra_yang_zhang_volatility_is_ready(struct YangZhangVolatility *handle);
 
+const char *wickra_yang_zhang_volatility_name(struct YangZhangVolatility *handle);
+
 void wickra_yang_zhang_volatility_reset(struct YangZhangVolatility *handle);
 
 void wickra_yang_zhang_volatility_free(struct YangZhangVolatility *handle);
@@ -9685,6 +10395,8 @@ uintptr_t wickra_yoyo_exit_warmup_period(struct YoyoExit *handle);
 
 bool wickra_yoyo_exit_is_ready(struct YoyoExit *handle);
 
+const char *wickra_yoyo_exit_name(struct YoyoExit *handle);
+
 void wickra_yoyo_exit_reset(struct YoyoExit *handle);
 
 void wickra_yoyo_exit_free(struct YoyoExit *handle);
@@ -9700,6 +10412,8 @@ double wickra_amihud_illiquidity_update(struct AmihudIlliquidity *handle,
 uintptr_t wickra_amihud_illiquidity_warmup_period(struct AmihudIlliquidity *handle);
 
 bool wickra_amihud_illiquidity_is_ready(struct AmihudIlliquidity *handle);
+
+const char *wickra_amihud_illiquidity_name(struct AmihudIlliquidity *handle);
 
 void wickra_amihud_illiquidity_reset(struct AmihudIlliquidity *handle);
 
@@ -9717,6 +10431,8 @@ uintptr_t wickra_cumulative_volume_delta_warmup_period(struct CumulativeVolumeDe
 
 bool wickra_cumulative_volume_delta_is_ready(struct CumulativeVolumeDelta *handle);
 
+const char *wickra_cumulative_volume_delta_name(struct CumulativeVolumeDelta *handle);
+
 void wickra_cumulative_volume_delta_reset(struct CumulativeVolumeDelta *handle);
 
 void wickra_cumulative_volume_delta_free(struct CumulativeVolumeDelta *handle);
@@ -9732,6 +10448,8 @@ double wickra_pin_update(struct Pin *handle,
 uintptr_t wickra_pin_warmup_period(struct Pin *handle);
 
 bool wickra_pin_is_ready(struct Pin *handle);
+
+const char *wickra_pin_name(struct Pin *handle);
 
 void wickra_pin_reset(struct Pin *handle);
 
@@ -9749,6 +10467,8 @@ uintptr_t wickra_roll_measure_warmup_period(struct RollMeasure *handle);
 
 bool wickra_roll_measure_is_ready(struct RollMeasure *handle);
 
+const char *wickra_roll_measure_name(struct RollMeasure *handle);
+
 void wickra_roll_measure_reset(struct RollMeasure *handle);
 
 void wickra_roll_measure_free(struct RollMeasure *handle);
@@ -9764,6 +10484,8 @@ double wickra_signed_volume_update(struct SignedVolume *handle,
 uintptr_t wickra_signed_volume_warmup_period(struct SignedVolume *handle);
 
 bool wickra_signed_volume_is_ready(struct SignedVolume *handle);
+
+const char *wickra_signed_volume_name(struct SignedVolume *handle);
 
 void wickra_signed_volume_reset(struct SignedVolume *handle);
 
@@ -9781,6 +10503,8 @@ uintptr_t wickra_trade_imbalance_warmup_period(struct TradeImbalance *handle);
 
 bool wickra_trade_imbalance_is_ready(struct TradeImbalance *handle);
 
+const char *wickra_trade_imbalance_name(struct TradeImbalance *handle);
+
 void wickra_trade_imbalance_reset(struct TradeImbalance *handle);
 
 void wickra_trade_imbalance_free(struct TradeImbalance *handle);
@@ -9797,6 +10521,8 @@ uintptr_t wickra_trade_sign_autocorrelation_warmup_period(struct TradeSignAutoco
 
 bool wickra_trade_sign_autocorrelation_is_ready(struct TradeSignAutocorrelation *handle);
 
+const char *wickra_trade_sign_autocorrelation_name(struct TradeSignAutocorrelation *handle);
+
 void wickra_trade_sign_autocorrelation_reset(struct TradeSignAutocorrelation *handle);
 
 void wickra_trade_sign_autocorrelation_free(struct TradeSignAutocorrelation *handle);
@@ -9812,6 +10538,8 @@ double wickra_vpin_update(struct Vpin *handle,
 uintptr_t wickra_vpin_warmup_period(struct Vpin *handle);
 
 bool wickra_vpin_is_ready(struct Vpin *handle);
+
+const char *wickra_vpin_name(struct Vpin *handle);
 
 void wickra_vpin_reset(struct Vpin *handle);
 
@@ -9830,6 +10558,8 @@ uintptr_t wickra_effective_spread_warmup_period(struct EffectiveSpread *handle);
 
 bool wickra_effective_spread_is_ready(struct EffectiveSpread *handle);
 
+const char *wickra_effective_spread_name(struct EffectiveSpread *handle);
+
 void wickra_effective_spread_reset(struct EffectiveSpread *handle);
 
 void wickra_effective_spread_free(struct EffectiveSpread *handle);
@@ -9847,6 +10577,8 @@ uintptr_t wickra_kyles_lambda_warmup_period(struct KylesLambda *handle);
 
 bool wickra_kyles_lambda_is_ready(struct KylesLambda *handle);
 
+const char *wickra_kyles_lambda_name(struct KylesLambda *handle);
+
 void wickra_kyles_lambda_reset(struct KylesLambda *handle);
 
 void wickra_kyles_lambda_free(struct KylesLambda *handle);
@@ -9863,6 +10595,8 @@ double wickra_realized_spread_update(struct RealizedSpread *handle,
 uintptr_t wickra_realized_spread_warmup_period(struct RealizedSpread *handle);
 
 bool wickra_realized_spread_is_ready(struct RealizedSpread *handle);
+
+const char *wickra_realized_spread_name(struct RealizedSpread *handle);
 
 void wickra_realized_spread_reset(struct RealizedSpread *handle);
 
@@ -9888,6 +10622,8 @@ uintptr_t wickra_calendar_spread_warmup_period(struct CalendarSpread *handle);
 
 bool wickra_calendar_spread_is_ready(struct CalendarSpread *handle);
 
+const char *wickra_calendar_spread_name(struct CalendarSpread *handle);
+
 void wickra_calendar_spread_reset(struct CalendarSpread *handle);
 
 void wickra_calendar_spread_free(struct CalendarSpread *handle);
@@ -9911,6 +10647,8 @@ double wickra_estimated_leverage_ratio_update(struct EstimatedLeverageRatio *han
 uintptr_t wickra_estimated_leverage_ratio_warmup_period(struct EstimatedLeverageRatio *handle);
 
 bool wickra_estimated_leverage_ratio_is_ready(struct EstimatedLeverageRatio *handle);
+
+const char *wickra_estimated_leverage_ratio_name(struct EstimatedLeverageRatio *handle);
 
 void wickra_estimated_leverage_ratio_reset(struct EstimatedLeverageRatio *handle);
 
@@ -9936,6 +10674,8 @@ uintptr_t wickra_funding_basis_warmup_period(struct FundingBasis *handle);
 
 bool wickra_funding_basis_is_ready(struct FundingBasis *handle);
 
+const char *wickra_funding_basis_name(struct FundingBasis *handle);
+
 void wickra_funding_basis_reset(struct FundingBasis *handle);
 
 void wickra_funding_basis_free(struct FundingBasis *handle);
@@ -9959,6 +10699,8 @@ double wickra_funding_implied_apr_update(struct FundingImpliedApr *handle,
 uintptr_t wickra_funding_implied_apr_warmup_period(struct FundingImpliedApr *handle);
 
 bool wickra_funding_implied_apr_is_ready(struct FundingImpliedApr *handle);
+
+const char *wickra_funding_implied_apr_name(struct FundingImpliedApr *handle);
 
 void wickra_funding_implied_apr_reset(struct FundingImpliedApr *handle);
 
@@ -9984,6 +10726,8 @@ uintptr_t wickra_funding_rate_warmup_period(struct FundingRate *handle);
 
 bool wickra_funding_rate_is_ready(struct FundingRate *handle);
 
+const char *wickra_funding_rate_name(struct FundingRate *handle);
+
 void wickra_funding_rate_reset(struct FundingRate *handle);
 
 void wickra_funding_rate_free(struct FundingRate *handle);
@@ -10007,6 +10751,8 @@ double wickra_funding_rate_mean_update(struct FundingRateMean *handle,
 uintptr_t wickra_funding_rate_mean_warmup_period(struct FundingRateMean *handle);
 
 bool wickra_funding_rate_mean_is_ready(struct FundingRateMean *handle);
+
+const char *wickra_funding_rate_mean_name(struct FundingRateMean *handle);
 
 void wickra_funding_rate_mean_reset(struct FundingRateMean *handle);
 
@@ -10032,6 +10778,8 @@ uintptr_t wickra_funding_rate_z_score_warmup_period(struct FundingRateZScore *ha
 
 bool wickra_funding_rate_z_score_is_ready(struct FundingRateZScore *handle);
 
+const char *wickra_funding_rate_z_score_name(struct FundingRateZScore *handle);
+
 void wickra_funding_rate_z_score_reset(struct FundingRateZScore *handle);
 
 void wickra_funding_rate_z_score_free(struct FundingRateZScore *handle);
@@ -10055,6 +10803,8 @@ double wickra_long_short_ratio_update(struct LongShortRatio *handle,
 uintptr_t wickra_long_short_ratio_warmup_period(struct LongShortRatio *handle);
 
 bool wickra_long_short_ratio_is_ready(struct LongShortRatio *handle);
+
+const char *wickra_long_short_ratio_name(struct LongShortRatio *handle);
 
 void wickra_long_short_ratio_reset(struct LongShortRatio *handle);
 
@@ -10080,6 +10830,8 @@ uintptr_t wickra_open_interest_delta_warmup_period(struct OpenInterestDelta *han
 
 bool wickra_open_interest_delta_is_ready(struct OpenInterestDelta *handle);
 
+const char *wickra_open_interest_delta_name(struct OpenInterestDelta *handle);
+
 void wickra_open_interest_delta_reset(struct OpenInterestDelta *handle);
 
 void wickra_open_interest_delta_free(struct OpenInterestDelta *handle);
@@ -10103,6 +10855,8 @@ double wickra_oi_price_divergence_update(struct OIPriceDivergence *handle,
 uintptr_t wickra_oi_price_divergence_warmup_period(struct OIPriceDivergence *handle);
 
 bool wickra_oi_price_divergence_is_ready(struct OIPriceDivergence *handle);
+
+const char *wickra_oi_price_divergence_name(struct OIPriceDivergence *handle);
 
 void wickra_oi_price_divergence_reset(struct OIPriceDivergence *handle);
 
@@ -10128,6 +10882,8 @@ uintptr_t wickra_oi_to_volume_ratio_warmup_period(struct OiToVolumeRatio *handle
 
 bool wickra_oi_to_volume_ratio_is_ready(struct OiToVolumeRatio *handle);
 
+const char *wickra_oi_to_volume_ratio_name(struct OiToVolumeRatio *handle);
+
 void wickra_oi_to_volume_ratio_reset(struct OiToVolumeRatio *handle);
 
 void wickra_oi_to_volume_ratio_free(struct OiToVolumeRatio *handle);
@@ -10151,6 +10907,8 @@ double wickra_oi_weighted_update(struct OIWeighted *handle,
 uintptr_t wickra_oi_weighted_warmup_period(struct OIWeighted *handle);
 
 bool wickra_oi_weighted_is_ready(struct OIWeighted *handle);
+
+const char *wickra_oi_weighted_name(struct OIWeighted *handle);
 
 void wickra_oi_weighted_reset(struct OIWeighted *handle);
 
@@ -10176,6 +10934,8 @@ uintptr_t wickra_open_interest_momentum_warmup_period(struct OpenInterestMomentu
 
 bool wickra_open_interest_momentum_is_ready(struct OpenInterestMomentum *handle);
 
+const char *wickra_open_interest_momentum_name(struct OpenInterestMomentum *handle);
+
 void wickra_open_interest_momentum_reset(struct OpenInterestMomentum *handle);
 
 void wickra_open_interest_momentum_free(struct OpenInterestMomentum *handle);
@@ -10199,6 +10959,8 @@ double wickra_perpetual_premium_index_update(struct PerpetualPremiumIndex *handl
 uintptr_t wickra_perpetual_premium_index_warmup_period(struct PerpetualPremiumIndex *handle);
 
 bool wickra_perpetual_premium_index_is_ready(struct PerpetualPremiumIndex *handle);
+
+const char *wickra_perpetual_premium_index_name(struct PerpetualPremiumIndex *handle);
 
 void wickra_perpetual_premium_index_reset(struct PerpetualPremiumIndex *handle);
 
@@ -10224,6 +10986,8 @@ uintptr_t wickra_taker_buy_sell_ratio_warmup_period(struct TakerBuySellRatio *ha
 
 bool wickra_taker_buy_sell_ratio_is_ready(struct TakerBuySellRatio *handle);
 
+const char *wickra_taker_buy_sell_ratio_name(struct TakerBuySellRatio *handle);
+
 void wickra_taker_buy_sell_ratio_reset(struct TakerBuySellRatio *handle);
 
 void wickra_taker_buy_sell_ratio_free(struct TakerBuySellRatio *handle);
@@ -10248,6 +11012,8 @@ uintptr_t wickra_term_structure_basis_warmup_period(struct TermStructureBasis *h
 
 bool wickra_term_structure_basis_is_ready(struct TermStructureBasis *handle);
 
+const char *wickra_term_structure_basis_name(struct TermStructureBasis *handle);
+
 void wickra_term_structure_basis_reset(struct TermStructureBasis *handle);
 
 void wickra_term_structure_basis_free(struct TermStructureBasis *handle);
@@ -10265,6 +11031,8 @@ double wickra_depth_slope_update(struct DepthSlope *handle,
 uintptr_t wickra_depth_slope_warmup_period(struct DepthSlope *handle);
 
 bool wickra_depth_slope_is_ready(struct DepthSlope *handle);
+
+const char *wickra_depth_slope_name(struct DepthSlope *handle);
 
 void wickra_depth_slope_reset(struct DepthSlope *handle);
 
@@ -10284,6 +11052,8 @@ uintptr_t wickra_microprice_warmup_period(struct Microprice *handle);
 
 bool wickra_microprice_is_ready(struct Microprice *handle);
 
+const char *wickra_microprice_name(struct Microprice *handle);
+
 void wickra_microprice_reset(struct Microprice *handle);
 
 void wickra_microprice_free(struct Microprice *handle);
@@ -10301,6 +11071,8 @@ double wickra_order_book_imbalance_full_update(struct OrderBookImbalanceFull *ha
 uintptr_t wickra_order_book_imbalance_full_warmup_period(struct OrderBookImbalanceFull *handle);
 
 bool wickra_order_book_imbalance_full_is_ready(struct OrderBookImbalanceFull *handle);
+
+const char *wickra_order_book_imbalance_full_name(struct OrderBookImbalanceFull *handle);
 
 void wickra_order_book_imbalance_full_reset(struct OrderBookImbalanceFull *handle);
 
@@ -10320,6 +11092,8 @@ uintptr_t wickra_order_book_imbalance_top1_warmup_period(struct OrderBookImbalan
 
 bool wickra_order_book_imbalance_top1_is_ready(struct OrderBookImbalanceTop1 *handle);
 
+const char *wickra_order_book_imbalance_top1_name(struct OrderBookImbalanceTop1 *handle);
+
 void wickra_order_book_imbalance_top1_reset(struct OrderBookImbalanceTop1 *handle);
 
 void wickra_order_book_imbalance_top1_free(struct OrderBookImbalanceTop1 *handle);
@@ -10337,6 +11111,8 @@ double wickra_order_book_imbalance_top_n_update(struct OrderBookImbalanceTopN *h
 uintptr_t wickra_order_book_imbalance_top_n_warmup_period(struct OrderBookImbalanceTopN *handle);
 
 bool wickra_order_book_imbalance_top_n_is_ready(struct OrderBookImbalanceTopN *handle);
+
+const char *wickra_order_book_imbalance_top_n_name(struct OrderBookImbalanceTopN *handle);
 
 void wickra_order_book_imbalance_top_n_reset(struct OrderBookImbalanceTopN *handle);
 
@@ -10356,6 +11132,8 @@ uintptr_t wickra_order_flow_imbalance_warmup_period(struct OrderFlowImbalance *h
 
 bool wickra_order_flow_imbalance_is_ready(struct OrderFlowImbalance *handle);
 
+const char *wickra_order_flow_imbalance_name(struct OrderFlowImbalance *handle);
+
 void wickra_order_flow_imbalance_reset(struct OrderFlowImbalance *handle);
 
 void wickra_order_flow_imbalance_free(struct OrderFlowImbalance *handle);
@@ -10373,6 +11151,8 @@ double wickra_quoted_spread_update(struct QuotedSpread *handle,
 uintptr_t wickra_quoted_spread_warmup_period(struct QuotedSpread *handle);
 
 bool wickra_quoted_spread_is_ready(struct QuotedSpread *handle);
+
+const char *wickra_quoted_spread_name(struct QuotedSpread *handle);
 
 void wickra_quoted_spread_reset(struct QuotedSpread *handle);
 
@@ -10394,6 +11174,8 @@ uintptr_t wickra_absolute_breadth_index_warmup_period(struct AbsoluteBreadthInde
 
 bool wickra_absolute_breadth_index_is_ready(struct AbsoluteBreadthIndex *handle);
 
+const char *wickra_absolute_breadth_index_name(struct AbsoluteBreadthIndex *handle);
+
 void wickra_absolute_breadth_index_reset(struct AbsoluteBreadthIndex *handle);
 
 void wickra_absolute_breadth_index_free(struct AbsoluteBreadthIndex *handle);
@@ -10413,6 +11195,8 @@ double wickra_ad_volume_line_update(struct AdVolumeLine *handle,
 uintptr_t wickra_ad_volume_line_warmup_period(struct AdVolumeLine *handle);
 
 bool wickra_ad_volume_line_is_ready(struct AdVolumeLine *handle);
+
+const char *wickra_ad_volume_line_name(struct AdVolumeLine *handle);
 
 void wickra_ad_volume_line_reset(struct AdVolumeLine *handle);
 
@@ -10434,6 +11218,8 @@ uintptr_t wickra_advance_decline_warmup_period(struct AdvanceDecline *handle);
 
 bool wickra_advance_decline_is_ready(struct AdvanceDecline *handle);
 
+const char *wickra_advance_decline_name(struct AdvanceDecline *handle);
+
 void wickra_advance_decline_reset(struct AdvanceDecline *handle);
 
 void wickra_advance_decline_free(struct AdvanceDecline *handle);
@@ -10453,6 +11239,8 @@ double wickra_advance_decline_ratio_update(struct AdvanceDeclineRatio *handle,
 uintptr_t wickra_advance_decline_ratio_warmup_period(struct AdvanceDeclineRatio *handle);
 
 bool wickra_advance_decline_ratio_is_ready(struct AdvanceDeclineRatio *handle);
+
+const char *wickra_advance_decline_ratio_name(struct AdvanceDeclineRatio *handle);
 
 void wickra_advance_decline_ratio_reset(struct AdvanceDeclineRatio *handle);
 
@@ -10474,6 +11262,8 @@ uintptr_t wickra_breadth_thrust_warmup_period(struct BreadthThrust *handle);
 
 bool wickra_breadth_thrust_is_ready(struct BreadthThrust *handle);
 
+const char *wickra_breadth_thrust_name(struct BreadthThrust *handle);
+
 void wickra_breadth_thrust_reset(struct BreadthThrust *handle);
 
 void wickra_breadth_thrust_free(struct BreadthThrust *handle);
@@ -10493,6 +11283,8 @@ double wickra_bullish_percent_index_update(struct BullishPercentIndex *handle,
 uintptr_t wickra_bullish_percent_index_warmup_period(struct BullishPercentIndex *handle);
 
 bool wickra_bullish_percent_index_is_ready(struct BullishPercentIndex *handle);
+
+const char *wickra_bullish_percent_index_name(struct BullishPercentIndex *handle);
 
 void wickra_bullish_percent_index_reset(struct BullishPercentIndex *handle);
 
@@ -10514,6 +11306,8 @@ uintptr_t wickra_cumulative_volume_index_warmup_period(struct CumulativeVolumeIn
 
 bool wickra_cumulative_volume_index_is_ready(struct CumulativeVolumeIndex *handle);
 
+const char *wickra_cumulative_volume_index_name(struct CumulativeVolumeIndex *handle);
+
 void wickra_cumulative_volume_index_reset(struct CumulativeVolumeIndex *handle);
 
 void wickra_cumulative_volume_index_free(struct CumulativeVolumeIndex *handle);
@@ -10533,6 +11327,8 @@ double wickra_high_low_index_update(struct HighLowIndex *handle,
 uintptr_t wickra_high_low_index_warmup_period(struct HighLowIndex *handle);
 
 bool wickra_high_low_index_is_ready(struct HighLowIndex *handle);
+
+const char *wickra_high_low_index_name(struct HighLowIndex *handle);
 
 void wickra_high_low_index_reset(struct HighLowIndex *handle);
 
@@ -10554,6 +11350,8 @@ uintptr_t wickra_mc_clellan_oscillator_warmup_period(struct McClellanOscillator 
 
 bool wickra_mc_clellan_oscillator_is_ready(struct McClellanOscillator *handle);
 
+const char *wickra_mc_clellan_oscillator_name(struct McClellanOscillator *handle);
+
 void wickra_mc_clellan_oscillator_reset(struct McClellanOscillator *handle);
 
 void wickra_mc_clellan_oscillator_free(struct McClellanOscillator *handle);
@@ -10573,6 +11371,8 @@ double wickra_mc_clellan_summation_index_update(struct McClellanSummationIndex *
 uintptr_t wickra_mc_clellan_summation_index_warmup_period(struct McClellanSummationIndex *handle);
 
 bool wickra_mc_clellan_summation_index_is_ready(struct McClellanSummationIndex *handle);
+
+const char *wickra_mc_clellan_summation_index_name(struct McClellanSummationIndex *handle);
 
 void wickra_mc_clellan_summation_index_reset(struct McClellanSummationIndex *handle);
 
@@ -10594,6 +11394,8 @@ uintptr_t wickra_new_highs_new_lows_warmup_period(struct NewHighsNewLows *handle
 
 bool wickra_new_highs_new_lows_is_ready(struct NewHighsNewLows *handle);
 
+const char *wickra_new_highs_new_lows_name(struct NewHighsNewLows *handle);
+
 void wickra_new_highs_new_lows_reset(struct NewHighsNewLows *handle);
 
 void wickra_new_highs_new_lows_free(struct NewHighsNewLows *handle);
@@ -10613,6 +11415,8 @@ double wickra_percent_above_ma_update(struct PercentAboveMa *handle,
 uintptr_t wickra_percent_above_ma_warmup_period(struct PercentAboveMa *handle);
 
 bool wickra_percent_above_ma_is_ready(struct PercentAboveMa *handle);
+
+const char *wickra_percent_above_ma_name(struct PercentAboveMa *handle);
 
 void wickra_percent_above_ma_reset(struct PercentAboveMa *handle);
 
@@ -10634,6 +11438,8 @@ uintptr_t wickra_tick_index_warmup_period(struct TickIndex *handle);
 
 bool wickra_tick_index_is_ready(struct TickIndex *handle);
 
+const char *wickra_tick_index_name(struct TickIndex *handle);
+
 void wickra_tick_index_reset(struct TickIndex *handle);
 
 void wickra_tick_index_free(struct TickIndex *handle);
@@ -10653,6 +11459,8 @@ double wickra_trin_update(struct Trin *handle,
 uintptr_t wickra_trin_warmup_period(struct Trin *handle);
 
 bool wickra_trin_is_ready(struct Trin *handle);
+
+const char *wickra_trin_name(struct Trin *handle);
 
 void wickra_trin_reset(struct Trin *handle);
 
@@ -10674,6 +11482,8 @@ uintptr_t wickra_up_down_volume_ratio_warmup_period(struct UpDownVolumeRatio *ha
 
 bool wickra_up_down_volume_ratio_is_ready(struct UpDownVolumeRatio *handle);
 
+const char *wickra_up_down_volume_ratio_name(struct UpDownVolumeRatio *handle);
+
 void wickra_up_down_volume_ratio_reset(struct UpDownVolumeRatio *handle);
 
 void wickra_up_down_volume_ratio_free(struct UpDownVolumeRatio *handle);
@@ -10693,6 +11503,8 @@ uintptr_t wickra_acceleration_bands_warmup_period(struct AccelerationBands *hand
 
 bool wickra_acceleration_bands_is_ready(struct AccelerationBands *handle);
 
+const char *wickra_acceleration_bands_name(struct AccelerationBands *handle);
+
 void wickra_acceleration_bands_reset(struct AccelerationBands *handle);
 
 void wickra_acceleration_bands_free(struct AccelerationBands *handle);
@@ -10711,6 +11523,8 @@ bool wickra_adx_update(struct Adx *handle,
 uintptr_t wickra_adx_warmup_period(struct Adx *handle);
 
 bool wickra_adx_is_ready(struct Adx *handle);
+
+const char *wickra_adx_name(struct Adx *handle);
 
 void wickra_adx_reset(struct Adx *handle);
 
@@ -10733,6 +11547,8 @@ uintptr_t wickra_alligator_warmup_period(struct Alligator *handle);
 
 bool wickra_alligator_is_ready(struct Alligator *handle);
 
+const char *wickra_alligator_name(struct Alligator *handle);
+
 void wickra_alligator_reset(struct Alligator *handle);
 
 void wickra_alligator_free(struct Alligator *handle);
@@ -10751,6 +11567,8 @@ bool wickra_andrews_pitchfork_update(struct AndrewsPitchfork *handle,
 uintptr_t wickra_andrews_pitchfork_warmup_period(struct AndrewsPitchfork *handle);
 
 bool wickra_andrews_pitchfork_is_ready(struct AndrewsPitchfork *handle);
+
+const char *wickra_andrews_pitchfork_name(struct AndrewsPitchfork *handle);
 
 void wickra_andrews_pitchfork_reset(struct AndrewsPitchfork *handle);
 
@@ -10771,6 +11589,8 @@ uintptr_t wickra_aroon_warmup_period(struct Aroon *handle);
 
 bool wickra_aroon_is_ready(struct Aroon *handle);
 
+const char *wickra_aroon_name(struct Aroon *handle);
+
 void wickra_aroon_reset(struct Aroon *handle);
 
 void wickra_aroon_free(struct Aroon *handle);
@@ -10789,6 +11609,8 @@ bool wickra_atr_bands_update(struct AtrBands *handle,
 uintptr_t wickra_atr_bands_warmup_period(struct AtrBands *handle);
 
 bool wickra_atr_bands_is_ready(struct AtrBands *handle);
+
+const char *wickra_atr_bands_name(struct AtrBands *handle);
 
 void wickra_atr_bands_reset(struct AtrBands *handle);
 
@@ -10811,6 +11633,8 @@ uintptr_t wickra_atr_ratchet_warmup_period(struct AtrRatchet *handle);
 
 bool wickra_atr_ratchet_is_ready(struct AtrRatchet *handle);
 
+const char *wickra_atr_ratchet_name(struct AtrRatchet *handle);
+
 void wickra_atr_ratchet_reset(struct AtrRatchet *handle);
 
 void wickra_atr_ratchet_free(struct AtrRatchet *handle);
@@ -10830,6 +11654,8 @@ uintptr_t wickra_auto_fib_warmup_period(struct AutoFib *handle);
 
 bool wickra_auto_fib_is_ready(struct AutoFib *handle);
 
+const char *wickra_auto_fib_name(struct AutoFib *handle);
+
 void wickra_auto_fib_reset(struct AutoFib *handle);
 
 void wickra_auto_fib_free(struct AutoFib *handle);
@@ -10844,6 +11670,8 @@ uintptr_t wickra_bollinger_bands_warmup_period(struct BollingerBands *handle);
 
 bool wickra_bollinger_bands_is_ready(struct BollingerBands *handle);
 
+const char *wickra_bollinger_bands_name(struct BollingerBands *handle);
+
 void wickra_bollinger_bands_reset(struct BollingerBands *handle);
 
 void wickra_bollinger_bands_free(struct BollingerBands *handle);
@@ -10857,6 +11685,8 @@ bool wickra_bomar_bands_update(struct BomarBands *handle,
 uintptr_t wickra_bomar_bands_warmup_period(struct BomarBands *handle);
 
 bool wickra_bomar_bands_is_ready(struct BomarBands *handle);
+
+const char *wickra_bomar_bands_name(struct BomarBands *handle);
 
 void wickra_bomar_bands_reset(struct BomarBands *handle);
 
@@ -10877,6 +11707,8 @@ uintptr_t wickra_camarilla_warmup_period(struct Camarilla *handle);
 
 bool wickra_camarilla_is_ready(struct Camarilla *handle);
 
+const char *wickra_camarilla_name(struct Camarilla *handle);
+
 void wickra_camarilla_reset(struct Camarilla *handle);
 
 void wickra_camarilla_free(struct Camarilla *handle);
@@ -10896,6 +11728,8 @@ uintptr_t wickra_candle_volume_warmup_period(struct CandleVolume *handle);
 
 bool wickra_candle_volume_is_ready(struct CandleVolume *handle);
 
+const char *wickra_candle_volume_name(struct CandleVolume *handle);
+
 void wickra_candle_volume_reset(struct CandleVolume *handle);
 
 void wickra_candle_volume_free(struct CandleVolume *handle);
@@ -10914,6 +11748,8 @@ bool wickra_central_pivot_range_update(struct CentralPivotRange *handle,
 uintptr_t wickra_central_pivot_range_warmup_period(struct CentralPivotRange *handle);
 
 bool wickra_central_pivot_range_is_ready(struct CentralPivotRange *handle);
+
+const char *wickra_central_pivot_range_name(struct CentralPivotRange *handle);
 
 void wickra_central_pivot_range_reset(struct CentralPivotRange *handle);
 
@@ -10936,6 +11772,8 @@ uintptr_t wickra_chande_kroll_stop_warmup_period(struct ChandeKrollStop *handle)
 
 bool wickra_chande_kroll_stop_is_ready(struct ChandeKrollStop *handle);
 
+const char *wickra_chande_kroll_stop_name(struct ChandeKrollStop *handle);
+
 void wickra_chande_kroll_stop_reset(struct ChandeKrollStop *handle);
 
 void wickra_chande_kroll_stop_free(struct ChandeKrollStop *handle);
@@ -10954,6 +11792,8 @@ bool wickra_chandelier_exit_update(struct ChandelierExit *handle,
 uintptr_t wickra_chandelier_exit_warmup_period(struct ChandelierExit *handle);
 
 bool wickra_chandelier_exit_is_ready(struct ChandelierExit *handle);
+
+const char *wickra_chandelier_exit_name(struct ChandelierExit *handle);
 
 void wickra_chandelier_exit_reset(struct ChandelierExit *handle);
 
@@ -10974,6 +11814,8 @@ uintptr_t wickra_classic_pivots_warmup_period(struct ClassicPivots *handle);
 
 bool wickra_classic_pivots_is_ready(struct ClassicPivots *handle);
 
+const char *wickra_classic_pivots_name(struct ClassicPivots *handle);
+
 void wickra_classic_pivots_reset(struct ClassicPivots *handle);
 
 void wickra_classic_pivots_free(struct ClassicPivots *handle);
@@ -10988,6 +11830,8 @@ bool wickra_cointegration_update(struct Cointegration *handle,
 uintptr_t wickra_cointegration_warmup_period(struct Cointegration *handle);
 
 bool wickra_cointegration_is_ready(struct Cointegration *handle);
+
+const char *wickra_cointegration_name(struct Cointegration *handle);
 
 void wickra_cointegration_reset(struct Cointegration *handle);
 
@@ -11010,6 +11854,8 @@ uintptr_t wickra_composite_profile_warmup_period(struct CompositeProfile *handle
 
 bool wickra_composite_profile_is_ready(struct CompositeProfile *handle);
 
+const char *wickra_composite_profile_name(struct CompositeProfile *handle);
+
 void wickra_composite_profile_reset(struct CompositeProfile *handle);
 
 void wickra_composite_profile_free(struct CompositeProfile *handle);
@@ -11028,6 +11874,8 @@ bool wickra_demark_pivots_update(struct DemarkPivots *handle,
 uintptr_t wickra_demark_pivots_warmup_period(struct DemarkPivots *handle);
 
 bool wickra_demark_pivots_is_ready(struct DemarkPivots *handle);
+
+const char *wickra_demark_pivots_name(struct DemarkPivots *handle);
 
 void wickra_demark_pivots_reset(struct DemarkPivots *handle);
 
@@ -11048,6 +11896,8 @@ uintptr_t wickra_donchian_warmup_period(struct Donchian *handle);
 
 bool wickra_donchian_is_ready(struct Donchian *handle);
 
+const char *wickra_donchian_name(struct Donchian *handle);
+
 void wickra_donchian_reset(struct Donchian *handle);
 
 void wickra_donchian_free(struct Donchian *handle);
@@ -11067,6 +11917,8 @@ uintptr_t wickra_donchian_stop_warmup_period(struct DonchianStop *handle);
 
 bool wickra_donchian_stop_is_ready(struct DonchianStop *handle);
 
+const char *wickra_donchian_stop_name(struct DonchianStop *handle);
+
 void wickra_donchian_stop_reset(struct DonchianStop *handle);
 
 void wickra_donchian_stop_free(struct DonchianStop *handle);
@@ -11082,6 +11934,8 @@ bool wickra_double_bollinger_update(struct DoubleBollinger *handle,
 uintptr_t wickra_double_bollinger_warmup_period(struct DoubleBollinger *handle);
 
 bool wickra_double_bollinger_is_ready(struct DoubleBollinger *handle);
+
+const char *wickra_double_bollinger_name(struct DoubleBollinger *handle);
 
 void wickra_double_bollinger_reset(struct DoubleBollinger *handle);
 
@@ -11102,6 +11956,8 @@ uintptr_t wickra_elder_ray_warmup_period(struct ElderRay *handle);
 
 bool wickra_elder_ray_is_ready(struct ElderRay *handle);
 
+const char *wickra_elder_ray_name(struct ElderRay *handle);
+
 void wickra_elder_ray_reset(struct ElderRay *handle);
 
 void wickra_elder_ray_free(struct ElderRay *handle);
@@ -11120,6 +11976,8 @@ bool wickra_elder_safe_zone_update(struct ElderSafeZone *handle,
 uintptr_t wickra_elder_safe_zone_warmup_period(struct ElderSafeZone *handle);
 
 bool wickra_elder_safe_zone_is_ready(struct ElderSafeZone *handle);
+
+const char *wickra_elder_safe_zone_name(struct ElderSafeZone *handle);
 
 void wickra_elder_safe_zone_reset(struct ElderSafeZone *handle);
 
@@ -11140,6 +11998,8 @@ uintptr_t wickra_equivolume_warmup_period(struct Equivolume *handle);
 
 bool wickra_equivolume_is_ready(struct Equivolume *handle);
 
+const char *wickra_equivolume_name(struct Equivolume *handle);
+
 void wickra_equivolume_reset(struct Equivolume *handle);
 
 void wickra_equivolume_free(struct Equivolume *handle);
@@ -11158,6 +12018,8 @@ bool wickra_fib_arcs_update(struct FibArcs *handle,
 uintptr_t wickra_fib_arcs_warmup_period(struct FibArcs *handle);
 
 bool wickra_fib_arcs_is_ready(struct FibArcs *handle);
+
+const char *wickra_fib_arcs_name(struct FibArcs *handle);
 
 void wickra_fib_arcs_reset(struct FibArcs *handle);
 
@@ -11178,6 +12040,8 @@ uintptr_t wickra_fib_channel_warmup_period(struct FibChannel *handle);
 
 bool wickra_fib_channel_is_ready(struct FibChannel *handle);
 
+const char *wickra_fib_channel_name(struct FibChannel *handle);
+
 void wickra_fib_channel_reset(struct FibChannel *handle);
 
 void wickra_fib_channel_free(struct FibChannel *handle);
@@ -11196,6 +12060,8 @@ bool wickra_fib_confluence_update(struct FibConfluence *handle,
 uintptr_t wickra_fib_confluence_warmup_period(struct FibConfluence *handle);
 
 bool wickra_fib_confluence_is_ready(struct FibConfluence *handle);
+
+const char *wickra_fib_confluence_name(struct FibConfluence *handle);
 
 void wickra_fib_confluence_reset(struct FibConfluence *handle);
 
@@ -11216,6 +12082,8 @@ uintptr_t wickra_fib_extension_warmup_period(struct FibExtension *handle);
 
 bool wickra_fib_extension_is_ready(struct FibExtension *handle);
 
+const char *wickra_fib_extension_name(struct FibExtension *handle);
+
 void wickra_fib_extension_reset(struct FibExtension *handle);
 
 void wickra_fib_extension_free(struct FibExtension *handle);
@@ -11234,6 +12102,8 @@ bool wickra_fib_fan_update(struct FibFan *handle,
 uintptr_t wickra_fib_fan_warmup_period(struct FibFan *handle);
 
 bool wickra_fib_fan_is_ready(struct FibFan *handle);
+
+const char *wickra_fib_fan_name(struct FibFan *handle);
 
 void wickra_fib_fan_reset(struct FibFan *handle);
 
@@ -11254,6 +12124,8 @@ uintptr_t wickra_fib_projection_warmup_period(struct FibProjection *handle);
 
 bool wickra_fib_projection_is_ready(struct FibProjection *handle);
 
+const char *wickra_fib_projection_name(struct FibProjection *handle);
+
 void wickra_fib_projection_reset(struct FibProjection *handle);
 
 void wickra_fib_projection_free(struct FibProjection *handle);
@@ -11272,6 +12144,8 @@ bool wickra_fib_retracement_update(struct FibRetracement *handle,
 uintptr_t wickra_fib_retracement_warmup_period(struct FibRetracement *handle);
 
 bool wickra_fib_retracement_is_ready(struct FibRetracement *handle);
+
+const char *wickra_fib_retracement_name(struct FibRetracement *handle);
 
 void wickra_fib_retracement_reset(struct FibRetracement *handle);
 
@@ -11292,6 +12166,8 @@ uintptr_t wickra_fib_time_zones_warmup_period(struct FibTimeZones *handle);
 
 bool wickra_fib_time_zones_is_ready(struct FibTimeZones *handle);
 
+const char *wickra_fib_time_zones_name(struct FibTimeZones *handle);
+
 void wickra_fib_time_zones_reset(struct FibTimeZones *handle);
 
 void wickra_fib_time_zones_free(struct FibTimeZones *handle);
@@ -11311,6 +12187,8 @@ uintptr_t wickra_fibonacci_pivots_warmup_period(struct FibonacciPivots *handle);
 
 bool wickra_fibonacci_pivots_is_ready(struct FibonacciPivots *handle);
 
+const char *wickra_fibonacci_pivots_name(struct FibonacciPivots *handle);
+
 void wickra_fibonacci_pivots_reset(struct FibonacciPivots *handle);
 
 void wickra_fibonacci_pivots_free(struct FibonacciPivots *handle);
@@ -11329,6 +12207,8 @@ bool wickra_fractal_chaos_bands_update(struct FractalChaosBands *handle,
 uintptr_t wickra_fractal_chaos_bands_warmup_period(struct FractalChaosBands *handle);
 
 bool wickra_fractal_chaos_bands_is_ready(struct FractalChaosBands *handle);
+
+const char *wickra_fractal_chaos_bands_name(struct FractalChaosBands *handle);
 
 void wickra_fractal_chaos_bands_reset(struct FractalChaosBands *handle);
 
@@ -11351,6 +12231,8 @@ uintptr_t wickra_gator_oscillator_warmup_period(struct GatorOscillator *handle);
 
 bool wickra_gator_oscillator_is_ready(struct GatorOscillator *handle);
 
+const char *wickra_gator_oscillator_name(struct GatorOscillator *handle);
+
 void wickra_gator_oscillator_reset(struct GatorOscillator *handle);
 
 void wickra_gator_oscillator_free(struct GatorOscillator *handle);
@@ -11369,6 +12251,8 @@ bool wickra_golden_pocket_update(struct GoldenPocket *handle,
 uintptr_t wickra_golden_pocket_warmup_period(struct GoldenPocket *handle);
 
 bool wickra_golden_pocket_is_ready(struct GoldenPocket *handle);
+
+const char *wickra_golden_pocket_name(struct GoldenPocket *handle);
 
 void wickra_golden_pocket_reset(struct GoldenPocket *handle);
 
@@ -11389,6 +12273,8 @@ uintptr_t wickra_heikin_ashi_warmup_period(struct HeikinAshi *handle);
 
 bool wickra_heikin_ashi_is_ready(struct HeikinAshi *handle);
 
+const char *wickra_heikin_ashi_name(struct HeikinAshi *handle);
+
 void wickra_heikin_ashi_reset(struct HeikinAshi *handle);
 
 void wickra_heikin_ashi_free(struct HeikinAshi *handle);
@@ -11408,6 +12294,8 @@ uintptr_t wickra_high_low_volume_nodes_warmup_period(struct HighLowVolumeNodes *
 
 bool wickra_high_low_volume_nodes_is_ready(struct HighLowVolumeNodes *handle);
 
+const char *wickra_high_low_volume_nodes_name(struct HighLowVolumeNodes *handle);
+
 void wickra_high_low_volume_nodes_reset(struct HighLowVolumeNodes *handle);
 
 void wickra_high_low_volume_nodes_free(struct HighLowVolumeNodes *handle);
@@ -11421,6 +12309,8 @@ bool wickra_ht_phasor_update(struct HtPhasor *handle,
 uintptr_t wickra_ht_phasor_warmup_period(struct HtPhasor *handle);
 
 bool wickra_ht_phasor_is_ready(struct HtPhasor *handle);
+
+const char *wickra_ht_phasor_name(struct HtPhasor *handle);
 
 void wickra_ht_phasor_reset(struct HtPhasor *handle);
 
@@ -11440,6 +12330,8 @@ bool wickra_hurst_channel_update(struct HurstChannel *handle,
 uintptr_t wickra_hurst_channel_warmup_period(struct HurstChannel *handle);
 
 bool wickra_hurst_channel_is_ready(struct HurstChannel *handle);
+
+const char *wickra_hurst_channel_name(struct HurstChannel *handle);
 
 void wickra_hurst_channel_reset(struct HurstChannel *handle);
 
@@ -11463,6 +12355,8 @@ uintptr_t wickra_ichimoku_warmup_period(struct Ichimoku *handle);
 
 bool wickra_ichimoku_is_ready(struct Ichimoku *handle);
 
+const char *wickra_ichimoku_name(struct Ichimoku *handle);
+
 void wickra_ichimoku_reset(struct Ichimoku *handle);
 
 void wickra_ichimoku_free(struct Ichimoku *handle);
@@ -11482,6 +12376,8 @@ uintptr_t wickra_initial_balance_warmup_period(struct InitialBalance *handle);
 
 bool wickra_initial_balance_is_ready(struct InitialBalance *handle);
 
+const char *wickra_initial_balance_name(struct InitialBalance *handle);
+
 void wickra_initial_balance_reset(struct InitialBalance *handle);
 
 void wickra_initial_balance_free(struct InitialBalance *handle);
@@ -11496,6 +12392,8 @@ bool wickra_kalman_hedge_ratio_update(struct KalmanHedgeRatio *handle,
 uintptr_t wickra_kalman_hedge_ratio_warmup_period(struct KalmanHedgeRatio *handle);
 
 bool wickra_kalman_hedge_ratio_is_ready(struct KalmanHedgeRatio *handle);
+
+const char *wickra_kalman_hedge_ratio_name(struct KalmanHedgeRatio *handle);
 
 void wickra_kalman_hedge_ratio_reset(struct KalmanHedgeRatio *handle);
 
@@ -11515,6 +12413,8 @@ bool wickra_kase_dev_stop_update(struct KaseDevStop *handle,
 uintptr_t wickra_kase_dev_stop_warmup_period(struct KaseDevStop *handle);
 
 bool wickra_kase_dev_stop_is_ready(struct KaseDevStop *handle);
+
+const char *wickra_kase_dev_stop_name(struct KaseDevStop *handle);
 
 void wickra_kase_dev_stop_reset(struct KaseDevStop *handle);
 
@@ -11536,6 +12436,8 @@ uintptr_t wickra_kase_permission_stochastic_warmup_period(struct KasePermissionS
 
 bool wickra_kase_permission_stochastic_is_ready(struct KasePermissionStochastic *handle);
 
+const char *wickra_kase_permission_stochastic_name(struct KasePermissionStochastic *handle);
+
 void wickra_kase_permission_stochastic_reset(struct KasePermissionStochastic *handle);
 
 void wickra_kase_permission_stochastic_free(struct KasePermissionStochastic *handle);
@@ -11554,6 +12456,8 @@ bool wickra_keltner_update(struct Keltner *handle,
 uintptr_t wickra_keltner_warmup_period(struct Keltner *handle);
 
 bool wickra_keltner_is_ready(struct Keltner *handle);
+
+const char *wickra_keltner_name(struct Keltner *handle);
 
 void wickra_keltner_reset(struct Keltner *handle);
 
@@ -11575,6 +12479,8 @@ uintptr_t wickra_kst_warmup_period(struct Kst *handle);
 
 bool wickra_kst_is_ready(struct Kst *handle);
 
+const char *wickra_kst_name(struct Kst *handle);
+
 void wickra_kst_reset(struct Kst *handle);
 
 void wickra_kst_free(struct Kst *handle);
@@ -11591,6 +12497,8 @@ uintptr_t wickra_lead_lag_cross_correlation_warmup_period(struct LeadLagCrossCor
 
 bool wickra_lead_lag_cross_correlation_is_ready(struct LeadLagCrossCorrelation *handle);
 
+const char *wickra_lead_lag_cross_correlation_name(struct LeadLagCrossCorrelation *handle);
+
 void wickra_lead_lag_cross_correlation_reset(struct LeadLagCrossCorrelation *handle);
 
 void wickra_lead_lag_cross_correlation_free(struct LeadLagCrossCorrelation *handle);
@@ -11604,6 +12512,8 @@ bool wickra_lin_reg_channel_update(struct LinRegChannel *handle,
 uintptr_t wickra_lin_reg_channel_warmup_period(struct LinRegChannel *handle);
 
 bool wickra_lin_reg_channel_is_ready(struct LinRegChannel *handle);
+
+const char *wickra_lin_reg_channel_name(struct LinRegChannel *handle);
 
 void wickra_lin_reg_channel_reset(struct LinRegChannel *handle);
 
@@ -11630,6 +12540,8 @@ uintptr_t wickra_liquidation_features_warmup_period(struct LiquidationFeatures *
 
 bool wickra_liquidation_features_is_ready(struct LiquidationFeatures *handle);
 
+const char *wickra_liquidation_features_name(struct LiquidationFeatures *handle);
+
 void wickra_liquidation_features_reset(struct LiquidationFeatures *handle);
 
 void wickra_liquidation_features_free(struct LiquidationFeatures *handle);
@@ -11643,6 +12555,8 @@ bool wickra_ma_envelope_update(struct MaEnvelope *handle,
 uintptr_t wickra_ma_envelope_warmup_period(struct MaEnvelope *handle);
 
 bool wickra_ma_envelope_is_ready(struct MaEnvelope *handle);
+
+const char *wickra_ma_envelope_name(struct MaEnvelope *handle);
 
 void wickra_ma_envelope_reset(struct MaEnvelope *handle);
 
@@ -11658,6 +12572,8 @@ uintptr_t wickra_macd_indicator_warmup_period(struct MacdIndicator *handle);
 
 bool wickra_macd_indicator_is_ready(struct MacdIndicator *handle);
 
+const char *wickra_macd_indicator_name(struct MacdIndicator *handle);
+
 void wickra_macd_indicator_reset(struct MacdIndicator *handle);
 
 void wickra_macd_indicator_free(struct MacdIndicator *handle);
@@ -11670,6 +12586,8 @@ uintptr_t wickra_macd_fix_warmup_period(struct MacdFix *handle);
 
 bool wickra_macd_fix_is_ready(struct MacdFix *handle);
 
+const char *wickra_macd_fix_name(struct MacdFix *handle);
+
 void wickra_macd_fix_reset(struct MacdFix *handle);
 
 void wickra_macd_fix_free(struct MacdFix *handle);
@@ -11681,6 +12599,8 @@ bool wickra_mama_update(struct Mama *handle, double value, struct WickraMamaOutp
 uintptr_t wickra_mama_warmup_period(struct Mama *handle);
 
 bool wickra_mama_is_ready(struct Mama *handle);
+
+const char *wickra_mama_name(struct Mama *handle);
 
 void wickra_mama_reset(struct Mama *handle);
 
@@ -11695,6 +12615,8 @@ bool wickra_median_channel_update(struct MedianChannel *handle,
 uintptr_t wickra_median_channel_warmup_period(struct MedianChannel *handle);
 
 bool wickra_median_channel_is_ready(struct MedianChannel *handle);
+
+const char *wickra_median_channel_name(struct MedianChannel *handle);
 
 void wickra_median_channel_reset(struct MedianChannel *handle);
 
@@ -11715,6 +12637,8 @@ uintptr_t wickra_modified_ma_stop_warmup_period(struct ModifiedMaStop *handle);
 
 bool wickra_modified_ma_stop_is_ready(struct ModifiedMaStop *handle);
 
+const char *wickra_modified_ma_stop_name(struct ModifiedMaStop *handle);
+
 void wickra_modified_ma_stop_reset(struct ModifiedMaStop *handle);
 
 void wickra_modified_ma_stop_free(struct ModifiedMaStop *handle);
@@ -11733,6 +12657,8 @@ bool wickra_murrey_math_lines_update(struct MurreyMathLines *handle,
 uintptr_t wickra_murrey_math_lines_warmup_period(struct MurreyMathLines *handle);
 
 bool wickra_murrey_math_lines_is_ready(struct MurreyMathLines *handle);
+
+const char *wickra_murrey_math_lines_name(struct MurreyMathLines *handle);
 
 void wickra_murrey_math_lines_reset(struct MurreyMathLines *handle);
 
@@ -11753,6 +12679,8 @@ uintptr_t wickra_nrtr_warmup_period(struct Nrtr *handle);
 
 bool wickra_nrtr_is_ready(struct Nrtr *handle);
 
+const char *wickra_nrtr_name(struct Nrtr *handle);
+
 void wickra_nrtr_reset(struct Nrtr *handle);
 
 void wickra_nrtr_free(struct Nrtr *handle);
@@ -11771,6 +12699,8 @@ bool wickra_opening_range_update(struct OpeningRange *handle,
 uintptr_t wickra_opening_range_warmup_period(struct OpeningRange *handle);
 
 bool wickra_opening_range_is_ready(struct OpeningRange *handle);
+
+const char *wickra_opening_range_name(struct OpeningRange *handle);
 
 void wickra_opening_range_reset(struct OpeningRange *handle);
 
@@ -11791,6 +12721,8 @@ uintptr_t wickra_overnight_intraday_return_warmup_period(struct OvernightIntrada
 
 bool wickra_overnight_intraday_return_is_ready(struct OvernightIntradayReturn *handle);
 
+const char *wickra_overnight_intraday_return_name(struct OvernightIntradayReturn *handle);
+
 void wickra_overnight_intraday_return_reset(struct OvernightIntradayReturn *handle);
 
 void wickra_overnight_intraday_return_free(struct OvernightIntradayReturn *handle);
@@ -11810,6 +12742,8 @@ uintptr_t wickra_projection_bands_warmup_period(struct ProjectionBands *handle);
 
 bool wickra_projection_bands_is_ready(struct ProjectionBands *handle);
 
+const char *wickra_projection_bands_name(struct ProjectionBands *handle);
+
 void wickra_projection_bands_reset(struct ProjectionBands *handle);
 
 void wickra_projection_bands_free(struct ProjectionBands *handle);
@@ -11821,6 +12755,8 @@ bool wickra_qqe_update(struct Qqe *handle, double value, struct WickraQqeOutput 
 uintptr_t wickra_qqe_warmup_period(struct Qqe *handle);
 
 bool wickra_qqe_is_ready(struct Qqe *handle);
+
+const char *wickra_qqe_name(struct Qqe *handle);
 
 void wickra_qqe_reset(struct Qqe *handle);
 
@@ -11835,6 +12771,8 @@ bool wickra_quartile_bands_update(struct QuartileBands *handle,
 uintptr_t wickra_quartile_bands_warmup_period(struct QuartileBands *handle);
 
 bool wickra_quartile_bands_is_ready(struct QuartileBands *handle);
+
+const char *wickra_quartile_bands_name(struct QuartileBands *handle);
 
 void wickra_quartile_bands_reset(struct QuartileBands *handle);
 
@@ -11851,6 +12789,8 @@ bool wickra_relative_strength_ab_update(struct RelativeStrengthAB *handle,
 uintptr_t wickra_relative_strength_ab_warmup_period(struct RelativeStrengthAB *handle);
 
 bool wickra_relative_strength_ab_is_ready(struct RelativeStrengthAB *handle);
+
+const char *wickra_relative_strength_ab_name(struct RelativeStrengthAB *handle);
 
 void wickra_relative_strength_ab_reset(struct RelativeStrengthAB *handle);
 
@@ -11871,6 +12811,8 @@ uintptr_t wickra_rwi_warmup_period(struct Rwi *handle);
 
 bool wickra_rwi_is_ready(struct Rwi *handle);
 
+const char *wickra_rwi_name(struct Rwi *handle);
+
 void wickra_rwi_reset(struct Rwi *handle);
 
 void wickra_rwi_free(struct Rwi *handle);
@@ -11889,6 +12831,8 @@ bool wickra_session_high_low_update(struct SessionHighLow *handle,
 uintptr_t wickra_session_high_low_warmup_period(struct SessionHighLow *handle);
 
 bool wickra_session_high_low_is_ready(struct SessionHighLow *handle);
+
+const char *wickra_session_high_low_name(struct SessionHighLow *handle);
 
 void wickra_session_high_low_reset(struct SessionHighLow *handle);
 
@@ -11909,6 +12853,8 @@ uintptr_t wickra_session_range_warmup_period(struct SessionRange *handle);
 
 bool wickra_session_range_is_ready(struct SessionRange *handle);
 
+const char *wickra_session_range_name(struct SessionRange *handle);
+
 void wickra_session_range_reset(struct SessionRange *handle);
 
 void wickra_session_range_free(struct SessionRange *handle);
@@ -11928,6 +12874,8 @@ uintptr_t wickra_smoothed_heikin_ashi_warmup_period(struct SmoothedHeikinAshi *h
 
 bool wickra_smoothed_heikin_ashi_is_ready(struct SmoothedHeikinAshi *handle);
 
+const char *wickra_smoothed_heikin_ashi_name(struct SmoothedHeikinAshi *handle);
+
 void wickra_smoothed_heikin_ashi_reset(struct SmoothedHeikinAshi *handle);
 
 void wickra_smoothed_heikin_ashi_free(struct SmoothedHeikinAshi *handle);
@@ -11943,6 +12891,8 @@ uintptr_t wickra_spread_bollinger_bands_warmup_period(struct SpreadBollingerBand
 
 bool wickra_spread_bollinger_bands_is_ready(struct SpreadBollingerBands *handle);
 
+const char *wickra_spread_bollinger_bands_name(struct SpreadBollingerBands *handle);
+
 void wickra_spread_bollinger_bands_reset(struct SpreadBollingerBands *handle);
 
 void wickra_spread_bollinger_bands_free(struct SpreadBollingerBands *handle);
@@ -11956,6 +12906,8 @@ bool wickra_standard_error_bands_update(struct StandardErrorBands *handle,
 uintptr_t wickra_standard_error_bands_warmup_period(struct StandardErrorBands *handle);
 
 bool wickra_standard_error_bands_is_ready(struct StandardErrorBands *handle);
+
+const char *wickra_standard_error_bands_name(struct StandardErrorBands *handle);
 
 void wickra_standard_error_bands_reset(struct StandardErrorBands *handle);
 
@@ -11978,6 +12930,8 @@ uintptr_t wickra_starc_bands_warmup_period(struct StarcBands *handle);
 
 bool wickra_starc_bands_is_ready(struct StarcBands *handle);
 
+const char *wickra_starc_bands_name(struct StarcBands *handle);
+
 void wickra_starc_bands_reset(struct StarcBands *handle);
 
 void wickra_starc_bands_free(struct StarcBands *handle);
@@ -11996,6 +12950,8 @@ bool wickra_stochastic_update(struct Stochastic *handle,
 uintptr_t wickra_stochastic_warmup_period(struct Stochastic *handle);
 
 bool wickra_stochastic_is_ready(struct Stochastic *handle);
+
+const char *wickra_stochastic_name(struct Stochastic *handle);
 
 void wickra_stochastic_reset(struct Stochastic *handle);
 
@@ -12016,6 +12972,8 @@ uintptr_t wickra_super_trend_warmup_period(struct SuperTrend *handle);
 
 bool wickra_super_trend_is_ready(struct SuperTrend *handle);
 
+const char *wickra_super_trend_name(struct SuperTrend *handle);
+
 void wickra_super_trend_reset(struct SuperTrend *handle);
 
 void wickra_super_trend_free(struct SuperTrend *handle);
@@ -12034,6 +12992,8 @@ bool wickra_td_lines_update(struct TdLines *handle,
 uintptr_t wickra_td_lines_warmup_period(struct TdLines *handle);
 
 bool wickra_td_lines_is_ready(struct TdLines *handle);
+
+const char *wickra_td_lines_name(struct TdLines *handle);
 
 void wickra_td_lines_reset(struct TdLines *handle);
 
@@ -12054,6 +13014,8 @@ uintptr_t wickra_td_moving_average_warmup_period(struct TdMovingAverage *handle)
 
 bool wickra_td_moving_average_is_ready(struct TdMovingAverage *handle);
 
+const char *wickra_td_moving_average_name(struct TdMovingAverage *handle);
+
 void wickra_td_moving_average_reset(struct TdMovingAverage *handle);
 
 void wickra_td_moving_average_free(struct TdMovingAverage *handle);
@@ -12073,6 +13035,8 @@ uintptr_t wickra_td_range_projection_warmup_period(struct TdRangeProjection *han
 
 bool wickra_td_range_projection_is_ready(struct TdRangeProjection *handle);
 
+const char *wickra_td_range_projection_name(struct TdRangeProjection *handle);
+
 void wickra_td_range_projection_reset(struct TdRangeProjection *handle);
 
 void wickra_td_range_projection_free(struct TdRangeProjection *handle);
@@ -12091,6 +13055,8 @@ bool wickra_td_risk_level_update(struct TdRiskLevel *handle,
 uintptr_t wickra_td_risk_level_warmup_period(struct TdRiskLevel *handle);
 
 bool wickra_td_risk_level_is_ready(struct TdRiskLevel *handle);
+
+const char *wickra_td_risk_level_name(struct TdRiskLevel *handle);
 
 void wickra_td_risk_level_reset(struct TdRiskLevel *handle);
 
@@ -12114,6 +13080,8 @@ uintptr_t wickra_td_sequential_warmup_period(struct TdSequential *handle);
 
 bool wickra_td_sequential_is_ready(struct TdSequential *handle);
 
+const char *wickra_td_sequential_name(struct TdSequential *handle);
+
 void wickra_td_sequential_reset(struct TdSequential *handle);
 
 void wickra_td_sequential_free(struct TdSequential *handle);
@@ -12132,6 +13100,8 @@ bool wickra_ttm_squeeze_update(struct TtmSqueeze *handle,
 uintptr_t wickra_ttm_squeeze_warmup_period(struct TtmSqueeze *handle);
 
 bool wickra_ttm_squeeze_is_ready(struct TtmSqueeze *handle);
+
+const char *wickra_ttm_squeeze_name(struct TtmSqueeze *handle);
 
 void wickra_ttm_squeeze_reset(struct TtmSqueeze *handle);
 
@@ -12154,6 +13124,8 @@ uintptr_t wickra_value_area_warmup_period(struct ValueArea *handle);
 
 bool wickra_value_area_is_ready(struct ValueArea *handle);
 
+const char *wickra_value_area_name(struct ValueArea *handle);
+
 void wickra_value_area_reset(struct ValueArea *handle);
 
 void wickra_value_area_free(struct ValueArea *handle);
@@ -12172,6 +13144,8 @@ bool wickra_volatility_cone_update(struct VolatilityCone *handle,
 uintptr_t wickra_volatility_cone_warmup_period(struct VolatilityCone *handle);
 
 bool wickra_volatility_cone_is_ready(struct VolatilityCone *handle);
+
+const char *wickra_volatility_cone_name(struct VolatilityCone *handle);
 
 void wickra_volatility_cone_reset(struct VolatilityCone *handle);
 
@@ -12194,6 +13168,8 @@ uintptr_t wickra_volume_weighted_macd_warmup_period(struct VolumeWeightedMacd *h
 
 bool wickra_volume_weighted_macd_is_ready(struct VolumeWeightedMacd *handle);
 
+const char *wickra_volume_weighted_macd_name(struct VolumeWeightedMacd *handle);
+
 void wickra_volume_weighted_macd_reset(struct VolumeWeightedMacd *handle);
 
 void wickra_volume_weighted_macd_free(struct VolumeWeightedMacd *handle);
@@ -12212,6 +13188,8 @@ bool wickra_volume_weighted_sr_update(struct VolumeWeightedSr *handle,
 uintptr_t wickra_volume_weighted_sr_warmup_period(struct VolumeWeightedSr *handle);
 
 bool wickra_volume_weighted_sr_is_ready(struct VolumeWeightedSr *handle);
+
+const char *wickra_volume_weighted_sr_name(struct VolumeWeightedSr *handle);
 
 void wickra_volume_weighted_sr_reset(struct VolumeWeightedSr *handle);
 
@@ -12232,6 +13210,8 @@ uintptr_t wickra_vortex_warmup_period(struct Vortex *handle);
 
 bool wickra_vortex_is_ready(struct Vortex *handle);
 
+const char *wickra_vortex_name(struct Vortex *handle);
+
 void wickra_vortex_reset(struct Vortex *handle);
 
 void wickra_vortex_free(struct Vortex *handle);
@@ -12250,6 +13230,8 @@ bool wickra_vwap_std_dev_bands_update(struct VwapStdDevBands *handle,
 uintptr_t wickra_vwap_std_dev_bands_warmup_period(struct VwapStdDevBands *handle);
 
 bool wickra_vwap_std_dev_bands_is_ready(struct VwapStdDevBands *handle);
+
+const char *wickra_vwap_std_dev_bands_name(struct VwapStdDevBands *handle);
 
 void wickra_vwap_std_dev_bands_reset(struct VwapStdDevBands *handle);
 
@@ -12272,6 +13254,8 @@ uintptr_t wickra_wave_trend_warmup_period(struct WaveTrend *handle);
 
 bool wickra_wave_trend_is_ready(struct WaveTrend *handle);
 
+const char *wickra_wave_trend_name(struct WaveTrend *handle);
+
 void wickra_wave_trend_reset(struct WaveTrend *handle);
 
 void wickra_wave_trend_free(struct WaveTrend *handle);
@@ -12290,6 +13274,8 @@ bool wickra_williams_fractals_update(struct WilliamsFractals *handle,
 uintptr_t wickra_williams_fractals_warmup_period(struct WilliamsFractals *handle);
 
 bool wickra_williams_fractals_is_ready(struct WilliamsFractals *handle);
+
+const char *wickra_williams_fractals_name(struct WilliamsFractals *handle);
 
 void wickra_williams_fractals_reset(struct WilliamsFractals *handle);
 
@@ -12310,6 +13296,8 @@ uintptr_t wickra_woodie_pivots_warmup_period(struct WoodiePivots *handle);
 
 bool wickra_woodie_pivots_is_ready(struct WoodiePivots *handle);
 
+const char *wickra_woodie_pivots_name(struct WoodiePivots *handle);
+
 void wickra_woodie_pivots_reset(struct WoodiePivots *handle);
 
 void wickra_woodie_pivots_free(struct WoodiePivots *handle);
@@ -12323,6 +13311,8 @@ bool wickra_zero_lag_macd_update(struct ZeroLagMacd *handle,
 uintptr_t wickra_zero_lag_macd_warmup_period(struct ZeroLagMacd *handle);
 
 bool wickra_zero_lag_macd_is_ready(struct ZeroLagMacd *handle);
+
+const char *wickra_zero_lag_macd_name(struct ZeroLagMacd *handle);
 
 void wickra_zero_lag_macd_reset(struct ZeroLagMacd *handle);
 
@@ -12343,6 +13333,8 @@ uintptr_t wickra_zig_zag_warmup_period(struct ZigZag *handle);
 
 bool wickra_zig_zag_is_ready(struct ZigZag *handle);
 
+const char *wickra_zig_zag_name(struct ZigZag *handle);
+
 void wickra_zig_zag_reset(struct ZigZag *handle);
 
 void wickra_zig_zag_free(struct ZigZag *handle);
@@ -12362,6 +13354,8 @@ intptr_t wickra_day_of_week_profile_update(struct DayOfWeekProfile *handle,
 uintptr_t wickra_day_of_week_profile_warmup_period(struct DayOfWeekProfile *handle);
 
 bool wickra_day_of_week_profile_is_ready(struct DayOfWeekProfile *handle);
+
+const char *wickra_day_of_week_profile_name(struct DayOfWeekProfile *handle);
 
 void wickra_day_of_week_profile_reset(struct DayOfWeekProfile *handle);
 
@@ -12384,6 +13378,8 @@ uintptr_t wickra_intraday_volatility_profile_warmup_period(struct IntradayVolati
 
 bool wickra_intraday_volatility_profile_is_ready(struct IntradayVolatilityProfile *handle);
 
+const char *wickra_intraday_volatility_profile_name(struct IntradayVolatilityProfile *handle);
+
 void wickra_intraday_volatility_profile_reset(struct IntradayVolatilityProfile *handle);
 
 void wickra_intraday_volatility_profile_free(struct IntradayVolatilityProfile *handle);
@@ -12404,6 +13400,8 @@ intptr_t wickra_time_of_day_return_profile_update(struct TimeOfDayReturnProfile 
 uintptr_t wickra_time_of_day_return_profile_warmup_period(struct TimeOfDayReturnProfile *handle);
 
 bool wickra_time_of_day_return_profile_is_ready(struct TimeOfDayReturnProfile *handle);
+
+const char *wickra_time_of_day_return_profile_name(struct TimeOfDayReturnProfile *handle);
 
 void wickra_time_of_day_return_profile_reset(struct TimeOfDayReturnProfile *handle);
 
@@ -12426,6 +13424,8 @@ uintptr_t wickra_tpo_profile_warmup_period(struct TpoProfile *handle);
 
 bool wickra_tpo_profile_is_ready(struct TpoProfile *handle);
 
+const char *wickra_tpo_profile_name(struct TpoProfile *handle);
+
 void wickra_tpo_profile_reset(struct TpoProfile *handle);
 
 void wickra_tpo_profile_free(struct TpoProfile *handle);
@@ -12446,6 +13446,8 @@ intptr_t wickra_volume_by_time_profile_update(struct VolumeByTimeProfile *handle
 uintptr_t wickra_volume_by_time_profile_warmup_period(struct VolumeByTimeProfile *handle);
 
 bool wickra_volume_by_time_profile_is_ready(struct VolumeByTimeProfile *handle);
+
+const char *wickra_volume_by_time_profile_name(struct VolumeByTimeProfile *handle);
 
 void wickra_volume_by_time_profile_reset(struct VolumeByTimeProfile *handle);
 
@@ -12468,6 +13470,8 @@ uintptr_t wickra_volume_profile_warmup_period(struct VolumeProfile *handle);
 
 bool wickra_volume_profile_is_ready(struct VolumeProfile *handle);
 
+const char *wickra_volume_profile_name(struct VolumeProfile *handle);
+
 void wickra_volume_profile_reset(struct VolumeProfile *handle);
 
 void wickra_volume_profile_free(struct VolumeProfile *handle);
@@ -12483,6 +13487,8 @@ uintptr_t wickra_dollar_bars_update(struct DollarBars *handle,
                                     int64_t timestamp,
                                     struct WickraDollarBar *out,
                                     uintptr_t cap);
+
+const char *wickra_dollar_bars_name(struct DollarBars *handle);
 
 void wickra_dollar_bars_reset(struct DollarBars *handle);
 
@@ -12500,6 +13506,8 @@ uintptr_t wickra_imbalance_bars_update(struct ImbalanceBars *handle,
                                        struct WickraImbalanceBar *out,
                                        uintptr_t cap);
 
+const char *wickra_imbalance_bars_name(struct ImbalanceBars *handle);
+
 void wickra_imbalance_bars_reset(struct ImbalanceBars *handle);
 
 void wickra_imbalance_bars_free(struct ImbalanceBars *handle);
@@ -12515,6 +13523,8 @@ uintptr_t wickra_kagi_bars_update(struct KagiBars *handle,
                                   int64_t timestamp,
                                   struct WickraKagiBar *out,
                                   uintptr_t cap);
+
+const char *wickra_kagi_bars_name(struct KagiBars *handle);
 
 void wickra_kagi_bars_reset(struct KagiBars *handle);
 
@@ -12532,6 +13542,8 @@ uintptr_t wickra_point_and_figure_bars_update(struct PointAndFigureBars *handle,
                                               struct WickraPnfColumn *out,
                                               uintptr_t cap);
 
+const char *wickra_point_and_figure_bars_name(struct PointAndFigureBars *handle);
+
 void wickra_point_and_figure_bars_reset(struct PointAndFigureBars *handle);
 
 void wickra_point_and_figure_bars_free(struct PointAndFigureBars *handle);
@@ -12547,6 +13559,8 @@ uintptr_t wickra_range_bars_update(struct RangeBars *handle,
                                    int64_t timestamp,
                                    struct WickraRangeBar *out,
                                    uintptr_t cap);
+
+const char *wickra_range_bars_name(struct RangeBars *handle);
 
 void wickra_range_bars_reset(struct RangeBars *handle);
 
@@ -12564,6 +13578,8 @@ uintptr_t wickra_renko_bars_update(struct RenkoBars *handle,
                                    struct WickraRenkoBrick *out,
                                    uintptr_t cap);
 
+const char *wickra_renko_bars_name(struct RenkoBars *handle);
+
 void wickra_renko_bars_reset(struct RenkoBars *handle);
 
 void wickra_renko_bars_free(struct RenkoBars *handle);
@@ -12579,6 +13595,8 @@ uintptr_t wickra_run_bars_update(struct RunBars *handle,
                                  int64_t timestamp,
                                  struct WickraRunBar *out,
                                  uintptr_t cap);
+
+const char *wickra_run_bars_name(struct RunBars *handle);
 
 void wickra_run_bars_reset(struct RunBars *handle);
 
@@ -12596,6 +13614,8 @@ uintptr_t wickra_three_line_break_bars_update(struct ThreeLineBreakBars *handle,
                                               struct WickraLineBreakBar *out,
                                               uintptr_t cap);
 
+const char *wickra_three_line_break_bars_name(struct ThreeLineBreakBars *handle);
+
 void wickra_three_line_break_bars_reset(struct ThreeLineBreakBars *handle);
 
 void wickra_three_line_break_bars_free(struct ThreeLineBreakBars *handle);
@@ -12612,6 +13632,8 @@ uintptr_t wickra_tick_bars_update(struct TickBars *handle,
                                   struct WickraTickBar *out,
                                   uintptr_t cap);
 
+const char *wickra_tick_bars_name(struct TickBars *handle);
+
 void wickra_tick_bars_reset(struct TickBars *handle);
 
 void wickra_tick_bars_free(struct TickBars *handle);
@@ -12627,6 +13649,8 @@ uintptr_t wickra_volume_bars_update(struct VolumeBars *handle,
                                     int64_t timestamp,
                                     struct WickraVolumeBar *out,
                                     uintptr_t cap);
+
+const char *wickra_volume_bars_name(struct VolumeBars *handle);
 
 void wickra_volume_bars_reset(struct VolumeBars *handle);
 
@@ -12645,6 +13669,8 @@ uintptr_t wickra_macd_ext_warmup_period(struct MacdExt *handle);
 
 bool wickra_macd_ext_is_ready(struct MacdExt *handle);
 
+const char *wickra_macd_ext_name(struct MacdExt *handle);
+
 void wickra_macd_ext_reset(struct MacdExt *handle);
 
 void wickra_macd_ext_free(struct MacdExt *handle);
@@ -12662,6 +13688,8 @@ intptr_t wickra_footprint_update(struct Footprint *handle,
 uintptr_t wickra_footprint_warmup_period(struct Footprint *handle);
 
 bool wickra_footprint_is_ready(struct Footprint *handle);
+
+const char *wickra_footprint_name(struct Footprint *handle);
 
 void wickra_footprint_reset(struct Footprint *handle);
 
