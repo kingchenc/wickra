@@ -23,6 +23,13 @@ internal static class WickraNative
     // Any exported symbol works as a fingerprint; sma_new exists in every build.
     private const string SentinelSymbol = "wickra_sma_new";
 
+    // CA2255 warns against [ModuleInitializer] in libraries, but registering the
+    // native-library resolver before any P/Invoke runs is exactly the advanced
+    // scenario the attribute exists for: a static constructor would run too late
+    // (only on first access to this type), letting the default resolver fail first.
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Usage", "CA2255:The 'ModuleInitializer' attribute should not be used in libraries",
+        Justification = "The DllImport resolver must be registered before the first P/Invoke; a static constructor would run too late.")]
     [ModuleInitializer]
     internal static void Register()
     {
