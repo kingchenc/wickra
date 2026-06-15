@@ -13711,9 +13711,11 @@ struct TickAggregator *wickra_tick_aggregator_new(int64_t bucket, bool gap_fill)
 intptr_t wickra_tick_aggregator_push(struct TickAggregator *handle,
                                      double price,
                                      double size,
-                                     int64_t timestamp,
-                                     struct WickraCandle *out,
-                                     uintptr_t cap);
+                                     int64_t timestamp);
+
+intptr_t wickra_tick_aggregator_drain(struct TickAggregator *handle,
+                                      struct WickraCandle *out,
+                                      uintptr_t cap);
 
 void wickra_tick_aggregator_free(struct TickAggregator *handle);
 

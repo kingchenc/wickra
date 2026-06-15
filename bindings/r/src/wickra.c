@@ -18965,6 +18965,38 @@ SEXP wk_thrusting_reset(SEXP e) {
   return R_NilValue;
 }
 
+static void tick_aggregator_fin(SEXP e) {
+  struct TickAggregator *h = (struct TickAggregator *)R_ExternalPtrAddr(e);
+  if (h) wickra_tick_aggregator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tick_aggregator_new(SEXP a0, SEXP a1) {
+  struct TickAggregator *h = wickra_tick_aggregator_new((int64_t)Rf_asReal(a0), (bool)(Rf_asLogical(a1) == TRUE));
+  if (!h) Rf_error("invalid TickAggregator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tick_aggregator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tick_aggregator_push(SEXP e, SEXP price, SEXP size, SEXP ts) {
+  struct TickAggregator *h = (struct TickAggregator *)R_ExternalPtrAddr(e);
+  intptr_t n = wickra_tick_aggregator_push(h, Rf_asReal(price), Rf_asReal(size), (int64_t)Rf_asReal(ts));
+  if (n <= 0) return Rf_allocMatrix(REALSXP, 0, 6);
+  struct WickraCandle *buf = (struct WickraCandle *)R_alloc(n, sizeof(struct WickraCandle));
+  intptr_t w = wickra_tick_aggregator_drain(h, buf, (uintptr_t)n);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)w, 6));
+  for (intptr_t i = 0; i < w; i++) {
+    REAL(r)[i + w * 0] = buf[i].open;
+    REAL(r)[i + w * 1] = buf[i].high;
+    REAL(r)[i + w * 2] = buf[i].low;
+    REAL(r)[i + w * 3] = buf[i].close;
+    REAL(r)[i + w * 4] = buf[i].volume;
+    REAL(r)[i + w * 5] = (double)buf[i].timestamp;
+  }
+  UNPROTECT(1);
+  return r;
+}
+
 static void tick_bars_fin(SEXP e) {
   struct TickBars *h = (struct TickBars *)R_ExternalPtrAddr(e);
   if (h) wickra_tick_bars_free(h);
@@ -25418,6 +25450,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_thrusting_is_ready", (DL_FUNC)&wk_thrusting_is_ready, 1},
   {"wk_thrusting_name", (DL_FUNC)&wk_thrusting_name, 1},
   {"wk_thrusting_reset", (DL_FUNC)&wk_thrusting_reset, 1},
+  {"wk_tick_aggregator_new", (DL_FUNC)&wk_tick_aggregator_new, 2},
+  {"wk_tick_aggregator_push", (DL_FUNC)&wk_tick_aggregator_push, 4},
   {"wk_tick_bars_new", (DL_FUNC)&wk_tick_bars_new, 1},
   {"wk_tick_bars_update", (DL_FUNC)&wk_tick_bars_update, 7},
   {"wk_tick_bars_name", (DL_FUNC)&wk_tick_bars_name, 1},

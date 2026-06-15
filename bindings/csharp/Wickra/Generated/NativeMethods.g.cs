@@ -12404,6 +12404,18 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_footprint_free(nint handle);
 
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nint wickra_tick_aggregator_new(long bucket, [MarshalAs(UnmanagedType.U1)] bool gapFill);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nint wickra_tick_aggregator_push(nint handle, double price, double size, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nint wickra_tick_aggregator_drain(nint handle, WickraCandle* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial void wickra_tick_aggregator_free(nint handle);
+
 }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -12501,6 +12513,17 @@ internal static partial class NativeMethods
         public double s2;
         public double s3;
         public double s4;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct WickraCandle
+    {
+        public double open;
+        public double high;
+        public double low;
+        public double close;
+        public double volume;
+        public long timestamp;
     }
 
     [StructLayout(LayoutKind.Sequential)]

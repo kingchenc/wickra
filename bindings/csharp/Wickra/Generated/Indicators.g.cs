@@ -16,6 +16,7 @@ public readonly record struct AutoFibOutput(double Level0, double Level236, doub
 public readonly record struct BollingerOutput(double Upper, double Middle, double Lower, double Stddev);
 public readonly record struct BomarBandsOutput(double Upper, double Middle, double Lower);
 public readonly record struct CamarillaPivotsOutput(double Pp, double R1, double R2, double R3, double R4, double S1, double S2, double S3, double S4);
+public readonly record struct Candle(double Open, double High, double Low, double Close, double Volume, double Timestamp);
 public readonly record struct CandleVolumeOutput(double Body, double Width);
 public readonly record struct CentralPivotRangeOutput(double Pivot, double Tc, double Bc);
 public readonly record struct ChandeKrollStopOutput(double StopLong, double StopShort);
@@ -34699,6 +34700,51 @@ public sealed class Thrusting : IDisposable
     {
         NativeMethods.wickra_thrusting_reset(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
+    }
+
+    public void Dispose() => _handle.Dispose();
+}
+
+public sealed class TickAggregator : IDisposable
+{
+    private readonly WickraHandle _handle;
+
+    public TickAggregator(long bucket, bool gapFill)
+    {
+        var ptr = NativeMethods.wickra_tick_aggregator_new(bucket, gapFill);
+        if (ptr == nint.Zero)
+        {
+            throw new ArgumentException("invalid TickAggregator parameters");
+        }
+
+        _handle = new WickraHandle(ptr, NativeMethods.wickra_tick_aggregator_free);
+    }
+
+
+    /// <summary>Feed one trade tick; returns the candles it closed.</summary>
+    public Candle[] Push(double price, double size, long timestamp)
+    {
+        var count = (long)NativeMethods.wickra_tick_aggregator_push(_handle.DangerousGetHandle(), price, size, timestamp);
+        GC.KeepAlive(_handle);
+        if (count <= 0)
+        {
+            return Array.Empty<Candle>();
+        }
+        var buffer = new WickraCandle[count];
+        unsafe
+        {
+            fixed (WickraCandle* ptr = buffer)
+            {
+                NativeMethods.wickra_tick_aggregator_drain(_handle.DangerousGetHandle(), ptr, (nuint)count);
+            }
+        }
+        GC.KeepAlive(_handle);
+        var result = new Candle[count];
+        for (var i = 0; i < count; i++)
+        {
+            result[i] = new Candle(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume, buffer[i].timestamp);
+        }
+        return result;
     }
 
     public void Dispose() => _handle.Dispose();

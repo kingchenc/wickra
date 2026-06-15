@@ -3947,6 +3947,10 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_FOOTPRINT_NAME;
     public static MethodHandle WICKRA_FOOTPRINT_RESET;
     public static MethodHandle WICKRA_FOOTPRINT_FREE;
+    public static MethodHandle WICKRA_TICK_AGGREGATOR_NEW;
+    public static MethodHandle WICKRA_TICK_AGGREGATOR_PUSH;
+    public static MethodHandle WICKRA_TICK_AGGREGATOR_DRAIN;
+    public static MethodHandle WICKRA_TICK_AGGREGATOR_FREE;
 
     static {
         init0();
@@ -8015,6 +8019,10 @@ public final class NativeMethods {
         WICKRA_FOOTPRINT_NAME = h("wickra_footprint_name", FunctionDescriptor.of(ADDRESS, ADDRESS));
         WICKRA_FOOTPRINT_RESET = h("wickra_footprint_reset", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_FOOTPRINT_FREE = h("wickra_footprint_free", FunctionDescriptor.ofVoid(ADDRESS));
+        WICKRA_TICK_AGGREGATOR_NEW = h("wickra_tick_aggregator_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_BYTE));
+        WICKRA_TICK_AGGREGATOR_PUSH = h("wickra_tick_aggregator_push", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG));
+        WICKRA_TICK_AGGREGATOR_DRAIN = h("wickra_tick_aggregator_drain", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
+        WICKRA_TICK_AGGREGATOR_FREE = h("wickra_tick_aggregator_free", FunctionDescriptor.ofVoid(ADDRESS));
     }
 
 }
