@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **`name()` on every indicator in all 10 languages.** The canonical
+  `Indicator::name()` / `BarBuilder::name()` accessor is now exposed through every
+  binding — Node.js `name()`, WASM `name()`, Python `name()`, and the C ABI
+  `wickra_<ind>_name()` surfaced as Go `Name()`, C# `Name()`, Java `name()`, and
+  the R `name()` S3 generic (C/C++ call the C ABI directly). The returned string
+  is the core canonical name, which may differ from the registered class name
+  (e.g. `ChaikinMoneyFlow` reports `"CMF"`, `Donchian` reports
+  `"DonchianChannels"`). A new cross-language golden (`testdata/golden/names.json`)
+  pins this name for all 514 indicators identically across every binding.
+
 ## [0.9.2] - 2026-06-15
 
 ### Added
