@@ -27,9 +27,14 @@ const BAR_BUILDERS = new Set([
   'ThreeLineBreakBars',
 ]);
 
+// Data-layer types (tick aggregator, resampler) are not `Indicator`s: they
+// transform raw market data into candles and have their own update/flush shape,
+// so they are excluded from the streaming-indicator completeness contract.
+const DATA_LAYER = new Set(['TickAggregator', 'Resampler']);
+
 // An "indicator class" is an exported constructor whose prototype carries the
 // streaming `update` method. This excludes `version` (a plain function), the bar
-// builders, and any non-indicator export.
+// builders, the data-layer types, and any non-indicator export.
 function indicatorClasses() {
   return Object.keys(wickra).filter((name) => {
     const value = wickra[name];
@@ -37,7 +42,8 @@ function indicatorClasses() {
       typeof value === 'function' &&
       value.prototype &&
       typeof value.prototype.update === 'function' &&
-      !BAR_BUILDERS.has(name)
+      !BAR_BUILDERS.has(name) &&
+      !DATA_LAYER.has(name)
     );
   });
 }
