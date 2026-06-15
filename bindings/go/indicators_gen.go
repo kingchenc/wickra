@@ -3,12 +3,14 @@
 package wickra
 
 /*
+#include <stdlib.h>
 #include "wickra.h"
 */
 import "C"
 
 import (
 	"runtime"
+	"time"
 	"unsafe"
 )
 
@@ -43317,5 +43319,115 @@ func (ind *Zlema) Close() {
 		C.wickra_zlema_free(ind.handle)
 		ind.handle = nil
 		runtime.SetFinalizer(ind, nil)
+	}
+}
+
+// ===== Live Binance kline feed (feature `live-binance`) =====
+
+// BinanceInterval selects a kline interval (the Interval declaration order).
+type BinanceInterval uint8
+
+// Kline intervals supported by the live Binance feed.
+const (
+	OneSecond BinanceInterval = iota
+	OneMinute
+	ThreeMinutes
+	FiveMinutes
+	FifteenMinutes
+	ThirtyMinutes
+	OneHour
+	TwoHours
+	FourHours
+	SixHours
+	EightHours
+	TwelveHours
+	OneDay
+	ThreeDays
+	OneWeek
+	OneMonth
+)
+
+// KlineEvent is one event from the live Binance feed.
+type KlineEvent struct {
+	Symbol   string
+	Open     float64
+	High     float64
+	Low      float64
+	Close    float64
+	Volume   float64
+	OpenTime int64
+	IsClosed bool
+}
+
+// BinanceFeed is a live Binance kline stream over the Wickra C ABI.
+type BinanceFeed struct {
+	handle *C.struct_BinanceStream
+}
+
+// NewBinanceFeed connects to Binance's live kline stream for the given
+// comma-separated symbols (case-insensitive) at interval. baseURL overrides
+// the endpoint ("" = production wss://stream.binance.com:9443; pass a ws://
+// URL to target a test server). It returns ErrInvalidParams on a bad symbol
+// list, an unknown interval, a bad URL, or a failed initial connect.
+func NewBinanceFeed(symbols string, interval BinanceInterval, baseURL string) (*BinanceFeed, error) {
+	csym := C.CString(symbols)
+	defer C.free(unsafe.Pointer(csym))
+	var curl *C.char
+	if baseURL != "" {
+		curl = C.CString(baseURL)
+		defer C.free(unsafe.Pointer(curl))
+	}
+	ptr := C.wickra_binance_connect(csym, C.uint8_t(interval), curl)
+	if ptr == nil {
+		return nil, ErrInvalidParams
+	}
+	obj := &BinanceFeed{handle: ptr}
+	runtime.SetFinalizer(obj, (*BinanceFeed).Close)
+	return obj, nil
+}
+
+// Next polls for the next kline event, waiting up to timeout. It returns the
+// event and true when one arrives, the zero value and false on timeout, or
+// ErrFeedClosed once the stream is closed or has errored out.
+func (f *BinanceFeed) Next(timeout time.Duration) (KlineEvent, bool, error) {
+	var ev C.struct_WickraKlineEvent
+	code := int(C.wickra_binance_next(f.handle, &ev, C.int64_t(timeout.Milliseconds())))
+	runtime.KeepAlive(f)
+	switch code {
+	case 1:
+		return klineFromC(&ev), true, nil
+	case 0:
+		return KlineEvent{}, false, nil
+	default:
+		return KlineEvent{}, false, ErrFeedClosed
+	}
+}
+
+func klineFromC(ev *C.struct_WickraKlineEvent) KlineEvent {
+	n := 0
+	for n < len(ev.symbol) && ev.symbol[n] != 0 {
+		n++
+	}
+	sym := C.GoBytes(unsafe.Pointer(&ev.symbol[0]), C.int(n))
+	return KlineEvent{
+		Symbol:   string(sym),
+		Open:     float64(ev.open),
+		High:     float64(ev.high),
+		Low:      float64(ev.low),
+		Close:    float64(ev.close),
+		Volume:   float64(ev.volume),
+		OpenTime: int64(ev.open_time),
+		IsClosed: bool(ev.is_closed),
+	}
+}
+
+// Close ends the stream and frees the native handle. Idempotent and safe to
+// call alongside the finalizer.
+func (f *BinanceFeed) Close() {
+	if f.handle != nil {
+		C.wickra_binance_close(f.handle)
+		C.wickra_binance_free(f.handle)
+		f.handle = nil
+		runtime.SetFinalizer(f, nil)
 	}
 }

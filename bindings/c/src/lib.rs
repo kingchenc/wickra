@@ -68379,6 +68379,199 @@ pub unsafe extern "C" fn wickra_candle_reader_free(handle: *mut CandleReader) {
     }
 }
 
+// ===== Live Binance kline feed (feature `live-binance`; blocking poll) =====
+
+/// C-ABI view of one kline event from the live Binance feed.
+#[cfg(feature = "live-binance")]
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKlineEvent {
+    /// NUL-terminated lowercase symbol (e.g. `b"btcusdt\0"`), truncated to 15 bytes.
+    pub symbol: [u8; 16],
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    /// Candle open time as Binance sends it (milliseconds since the Unix epoch).
+    pub open_time: i64,
+    /// Whether the candle is closed; only closed candles are final.
+    pub is_closed: bool,
+}
+
+/// Opaque live Binance kline stream: the async stream plus a single-thread tokio
+/// runtime that drives it. Each poll runs one async step to completion.
+#[cfg(feature = "live-binance")]
+#[derive(Debug)]
+pub struct BinanceStream {
+    runtime: tokio::runtime::Runtime,
+    inner: wickra_data::live::binance::BinanceKlineStream,
+}
+
+/// Map a `u8` interval code (the `Interval` declaration order, `0..=15`) to the
+/// feed's interval. Returns `None` for an unknown code.
+#[cfg(feature = "live-binance")]
+fn binance_interval(code: u8) -> Option<wickra_data::live::binance::Interval> {
+    use wickra_data::live::binance::Interval;
+    Some(match code {
+        0 => Interval::OneSecond,
+        1 => Interval::OneMinute,
+        2 => Interval::ThreeMinutes,
+        3 => Interval::FiveMinutes,
+        4 => Interval::FifteenMinutes,
+        5 => Interval::ThirtyMinutes,
+        6 => Interval::OneHour,
+        7 => Interval::TwoHours,
+        8 => Interval::FourHours,
+        9 => Interval::SixHours,
+        10 => Interval::EightHours,
+        11 => Interval::TwelveHours,
+        12 => Interval::OneDay,
+        13 => Interval::ThreeDays,
+        14 => Interval::OneWeek,
+        15 => Interval::OneMonth,
+        _ => return None,
+    })
+}
+
+/// Connect to Binance's live kline stream for one or more comma-separated
+/// `symbols` (case-insensitive, e.g. `"BTCUSDT,ETHUSDT"`) at the given `interval`
+/// code (`0..=15`, the `Interval` declaration order). `base_url` overrides the
+/// endpoint (`NULL` = production `wss://stream.binance.com:9443`); pass a `ws://…`
+/// URL to target a test server. Returns `NULL` on a null/empty/invalid symbol
+/// list, an unknown interval, a bad URL, or a failed initial connect. Release
+/// with `wickra_binance_free`.
+///
+/// # Safety
+/// `symbols` must be a valid NUL-terminated UTF-8 C string; `base_url` must be
+/// `NULL` or a valid NUL-terminated UTF-8 C string.
+#[cfg(feature = "live-binance")]
+#[no_mangle]
+pub unsafe extern "C" fn wickra_binance_connect(
+    symbols: *const c_char,
+    interval: u8,
+    base_url: *const c_char,
+) -> *mut BinanceStream {
+    if symbols.is_null() {
+        return ptr::null_mut();
+    }
+    let Ok(symbols_str) = core::ffi::CStr::from_ptr(symbols).to_str() else {
+        return ptr::null_mut();
+    };
+    let symbol_list: Vec<String> = symbols_str
+        .split(',')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(str::to_owned)
+        .collect();
+    if symbol_list.is_empty() {
+        return ptr::null_mut();
+    }
+    let Some(interval) = binance_interval(interval) else {
+        return ptr::null_mut();
+    };
+    let mut config = wickra_data::live::binance::BinanceConfig::default();
+    if !base_url.is_null() {
+        let Ok(url) = core::ffi::CStr::from_ptr(base_url).to_str() else {
+            return ptr::null_mut();
+        };
+        url.clone_into(&mut config.base_url);
+    }
+    let Ok(runtime) = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+    else {
+        return ptr::null_mut();
+    };
+    match runtime.block_on(
+        wickra_data::live::binance::BinanceKlineStream::connect_with_config(
+            &symbol_list,
+            interval,
+            config,
+        ),
+    ) {
+        Ok(inner) => Box::into_raw(Box::new(BinanceStream { runtime, inner })),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Poll for the next kline event, waiting up to `timeout_ms` milliseconds.
+/// Returns `1` and writes the event to `*out` when one arrives, `0` on timeout
+/// (no event yet — call again), or `-1` if the stream is closed/errored or
+/// `handle`/`out` is `NULL`. A dropped connection is reconnected transparently
+/// within a single call (which may consume part of the timeout).
+///
+/// # Safety
+/// `handle` (from `wickra_binance_connect`, not freed) and `out` must be valid or `NULL`.
+#[cfg(feature = "live-binance")]
+#[no_mangle]
+pub unsafe extern "C" fn wickra_binance_next(
+    handle: *mut BinanceStream,
+    out: *mut WickraKlineEvent,
+    timeout_ms: i64,
+) -> i32 {
+    let Some(stream) = handle.as_mut() else {
+        return -1;
+    };
+    if out.is_null() {
+        return -1;
+    }
+    let timeout = std::time::Duration::from_millis(timeout_ms.max(0) as u64);
+    let runtime = &stream.runtime;
+    let inner = &mut stream.inner;
+    let result =
+        runtime.block_on(async { tokio::time::timeout(timeout, inner.next_event()).await });
+    match result {
+        Ok(Ok(Some(event))) => {
+            let mut symbol = [0_u8; 16];
+            for (slot, byte) in symbol.iter_mut().zip(event.symbol.bytes()).take(15) {
+                *slot = byte;
+            }
+            *out = WickraKlineEvent {
+                symbol,
+                open: event.candle.open,
+                high: event.candle.high,
+                low: event.candle.low,
+                close: event.candle.close,
+                volume: event.candle.volume,
+                open_time: event.candle.timestamp,
+                is_closed: event.is_closed,
+            };
+            1
+        }
+        // Closed stream or any transport/parse error: both terminal for the poll.
+        Ok(Ok(None) | Err(_)) => -1,
+        Err(_) => 0,
+    }
+}
+
+/// Close the stream's connection; afterwards every `wickra_binance_next` returns
+/// `-1`. No-op on a `NULL` handle.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_binance_connect`, not freed), or `NULL`.
+#[cfg(feature = "live-binance")]
+#[no_mangle]
+pub unsafe extern "C" fn wickra_binance_close(handle: *mut BinanceStream) {
+    if let Some(stream) = handle.as_mut() {
+        let runtime = &stream.runtime;
+        let inner = &mut stream.inner;
+        let _ = runtime.block_on(inner.close());
+    }
+}
+
+/// Destroy a stream created by `wickra_binance_connect`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_binance_connect` and not previously freed, or `NULL`.
+#[cfg(feature = "live-binance")]
+#[no_mangle]
+pub unsafe extern "C" fn wickra_binance_free(handle: *mut BinanceStream) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
