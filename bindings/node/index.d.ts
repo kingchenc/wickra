@@ -594,6 +594,15 @@ export interface VolumeWeightedMacdValue {
   signal: number
   histogram: number
 }
+/** One aggregated OHLCV candle emitted by [`TickAggregatorNode`]. */
+export interface CandleValue {
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+  timestamp: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -5929,4 +5938,22 @@ export declare class VolumeWeightedMacd {
   name(): string
   isReady(): boolean
   warmupPeriod(): number
+}
+export type TickAggregatorNode = TickAggregator
+/** Roll trade ticks up into fixed-timeframe OHLCV candles. */
+export declare class TickAggregator {
+  /**
+   * Construct an aggregator with the given bucket size (in the same unit as
+   * the tick timestamps). Pass `gapFill = true` to emit a flat placeholder
+   * candle for every skipped bucket.
+   */
+  constructor(bucket: number, gapFill?: boolean | undefined | null)
+  /**
+   * Push one trade tick; returns every candle that closed as a result (none
+   * while the open bar keeps growing, one on a bucket boundary, plus one flat
+   * candle per skipped bucket when gap filling is enabled).
+   */
+  push(price: number, size: number, timestamp: number): Array<CandleValue>
+  /** Whether gap filling is enabled. */
+  fillsGaps(): boolean
 }

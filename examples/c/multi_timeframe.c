@@ -30,12 +30,12 @@
 /* Aggregate `in` into fixed-width time buckets of `tf_ms`. Writes the bucketed
  * candles into the caller-owned `out` (capacity >= count) and returns how many
  * buckets were produced. */
-static size_t resample(const WickraCandle *in, size_t count, int64_t tf_ms,
-                       WickraCandle *out) {
+static size_t resample(const WickraBar *in, size_t count, int64_t tf_ms,
+                       WickraBar *out) {
     size_t produced = 0;
     int open_bucket = 0;
     int64_t bucket_start = 0;
-    WickraCandle cur = {0};
+    WickraBar cur = {0};
     for (size_t i = 0; i < count; ++i) {
         int64_t b = in[i].timestamp - (in[i].timestamp % tf_ms);
         if (!open_bucket || b != bucket_start) {
@@ -63,7 +63,7 @@ static size_t resample(const WickraCandle *in, size_t count, int64_t tf_ms,
     return produced;
 }
 
-static void summarize(const char *label, const WickraCandle *candles, size_t n) {
+static void summarize(const char *label, const WickraBar *candles, size_t n) {
     if (n == 0) {
         printf("  %-5s (empty)\n", label);
         return;
@@ -76,7 +76,7 @@ static void summarize(const char *label, const WickraCandle *candles, size_t n) 
     double last_hist = NAN;
     double last_adx = NAN;
     for (size_t i = 0; i < n; ++i) {
-        const WickraCandle *c = &candles[i];
+        const WickraBar *c = &candles[i];
         double r = wickra_rsi_update(rsi, c->close);
         if (isfinite(r)) {
             last_rsi = r;
@@ -119,14 +119,14 @@ static void summarize(const char *label, const WickraCandle *candles, size_t n) 
 int main(int argc, char **argv) {
     const char *path = (argc > 1) ? argv[1] : WICKRA_DATA_DIR "/btcusdt-1m.csv";
 
-    WickraCandle *ones = NULL;
+    WickraBar *ones = NULL;
     size_t n = wickra_load_csv(path, &ones);
     if (n == 0) {
         fprintf(stderr, "multi_timeframe: no candles read from %s\n", path);
         return 1;
     }
     /* Resampling only ever produces fewer candles than the 1m source. */
-    WickraCandle *buf = (WickraCandle *)malloc(n * sizeof(*buf));
+    WickraBar *buf = (WickraBar *)malloc(n * sizeof(*buf));
     if (buf == NULL) {
         fprintf(stderr, "multi_timeframe: allocation failed\n");
         free(ones);

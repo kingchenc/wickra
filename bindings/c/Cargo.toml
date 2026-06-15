@@ -57,3 +57,4 @@ parallel = ["wickra-core/parallel"]
 # does not set it, which would leave rayon in the wasm build. wickra-c is
 # `publish = false`, so no version pin is needed (and none to keep in sync).
 wickra-core = { path = "../../crates/wickra-core", default-features = false }
+wickra-data = { path = "../../crates/wickra-data" }

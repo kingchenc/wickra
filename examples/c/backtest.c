@@ -34,7 +34,7 @@ static double last_finite(const double *v, size_t n) {
 int main(int argc, char **argv) {
     const char *path = (argc > 1) ? argv[1] : WICKRA_DATA_DIR "/btcusdt-1d.csv";
 
-    WickraCandle *candles = NULL;
+    WickraBar *candles = NULL;
     size_t n = wickra_load_csv(path, &candles);
     if (n == 0) {
         fprintf(stderr, "backtest: no candles read from %s\n", path);
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     double last_atr = NAN;
     double last_obv = NAN;
     for (size_t i = 0; i < n; ++i) {
-        const WickraCandle *c = &candles[i];
+        const WickraBar *c = &candles[i];
         WickraBollingerOutput bo;
         if (wickra_bollinger_bands_update(bb, c->close, &bo)) {
             last_bb = bo;

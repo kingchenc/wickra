@@ -102,6 +102,16 @@ type CamarillaPivotsOutput struct {
 	S4 float64
 }
 
+// Candle is the output of the Candle indicator.
+type Candle struct {
+	Open      float64
+	High      float64
+	Low       float64
+	Close     float64
+	Volume    float64
+	Timestamp int64
+}
+
 // CandleVolumeOutput is the output of the CandleVolume indicator.
 type CandleVolumeOutput struct {
 	Body  float64
@@ -36386,6 +36396,51 @@ func (ind *Thrusting) Reset() {
 func (ind *Thrusting) Close() {
 	if ind.handle != nil {
 		C.wickra_thrusting_free(ind.handle)
+		ind.handle = nil
+		runtime.SetFinalizer(ind, nil)
+	}
+}
+
+// TickAggregator wraps the TickAggregator indicator over the Wickra C ABI.
+type TickAggregator struct {
+	handle *C.struct_TickAggregator
+}
+
+// NewTickAggregator constructs a TickAggregator. It returns ErrInvalidParams when the
+// native constructor rejects the arguments.
+func NewTickAggregator(bucket int64, gapFill bool) (*TickAggregator, error) {
+	ptr := C.wickra_tick_aggregator_new(C.int64_t(bucket), C.bool(gapFill))
+	if ptr == nil {
+		return nil, ErrInvalidParams
+	}
+	obj := &TickAggregator{handle: ptr}
+	runtime.SetFinalizer(obj, (*TickAggregator).Close)
+	return obj, nil
+}
+
+// Push feeds one trade tick and returns the candles it closed (none while
+// the open bar grows, one per closed bucket, plus gap-fill placeholders).
+func (ind *TickAggregator) Push(price float64, size float64, timestamp int64) []Candle {
+	n := int(C.wickra_tick_aggregator_push(ind.handle, C.double(price), C.double(size), C.int64_t(timestamp)))
+	runtime.KeepAlive(ind)
+	if n <= 0 {
+		return nil
+	}
+	buf := make([]C.struct_WickraCandle, n)
+	C.wickra_tick_aggregator_drain(ind.handle, &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	out := make([]Candle, n)
+	for i := 0; i < n; i++ {
+		out[i] = Candle{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume), int64(buf[i].timestamp)}
+	}
+	return out
+}
+
+// Close frees the native handle. It is idempotent and safe to call
+// alongside the finalizer.
+func (ind *TickAggregator) Close() {
+	if ind.handle != nil {
+		C.wickra_tick_aggregator_free(ind.handle)
 		ind.handle = nil
 		runtime.SetFinalizer(ind, nil)
 	}

@@ -876,6 +876,8 @@ typedef struct ThreeStarsInSouth ThreeStarsInSouth;
 
 typedef struct Thrusting Thrusting;
 
+typedef struct TickAggregator TickAggregator;
+
 typedef struct TickBars TickBars;
 
 typedef struct TickIndex TickIndex;
@@ -1674,6 +1676,15 @@ typedef struct WickraFootprintLevel {
     double bid_vol;
     double ask_vol;
 } WickraFootprintLevel;
+
+typedef struct WickraCandle {
+    double open;
+    double high;
+    double low;
+    double close;
+    double volume;
+    int64_t timestamp;
+} WickraCandle;
 
 #ifdef __cplusplus
 extern "C" {
@@ -13694,6 +13705,19 @@ const char *wickra_footprint_name(struct Footprint *handle);
 void wickra_footprint_reset(struct Footprint *handle);
 
 void wickra_footprint_free(struct Footprint *handle);
+
+struct TickAggregator *wickra_tick_aggregator_new(int64_t bucket, bool gap_fill);
+
+intptr_t wickra_tick_aggregator_push(struct TickAggregator *handle,
+                                     double price,
+                                     double size,
+                                     int64_t timestamp);
+
+intptr_t wickra_tick_aggregator_drain(struct TickAggregator *handle,
+                                      struct WickraCandle *out,
+                                      uintptr_t cap);
+
+void wickra_tick_aggregator_free(struct TickAggregator *handle);
 
 #ifdef __cplusplus
 }  // extern "C"

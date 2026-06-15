@@ -3471,6 +3471,14 @@ Thrusting <- function() {
   .wk_obj("thrusting", ptr, "Thrusting")
 }
 
+#' TickAggregator indicator
+#' @keywords internal
+#' @export
+TickAggregator <- function(bucket, gap_fill) {
+  ptr <- .Call("wk_tick_aggregator_new", bucket, gap_fill, PACKAGE = "wickra")
+  .wk_obj("tick_aggregator", ptr, "TickAggregator")
+}
+
 #' TickBars indicator
 #' @keywords internal
 #' @export

@@ -24,6 +24,7 @@ workspace = true
 # depend on the local path directly with default features disabled. This also
 # strips the parallel batch helpers we don't ship to JavaScript.
 wickra-core = { path = "../../crates/wickra-core", default-features = false }
+wickra-data = { path = "../../crates/wickra-data" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }

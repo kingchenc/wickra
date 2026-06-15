@@ -21865,3 +21865,75 @@ impl VolumeWeightedMacdNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ===== Data layer: tick-to-candle aggregation =====
+
+/// Convert a `wickra-data` error into a JS error.
+fn map_data_err(e: wickra_data::Error) -> NapiError {
+    NapiError::new(Status::InvalidArg, e.to_string())
+}
+
+/// One aggregated OHLCV candle emitted by [`TickAggregatorNode`].
+#[napi(object)]
+pub struct CandleValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub timestamp: f64,
+}
+
+/// Roll trade ticks up into fixed-timeframe OHLCV candles.
+#[napi(js_name = "TickAggregator")]
+pub struct TickAggregatorNode {
+    inner: wickra_data::aggregator::TickAggregator,
+}
+
+#[napi]
+impl TickAggregatorNode {
+    /// Construct an aggregator with the given bucket size (in the same unit as
+    /// the tick timestamps). Pass `gapFill = true` to emit a flat placeholder
+    /// candle for every skipped bucket.
+    #[napi(constructor)]
+    pub fn new(bucket: f64, gap_fill: Option<bool>) -> napi::Result<Self> {
+        let timeframe =
+            wickra_data::aggregator::Timeframe::new(bucket as i64).map_err(map_data_err)?;
+        let mut inner = wickra_data::aggregator::TickAggregator::new(timeframe);
+        if gap_fill.unwrap_or(false) {
+            inner = inner.with_gap_fill(true);
+        }
+        Ok(Self { inner })
+    }
+
+    /// Push one trade tick; returns every candle that closed as a result (none
+    /// while the open bar keeps growing, one on a bucket boundary, plus one flat
+    /// candle per skipped bucket when gap filling is enabled).
+    #[napi]
+    pub fn push(
+        &mut self,
+        price: f64,
+        size: f64,
+        timestamp: f64,
+    ) -> napi::Result<Vec<CandleValue>> {
+        let tick = wc::Tick::new(price, size, timestamp as i64).map_err(map_err)?;
+        let candles = self.inner.push(tick).map_err(map_data_err)?;
+        Ok(candles
+            .into_iter()
+            .map(|c| CandleValue {
+                open: c.open,
+                high: c.high,
+                low: c.low,
+                close: c.close,
+                volume: c.volume,
+                timestamp: c.timestamp as f64,
+            })
+            .collect())
+    }
+
+    /// Whether gap filling is enabled.
+    #[napi(js_name = "fillsGaps")]
+    pub fn fills_gaps(&self) -> bool {
+        self.inner.fills_gaps()
+    }
+}

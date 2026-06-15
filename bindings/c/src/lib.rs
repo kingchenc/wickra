@@ -98,9 +98,9 @@ use wickra_core::{
     TdDWave, TdDeMarker, TdDifferential, TdLines, TdMovingAverage, TdOpen, TdPressure,
     TdPropulsion, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, TdTrap, Tema,
     TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineBreakBars,
-    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TickBars,
-    TickIndex, Tii, TimeBasedStop, TimeOfDayReturnProfile, TowerTopBottom, TpoProfile, Trade,
-    TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
+    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tick,
+    TickBars, TickIndex, Tii, TimeBasedStop, TimeOfDayReturnProfile, TowerTopBottom, TpoProfile,
+    Trade, TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
     TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar,
     Trix, TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer,
     TwiggsMoneyFlow, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver,
@@ -113,6 +113,8 @@ use wickra_core::{
     WinRate, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZigZag, Zlema,
     T3,
 };
+
+use wickra_data::aggregator::{TickAggregator as DataTickAggregator, Timeframe};
 
 // ===== Scalar indicators (f64 -> f64) =====
 
@@ -68067,6 +68069,120 @@ pub unsafe extern "C" fn wickra_footprint_reset(handle: *mut Footprint) {
 /// `handle` must have been returned by `wickra_footprint_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_footprint_free(handle: *mut Footprint) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Data layer (tick aggregation; caller buffer + count) =====
+
+/// C-ABI view of an OHLCV candle (the tick aggregator's output).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraCandle {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub timestamp: i64,
+}
+
+/// Opaque tick aggregator: the streaming aggregator plus the buffer of candles
+/// the most recent `push` closed, awaiting `drain`. Named `TickAggregator` (the
+/// public C-ABI handle); the inner `wickra-data` type is aliased to avoid the
+/// name clash.
+#[derive(Debug)]
+pub struct TickAggregator {
+    inner: DataTickAggregator,
+    pending: Vec<Candle>,
+}
+
+/// Create a tick aggregator with the given bucket size (the same unit as the
+/// tick timestamps). `gap_fill` emits a flat placeholder candle for every
+/// skipped bucket. Returns `NULL` on a non-positive bucket; release with
+/// `wickra_tick_aggregator_free`.
+#[no_mangle]
+pub extern "C" fn wickra_tick_aggregator_new(bucket: i64, gap_fill: bool) -> *mut TickAggregator {
+    match Timeframe::new(bucket) {
+        Ok(timeframe) => Box::into_raw(Box::new(TickAggregator {
+            inner: DataTickAggregator::new(timeframe).with_gap_fill(gap_fill),
+            pending: Vec::new(),
+        })),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Push one trade tick. Buffers the candles it closed inside the handle and
+/// returns the count (`0` if the open bar merely grew), or `-1` on a `NULL`
+/// handle / invalid tick / malformed timestamp. Read the candles with
+/// `wickra_tick_aggregator_drain`; the next `push` replaces the buffer.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_aggregator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_aggregator_push(
+    handle: *mut TickAggregator,
+    price: f64,
+    size: f64,
+    timestamp: i64,
+) -> isize {
+    let Some(aggregator) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(tick) = Tick::new(price, size, timestamp) else {
+        return -1;
+    };
+    let Ok(candles) = aggregator.inner.push(tick) else {
+        return -1;
+    };
+    aggregator.pending = candles;
+    isize::try_from(aggregator.pending.len()).unwrap_or(isize::MAX)
+}
+
+/// Copy up to `cap` buffered candles (from the last `push`) into `out`, remove
+/// them from the buffer, and return the number written. Returns `0` on a `NULL`
+/// handle / `out`. Call with `cap` equal to the last `push` return to drain the
+/// whole batch losslessly.
+///
+/// # Safety
+/// `handle` (from `wickra_tick_aggregator_new`, not freed) and `out` must be valid
+/// or `NULL`; when non-`NULL`, `out` must cover `cap` `WickraCandle` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_aggregator_drain(
+    handle: *mut TickAggregator,
+    out: *mut WickraCandle,
+    cap: usize,
+) -> isize {
+    let Some(aggregator) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = aggregator.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, candle) in slots.iter_mut().zip(aggregator.pending.drain(..count)) {
+        *slot = WickraCandle {
+            open: candle.open,
+            high: candle.high,
+            low: candle.low,
+            close: candle.close,
+            volume: candle.volume,
+            timestamp: candle.timestamp,
+        };
+    }
+    isize::try_from(count).unwrap_or(isize::MAX)
+}
+
+/// Destroy a tick aggregator created by `wickra_tick_aggregator_new`. No-op if
+/// `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_tick_aggregator_new` and not
+/// previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_aggregator_free(handle: *mut TickAggregator) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }

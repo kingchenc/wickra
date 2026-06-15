@@ -138,3 +138,35 @@ name <- function(object) {
 name.wickra_indicator <- function(object) {
   .Call(paste0("wk_", object$prefix, "_name"), object$ptr, PACKAGE = "wickra")
 }
+
+#' Push a trade tick into a tick aggregator
+#'
+#' Feeds one trade tick to a [TickAggregator()] and returns the candles it
+#' closed as a numeric matrix with columns `open`, `high`, `low`, `close`,
+#' `volume`, `timestamp` (zero rows while the open bar merely grows).
+#'
+#' @param object A `wickra_indicator` created by [TickAggregator()].
+#' @param price Trade price.
+#' @param size Trade size (volume).
+#' @param timestamp Trade timestamp, in the same unit as the aggregator bucket.
+#' @return A numeric matrix with six named columns (possibly zero rows).
+#' @examples
+#' agg <- TickAggregator(1000)
+#' push(agg, 100, 1, 0)
+#' push(agg, 102, 1, 1000) # closes the first bucket
+#' @export
+push <- function(object, price, size, timestamp) {
+  UseMethod("push")
+}
+
+#' @rdname push
+#' @export
+push.wickra_indicator <- function(object, price, size, timestamp) {
+  out <- .Call(
+    paste0("wk_", object$prefix, "_push"),
+    object$ptr, price, size, timestamp,
+    PACKAGE = "wickra"
+  )
+  colnames(out) <- c("open", "high", "low", "close", "volume", "timestamp")
+  out
+}

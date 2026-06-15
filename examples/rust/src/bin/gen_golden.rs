@@ -17,8 +17,9 @@ use std::path::Path;
 
 use wickra::{
     AdOscillator, Adx, Atr, AverageDrawdown, AwesomeOscillatorHistogram, Beta, Candle, Ema,
-    Indicator, IntradayIntensity, MacdIndicator, Rsi, Sma,
+    Indicator, IntradayIntensity, MacdIndicator, Rsi, Sma, Tick,
 };
+use wickra_data::aggregator::{TickAggregator, Timeframe};
 
 const N: usize = 80;
 
@@ -183,7 +184,50 @@ fn main() {
     emit_special(dir, &candles);
     emit_profiles(dir, &candles);
     emit_bars(dir, &candles);
+    emit_data_layer(dir);
     println!("golden fixtures written to {}", dir.display());
+}
+
+/// Deterministic trade tick `i`: price on the shared varied path, a small
+/// repeating size, and a timestamp that places roughly three ticks per
+/// 1000-unit bucket. A deliberate jump at `i == 36` opens a multi-bucket gap so
+/// the gap-fill fixture exercises several flat candles emitted from one push.
+fn tick(i: usize) -> (f64, f64, i64) {
+    let t = i as f64;
+    let price = 100.0 + 10.0 * (t * 0.3).sin() + 0.5 * t;
+    let size = 1.0 + (i % 5) as f64;
+    let base = i64::try_from(i).expect("tick index fits i64") * 350;
+    let ts = if i >= 36 { base + 5000 } else { base };
+    (price, size, ts)
+}
+
+/// Data layer: the tick-to-candle aggregator. Writes the shared tick input plus
+/// the reference candle streams with and without gap filling.
+fn emit_data_layer(dir: &Path) {
+    const N_TICKS: usize = 60;
+    let ticks: Vec<(f64, f64, i64)> = (0..N_TICKS).map(tick).collect();
+
+    let mut tin = Vec::with_capacity(N_TICKS);
+    for &(price, size, ts) in &ticks {
+        tin.push(format!("{price},{size},{ts}"));
+    }
+    write_csv(dir, "data_ticks", "price,size,timestamp", &tin);
+
+    let header = "open,high,low,close,volume,timestamp";
+    for (name, gap_fill) in [("data_candles", false), ("data_candles_gap", true)] {
+        let mut agg = TickAggregator::new(Timeframe::new(1000).unwrap()).with_gap_fill(gap_fill);
+        let mut rows = Vec::new();
+        for &(price, size, ts) in &ticks {
+            let tick = Tick::new(price, size, ts).expect("valid tick");
+            for c in agg.push(tick).expect("valid push") {
+                rows.push(format!(
+                    "{},{},{},{},{},{}",
+                    c.open, c.high, c.low, c.close, c.volume, c.timestamp
+                ));
+            }
+        }
+        write_csv(dir, name, header, &rows);
+    }
 }
 
 // AUTO-GENERATED scalar-output golden tranche (single f64 output).

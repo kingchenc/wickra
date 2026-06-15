@@ -34,7 +34,7 @@
 int main(int argc, char **argv) {
     const char *path = (argc > 1) ? argv[1] : WICKRA_DATA_DIR "/btcusdt-1h.csv";
 
-    WickraCandle *candles = NULL;
+    WickraBar *candles = NULL;
     size_t n = wickra_load_csv(path, &candles);
     if (n == 0) {
         fprintf(stderr, "CSV is empty: %s\n", path);
@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
     int prev_hist_sign = -1;
 
     for (size_t i = 0; i < n; ++i) {
-        const WickraCandle *c = &candles[i];
+        const WickraBar *c = &candles[i];
         double price = c->close;
         WickraMacdOutput m;
         int macd_ready = wickra_macd_indicator_update(macd, price, &m);

@@ -83,7 +83,8 @@ endif()
 # prove the C ABI header is consumable from each language. The fixtures live at
 # the repo root; pass the absolute path as the test argument.
 get_filename_component(WICKRA_GOLDEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../testdata/golden" ABSOLUTE)
-foreach(gt_pair "golden_test:golden_test.c" "golden_test_cpp:golden_test.cpp")
+foreach(gt_pair "golden_test:golden_test.c" "golden_test_cpp:golden_test.cpp"
+                "data_layer_test:data_layer_test.c" "data_layer_test_cpp:data_layer_test.cpp")
     string(REPLACE ":" ";" gt_list "${gt_pair}")
     list(GET gt_list 0 gt_name)
     list(GET gt_list 1 gt_src)
