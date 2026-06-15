@@ -34,7 +34,7 @@
 int main(int argc, char **argv) {
     const char *path = (argc > 1) ? argv[1] : WICKRA_DATA_DIR "/btcusdt-1h.csv";
 
-    WickraCandle *candles = NULL;
+    WickraBar *candles = NULL;
     size_t n = wickra_load_csv(path, &candles);
     if (n < RSI_PERIOD * 4) {
         fprintf(stderr, "dataset too small: %llu\n", (unsigned long long)n);

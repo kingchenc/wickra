@@ -15,27 +15,27 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct WickraCandle {
+typedef struct WickraBar {
     int64_t timestamp;
     double open;
     double high;
     double low;
     double close;
     double volume;
-} WickraCandle;
+} WickraBar;
 
 /* Load an OHLCV CSV into a malloc'd array. Returns the candle count and stores
  * the array in *out (caller frees with free()). Returns 0 and leaves *out NULL
  * on any error (missing file, no parseable rows). A leading header line whose
  * first field is non-numeric is skipped. */
-size_t wickra_load_csv(const char *path, WickraCandle **out);
+size_t wickra_load_csv(const char *path, WickraBar **out);
 
 #ifdef WICKRA_CSV_IMPL
 
 #include <stdio.h>
 #include <stdlib.h>
 
-size_t wickra_load_csv(const char *path, WickraCandle **out) {
+size_t wickra_load_csv(const char *path, WickraBar **out) {
     *out = NULL;
     FILE *f = fopen(path, "r");
     if (f == NULL) {
@@ -45,7 +45,7 @@ size_t wickra_load_csv(const char *path, WickraCandle **out) {
 
     size_t cap = 1024;
     size_t n = 0;
-    WickraCandle *rows = (WickraCandle *)malloc(cap * sizeof(*rows));
+    WickraBar *rows = (WickraBar *)malloc(cap * sizeof(*rows));
     if (rows == NULL) {
         fclose(f);
         return 0;
@@ -53,7 +53,7 @@ size_t wickra_load_csv(const char *path, WickraCandle **out) {
 
     char line[512];
     while (fgets(line, (int)sizeof(line), f) != NULL) {
-        WickraCandle c;
+        WickraBar c;
         long long ts = 0;
         /* sscanf returns the number of fields successfully matched. A header
          * row ("timestamp,...") matches 0 and is skipped. */
@@ -66,7 +66,7 @@ size_t wickra_load_csv(const char *path, WickraCandle **out) {
 
         if (n == cap) {
             cap *= 2;
-            WickraCandle *grown = (WickraCandle *)realloc(rows, cap * sizeof(*rows));
+            WickraBar *grown = (WickraBar *)realloc(rows, cap * sizeof(*rows));
             if (grown == NULL) {
                 free(rows);
                 fclose(f);
