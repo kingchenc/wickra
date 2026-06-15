@@ -600,6 +600,7 @@ export declare class SMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -609,6 +610,7 @@ export declare class EMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -618,6 +620,7 @@ export declare class WMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -627,6 +630,7 @@ export declare class RSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -636,6 +640,7 @@ export declare class DEMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -645,6 +650,7 @@ export declare class TEMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -654,6 +660,7 @@ export declare class HMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -663,6 +670,7 @@ export declare class ROC {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -672,6 +680,7 @@ export declare class TRIX {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -681,6 +690,7 @@ export declare class SMMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -690,6 +700,7 @@ export declare class TRIMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -699,6 +710,7 @@ export declare class ZLEMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -708,6 +720,7 @@ export declare class MOM {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -717,6 +730,7 @@ export declare class CMO {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -726,6 +740,7 @@ export declare class DPO {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -735,6 +750,7 @@ export declare class StdDev {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -744,6 +760,7 @@ export declare class UlcerIndex {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -753,6 +770,7 @@ export declare class VerticalHorizontalFilter {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -762,6 +780,7 @@ export declare class ZScore {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -771,6 +790,7 @@ export declare class McGinleyDynamic {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -780,6 +800,7 @@ export declare class FRAMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -789,6 +810,7 @@ export declare class SuperSmoother {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -798,6 +820,7 @@ export declare class FisherTransform {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -807,6 +830,7 @@ export declare class Decycler {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -816,6 +840,7 @@ export declare class CenterOfGravity {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -825,6 +850,7 @@ export declare class CyberneticCycle {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -834,6 +860,7 @@ export declare class InstantaneousTrendline {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -843,6 +870,7 @@ export declare class EhlersStochastic {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -852,6 +880,7 @@ export declare class RVIVolatility {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -861,6 +890,7 @@ export declare class Variance {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -870,6 +900,7 @@ export declare class CoefficientOfVariation {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -879,6 +910,7 @@ export declare class Skewness {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -888,6 +920,7 @@ export declare class Kurtosis {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -897,6 +930,7 @@ export declare class StandardError {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -906,6 +940,7 @@ export declare class DetrendedStdDev {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -915,6 +950,7 @@ export declare class RSquared {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -924,6 +960,7 @@ export declare class MedianAbsoluteDeviation {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -933,6 +970,7 @@ export declare class MIDPOINT {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -942,6 +980,7 @@ export declare class ROCP {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -951,6 +990,7 @@ export declare class ROCR {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -960,6 +1000,7 @@ export declare class ROCR100 {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -969,6 +1010,7 @@ export declare class LINEARREG_INTERCEPT {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -978,6 +1020,7 @@ export declare class TSF {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -987,6 +1030,7 @@ export declare class LogReturn {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -996,6 +1040,7 @@ export declare class RealizedVolatility {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1005,6 +1050,7 @@ export declare class RollingIqr {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1014,6 +1060,7 @@ export declare class RollingPercentileRank {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1023,6 +1070,7 @@ export declare class TrendLabel {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1032,6 +1080,7 @@ export declare class WinRate {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1041,6 +1090,7 @@ export declare class Expectancy {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1050,6 +1100,7 @@ export declare class SWMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1059,6 +1110,7 @@ export declare class GMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1068,6 +1120,7 @@ export declare class EHMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1077,6 +1130,7 @@ export declare class MedianMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1086,6 +1140,7 @@ export declare class AdaptiveLaguerre {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1095,6 +1150,7 @@ export declare class DisparityIndex {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1104,6 +1160,7 @@ export declare class FisherRSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1113,6 +1170,7 @@ export declare class RSX {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1122,6 +1180,7 @@ export declare class DynamicMomentumIndex {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1131,6 +1190,7 @@ export declare class TREND_STRENGTH_INDEX {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1140,6 +1200,7 @@ export declare class TsfOscillator {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1149,6 +1210,7 @@ export declare class BipowerVariation {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1158,6 +1220,7 @@ export declare class JARQUEBERA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1167,6 +1230,7 @@ export declare class ROLLINGMINMAX {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1176,6 +1240,7 @@ export declare class HIGHPASS {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1185,6 +1250,7 @@ export declare class REFLEX {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1194,6 +1260,7 @@ export declare class TRENDFLEX {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1203,6 +1270,7 @@ export declare class CTI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1212,6 +1280,7 @@ export declare class ADAPTIVERSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1221,6 +1290,7 @@ export declare class UNIVERSALOSC {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1230,6 +1300,7 @@ export declare class SterlingRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1239,6 +1310,7 @@ export declare class BurkeRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1248,6 +1320,7 @@ export declare class MartinRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1257,6 +1330,7 @@ export declare class TailRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1266,6 +1340,7 @@ export declare class KRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1275,6 +1350,7 @@ export declare class CommonSenseRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1284,6 +1360,7 @@ export declare class GainToPainRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1293,6 +1370,7 @@ export declare class UpsidePotentialRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1302,6 +1380,7 @@ export declare class M2Measure {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1311,6 +1390,7 @@ export declare class BANDPASS {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1320,6 +1400,7 @@ export declare class EVENBETTERSINE {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1329,6 +1410,7 @@ export declare class AUTOCORRPGRAM {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1338,6 +1420,7 @@ export declare class SHANNONENT {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1347,6 +1430,7 @@ export declare class SAMPLEENT {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1356,6 +1440,7 @@ export declare class EwmaVolatility {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1365,6 +1450,7 @@ export declare class Garch11 {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1374,6 +1460,7 @@ export declare class VolatilityOfVolatility {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1383,6 +1470,7 @@ export declare class VolatilityCone {
   update(high: number, low: number, close: number): VolatilityConeValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1392,6 +1480,7 @@ export declare class JumpIndicator {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1401,6 +1490,7 @@ export declare class RegimeLabel {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1410,6 +1500,7 @@ export declare class RollingQuantile {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1419,6 +1510,7 @@ export declare class Autocorrelation {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1428,6 +1520,7 @@ export declare class HurstExponent {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1441,6 +1534,7 @@ export declare class PearsonCorrelation {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1454,6 +1548,7 @@ export declare class Beta {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1467,6 +1562,7 @@ export declare class PairwiseBeta {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1480,6 +1576,7 @@ export declare class SpreadAr1Coefficient {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1493,6 +1590,7 @@ export declare class SpearmanCorrelation {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1506,6 +1604,7 @@ export declare class RollingCorrelation {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1519,6 +1618,7 @@ export declare class RollingCovariance {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1532,6 +1632,7 @@ export declare class OuHalfLife {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1545,6 +1646,7 @@ export declare class SpreadHurst {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1558,6 +1660,7 @@ export declare class DistanceSsd {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1571,6 +1674,7 @@ export declare class KendallTau {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1584,6 +1688,7 @@ export declare class BetaNeutralSpread {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1597,6 +1702,7 @@ export declare class HasbrouckInformationShare {
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1614,6 +1720,7 @@ export declare class PairSpreadZScore {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1628,6 +1735,7 @@ export declare class LeadLagCrossCorrelation {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1642,6 +1750,7 @@ export declare class Cointegration {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1656,6 +1765,7 @@ export declare class RelativeStrengthAB {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1673,6 +1783,7 @@ export declare class VarianceRatio {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1690,6 +1801,7 @@ export declare class GrangerCausality {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1704,6 +1816,7 @@ export declare class KalmanHedgeRatio {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1718,6 +1831,7 @@ export declare class SpreadBollingerBands {
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1732,6 +1846,7 @@ export declare class MACD {
    */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1745,6 +1860,7 @@ export declare class MACDFIX {
    */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1762,6 +1878,7 @@ export declare class MACDEXT {
    */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1776,6 +1893,7 @@ export declare class BollingerBands {
    */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1785,6 +1903,7 @@ export declare class ATR {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1794,6 +1913,7 @@ export declare class PLUS_DM {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1803,6 +1923,7 @@ export declare class MINUS_DM {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1812,6 +1933,7 @@ export declare class PLUS_DI {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1821,6 +1943,7 @@ export declare class MINUS_DI {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1830,6 +1953,7 @@ export declare class DX {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1839,6 +1963,7 @@ export declare class MIDPRICE {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1848,6 +1973,7 @@ export declare class AVGPRICE {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1857,6 +1983,7 @@ export declare class SAREXT {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1870,6 +1997,7 @@ export declare class HT_PHASOR {
    */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1879,6 +2007,7 @@ export declare class CloseVsOpen {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1888,6 +2017,7 @@ export declare class BodySizePct {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1897,6 +2027,7 @@ export declare class WickRatio {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1906,6 +2037,7 @@ export declare class HighLowRange {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1915,6 +2047,7 @@ export declare class StochasticCCI {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1924,6 +2057,7 @@ export declare class IMI {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1933,6 +2067,7 @@ export declare class QQE {
   update(value: number): QqeValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1942,6 +2077,7 @@ export declare class ElderRay {
   update(high: number, low: number, close: number): ElderRayValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1951,6 +2087,7 @@ export declare class TTM_TREND {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1960,6 +2097,7 @@ export declare class Qstick {
   update(open: number, close: number): number | null
   batch(open: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1969,6 +2107,7 @@ export declare class POLARIZED_FRACTAL_EFFICIENCY {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1978,6 +2117,7 @@ export declare class WAVE_PM {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1987,6 +2127,7 @@ export declare class GatorOscillator {
   update(high: number, low: number, close: number): GatorOscillatorValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -1996,6 +2137,7 @@ export declare class KasePermissionStochastic {
   update(high: number, low: number, close: number): KasePermissionStochasticValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2005,6 +2147,7 @@ export declare class VolatilityRatio {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2014,6 +2157,7 @@ export declare class ProjectionOscillator {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2023,6 +2167,7 @@ export declare class TimeBasedStop {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2032,6 +2177,7 @@ export declare class ADAPTIVECCI {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2041,6 +2187,7 @@ export declare class Stochastic {
   update(high: number, low: number, close: number): StochValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2050,6 +2197,7 @@ export declare class OBV {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2059,6 +2207,7 @@ export declare class ADX {
   update(high: number, low: number, close: number): AdxValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2068,6 +2217,7 @@ export declare class ADXR {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2075,6 +2225,7 @@ export type CciNode = CCI
 export declare class CCI {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number): number | null
@@ -2084,6 +2235,7 @@ export type WilliamsRNode = WilliamsR
 export declare class WilliamsR {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number): number | null
@@ -2093,6 +2245,7 @@ export type MfiNode = MFI
 export declare class MFI {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number, volume: number): number | null
@@ -2102,6 +2255,7 @@ export type PsarNode = PSAR
 export declare class PSAR {
   constructor(afStart: number, afStep: number, afMax: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number): number | null
@@ -2111,6 +2265,7 @@ export type KeltnerNode = Keltner
 export declare class Keltner {
   constructor(emaPeriod: number, atrPeriod: number, multiplier: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number): KeltnerValue | null
@@ -2120,6 +2275,7 @@ export type DonchianNode = Donchian
 export declare class Donchian {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number): DonchianValue | null
@@ -2129,6 +2285,7 @@ export type VwapNode = VWAP
 export declare class VWAP {
   constructor()
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number, volume: number): number | null
@@ -2139,6 +2296,7 @@ export declare class RollingVWAP {
   constructor(period: number)
   get period(): number
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, close: number, volume: number): number | null
@@ -2148,6 +2306,7 @@ export type AoNode = AwesomeOscillator
 export declare class AwesomeOscillator {
   constructor(fast: number, slow: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number): number | null
@@ -2157,6 +2316,7 @@ export type AroonNode = Aroon
 export declare class Aroon {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number): AroonValue | null
@@ -2168,6 +2328,7 @@ export declare class Inertia {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2177,6 +2338,7 @@ export declare class ConnorsRSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2186,6 +2348,7 @@ export declare class LaguerreRSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2195,6 +2358,7 @@ export declare class SMI {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2205,6 +2369,7 @@ export declare class KST {
   update(value: number): KstValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2214,6 +2379,7 @@ export declare class PGO {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2223,6 +2389,7 @@ export declare class RVI {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2232,6 +2399,7 @@ export declare class AwesomeOscillatorHistogram {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2241,6 +2409,7 @@ export declare class STC {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2250,6 +2419,7 @@ export declare class ElderImpulse {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2259,6 +2429,7 @@ export declare class ZeroLagMACD {
   update(value: number): ZeroLagMacdValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2268,6 +2439,7 @@ export declare class CFO {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2277,6 +2449,7 @@ export declare class APO {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2284,6 +2457,7 @@ export type KamaNode = KAMA
 export declare class KAMA {
   constructor(erPeriod: number, fast: number, slow: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(value: number): number | null
@@ -2295,6 +2469,7 @@ export declare class EVWMA {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2302,6 +2477,7 @@ export type AlligatorNode = Alligator
 export declare class Alligator {
   constructor(jaw: number, teeth: number, lips: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number): AlligatorValue | null
@@ -2311,6 +2487,7 @@ export type JmaNode = JMA
 export declare class JMA {
   constructor(period: number, phase: number, power: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(value: number): number | null
@@ -2320,6 +2497,7 @@ export type VidyaNode = VIDYA
 export declare class VIDYA {
   constructor(period: number, cmoPeriod: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(value: number): number | null
@@ -2329,6 +2507,7 @@ export type AlmaNode = ALMA
 export declare class ALMA {
   constructor(period: number, offset: number, sigma: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(value: number): number | null
@@ -2340,6 +2519,7 @@ export declare class T3 {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2349,6 +2529,7 @@ export declare class GD {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2358,6 +2539,7 @@ export declare class HoltWinters {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2367,6 +2549,7 @@ export declare class RMI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2376,6 +2559,7 @@ export declare class DerivativeOscillator {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2385,6 +2569,7 @@ export declare class MacdHistogram {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2394,6 +2579,7 @@ export declare class PpoHistogram {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2403,6 +2589,7 @@ export declare class TSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2412,6 +2599,7 @@ export declare class PMO {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2421,6 +2609,7 @@ export declare class TII {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2430,6 +2619,7 @@ export declare class ADL {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2439,6 +2629,7 @@ export declare class VolumePriceTrend {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2448,6 +2639,7 @@ export declare class ChaikinMoneyFlow {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2457,6 +2649,7 @@ export declare class ChaikinOscillator {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2466,6 +2659,7 @@ export declare class ForceIndex {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2475,6 +2669,7 @@ export declare class NVI {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2484,6 +2679,7 @@ export declare class PVI {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2493,6 +2689,7 @@ export declare class VolumeOscillator {
   update(volume: number): number | null
   batch(volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2502,6 +2699,7 @@ export declare class KVO {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2511,6 +2709,7 @@ export declare class ADOSC {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2521,6 +2720,7 @@ export declare class AnchoredRSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2531,6 +2731,7 @@ export declare class AnchoredVWAP {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2540,6 +2741,7 @@ export declare class DemandIndex {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2549,6 +2751,7 @@ export declare class TSV {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2558,6 +2761,7 @@ export declare class VZO {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2567,6 +2771,7 @@ export declare class MarketFacilitationIndex {
   update(high: number, low: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2576,6 +2781,7 @@ export declare class EaseOfMovement {
   update(high: number, low: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2589,6 +2795,7 @@ export declare class SuperTrend {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2602,6 +2809,7 @@ export declare class ChandelierExit {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2615,6 +2823,7 @@ export declare class ChandeKrollStop {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2624,6 +2833,7 @@ export declare class AtrTrailingStop {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2633,6 +2843,7 @@ export declare class HiLoActivator {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2642,6 +2853,7 @@ export declare class VoltyStop {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2651,6 +2863,7 @@ export declare class YoyoExit {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   inTrade(): boolean
@@ -2665,6 +2878,7 @@ export declare class DonchianStop {
    */
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2674,6 +2888,7 @@ export declare class PercentageTrailingStop {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2683,6 +2898,7 @@ export declare class StepTrailingStop {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2692,6 +2908,7 @@ export declare class RenkoTrailingStop {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2705,6 +2922,7 @@ export declare class KaseDevStop {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2718,6 +2936,7 @@ export declare class ElderSafeZone {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2731,6 +2950,7 @@ export declare class AtrRatchet {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2744,6 +2964,7 @@ export declare class Nrtr {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2757,6 +2978,7 @@ export declare class ModifiedMaStop {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2766,6 +2988,7 @@ export declare class TypicalPrice {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2775,6 +2998,7 @@ export declare class MedianPrice {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2784,6 +3008,7 @@ export declare class WeightedClose {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2793,6 +3018,7 @@ export declare class LinearRegression {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2802,6 +3028,7 @@ export declare class LinRegSlope {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2811,6 +3038,7 @@ export declare class AcceleratorOscillator {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2820,6 +3048,7 @@ export declare class BalanceOfPower {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2829,6 +3058,7 @@ export declare class ChoppinessIndex {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2838,6 +3068,7 @@ export declare class TrueRange {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2847,6 +3078,7 @@ export declare class ChaikinVolatility {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2856,6 +3088,7 @@ export declare class YangZhangVolatility {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2865,6 +3098,7 @@ export declare class RogersSatchellVolatility {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2874,6 +3108,7 @@ export declare class GarmanKlassVolatility {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2883,6 +3118,7 @@ export declare class ParkinsonVolatility {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2892,6 +3128,7 @@ export declare class LinRegAngle {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2901,6 +3138,7 @@ export declare class BollingerBandwidth {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2910,6 +3148,7 @@ export declare class PercentB {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2919,6 +3158,7 @@ export declare class NATR {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2928,6 +3168,7 @@ export declare class HistoricalVolatility {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2937,6 +3178,7 @@ export declare class AroonOscillator {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2947,6 +3189,7 @@ export declare class WaveTrend {
   update(high: number, low: number, close: number): WaveTrendValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2957,6 +3200,7 @@ export declare class RWI {
   /** Returns `[high0, low0, high1, low1, ...]`, length `2 * n`. Warmup is NaN. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2967,6 +3211,7 @@ export declare class Vortex {
   /** Returns `[plus0, minus0, plus1, minus1, ...]`, length `2 * n`. Warmup is NaN. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2976,6 +3221,7 @@ export declare class MassIndex {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2985,6 +3231,7 @@ export declare class StochRSI {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -2994,6 +3241,7 @@ export declare class UltimateOscillator {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3003,6 +3251,7 @@ export declare class PPO {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3012,6 +3261,7 @@ export declare class Coppock {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3021,6 +3271,7 @@ export declare class VWMA {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3031,6 +3282,7 @@ export declare class MaEnvelope {
   /** Flat `[upper0, middle0, lower0, upper1, ...]`, length `3 * n`. */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3040,6 +3292,7 @@ export declare class AccelerationBands {
   update(high: number, low: number, close: number): AccelerationBandsValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3049,6 +3302,7 @@ export declare class StarcBands {
   update(high: number, low: number, close: number): StarcBandsValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3058,6 +3312,7 @@ export declare class AtrBands {
   update(high: number, low: number, close: number): AtrBandsValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3067,6 +3322,7 @@ export declare class HurstChannel {
   update(high: number, low: number, close: number): HurstChannelValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3076,6 +3332,7 @@ export declare class LinRegChannel {
   update(value: number): LinRegChannelValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3085,6 +3342,7 @@ export declare class StandardErrorBands {
   update(value: number): StandardErrorBandsValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3094,6 +3352,7 @@ export declare class QuartileBands {
   update(value: number): QuartileBandsValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3103,6 +3362,7 @@ export declare class BomarBands {
   update(value: number): BomarBandsValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3112,6 +3372,7 @@ export declare class MedianChannel {
   update(value: number): MedianChannelValue | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3121,6 +3382,7 @@ export declare class ProjectionBands {
   update(high: number, low: number): ProjectionBandsValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3130,6 +3392,7 @@ export declare class CentralPivotRange {
   update(high: number, low: number, close: number): CentralPivotRangeValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3139,6 +3402,7 @@ export declare class MurreyMathLines {
   update(high: number, low: number): MurreyMathLinesValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3148,6 +3412,7 @@ export declare class AndrewsPitchfork {
   update(high: number, low: number): AndrewsPitchforkValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3157,6 +3422,7 @@ export declare class VolumeWeightedSr {
   update(high: number, low: number, volume: number): VolumeWeightedSrValue | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3166,6 +3432,7 @@ export declare class PivotReversal {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3176,6 +3443,7 @@ export declare class DoubleBollinger {
   /** Flat `[u_o, u_i, m, l_i, l_o, ...]`, length `5 * n`. */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3186,6 +3454,7 @@ export declare class TtmSqueeze {
   /** Flat `[sq0, mom0, sq1, mom1, ...]`, length `2 * n`. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3196,6 +3465,7 @@ export declare class FractalChaosBands {
   /** Flat `[u0, l0, u1, l1, ...]`, length `2 * n`. */
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3206,6 +3476,7 @@ export declare class VwapStdDevBands {
   /** Flat `[u0, m0, l0, sd0, ...]`, length `4 * n`. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3215,6 +3486,7 @@ export declare class ClassicPivots {
   update(high: number, low: number, close: number): ClassicPivotsValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3224,6 +3496,7 @@ export declare class FibonacciPivots {
   update(high: number, low: number, close: number): FibonacciPivotsValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3233,6 +3506,7 @@ export declare class Camarilla {
   update(high: number, low: number, close: number): CamarillaValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3242,6 +3516,7 @@ export declare class WoodiePivots {
   update(high: number, low: number, close: number): WoodiePivotsValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3251,6 +3526,7 @@ export declare class DemarkPivots {
   update(open: number, high: number, low: number, close: number): DemarkPivotsValue | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3260,6 +3536,7 @@ export declare class WilliamsFractals {
   update(high: number, low: number): WilliamsFractalsValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3270,6 +3547,7 @@ export declare class ZigZag {
   batch(high: Array<number>, low: Array<number>): Array<number>
   get threshold(): number
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3279,6 +3557,7 @@ export declare class TDSetup {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3289,6 +3568,7 @@ export declare class TDSequential {
   /** Batch returns a flat array `[setup0, countdown0, direction0, setup1, ...]`. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3298,6 +3578,7 @@ export declare class TDDeMarker {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3307,6 +3588,7 @@ export declare class TDREI {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3316,6 +3598,7 @@ export declare class TDPressure {
   update(open: number, high: number, low: number, close: number, volume: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3325,6 +3608,7 @@ export declare class TDCombo {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3334,6 +3618,7 @@ export declare class TDDWave {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3343,6 +3628,7 @@ export declare class TDMovingAverage {
   update(high: number, low: number): TdMovingAverageValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3352,6 +3638,7 @@ export declare class TDCountdown {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3362,6 +3649,7 @@ export declare class TDLines {
   /** Batch returns a flat array `[resistance0, support0, resistance1, ...]`. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3372,6 +3660,7 @@ export declare class TDRangeProjection {
   /** Batch returns a flat array `[high0, low0, high1, low1, ...]`. */
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3381,6 +3670,7 @@ export declare class TDDifferential {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3390,6 +3680,7 @@ export declare class TDOpen {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3400,6 +3691,7 @@ export declare class TDRiskLevel {
   /** Batch returns a flat array `[buyRisk0, sellRisk0, buyRisk1, ...]`. */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3409,6 +3701,7 @@ export declare class InverseFisherTransform {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3418,6 +3711,7 @@ export declare class DecyclerOscillator {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3427,6 +3721,7 @@ export declare class RoofingFilter {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3436,6 +3731,7 @@ export declare class EmpiricalModeDecomposition {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3445,6 +3741,7 @@ export declare class HT_DCPHASE {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3454,6 +3751,7 @@ export declare class HT_TRENDMODE {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3463,6 +3761,7 @@ export declare class HilbertDominantCycle {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3472,6 +3771,7 @@ export declare class AdaptiveCycle {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3482,6 +3782,7 @@ export declare class SineWave {
   batch(prices: Array<number>): Array<number>
   lead(): number
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3492,6 +3793,7 @@ export declare class MAMA {
   /** Returns a flat array of length `2 * n`: `[mama0, fama0, mama1, fama1, ...]`. */
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3501,6 +3803,7 @@ export declare class FAMA {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3514,6 +3817,7 @@ export declare class Ichimoku {
    */
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3524,6 +3828,7 @@ export declare class HeikinAshi {
   /** Returns `[open0, high0, low0, close0, open1, ...]`, length `4 * n`. */
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3533,6 +3838,7 @@ export declare class HeikinAshiOscillator {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3542,6 +3848,7 @@ export declare class ThreeLineBreak {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3551,6 +3858,7 @@ export declare class SmoothedHeikinAshi {
   update(open: number, high: number, low: number, close: number): SmoothedHeikinAshiValue | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3560,6 +3868,7 @@ export declare class Equivolume {
   update(high: number, low: number, volume: number): EquivolumeValue | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3569,6 +3878,7 @@ export declare class CandleVolume {
   update(open: number, close: number, volume: number): CandleVolumeValue | null
   batch(open: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3578,6 +3888,7 @@ export declare class FryPanBottom {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3587,6 +3898,7 @@ export declare class DumplingTop {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3596,6 +3908,7 @@ export declare class NewPriceLines {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3603,6 +3916,7 @@ export type ValueAreaNode = ValueArea
 export declare class ValueArea {
   constructor(period: number, binCount: number, valueAreaPct: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, volume: number): ValueAreaValue | null
@@ -3614,6 +3928,7 @@ export declare class NakedPoc {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3623,6 +3938,7 @@ export declare class SinglePrints {
   update(high: number, low: number): number | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3632,6 +3948,7 @@ export declare class ProfileShape {
   update(high: number, low: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3641,6 +3958,7 @@ export declare class HighLowVolumeNodes {
   update(high: number, low: number, volume: number): HighLowVolumeNodesValue | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3650,6 +3968,7 @@ export declare class CompositeProfile {
   update(high: number, low: number, volume: number): CompositeProfileValue | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3657,6 +3976,7 @@ export type VolumeProfileNode = VolumeProfile
 export declare class VolumeProfile {
   constructor(period: number, binCount: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number, volume: number): VolumeProfileValue | null
@@ -3666,6 +3986,7 @@ export type TpoProfileNode = TpoProfile
 export declare class TpoProfile {
   constructor(period: number, binCount: number)
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   update(high: number, low: number): TpoProfileValue | null
@@ -3675,6 +3996,7 @@ export type InitialBalanceNode = InitialBalance
 export declare class InitialBalance {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   isLocked(): boolean
   warmupPeriod(): number
@@ -3685,6 +4007,7 @@ export type OpeningRangeNode = OpeningRange
 export declare class OpeningRange {
   constructor(period: number)
   reset(): void
+  name(): string
   isReady(): boolean
   isLocked(): boolean
   warmupPeriod(): number
@@ -3697,6 +4020,7 @@ export declare class Doji {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   isSigned(): boolean
@@ -3707,6 +4031,7 @@ export declare class Hammer {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3716,6 +4041,7 @@ export declare class InvertedHammer {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3725,6 +4051,7 @@ export declare class HangingMan {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3734,6 +4061,7 @@ export declare class ShootingStar {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3743,6 +4071,7 @@ export declare class Engulfing {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3752,6 +4081,7 @@ export declare class Harami {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3761,6 +4091,7 @@ export declare class MorningEveningStar {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3770,6 +4101,7 @@ export declare class ThreeSoldiersOrCrows {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3779,6 +4111,7 @@ export declare class PiercingDarkCloud {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3788,6 +4121,7 @@ export declare class Marubozu {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3797,6 +4131,7 @@ export declare class Tweezer {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3806,6 +4141,7 @@ export declare class SpinningTop {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3815,6 +4151,7 @@ export declare class ThreeInside {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3824,6 +4161,7 @@ export declare class ThreeOutside {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3833,6 +4171,7 @@ export declare class TwoCrows {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3842,6 +4181,7 @@ export declare class UpsideGapTwoCrows {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3851,6 +4191,7 @@ export declare class IdenticalThreeCrows {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3860,6 +4201,7 @@ export declare class ThreeLineStrike {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3869,6 +4211,7 @@ export declare class ThreeStarsInSouth {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3878,6 +4221,7 @@ export declare class AbandonedBaby {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3887,6 +4231,7 @@ export declare class AdvanceBlock {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3896,6 +4241,7 @@ export declare class BeltHold {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3905,6 +4251,7 @@ export declare class Breakaway {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3914,6 +4261,7 @@ export declare class Counterattack {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3923,6 +4271,7 @@ export declare class DojiStar {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3932,6 +4281,7 @@ export declare class DragonflyDoji {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3941,6 +4291,7 @@ export declare class GravestoneDoji {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3950,6 +4301,7 @@ export declare class LongLeggedDoji {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3959,6 +4311,7 @@ export declare class RickshawMan {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3968,6 +4321,7 @@ export declare class EveningDojiStar {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3977,6 +4331,7 @@ export declare class MorningDojiStar {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3986,6 +4341,7 @@ export declare class GapSideBySideWhite {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -3995,6 +4351,7 @@ export declare class HighWave {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4004,6 +4361,7 @@ export declare class Hikkake {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4013,6 +4371,7 @@ export declare class HikkakeModified {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4022,6 +4381,7 @@ export declare class HomingPigeon {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4031,6 +4391,7 @@ export declare class OnNeck {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4040,6 +4401,7 @@ export declare class InNeck {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4049,6 +4411,7 @@ export declare class Thrusting {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4058,6 +4421,7 @@ export declare class SeparatingLines {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4067,6 +4431,7 @@ export declare class Kicking {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4076,6 +4441,7 @@ export declare class KickingByLength {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4085,6 +4451,7 @@ export declare class LadderBottom {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4094,6 +4461,7 @@ export declare class MatHold {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4103,6 +4471,7 @@ export declare class MatchingLow {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4112,6 +4481,7 @@ export declare class LongLine {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4121,6 +4491,7 @@ export declare class ShortLine {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4130,6 +4501,7 @@ export declare class RisingThreeMethods {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4139,6 +4511,7 @@ export declare class FallingThreeMethods {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4148,6 +4521,7 @@ export declare class UpsideGapThreeMethods {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4157,6 +4531,7 @@ export declare class DownsideGapThreeMethods {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4166,6 +4541,7 @@ export declare class StalledPattern {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4175,6 +4551,7 @@ export declare class StickSandwich {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4184,6 +4561,7 @@ export declare class Takuri {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4193,6 +4571,7 @@ export declare class ClosingMarubozu {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4202,6 +4581,7 @@ export declare class OpeningMarubozu {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4211,6 +4591,7 @@ export declare class TasukiGap {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4220,6 +4601,7 @@ export declare class UniqueThreeRiver {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4229,6 +4611,7 @@ export declare class ConcealingBabySwallow {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4238,6 +4621,7 @@ export declare class DoubleTopBottom {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4247,6 +4631,7 @@ export declare class TripleTopBottom {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4256,6 +4641,7 @@ export declare class HeadAndShoulders {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4265,6 +4651,7 @@ export declare class Triangle {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4274,6 +4661,7 @@ export declare class Wedge {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4283,6 +4671,7 @@ export declare class FlagPennant {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4292,6 +4681,7 @@ export declare class RectangleRange {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4301,6 +4691,7 @@ export declare class CupAndHandle {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4310,6 +4701,7 @@ export declare class Abcd {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4319,6 +4711,7 @@ export declare class Gartley {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4328,6 +4721,7 @@ export declare class Butterfly {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4337,6 +4731,7 @@ export declare class Bat {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4346,6 +4741,7 @@ export declare class Crab {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4355,6 +4751,7 @@ export declare class Shark {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4364,6 +4761,7 @@ export declare class Cypher {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4373,6 +4771,7 @@ export declare class ThreeDrives {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4382,6 +4781,7 @@ export declare class TDCamouflage {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4391,6 +4791,7 @@ export declare class TDClop {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4400,6 +4801,7 @@ export declare class TDClopwin {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4409,6 +4811,7 @@ export declare class TDPropulsion {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4418,6 +4821,7 @@ export declare class TDTrap {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4427,6 +4831,7 @@ export declare class Tristar {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4436,6 +4841,7 @@ export declare class HaramiCross {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4445,6 +4851,7 @@ export declare class TowerTopBottom {
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4454,6 +4861,7 @@ export declare class OrderBookImbalanceTop1 {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4463,6 +4871,7 @@ export declare class OrderBookImbalanceFull {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4472,6 +4881,7 @@ export declare class Microprice {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4481,6 +4891,7 @@ export declare class QuotedSpread {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4490,6 +4901,7 @@ export declare class DepthSlope {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4499,6 +4911,7 @@ export declare class OrderBookImbalanceTopN {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4508,6 +4921,7 @@ export declare class SignedVolume {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4517,6 +4931,7 @@ export declare class CumulativeVolumeDelta {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4526,6 +4941,7 @@ export declare class TradeImbalance {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4535,6 +4951,7 @@ export declare class TradeSignAutocorrelation {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4544,6 +4961,7 @@ export declare class Pin {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4553,6 +4971,7 @@ export declare class OrderFlowImbalance {
   update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
   batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4562,6 +4981,7 @@ export declare class Vpin {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4571,6 +4991,7 @@ export declare class AmihudIlliquidity {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4580,6 +5001,7 @@ export declare class RollMeasure {
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4589,6 +5011,7 @@ export declare class EffectiveSpread {
   update(price: number, size: number, isBuy: boolean, mid: number): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4598,6 +5021,7 @@ export declare class RealizedSpread {
   update(price: number, size: number, isBuy: boolean, mid: number): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4607,6 +5031,7 @@ export declare class KylesLambda {
   update(price: number, size: number, isBuy: boolean, mid: number): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4616,6 +5041,7 @@ export declare class Footprint {
   update(price: number, size: number, isBuy: boolean): Array<FootprintLevelValue>
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<Array<FootprintLevelValue>>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4625,6 +5051,7 @@ export declare class FundingRate {
   update(fundingRate: number): number | null
   batch(fundingRate: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4634,6 +5061,7 @@ export declare class FundingRateMean {
   update(fundingRate: number): number | null
   batch(fundingRate: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4643,6 +5071,7 @@ export declare class FundingRateZScore {
   update(fundingRate: number): number | null
   batch(fundingRate: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4652,6 +5081,7 @@ export declare class FundingBasis {
   update(markPrice: number, indexPrice: number): number | null
   batch(markPrice: Array<number>, indexPrice: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4661,6 +5091,7 @@ export declare class OpenInterestDelta {
   update(openInterest: number): number | null
   batch(openInterest: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4670,6 +5101,7 @@ export declare class OIPriceDivergence {
   update(openInterest: number, markPrice: number): number | null
   batch(openInterest: Array<number>, markPrice: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4679,6 +5111,7 @@ export declare class OIWeighted {
   update(markPrice: number, openInterest: number): number | null
   batch(markPrice: Array<number>, openInterest: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4688,6 +5121,7 @@ export declare class LongShortRatio {
   update(longSize: number, shortSize: number): number | null
   batch(longSize: Array<number>, shortSize: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4697,6 +5131,7 @@ export declare class TakerBuySellRatio {
   update(takerBuyVolume: number, takerSellVolume: number): number | null
   batch(takerBuyVolume: Array<number>, takerSellVolume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4706,6 +5141,7 @@ export declare class LiquidationFeatures {
   update(longLiquidation: number, shortLiquidation: number): LiquidationFeaturesValue | null
   batch(longLiquidation: Array<number>, shortLiquidation: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4715,6 +5151,7 @@ export declare class TermStructureBasis {
   update(futuresPrice: number, indexPrice: number): number | null
   batch(futuresPrice: Array<number>, indexPrice: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4724,6 +5161,7 @@ export declare class CalendarSpread {
   update(futuresPrice: number, markPrice: number): number | null
   batch(futuresPrice: Array<number>, markPrice: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4733,6 +5171,7 @@ export declare class EstimatedLeverageRatio {
   update(openInterest: number, longSize: number, shortSize: number): number | null
   batch(openInterest: Array<number>, longSize: Array<number>, shortSize: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4742,6 +5181,7 @@ export declare class OiToVolumeRatio {
   update(openInterest: number, takerBuyVolume: number, takerSellVolume: number): number | null
   batch(openInterest: Array<number>, takerBuyVolume: Array<number>, takerSellVolume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4751,6 +5191,7 @@ export declare class PerpetualPremiumIndex {
   update(markPrice: number, indexPrice: number): number | null
   batch(markPrice: Array<number>, indexPrice: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4760,6 +5201,7 @@ export declare class FundingImpliedApr {
   update(fundingRate: number): number | null
   batch(fundingRate: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4769,6 +5211,7 @@ export declare class OpenInterestMomentum {
   update(openInterest: number): number | null
   batch(openInterest: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4778,6 +5221,7 @@ export declare class AdvanceDecline {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4787,6 +5231,7 @@ export declare class AdvanceDeclineRatio {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4796,6 +5241,7 @@ export declare class AdVolumeLine {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4805,6 +5251,7 @@ export declare class McClellanOscillator {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4814,6 +5261,7 @@ export declare class McClellanSummationIndex {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4823,6 +5271,7 @@ export declare class Trin {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4832,6 +5281,7 @@ export declare class BreadthThrust {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4841,6 +5291,7 @@ export declare class NewHighsNewLows {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4850,6 +5301,7 @@ export declare class HighLowIndex {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4859,6 +5311,7 @@ export declare class PercentAboveMa {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>, aboveMa: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>, aboveMa: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4868,6 +5321,7 @@ export declare class UpDownVolumeRatio {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4877,6 +5331,7 @@ export declare class BullishPercentIndex {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>, onBuySignal: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>, onBuySignal: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4886,6 +5341,7 @@ export declare class CumulativeVolumeIndex {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4895,6 +5351,7 @@ export declare class AbsoluteBreadthIndex {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4904,6 +5361,7 @@ export declare class TickIndex {
   update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
   batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4913,6 +5371,7 @@ export declare class SharpeRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4922,6 +5381,7 @@ export declare class SortinoRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4931,6 +5391,7 @@ export declare class CalmarRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4940,6 +5401,7 @@ export declare class OmegaRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4949,6 +5411,7 @@ export declare class MaxDrawdown {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4958,6 +5421,7 @@ export declare class AverageDrawdown {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4967,6 +5431,7 @@ export declare class DrawdownDuration {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4976,6 +5441,7 @@ export declare class PainIndex {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4985,6 +5451,7 @@ export declare class ValueAtRisk {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -4994,6 +5461,7 @@ export declare class ConditionalValueAtRisk {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5003,6 +5471,7 @@ export declare class ProfitFactor {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5012,6 +5481,7 @@ export declare class GainLossRatio {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5021,6 +5491,7 @@ export declare class RecoveryFactor {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5030,6 +5501,7 @@ export declare class KellyCriterion {
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5039,6 +5511,7 @@ export declare class TreynorRatio {
   update(asset: number, benchmark: number): number | null
   batch(asset: Array<number>, benchmark: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5048,6 +5521,7 @@ export declare class InformationRatio {
   update(asset: number, benchmark: number): number | null
   batch(asset: Array<number>, benchmark: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5058,6 +5532,7 @@ export declare class RenkoBars {
   batch(close: Array<number>): Array<RenkoBrickValue>
   boxSize(): number
   reset(): void
+  name(): string
 }
 export type KagiBarsNode = KagiBars
 export declare class KagiBars {
@@ -5066,6 +5541,7 @@ export declare class KagiBars {
   batch(close: Array<number>): Array<KagiSegmentValue>
   reversal(): number
   reset(): void
+  name(): string
 }
 export type PointAndFigureBarsNode = PointAndFigureBars
 export declare class PointAndFigureBars {
@@ -5075,6 +5551,7 @@ export declare class PointAndFigureBars {
   boxSize(): number
   reversal(): number
   reset(): void
+  name(): string
 }
 export type RangeBarsNode = RangeBars
 export declare class RangeBars {
@@ -5083,6 +5560,7 @@ export declare class RangeBars {
   batch(close: Array<number>): Array<RangeBarValue>
   range(): number
   reset(): void
+  name(): string
 }
 export type TickBarsNode = TickBars
 export declare class TickBars {
@@ -5091,6 +5569,7 @@ export declare class TickBars {
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<TickBarValue>
   ticks(): number
   reset(): void
+  name(): string
 }
 export type VolumeBarsNode = VolumeBars
 export declare class VolumeBars {
@@ -5099,6 +5578,7 @@ export declare class VolumeBars {
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<VolumeBarValue>
   volumePerBar(): number
   reset(): void
+  name(): string
 }
 export type DollarBarsNode = DollarBars
 export declare class DollarBars {
@@ -5107,6 +5587,7 @@ export declare class DollarBars {
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<DollarBarValue>
   dollarPerBar(): number
   reset(): void
+  name(): string
 }
 export type ImbalanceBarsNode = ImbalanceBars
 export declare class ImbalanceBars {
@@ -5115,6 +5596,7 @@ export declare class ImbalanceBars {
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<ImbalanceBarValue>
   threshold(): number
   reset(): void
+  name(): string
 }
 export type RunBarsNode = RunBars
 export declare class RunBars {
@@ -5123,6 +5605,7 @@ export declare class RunBars {
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<RunBarValue>
   runLength(): number
   reset(): void
+  name(): string
 }
 export type ThreeLineBreakBarsNode = ThreeLineBreakBars
 export declare class ThreeLineBreakBars {
@@ -5131,6 +5614,7 @@ export declare class ThreeLineBreakBars {
   batch(close: Array<number>): Array<LineBreakBarValue>
   lines(): number
   reset(): void
+  name(): string
 }
 export type AlphaNode = Alpha
 export declare class Alpha {
@@ -5138,6 +5622,7 @@ export declare class Alpha {
   update(asset: number, benchmark: number): number | null
   batch(asset: Array<number>, benchmark: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5147,6 +5632,7 @@ export declare class SessionVwap {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   utcOffsetMinutes(): number
@@ -5157,6 +5643,7 @@ export declare class OvernightGap {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   utcOffsetMinutes(): number
@@ -5167,6 +5654,7 @@ export declare class SeasonalZScore {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   utcOffsetMinutes(): number
@@ -5177,6 +5665,7 @@ export declare class TimeOfDayReturnProfile {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   buckets(): number
@@ -5188,6 +5677,7 @@ export declare class IntradayVolatilityProfile {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   buckets(): number
@@ -5199,6 +5689,7 @@ export declare class VolumeByTimeProfile {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   buckets(): number
@@ -5210,6 +5701,7 @@ export declare class DayOfWeekProfile {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
   utcOffsetMinutes(): number
@@ -5220,6 +5712,7 @@ export declare class AverageDailyRange {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5229,6 +5722,7 @@ export declare class TurnOfMonth {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5238,6 +5732,7 @@ export declare class SessionHighLow {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): SessionHighLowValue | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5247,6 +5742,7 @@ export declare class SessionRange {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): SessionRangeValue | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5256,6 +5752,7 @@ export declare class OvernightIntradayReturn {
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): OvernightIntradayReturnValue | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5265,6 +5762,7 @@ export declare class FibRetracement {
   update(high: number, low: number): FibRetracementValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5274,6 +5772,7 @@ export declare class FibExtension {
   update(high: number, low: number): FibExtensionValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5283,6 +5782,7 @@ export declare class FibProjection {
   update(high: number, low: number): FibProjectionValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5292,6 +5792,7 @@ export declare class AutoFib {
   update(high: number, low: number): AutoFibValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5301,6 +5802,7 @@ export declare class GoldenPocket {
   update(high: number, low: number): GoldenPocketValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5310,6 +5812,7 @@ export declare class FibConfluence {
   update(high: number, low: number): FibConfluenceValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5319,6 +5822,7 @@ export declare class FibFan {
   update(high: number, low: number): FibFanValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5328,6 +5832,7 @@ export declare class FibArcs {
   update(high: number, low: number): FibArcsValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5337,6 +5842,7 @@ export declare class FibChannel {
   update(high: number, low: number): FibChannelValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5346,6 +5852,7 @@ export declare class FibTimeZones {
   update(high: number, low: number): FibTimeZonesValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5355,6 +5862,7 @@ export declare class VolumeRsi {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5364,6 +5872,7 @@ export declare class Wad {
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5373,6 +5882,7 @@ export declare class TwiggsMoneyFlow {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5382,6 +5892,7 @@ export declare class TradeVolumeIndex {
   update(close: number, volume: number): number | null
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5391,6 +5902,7 @@ export declare class IntradayIntensity {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5400,6 +5912,7 @@ export declare class BetterVolume {
   update(high: number, low: number, close: number, volume: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }
@@ -5413,6 +5926,7 @@ export declare class VolumeWeightedMacd {
    */
   batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
+  name(): string
   isReady(): boolean
   warmupPeriod(): number
 }

@@ -60,6 +60,7 @@ macro_rules! wasm_scalar_indicator {
                 Float64Array::from(out.as_slice())
             }
             pub fn reset(&mut self) { self.inner.reset(); }
+            pub fn name(&self) -> String { self.inner.name().to_string() }
             #[wasm_bindgen(js_name = isReady)] pub fn is_ready(&self) -> bool { self.inner.is_ready() }
             #[wasm_bindgen(js_name = warmupPeriod)] pub fn warmup_period(&self) -> usize { self.inner.warmup_period() }
         }
@@ -164,6 +165,10 @@ impl WasmKst {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
@@ -214,6 +219,10 @@ impl WasmZeroLagMacd {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -295,6 +304,10 @@ impl WasmYangZhangVolatility {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -353,6 +366,10 @@ impl WasmRogersSatchellVolatility {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -413,6 +430,10 @@ impl WasmGarmanKlassVolatility {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -455,6 +476,10 @@ impl WasmParkinsonVolatility {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -514,6 +539,10 @@ macro_rules! wasm_pair_indicator {
             }
             pub fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
             }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
@@ -602,6 +631,10 @@ impl WasmPairSpreadZScore {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -658,6 +691,10 @@ impl WasmLeadLagCrossCorrelation {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -717,6 +754,10 @@ impl WasmCointegration {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -775,6 +816,10 @@ impl WasmRelativeStrengthAB {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -818,6 +863,10 @@ impl WasmVarianceRatio {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -860,6 +909,10 @@ impl WasmGrangerCausality {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -918,6 +971,10 @@ impl WasmKalmanHedgeRatio {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -979,6 +1036,10 @@ impl WasmSpreadBollingerBands {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1013,6 +1074,10 @@ impl WasmKama {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -1068,6 +1133,10 @@ impl WasmMacd {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1119,6 +1188,10 @@ impl WasmBb {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 // ---------- Candle-input indicators ----------
@@ -1168,6 +1241,10 @@ impl WasmSmi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1213,6 +1290,10 @@ impl WasmPgo {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -1269,6 +1350,10 @@ impl WasmInertia {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1324,6 +1409,10 @@ impl WasmRvi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -1370,6 +1459,10 @@ impl WasmAtr {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = PLUS_DM)]
@@ -1407,6 +1500,10 @@ impl WasmPlusDm {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -1446,6 +1543,10 @@ impl WasmMinusDm {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = PLUS_DI)]
@@ -1483,6 +1584,10 @@ impl WasmPlusDi {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -1522,6 +1627,10 @@ impl WasmMinusDi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = DX)]
@@ -1560,6 +1669,10 @@ impl WasmDx {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = MIDPRICE)]
@@ -1597,6 +1710,10 @@ impl WasmMidPrice {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -1650,6 +1767,10 @@ impl WasmAvgPrice {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -1710,6 +1831,10 @@ impl WasmMacdExt {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = MACDFIX)]
@@ -1752,6 +1877,10 @@ impl WasmMacdFix {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -1811,6 +1940,10 @@ impl WasmSarExt {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = HT_PHASOR)]
@@ -1857,6 +1990,10 @@ impl WasmHtPhasor {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -1909,6 +2046,10 @@ impl WasmCloseVsOpen {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = BodySizePct)]
@@ -1959,6 +2100,10 @@ impl WasmBodySizePct {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -2011,6 +2156,10 @@ impl WasmWickRatio {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = HighLowRange)]
@@ -2062,6 +2211,10 @@ impl WasmHighLowRange {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = StochasticCCI)]
@@ -2099,6 +2252,10 @@ impl WasmStochasticCci {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -2138,6 +2295,10 @@ impl WasmImi {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     /// Streaming update over one candle's open/high/low/close.
     pub fn update(
@@ -2186,6 +2347,10 @@ impl WasmQqe {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     /// Streaming update. Returns `{ rsiMa, trailingLine }` once warm, else `null`.
     pub fn update(&mut self, value: f64) -> JsValue {
@@ -2246,6 +2411,10 @@ impl WasmElderRay {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     /// Streaming update. Returns `{ bullPower, bearPower }` once warm, else `null`.
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
@@ -2305,6 +2474,10 @@ impl WasmTtmTrend {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = Qstick)]
@@ -2339,6 +2512,10 @@ impl WasmQstick {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     /// Streaming update over one candle's open and close.
     pub fn update(&mut self, open: f64, close: f64) -> Result<Option<f64>, JsError> {
@@ -2398,6 +2575,10 @@ impl WasmGatorOscillator {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     /// Streaming update. Returns `{ upper, lower }` once warm, else `null`.
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
@@ -2459,6 +2640,10 @@ impl WasmKasePermissionStochastic {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     /// Streaming update. Returns `{ fast, slow }` once warm, else `null`.
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
@@ -2518,6 +2703,10 @@ impl WasmVolatilityRatio {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ProjectionOscillator)]
@@ -2555,6 +2744,10 @@ impl WasmProjectionOscillator {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -2594,6 +2787,10 @@ impl WasmTimeBasedStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ADAPTIVECCI)]
@@ -2631,6 +2828,10 @@ impl WasmAdaptiveCci {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -2670,6 +2871,10 @@ impl WasmStoch {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     /// Streaming update. Returns `{ k, d }` once warm, else `null`.
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
@@ -2727,6 +2932,10 @@ impl WasmObv {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
         let c = make_candle(close, close, close, volume)?;
         Ok(self.inner.update(c))
@@ -2776,6 +2985,10 @@ impl WasmUltimateOscillator {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -2831,6 +3044,10 @@ impl WasmAdl {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = VolumePriceTrend)]
@@ -2869,6 +3086,10 @@ impl WasmVolumePriceTrend {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -2918,6 +3139,10 @@ impl WasmChaikinMoneyFlow {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ChaikinOscillator)]
@@ -2966,6 +3191,10 @@ impl WasmChaikinOscillator {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ForceIndex)]
@@ -2999,6 +3228,10 @@ impl WasmForceIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = VolumeOscillator)]
@@ -3028,6 +3261,10 @@ impl WasmVolumeOscillator {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3062,6 +3299,10 @@ impl WasmNvi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = PVI)]
@@ -3094,6 +3335,10 @@ impl WasmPvi {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3143,6 +3388,10 @@ impl WasmKvo {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ADOSC)]
@@ -3183,6 +3432,10 @@ impl WasmAdOscillator {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = AnchoredRSI)]
@@ -3212,6 +3465,10 @@ impl WasmAnchoredRsi {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -3274,6 +3531,10 @@ impl WasmAnchoredVwap {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = DemandIndex)]
@@ -3322,6 +3583,10 @@ impl WasmDemandIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = TSV)]
@@ -3355,6 +3620,10 @@ impl WasmTsv {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = VZO)]
@@ -3387,6 +3656,10 @@ impl WasmVzo {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3428,6 +3701,10 @@ impl WasmMarketFacilitationIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = EaseOfMovement)]
@@ -3466,6 +3743,10 @@ impl WasmEaseOfMovement {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3520,6 +3801,10 @@ impl WasmSuperTrend {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ChandelierExit)]
@@ -3571,6 +3856,10 @@ impl WasmChandelierExit {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3629,6 +3918,10 @@ impl WasmChandeKrollStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = AtrTrailingStop)]
@@ -3667,6 +3960,10 @@ impl WasmAtrTrailingStop {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3709,6 +4006,10 @@ impl WasmHiLoActivator {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = VoltyStop)]
@@ -3748,6 +4049,10 @@ impl WasmVoltyStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = YoyoExit)]
@@ -3786,6 +4091,10 @@ impl WasmYoyoExit {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = inTrade)]
     pub fn in_trade(&self) -> bool {
@@ -3838,6 +4147,10 @@ impl WasmDonchianStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = PercentageTrailingStop)]
@@ -3862,6 +4175,10 @@ impl WasmPercentageTrailingStop {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3888,6 +4205,10 @@ impl WasmStepTrailingStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = RenkoTrailingStop)]
@@ -3912,6 +4233,10 @@ impl WasmRenkoTrailingStop {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -3966,6 +4291,10 @@ impl WasmKaseDevStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ElderSafeZone)]
@@ -4018,6 +4347,10 @@ impl WasmElderSafeZone {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4076,6 +4409,10 @@ impl WasmAtrRatchet {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = Nrtr)]
@@ -4128,6 +4465,10 @@ impl WasmNrtr {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4182,6 +4523,10 @@ impl WasmModifiedMaStop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = TypicalPrice)]
@@ -4227,6 +4572,10 @@ impl WasmTypicalPrice {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = MedianPrice)]
@@ -4265,6 +4614,10 @@ impl WasmMedianPrice {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4311,6 +4664,10 @@ impl WasmWeightedClose {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = AcceleratorOscillator)]
@@ -4348,6 +4705,10 @@ impl WasmAcceleratorOscillator {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4401,6 +4762,10 @@ impl WasmBalanceOfPower {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ChoppinessIndex)]
@@ -4439,6 +4804,10 @@ impl WasmChoppinessIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4485,6 +4854,10 @@ impl WasmTrueRange {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ChaikinVolatility)]
@@ -4517,6 +4890,10 @@ impl WasmChaikinVolatility {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4556,6 +4933,10 @@ impl WasmNatr {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = AroonOscillator)]
@@ -4588,6 +4969,10 @@ impl WasmAroonOscillator {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4639,6 +5024,10 @@ impl WasmVortex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4700,6 +5089,10 @@ impl WasmWaveTrend {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = RWI)]
@@ -4751,6 +5144,10 @@ impl WasmRwi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = MassIndex)]
@@ -4784,6 +5181,10 @@ impl WasmMassIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = EVWMA)]
@@ -4816,6 +5217,10 @@ impl WasmEvwma {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -4857,6 +5262,10 @@ impl WasmVwma {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -4912,6 +5321,10 @@ impl WasmAdx {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -4957,6 +5370,10 @@ impl WasmAdxr {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5004,6 +5421,10 @@ impl WasmWilliamsR {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5049,6 +5470,10 @@ impl WasmCci {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5105,6 +5530,10 @@ impl WasmMfi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5150,6 +5579,10 @@ impl WasmPsar {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5216,6 +5649,10 @@ impl WasmKeltner {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5271,6 +5708,10 @@ impl WasmDonchian {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5333,6 +5774,10 @@ impl WasmVwap {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5392,6 +5837,10 @@ impl WasmRollingVwap {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5433,6 +5882,10 @@ impl WasmAoHist {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5473,6 +5926,10 @@ impl WasmAo {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5531,6 +5988,10 @@ impl WasmAlligator {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5586,6 +6047,10 @@ impl WasmAroon {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5621,6 +6086,10 @@ impl WasmHtDcPhase {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5653,6 +6122,10 @@ impl WasmHtTrendMode {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5687,6 +6160,10 @@ impl WasmHilbertDominantCycle {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -5719,6 +6196,10 @@ impl WasmAdaptiveCycle {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5755,6 +6236,10 @@ impl WasmSineWave {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5804,6 +6289,10 @@ impl WasmMama {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5865,6 +6354,10 @@ impl WasmMaEnvelope {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5928,6 +6421,10 @@ impl WasmAccelerationBands {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -5995,6 +6492,10 @@ impl WasmStarcBands {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6056,6 +6557,10 @@ impl WasmAtrBands {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6119,6 +6624,10 @@ impl WasmHurstChannel {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6170,6 +6679,10 @@ impl WasmLinRegChannel {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6223,6 +6736,10 @@ impl WasmStandardErrorBands {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6274,6 +6791,10 @@ impl WasmQuartileBands {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6327,6 +6848,10 @@ impl WasmBomarBands {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6378,6 +6903,10 @@ impl WasmMedianChannel {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6435,6 +6964,10 @@ impl WasmProjectionBands {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6503,6 +7036,10 @@ impl WasmCentralPivotRange {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6573,6 +7110,10 @@ impl WasmMurreyMathLines {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6629,6 +7170,10 @@ impl WasmAndrewsPitchfork {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6690,6 +7235,10 @@ impl WasmVolumeWeightedSr {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6737,6 +7286,10 @@ impl WasmPivotReversal {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6794,6 +7347,10 @@ impl WasmDoubleBollinger {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6856,6 +7413,10 @@ impl WasmTtmSqueeze {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -6911,6 +7472,10 @@ impl WasmFractalChaosBands {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -6985,6 +7550,10 @@ impl WasmVwapStdDevBands {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7062,6 +7631,10 @@ impl WasmClassicPivots {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7135,6 +7708,10 @@ impl WasmFibonacciPivots {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7214,6 +7791,10 @@ impl WasmCamarilla {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7283,6 +7864,10 @@ impl WasmWoodiePivots {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7357,6 +7942,10 @@ impl WasmDemarkPivots {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7423,6 +8012,10 @@ impl WasmWilliamsFractals {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7480,6 +8073,10 @@ impl WasmZigZag {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7526,6 +8123,10 @@ impl WasmTdSetup {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7603,6 +8204,10 @@ impl WasmTdSequential {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7646,6 +8251,10 @@ impl WasmTdDeMarker {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7688,6 +8297,10 @@ impl WasmTdRei {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7753,6 +8366,10 @@ impl WasmTdPressure {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7812,6 +8429,10 @@ impl WasmTdCombo {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -7859,6 +8480,10 @@ impl WasmTdDWave {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7914,6 +8539,10 @@ impl WasmTdMovingAverage {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -7973,6 +8602,10 @@ impl WasmTdCountdown {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8035,6 +8668,10 @@ impl WasmTdLines {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8106,6 +8743,10 @@ impl WasmTdRangeProjection {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8154,6 +8795,10 @@ impl WasmTdDifferential {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8210,6 +8855,10 @@ impl WasmTdOpen {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8272,6 +8921,10 @@ impl WasmTdRiskLevel {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8369,6 +9022,10 @@ impl WasmIchimoku {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8449,6 +9106,10 @@ impl WasmHeikinAshi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8516,6 +9177,10 @@ impl WasmValueArea {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8574,6 +9239,10 @@ impl WasmNakedPoc {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8621,6 +9290,10 @@ impl WasmSinglePrints {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8677,6 +9350,10 @@ impl WasmProfileShape {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8739,6 +9416,10 @@ impl WasmHighLowVolumeNodes {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -8808,6 +9489,10 @@ impl WasmCompositeProfile {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8875,6 +9560,10 @@ impl WasmVolumeProfile {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8937,6 +9626,10 @@ impl WasmTpoProfile {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -8992,6 +9685,10 @@ impl WasmInitialBalance {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9063,6 +9760,10 @@ impl WasmOpeningRange {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9138,6 +9839,10 @@ macro_rules! wasm_candle_pattern {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -9204,6 +9909,10 @@ impl WasmDoji {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9417,6 +10126,10 @@ macro_rules! wasm_ob_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -9469,6 +10182,10 @@ impl WasmOrderBookImbalanceTopN {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9527,6 +10244,10 @@ macro_rules! wasm_trade_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -9566,6 +10287,10 @@ impl WasmTradeImbalance {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9596,6 +10321,10 @@ impl WasmTradeSignAutocorrelation {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9625,6 +10354,10 @@ impl WasmPin {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9663,6 +10396,10 @@ impl WasmOrderFlowImbalance {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9692,6 +10429,10 @@ impl WasmVpin {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9723,6 +10464,10 @@ impl WasmAmihudIlliquidity {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9752,6 +10497,10 @@ impl WasmRollMeasure {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9816,6 +10565,10 @@ macro_rules! wasm_trade_quote_indicator {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -9858,6 +10611,10 @@ impl WasmRealizedSpread {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -9895,6 +10652,10 @@ impl WasmKylesLambda {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -9943,6 +10704,10 @@ impl WasmFootprint {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10041,6 +10806,10 @@ impl WasmFundingRate {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10070,6 +10839,10 @@ impl WasmFundingRateMean {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10098,6 +10871,10 @@ impl WasmFundingRateZScore {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10134,6 +10911,10 @@ impl WasmFundingBasis {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10168,6 +10949,10 @@ impl WasmOpenInterestDelta {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10309,6 +11094,10 @@ impl WasmOIPriceDivergence {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10344,6 +11133,10 @@ impl WasmOIWeighted {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10378,6 +11171,10 @@ impl WasmLongShortRatio {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10419,6 +11216,10 @@ impl WasmTakerBuySellRatio {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10468,6 +11269,10 @@ impl WasmLiquidationFeatures {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10545,6 +11350,10 @@ impl WasmTermStructureBasis {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10581,6 +11390,10 @@ impl WasmCalendarSpread {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10625,6 +11438,10 @@ impl WasmEstimatedLeverageRatio {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10672,6 +11489,10 @@ impl WasmOiToVolumeRatio {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10709,6 +11530,10 @@ impl WasmPerpetualPremiumIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10740,6 +11565,10 @@ impl WasmFundingImpliedApr {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10770,6 +11599,10 @@ impl WasmOpenInterestMomentum {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10826,6 +11659,10 @@ impl WasmHeikinAshiOscillator {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -10873,6 +11710,10 @@ impl WasmThreeLineBreak {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -10945,6 +11786,10 @@ impl WasmSmoothedHeikinAshi {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11005,6 +11850,10 @@ impl WasmEquivolume {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11071,6 +11920,10 @@ impl WasmCandleVolume {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11118,6 +11971,10 @@ impl WasmFryPanBottom {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11167,6 +12024,10 @@ impl WasmDumplingTop {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11214,6 +12075,10 @@ impl WasmNewPriceLines {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11286,6 +12151,10 @@ impl WasmAdvanceDecline {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11392,6 +12261,10 @@ impl WasmAdvanceDeclineRatio {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11434,6 +12307,10 @@ impl WasmAdVolumeLine {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11478,6 +12355,10 @@ impl WasmMcClellanOscillator {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11520,6 +12401,10 @@ impl WasmMcClellanSummationIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11564,6 +12449,10 @@ impl WasmTrin {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11600,6 +12489,10 @@ impl WasmBreadthThrust {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11644,6 +12537,10 @@ impl WasmNewHighsNewLows {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11680,6 +12577,10 @@ impl WasmHighLowIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11725,6 +12626,10 @@ impl WasmPercentAboveMa {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11767,6 +12672,10 @@ impl WasmUpDownVolumeRatio {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11816,6 +12725,10 @@ impl WasmBullishPercentIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11858,6 +12771,10 @@ impl WasmCumulativeVolumeIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -11902,6 +12819,10 @@ impl WasmAbsoluteBreadthIndex {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -11944,6 +12865,10 @@ impl WasmTickIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -12821,6 +13746,10 @@ impl WasmVolatilityCone {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12865,6 +13794,10 @@ impl WasmDrawdownDuration {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12905,6 +13838,10 @@ impl WasmRecoveryFactor {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -12955,6 +13892,10 @@ impl WasmTreynorRatio {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -12997,6 +13938,10 @@ impl WasmInformationRatio {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -13061,6 +14006,10 @@ impl WasmRenkoBars {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = KagiBars)]
@@ -13108,6 +14057,10 @@ impl WasmKagiBars {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -13161,6 +14114,10 @@ impl WasmPointAndFigureBars {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = RangeBars)]
@@ -13209,6 +14166,10 @@ impl WasmRangeBars {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = TickBars)]
@@ -13251,6 +14212,10 @@ impl WasmTickBars {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -13295,6 +14260,10 @@ impl WasmVolumeBars {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -13341,6 +14310,10 @@ impl WasmDollarBars {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = ImbalanceBars)]
@@ -13377,6 +14350,10 @@ impl WasmImbalanceBars {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -13416,6 +14393,10 @@ impl WasmRunBars {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
 }
 
@@ -13465,6 +14446,10 @@ impl WasmThreeLineBreakBars {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
 }
 
 #[wasm_bindgen(js_name = Alpha)]
@@ -13499,6 +14484,10 @@ impl WasmAlpha {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -13546,6 +14535,10 @@ macro_rules! wasm_seasonality_offset_scalar {
             }
             pub fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
             }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
@@ -13596,6 +14589,10 @@ macro_rules! wasm_seasonality_bucket_profile {
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
+            }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
                 self.inner.is_ready()
@@ -13644,6 +14641,10 @@ macro_rules! wasm_seasonality_offset_profile {
             }
             pub fn reset(&mut self) {
                 self.inner.reset();
+            }
+
+            pub fn name(&self) -> String {
+                self.inner.name().to_string()
             }
             #[wasm_bindgen(js_name = isReady)]
             pub fn is_ready(&self) -> bool {
@@ -13709,6 +14710,10 @@ impl WasmAverageDailyRange {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13750,6 +14755,10 @@ impl WasmTurnOfMonth {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -13795,6 +14804,10 @@ impl WasmSessionHighLow {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -13842,6 +14855,10 @@ impl WasmSessionRange {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -13886,6 +14903,10 @@ impl WasmOvernightIntradayReturn {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -13963,6 +14984,10 @@ impl WasmFibRetracement {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14027,6 +15052,10 @@ impl WasmFibExtension {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14088,6 +15117,10 @@ impl WasmFibProjection {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14157,6 +15190,10 @@ impl WasmAutoFib {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14217,6 +15254,10 @@ impl WasmGoldenPocket {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14274,6 +15315,10 @@ impl WasmFibConfluence {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14335,6 +15380,10 @@ impl WasmFibFan {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14394,6 +15443,10 @@ impl WasmFibArcs {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14457,6 +15510,10 @@ impl WasmFibChannel {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14515,6 +15572,10 @@ impl WasmFibTimeZones {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14557,6 +15618,10 @@ impl WasmVolumeRsi {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14605,6 +15670,10 @@ impl WasmWad {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14663,6 +15732,10 @@ impl WasmTwiggsMoneyFlow {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14705,6 +15778,10 @@ impl WasmTradeVolumeIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14763,6 +15840,10 @@ impl WasmIntradayIntensity {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
+    }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
@@ -14819,6 +15900,10 @@ impl WasmBetterVolume {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
@@ -14878,6 +15963,10 @@ impl WasmVolumeWeightedMacd {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+
+    pub fn name(&self) -> String {
+        self.inner.name().to_string()
     }
     #[wasm_bindgen(js_name = isReady)]
     pub fn is_ready(&self) -> bool {
