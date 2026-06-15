@@ -22,5 +22,6 @@ workspace = true
 
 [dependencies]
 wickra-core = { workspace = true }
+wickra-data = { workspace = true }
 pyo3 = { workspace = true }
 numpy = { workspace = true }

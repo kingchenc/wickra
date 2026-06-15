@@ -28285,6 +28285,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyProfileShape>()?;
     m.add_class::<PyHighLowVolumeNodes>()?;
     m.add_class::<PyCompositeProfile>()?;
+    // Data layer.
+    m.add_class::<PyTickAggregator>()?;
     // Candlestick patterns.
     m.add_class::<PyDoji>()?;
     m.add_class::<PyHammer>()?;
@@ -28556,4 +28558,61 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyUpsidePotentialRatio>()?;
     m.add_class::<PyM2Measure>()?;
     Ok(())
+}
+
+// ===== Data layer: tick-to-candle aggregation =====
+
+/// One aggregated candle as `(open, high, low, close, volume, timestamp)`.
+type CandleTuple = (f64, f64, f64, f64, f64, i64);
+
+/// Convert a `wickra-data` error into a Python `ValueError`.
+fn map_data_err(e: wickra_data::Error) -> PyErr {
+    PyValueError::new_err(e.to_string())
+}
+
+/// Roll trade ticks up into fixed-timeframe OHLCV candles.
+#[pyclass(
+    name = "TickAggregator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTickAggregator {
+    inner: wickra_data::aggregator::TickAggregator,
+}
+
+#[pymethods]
+impl PyTickAggregator {
+    #[new]
+    #[pyo3(signature = (bucket, gap_fill = false))]
+    fn new(bucket: i64, gap_fill: bool) -> PyResult<Self> {
+        let timeframe = wickra_data::aggregator::Timeframe::new(bucket).map_err(map_data_err)?;
+        let mut inner = wickra_data::aggregator::TickAggregator::new(timeframe);
+        if gap_fill {
+            inner = inner.with_gap_fill(true);
+        }
+        Ok(Self { inner })
+    }
+
+    /// Push one trade tick; returns the candles closed as a result, each a
+    /// `(open, high, low, close, volume, timestamp)` tuple.
+    fn push(&mut self, price: f64, size: f64, timestamp: i64) -> PyResult<Vec<CandleTuple>> {
+        let tick = wc::Tick::new(price, size, timestamp).map_err(map_err)?;
+        Ok(self
+            .inner
+            .push(tick)
+            .map_err(map_data_err)?
+            .into_iter()
+            .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp))
+            .collect())
+    }
+
+    #[getter]
+    fn fills_gaps(&self) -> bool {
+        self.inner.fills_gaps()
+    }
+
+    fn __repr__(&self) -> String {
+        format!("TickAggregator(fills_gaps={})", self.inner.fills_gaps())
+    }
 }

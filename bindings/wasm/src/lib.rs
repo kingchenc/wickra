@@ -15989,3 +15989,57 @@ impl Default for WasmIntradayIntensity {
         Self::new()
     }
 }
+
+// ===== Data layer: tick-to-candle aggregation =====
+
+/// Convert a `wickra-data` error into a JS error.
+fn map_data_err(e: wickra_data::Error) -> JsError {
+    JsError::new(&e.to_string())
+}
+
+/// Roll trade ticks up into fixed-timeframe OHLCV candles.
+#[wasm_bindgen(js_name = TickAggregator)]
+pub struct WasmTickAggregator {
+    inner: wickra_data::aggregator::TickAggregator,
+}
+
+#[wasm_bindgen(js_class = TickAggregator)]
+impl WasmTickAggregator {
+    /// Construct an aggregator with the given bucket size (same unit as the tick
+    /// timestamps). Pass `gapFill = true` to emit a flat placeholder candle for
+    /// every skipped bucket.
+    #[wasm_bindgen(constructor)]
+    pub fn new(bucket: f64, gap_fill: Option<bool>) -> Result<WasmTickAggregator, JsError> {
+        let timeframe =
+            wickra_data::aggregator::Timeframe::new(bucket as i64).map_err(map_data_err)?;
+        let mut inner = wickra_data::aggregator::TickAggregator::new(timeframe);
+        if gap_fill.unwrap_or(false) {
+            inner = inner.with_gap_fill(true);
+        }
+        Ok(Self { inner })
+    }
+
+    /// Push one trade tick; returns an array of `{ open, high, low, close,
+    /// volume, timestamp }` candles closed as a result.
+    pub fn push(&mut self, price: f64, size: f64, timestamp: f64) -> Result<Array, JsError> {
+        let tick = wc::Tick::new(price, size, timestamp as i64).map_err(map_err)?;
+        let arr = Array::new();
+        for c in self.inner.push(tick).map_err(map_data_err)? {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &c.open.into()).ok();
+            Reflect::set(&obj, &"high".into(), &c.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &c.low.into()).ok();
+            Reflect::set(&obj, &"close".into(), &c.close.into()).ok();
+            Reflect::set(&obj, &"volume".into(), &c.volume.into()).ok();
+            Reflect::set(&obj, &"timestamp".into(), &(c.timestamp as f64).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+
+    /// Whether gap filling is enabled.
+    #[wasm_bindgen(js_name = fillsGaps)]
+    pub fn fills_gaps(&self) -> bool {
+        self.inner.fills_gaps()
+    }
+}

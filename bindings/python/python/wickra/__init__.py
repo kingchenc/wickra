@@ -358,6 +358,8 @@ from ._wickra import (
     ThreeLineBreak,
     Equivolume,
     CandleVolume,
+    # Data layer
+    TickAggregator,
     # Market Profile
     CompositeProfile,
     HighLowVolumeNodes,
@@ -902,6 +904,8 @@ __all__ = [
     "ThreeLineBreak",
     "Equivolume",
     "CandleVolume",
+    # Data layer
+    "TickAggregator",
     # Market Profile
     "CompositeProfile",
     "HighLowVolumeNodes",

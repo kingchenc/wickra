@@ -17,4 +17,4 @@ documentation = false
 # discovered and emitted as forward-declared opaque structs. Their fields are
 # never exposed — only `T *` handles cross the boundary.
 parse_deps = true
-include = ["wickra-core"]
+include = ["wickra-core", "wickra-data"]
