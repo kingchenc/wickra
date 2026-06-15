@@ -21937,3 +21937,66 @@ impl TickAggregatorNode {
         self.inner.fills_gaps()
     }
 }
+
+// ===== Data layer: resampling (candle -> higher-timeframe candle) =====
+
+fn candle_to_value(c: wc::Candle) -> CandleValue {
+    CandleValue {
+        open: c.open,
+        high: c.high,
+        low: c.low,
+        close: c.close,
+        volume: c.volume,
+        timestamp: c.timestamp as f64,
+    }
+}
+
+/// Resample candles into a higher timeframe (e.g. 1m -> 5m).
+#[napi(js_name = "Resampler")]
+pub struct ResamplerNode {
+    inner: wickra_data::resample::Resampler,
+}
+
+#[napi]
+impl ResamplerNode {
+    /// Construct a resampler that aggregates inputs into `timeframe`-sized
+    /// candles (same unit as the candle timestamps).
+    #[napi(constructor)]
+    pub fn new(timeframe: f64) -> napi::Result<Self> {
+        let tf = wickra_data::aggregator::Timeframe::new(timeframe as i64).map_err(map_data_err)?;
+        Ok(Self {
+            inner: wickra_data::resample::Resampler::new(tf),
+        })
+    }
+
+    /// Push one candle; returns the completed higher-timeframe candle when a
+    /// bucket boundary is crossed, otherwise `null`.
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: f64,
+    ) -> napi::Result<Option<CandleValue>> {
+        let candle =
+            wc::Candle::new(open, high, low, close, volume, timestamp as i64).map_err(map_err)?;
+        Ok(self
+            .inner
+            .push(candle)
+            .map_err(map_data_err)?
+            .map(candle_to_value))
+    }
+
+    /// Emit the final, still-open candle (or `null` if none is pending).
+    #[napi]
+    pub fn flush(&mut self) -> napi::Result<Option<CandleValue>> {
+        Ok(self
+            .inner
+            .flush()
+            .map_err(map_data_err)?
+            .map(candle_to_value))
+    }
+}

@@ -5957,3 +5957,19 @@ export declare class TickAggregator {
   /** Whether gap filling is enabled. */
   fillsGaps(): boolean
 }
+export type ResamplerNode = Resampler
+/** Resample candles into a higher timeframe (e.g. 1m -> 5m). */
+export declare class Resampler {
+  /**
+   * Construct a resampler that aggregates inputs into `timeframe`-sized
+   * candles (same unit as the candle timestamps).
+   */
+  constructor(timeframe: number)
+  /**
+   * Push one candle; returns the completed higher-timeframe candle when a
+   * bucket boundary is crossed, otherwise `null`.
+   */
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): CandleValue | null
+  /** Emit the final, still-open candle (or `null` if none is pending). */
+  flush(): CandleValue | null
+}

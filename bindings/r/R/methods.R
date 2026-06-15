@@ -170,3 +170,22 @@ push.wickra_indicator <- function(object, price, size, timestamp) {
   colnames(out) <- c("open", "high", "low", "close", "volume", "timestamp")
   out
 }
+
+#' Flush a resampler's final candle
+#'
+#' Emit the final, still-open candle a [Resampler()] is aggregating (the partial
+#' higher-timeframe bar that no later input has closed yet). Extends the base
+#' generic [base::flush()].
+#'
+#' @param con A `wickra_indicator` created by [Resampler()].
+#' @return A named numeric vector (`open`, `high`, `low`, `close`, `volume`,
+#'   `timestamp`), or `NULL` if nothing is pending.
+#' @examples
+#' r <- Resampler(5)
+#' for (t in 0:6) update(r, 100 + t, 101 + t, 99 + t, 100 + t, 10, t)
+#' flush(r)
+#' @exportS3Method base::flush
+flush.wickra_indicator <- function(con) {
+  out <- .Call(paste0("wk_", con$prefix, "_flush"), con$ptr, PACKAGE = "wickra")
+  out
+}

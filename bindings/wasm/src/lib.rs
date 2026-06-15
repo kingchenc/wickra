@@ -16043,3 +16043,61 @@ impl WasmTickAggregator {
         self.inner.fills_gaps()
     }
 }
+
+// ===== Data layer: resampling (candle -> higher-timeframe candle) =====
+
+fn candle_object(c: wc::Candle) -> Object {
+    let obj = Object::new();
+    Reflect::set(&obj, &"open".into(), &c.open.into()).ok();
+    Reflect::set(&obj, &"high".into(), &c.high.into()).ok();
+    Reflect::set(&obj, &"low".into(), &c.low.into()).ok();
+    Reflect::set(&obj, &"close".into(), &c.close.into()).ok();
+    Reflect::set(&obj, &"volume".into(), &c.volume.into()).ok();
+    Reflect::set(&obj, &"timestamp".into(), &(c.timestamp as f64).into()).ok();
+    obj
+}
+
+/// Resample candles into a higher timeframe (e.g. 1m -> 5m).
+#[wasm_bindgen(js_name = Resampler)]
+pub struct WasmResampler {
+    inner: wickra_data::resample::Resampler,
+}
+
+#[wasm_bindgen(js_class = Resampler)]
+impl WasmResampler {
+    /// Construct a resampler aggregating inputs into `timeframe`-sized candles.
+    #[wasm_bindgen(constructor)]
+    pub fn new(timeframe: f64) -> Result<WasmResampler, JsError> {
+        let tf = wickra_data::aggregator::Timeframe::new(timeframe as i64).map_err(map_data_err)?;
+        Ok(Self {
+            inner: wickra_data::resample::Resampler::new(tf),
+        })
+    }
+
+    /// Push one candle; returns a `{ open, high, low, close, volume, timestamp }`
+    /// object on a bucket boundary, otherwise `null`.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: f64,
+    ) -> Result<JsValue, JsError> {
+        let candle =
+            wc::Candle::new(open, high, low, close, volume, timestamp as i64).map_err(map_err)?;
+        match self.inner.push(candle).map_err(map_data_err)? {
+            Some(c) => Ok(candle_object(c).into()),
+            None => Ok(JsValue::NULL),
+        }
+    }
+
+    /// Emit the final, still-open candle (or `null` if none is pending).
+    pub fn flush(&mut self) -> Result<JsValue, JsError> {
+        match self.inner.flush().map_err(map_data_err)? {
+            Some(c) => Ok(candle_object(c).into()),
+            None => Ok(JsValue::NULL),
+        }
+    }
+}

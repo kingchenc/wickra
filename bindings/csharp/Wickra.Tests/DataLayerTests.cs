@@ -28,6 +28,37 @@ public class DataLayerTests
         return rows.ToArray();
     }
 
+    [Fact]
+    public void ResamplerMatchesGolden()
+    {
+        var input = Read("input"); // open,high,low,close,volume (timestamp = row index)
+        using var r = new Resampler(5);
+        var got = new List<double[]>();
+        for (var i = 0; i < input.Length; i++)
+        {
+            var c = r.Update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], i);
+            if (c.HasValue)
+            {
+                got.Add(new[] { c.Value.Open, c.Value.High, c.Value.Low, c.Value.Close, c.Value.Volume, (double)c.Value.Timestamp });
+            }
+        }
+        var f = r.Flush();
+        if (f.HasValue)
+        {
+            got.Add(new[] { f.Value.Open, f.Value.High, f.Value.Low, f.Value.Close, f.Value.Volume, (double)f.Value.Timestamp });
+        }
+        var want = Read("data_resampled");
+        Assert.Equal(want.Length, got.Count);
+        for (var i = 0; i < got.Count; i++)
+        {
+            for (var j = 0; j < 6; j++)
+            {
+                var tol = 1e-9 * Math.Max(1, Math.Abs(want[i][j]));
+                Assert.True(Math.Abs(got[i][j] - want[i][j]) <= tol, $"resample row {i} col {j}: {got[i][j]} vs {want[i][j]}");
+            }
+        }
+    }
+
     [Theory]
     [InlineData(false, "data_candles")]
     [InlineData(true, "data_candles_gap")]

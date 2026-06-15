@@ -94,12 +94,66 @@ static int check(const char *fixture, bool gap, const double *ticks, int nt) {
     return fails;
 }
 
+static int check_resample(void) {
+    double input[MAXROWS * 5];
+    int ni = read_csv("input", input, 5);
+    double want[MAXROWS * 6];
+    int nw = read_csv("data_resampled", want, 6);
+    struct Resampler *r = wickra_resampler_new(5);
+    if (!r) {
+        printf("FAIL resample: new returned NULL\n");
+        return 1;
+    }
+    double got[MAXROWS * 6];
+    int ng = 0;
+    struct WickraCandle out;
+    for (int i = 0; i < ni; i++) {
+        if (wickra_resampler_update(r, input[i * 5 + 0], input[i * 5 + 1], input[i * 5 + 2],
+                                    input[i * 5 + 3], input[i * 5 + 4], (int64_t)i, &out)) {
+            got[ng * 6 + 0] = out.open;
+            got[ng * 6 + 1] = out.high;
+            got[ng * 6 + 2] = out.low;
+            got[ng * 6 + 3] = out.close;
+            got[ng * 6 + 4] = out.volume;
+            got[ng * 6 + 5] = (double)out.timestamp;
+            ng++;
+        }
+    }
+    if (wickra_resampler_flush(r, &out)) {
+        got[ng * 6 + 0] = out.open;
+        got[ng * 6 + 1] = out.high;
+        got[ng * 6 + 2] = out.low;
+        got[ng * 6 + 3] = out.close;
+        got[ng * 6 + 4] = out.volume;
+        got[ng * 6 + 5] = (double)out.timestamp;
+        ng++;
+    }
+    wickra_resampler_free(r);
+    if (ng != nw) {
+        printf("FAIL resample: %d candles vs %d\n", ng, nw);
+        return 1;
+    }
+    int fails = 0;
+    for (int i = 0; i < ng; i++) {
+        for (int j = 0; j < 6; j++) {
+            double w = want[i * 6 + j];
+            double tol = 1e-9 * fmax(1.0, fabs(w));
+            if (fabs(got[i * 6 + j] - w) > tol) {
+                printf("FAIL resample row %d col %d: %g vs %g\n", i, j, got[i * 6 + j], w);
+                fails++;
+            }
+        }
+    }
+    return fails;
+}
+
 int main(int argc, char **argv) {
     GDIR = (argc > 1) ? argv[1] : "testdata/golden";
     double ticks[MAXROWS * 3];
     int nt = read_csv("data_ticks", ticks, 3);
     int fails = check("data_candles", false, ticks, nt);
     fails += check("data_candles_gap", true, ticks, nt);
+    fails += check_resample();
     if (fails == 0) {
         printf("C/C++ data layer: OK (%d ticks)\n", nt);
     }

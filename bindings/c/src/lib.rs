@@ -116,6 +116,8 @@ use wickra_core::{
 
 use wickra_data::aggregator::{TickAggregator as DataTickAggregator, Timeframe};
 
+use wickra_data::resample::Resampler;
+
 // ===== Scalar indicators (f64 -> f64) =====
 
 /// Create a `AdaptiveCycle` indicator.
@@ -68183,6 +68185,102 @@ pub unsafe extern "C" fn wickra_tick_aggregator_drain(
 /// previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_tick_aggregator_free(handle: *mut TickAggregator) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Convert a core candle into the C-ABI view.
+fn candle_to_c(candle: Candle) -> WickraCandle {
+    WickraCandle {
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+        volume: candle.volume,
+        timestamp: candle.timestamp,
+    }
+}
+
+/// Create a resampler aggregating input candles into `timeframe`-sized candles
+/// (the same unit as the candle timestamps). Returns `NULL` on a non-positive
+/// timeframe; release with `wickra_resampler_free`.
+#[no_mangle]
+pub extern "C" fn wickra_resampler_new(timeframe: i64) -> *mut Resampler {
+    match Timeframe::new(timeframe) {
+        Ok(tf) => Box::into_raw(Box::new(Resampler::new(tf))),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Push one candle. On `true` the completed higher-timeframe candle is written to
+/// `*out`; `false` means none closed yet (still aggregating), a `NULL` handle /
+/// `out`, or an invalid input candle.
+///
+/// # Safety
+/// `handle` (from `wickra_resampler_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_resampler_update(
+    handle: *mut Resampler,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraCandle,
+) -> bool {
+    let Some(resampler) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match resampler.push(candle) {
+        Ok(Some(emitted)) => {
+            *out = candle_to_c(emitted);
+            true
+        }
+        _ => false,
+    }
+}
+
+/// Flush the final, still-open candle. On `true` it is written to `*out`; `false`
+/// means nothing was pending or `handle` / `out` is `NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_resampler_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_resampler_flush(
+    handle: *mut Resampler,
+    out: *mut WickraCandle,
+) -> bool {
+    let Some(resampler) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match resampler.flush() {
+        Ok(Some(emitted)) => {
+            *out = candle_to_c(emitted);
+            true
+        }
+        _ => false,
+    }
+}
+
+/// Destroy a resampler created by `wickra_resampler_new`. No-op if `handle` is
+/// `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_resampler_new` and not previously
+/// freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_resampler_free(handle: *mut Resampler) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }

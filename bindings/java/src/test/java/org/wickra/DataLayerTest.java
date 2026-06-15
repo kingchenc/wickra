@@ -47,6 +47,33 @@ class DataLayerTest {
     }
 
     @Test
+    void resamplerMatchesGolden() throws IOException {
+        double[][] input = read("input"); // open,high,low,close,volume (timestamp = row index)
+        try (Resampler r = new Resampler(5)) {
+            List<double[]> got = new ArrayList<>();
+            for (int i = 0; i < input.length; i++) {
+                Candle c = r.update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], i);
+                if (c != null) {
+                    got.add(new double[]{c.open(), c.high(), c.low(), c.close(), c.volume(), (double) c.timestamp()});
+                }
+            }
+            Candle f = r.flush();
+            if (f != null) {
+                got.add(new double[]{f.open(), f.high(), f.low(), f.close(), f.volume(), (double) f.timestamp()});
+            }
+            double[][] want = read("data_resampled");
+            assertEquals(want.length, got.size(), "resample candle count");
+            for (int i = 0; i < got.size(); i++) {
+                for (int j = 0; j < 6; j++) {
+                    double w = want[i][j];
+                    assertTrue(Math.abs(got.get(i)[j] - w) <= 1e-9 * Math.max(1, Math.abs(w)),
+                        "resample row " + i + " col " + j + ": " + got.get(i)[j] + " vs " + w);
+                }
+            }
+        }
+    }
+
+    @Test
     void tickAggregatorMatchesGolden() throws IOException {
         double[][] ticks = read("data_ticks");
         String[][] cases = {{"data_candles", "false"}, {"data_candles_gap", "true"}};

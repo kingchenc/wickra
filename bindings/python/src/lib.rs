@@ -28287,6 +28287,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyCompositeProfile>()?;
     // Data layer.
     m.add_class::<PyTickAggregator>()?;
+    m.add_class::<PyResampler>()?;
     // Candlestick patterns.
     m.add_class::<PyDoji>()?;
     m.add_class::<PyHammer>()?;
@@ -28614,5 +28615,54 @@ impl PyTickAggregator {
 
     fn __repr__(&self) -> String {
         format!("TickAggregator(fills_gaps={})", self.inner.fills_gaps())
+    }
+}
+
+// ===== Data layer: resampling (candle -> higher-timeframe candle) =====
+
+/// Resample candles into a higher timeframe (e.g. 1m -> 5m).
+#[pyclass(name = "Resampler", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyResampler {
+    inner: wickra_data::resample::Resampler,
+}
+
+#[pymethods]
+impl PyResampler {
+    #[new]
+    fn new(timeframe: i64) -> PyResult<Self> {
+        let tf = wickra_data::aggregator::Timeframe::new(timeframe).map_err(map_data_err)?;
+        Ok(Self {
+            inner: wickra_data::resample::Resampler::new(tf),
+        })
+    }
+
+    /// Push one candle; returns the completed higher-timeframe candle as
+    /// `(open, high, low, close, volume, timestamp)` on a bucket boundary, else
+    /// `None`.
+    fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> PyResult<Option<CandleTuple>> {
+        let candle = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
+        Ok(self
+            .inner
+            .push(candle)
+            .map_err(map_data_err)?
+            .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp)))
+    }
+
+    /// Emit the final, still-open candle (or `None` if none is pending).
+    fn flush(&mut self) -> PyResult<Option<CandleTuple>> {
+        Ok(self
+            .inner
+            .flush()
+            .map_err(map_data_err)?
+            .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp)))
     }
 }

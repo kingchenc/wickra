@@ -14606,6 +14606,64 @@ SEXP wk_renko_trailing_stop_reset(SEXP e) {
   return R_NilValue;
 }
 
+static void resampler_fin(SEXP e) {
+  struct Resampler *h = (struct Resampler *)R_ExternalPtrAddr(e);
+  if (h) wickra_resampler_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_resampler_new(SEXP a0) {
+  struct Resampler *h = wickra_resampler_new((int64_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Resampler parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, resampler_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_resampler_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Resampler *h = (struct Resampler *)R_ExternalPtrAddr(e);
+  struct WickraCandle out;
+  int ok = wickra_resampler_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 6));
+  REAL(r)[0] = ok ? (double)out.open : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.low : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.close : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.volume : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.timestamp : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("volume"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("timestamp"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_resampler_flush(SEXP e) {
+  struct Resampler *h = (struct Resampler *)R_ExternalPtrAddr(e);
+  struct WickraCandle out;
+  if (!wickra_resampler_flush(h, &out)) return R_NilValue;
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 6));
+  REAL(r)[0] = out.open;
+  REAL(r)[1] = out.high;
+  REAL(r)[2] = out.low;
+  REAL(r)[3] = out.close;
+  REAL(r)[4] = out.volume;
+  REAL(r)[5] = (double)out.timestamp;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("volume"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("timestamp"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+
 static void rickshaw_man_fin(SEXP e) {
   struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
   if (h) wickra_rickshaw_man_free(h);
@@ -24781,6 +24839,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_renko_trailing_stop_is_ready", (DL_FUNC)&wk_renko_trailing_stop_is_ready, 1},
   {"wk_renko_trailing_stop_name", (DL_FUNC)&wk_renko_trailing_stop_name, 1},
   {"wk_renko_trailing_stop_reset", (DL_FUNC)&wk_renko_trailing_stop_reset, 1},
+  {"wk_resampler_new", (DL_FUNC)&wk_resampler_new, 1},
+  {"wk_resampler_update", (DL_FUNC)&wk_resampler_update, 7},
+  {"wk_resampler_flush", (DL_FUNC)&wk_resampler_flush, 1},
   {"wk_rickshaw_man_new", (DL_FUNC)&wk_rickshaw_man_new, 0},
   {"wk_rickshaw_man_update", (DL_FUNC)&wk_rickshaw_man_update, 7},
   {"wk_rickshaw_man_batch", (DL_FUNC)&wk_rickshaw_man_batch, 7},

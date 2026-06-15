@@ -50,3 +50,31 @@ test_that("tick aggregator matches the golden candles", {
     expect_equal(got, want, tolerance = 1e-9, info = spec$fixture)
   }
 })
+
+test_that("resampler matches the golden candles", {
+  gdir <- find_data_golden_dir()
+  skip_if(is.null(gdir), "golden fixtures not bundled with the package")
+
+  read_mat <- function(name) {
+    lines <- readLines(file.path(gdir, paste0(name, ".csv")))[-1]
+    lines <- lines[nzchar(lines)]
+    do.call(rbind, lapply(lines, function(l) as.numeric(strsplit(l, ",")[[1]])))
+  }
+
+  input <- read_mat("input") # open,high,low,close,volume (timestamp = row index)
+  r <- Resampler(5)
+  got <- matrix(numeric(0), 0, 6)
+  for (i in seq_len(nrow(input))) {
+    c <- update(r, input[i, 1], input[i, 2], input[i, 3], input[i, 4], input[i, 5], i - 1)
+    if (!is.na(c[1])) {
+      got <- rbind(got, unname(c))
+    }
+  }
+  f <- flush(r)
+  if (!is.null(f)) {
+    got <- rbind(got, unname(f))
+  }
+  want <- unname(read_mat("data_resampled"))
+  expect_equal(nrow(got), nrow(want))
+  expect_equal(got, want, tolerance = 1e-9)
+})

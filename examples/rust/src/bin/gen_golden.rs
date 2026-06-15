@@ -20,6 +20,7 @@ use wickra::{
     Indicator, IntradayIntensity, MacdIndicator, Rsi, Sma, Tick,
 };
 use wickra_data::aggregator::{TickAggregator, Timeframe};
+use wickra_data::resample::Resampler;
 
 const N: usize = 80;
 
@@ -185,7 +186,35 @@ fn main() {
     emit_profiles(dir, &candles);
     emit_bars(dir, &candles);
     emit_data_layer(dir);
+    emit_resampler(dir, &candles);
     println!("golden fixtures written to {}", dir.display());
+}
+
+/// Data layer: the resampler. Resamples the shared input candles (timestamp =
+/// row index) into 5-unit buckets; the final partial bucket comes out of flush.
+fn emit_resampler(dir: &Path, candles: &[Candle]) {
+    let mut resampler = Resampler::new(Timeframe::new(5).unwrap());
+    let mut rows = Vec::new();
+    for &candle in candles {
+        if let Some(out) = resampler.push(candle).expect("valid resample push") {
+            rows.push(format!(
+                "{},{},{},{},{},{}",
+                out.open, out.high, out.low, out.close, out.volume, out.timestamp
+            ));
+        }
+    }
+    if let Some(out) = resampler.flush().expect("valid resample flush") {
+        rows.push(format!(
+            "{},{},{},{},{},{}",
+            out.open, out.high, out.low, out.close, out.volume, out.timestamp
+        ));
+    }
+    write_csv(
+        dir,
+        "data_resampled",
+        "open,high,low,close,volume,timestamp",
+        &rows,
+    );
 }
 
 /// Deterministic trade tick `i`: price on the shared varied path, a small

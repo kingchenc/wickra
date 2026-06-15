@@ -20,6 +20,37 @@ func dataParseF(t *testing.T, s string) float64 {
 	return v
 }
 
+func TestResamplerGolden(t *testing.T) {
+	input := readGolden(t, "input") // open,high,low,close,volume (timestamp = row index)
+	r, err := NewResampler(5)
+	if err != nil {
+		t.Fatalf("new: %v", err)
+	}
+	var got [][6]float64
+	for i, row := range input {
+		o, h, l, c, v := dataParseF(t, row[0]), dataParseF(t, row[1]), dataParseF(t, row[2]), dataParseF(t, row[3]), dataParseF(t, row[4])
+		if k, ok := r.Update(o, h, l, c, v, int64(i)); ok {
+			got = append(got, [6]float64{k.Open, k.High, k.Low, k.Close, k.Volume, float64(k.Timestamp)})
+		}
+	}
+	if k, ok := r.Flush(); ok {
+		got = append(got, [6]float64{k.Open, k.High, k.Low, k.Close, k.Volume, float64(k.Timestamp)})
+	}
+	r.Close()
+	want := readGolden(t, "data_resampled")
+	if len(got) != len(want) {
+		t.Fatalf("resample: %d candles vs %d", len(got), len(want))
+	}
+	for i := range got {
+		for j := 0; j < 6; j++ {
+			w := dataParseF(t, want[i][j])
+			if math.Abs(got[i][j]-w) > 1e-9*math.Max(1, math.Abs(w)) {
+				t.Errorf("resample row %d col %d: %v vs %v", i, j, got[i][j], w)
+			}
+		}
+	}
+}
+
 func TestTickAggregatorGolden(t *testing.T) {
 	ticks := readGolden(t, "data_ticks")
 	cases := []struct {

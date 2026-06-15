@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Candle resampling in all 10 languages (data layer).** The `Resampler`
+  aggregates candles into a higher timeframe (e.g. 1m → 5m): `update(open, high,
+  low, close, volume, timestamp)` returns the completed higher-timeframe candle on
+  a bucket boundary (else `null`/`None`/`NA`), and `flush()` emits the final,
+  still-open candle. Exposed natively (Node.js / WASM / Python) and over the C ABI
+  (Go / C# / Java return `(Candle, bool)` / `Candle?` / `Candle`; R via `update()`
+  and a `flush()` S3 method; C / C++ directly). A cross-language golden
+  (`testdata/golden/data_resampled.csv`) pins the resampled stream identically.
 - **Tick-to-candle aggregation in all 10 languages (data layer).** The
   `TickAggregator` — roll trade ticks up into fixed-timeframe OHLCV candles, with
   optional gap filling — is now exposed natively (Node.js / WASM `push(price,

@@ -12416,6 +12416,20 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tick_aggregator_free(nint handle);
 
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nint wickra_resampler_new(long timeframe);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static unsafe partial bool wickra_resampler_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraCandle* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static unsafe partial bool wickra_resampler_flush(nint handle, WickraCandle* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial void wickra_resampler_free(nint handle);
+
 }
 
     [StructLayout(LayoutKind.Sequential)]
