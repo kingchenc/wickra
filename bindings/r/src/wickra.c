@@ -7,6 +7,21 @@
 #include <stddef.h>
 #include "wickra.h"
 
+/* Convert an R numeric vector of flags (non-zero == TRUE) into a C `bool*`
+ * buffer (one byte per element). The cross-section indicators take their state
+ * flags as `const bool*`; casting `wk_bool_vec(x)` would reinterpret the
+ * 8-byte doubles as 1-byte bools and read every flag as false. The buffer is
+ * allocated with R_alloc, so it lives until the enclosing .Call returns. */
+static bool *wk_bool_vec(SEXP x) {
+  R_xlen_t n = Rf_xlength(x);
+  bool *out = (bool *)R_alloc(n, sizeof(bool));
+  double *src = REAL(x);
+  for (R_xlen_t i = 0; i < n; i++) {
+    out[i] = src[i] != 0.0;
+  }
+  return out;
+}
+
 static void abandoned_baby_fin(SEXP e) {
   struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
   if (h) wickra_abandoned_baby_free(h);
@@ -104,7 +119,7 @@ SEXP wk_absolute_breadth_index_new(void) {
 }
 SEXP wk_absolute_breadth_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_absolute_breadth_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_absolute_breadth_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_absolute_breadth_index_warmup_period(SEXP e) {
   struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
@@ -260,7 +275,7 @@ SEXP wk_ad_volume_line_new(void) {
 }
 SEXP wk_ad_volume_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_ad_volume_line_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_ad_volume_line_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_ad_volume_line_warmup_period(SEXP e) {
   struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
@@ -531,7 +546,7 @@ SEXP wk_advance_decline_new(void) {
 }
 SEXP wk_advance_decline_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_advance_decline_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_advance_decline_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_advance_decline_warmup_period(SEXP e) {
   struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
@@ -562,7 +577,7 @@ SEXP wk_advance_decline_ratio_new(void) {
 }
 SEXP wk_advance_decline_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_advance_decline_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_advance_decline_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_advance_decline_ratio_warmup_period(SEXP e) {
   struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
@@ -2059,7 +2074,7 @@ SEXP wk_breadth_thrust_new(SEXP a0) {
 }
 SEXP wk_breadth_thrust_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_breadth_thrust_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_breadth_thrust_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_breadth_thrust_warmup_period(SEXP e) {
   struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
@@ -2131,7 +2146,7 @@ SEXP wk_bullish_percent_index_new(void) {
 }
 SEXP wk_bullish_percent_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_bullish_percent_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_bullish_percent_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_bullish_percent_index_warmup_period(SEXP e) {
   struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
@@ -3462,7 +3477,7 @@ SEXP wk_cumulative_volume_index_new(void) {
 }
 SEXP wk_cumulative_volume_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_cumulative_volume_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_cumulative_volume_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_cumulative_volume_index_warmup_period(SEXP e) {
   struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
@@ -7104,7 +7119,7 @@ SEXP wk_high_low_index_new(SEXP a0) {
 }
 SEXP wk_high_low_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_high_low_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_high_low_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_high_low_index_warmup_period(SEXP e) {
   struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
@@ -10118,7 +10133,7 @@ SEXP wk_mc_clellan_oscillator_new(void) {
 }
 SEXP wk_mc_clellan_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_mc_clellan_oscillator_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_mc_clellan_oscillator_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_mc_clellan_oscillator_warmup_period(SEXP e) {
   struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
@@ -10149,7 +10164,7 @@ SEXP wk_mc_clellan_summation_index_new(void) {
 }
 SEXP wk_mc_clellan_summation_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_mc_clellan_summation_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_mc_clellan_summation_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_mc_clellan_summation_index_warmup_period(SEXP e) {
   struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
@@ -10914,7 +10929,7 @@ SEXP wk_new_highs_new_lows_new(void) {
 }
 SEXP wk_new_highs_new_lows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_new_highs_new_lows_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_new_highs_new_lows_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_new_highs_new_lows_warmup_period(SEXP e) {
   struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
@@ -11870,7 +11885,7 @@ SEXP wk_percent_above_ma_new(void) {
 }
 SEXP wk_percent_above_ma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_percent_above_ma_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_percent_above_ma_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_percent_above_ma_warmup_period(SEXP e) {
   struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
@@ -17276,7 +17291,7 @@ SEXP wk_tick_index_new(void) {
 }
 SEXP wk_tick_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_tick_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_tick_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_tick_index_warmup_period(SEXP e) {
   struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
@@ -17853,7 +17868,7 @@ SEXP wk_trin_new(void) {
 }
 SEXP wk_trin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_trin_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_trin_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_trin_warmup_period(SEXP e) {
   struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
@@ -18651,7 +18666,7 @@ SEXP wk_up_down_volume_ratio_new(void) {
 }
 SEXP wk_up_down_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
-  return Rf_ScalarReal(wickra_up_down_volume_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+  return Rf_ScalarReal(wickra_up_down_volume_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
 SEXP wk_up_down_volume_ratio_warmup_period(SEXP e) {
   struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);

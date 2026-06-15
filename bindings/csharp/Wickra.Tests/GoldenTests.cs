@@ -159,4 +159,58 @@ public class GoldenTests
             AssertClose(got.Value.Adx, Cell(e[2]), i, "adx.adx");
         }
     }
+
+    // --- the four de-duplicated indicators ------------------------------------
+
+    [Fact]
+    public void Candle_AdOscillator_MatchesGolden()
+    {
+        var input = Input();
+        var expected = ReadCsv("ad_oscillator");
+        using var ad = new AdOscillator();
+        for (var i = 0; i < input.Length; i++)
+        {
+            var (o, h, l, c, v) = (input[i][0], input[i][1], input[i][2], input[i][3], input[i][4]);
+            AssertClose(ad.Update(o, h, l, c, v, i), Cell(expected[i][0]), i, "ad_oscillator");
+        }
+    }
+
+    [Fact]
+    public void Candle_IntradayIntensity_MatchesGolden()
+    {
+        var input = Input();
+        var expected = ReadCsv("intraday_intensity");
+        using var ii = new IntradayIntensity();
+        for (var i = 0; i < input.Length; i++)
+        {
+            var (o, h, l, c, v) = (input[i][0], input[i][1], input[i][2], input[i][3], input[i][4]);
+            AssertClose(ii.Update(o, h, l, c, v, i), Cell(expected[i][0]), i, "intraday_intensity");
+        }
+    }
+
+    [Fact]
+    public void Candle_AwesomeOscillatorHistogram_MatchesGolden()
+    {
+        var input = Input();
+        var expected = ReadCsv("awesome_oscillator_histogram");
+        using var aoh = new AwesomeOscillatorHistogram(5, 34, 1);
+        for (var i = 0; i < input.Length; i++)
+        {
+            var (o, h, l, c, v) = (input[i][0], input[i][1], input[i][2], input[i][3], input[i][4]);
+            AssertClose(aoh.Update(o, h, l, c, v, i), Cell(expected[i][0]), i, "awesome_oscillator_histogram");
+        }
+    }
+
+    [Fact]
+    public void Scalar_AverageDrawdown_MatchesGolden()
+    {
+        var input = Input();
+        var expected = ReadCsv("average_drawdown");
+        using var avg = new AverageDrawdown(20);
+        for (var i = 0; i < input.Length; i++)
+        {
+            // generator fed the close column as the equity-curve sample.
+            AssertClose(avg.Update(input[i][3]), Cell(expected[i][0]), i, "average_drawdown");
+        }
+    }
 }

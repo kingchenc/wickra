@@ -1,0 +1,10720 @@
+[
+ {
+  "canonical": "AbandonedBaby",
+  "native": "AbandonedBaby",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Abcd",
+  "native": "Abcd",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AbsoluteBreadthIndex",
+  "native": "AbsoluteBreadthIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AccelerationBands",
+  "native": "AccelerationBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "AcceleratorOscillator",
+  "native": "AcceleratorOscillator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdOscillator",
+  "native": "ADOSC",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdVolumeLine",
+  "native": "AdVolumeLine",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdaptiveCci",
+  "native": "ADAPTIVECCI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdaptiveCycle",
+  "native": "AdaptiveCycle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdaptiveLaguerreFilter",
+  "native": "AdaptiveLaguerre",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdaptiveRsi",
+  "native": "ADAPTIVERSI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Adl",
+  "native": "ADL",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdvanceBlock",
+  "native": "AdvanceBlock",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdvanceDecline",
+  "native": "AdvanceDecline",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AdvanceDeclineRatio",
+  "native": "AdvanceDeclineRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Adx",
+  "native": "ADX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "plusDi",
+   "minusDi",
+   "adx"
+  ]
+ },
+ {
+  "canonical": "Adxr",
+  "native": "ADXR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Alligator",
+  "native": "Alligator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "jaw",
+   "teeth",
+   "lips"
+  ]
+ },
+ {
+  "canonical": "Alma",
+  "native": "ALMA",
+  "ctor": [
+   9,
+   0.85,
+   6.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Alpha",
+  "native": "Alpha",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "asset",
+    "array": false
+   },
+   {
+    "name": "benchmark",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AmihudIlliquidity",
+  "native": "AmihudIlliquidity",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AnchoredRsi",
+  "native": "AnchoredRSI",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AnchoredVwap",
+  "native": "AnchoredVWAP",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AndrewsPitchfork",
+  "native": "AndrewsPitchfork",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "median",
+   "upper",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "Apo",
+  "native": "APO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Aroon",
+  "native": "Aroon",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "up",
+   "down"
+  ]
+ },
+ {
+  "canonical": "AroonOscillator",
+  "native": "AroonOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Atr",
+  "native": "ATR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AtrBands",
+  "native": "AtrBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "AtrRatchet",
+  "native": "AtrRatchet",
+  "ctor": [
+   14,
+   2.0,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "value",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "AtrTrailingStop",
+  "native": "AtrTrailingStop",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AutoFib",
+  "native": "AutoFib",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "level0",
+   "level236",
+   "level382",
+   "level500",
+   "level618",
+   "level786",
+   "level1000"
+  ]
+ },
+ {
+  "canonical": "Autocorrelation",
+  "native": "Autocorrelation",
+  "ctor": [
+   10,
+   1
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AutocorrelationPeriodogram",
+  "native": "AUTOCORRPGRAM",
+  "ctor": [
+   10,
+   48
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AverageDailyRange",
+  "native": "AverageDailyRange",
+  "ctor": [
+   14,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AverageDrawdown",
+  "native": "AverageDrawdown",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AvgPrice",
+  "native": "AVGPRICE",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AwesomeOscillator",
+  "native": "AwesomeOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "AwesomeOscillatorHistogram",
+  "native": "AwesomeOscillatorHistogram",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BalanceOfPower",
+  "native": "BalanceOfPower",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BandpassFilter",
+  "native": "BANDPASS",
+  "ctor": [
+   20,
+   0.3
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Bat",
+  "native": "Bat",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BeltHold",
+  "native": "BeltHold",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Beta",
+  "native": "Beta",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BetaNeutralSpread",
+  "native": "BetaNeutralSpread",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BetterVolume",
+  "native": "BetterVolume",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BipowerVariation",
+  "native": "BipowerVariation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BodySizePct",
+  "native": "BodySizePct",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BollingerBands",
+  "native": "BollingerBands",
+  "ctor": [
+   20,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower",
+   "stddev"
+  ]
+ },
+ {
+  "canonical": "BollingerBandwidth",
+  "native": "BollingerBandwidth",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BomarBands",
+  "native": "BomarBands",
+  "ctor": [
+   4,
+   0.85
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "BreadthThrust",
+  "native": "BreadthThrust",
+  "ctor": [
+   10
+  ],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Breakaway",
+  "native": "Breakaway",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BullishPercentIndex",
+  "native": "BullishPercentIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   },
+   {
+    "name": "onBuySignal",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "BurkeRatio",
+  "native": "BurkeRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Butterfly",
+  "native": "Butterfly",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CalendarSpread",
+  "native": "CalendarSpread",
+  "ctor": [],
+  "args": [
+   {
+    "name": "futuresPrice",
+    "array": false
+   },
+   {
+    "name": "markPrice",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CalmarRatio",
+  "native": "CalmarRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Camarilla",
+  "native": "Camarilla",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "pp",
+   "r1",
+   "r2",
+   "r3",
+   "r4",
+   "s1",
+   "s2",
+   "s3",
+   "s4"
+  ]
+ },
+ {
+  "canonical": "CandleVolume",
+  "native": "CandleVolume",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "body",
+   "width"
+  ]
+ },
+ {
+  "canonical": "Cci",
+  "native": "CCI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CenterOfGravity",
+  "native": "CenterOfGravity",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CentralPivotRange",
+  "native": "CentralPivotRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "pivot",
+   "tc",
+   "bc"
+  ]
+ },
+ {
+  "canonical": "Cfo",
+  "native": "CFO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ChaikinMoneyFlow",
+  "native": "ChaikinMoneyFlow",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ChaikinOscillator",
+  "native": "ChaikinOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ChaikinVolatility",
+  "native": "ChaikinVolatility",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ChandeKrollStop",
+  "native": "ChandeKrollStop",
+  "ctor": [
+   3,
+   2.0,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "stopLong",
+   "stopShort"
+  ]
+ },
+ {
+  "canonical": "ChandelierExit",
+  "native": "ChandelierExit",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "longStop",
+   "shortStop"
+  ]
+ },
+ {
+  "canonical": "ChoppinessIndex",
+  "native": "ChoppinessIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ClassicPivots",
+  "native": "ClassicPivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "pp",
+   "r1",
+   "r2",
+   "r3",
+   "s1",
+   "s2",
+   "s3"
+  ]
+ },
+ {
+  "canonical": "CloseVsOpen",
+  "native": "CloseVsOpen",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ClosingMarubozu",
+  "native": "ClosingMarubozu",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Cmo",
+  "native": "CMO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CoefficientOfVariation",
+  "native": "CoefficientOfVariation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Cointegration",
+  "native": "Cointegration",
+  "ctor": [
+   40,
+   1
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "hedgeRatio",
+   "spread",
+   "adfStat"
+  ]
+ },
+ {
+  "canonical": "CommonSenseRatio",
+  "native": "CommonSenseRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CompositeProfile",
+  "native": "CompositeProfile",
+  "ctor": [
+   20,
+   24,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "poc",
+   "vah",
+   "val"
+  ]
+ },
+ {
+  "canonical": "ConcealingBabySwallow",
+  "native": "ConcealingBabySwallow",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ConditionalValueAtRisk",
+  "native": "ConditionalValueAtRisk",
+  "ctor": [
+   20,
+   0.95
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ConnorsRsi",
+  "native": "ConnorsRSI",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Coppock",
+  "native": "Coppock",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CorrelationTrendIndicator",
+  "native": "CTI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Counterattack",
+  "native": "Counterattack",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Crab",
+  "native": "Crab",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CumulativeVolumeDelta",
+  "native": "CumulativeVolumeDelta",
+  "ctor": [],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CumulativeVolumeIndex",
+  "native": "CumulativeVolumeIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CupAndHandle",
+  "native": "CupAndHandle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "CyberneticCycle",
+  "native": "CyberneticCycle",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Cypher",
+  "native": "Cypher",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DayOfWeekProfile",
+  "native": "DayOfWeekProfile",
+  "ctor": [
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "profile_bins",
+  "width": 7
+ },
+ {
+  "canonical": "Decycler",
+  "native": "Decycler",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DecyclerOscillator",
+  "native": "DecyclerOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Dema",
+  "native": "DEMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DemandIndex",
+  "native": "DemandIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DemarkPivots",
+  "native": "DemarkPivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "pp",
+   "r1",
+   "s1"
+  ]
+ },
+ {
+  "canonical": "DepthSlope",
+  "native": "DepthSlope",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DerivativeOscillator",
+  "native": "DerivativeOscillator",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DetrendedStdDev",
+  "native": "DetrendedStdDev",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DisparityIndex",
+  "native": "DisparityIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DistanceSsd",
+  "native": "DistanceSsd",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Doji",
+  "native": "Doji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DojiStar",
+  "native": "DojiStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DollarBars",
+  "native": "DollarBars",
+  "ctor": [
+   50000.0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close",
+   "volume",
+   "dollar"
+  ]
+ },
+ {
+  "canonical": "Donchian",
+  "native": "Donchian",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "DonchianStop",
+  "native": "DonchianStop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "stopLong",
+   "stopShort"
+  ]
+ },
+ {
+  "canonical": "DoubleBollinger",
+  "native": "DoubleBollinger",
+  "ctor": [
+   20,
+   1.0,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upperOuter",
+   "upperInner",
+   "middle",
+   "lowerInner",
+   "lowerOuter"
+  ]
+ },
+ {
+  "canonical": "DoubleTopBottom",
+  "native": "DoubleTopBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DownsideGapThreeMethods",
+  "native": "DownsideGapThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Dpo",
+  "native": "DPO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DragonflyDoji",
+  "native": "DragonflyDoji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DrawdownDuration",
+  "native": "DrawdownDuration",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DumplingTop",
+  "native": "DumplingTop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Dx",
+  "native": "DX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "DynamicMomentumIndex",
+  "native": "DynamicMomentumIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EaseOfMovement",
+  "native": "EaseOfMovement",
+  "ctor": [
+   14,
+   100000000.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EffectiveSpread",
+  "native": "EffectiveSpread",
+  "ctor": [],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   },
+   {
+    "name": "mid",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EhlersStochastic",
+  "native": "EhlersStochastic",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Ehma",
+  "native": "EHMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ElderImpulse",
+  "native": "ElderImpulse",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ElderRay",
+  "native": "ElderRay",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "bullPower",
+   "bearPower"
+  ]
+ },
+ {
+  "canonical": "ElderSafeZone",
+  "native": "ElderSafeZone",
+  "ctor": [
+   10,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "value",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "Ema",
+  "native": "EMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EmpiricalModeDecomposition",
+  "native": "EmpiricalModeDecomposition",
+  "ctor": [
+   20,
+   0.1
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Engulfing",
+  "native": "Engulfing",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Equivolume",
+  "native": "Equivolume",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "height",
+   "width"
+  ]
+ },
+ {
+  "canonical": "EstimatedLeverageRatio",
+  "native": "EstimatedLeverageRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "openInterest",
+    "array": false
+   },
+   {
+    "name": "longSize",
+    "array": false
+   },
+   {
+    "name": "shortSize",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EvenBetterSinewave",
+  "native": "EVENBETTERSINE",
+  "ctor": [
+   40,
+   10
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EveningDojiStar",
+  "native": "EveningDojiStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Evwma",
+  "native": "EVWMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "EwmaVolatility",
+  "native": "EwmaVolatility",
+  "ctor": [
+   0.94
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Expectancy",
+  "native": "Expectancy",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FallingThreeMethods",
+  "native": "FallingThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Fama",
+  "native": "FAMA",
+  "ctor": [
+   0.5,
+   0.05
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FibArcs",
+  "native": "FibArcs",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "arc382",
+   "arc500",
+   "arc618"
+  ]
+ },
+ {
+  "canonical": "FibChannel",
+  "native": "FibChannel",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "base",
+   "level618",
+   "level1000",
+   "level1618"
+  ]
+ },
+ {
+  "canonical": "FibConfluence",
+  "native": "FibConfluence",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "price",
+   "strength"
+  ]
+ },
+ {
+  "canonical": "FibExtension",
+  "native": "FibExtension",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "level1272",
+   "level1414",
+   "level1618",
+   "level2000",
+   "level2618"
+  ]
+ },
+ {
+  "canonical": "FibFan",
+  "native": "FibFan",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "fan382",
+   "fan500",
+   "fan618"
+  ]
+ },
+ {
+  "canonical": "FibProjection",
+  "native": "FibProjection",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "level618",
+   "level1000",
+   "level1618",
+   "level2618"
+  ]
+ },
+ {
+  "canonical": "FibRetracement",
+  "native": "FibRetracement",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "level0",
+   "level236",
+   "level382",
+   "level500",
+   "level618",
+   "level786",
+   "level1000"
+  ]
+ },
+ {
+  "canonical": "FibTimeZones",
+  "native": "FibTimeZones",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "onZone",
+   "barsToNext"
+  ]
+ },
+ {
+  "canonical": "FibonacciPivots",
+  "native": "FibonacciPivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "pp",
+   "r1",
+   "r2",
+   "r3",
+   "s1",
+   "s2",
+   "s3"
+  ]
+ },
+ {
+  "canonical": "FisherRsi",
+  "native": "FisherRSI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FisherTransform",
+  "native": "FisherTransform",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FlagPennant",
+  "native": "FlagPennant",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Footprint",
+  "native": "Footprint",
+  "ctor": [
+   1.0
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "footprint",
+  "fields": [
+   "price",
+   "bidVol",
+   "askVol"
+  ]
+ },
+ {
+  "canonical": "ForceIndex",
+  "native": "ForceIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FractalChaosBands",
+  "native": "FractalChaosBands",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "Frama",
+  "native": "FRAMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FryPanBottom",
+  "native": "FryPanBottom",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FundingBasis",
+  "native": "FundingBasis",
+  "ctor": [],
+  "args": [
+   {
+    "name": "markPrice",
+    "array": false
+   },
+   {
+    "name": "indexPrice",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FundingImpliedApr",
+  "native": "FundingImpliedApr",
+  "ctor": [
+   1095.0
+  ],
+  "args": [
+   {
+    "name": "fundingRate",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FundingRate",
+  "native": "FundingRate",
+  "ctor": [],
+  "args": [
+   {
+    "name": "fundingRate",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FundingRateMean",
+  "native": "FundingRateMean",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "fundingRate",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "FundingRateZScore",
+  "native": "FundingRateZScore",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "fundingRate",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GainLossRatio",
+  "native": "GainLossRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GainToPainRatio",
+  "native": "GainToPainRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GapSideBySideWhite",
+  "native": "GapSideBySideWhite",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Garch11",
+  "native": "Garch11",
+  "ctor": [
+   2e-06,
+   0.1,
+   0.88
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GarmanKlassVolatility",
+  "native": "GarmanKlassVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Gartley",
+  "native": "Gartley",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GatorOscillator",
+  "native": "GatorOscillator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "GeneralizedDema",
+  "native": "GD",
+  "ctor": [
+   5,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GeometricMa",
+  "native": "GMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GoldenPocket",
+  "native": "GoldenPocket",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "low",
+   "mid",
+   "high"
+  ]
+ },
+ {
+  "canonical": "GrangerCausality",
+  "native": "GrangerCausality",
+  "ctor": [
+   60,
+   1
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "GravestoneDoji",
+  "native": "GravestoneDoji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Hammer",
+  "native": "Hammer",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HangingMan",
+  "native": "HangingMan",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Harami",
+  "native": "Harami",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HaramiCross",
+  "native": "HaramiCross",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HasbrouckInformationShare",
+  "native": "HasbrouckInformationShare",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HeadAndShoulders",
+  "native": "HeadAndShoulders",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HeikinAshi",
+  "native": "HeikinAshi",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ]
+ },
+ {
+  "canonical": "HeikinAshiOscillator",
+  "native": "HeikinAshiOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HiLoActivator",
+  "native": "HiLoActivator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HighLowIndex",
+  "native": "HighLowIndex",
+  "ctor": [
+   10
+  ],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HighLowRange",
+  "native": "HighLowRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HighLowVolumeNodes",
+  "native": "HighLowVolumeNodes",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "hvn",
+   "lvn"
+  ]
+ },
+ {
+  "canonical": "HighWave",
+  "native": "HighWave",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HighpassFilter",
+  "native": "HIGHPASS",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Hikkake",
+  "native": "Hikkake",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HikkakeModified",
+  "native": "HikkakeModified",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HilbertDominantCycle",
+  "native": "HilbertDominantCycle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HistoricalVolatility",
+  "native": "HistoricalVolatility",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Hma",
+  "native": "HMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HoltWinters",
+  "native": "HoltWinters",
+  "ctor": [
+   0.5,
+   0.1
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HomingPigeon",
+  "native": "HomingPigeon",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HtDcPhase",
+  "native": "HT_DCPHASE",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HtPhasor",
+  "native": "HT_PHASOR",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "inphase",
+   "quadrature"
+  ]
+ },
+ {
+  "canonical": "HtTrendMode",
+  "native": "HT_TRENDMODE",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "HurstChannel",
+  "native": "HurstChannel",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "HurstExponent",
+  "native": "HurstExponent",
+  "ctor": [
+   100,
+   4
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Ichimoku",
+  "native": "Ichimoku",
+  "ctor": [
+   9,
+   26,
+   52,
+   26
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "tenkan",
+   "kijun",
+   "senkouA",
+   "senkouB",
+   "chikou"
+  ]
+ },
+ {
+  "canonical": "IdenticalThreeCrows",
+  "native": "IdenticalThreeCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ImbalanceBars",
+  "native": "ImbalanceBars",
+  "ctor": [
+   5.0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close",
+   "imbalance",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "InNeck",
+  "native": "InNeck",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Inertia",
+  "native": "Inertia",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "InformationRatio",
+  "native": "InformationRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "asset",
+    "array": false
+   },
+   {
+    "name": "benchmark",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "InitialBalance",
+  "native": "InitialBalance",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "high",
+   "low"
+  ]
+ },
+ {
+  "canonical": "InstantaneousTrendline",
+  "native": "InstantaneousTrendline",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "IntradayIntensity",
+  "native": "IntradayIntensity",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "IntradayMomentumIndex",
+  "native": "IMI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "IntradayVolatilityProfile",
+  "native": "IntradayVolatilityProfile",
+  "ctor": [
+   24,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "profile_bins",
+  "width": 24
+ },
+ {
+  "canonical": "InverseFisherTransform",
+  "native": "InverseFisherTransform",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "InvertedHammer",
+  "native": "InvertedHammer",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "JarqueBera",
+  "native": "JARQUEBERA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Jma",
+  "native": "JMA",
+  "ctor": [
+   7,
+   0.0,
+   2
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "JumpIndicator",
+  "native": "JumpIndicator",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "KRatio",
+  "native": "KRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "KagiBars",
+  "native": "KagiBars",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "start",
+   "end",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "KalmanHedgeRatio",
+  "native": "KalmanHedgeRatio",
+  "ctor": [
+   0.01,
+   0.001
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "hedgeRatio",
+   "intercept",
+   "spread"
+  ]
+ },
+ {
+  "canonical": "Kama",
+  "native": "KAMA",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "KaseDevStop",
+  "native": "KaseDevStop",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "value",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "KasePermissionStochastic",
+  "native": "KasePermissionStochastic",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "fast",
+   "slow"
+  ]
+ },
+ {
+  "canonical": "KellyCriterion",
+  "native": "KellyCriterion",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Keltner",
+  "native": "Keltner",
+  "ctor": [
+   3,
+   7,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "KendallTau",
+  "native": "KendallTau",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Kicking",
+  "native": "Kicking",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "KickingByLength",
+  "native": "KickingByLength",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Kst",
+  "native": "KST",
+  "ctor": [
+   3,
+   7,
+   14,
+   28,
+   35,
+   42,
+   56,
+   63,
+   70
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "kst",
+   "signal"
+  ]
+ },
+ {
+  "canonical": "Kurtosis",
+  "native": "Kurtosis",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Kvo",
+  "native": "KVO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "KylesLambda",
+  "native": "KylesLambda",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   },
+   {
+    "name": "mid",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LadderBottom",
+  "native": "LadderBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LaguerreRsi",
+  "native": "LaguerreRSI",
+  "ctor": [
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LeadLagCrossCorrelation",
+  "native": "LeadLagCrossCorrelation",
+  "ctor": [
+   20,
+   10
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "lag",
+   "correlation"
+  ]
+ },
+ {
+  "canonical": "LinRegAngle",
+  "native": "LinRegAngle",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LinRegChannel",
+  "native": "LinRegChannel",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "LinRegIntercept",
+  "native": "LINEARREG_INTERCEPT",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LinRegSlope",
+  "native": "LinRegSlope",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LinearRegression",
+  "native": "LinearRegression",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LiquidationFeatures",
+  "native": "LiquidationFeatures",
+  "ctor": [],
+  "args": [
+   {
+    "name": "longLiquidation",
+    "array": false
+   },
+   {
+    "name": "shortLiquidation",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "long",
+   "short",
+   "net",
+   "total",
+   "imbalance"
+  ]
+ },
+ {
+  "canonical": "LogReturn",
+  "native": "LogReturn",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LongLeggedDoji",
+  "native": "LongLeggedDoji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LongLine",
+  "native": "LongLine",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "LongShortRatio",
+  "native": "LongShortRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "longSize",
+    "array": false
+   },
+   {
+    "name": "shortSize",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "M2Measure",
+  "native": "M2Measure",
+  "ctor": [
+   14,
+   2.0,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MaEnvelope",
+  "native": "MaEnvelope",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "MacdExt",
+  "native": "MACDEXT",
+  "ctor": [
+   12,
+   0,
+   26,
+   0,
+   9,
+   0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "macd",
+   "signal",
+   "histogram"
+  ]
+ },
+ {
+  "canonical": "MacdFix",
+  "native": "MACDFIX",
+  "ctor": [
+   9
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "macd",
+   "signal",
+   "histogram"
+  ]
+ },
+ {
+  "canonical": "MacdHistogram",
+  "native": "MacdHistogram",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MacdIndicator",
+  "native": "MACD",
+  "ctor": [
+   12,
+   26,
+   9
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "macd",
+   "signal",
+   "histogram"
+  ]
+ },
+ {
+  "canonical": "Mama",
+  "native": "MAMA",
+  "ctor": [
+   0.5,
+   0.05
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "mama",
+   "fama"
+  ]
+ },
+ {
+  "canonical": "MarketFacilitationIndex",
+  "native": "MarketFacilitationIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MartinRatio",
+  "native": "MartinRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Marubozu",
+  "native": "Marubozu",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MassIndex",
+  "native": "MassIndex",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MatHold",
+  "native": "MatHold",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MatchingLow",
+  "native": "MatchingLow",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MaxDrawdown",
+  "native": "MaxDrawdown",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "McClellanOscillator",
+  "native": "McClellanOscillator",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "McClellanSummationIndex",
+  "native": "McClellanSummationIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "McGinleyDynamic",
+  "native": "McGinleyDynamic",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MedianAbsoluteDeviation",
+  "native": "MedianAbsoluteDeviation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MedianChannel",
+  "native": "MedianChannel",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "MedianMa",
+  "native": "MedianMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MedianPrice",
+  "native": "MedianPrice",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Mfi",
+  "native": "MFI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Microprice",
+  "native": "Microprice",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MidPoint",
+  "native": "MIDPOINT",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MidPrice",
+  "native": "MIDPRICE",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MinusDi",
+  "native": "MINUS_DI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MinusDm",
+  "native": "MINUS_DM",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ModifiedMaStop",
+  "native": "ModifiedMaStop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "value",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "Mom",
+  "native": "MOM",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MorningDojiStar",
+  "native": "MorningDojiStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MorningEveningStar",
+  "native": "MorningEveningStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "MurreyMathLines",
+  "native": "MurreyMathLines",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "mm88",
+   "mm78",
+   "mm68",
+   "mm58",
+   "mm48",
+   "mm38",
+   "mm28",
+   "mm18",
+   "mm08"
+  ]
+ },
+ {
+  "canonical": "NakedPoc",
+  "native": "NakedPoc",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Natr",
+  "native": "NATR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "NewHighsNewLows",
+  "native": "NewHighsNewLows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "NewPriceLines",
+  "native": "NewPriceLines",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Nrtr",
+  "native": "Nrtr",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "value",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "Nvi",
+  "native": "NVI",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OIPriceDivergence",
+  "native": "OIPriceDivergence",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "openInterest",
+    "array": false
+   },
+   {
+    "name": "markPrice",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OIWeighted",
+  "native": "OIWeighted",
+  "ctor": [],
+  "args": [
+   {
+    "name": "markPrice",
+    "array": false
+   },
+   {
+    "name": "openInterest",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Obv",
+  "native": "OBV",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OiToVolumeRatio",
+  "native": "OiToVolumeRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "openInterest",
+    "array": false
+   },
+   {
+    "name": "takerBuyVolume",
+    "array": false
+   },
+   {
+    "name": "takerSellVolume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OmegaRatio",
+  "native": "OmegaRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OnNeck",
+  "native": "OnNeck",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OpenInterestDelta",
+  "native": "OpenInterestDelta",
+  "ctor": [],
+  "args": [
+   {
+    "name": "openInterest",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OpenInterestMomentum",
+  "native": "OpenInterestMomentum",
+  "ctor": [
+   10
+  ],
+  "args": [
+   {
+    "name": "openInterest",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OpeningMarubozu",
+  "native": "OpeningMarubozu",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OpeningRange",
+  "native": "OpeningRange",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "high",
+   "low",
+   "breakoutDistance"
+  ]
+ },
+ {
+  "canonical": "OrderBookImbalanceFull",
+  "native": "OrderBookImbalanceFull",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OrderBookImbalanceTop1",
+  "native": "OrderBookImbalanceTop1",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OrderBookImbalanceTopN",
+  "native": "OrderBookImbalanceTopN",
+  "ctor": [
+   5
+  ],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OrderFlowImbalance",
+  "native": "OrderFlowImbalance",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OuHalfLife",
+  "native": "OuHalfLife",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OvernightGap",
+  "native": "OvernightGap",
+  "ctor": [
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "OvernightIntradayReturn",
+  "native": "OvernightIntradayReturn",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "overnight",
+   "intraday"
+  ]
+ },
+ {
+  "canonical": "PainIndex",
+  "native": "PainIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PairSpreadZScore",
+  "native": "PairSpreadZScore",
+  "ctor": [
+   20,
+   20
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PairwiseBeta",
+  "native": "PairwiseBeta",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ParkinsonVolatility",
+  "native": "ParkinsonVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PearsonCorrelation",
+  "native": "PearsonCorrelation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PercentAboveMa",
+  "native": "PercentAboveMa",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   },
+   {
+    "name": "aboveMa",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PercentB",
+  "native": "PercentB",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PercentageTrailingStop",
+  "native": "PercentageTrailingStop",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PerpetualPremiumIndex",
+  "native": "PerpetualPremiumIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "markPrice",
+    "array": false
+   },
+   {
+    "name": "indexPrice",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Pgo",
+  "native": "PGO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PiercingDarkCloud",
+  "native": "PiercingDarkCloud",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Pin",
+  "native": "Pin",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PivotReversal",
+  "native": "PivotReversal",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PlusDi",
+  "native": "PLUS_DI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PlusDm",
+  "native": "PLUS_DM",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Pmo",
+  "native": "PMO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PointAndFigureBars",
+  "native": "PointAndFigureBars",
+  "ctor": [
+   2.0,
+   3
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "direction",
+   "high",
+   "low"
+  ]
+ },
+ {
+  "canonical": "PolarizedFractalEfficiency",
+  "native": "POLARIZED_FRACTAL_EFFICIENCY",
+  "ctor": [
+   10,
+   5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Ppo",
+  "native": "PPO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "PpoHistogram",
+  "native": "PpoHistogram",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ProfileShape",
+  "native": "ProfileShape",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ProfitFactor",
+  "native": "ProfitFactor",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ProjectionBands",
+  "native": "ProjectionBands",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "ProjectionOscillator",
+  "native": "ProjectionOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Psar",
+  "native": "PSAR",
+  "ctor": [
+   0.02,
+   0.02,
+   0.2
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Pvi",
+  "native": "PVI",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Qqe",
+  "native": "QQE",
+  "ctor": [
+   3,
+   7,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "rsiMa",
+   "trailingLine"
+  ]
+ },
+ {
+  "canonical": "Qstick",
+  "native": "Qstick",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "QuartileBands",
+  "native": "QuartileBands",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "QuotedSpread",
+  "native": "QuotedSpread",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bidPx",
+    "array": true
+   },
+   {
+    "name": "bidSz",
+    "array": true
+   },
+   {
+    "name": "askPx",
+    "array": true
+   },
+   {
+    "name": "askSz",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RSquared",
+  "native": "RSquared",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RangeBars",
+  "native": "RangeBars",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "close",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "RealizedSpread",
+  "native": "RealizedSpread",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   },
+   {
+    "name": "mid",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RealizedVolatility",
+  "native": "RealizedVolatility",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RecoveryFactor",
+  "native": "RecoveryFactor",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RectangleRange",
+  "native": "RectangleRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Reflex",
+  "native": "REFLEX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RegimeLabel",
+  "native": "RegimeLabel",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RelativeStrengthAB",
+  "native": "RelativeStrengthAB",
+  "ctor": [
+   14,
+   14
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "ratio",
+   "ratioMa",
+   "ratioRsi"
+  ]
+ },
+ {
+  "canonical": "RenkoBars",
+  "native": "RenkoBars",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "close",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "RenkoTrailingStop",
+  "native": "RenkoTrailingStop",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RickshawMan",
+  "native": "RickshawMan",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RisingThreeMethods",
+  "native": "RisingThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rmi",
+  "native": "RMI",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Roc",
+  "native": "ROC",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rocp",
+  "native": "ROCP",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rocr",
+  "native": "ROCR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rocr100",
+  "native": "ROCR100",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RogersSatchellVolatility",
+  "native": "RogersSatchellVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollMeasure",
+  "native": "RollMeasure",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingCorrelation",
+  "native": "RollingCorrelation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingCovariance",
+  "native": "RollingCovariance",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingIqr",
+  "native": "RollingIqr",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingMinMaxScaler",
+  "native": "ROLLINGMINMAX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingPercentileRank",
+  "native": "RollingPercentileRank",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingQuantile",
+  "native": "RollingQuantile",
+  "ctor": [
+   20,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RollingVwap",
+  "native": "RollingVWAP",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RoofingFilter",
+  "native": "RoofingFilter",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rsi",
+  "native": "RSI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rsx",
+  "native": "RSX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RunBars",
+  "native": "RunBars",
+  "ctor": [
+   3
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close",
+   "length",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "Rvi",
+  "native": "RVI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "RviVolatility",
+  "native": "RVIVolatility",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Rwi",
+  "native": "RWI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "high",
+   "low"
+  ]
+ },
+ {
+  "canonical": "SampleEntropy",
+  "native": "SAMPLEENT",
+  "ctor": [
+   20,
+   2,
+   0.2
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SarExt",
+  "native": "SAREXT",
+  "ctor": [
+   2.0,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SeasonalZScore",
+  "native": "SeasonalZScore",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SeparatingLines",
+  "native": "SeparatingLines",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SessionHighLow",
+  "native": "SessionHighLow",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "high",
+   "low"
+  ]
+ },
+ {
+  "canonical": "SessionRange",
+  "native": "SessionRange",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "asia",
+   "eu",
+   "us"
+  ]
+ },
+ {
+  "canonical": "SessionVwap",
+  "native": "SessionVwap",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ShannonEntropy",
+  "native": "SHANNONENT",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Shark",
+  "native": "Shark",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SharpeRatio",
+  "native": "SharpeRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ShootingStar",
+  "native": "ShootingStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ShortLine",
+  "native": "ShortLine",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SignedVolume",
+  "native": "SignedVolume",
+  "ctor": [],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SineWave",
+  "native": "SineWave",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SineWeightedMa",
+  "native": "SWMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SinglePrints",
+  "native": "SinglePrints",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Skewness",
+  "native": "Skewness",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Sma",
+  "native": "SMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Smi",
+  "native": "SMI",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Smma",
+  "native": "SMMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SmoothedHeikinAshi",
+  "native": "SmoothedHeikinAshi",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close"
+  ]
+ },
+ {
+  "canonical": "SortinoRatio",
+  "native": "SortinoRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SpearmanCorrelation",
+  "native": "SpearmanCorrelation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SpinningTop",
+  "native": "SpinningTop",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SpreadAr1Coefficient",
+  "native": "SpreadAr1Coefficient",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SpreadBollingerBands",
+  "native": "SpreadBollingerBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "middle",
+   "upper",
+   "lower",
+   "percentB"
+  ]
+ },
+ {
+  "canonical": "SpreadHurst",
+  "native": "SpreadHurst",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false
+   },
+   {
+    "name": "y",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StalledPattern",
+  "native": "StalledPattern",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StandardError",
+  "native": "StandardError",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StandardErrorBands",
+  "native": "StandardErrorBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "StarcBands",
+  "native": "StarcBands",
+  "ctor": [
+   3,
+   7,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower"
+  ]
+ },
+ {
+  "canonical": "Stc",
+  "native": "STC",
+  "ctor": [
+   10,
+   23,
+   10,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StdDev",
+  "native": "StdDev",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StepTrailingStop",
+  "native": "StepTrailingStop",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SterlingRatio",
+  "native": "SterlingRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StickSandwich",
+  "native": "StickSandwich",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "StochRsi",
+  "native": "StochRSI",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Stochastic",
+  "native": "Stochastic",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "k",
+   "d"
+  ]
+ },
+ {
+  "canonical": "StochasticCci",
+  "native": "StochasticCCI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SuperSmoother",
+  "native": "SuperSmoother",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "SuperTrend",
+  "native": "SuperTrend",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "value",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "T3",
+  "native": "T3",
+  "ctor": [
+   5,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TailRatio",
+  "native": "TailRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TakerBuySellRatio",
+  "native": "TakerBuySellRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "takerBuyVolume",
+    "array": false
+   },
+   {
+    "name": "takerSellVolume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Takuri",
+  "native": "Takuri",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TasukiGap",
+  "native": "TasukiGap",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdCamouflage",
+  "native": "TDCamouflage",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdClop",
+  "native": "TDClop",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdClopwin",
+  "native": "TDClopwin",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdCombo",
+  "native": "TDCombo",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdCountdown",
+  "native": "TDCountdown",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdDWave",
+  "native": "TDDWave",
+  "ctor": [
+   2
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdDeMarker",
+  "native": "TDDeMarker",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdDifferential",
+  "native": "TDDifferential",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdLines",
+  "native": "TDLines",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "resistance",
+   "support"
+  ]
+ },
+ {
+  "canonical": "TdMovingAverage",
+  "native": "TDMovingAverage",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "st1",
+   "st2"
+  ]
+ },
+ {
+  "canonical": "TdOpen",
+  "native": "TDOpen",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdPressure",
+  "native": "TDPressure",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdPropulsion",
+  "native": "TDPropulsion",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdRangeProjection",
+  "native": "TDRangeProjection",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "high",
+   "low"
+  ]
+ },
+ {
+  "canonical": "TdRei",
+  "native": "TDREI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdRiskLevel",
+  "native": "TDRiskLevel",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "buyRisk",
+   "sellRisk"
+  ]
+ },
+ {
+  "canonical": "TdSequential",
+  "native": "TDSequential",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "setup",
+   "countdown",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "TdSetup",
+  "native": "TDSetup",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TdTrap",
+  "native": "TDTrap",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tema",
+  "native": "TEMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TermStructureBasis",
+  "native": "TermStructureBasis",
+  "ctor": [],
+  "args": [
+   {
+    "name": "futuresPrice",
+    "array": false
+   },
+   {
+    "name": "indexPrice",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeDrives",
+  "native": "ThreeDrives",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeInside",
+  "native": "ThreeInside",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeLineBreak",
+  "native": "ThreeLineBreak",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeLineBreakBars",
+  "native": "ThreeLineBreakBars",
+  "ctor": [
+   3
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "close",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "ThreeLineStrike",
+  "native": "ThreeLineStrike",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeOutside",
+  "native": "ThreeOutside",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeSoldiersOrCrows",
+  "native": "ThreeSoldiersOrCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ThreeStarsInSouth",
+  "native": "ThreeStarsInSouth",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Thrusting",
+  "native": "Thrusting",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TickBars",
+  "native": "TickBars",
+  "ctor": [
+   2
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close",
+   "volume"
+  ]
+ },
+ {
+  "canonical": "TickIndex",
+  "native": "TickIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tii",
+  "native": "TII",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TimeBasedStop",
+  "native": "TimeBasedStop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TimeOfDayReturnProfile",
+  "native": "TimeOfDayReturnProfile",
+  "ctor": [
+   24,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "profile_bins",
+  "width": 24
+ },
+ {
+  "canonical": "TowerTopBottom",
+  "native": "TowerTopBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TpoProfile",
+  "native": "TpoProfile",
+  "ctor": [
+   30,
+   50
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "profile_pricebins",
+  "width": 52,
+  "arrayField": "counts"
+ },
+ {
+  "canonical": "TradeImbalance",
+  "native": "TradeImbalance",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TradeSignAutocorrelation",
+  "native": "TradeSignAutocorrelation",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TradeVolumeIndex",
+  "native": "TradeVolumeIndex",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TrendLabel",
+  "native": "TrendLabel",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TrendStrengthIndex",
+  "native": "TREND_STRENGTH_INDEX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Trendflex",
+  "native": "TRENDFLEX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TreynorRatio",
+  "native": "TreynorRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "asset",
+    "array": false
+   },
+   {
+    "name": "benchmark",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Triangle",
+  "native": "Triangle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Trima",
+  "native": "TRIMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Trin",
+  "native": "Trin",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TripleTopBottom",
+  "native": "TripleTopBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tristar",
+  "native": "Tristar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Trix",
+  "native": "TRIX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TrueRange",
+  "native": "TrueRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tsf",
+  "native": "TSF",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TsfOscillator",
+  "native": "TsfOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tsi",
+  "native": "TSI",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tsv",
+  "native": "TSV",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TtmSqueeze",
+  "native": "TtmSqueeze",
+  "ctor": [
+   14,
+   2.0,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "squeeze",
+   "momentum"
+  ]
+ },
+ {
+  "canonical": "TtmTrend",
+  "native": "TTM_TREND",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TurnOfMonth",
+  "native": "TurnOfMonth",
+  "ctor": [
+   3,
+   3,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Tweezer",
+  "native": "Tweezer",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TwiggsMoneyFlow",
+  "native": "TwiggsMoneyFlow",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TwoCrows",
+  "native": "TwoCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "TypicalPrice",
+  "native": "TypicalPrice",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UlcerIndex",
+  "native": "UlcerIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UltimateOscillator",
+  "native": "UltimateOscillator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UniqueThreeRiver",
+  "native": "UniqueThreeRiver",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UniversalOscillator",
+  "native": "UNIVERSALOSC",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UpDownVolumeRatio",
+  "native": "UpDownVolumeRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true
+   },
+   {
+    "name": "volume",
+    "array": true
+   },
+   {
+    "name": "newHigh",
+    "array": true
+   },
+   {
+    "name": "newLow",
+    "array": true
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UpsideGapThreeMethods",
+  "native": "UpsideGapThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UpsideGapTwoCrows",
+  "native": "UpsideGapTwoCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "UpsidePotentialRatio",
+  "native": "UpsidePotentialRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ValueArea",
+  "native": "ValueArea",
+  "ctor": [
+   20,
+   50,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "poc",
+   "vah",
+   "val"
+  ]
+ },
+ {
+  "canonical": "ValueAtRisk",
+  "native": "ValueAtRisk",
+  "ctor": [
+   20,
+   0.95
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Variance",
+  "native": "Variance",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VarianceRatio",
+  "native": "VarianceRatio",
+  "ctor": [
+   60,
+   2
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false
+   },
+   {
+    "name": "b",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VerticalHorizontalFilter",
+  "native": "VerticalHorizontalFilter",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Vidya",
+  "native": "VIDYA",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VolatilityCone",
+  "native": "VolatilityCone",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "current",
+   "min",
+   "median",
+   "max",
+   "percentile"
+  ]
+ },
+ {
+  "canonical": "VolatilityOfVolatility",
+  "native": "VolatilityOfVolatility",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VolatilityRatio",
+  "native": "VolatilityRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VoltyStop",
+  "native": "VoltyStop",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VolumeBars",
+  "native": "VolumeBars",
+  "ctor": [
+   500.0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "bars",
+  "fields": [
+   "open",
+   "high",
+   "low",
+   "close",
+   "volume"
+  ]
+ },
+ {
+  "canonical": "VolumeByTimeProfile",
+  "native": "VolumeByTimeProfile",
+  "ctor": [
+   24,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   },
+   {
+    "name": "timestamp",
+    "array": false
+   }
+  ],
+  "out": "profile_bins",
+  "width": 24
+ },
+ {
+  "canonical": "VolumeOscillator",
+  "native": "VolumeOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VolumePriceTrend",
+  "native": "VolumePriceTrend",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VolumeProfile",
+  "native": "VolumeProfile",
+  "ctor": [
+   20,
+   50
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "profile_pricebins",
+  "width": 52,
+  "arrayField": "bins"
+ },
+ {
+  "canonical": "VolumeRsi",
+  "native": "VolumeRsi",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VolumeWeightedMacd",
+  "native": "VolumeWeightedMacd",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "macd",
+   "signal",
+   "histogram"
+  ]
+ },
+ {
+  "canonical": "VolumeWeightedSr",
+  "native": "VolumeWeightedSr",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "support",
+   "resistance"
+  ]
+ },
+ {
+  "canonical": "Vortex",
+  "native": "Vortex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "plus",
+   "minus"
+  ]
+ },
+ {
+  "canonical": "Vpin",
+  "native": "Vpin",
+  "ctor": [
+   5000.0,
+   10
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false
+   },
+   {
+    "name": "size",
+    "array": false
+   },
+   {
+    "name": "isBuy",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Vwap",
+  "native": "VWAP",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "VwapStdDevBands",
+  "native": "VwapStdDevBands",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "upper",
+   "middle",
+   "lower",
+   "stddev"
+  ]
+ },
+ {
+  "canonical": "Vwma",
+  "native": "VWMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Vzo",
+  "native": "VZO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false
+   },
+   {
+    "name": "volume",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Wad",
+  "native": "Wad",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WavePm",
+  "native": "WAVE_PM",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WaveTrend",
+  "native": "WaveTrend",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "wt1",
+   "wt2"
+  ]
+ },
+ {
+  "canonical": "Wedge",
+  "native": "Wedge",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WeightedClose",
+  "native": "WeightedClose",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WickRatio",
+  "native": "WickRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WilliamsFractals",
+  "native": "WilliamsFractals",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "up",
+   "down"
+  ]
+ },
+ {
+  "canonical": "WilliamsR",
+  "native": "WilliamsR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WinRate",
+  "native": "WinRate",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "Wma",
+  "native": "WMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "WoodiePivots",
+  "native": "WoodiePivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "pp",
+   "r1",
+   "r2",
+   "s1",
+   "s2"
+  ]
+ },
+ {
+  "canonical": "YangZhangVolatility",
+  "native": "YangZhangVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false
+   },
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "YoyoExit",
+  "native": "YoyoExit",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   },
+   {
+    "name": "close",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ZScore",
+  "native": "ZScore",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ },
+ {
+  "canonical": "ZeroLagMacd",
+  "native": "ZeroLagMACD",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "macd",
+   "signal",
+   "histogram"
+  ]
+ },
+ {
+  "canonical": "ZigZag",
+  "native": "ZigZag",
+  "ctor": [
+   0.02
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false
+   },
+   {
+    "name": "low",
+    "array": false
+   }
+  ],
+  "out": "multi",
+  "fields": [
+   "swing",
+   "direction"
+  ]
+ },
+ {
+  "canonical": "Zlema",
+  "native": "ZLEMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false
+   }
+  ],
+  "out": "scalar"
+ }
+]

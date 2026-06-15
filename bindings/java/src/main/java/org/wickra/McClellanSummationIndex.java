@@ -47,10 +47,10 @@ public final class McClellanSummationIndex implements AutoCloseable {
         try (Arena a = Arena.ofConfined()) {
             MemorySegment changeSeg = a.allocateFrom(JAVA_DOUBLE, change);
             MemorySegment volumeSeg = a.allocateFrom(JAVA_DOUBLE, volume);
-            MemorySegment newHighSeg = a.allocateFrom(JAVA_DOUBLE, newHigh);
-            MemorySegment newLowSeg = a.allocateFrom(JAVA_DOUBLE, newLow);
-            MemorySegment aboveMaSeg = a.allocateFrom(JAVA_DOUBLE, aboveMa);
-            MemorySegment onBuySignalSeg = a.allocateFrom(JAVA_DOUBLE, onBuySignal);
+            MemorySegment newHighSeg = WickraNative.boolSegment(a, newHigh);
+            MemorySegment newLowSeg = WickraNative.boolSegment(a, newLow);
+            MemorySegment aboveMaSeg = WickraNative.boolSegment(a, aboveMa);
+            MemorySegment onBuySignalSeg = WickraNative.boolSegment(a, onBuySignal);
             return (double) NativeMethods.WICKRA_MC_CLELLAN_SUMMATION_INDEX_UPDATE.invokeExact(handle, changeSeg, volumeSeg, newHighSeg, newLowSeg, aboveMaSeg, onBuySignalSeg, (long) change.length, timestamp);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);

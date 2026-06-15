@@ -157,4 +157,51 @@ class GoldenTests {
             }
         }
     }
+
+    // The four de-duplicated indicators, pinned against the Rust reference.
+
+    @Test
+    void adOscillatorMatchesGolden() throws Exception {
+        double[][] in = input();
+        List<String[]> e = readCsv("ad_oscillator");
+        try (AdOscillator ad = new AdOscillator()) {
+            for (int i = 0; i < in.length; i++) {
+                close(ad.update(in[i][0], in[i][1], in[i][2], in[i][3], in[i][4], i), cell(e.get(i)[0]), i, "ad_oscillator");
+            }
+        }
+    }
+
+    @Test
+    void intradayIntensityMatchesGolden() throws Exception {
+        double[][] in = input();
+        List<String[]> e = readCsv("intraday_intensity");
+        try (IntradayIntensity ii = new IntradayIntensity()) {
+            for (int i = 0; i < in.length; i++) {
+                close(ii.update(in[i][0], in[i][1], in[i][2], in[i][3], in[i][4], i), cell(e.get(i)[0]), i, "intraday_intensity");
+            }
+        }
+    }
+
+    @Test
+    void awesomeOscillatorHistogramMatchesGolden() throws Exception {
+        double[][] in = input();
+        List<String[]> e = readCsv("awesome_oscillator_histogram");
+        try (AwesomeOscillatorHistogram aoh = new AwesomeOscillatorHistogram(5, 34, 1)) {
+            for (int i = 0; i < in.length; i++) {
+                close(aoh.update(in[i][0], in[i][1], in[i][2], in[i][3], in[i][4], i), cell(e.get(i)[0]), i, "awesome_oscillator_histogram");
+            }
+        }
+    }
+
+    @Test
+    void averageDrawdownMatchesGolden() throws Exception {
+        double[][] in = input();
+        List<String[]> e = readCsv("average_drawdown");
+        try (AverageDrawdown avg = new AverageDrawdown(20)) {
+            for (int i = 0; i < in.length; i++) {
+                // generator fed the close column as the equity-curve sample.
+                close(avg.update(in[i][3]), cell(e.get(i)[0]), i, "average_drawdown");
+            }
+        }
+    }
 }

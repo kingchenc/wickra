@@ -1,0 +1,364 @@
+{
+ "deriv": [
+  {
+   "canonical": "CalendarSpread",
+   "native": "CalendarSpread",
+   "params": [],
+   "args": [
+    "futures_price",
+    "mark_price"
+   ]
+  },
+  {
+   "canonical": "EstimatedLeverageRatio",
+   "native": "EstimatedLeverageRatio",
+   "params": [],
+   "args": [
+    "open_interest",
+    "long_size",
+    "short_size"
+   ]
+  },
+  {
+   "canonical": "FundingBasis",
+   "native": "FundingBasis",
+   "params": [],
+   "args": [
+    "mark_price",
+    "index_price"
+   ]
+  },
+  {
+   "canonical": "FundingImpliedApr",
+   "native": "FundingImpliedApr",
+   "params": [
+    1095.0
+   ],
+   "args": [
+    "funding_rate"
+   ]
+  },
+  {
+   "canonical": "FundingRate",
+   "native": "FundingRate",
+   "params": [],
+   "args": [
+    "funding_rate"
+   ]
+  },
+  {
+   "canonical": "FundingRateMean",
+   "native": "FundingRateMean",
+   "params": [
+    20
+   ],
+   "args": [
+    "funding_rate"
+   ]
+  },
+  {
+   "canonical": "FundingRateZScore",
+   "native": "FundingRateZScore",
+   "params": [
+    20
+   ],
+   "args": [
+    "funding_rate"
+   ]
+  },
+  {
+   "canonical": "LongShortRatio",
+   "native": "LongShortRatio",
+   "params": [],
+   "args": [
+    "long_size",
+    "short_size"
+   ]
+  },
+  {
+   "canonical": "OpenInterestDelta",
+   "native": "OpenInterestDelta",
+   "params": [],
+   "args": [
+    "open_interest"
+   ]
+  },
+  {
+   "canonical": "OIPriceDivergence",
+   "native": "OIPriceDivergence",
+   "params": [
+    20
+   ],
+   "args": [
+    "open_interest",
+    "mark_price"
+   ]
+  },
+  {
+   "canonical": "OiToVolumeRatio",
+   "native": "OiToVolumeRatio",
+   "params": [],
+   "args": [
+    "open_interest",
+    "taker_buy_volume",
+    "taker_sell_volume"
+   ]
+  },
+  {
+   "canonical": "OIWeighted",
+   "native": "OIWeighted",
+   "params": [],
+   "args": [
+    "mark_price",
+    "open_interest"
+   ]
+  },
+  {
+   "canonical": "OpenInterestMomentum",
+   "native": "OpenInterestMomentum",
+   "params": [
+    10
+   ],
+   "args": [
+    "open_interest"
+   ]
+  },
+  {
+   "canonical": "PerpetualPremiumIndex",
+   "native": "PerpetualPremiumIndex",
+   "params": [],
+   "args": [
+    "mark_price",
+    "index_price"
+   ]
+  },
+  {
+   "canonical": "TakerBuySellRatio",
+   "native": "TakerBuySellRatio",
+   "params": [],
+   "args": [
+    "taker_buy_volume",
+    "taker_sell_volume"
+   ]
+  },
+  {
+   "canonical": "TermStructureBasis",
+   "native": "TermStructureBasis",
+   "params": [],
+   "args": [
+    "futures_price",
+    "index_price"
+   ]
+  },
+  {
+   "canonical": "LiquidationFeatures",
+   "native": "LiquidationFeatures",
+   "params": [],
+   "args": [
+    "long_liquidation",
+    "short_liquidation"
+   ],
+   "n": 5
+  }
+ ],
+ "cross": [
+  {
+   "canonical": "AbsoluteBreadthIndex",
+   "native": "AbsoluteBreadthIndex",
+   "params": []
+  },
+  {
+   "canonical": "AdvanceDecline",
+   "native": "AdvanceDecline",
+   "params": []
+  },
+  {
+   "canonical": "AdvanceDeclineRatio",
+   "native": "AdvanceDeclineRatio",
+   "params": []
+  },
+  {
+   "canonical": "AdVolumeLine",
+   "native": "AdVolumeLine",
+   "params": []
+  },
+  {
+   "canonical": "BreadthThrust",
+   "native": "BreadthThrust",
+   "params": [
+    10
+   ]
+  },
+  {
+   "canonical": "BullishPercentIndex",
+   "native": "BullishPercentIndex",
+   "params": [],
+   "extra": "on_buy_signal"
+  },
+  {
+   "canonical": "CumulativeVolumeIndex",
+   "native": "CumulativeVolumeIndex",
+   "params": []
+  },
+  {
+   "canonical": "HighLowIndex",
+   "native": "HighLowIndex",
+   "params": [
+    10
+   ]
+  },
+  {
+   "canonical": "McClellanOscillator",
+   "native": "McClellanOscillator",
+   "params": []
+  },
+  {
+   "canonical": "McClellanSummationIndex",
+   "native": "McClellanSummationIndex",
+   "params": []
+  },
+  {
+   "canonical": "NewHighsNewLows",
+   "native": "NewHighsNewLows",
+   "params": []
+  },
+  {
+   "canonical": "PercentAboveMa",
+   "native": "PercentAboveMa",
+   "params": [],
+   "extra": "above_ma"
+  },
+  {
+   "canonical": "TickIndex",
+   "native": "TickIndex",
+   "params": []
+  },
+  {
+   "canonical": "Trin",
+   "native": "Trin",
+   "params": []
+  },
+  {
+   "canonical": "UpDownVolumeRatio",
+   "native": "UpDownVolumeRatio",
+   "params": []
+  }
+ ],
+ "trade": [
+  {
+   "canonical": "AmihudIlliquidity",
+   "native": "AmihudIlliquidity",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "CumulativeVolumeDelta",
+   "native": "CumulativeVolumeDelta",
+   "params": []
+  },
+  {
+   "canonical": "Pin",
+   "native": "Pin",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "RollMeasure",
+   "native": "RollMeasure",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "SignedVolume",
+   "native": "SignedVolume",
+   "params": []
+  },
+  {
+   "canonical": "TradeImbalance",
+   "native": "TradeImbalance",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "TradeSignAutocorrelation",
+   "native": "TradeSignAutocorrelation",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "Vpin",
+   "native": "Vpin",
+   "params": [
+    5000.0,
+    10
+   ]
+  }
+ ],
+ "trademid": [
+  {
+   "canonical": "KylesLambda",
+   "native": "KylesLambda",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "RealizedSpread",
+   "native": "RealizedSpread",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "EffectiveSpread",
+   "native": "EffectiveSpread",
+   "params": []
+  }
+ ],
+ "ob": [
+  {
+   "canonical": "DepthSlope",
+   "native": "DepthSlope",
+   "params": []
+  },
+  {
+   "canonical": "Microprice",
+   "native": "Microprice",
+   "params": []
+  },
+  {
+   "canonical": "OrderBookImbalanceFull",
+   "native": "OrderBookImbalanceFull",
+   "params": []
+  },
+  {
+   "canonical": "OrderBookImbalanceTop1",
+   "native": "OrderBookImbalanceTop1",
+   "params": []
+  },
+  {
+   "canonical": "OrderBookImbalanceTopN",
+   "native": "OrderBookImbalanceTopN",
+   "params": [
+    5
+   ]
+  },
+  {
+   "canonical": "OrderFlowImbalance",
+   "native": "OrderFlowImbalance",
+   "params": [
+    20
+   ]
+  },
+  {
+   "canonical": "QuotedSpread",
+   "native": "QuotedSpread",
+   "params": []
+  }
+ ]
+}
