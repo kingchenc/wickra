@@ -142,7 +142,7 @@ build-checked but not run in CI.
 | --- | --- | --- |
 | `streaming.py` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `python -m examples.python.streaming` |
 | `backtest.py` | Basket of indicators over an OHLCV CSV. | `python -m examples.python.backtest <ohlcv.csv>` |
-| `live_trading.py` | Live Binance feed → RSI / MACD / Bollinger → signals. | `python -m examples.python.live_trading --symbol BTCUSDT --interval 1m` |
+| `live_binance.py` | Live Binance feed → RSI / MACD / Bollinger → signals. | `python -m examples.python.live_binance --symbol BTCUSDT --interval 1m` |
 | `multi_timeframe.py` | Resample a 1-minute CSV to coarser timeframes and compare. | `python -m examples.python.multi_timeframe <1m.csv>` |
 | `parallel_assets.py` | Process many symbols in parallel — the Rust extension releases the GIL during batch computation. | `python -m examples.python.parallel_assets --assets 200 --bars 5000` |
 | `fetch_btcusdt.py` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (urllib + stdlib only). | `python -m examples.python.fetch_btcusdt` |
@@ -150,7 +150,7 @@ build-checked but not run in CI.
 | `strategy_macd_adx.py` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `python -m examples.python.strategy_macd_adx` |
 | `strategy_bollinger_squeeze.py` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `python -m examples.python.strategy_bollinger_squeeze` |
 
-`live_trading.py` additionally needs `pip install websockets`.
+`live_binance.py` additionally needs `pip install websockets`.
 
 ## Node.js — `examples/node/`
 
@@ -167,7 +167,7 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 | `backtest.js` | Basket of indicators over an OHLCV CSV; defaults to the bundled BTCUSDT daily dataset. | `node backtest.js [ohlcv.csv]` |
 | `multi_timeframe.js` | Roll a 1-minute CSV up to 5m / 15m / 1h / 4h / 1d and print indicators per timeframe. | `node multi_timeframe.js [path/to/1m.csv]` |
 | `parallel_assets.js` | Serial vs `worker_threads` pool over a synthetic panel, with speedup. | `node parallel_assets.js --assets 200 --bars 5000` |
-| `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_trading.js --symbol BTCUSDT --interval 1m` |
+| `live_binance.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_binance.js --symbol BTCUSDT --interval 1m` |
 | `fetch_btcusdt.js` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (built-in `fetch`, Node 18+). | `node fetch_btcusdt.js` |
 | `strategy_rsi_mean_reversion.js` | Hourly BTCUSDT mean-reversion using RSI(14) thresholds, with PnL / Sharpe / max-DD summary. | `node strategy_rsi_mean_reversion.js` |
 | `strategy_macd_adx.js` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `node strategy_macd_adx.js` |
@@ -188,7 +188,7 @@ Then serve the repository root (`python -m http.server`, `npx http-server`,
 | --- | --- |
 | `index.html` | Streams a synthetic price series through six indicators and draws a live `<canvas>` chart. |
 | `backtest.html` | Streams a fetched OHLCV CSV through a basket of indicators (SMA, EMA, RSI, MACD, Bollinger, ATR, ADX, OBV) and prints a per-series summary table. |
-| `live_trading.html` | Opens a browser-native `WebSocket` to Binance, runs RSI / MACD / Bollinger and flags BUY/SELL candidates. |
+| `live_binance.html` | Opens a browser-native `WebSocket` to Binance, runs RSI / MACD / Bollinger and flags BUY/SELL candidates. |
 | `multi_timeframe.html` | Fetches a 1-minute CSV, rolls it up to 5m / 15m / 1h / 4h / 1d in-page, prints RSI / MACD hist / ADX per timeframe. |
 | `parallel_assets.html` | Spawns a pool of module Workers (each loading its own copy of the WASM module) and reports the speedup over a serial baseline. |
 | `strategy_rsi_mean_reversion.html` | Hourly BTCUSDT RSI(14) mean-reversion (long &lt; 30, exit &gt; 70); prints a PnL / Sharpe / max-DD summary table. |

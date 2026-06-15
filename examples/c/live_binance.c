@@ -1,7 +1,7 @@
 /* Live BTCUSDT indicator with the Wickra C ABI.
  *
  * The C counterpart of `examples/rust/src/bin/live_binance.rs`,
- * `examples/python/live_trading.py` and `examples/node/live_trading.js`. Those
+ * `examples/python/live_binance.py` and `examples/node/live_binance.js`. Those
  * stream Binance over a WebSocket; the C ABI ships only the indicators and no
  * socket layer, so this example polls the Binance REST klines endpoint via the
  * system `curl` once per interval and feeds each newly *closed* candle into a

@@ -227,7 +227,7 @@ A handful of indicators need care beyond naive accumulation:
 A typical full-stack call sequence for a Python live-trading example:
 
 ```
-[ Python: live_trading.py ]
+[ Python: live_binance.py ]
         │
         ▼
 [ binance.AsyncClient WebSocket ] ──── wickra_data live feed ───┐
