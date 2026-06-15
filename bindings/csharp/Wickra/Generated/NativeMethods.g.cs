@@ -12430,6 +12430,18 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_resampler_free(nint handle);
 
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nint wickra_candle_reader_new(byte* data, nuint len);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_candle_reader_count(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_candle_reader_read(nint handle, WickraCandle* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial void wickra_candle_reader_free(nint handle);
+
 }
 
     [StructLayout(LayoutKind.Sequential)]

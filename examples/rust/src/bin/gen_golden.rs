@@ -187,7 +187,55 @@ fn main() {
     emit_bars(dir, &candles);
     emit_data_layer(dir);
     emit_resampler(dir, &candles);
+    emit_candle_reader_csv(dir, &candles);
     println!("golden fixtures written to {}", dir.display());
+}
+
+/// Data layer: the CSV candle reader. Writes a source CSV in the reader's required
+/// `timestamp,open,high,low,close,volume` layout, plus the reference candles the
+/// reader parses out of it. Every binding parses the same bytes and checks the
+/// candles match — pinning column mapping and numeric round-tripping across the
+/// FFI.
+fn emit_candle_reader_csv(dir: &Path, candles: &[Candle]) {
+    let mut src = Vec::with_capacity(candles.len());
+    for c in candles {
+        src.push(format!(
+            "{},{},{},{},{},{}",
+            c.timestamp, c.open, c.high, c.low, c.close, c.volume
+        ));
+    }
+    write_csv(
+        dir,
+        "data_csv",
+        "timestamp,open,high,low,close,volume",
+        &src,
+    );
+
+    // Reference parse: feed the same bytes back through the reader so the fixture
+    // is exactly what wickra-data's parser yields, not just the input echoed.
+    let mut bytes = String::from("timestamp,open,high,low,close,volume\n");
+    for row in &src {
+        bytes.push_str(row);
+        bytes.push('\n');
+    }
+    let mut reader =
+        wickra_data::csv::CandleReader::from_reader(bytes.as_bytes()).expect("valid candle reader");
+    let parsed = reader.read_all().expect("valid csv parse");
+    let rows: Vec<String> = parsed
+        .iter()
+        .map(|c| {
+            format!(
+                "{},{},{},{},{},{}",
+                c.open, c.high, c.low, c.close, c.volume, c.timestamp
+            )
+        })
+        .collect();
+    write_csv(
+        dir,
+        "data_csv_candles",
+        "open,high,low,close,volume,timestamp",
+        &rows,
+    );
 }
 
 /// Data layer: the resampler. Resamples the shared input candles (timestamp =

@@ -2603,6 +2603,40 @@ SEXP wk_camarilla_reset(SEXP e) {
   return R_NilValue;
 }
 
+static void candle_reader_fin(SEXP e) {
+  struct CandleReader *h = (struct CandleReader *)R_ExternalPtrAddr(e);
+  if (h) wickra_candle_reader_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_candle_reader_new(SEXP csv) {
+  SEXP s = STRING_ELT(csv, 0);
+  const char *str = CHAR(s);
+  struct CandleReader *h = wickra_candle_reader_new((const uint8_t *)str, (uintptr_t)LENGTH(s));
+  if (!h) Rf_error("invalid CandleReader CSV");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, candle_reader_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_candle_reader_read(SEXP e) {
+  struct CandleReader *h = (struct CandleReader *)R_ExternalPtrAddr(e);
+  uintptr_t n = wickra_candle_reader_count(h);
+  if (n == 0) return Rf_allocMatrix(REALSXP, 0, 6);
+  struct WickraCandle *buf = (struct WickraCandle *)R_alloc(n, sizeof(struct WickraCandle));
+  uintptr_t w = wickra_candle_reader_read(h, buf, n);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)w, 6));
+  for (uintptr_t i = 0; i < w; i++) {
+    REAL(r)[i + w * 0] = buf[i].open;
+    REAL(r)[i + w * 1] = buf[i].high;
+    REAL(r)[i + w * 2] = buf[i].low;
+    REAL(r)[i + w * 3] = buf[i].close;
+    REAL(r)[i + w * 4] = buf[i].volume;
+    REAL(r)[i + w * 5] = (double)buf[i].timestamp;
+  }
+  UNPROTECT(1);
+  return r;
+}
+
 static void candle_volume_fin(SEXP e) {
   struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
   if (h) wickra_candle_volume_free(h);
@@ -23021,6 +23055,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_camarilla_is_ready", (DL_FUNC)&wk_camarilla_is_ready, 1},
   {"wk_camarilla_name", (DL_FUNC)&wk_camarilla_name, 1},
   {"wk_camarilla_reset", (DL_FUNC)&wk_camarilla_reset, 1},
+  {"wk_candle_reader_new", (DL_FUNC)&wk_candle_reader_new, 1},
+  {"wk_candle_reader_read", (DL_FUNC)&wk_candle_reader_read, 1},
   {"wk_candle_volume_new", (DL_FUNC)&wk_candle_volume_new, 1},
   {"wk_candle_volume_update", (DL_FUNC)&wk_candle_volume_update, 7},
   {"wk_candle_volume_warmup_period", (DL_FUNC)&wk_candle_volume_warmup_period, 1},

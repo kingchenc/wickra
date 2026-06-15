@@ -16101,3 +16101,34 @@ impl WasmResampler {
         }
     }
 }
+
+// ===== Data layer: CSV candle reader =====
+
+/// Parse OHLCV candles from a CSV string (header `timestamp,open,high,low,close,
+/// volume`; a leading UTF-8 BOM is stripped).
+#[wasm_bindgen(js_name = CandleReader)]
+pub struct WasmCandleReader {
+    candles: Vec<wc::Candle>,
+}
+
+#[wasm_bindgen(js_class = CandleReader)]
+impl WasmCandleReader {
+    /// Parse the whole CSV up front; throws on a malformed header or row.
+    #[wasm_bindgen(constructor)]
+    pub fn new(csv: &str) -> Result<WasmCandleReader, JsError> {
+        let mut reader =
+            wickra_data::csv::CandleReader::from_reader(csv.as_bytes()).map_err(map_data_err)?;
+        let candles = reader.read_all().map_err(map_data_err)?;
+        Ok(Self { candles })
+    }
+
+    /// Return every parsed candle as a `{ open, high, low, close, volume,
+    /// timestamp }` object.
+    pub fn read(&self) -> Array {
+        let arr = Array::new();
+        for &c in &self.candles {
+            arr.push(&candle_object(c));
+        }
+        arr
+    }
+}

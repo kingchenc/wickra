@@ -59,6 +59,26 @@ public class DataLayerTests
         }
     }
 
+    [Fact]
+    public void CandleReaderMatchesGolden()
+    {
+        var csv = File.ReadAllText(Path.Combine(GoldenDir(), "data_csv.csv"));
+        using var reader = new CandleReader(csv);
+        var candles = reader.Read();
+        var want = Read("data_csv_candles");
+        Assert.Equal(want.Length, candles.Length);
+        for (var i = 0; i < candles.Length; i++)
+        {
+            var c = candles[i];
+            var got = new[] { c.Open, c.High, c.Low, c.Close, c.Volume, (double)c.Timestamp };
+            for (var j = 0; j < 6; j++)
+            {
+                var tol = 1e-9 * Math.Max(1, Math.Abs(want[i][j]));
+                Assert.True(Math.Abs(got[j] - want[i][j]) <= tol, $"candle reader row {i} col {j}: {got[j]} vs {want[i][j]}");
+            }
+        }
+    }
+
     [Theory]
     [InlineData(false, "data_candles")]
     [InlineData(true, "data_candles_gap")]

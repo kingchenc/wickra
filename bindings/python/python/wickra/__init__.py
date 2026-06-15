@@ -361,6 +361,7 @@ from ._wickra import (
     # Data layer
     TickAggregator,
     Resampler,
+    CandleReader,
     # Market Profile
     CompositeProfile,
     HighLowVolumeNodes,
@@ -908,6 +909,7 @@ __all__ = [
     # Data layer
     "TickAggregator",
     "Resampler",
+    "CandleReader",
     # Market Profile
     "CompositeProfile",
     "HighLowVolumeNodes",
