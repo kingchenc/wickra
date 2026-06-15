@@ -259,7 +259,7 @@ const candleScalar = {
   VolumeOscillator: { make: () => new wickra.VolumeOscillator(14, 28), step: (ind, i) => ind.update(volume[i]), batch: (ind) => ind.batch(volume) },
   NVI: { make: () => new wickra.NVI(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   PVI: { make: () => new wickra.PVI(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
-  WilliamsAD: { make: () => new wickra.WilliamsAD(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ADOSC: { make: () => new wickra.ADOSC(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AnchoredVWAP: { make: () => new wickra.AnchoredVWAP(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   DemandIndex: { make: () => new wickra.DemandIndex(10), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   TSV: { make: () => new wickra.TSV(18), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
@@ -1009,8 +1009,8 @@ test('AwesomeOscillatorHistogram on a flat median converges to zero', () => {
     Array(n).fill(11),
     Array(n).fill(9),
   );
-  // warmup = 5 + 3 - 1 = 7.
-  for (let i = 6; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+  // AO momentum; warmup = slow + lookback = 5 + 3 = 8.
+  for (let i = 7; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
 });
 
 test('STC on a flat series stays at zero', () => {

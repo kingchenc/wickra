@@ -2505,8 +2505,8 @@ export declare class KVO {
   isReady(): boolean
   warmupPeriod(): number
 }
-export type AdOscillatorNode = WilliamsAD
-export declare class WilliamsAD {
+export type AdOscillatorNode = ADOSC
+export declare class ADOSC {
   constructor()
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>

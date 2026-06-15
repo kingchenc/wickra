@@ -3145,12 +3145,12 @@ impl WasmKvo {
     }
 }
 
-#[wasm_bindgen(js_name = WilliamsAD)]
+#[wasm_bindgen(js_name = ADOSC)]
 pub struct WasmAdOscillator {
     inner: wc::AdOscillator,
 }
 
-#[wasm_bindgen(js_class = WilliamsAD)]
+#[wasm_bindgen(js_class = ADOSC)]
 impl WasmAdOscillator {
     #[wasm_bindgen(constructor)]
     #[allow(clippy::new_without_default)]

@@ -634,8 +634,8 @@ CANDLE_SCALAR = {
         lambda: ta.PVI(),
         lambda ind, h, l, c, v: ind.batch(c, v),
     ),
-    "WilliamsAD": (
-        lambda: ta.WilliamsAD(),
+    "ADOSC": (
+        lambda: ta.ADOSC(),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
     ),
     "AnchoredVWAP": (
@@ -1762,7 +1762,7 @@ def test_wad_reference():
     #   TR_l = min(10, 8) = 8 -> delta = 12 - 8 = 4. AD = 4.
     # bar 2: prev=12, today high=11, low=7, close=7 (down day).
     #   TR_h = max(12, 11) = 12 -> delta = 7 - 12 = -5. AD = 4 - 5 = -1.
-    ad = ta.WilliamsAD()
+    ad = ta.Wad()
     high = np.array([11.0, 13.0, 11.0])
     low = np.array([9.0, 8.0, 7.0])
     close = np.array([10.0, 12.0, 7.0])

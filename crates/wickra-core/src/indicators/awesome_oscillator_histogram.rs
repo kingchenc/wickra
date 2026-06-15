@@ -1,24 +1,28 @@
 //! Awesome Oscillator Histogram.
 
+use std::collections::VecDeque;
+
 use crate::error::{Error, Result};
 use crate::indicators::awesome_oscillator::AwesomeOscillator;
-use crate::indicators::sma::Sma;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
-/// "Awesome Oscillator Histogram" — the difference between the Awesome
-/// Oscillator and its `sma_period`-bar `SMA`. Positive bars mean `AO` is
-/// trending up (bullish acceleration); negative bars mean `AO` is trending
-/// down (bearish acceleration).
+/// Awesome Oscillator Histogram — the bar-to-bar **momentum** of the Awesome
+/// Oscillator over a `lookback` window. This is the value behind the coloured
+/// histogram bars in Bill Williams' charts: each bar shows how much `AO` has
+/// changed, so positive values mean `AO` is rising (the histogram "greens up")
+/// and negative values mean it is falling.
 ///
 /// ```text
-/// AO         = SMA(median, fast) − SMA(median, slow)
-/// AOHist     = AO − SMA(AO, sma_period)
+/// AO     = SMA(median, fast) − SMA(median, slow)
+/// AOHist = AO_t − AO_{t−lookback}
 /// ```
 ///
-/// With Williams' default `sma_period = 5`, this collapses to the existing
-/// `AcceleratorOscillator` for `fast = 5, slow = 34, sma_period = 5`; for any
-/// other parameterisation this is a more flexible variant.
+/// This is distinct from the two related indicators Wickra ships: the raw
+/// [`AwesomeOscillator`](crate::AwesomeOscillator) is `AO` itself, and the
+/// [`AcceleratorOscillator`](crate::AcceleratorOscillator) is `AO − SMA(AO, n)`.
+/// The histogram instead reports `AO`'s rate of change. The default `lookback`
+/// is `1` (the classic one-bar histogram delta).
 ///
 /// # Example
 ///
@@ -38,17 +42,18 @@ use crate::traits::Indicator;
 pub struct AwesomeOscillatorHistogram {
     fast_period: usize,
     slow_period: usize,
-    sma_period: usize,
+    lookback: usize,
     ao: AwesomeOscillator,
-    sma: Sma,
+    history: VecDeque<f64>,
+    emitted: bool,
 }
 
 impl AwesomeOscillatorHistogram {
     /// # Errors
     /// - [`Error::PeriodZero`] if any period is zero.
     /// - [`Error::InvalidPeriod`] if `fast >= slow`.
-    pub fn new(fast: usize, slow: usize, sma_period: usize) -> Result<Self> {
-        if fast == 0 || slow == 0 || sma_period == 0 {
+    pub fn new(fast: usize, slow: usize, lookback: usize) -> Result<Self> {
+        if fast == 0 || slow == 0 || lookback == 0 {
             return Err(Error::PeriodZero);
         }
         if fast >= slow {
@@ -59,20 +64,21 @@ impl AwesomeOscillatorHistogram {
         Ok(Self {
             fast_period: fast,
             slow_period: slow,
-            sma_period,
+            lookback,
             ao: AwesomeOscillator::new(fast, slow)?,
-            sma: Sma::new(sma_period)?,
+            history: VecDeque::with_capacity(lookback + 1),
+            emitted: false,
         })
     }
 
-    /// Bill Williams' Accelerator-equivalent defaults `(5, 34, 5)`.
+    /// Bill Williams' defaults with a one-bar histogram delta `(5, 34, 1)`.
     pub fn classic() -> Self {
-        Self::new(5, 34, 5).expect("classic Awesome Oscillator Histogram parameters are valid")
+        Self::new(5, 34, 1).expect("classic Awesome Oscillator Histogram parameters are valid")
     }
 
-    /// Configured `(fast_period, slow_period, sma_period)`.
+    /// Configured `(fast_period, slow_period, lookback)`.
     pub const fn periods(&self) -> (usize, usize, usize) {
-        (self.fast_period, self.slow_period, self.sma_period)
+        (self.fast_period, self.slow_period, self.lookback)
     }
 }
 
@@ -82,23 +88,29 @@ impl Indicator for AwesomeOscillatorHistogram {
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let ao = self.ao.update(candle)?;
-        let sma = self.sma.update(ao)?;
-        Some(ao - sma)
+        self.history.push_back(ao);
+        if self.history.len() <= self.lookback {
+            return None;
+        }
+        let prev = self.history.pop_front().expect("history is non-empty");
+        self.emitted = true;
+        Some(ao - prev)
     }
 
     fn reset(&mut self) {
         self.ao.reset();
-        self.sma.reset();
+        self.history.clear();
+        self.emitted = false;
     }
 
     fn warmup_period(&self) -> usize {
-        // AO emits at `slow` candles; the SMA then needs `sma_period - 1`
-        // more AO values to fill its window.
-        self.slow_period + self.sma_period - 1
+        // AO first emits at `slow` candles; `lookback` more AO values are then
+        // needed before `AO_t − AO_{t−lookback}` can be formed.
+        self.slow_period + self.lookback
     }
 
     fn is_ready(&self) -> bool {
-        self.sma.is_ready()
+        self.emitted
     }
 
     fn name(&self) -> &'static str {
@@ -119,11 +131,11 @@ mod tests {
     #[test]
     fn rejects_zero_period() {
         assert!(matches!(
-            AwesomeOscillatorHistogram::new(0, 34, 5),
+            AwesomeOscillatorHistogram::new(0, 34, 1),
             Err(Error::PeriodZero)
         ));
         assert!(matches!(
-            AwesomeOscillatorHistogram::new(5, 0, 5),
+            AwesomeOscillatorHistogram::new(5, 0, 1),
             Err(Error::PeriodZero)
         ));
         assert!(matches!(
@@ -135,7 +147,7 @@ mod tests {
     #[test]
     fn rejects_fast_geq_slow() {
         assert!(matches!(
-            AwesomeOscillatorHistogram::new(34, 5, 5),
+            AwesomeOscillatorHistogram::new(34, 5, 1),
             Err(Error::InvalidPeriod { .. })
         ));
     }
@@ -143,15 +155,15 @@ mod tests {
     #[test]
     fn accessors_and_metadata() {
         let hist = AwesomeOscillatorHistogram::classic();
-        assert_eq!(hist.periods(), (5, 34, 5));
-        assert_eq!(hist.warmup_period(), 38);
+        assert_eq!(hist.periods(), (5, 34, 1));
+        assert_eq!(hist.warmup_period(), 35);
         assert_eq!(hist.name(), "AwesomeOscillatorHistogram");
     }
 
     #[test]
-    fn constant_series_converges_to_zero() {
-        // AO of a flat series is 0; SMA of 0 is 0; difference is 0.
-        let mut hist = AwesomeOscillatorHistogram::new(3, 5, 3).unwrap();
+    fn constant_series_yields_zero() {
+        // AO of a flat series is 0, so its momentum is 0.
+        let mut hist = AwesomeOscillatorHistogram::new(3, 5, 1).unwrap();
         let candles: Vec<Candle> = (0..30).map(|i| candle(42.0, i)).collect();
         let out = hist.batch(&candles);
         for v in out.iter().skip(hist.warmup_period() - 1).flatten() {
@@ -161,7 +173,7 @@ mod tests {
 
     #[test]
     fn warmup_emits_first_value_at_warmup_period() {
-        let mut hist = AwesomeOscillatorHistogram::new(2, 4, 3).unwrap();
+        let mut hist = AwesomeOscillatorHistogram::new(2, 4, 2).unwrap();
         assert_eq!(hist.warmup_period(), 6);
         let candles: Vec<Candle> = (0..8)
             .map(|i| candle(10.0 + f64::from(i), i64::from(i)))
@@ -171,6 +183,27 @@ mod tests {
             assert!(v.is_none());
         }
         assert!(out[5].is_some());
+    }
+
+    #[test]
+    fn equals_ao_difference() {
+        // The histogram must equal AO_t − AO_{t−lookback} bar for bar.
+        let candles: Vec<Candle> = (0..60_i64)
+            .map(|i| candle(100.0 + (i as f64 * 0.3).sin() * 5.0, i))
+            .collect();
+        let lookback = 1;
+        let ao_series = AwesomeOscillator::new(5, 34).unwrap().batch(&candles);
+        let hist = AwesomeOscillatorHistogram::new(5, 34, lookback)
+            .unwrap()
+            .batch(&candles);
+        for i in 0..candles.len() {
+            if let Some(h) = hist[i] {
+                let ao_now = ao_series[i].expect("AO present once histogram emits");
+                let ao_prev =
+                    ao_series[i - lookback].expect("prior AO present once histogram emits");
+                assert_relative_eq!(h, ao_now - ao_prev, epsilon = 1e-9);
+            }
+        }
     }
 
     #[test]

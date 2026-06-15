@@ -5926,7 +5926,7 @@ impl KvoNode {
 
 // ============================== Williams A/D ==============================
 
-#[napi(js_name = "WilliamsAD")]
+#[napi(js_name = "ADOSC")]
 pub struct AdOscillatorNode {
     inner: wc::AdOscillator,
 }

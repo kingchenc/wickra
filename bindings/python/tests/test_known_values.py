@@ -258,9 +258,9 @@ def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
     n = 50
     high = np.full(n, 11.0)
     low = np.full(n, 9.0)
-    out = ta.AwesomeOscillatorHistogram(3, 5, 3).batch(high, low)
-    # warmup = slow + sma - 1 = 5 + 3 - 1 = 7.
-    np.testing.assert_allclose(out[6:], 0.0, atol=1e-12)
+    out = ta.AwesomeOscillatorHistogram(3, 5, 3).batch(high, low)  # AO momentum
+    # warmup = slow + lookback = 5 + 3 = 8.
+    np.testing.assert_allclose(out[7:], 0.0, atol=1e-12)
 
 
 def test_stc_constant_series_yields_zero():
@@ -521,10 +521,10 @@ def test_calmar_ratio_known_path():
 
 
 def test_average_drawdown_known_window():
-    # window [100, 120, 90, 110]: dd = 0, 0, 0.25, 10/120;
-    # mean = (0.25 + 10/120) / 4.
+    # window [100, 120, 90, 110]: one drawdown episode (peak 120, trough 90),
+    # never recovering -> depth (120-90)/120 = 0.25; one episode -> AvgDD = 0.25.
     out = ta.AverageDrawdown(4).batch(np.array([100.0, 120.0, 90.0, 110.0]))
-    expected = (0.25 + 10.0 / 120.0) / 4.0
+    expected = 0.25
     assert math.isclose(out[-1], expected, rel_tol=1e-12)
 
 
