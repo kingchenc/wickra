@@ -2,6 +2,7 @@ package wickra
 
 import (
 	"math"
+	"os"
 	"strconv"
 	"testing"
 )
@@ -46,6 +47,35 @@ func TestResamplerGolden(t *testing.T) {
 			w := dataParseF(t, want[i][j])
 			if math.Abs(got[i][j]-w) > 1e-9*math.Max(1, math.Abs(w)) {
 				t.Errorf("resample row %d col %d: %v vs %v", i, j, got[i][j], w)
+			}
+		}
+	}
+}
+
+func TestCandleReaderGolden(t *testing.T) {
+	csv, err := os.ReadFile("../../testdata/golden/data_csv.csv")
+	if err != nil {
+		t.Fatalf("read data_csv.csv: %v", err)
+	}
+	r, err := NewCandleReader(string(csv))
+	if err != nil {
+		t.Fatalf("new: %v", err)
+	}
+	defer r.Close()
+	candles := r.Read()
+	got := make([][6]float64, len(candles))
+	for i, c := range candles {
+		got[i] = [6]float64{c.Open, c.High, c.Low, c.Close, c.Volume, float64(c.Timestamp)}
+	}
+	want := readGolden(t, "data_csv_candles")
+	if len(got) != len(want) {
+		t.Fatalf("candle reader: %d candles vs %d", len(got), len(want))
+	}
+	for i := range got {
+		for j := 0; j < 6; j++ {
+			w := dataParseF(t, want[i][j])
+			if math.Abs(got[i][j]-w) > 1e-9*math.Max(1, math.Abs(w)) {
+				t.Errorf("candle reader row %d col %d: %v vs %v", i, j, got[i][j], w)
 			}
 		}
 	}

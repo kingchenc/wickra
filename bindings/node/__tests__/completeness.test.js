@@ -27,10 +27,11 @@ const BAR_BUILDERS = new Set([
   'ThreeLineBreakBars',
 ]);
 
-// Data-layer types (tick aggregator, resampler) are not `Indicator`s: they
-// transform raw market data into candles and have their own update/flush shape,
-// so they are excluded from the streaming-indicator completeness contract.
-const DATA_LAYER = new Set(['TickAggregator', 'Resampler']);
+// Data-layer types (tick aggregator, resampler, CSV candle reader) are not
+// `Indicator`s: they transform raw market data into candles and have their own
+// update/flush/read shape, so they are excluded from the streaming-indicator
+// completeness contract.
+const DATA_LAYER = new Set(['TickAggregator', 'Resampler', 'CandleReader']);
 
 // An "indicator class" is an exported constructor whose prototype carries the
 // streaming `update` method. This excludes `version` (a plain function), the bar

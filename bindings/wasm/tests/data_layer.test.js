@@ -50,6 +50,13 @@ test('wasm tick aggregator gap-fill matches the golden candles', () => {
   assertCandles(run(true), readCsv('data_candles_gap'), 'gap');
 });
 
+test('wasm candle reader matches the golden candles', () => {
+  const csv = fs.readFileSync(path.join(GOLDEN, 'data_csv.csv'), 'utf8');
+  const reader = new W.CandleReader(csv);
+  const got = reader.read().map((c) => [c.open, c.high, c.low, c.close, c.volume, c.timestamp]);
+  assertCandles(got, readCsv('data_csv_candles'), 'candle-reader');
+});
+
 const INPUT = readCsv('input'); // open,high,low,close,volume (timestamp = row index)
 
 function runResample() {

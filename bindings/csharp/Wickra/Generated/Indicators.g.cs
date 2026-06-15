@@ -4981,6 +4981,60 @@ public sealed class Camarilla : IDisposable
     public void Dispose() => _handle.Dispose();
 }
 
+public sealed class CandleReader : IDisposable
+{
+    private readonly WickraHandle _handle;
+
+    /// <summary>Parse a timestamp,open,high,low,close,volume CSV string (a
+    /// leading UTF-8 BOM and field whitespace are tolerated).</summary>
+    public CandleReader(string csv)
+    {
+        ArgumentNullException.ThrowIfNull(csv);
+        var bytes = System.Text.Encoding.UTF8.GetBytes(csv);
+        nint ptr;
+        unsafe
+        {
+            fixed (byte* data = bytes)
+            {
+                ptr = NativeMethods.wickra_candle_reader_new(data, (nuint)bytes.Length);
+            }
+        }
+        if (ptr == nint.Zero)
+        {
+            throw new ArgumentException("invalid CandleReader CSV");
+        }
+        _handle = new WickraHandle(ptr, NativeMethods.wickra_candle_reader_free);
+    }
+
+    /// <summary>Every candle parsed from the CSV, in file order.</summary>
+    public Candle[] Read()
+    {
+        var count = (long)NativeMethods.wickra_candle_reader_count(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        if (count <= 0)
+        {
+            return Array.Empty<Candle>();
+        }
+        var buffer = new WickraCandle[count];
+        unsafe
+        {
+            fixed (WickraCandle* ptr = buffer)
+            {
+                NativeMethods.wickra_candle_reader_read(_handle.DangerousGetHandle(), ptr, (nuint)count);
+            }
+        }
+        GC.KeepAlive(_handle);
+        var result = new Candle[count];
+        for (var i = 0; i < count; i++)
+        {
+            result[i] = new Candle(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume, buffer[i].timestamp);
+        }
+        return result;
+    }
+
+    public void Dispose() => _handle.Dispose();
+}
+
 public sealed class CandleVolume : IDisposable
 {
     private readonly WickraHandle _handle;

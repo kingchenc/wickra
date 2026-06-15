@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **CSV candle reading in all 10 languages (data layer).** The `CandleReader`
+  parses a `timestamp,open,high,low,close,volume` CSV buffer (a leading UTF-8 BOM
+  and field whitespace are tolerated) into candles: construct it from a CSV string
+  and call `read()` for every candle in file order. Exposed natively (Node.js /
+  WASM `read(): Candle[]`, Python `read() -> list[tuple]`) and over the C ABI as Go
+  `Read() []Candle`, C# `Candle[] Read()`, Java `Candle[] read()`, and the R
+  `read()` S3 generic (an `n×6` matrix); C / C++ call `wickra_candle_reader_new` /
+  `_count` / `_read` directly. A cross-language golden
+  (`testdata/golden/data_csv*.csv`) pins the parsed candles identically across
+  every binding. This makes CSV backtest loading dependency-free in every binding.
 - **Candle resampling in all 10 languages (data layer).** The `Resampler`
   aggregates candles into a higher timeframe (e.g. 1m → 5m): `update(open, high,
   low, close, volume, timestamp)` returns the completed higher-timeframe candle on

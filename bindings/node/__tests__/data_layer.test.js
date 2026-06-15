@@ -8,7 +8,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { TickAggregator, Resampler } = require('..');
+const { TickAggregator, Resampler, CandleReader } = require('..');
 
 const GOLDEN = path.resolve(__dirname, '..', '..', '..', 'testdata', 'golden');
 
@@ -50,6 +50,13 @@ test('tick aggregator matches the golden candles', () => {
 
 test('tick aggregator gap-fill matches the golden candles', () => {
   assertCandles(run(true), readCsv('data_candles_gap'), 'gap');
+});
+
+test('candle reader matches the golden candles', () => {
+  const csv = fs.readFileSync(path.join(GOLDEN, 'data_csv.csv'), 'utf8');
+  const reader = new CandleReader(csv);
+  const got = reader.read().map((c) => [c.open, c.high, c.low, c.close, c.volume, c.timestamp]);
+  assertCandles(got, readCsv('data_csv_candles'), 'candle-reader');
 });
 
 const INPUT = readCsv('input'); // open,high,low,close,volume (timestamp = row index)

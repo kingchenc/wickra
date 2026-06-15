@@ -3955,6 +3955,10 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_RESAMPLER_UPDATE;
     public static MethodHandle WICKRA_RESAMPLER_FLUSH;
     public static MethodHandle WICKRA_RESAMPLER_FREE;
+    public static MethodHandle WICKRA_CANDLE_READER_NEW;
+    public static MethodHandle WICKRA_CANDLE_READER_COUNT;
+    public static MethodHandle WICKRA_CANDLE_READER_READ;
+    public static MethodHandle WICKRA_CANDLE_READER_FREE;
 
     static {
         init0();
@@ -8031,6 +8035,10 @@ public final class NativeMethods {
         WICKRA_RESAMPLER_UPDATE = h("wickra_resampler_update", FunctionDescriptor.of(JAVA_BYTE, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS));
         WICKRA_RESAMPLER_FLUSH = h("wickra_resampler_flush", FunctionDescriptor.of(JAVA_BYTE, ADDRESS, ADDRESS));
         WICKRA_RESAMPLER_FREE = h("wickra_resampler_free", FunctionDescriptor.ofVoid(ADDRESS));
+        WICKRA_CANDLE_READER_NEW = h("wickra_candle_reader_new", FunctionDescriptor.of(ADDRESS, ADDRESS, JAVA_LONG));
+        WICKRA_CANDLE_READER_COUNT = h("wickra_candle_reader_count", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
+        WICKRA_CANDLE_READER_READ = h("wickra_candle_reader_read", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
+        WICKRA_CANDLE_READER_FREE = h("wickra_candle_reader_free", FunctionDescriptor.ofVoid(ADDRESS));
     }
 
 }

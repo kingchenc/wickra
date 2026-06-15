@@ -28288,6 +28288,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Data layer.
     m.add_class::<PyTickAggregator>()?;
     m.add_class::<PyResampler>()?;
+    m.add_class::<PyCandleReader>()?;
     // Candlestick patterns.
     m.add_class::<PyDoji>()?;
     m.add_class::<PyHammer>()?;
@@ -28664,5 +28665,34 @@ impl PyResampler {
             .flush()
             .map_err(map_data_err)?
             .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp)))
+    }
+}
+
+// ===== Data layer: CSV candle reader =====
+
+/// Parse OHLCV candles from a CSV string (header `timestamp,open,high,low,close,
+/// volume`; a leading UTF-8 BOM is stripped).
+#[pyclass(name = "CandleReader", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyCandleReader {
+    candles: Vec<wc::Candle>,
+}
+
+#[pymethods]
+impl PyCandleReader {
+    #[new]
+    fn new(csv: &str) -> PyResult<Self> {
+        let mut reader =
+            wickra_data::csv::CandleReader::from_reader(csv.as_bytes()).map_err(map_data_err)?;
+        let candles = reader.read_all().map_err(map_data_err)?;
+        Ok(Self { candles })
+    }
+
+    /// Return every parsed candle as `(open, high, low, close, volume, timestamp)`.
+    fn read(&self) -> Vec<CandleTuple> {
+        self.candles
+            .iter()
+            .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp))
+            .collect()
     }
 }

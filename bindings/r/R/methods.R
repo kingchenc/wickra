@@ -189,3 +189,26 @@ flush.wickra_indicator <- function(con) {
   out <- .Call(paste0("wk_", con$prefix, "_flush"), con$ptr, PACKAGE = "wickra")
   out
 }
+
+#' Read every candle parsed by a CSV candle reader
+#'
+#' Returns all the candles a [CandleReader()] parsed from its CSV, as a numeric
+#' matrix with columns `open`, `high`, `low`, `close`, `volume`, `timestamp`.
+#'
+#' @param object A `wickra_indicator` created by [CandleReader()].
+#' @return A numeric matrix with six named columns (zero rows for an empty CSV).
+#' @examples
+#' r <- CandleReader("timestamp,open,high,low,close,volume\n0,100,101,99,100.5,10\n")
+#' read(r)
+#' @export
+read <- function(object) {
+  UseMethod("read")
+}
+
+#' @rdname read
+#' @export
+read.wickra_indicator <- function(object) {
+  out <- .Call(paste0("wk_", object$prefix, "_read"), object$ptr, PACKAGE = "wickra")
+  colnames(out) <- c("open", "high", "low", "close", "volume", "timestamp")
+  out
+}

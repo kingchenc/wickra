@@ -44,6 +44,18 @@ def test_tick_aggregator_matches_golden(gap_fill, fixture):
             assert abs(g[j] - w[j]) <= tol, f"row {i} col {j}: {g[j]} vs {w[j]}"
 
 
+def test_candle_reader_matches_golden():
+    with open(os.path.join(GOLDEN, "data_csv.csv")) as f:
+        text = f.read()
+    got = ta.CandleReader(text).read()
+    want = _read("data_csv_candles")
+    assert len(got) == len(want)
+    for i, (g, w) in enumerate(zip(got, want)):
+        for j in range(6):
+            tol = 1e-9 * max(1.0, abs(w[j]))
+            assert abs(g[j] - w[j]) <= tol, f"row {i} col {j}: {g[j]} vs {w[j]}"
+
+
 INPUT = _read("input")  # open,high,low,close,volume (timestamp = row index)
 
 

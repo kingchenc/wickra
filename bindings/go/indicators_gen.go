@@ -5746,6 +5746,57 @@ func (ind *Camarilla) Close() {
 	}
 }
 
+// CandleReader parses an OHLCV CSV buffer into candles over the Wickra C ABI.
+type CandleReader struct {
+	handle *C.struct_CandleReader
+}
+
+// NewCandleReader parses a timestamp,open,high,low,close,volume CSV string (a
+// leading UTF-8 BOM and field whitespace are tolerated). It returns
+// ErrInvalidParams when the header or a row is malformed.
+func NewCandleReader(csv string) (*CandleReader, error) {
+	data := []byte(csv)
+	var ptr *C.struct_CandleReader
+	if len(data) == 0 {
+		ptr = C.wickra_candle_reader_new(nil, 0)
+	} else {
+		ptr = C.wickra_candle_reader_new((*C.uint8_t)(unsafe.Pointer(&data[0])), C.uintptr_t(len(data)))
+	}
+	if ptr == nil {
+		return nil, ErrInvalidParams
+	}
+	obj := &CandleReader{handle: ptr}
+	runtime.SetFinalizer(obj, (*CandleReader).Close)
+	return obj, nil
+}
+
+// Read returns every candle parsed from the CSV, in file order.
+func (ind *CandleReader) Read() []Candle {
+	n := int(C.wickra_candle_reader_count(ind.handle))
+	runtime.KeepAlive(ind)
+	if n <= 0 {
+		return nil
+	}
+	buf := make([]C.struct_WickraCandle, n)
+	C.wickra_candle_reader_read(ind.handle, &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	out := make([]Candle, n)
+	for i := 0; i < n; i++ {
+		out[i] = Candle{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume), int64(buf[i].timestamp)}
+	}
+	return out
+}
+
+// Close frees the native handle. It is idempotent and safe to call
+// alongside the finalizer.
+func (ind *CandleReader) Close() {
+	if ind.handle != nil {
+		C.wickra_candle_reader_free(ind.handle)
+		ind.handle = nil
+		runtime.SetFinalizer(ind, nil)
+	}
+}
+
 // CandleVolume wraps the CandleVolume indicator over the Wickra C ABI.
 type CandleVolume struct {
 	handle *C.struct_CandleVolume

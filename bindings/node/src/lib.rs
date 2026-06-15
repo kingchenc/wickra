@@ -22000,3 +22000,30 @@ impl ResamplerNode {
             .map(candle_to_value))
     }
 }
+
+// ===== Data layer: CSV candle reader =====
+
+/// Parse OHLCV candles from a CSV string (header `timestamp,open,high,low,close,
+/// volume`; a leading UTF-8 BOM is stripped).
+#[napi(js_name = "CandleReader")]
+pub struct CandleReaderNode {
+    candles: Vec<wc::Candle>,
+}
+
+#[napi]
+impl CandleReaderNode {
+    /// Parse the whole CSV up front; throws on a malformed header or row.
+    #[napi(constructor)]
+    pub fn new(csv: String) -> napi::Result<Self> {
+        let mut reader =
+            wickra_data::csv::CandleReader::from_reader(csv.as_bytes()).map_err(map_data_err)?;
+        let candles = reader.read_all().map_err(map_data_err)?;
+        Ok(Self { candles })
+    }
+
+    /// Return every parsed candle as `{ open, high, low, close, volume, timestamp }`.
+    #[napi]
+    pub fn read(&self) -> Vec<CandleValue> {
+        self.candles.iter().map(|&c| candle_to_value(c)).collect()
+    }
+}

@@ -128,6 +128,8 @@ typedef struct CalmarRatio CalmarRatio;
 
 typedef struct Camarilla Camarilla;
 
+typedef struct CandleReader CandleReader;
+
 typedef struct CandleVolume CandleVolume;
 
 typedef struct Cci Cci;
@@ -13735,6 +13737,16 @@ bool wickra_resampler_update(struct Resampler *handle,
 bool wickra_resampler_flush(struct Resampler *handle, struct WickraCandle *out);
 
 void wickra_resampler_free(struct Resampler *handle);
+
+struct CandleReader *wickra_candle_reader_new(const uint8_t *data, uintptr_t len);
+
+uintptr_t wickra_candle_reader_count(const struct CandleReader *handle);
+
+uintptr_t wickra_candle_reader_read(struct CandleReader *handle,
+                                    struct WickraCandle *out,
+                                    uintptr_t cap);
+
+void wickra_candle_reader_free(struct CandleReader *handle);
 
 #ifdef __cplusplus
 }  // extern "C"

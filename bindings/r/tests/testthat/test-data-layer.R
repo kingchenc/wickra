@@ -51,6 +51,24 @@ test_that("tick aggregator matches the golden candles", {
   }
 })
 
+test_that("candle reader matches the golden candles", {
+  gdir <- find_data_golden_dir()
+  skip_if(is.null(gdir), "golden fixtures not bundled with the package")
+
+  read_mat <- function(name) {
+    lines <- readLines(file.path(gdir, paste0(name, ".csv")))[-1]
+    lines <- lines[nzchar(lines)]
+    do.call(rbind, lapply(lines, function(l) as.numeric(strsplit(l, ",")[[1]])))
+  }
+
+  csv <- paste(readLines(file.path(gdir, "data_csv.csv")), collapse = "\n")
+  reader <- CandleReader(csv)
+  got <- unname(read(reader))
+  want <- unname(read_mat("data_csv_candles"))
+  expect_equal(nrow(got), nrow(want))
+  expect_equal(got, want, tolerance = 1e-9)
+})
+
 test_that("resampler matches the golden candles", {
   gdir <- find_data_golden_dir()
   skip_if(is.null(gdir), "golden fixtures not bundled with the package")

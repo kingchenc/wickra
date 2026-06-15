@@ -74,6 +74,25 @@ class DataLayerTest {
     }
 
     @Test
+    void candleReaderMatchesGolden() throws IOException {
+        String csv = Files.readString(goldenDir().resolve("data_csv.csv"));
+        try (CandleReader reader = new CandleReader(csv)) {
+            Candle[] candles = reader.read();
+            double[][] want = read("data_csv_candles");
+            assertEquals(want.length, candles.length, "candle reader count");
+            for (int i = 0; i < candles.length; i++) {
+                Candle k = candles[i];
+                double[] got = {k.open(), k.high(), k.low(), k.close(), k.volume(), (double) k.timestamp()};
+                for (int j = 0; j < 6; j++) {
+                    double w = want[i][j];
+                    assertTrue(Math.abs(got[j] - w) <= 1e-9 * Math.max(1, Math.abs(w)),
+                        "candle reader row " + i + " col " + j + ": " + got[j] + " vs " + w);
+                }
+            }
+        }
+    }
+
+    @Test
     void tickAggregatorMatchesGolden() throws IOException {
         double[][] ticks = read("data_ticks");
         String[][] cases = {{"data_candles", "false"}, {"data_candles_gap", "true"}};

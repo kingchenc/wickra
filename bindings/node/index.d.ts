@@ -5973,3 +5973,14 @@ export declare class Resampler {
   /** Emit the final, still-open candle (or `null` if none is pending). */
   flush(): CandleValue | null
 }
+export type CandleReaderNode = CandleReader
+/**
+ * Parse OHLCV candles from a CSV string (header `timestamp,open,high,low,close,
+ * volume`; a leading UTF-8 BOM is stripped).
+ */
+export declare class CandleReader {
+  /** Parse the whole CSV up front; throws on a malformed header or row. */
+  constructor(csv: string)
+  /** Return every parsed candle as `{ open, high, low, close, volume, timestamp }`. */
+  read(): Array<CandleValue>
+}

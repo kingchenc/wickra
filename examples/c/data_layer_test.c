@@ -147,6 +147,49 @@ static int check_resample(void) {
     return fails;
 }
 
+static int check_reader(void) {
+    char path[1024];
+    snprintf(path, sizeof(path), "%s/data_csv.csv", GDIR);
+    FILE *f = fopen(path, "rb");
+    if (!f) {
+        printf("FAIL reader: cannot open %s\n", path);
+        return 1;
+    }
+    static char buf[1 << 16];
+    size_t len = fread(buf, 1, sizeof(buf), f);
+    fclose(f);
+
+    struct CandleReader *r = wickra_candle_reader_new((const uint8_t *)buf, len);
+    if (!r) {
+        printf("FAIL reader: new returned NULL\n");
+        return 1;
+    }
+    double want[MAXROWS * 6];
+    int nw = read_csv("data_csv_candles", want, 6);
+    uintptr_t n = wickra_candle_reader_count(r);
+    struct WickraCandle cands[MAXROWS];
+    uintptr_t got = wickra_candle_reader_read(r, cands, n);
+    wickra_candle_reader_free(r);
+    if ((int)got != nw) {
+        printf("FAIL reader: %d candles vs %d\n", (int)got, nw);
+        return 1;
+    }
+    int fails = 0;
+    for (uintptr_t i = 0; i < got; i++) {
+        double row[6] = {cands[i].open,   cands[i].high,   cands[i].low,
+                         cands[i].close,  cands[i].volume, (double)cands[i].timestamp};
+        for (int j = 0; j < 6; j++) {
+            double w = want[i * 6 + j];
+            double tol = 1e-9 * fmax(1.0, fabs(w));
+            if (fabs(row[j] - w) > tol) {
+                printf("FAIL reader row %d col %d: %g vs %g\n", (int)i, j, row[j], w);
+                fails++;
+            }
+        }
+    }
+    return fails;
+}
+
 int main(int argc, char **argv) {
     GDIR = (argc > 1) ? argv[1] : "testdata/golden";
     double ticks[MAXROWS * 3];
@@ -154,6 +197,7 @@ int main(int argc, char **argv) {
     int fails = check("data_candles", false, ticks, nt);
     fails += check("data_candles_gap", true, ticks, nt);
     fails += check_resample();
+    fails += check_reader();
     if (fails == 0) {
         printf("C/C++ data layer: OK (%d ticks)\n", nt);
     }

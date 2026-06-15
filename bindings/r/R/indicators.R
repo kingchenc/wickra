@@ -479,6 +479,14 @@ Camarilla <- function() {
   .wk_obj("camarilla", ptr, "Camarilla")
 }
 
+#' CandleReader: parse OHLCV candles from a CSV string
+#' @keywords internal
+#' @export
+CandleReader <- function(csv) {
+  ptr <- .Call("wk_candle_reader_new", csv, PACKAGE = "wickra")
+  .wk_obj("candle_reader", ptr, "CandleReader")
+}
+
 #' CandleVolume indicator
 #' @keywords internal
 #' @export

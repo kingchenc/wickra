@@ -68286,6 +68286,99 @@ pub unsafe extern "C" fn wickra_resampler_free(handle: *mut Resampler) {
     }
 }
 
+/// Opaque CSV candle reader: parses an entire `timestamp,open,high,low,close,volume`
+/// CSV buffer up front and hands the candles out in drain order. Named
+/// `CandleReader` (the public C-ABI handle); the inner `wickra-data` reader is
+/// reached through its full path to avoid the name clash.
+#[derive(Debug)]
+pub struct CandleReader {
+    candles: Vec<Candle>,
+    pos: usize,
+}
+
+/// Parse an OHLCV CSV buffer (`len` bytes at `data`) into candles. The first line
+/// must be a header naming `timestamp,open,high,low,close,volume` (a leading UTF-8
+/// BOM and field whitespace are tolerated). Returns `NULL` on a `NULL` pointer or a
+/// malformed CSV (missing column, unparseable row, or an OHLC relation the core
+/// rejects). Read the candles with `wickra_candle_reader_read` and release with
+/// `wickra_candle_reader_free`.
+///
+/// # Safety
+/// `data` must point to `len` readable bytes, or be `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_reader_new(
+    data: *const u8,
+    len: usize,
+) -> *mut CandleReader {
+    if data.is_null() {
+        return ptr::null_mut();
+    }
+    let bytes = slice::from_raw_parts(data, len);
+    let Ok(mut reader) = wickra_data::csv::CandleReader::from_reader(bytes) else {
+        return ptr::null_mut();
+    };
+    match reader.read_all() {
+        Ok(candles) => Box::into_raw(Box::new(CandleReader { candles, pos: 0 })),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Number of candles not yet read from the reader. Returns `0` on a `NULL` handle.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_candle_reader_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_reader_count(handle: *const CandleReader) -> usize {
+    match handle.as_ref() {
+        Some(reader) => reader.candles.len() - reader.pos,
+        None => 0,
+    }
+}
+
+/// Copy up to `cap` not-yet-read candles into `out`, advance past them, and return
+/// the number written. Returns `0` on a `NULL` handle / `out`. Call with `cap` equal
+/// to `wickra_candle_reader_count` to drain every candle in one call.
+///
+/// # Safety
+/// `handle` (from `wickra_candle_reader_new`, not freed) and `out` must be valid or
+/// `NULL`; when non-`NULL`, `out` must cover `cap` `WickraCandle` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_reader_read(
+    handle: *mut CandleReader,
+    out: *mut WickraCandle,
+    cap: usize,
+) -> usize {
+    let Some(reader) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = (reader.candles.len() - reader.pos).min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, candle) in slots
+        .iter_mut()
+        .zip(&reader.candles[reader.pos..reader.pos + count])
+    {
+        *slot = candle_to_c(*candle);
+    }
+    reader.pos += count;
+    count
+}
+
+/// Destroy a candle reader created by `wickra_candle_reader_new`. No-op if `handle`
+/// is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_candle_reader_new` and not previously
+/// freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_reader_free(handle: *mut CandleReader) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
