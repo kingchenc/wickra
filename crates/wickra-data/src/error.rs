@@ -32,9 +32,12 @@ pub enum Error {
     #[error("JSON decode error: {0}")]
     Json(#[from] serde_json::Error),
 
+    /// Boxed because ureq 2.x's `Error::Status` carries a full `Response`, which
+    /// would otherwise make this the dominant enum variant (clippy
+    /// `large_enum_variant`).
     #[cfg(feature = "live-binance")]
     #[error("HTTP error: {0}")]
-    Http(#[from] ureq::Error),
+    Http(#[from] Box<ureq::Error>),
 }
 
 /// Convenience alias for `Result<T, wickra_data::Error>`.

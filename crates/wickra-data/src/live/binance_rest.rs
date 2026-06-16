@@ -145,7 +145,16 @@ pub fn fetch_klines_with_config(
         let _ = write!(url, "&endTime={end}");
     }
 
-    let body = ureq::get(&url).call()?.body_mut().read_to_string()?;
+    // ureq 2.x does not auto-configure native-tls, so build an agent with an
+    // explicit native-tls connector (verifies against the OS trust store; no
+    // bundled CA roots). The connector is cheap and a one-shot fetch needs no
+    // pooling, so we build it per call.
+    let connector = native_tls::TlsConnector::new()
+        .map_err(|e| Error::Malformed(format!("native-tls init failed: {e}")))?;
+    let agent = ureq::AgentBuilder::new()
+        .tls_connector(std::sync::Arc::new(connector))
+        .build();
+    let body = agent.get(&url).call().map_err(Box::new)?.into_string()?;
     let rows: Vec<RawRestKline> = serde_json::from_str(&body)?;
     rows.into_iter().map(RawRestKline::into_candle).collect()
 }
