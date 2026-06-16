@@ -11,7 +11,7 @@ homepage.workspace = true
 readme.workspace = true
 keywords.workspace = true
 categories.workspace = true
-documentation = "https://docs.rs/wickra"
+documentation = "https://docs.wickra.org"
 
 # Render the docs on docs.rs with every feature enabled.
 [package.metadata.docs.rs]
