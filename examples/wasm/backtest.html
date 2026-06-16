@@ -44,40 +44,26 @@
 
   <script type="module">
     import init, {
+      CandleReader,
       version, installPanicHook,
       SMA, EMA, RSI, MACD, BollingerBands, ATR, ADX, OBV,
     } from "../../bindings/wasm/pkg/wickra_wasm.js";
 
-    const REQUIRED = ["timestamp", "open", "high", "low", "close", "volume"];
 
     // Parse a plain OHLCV CSV — the Wickra layout never quotes values nor
     // embeds commas in fields, so split-on-comma is a complete parse.
     function parseCsv(text) {
-      const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
-      if (lines.length === 0) throw new Error("file is empty");
-      const header = lines[0].split(",").map((s) => s.trim());
-      const missing = REQUIRED.filter((c) => !header.includes(c));
-      if (missing.length > 0) {
-        throw new Error(
-          `missing required column(s): ${missing.join(", ")}; found: ${header.join(", ")}`,
-        );
-      }
-      if (lines.length === 1) throw new Error("CSV has a header but no data rows");
-
-      const idx = {};
-      for (const c of REQUIRED) idx[c] = header.indexOf(c);
+      // Native CandleReader: header validation, BOM/whitespace tolerance. No
+      // manual CSV parsing.
+      const candles = new CandleReader(text).read();
       const cols = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
-      for (let i = 1; i < lines.length; i++) {
-        const cells = lines[i].split(",");
-        for (const c of REQUIRED) {
-          const v = Number(cells[idx[c]]);
-          if (!Number.isFinite(v)) {
-            throw new Error(
-              `row ${i + 1} column '${c}' is not numeric: ${JSON.stringify(cells[idx[c]])}`,
-            );
-          }
-          cols[c].push(v);
-        }
+      for (const c of candles) {
+        cols.timestamp.push(c.timestamp);
+        cols.open.push(c.open);
+        cols.high.push(c.high);
+        cols.low.push(c.low);
+        cols.close.push(c.close);
+        cols.volume.push(c.volume);
       }
       return cols;
     }
