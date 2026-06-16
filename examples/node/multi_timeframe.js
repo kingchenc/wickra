@@ -14,87 +14,51 @@ const path = require('node:path');
 
 const wickra = require('wickra');
 
-const REQUIRED_COLUMNS = ['timestamp', 'open', 'high', 'low', 'close', 'volume'];
 const DEFAULT_CSV = path.join(__dirname, '..', 'data', 'btcusdt-1m.csv');
 const ONE_MINUTE_MS = 60_000;
 
 function readCsv(csvPath) {
+  // Native CandleReader: header validation, BOM/whitespace tolerance, throws on
+  // a malformed row.
   const text = fs.readFileSync(csvPath, 'utf8');
-  const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
-  if (lines.length === 0) {
-    throw new Error(`${csvPath}: file is empty`);
-  }
-  const header = lines[0].split(',').map((cell) => cell.trim());
-  const missing = REQUIRED_COLUMNS.filter((col) => !header.includes(col));
-  if (missing.length > 0) {
-    throw new Error(
-      `${csvPath}: missing required column(s): ${missing.join(', ')}; found: ${header.join(', ')}`,
-    );
-  }
-  if (lines.length === 1) {
+  const candles = new wickra.CandleReader(text).read();
+  if (candles.length === 0) {
     throw new Error(`${csvPath}: CSV has a header but no data rows`);
   }
-  const idx = {};
-  for (const col of REQUIRED_COLUMNS) {
-    idx[col] = header.indexOf(col);
-  }
   const cols = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
-  for (let i = 1; i < lines.length; i++) {
-    const cells = lines[i].split(',');
-    for (const col of REQUIRED_COLUMNS) {
-      const value = Number(cells[idx[col]]);
-      if (!Number.isFinite(value)) {
-        throw new Error(
-          `${csvPath}: row ${i + 1} column '${col}' is not numeric: ${JSON.stringify(cells[idx[col]])}`,
-        );
-      }
-      cols[col].push(value);
-    }
+  for (const k of candles) {
+    cols.timestamp.push(k.timestamp);
+    cols.open.push(k.open);
+    cols.high.push(k.high);
+    cols.low.push(k.low);
+    cols.close.push(k.close);
+    cols.volume.push(k.volume);
   }
   return cols;
 }
 
-// Roll an OHLCV series up to `bucketMs`-sized buckets keyed on each bar's
-// `floor(timestamp / bucketMs)`. Input timestamps must be monotonic
-// non-decreasing (the bundled BTCUSDT-1m dataset is contiguous, so this
-// holds by construction).
 function resample(cols, bucketMs) {
   if (cols.timestamp.length === 0) {
     throw new Error('resample: empty input series');
   }
+  // Native Resampler — no hand-written bucketing. update() emits a closed candle
+  // when a bucket boundary is crossed; flush() yields the final partial bucket.
+  const r = new wickra.Resampler(bucketMs);
   const out = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
-  let bucketStart = Math.floor(cols.timestamp[0] / bucketMs) * bucketMs;
-  let [o, h, l, c, v] = [cols.open[0], cols.high[0], cols.low[0], cols.close[0], cols.volume[0]];
-
-  for (let i = 1; i < cols.timestamp.length; i++) {
-    const start = Math.floor(cols.timestamp[i] / bucketMs) * bucketMs;
-    if (start === bucketStart) {
-      if (cols.high[i] > h) h = cols.high[i];
-      if (cols.low[i] < l) l = cols.low[i];
-      c = cols.close[i];
-      v += cols.volume[i];
-    } else {
-      out.timestamp.push(bucketStart);
-      out.open.push(o);
-      out.high.push(h);
-      out.low.push(l);
-      out.close.push(c);
-      out.volume.push(v);
-      bucketStart = start;
-      o = cols.open[i];
-      h = cols.high[i];
-      l = cols.low[i];
-      c = cols.close[i];
-      v = cols.volume[i];
-    }
+  const push = (k) => {
+    out.timestamp.push(k.timestamp);
+    out.open.push(k.open);
+    out.high.push(k.high);
+    out.low.push(k.low);
+    out.close.push(k.close);
+    out.volume.push(k.volume);
+  };
+  for (let i = 0; i < cols.timestamp.length; i++) {
+    const k = r.update(cols.open[i], cols.high[i], cols.low[i], cols.close[i], cols.volume[i], cols.timestamp[i]);
+    if (k !== null) push(k);
   }
-  // Flush the final open bucket.
-  out.timestamp.push(bucketStart);
-  out.open.push(o);
-  out.high.push(h);
-  out.low.push(l);
-  out.close.push(c);
-  out.volume.push(v);
+  const last = r.flush();
+  if (last !== null) push(last);
   return out;
 }
 

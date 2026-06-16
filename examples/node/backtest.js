@@ -18,9 +18,6 @@ const path = require('node:path');
 
 const wickra = require('wickra');
 
-// The OHLCV columns the default layout requires; the CSV header must name
-// every one of them (any extra columns are ignored).
-const REQUIRED_COLUMNS = ['timestamp', 'open', 'high', 'low', 'close', 'volume'];
 
 // Default dataset: the checked-in BTCUSDT daily candles under the workspace
 // `examples/data/` directory, resolved relative to this file.
@@ -31,42 +28,22 @@ const DEFAULT_CSV = path.join(__dirname, '..', 'data', 'btcusdt-1d.csv');
 // The Wickra CSV layout is plain numeric — no quoted fields, no embedded
 // commas — so splitting on `,` is a complete and correct parse for it.
 function readHistory(csvPath) {
+  // Native CandleReader: validates the header (timestamp,open,high,low,close,
+  // volume), tolerates a UTF-8 BOM and field whitespace, and throws on a
+  // malformed row. No manual CSV parsing.
   const text = fs.readFileSync(csvPath, 'utf8');
-  const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
-  if (lines.length === 0) {
-    throw new Error(`${csvPath}: file is empty`);
-  }
-
-  const header = lines[0].split(',').map((cell) => cell.trim());
-  const missing = REQUIRED_COLUMNS.filter((col) => !header.includes(col));
-  if (missing.length > 0) {
-    throw new Error(
-      `${csvPath}: CSV header is missing required column(s): ${missing.join(', ')}; ` +
-        `found: ${header.join(', ')}`,
-    );
-  }
-  if (lines.length === 1) {
+  const candles = new wickra.CandleReader(text).read();
+  if (candles.length === 0) {
     throw new Error(`${csvPath}: CSV has a header but no data rows`);
   }
-
-  const columnIndex = {};
-  for (const col of REQUIRED_COLUMNS) {
-    columnIndex[col] = header.indexOf(col);
-  }
-
   const cols = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
-  for (let row = 1; row < lines.length; row++) {
-    const cells = lines[row].split(',');
-    for (const col of REQUIRED_COLUMNS) {
-      const raw = cells[columnIndex[col]];
-      const value = raw === undefined ? NaN : Number(raw.trim());
-      if (raw === undefined || raw.trim() === '' || !Number.isFinite(value)) {
-        throw new Error(
-          `${csvPath}: row ${row + 1} column '${col}' is not numeric: ${JSON.stringify(raw)}`,
-        );
-      }
-      cols[col].push(value);
-    }
+  for (const k of candles) {
+    cols.timestamp.push(k.timestamp);
+    cols.open.push(k.open);
+    cols.high.push(k.high);
+    cols.low.push(k.low);
+    cols.close.push(k.close);
+    cols.volume.push(k.volume);
   }
   return cols;
 }
