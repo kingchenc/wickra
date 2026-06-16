@@ -28290,6 +28290,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyResampler>()?;
     m.add_class::<PyCandleReader>()?;
     m.add_class::<PyBinanceFeed>()?;
+    m.add_function(wrap_pyfunction!(fetch_binance_klines, m)?)?;
     // Candlestick patterns.
     m.add_class::<PyDoji>()?;
     m.add_class::<PyHammer>()?;
@@ -28677,6 +28678,49 @@ impl PyBinanceFeed {
         let inner = &mut self.inner;
         let _ = runtime.block_on(inner.close());
     }
+}
+
+/// Fetch historical klines from Binance's REST endpoint. `symbol` is the trading
+/// pair (case-insensitive, e.g. `"BTCUSDT"`), `interval` the code `0..=15` (the
+/// `Interval` declaration order), and `limit` the number of candles to request
+/// (`1..=1000`). `start_ms`/`end_ms` are optional inclusive Unix-millisecond
+/// bounds; `base_url` overrides the host (omit for production). Returns a list of
+/// `(open, high, low, close, volume, timestamp)` tuples. This blocks until the
+/// HTTP response arrives, releasing the GIL while it waits.
+#[pyfunction]
+#[pyo3(signature = (symbol, interval, limit, start_ms = None, end_ms = None, base_url = None))]
+fn fetch_binance_klines(
+    py: Python<'_>,
+    symbol: &str,
+    interval: u8,
+    limit: u32,
+    start_ms: Option<i64>,
+    end_ms: Option<i64>,
+    base_url: Option<&str>,
+) -> PyResult<Vec<CandleTuple>> {
+    let iv = binance_interval(interval)
+        .ok_or_else(|| PyValueError::new_err("unknown interval code (expected 0..=15)"))?;
+    let limit =
+        u16::try_from(limit).map_err(|_| PyValueError::new_err("limit must be in 1..=1000"))?;
+    let symbol = symbol.to_owned();
+    let base_url = base_url.map(str::to_owned);
+    let candles = py
+        .detach(move || match base_url {
+            Some(url) => {
+                let config = wickra_data::live::binance_rest::BinanceRestConfig { base_url: url };
+                wickra_data::live::binance_rest::fetch_klines_with_config(
+                    &symbol, iv, limit, start_ms, end_ms, &config,
+                )
+            }
+            None => {
+                wickra_data::live::binance_rest::fetch_klines(&symbol, iv, limit, start_ms, end_ms)
+            }
+        })
+        .map_err(map_data_err)?;
+    Ok(candles
+        .into_iter()
+        .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp))
+        .collect())
 }
 
 /// Roll trade ticks up into fixed-timeframe OHLCV candles.

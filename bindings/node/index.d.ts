@@ -614,6 +614,15 @@ export interface KlineEvent {
   openTime: number
   isClosed: boolean
 }
+/**
+ * Fetch historical klines from Binance's REST endpoint. `symbol` is the trading
+ * pair (case-insensitive, e.g. `"BTCUSDT"`), `interval` the code `0..=15` (the
+ * `Interval` declaration order), and `limit` the number of candles to request
+ * (`1..=1000`). `startMs`/`endMs` are optional inclusive Unix-millisecond
+ * bounds; `baseUrl` overrides the host (omit for production). This is a blocking
+ * call — run it on a Worker thread to keep the event loop responsive.
+ */
+export declare function fetchBinanceKlines(symbol: string, interval: number, limit: number, startMs?: number | undefined | null, endMs?: number | undefined | null, baseUrl?: string | undefined | null): Array<CandleValue>
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
