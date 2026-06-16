@@ -4,8 +4,9 @@
 //!   history in memory.
 //! - [`aggregator`]: roll trade ticks up into candles of arbitrary timeframes.
 //! - [`resample`]: convert a stream of candles from one timeframe to a coarser one.
-//! - [`live`] (feature `live-binance`): connect to exchange websockets and yield
-//!   typed events compatible with the rest of the crate.
+//! - [`live`] (feature `live-binance`): connect to exchange websockets for live
+//!   klines, or pull historical klines over REST — both yield typed candles
+//!   compatible with the rest of the crate.
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 // `tokio_tungstenite::Error` is large by itself (~200 B). Boxing every Err

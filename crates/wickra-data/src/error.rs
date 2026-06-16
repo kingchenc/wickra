@@ -31,6 +31,10 @@ pub enum Error {
     #[cfg(feature = "live-binance")]
     #[error("JSON decode error: {0}")]
     Json(#[from] serde_json::Error),
+
+    #[cfg(feature = "live-binance")]
+    #[error("HTTP error: {0}")]
+    Http(#[from] ureq::Error),
 }
 
 /// Convenience alias for `Result<T, wickra_data::Error>`.

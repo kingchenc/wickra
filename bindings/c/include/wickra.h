@@ -13773,6 +13773,15 @@ void wickra_binance_close(struct BinanceStream *handle);
 
 void wickra_binance_free(struct BinanceStream *handle);
 
+intptr_t wickra_binance_fetch_klines(const char *symbol,
+                                     uint8_t interval,
+                                     uint32_t limit,
+                                     int64_t start_ms,
+                                     int64_t end_ms,
+                                     const char *base_url,
+                                     struct WickraCandle *out,
+                                     uintptr_t cap);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
