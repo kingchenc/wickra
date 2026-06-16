@@ -24,14 +24,11 @@ synthetic_candles <- function(count, start_ts = 0, step_ms = 3600000) {
 }
 
 load_ohlcv_csv <- function(path) {
-  df <- utils::read.csv(path, header = TRUE, stringsAsFactors = FALSE)
-  if (ncol(df) >= 6) {
-    data.frame(open = df[[2]], high = df[[3]], low = df[[4]],
-               close = df[[5]], volume = df[[6]], timestamp = df[[1]])
-  } else {
-    data.frame(open = df[[1]], high = df[[2]], low = df[[3]],
-               close = df[[4]], volume = df[[5]], timestamp = seq_len(nrow(df)))
-  }
+  # Native CandleReader: header validation, BOM and field-whitespace tolerance.
+  # read() returns an (n x 6) matrix of open, high, low, close, volume, timestamp.
+  m <- read(CandleReader(paste(readLines(path, warn = FALSE), collapse = "\n")))
+  data.frame(open = m[, "open"], high = m[, "high"], low = m[, "low"],
+             close = m[, "close"], volume = m[, "volume"], timestamp = m[, "timestamp"])
 }
 
 summarize_equity <- function(returns, trades, periods_per_year = 252) {

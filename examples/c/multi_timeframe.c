@@ -32,34 +32,37 @@
  * buckets were produced. */
 static size_t resample(const WickraBar *in, size_t count, int64_t tf_ms,
                        WickraBar *out) {
+    /* Native Resampler — no hand-written bucketing. update() emits a closed
+     * candle on a bucket boundary; flush() yields the final partial bucket. */
+    struct Resampler *r = wickra_resampler_new(tf_ms);
+    if (r == NULL) {
+        return 0;
+    }
     size_t produced = 0;
-    int open_bucket = 0;
-    int64_t bucket_start = 0;
-    WickraBar cur = {0};
+    struct WickraCandle c;
     for (size_t i = 0; i < count; ++i) {
-        int64_t b = in[i].timestamp - (in[i].timestamp % tf_ms);
-        if (!open_bucket || b != bucket_start) {
-            if (open_bucket) {
-                out[produced++] = cur;
-            }
-            bucket_start = b;
-            cur = in[i];
-            cur.timestamp = b;
-            open_bucket = 1;
-        } else {
-            if (in[i].high > cur.high) {
-                cur.high = in[i].high;
-            }
-            if (in[i].low < cur.low) {
-                cur.low = in[i].low;
-            }
-            cur.close = in[i].close;
-            cur.volume += in[i].volume;
+        if (wickra_resampler_update(r, in[i].open, in[i].high, in[i].low,
+                                    in[i].close, in[i].volume, in[i].timestamp,
+                                    &c)) {
+            out[produced].timestamp = c.timestamp;
+            out[produced].open = c.open;
+            out[produced].high = c.high;
+            out[produced].low = c.low;
+            out[produced].close = c.close;
+            out[produced].volume = c.volume;
+            produced++;
         }
     }
-    if (open_bucket) {
-        out[produced++] = cur;
+    if (wickra_resampler_flush(r, &c)) {
+        out[produced].timestamp = c.timestamp;
+        out[produced].open = c.open;
+        out[produced].high = c.high;
+        out[produced].low = c.low;
+        out[produced].close = c.close;
+        out[produced].volume = c.volume;
+        produced++;
     }
+    wickra_resampler_free(r);
     return produced;
 }
 

@@ -5,12 +5,11 @@
 package market
 
 import (
-	"bufio"
 	"fmt"
 	"math"
 	"os"
-	"strconv"
-	"strings"
+
+	wickra "github.com/wickra-lib/wickra/bindings/go"
 )
 
 // Bar is one OHLCV bar with a millisecond timestamp.
@@ -62,39 +61,25 @@ func SyntheticCandlesStep(count int, startTimestamp, stepMs int64) []Bar {
 	return bars
 }
 
-// LoadOhlcvCsv loads an OHLCV CSV. It accepts rows of
-// timestamp,open,high,low,close,volume or open,high,low,close,volume; a
-// non-numeric first row is treated as a header and skipped.
+// LoadOhlcvCsv loads a timestamp,open,high,low,close,volume OHLCV CSV with
+// Wickra's native CandleReader (header validation, BOM and field-whitespace
+// tolerance) — no manual CSV parsing.
 func LoadOhlcvCsv(path string) ([]Bar, error) {
-	file, err := os.Open(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
-
-	var bars []Bar
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue
-		}
-		cols := strings.Split(line, ",")
-		if _, err := strconv.ParseFloat(cols[0], 64); err != nil {
-			continue // header row
-		}
-		f := func(i int) float64 {
-			v, _ := strconv.ParseFloat(strings.TrimSpace(cols[i]), 64)
-			return v
-		}
-		if len(cols) >= 6 {
-			ts, _ := strconv.ParseInt(strings.TrimSpace(cols[0]), 10, 64)
-			bars = append(bars, Bar{f(1), f(2), f(3), f(4), f(5), ts})
-		} else {
-			bars = append(bars, Bar{f(0), f(1), f(2), f(3), f(4), int64(len(bars))})
-		}
+	reader, err := wickra.NewCandleReader(string(data))
+	if err != nil {
+		return nil, err
 	}
-	return bars, scanner.Err()
+	defer reader.Close()
+	candles := reader.Read()
+	bars := make([]Bar, len(candles))
+	for i, c := range candles {
+		bars[i] = Bar{c.Open, c.High, c.Low, c.Close, c.Volume, c.Timestamp}
+	}
+	return bars, nil
 }
 
 // EquityResult holds summary statistics for a long-only equity curve.

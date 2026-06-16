@@ -1,61 +1,42 @@
-"""Live Binance feed: stream Binance kline ticks → incremental indicators → signals.
+"""Live Binance feed: stream Binance kline ticks -> incremental indicators -> signals.
 
-This example connects to Binance's public WebSocket feed (no API key needed)
-and runs RSI / MACD / Bollinger Bands on the close prices coming in. When the
-RSI crosses common overbought / oversold thresholds *and* the MACD histogram
-confirms the direction, a `Signal` event is printed. No orders are placed.
+This example streams Binance's public kline feed (no API key needed) through
+Wickra's **native** ``BinanceFeed`` and runs RSI / MACD / Bollinger Bands on the
+close prices coming in. When the RSI crosses common overbought / oversold
+thresholds *and* the MACD histogram confirms the direction, a signal is printed.
+No orders are placed.
 
-Run with::
+There is **no third-party dependency** — the WebSocket client is built into
+Wickra. Just::
 
     python -m examples.python.live_binance --symbol BTCUSDT --interval 1m
-
-Dependencies::
-
-    pip install websockets
 """
 
 from __future__ import annotations
 
 import argparse
-import asyncio
-import json
 import logging
 import re
-import signal
 import sys
 from dataclasses import dataclass
 from typing import Optional
 
 import wickra as ta
 
-try:
-    import websockets
-except ImportError:
-    print("This example needs the `websockets` package: pip install websockets", file=sys.stderr)
-    raise
-
-
-BINANCE_WS = "wss://stream.binance.com:9443/stream"
-
-# Kline intervals the public Binance WebSocket API recognises.
-VALID_INTERVALS = frozenset(
-    {
-        "1s", "1m", "3m", "5m", "15m", "30m",
-        "1h", "2h", "4h", "6h", "8h", "12h",
-        "1d", "3d", "1w", "1M",
-    }
-)
+# Binance kline interval -> the integer code BinanceFeed expects (the same order
+# in every Wickra binding).
+INTERVAL_CODES = {
+    "1s": 0, "1m": 1, "3m": 2, "5m": 3, "15m": 4, "30m": 5,
+    "1h": 6, "2h": 7, "4h": 8, "6h": 9, "8h": 10, "12h": 11,
+    "1d": 12, "3d": 13, "1w": 14, "1M": 15,
+}
 
 # A Binance symbol is strictly alphanumeric (e.g. BTCUSDT).
 _SYMBOL_RE = re.compile(r"^[A-Za-z0-9]+$")
 
 
-def validate_args(symbol: str, interval: str) -> None:
-    """Reject a symbol or interval that is not safe to splice into the WS URL.
-
-    Both values are interpolated straight into the stream name and URL, so an
-    unexpected value would otherwise produce a confusing connection failure.
-    Validating up front keeps the URL well-formed without needing to escape it.
+def validate_args(symbol: str, interval: str) -> int:
+    """Validate the symbol/interval and return the interval's integer code.
 
     Raises:
         ValueError: if ``symbol`` is not strictly alphanumeric, or ``interval``
@@ -63,14 +44,14 @@ def validate_args(symbol: str, interval: str) -> None:
     """
     if not _SYMBOL_RE.match(symbol):
         raise ValueError(
-            f"invalid --symbol {symbol!r}: expected only letters and digits, "
-            "e.g. BTCUSDT"
+            f"invalid --symbol {symbol!r}: expected only letters and digits, e.g. BTCUSDT"
         )
-    if interval not in VALID_INTERVALS:
+    if interval not in INTERVAL_CODES:
         raise ValueError(
             f"invalid --interval {interval!r}: expected one of "
-            + ", ".join(sorted(VALID_INTERVALS))
+            + ", ".join(INTERVAL_CODES)
         )
+    return INTERVAL_CODES[interval]
 
 
 @dataclass
@@ -120,38 +101,28 @@ def emit_signal(snap: Snapshot, log: logging.Logger) -> None:
         )
 
 
-async def run(symbol: str, interval: str) -> None:
-    stream = f"{symbol.lower()}@kline_{interval}"
-    url = f"{BINANCE_WS}?streams={stream}"
+def run(symbol: str, interval_code: int) -> None:
     log = logging.getLogger("wickra-live")
     state = StrategyState()
-    log.info("Connecting to %s", url)
-    async with websockets.connect(url, ping_interval=20) as ws:
-        log.info("Connected, listening for %s klines", stream)
-        async for raw in ws:
-            envelope = json.loads(raw)
-            payload = envelope.get("data", {})
-            k = payload.get("k", {})
-            if not k or "c" not in k:
-                # Subscription acks, heartbeats and error frames carry no
-                # kline payload — skip them instead of crashing on
-                # float(None) the moment the stream opens.
-                log.debug("skipping non-kline frame: %s", raw)
-                continue
-            close = float(k.get("c"))
-            is_closed = bool(k.get("x"))
-            snap = state.update(close)
-            log.info(
-                "%s close=%.4f rsi=%s hist=%s bb=%s",
-                "BAR" if is_closed else "tick",
-                close,
-                f"{snap.rsi:.1f}" if snap.rsi is not None else "--",
-                f"{snap.macd_hist:+.4f}" if snap.macd_hist is not None else "--",
-                f"{snap.bb_lower:.2f}/{snap.bb_middle:.2f}/{snap.bb_upper:.2f}"
-                if snap.bb_upper is not None
-                else "--",
-            )
-            emit_signal(snap, log)
+    feed = ta.BinanceFeed(symbol, interval_code)
+    log.info("Streaming %s klines from Binance", symbol)
+    while True:
+        event = feed.next(1000)  # blocks up to 1s; None on timeout (Ctrl+C between polls)
+        if event is None:
+            continue
+        _symbol, _open, _high, _low, close, _volume, _open_time, is_closed = event
+        snap = state.update(close)
+        log.info(
+            "%s close=%.4f rsi=%s hist=%s bb=%s",
+            "BAR" if is_closed else "tick",
+            close,
+            f"{snap.rsi:.1f}" if snap.rsi is not None else "--",
+            f"{snap.macd_hist:+.4f}" if snap.macd_hist is not None else "--",
+            f"{snap.bb_lower:.2f}/{snap.bb_middle:.2f}/{snap.bb_upper:.2f}"
+            if snap.bb_upper is not None
+            else "--",
+        )
+        emit_signal(snap, log)
 
 
 def parse_args() -> argparse.Namespace:
@@ -165,7 +136,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
-        validate_args(args.symbol, args.interval)
+        interval_code = validate_args(args.symbol, args.interval)
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
@@ -173,19 +144,10 @@ def main() -> int:
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
     )
-    loop = asyncio.new_event_loop()
-    # Translate Ctrl+C into a clean loop stop.
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        try:
-            loop.add_signal_handler(sig, loop.stop)
-        except NotImplementedError:
-            pass  # Windows does not support add_signal_handler for SIGTERM.
     try:
-        loop.run_until_complete(run(args.symbol, args.interval))
+        run(args.symbol, interval_code)
     except KeyboardInterrupt:
         pass
-    finally:
-        loop.close()
     return 0
 
 

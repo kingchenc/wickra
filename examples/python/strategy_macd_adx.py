@@ -15,7 +15,6 @@ Uses the checked-in ``examples/data/btcusdt-1h.csv`` dataset.
 
 from __future__ import annotations
 
-import csv
 import math
 from pathlib import Path
 
@@ -26,18 +25,14 @@ ADX_FLOOR = 20.0
 
 
 def load_candles(path: Path) -> list[dict[str, float]]:
-    with path.open() as fh:
-        reader = csv.DictReader(fh)
-        return [
-            {
-                "open": float(r["open"]),
-                "high": float(r["high"]),
-                "low": float(r["low"]),
-                "close": float(r["close"]),
-                "volume": float(r["volume"]),
-            }
-            for r in reader
-        ]
+    # Native CandleReader: validates the header, tolerates a UTF-8 BOM and field
+    # whitespace, and raises ValueError on a malformed row. No third-party CSV.
+    candles = ta.CandleReader(path.read_text(encoding="utf-8")).read()
+    # CandleReader yields (open, high, low, close, volume, timestamp) tuples.
+    return [
+        {"open": o, "high": h, "low": l, "close": c, "volume": v}
+        for o, h, l, c, v, _ts in candles
+    ]
 
 
 def print_summary(

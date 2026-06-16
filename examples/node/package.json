@@ -6,8 +6,5 @@
   "license": "SEE LICENSE IN ../../LICENSE",
   "dependencies": {
     "wickra": "file:../../bindings/node"
-  },
-  "devDependencies": {
-    "ws": "^8.18.0"
   }
 }

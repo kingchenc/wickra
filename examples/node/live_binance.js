@@ -1,37 +1,28 @@
 // Live Binance feed example for the Wickra Node binding.
 //
-// Connects to Binance's public WebSocket feed (no API key needed) and runs
-// RSI / MACD / Bollinger Bands on the incoming close prices. When RSI crosses
-// the common overbought / oversold thresholds *and* the MACD histogram
-// confirms the direction *and* price pierces the matching Bollinger band, a
-// signal line is printed. No orders are placed. It is the Node counterpart of
+// Connects to Binance's public kline feed (no API key needed) through Wickra's
+// native `BinanceFeed` — no third-party WebSocket client — and runs RSI / MACD /
+// Bollinger Bands on the incoming close prices. When RSI crosses the common
+// overbought / oversold thresholds *and* the MACD histogram confirms the
+// direction *and* price pierces the matching Bollinger band, a signal line is
+// printed. No orders are placed. It is the Node counterpart of
 // examples/python/live_binance.py.
 //
 // Run it from the repository after building the native binding:
 //
 //   cd bindings/node && npm install && npx napi build --platform --release
-//   cd ../../examples/node && npm install     # pulls `ws` for this example
-//   node live_binance.js --symbol BTCUSDT --interval 1m
+//   cd ../../examples/node && node live_binance.js --symbol BTCUSDT --interval 1m
 //
 // Stop it with Ctrl+C.
 
 const wickra = require('wickra');
 
-let WebSocket;
-try {
-  WebSocket = require('ws');
-} catch (err) {
-  console.error('This example needs the `ws` package — run `npm install` in examples/node.');
-  process.exit(1);
-}
-
-const BINANCE_WS = 'wss://stream.binance.com:9443/stream';
-
-// Kline intervals the public Binance WebSocket API recognises.
-const VALID_INTERVALS = new Set([
-  '1s', '1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h',
-  '1d', '3d', '1w', '1M',
-]);
+// Kline interval string -> BinanceFeed interval code (the Interval declaration
+// order shared by every binding).
+const INTERVAL_CODES = {
+  '1s': 0, '1m': 1, '3m': 2, '5m': 3, '15m': 4, '30m': 5, '1h': 6, '2h': 7,
+  '4h': 8, '6h': 9, '8h': 10, '12h': 11, '1d': 12, '3d': 13, '1w': 14, '1M': 15,
+};
 
 // A Binance symbol is strictly alphanumeric (e.g. BTCUSDT).
 const SYMBOL_RE = /^[A-Za-z0-9]+$/;
@@ -53,19 +44,17 @@ function parseArgs(argv) {
   return args;
 }
 
-// Reject a symbol or interval that is not safe to splice into the WS URL.
-// Both are interpolated straight into the stream name, so validating up front
-// keeps the URL well-formed without needing to escape it.
+// Reject a symbol or interval the feed cannot use.
 function validateArgs(symbol, interval) {
   if (typeof symbol !== 'string' || !SYMBOL_RE.test(symbol)) {
     throw new Error(
       `invalid --symbol ${JSON.stringify(symbol)}: expected only letters and digits, e.g. BTCUSDT`,
     );
   }
-  if (!VALID_INTERVALS.has(interval)) {
+  if (!(interval in INTERVAL_CODES)) {
     throw new Error(
       `invalid --interval ${JSON.stringify(interval)}: expected one of ` +
-        [...VALID_INTERVALS].join(', '),
+        Object.keys(INTERVAL_CODES).join(', '),
     );
   }
 }
@@ -88,31 +77,35 @@ function main() {
   const macd = new wickra.MACD(12, 26, 9);
   const bb = new wickra.BollingerBands(20, 2.0);
 
-  const stream = `${args.symbol.toLowerCase()}@kline_${args.interval}`;
-  const url = `${BINANCE_WS}?streams=${stream}`;
-  console.log(`Connecting to ${url}`);
+  // Native feed: a blocking poll driving the same tested WebSocket stream as the
+  // Rust core. `next(timeoutMs)` returns the next event or null on timeout, so a
+  // short timeout in a loop keeps Ctrl+C responsive without a third-party client.
+  const feed = new wickra.BinanceFeed(args.symbol, INTERVAL_CODES[args.interval]);
+  console.log(
+    `Listening for ${args.symbol.toLowerCase()}@kline_${args.interval} klines (Ctrl+C to stop)`,
+  );
 
-  const ws = new WebSocket(url);
-
-  ws.on('open', () => {
-    console.log(`Connected, listening for ${stream} klines (Ctrl+C to stop)`);
+  let running = true;
+  process.on('SIGINT', () => {
+    console.log('\nShutting down…');
+    running = false;
   });
 
-  ws.on('message', (raw) => {
-    let envelope;
+  while (running) {
+    let event;
     try {
-      envelope = JSON.parse(raw.toString());
+      event = feed.next(1000);
     } catch (err) {
-      return; // ignore non-JSON frames
+      console.error(`feed error: ${err.message}`);
+      process.exitCode = 1;
+      break;
     }
-    const k = (envelope.data && envelope.data.k) || null;
-    if (!k || k.c === undefined) {
-      // Subscription acks, heartbeats and error frames carry no kline payload —
-      // skip them instead of crashing on Number(undefined).
-      return;
+    if (event === null) {
+      continue; // timeout — poll again
     }
-    const close = Number(k.c);
-    const isClosed = Boolean(k.x);
+
+    const close = event.close;
+    const isClosed = event.isClosed;
 
     const rsiV = rsi.update(close);
     const macdV = macd.update(close); // { macd, signal, histogram } or null
@@ -137,23 +130,10 @@ function main() {
         );
       }
     }
-  });
+  }
 
-  ws.on('error', (err) => {
-    console.error(`websocket error: ${err.message}`);
-    process.exitCode = 1;
-  });
-
-  ws.on('close', () => {
-    console.log('Connection closed.');
-  });
-
-  // Translate Ctrl+C into a clean shutdown.
-  process.on('SIGINT', () => {
-    console.log('\nShutting down…');
-    ws.close();
-    process.exit(0);
-  });
+  feed.close();
+  console.log('Connection closed.');
 }
 
 main();

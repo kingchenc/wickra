@@ -45,34 +45,17 @@ public static class MarketData
     /// </summary>
     public static Bar[] LoadOhlcvCsv(string path)
     {
-        var bars = new List<Bar>();
-        foreach (var rawLine in File.ReadLines(path))
+        // Native CandleReader: header validation, BOM and field-whitespace tolerance.
+        // No manual CSV parsing.
+        using var reader = new Wickra.CandleReader(File.ReadAllText(path));
+        var candles = reader.Read();
+        var bars = new Bar[candles.Length];
+        for (var i = 0; i < candles.Length; i++)
         {
-            var line = rawLine.Trim();
-            if (line.Length == 0)
-            {
-                continue;
-            }
-
-            var cols = line.Split(',');
-            if (!double.TryParse(cols[0], System.Globalization.CultureInfo.InvariantCulture, out _) &&
-                !long.TryParse(cols[0], out _))
-            {
-                continue; // header row
-            }
-
-            double F(int i) => double.Parse(cols[i], System.Globalization.CultureInfo.InvariantCulture);
-
-            if (cols.Length >= 6)
-            {
-                bars.Add(new Bar(F(1), F(2), F(3), F(4), F(5), long.Parse(cols[0])));
-            }
-            else
-            {
-                bars.Add(new Bar(F(0), F(1), F(2), F(3), F(4), bars.Count));
-            }
+            var c = candles[i];
+            bars[i] = new Bar(c.Open, c.High, c.Low, c.Close, c.Volume, (long)c.Timestamp);
         }
 
-        return bars.ToArray();
+        return bars;
     }
 }

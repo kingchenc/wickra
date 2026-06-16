@@ -24,10 +24,10 @@ Rscript streaming.R
 | `strategy_rsi_mean_reversion.R` | RSI(14) mean-reversion with a PnL / Sharpe / max-DD summary. | `Rscript strategy_rsi_mean_reversion.R` |
 | `strategy_macd_adx.R` | MACD crossover entries gated by ADX(14) > 20. | `Rscript strategy_macd_adx.R` |
 | `strategy_bollinger_squeeze.R` | Bollinger-squeeze breakout with an ATR(14) trailing stop. | `Rscript strategy_bollinger_squeeze.R` |
-| `fetch_btcusdt.R` | Download real BTCUSDT klines from the Binance REST API into a CSV (`jsonlite`). | `Rscript fetch_btcusdt.R` |
-| `live_binance.R` | Stream live Binance klines through EMA(20) over a WebSocket (`websocket`). | `Rscript live_binance.R` |
+| `fetch_btcusdt.R` | Download real BTCUSDT klines from the Binance REST API into a CSV (native `fetch_binance_klines`). | `Rscript fetch_btcusdt.R` |
+| `live_binance.R` | Stream live Binance klines through EMA(20) via the native `BinanceFeed`. | `Rscript live_binance.R` |
 
-`fetch_btcusdt.R` and `live_binance.R` require network access (and the
-`jsonlite` / `websocket` packages); the rest run offline on deterministic
-synthetic data. `parallel_assets.R` forks via `parallel::mclapply` on Unix and
-runs serially on Windows.
+`fetch_btcusdt.R` and `live_binance.R` require network access but no third-party
+packages — they use Wickra's native REST fetcher and live feed; the rest run
+offline on deterministic synthetic data. `parallel_assets.R` forks via
+`parallel::mclapply` on Unix and runs serially on Windows.

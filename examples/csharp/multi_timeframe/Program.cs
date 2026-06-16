@@ -25,20 +25,26 @@ static Bar[] Resample(Bar[] source, int factor)
         return source;
     }
 
+    // Native Resampler: bucket by an absolute timeframe (the synthetic bars step
+    // 60_000 ms, so factor minutes == factor*60_000 ms). No hand-written bucketing.
+    using var r = new Resampler((long)factor * 60_000);
     var output = new List<Bar>();
-    for (var i = 0; i < source.Length; i += factor)
+    foreach (var b in source)
     {
-        var end = Math.Min(i + factor, source.Length);
-        double high = double.MinValue, low = double.MaxValue, volume = 0;
-        for (var j = i; j < end; j++)
+        var c = r.Update(b.Open, b.High, b.Low, b.Close, b.Volume, b.Timestamp);
+        if (c is not null)
         {
-            high = Math.Max(high, source[j].High);
-            low = Math.Min(low, source[j].Low);
-            volume += source[j].Volume;
+            output.Add(ToBar(c.Value));
         }
+    }
 
-        output.Add(new Bar(source[i].Open, high, low, source[end - 1].Close, volume, source[i].Timestamp));
+    var last = r.Flush();
+    if (last is not null)
+    {
+        output.Add(ToBar(last.Value));
     }
 
     return output.ToArray();
 }
+
+static Bar ToBar(Candle c) => new(c.Open, c.High, c.Low, c.Close, c.Volume, (long)c.Timestamp);

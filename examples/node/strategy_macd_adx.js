@@ -25,48 +25,14 @@ const wickra = require('wickra');
 const FEE = 0.001;
 const ADX_FLOOR = 20.0;
 
-const REQUIRED_COLUMNS = ['timestamp', 'open', 'high', 'low', 'close', 'volume'];
 const DEFAULT_CSV = path.join(__dirname, '..', 'data', 'btcusdt-1h.csv');
 
 function loadCandles(csvPath) {
+  // Native CandleReader: validates the header, tolerates a UTF-8 BOM and field
+  // whitespace, and throws on a malformed row. Yields { open, high, low, close,
+  // volume, timestamp } objects.
   const text = fs.readFileSync(csvPath, 'utf8');
-  const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
-  if (lines.length === 0) {
-    throw new Error(`${csvPath}: file is empty`);
-  }
-
-  const header = lines[0].split(',').map((cell) => cell.trim());
-  const missing = REQUIRED_COLUMNS.filter((col) => !header.includes(col));
-  if (missing.length > 0) {
-    throw new Error(
-      `${csvPath}: CSV header is missing required column(s): ${missing.join(', ')}; ` +
-        `found: ${header.join(', ')}`,
-    );
-  }
-  if (lines.length === 1) {
-    throw new Error(`${csvPath}: CSV has a header but no data rows`);
-  }
-
-  const idx = {};
-  for (const col of REQUIRED_COLUMNS) idx[col] = header.indexOf(col);
-
-  const candles = [];
-  for (let row = 1; row < lines.length; row++) {
-    const cells = lines[row].split(',');
-    const candle = {};
-    for (const col of ['open', 'high', 'low', 'close', 'volume']) {
-      const raw = cells[idx[col]];
-      const value = raw === undefined ? NaN : Number(raw.trim());
-      if (raw === undefined || raw.trim() === '' || !Number.isFinite(value)) {
-        throw new Error(
-          `${csvPath}: row ${row + 1} column '${col}' is not numeric: ${JSON.stringify(raw)}`,
-        );
-      }
-      candle[col] = value;
-    }
-    candles.push(candle);
-  }
-  return candles;
+  return new wickra.CandleReader(text).read();
 }
 
 function signed(value, digits) {
