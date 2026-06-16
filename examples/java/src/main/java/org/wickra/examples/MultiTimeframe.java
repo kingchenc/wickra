@@ -1,6 +1,8 @@
 package org.wickra.examples;
 
+import org.wickra.Candle;
 import org.wickra.Ema;
+import org.wickra.Resampler;
 import org.wickra.examples.MarketData.Bar;
 
 import java.util.ArrayList;
@@ -28,19 +30,25 @@ public final class MultiTimeframe {
         if (factor <= 1) {
             return source;
         }
+        // Native Resampler: bucket by an absolute timeframe (the synthetic bars step
+        // 60_000 ms, so factor minutes == factor*60_000 ms). No hand-written bucketing.
         List<Bar> output = new ArrayList<>();
-        for (int i = 0; i < source.length; i += factor) {
-            int end = Math.min(i + factor, source.length);
-            double high = Double.MIN_VALUE;
-            double low = Double.MAX_VALUE;
-            double volume = 0;
-            for (int j = i; j < end; j++) {
-                high = Math.max(high, source[j].high());
-                low = Math.min(low, source[j].low());
-                volume += source[j].volume();
+        try (Resampler r = new Resampler((long) factor * 60_000L)) {
+            for (Bar b : source) {
+                Candle c = r.update(b.open(), b.high(), b.low(), b.close(), b.volume(), b.timestamp());
+                if (c != null) {
+                    output.add(toBar(c));
+                }
             }
-            output.add(new Bar(source[i].open(), high, low, source[end - 1].close(), volume, source[i].timestamp()));
+            Candle last = r.flush();
+            if (last != null) {
+                output.add(toBar(last));
+            }
         }
         return output.toArray(new Bar[0]);
+    }
+
+    private static Bar toBar(Candle c) {
+        return new Bar(c.open(), c.high(), c.low(), c.close(), c.volume(), (long) c.timestamp());
     }
 }

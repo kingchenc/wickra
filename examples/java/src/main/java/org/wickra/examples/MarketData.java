@@ -3,8 +3,9 @@ package org.wickra.examples;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.wickra.Candle;
+import org.wickra.CandleReader;
 
 /**
  * Deterministic synthetic market data plus a small OHLCV CSV loader, shared by
@@ -51,41 +52,20 @@ public final class MarketData {
     }
 
     /**
-     * Loads an OHLCV CSV. Accepts rows of {@code timestamp,open,high,low,close,volume}
-     * or {@code open,high,low,close,volume}; a non-numeric first row is treated as a header.
+     * Loads a {@code timestamp,open,high,low,close,volume} OHLCV CSV with Wickra's
+     * native CandleReader (header validation, BOM and field-whitespace tolerance) —
+     * no manual CSV parsing.
      */
     public static Bar[] loadOhlcvCsv(String path) throws IOException {
-        List<Bar> bars = new ArrayList<>();
-        for (String rawLine : Files.readAllLines(Path.of(path))) {
-            String line = rawLine.trim();
-            if (line.isEmpty()) {
-                continue;
+        String csv = Files.readString(Path.of(path));
+        try (CandleReader reader = new CandleReader(csv)) {
+            Candle[] candles = reader.read();
+            Bar[] bars = new Bar[candles.length];
+            for (int i = 0; i < candles.length; i++) {
+                Candle c = candles[i];
+                bars[i] = new Bar(c.open(), c.high(), c.low(), c.close(), c.volume(), (long) c.timestamp());
             }
-            String[] cols = line.split(",");
-            if (!isNumeric(cols[0])) {
-                continue; // header row
-            }
-            if (cols.length >= 6) {
-                bars.add(new Bar(
-                        Double.parseDouble(cols[1]), Double.parseDouble(cols[2]),
-                        Double.parseDouble(cols[3]), Double.parseDouble(cols[4]),
-                        Double.parseDouble(cols[5]), Long.parseLong(cols[0])));
-            } else {
-                bars.add(new Bar(
-                        Double.parseDouble(cols[0]), Double.parseDouble(cols[1]),
-                        Double.parseDouble(cols[2]), Double.parseDouble(cols[3]),
-                        Double.parseDouble(cols[4]), bars.size()));
-            }
-        }
-        return bars.toArray(new Bar[0]);
-    }
-
-    private static boolean isNumeric(String s) {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
+            return bars;
         }
     }
 }
