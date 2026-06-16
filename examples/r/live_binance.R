@@ -1,17 +1,20 @@
 # Stream live BTCUSDT 1-minute klines from Binance and feed each close through EMA(20).
-# Requires network access and the 'websocket' + 'jsonlite' packages. Runs ~60s.
+# Uses Wickra's native BinanceFeed — no third-party packages. Requires network
+# access. Runs for up to ~60 seconds.
 library(wickra)
-for (p in c("websocket", "jsonlite", "later")) {
-  if (!requireNamespace(p, quietly = TRUE)) stop(sprintf("install '%s' to run this example", p))
-}
+
 ema <- Ema(20)
-ws <- websocket::WebSocket$new("wss://stream.binance.com:9443/ws/btcusdt@kline_1m")
-ws$onOpen(function(event) cat("Connected; streaming for up to 60s...\n"))
-ws$onMessage(function(event) {
-  msg <- jsonlite::fromJSON(event$data)
-  close <- as.numeric(msg$k$c)
-  cat(sprintf("close=%.2f  EMA(20)=%.2f\n", close, update(ema, close)))
-})
-ws$connect()
-later::later(function() ws$close(), 60)
-while (ws$readyState() <= 1L) later::run_now(timeout = 1)
+# Interval code 1 == 1m (the Interval declaration order shared by every binding).
+feed <- BinanceFeed("BTCUSDT", 1L)
+cat("Streaming for up to 60s...\n")
+
+deadline <- Sys.time() + 60
+repeat {
+  if (Sys.time() > deadline) break
+  # binance_next() returns a named list on an event, or NULL on timeout.
+  event <- binance_next(feed, 1000)
+  if (is.null(event)) next
+  cat(sprintf("close=%.2f  EMA(20)=%.2f\n", event$close, update(ema, event$close)))
+}
+binance_close(feed)
+cat("Done (time limit reached).\n")
