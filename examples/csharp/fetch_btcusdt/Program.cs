@@ -1,33 +1,23 @@
 using System.Globalization;
-using System.Text.Json;
+using Wickra;
 
 // Download real BTCUSDT hourly klines from the Binance REST API into a CSV that the
-// other examples can consume. Requires network access (build-only in CI).
-const string url = "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=500";
+// other examples can consume, using Wickra's native fetcher — no third-party HTTP or
+// JSON library. Requires network access (build-only in CI).
+Console.WriteLine("Fetching 500 BTCUSDT 1h klines from Binance...");
 
-using var http = new HttpClient();
-Console.WriteLine($"Fetching {url}");
-var json = await http.GetStringAsync(url);
+var klines = BinanceFeed.FetchKlines("BTCUSDT", BinanceInterval.OneHour, 500);
 
-using var doc = JsonDocument.Parse(json);
 var dir = Path.Combine(AppContext.BaseDirectory, "data");
 Directory.CreateDirectory(dir);
 var path = Path.Combine(dir, "btcusdt_1h.csv");
 
 using var writer = new StreamWriter(path);
 writer.WriteLine("timestamp,open,high,low,close,volume");
-var count = 0;
-foreach (var kline in doc.RootElement.EnumerateArray())
+foreach (var k in klines)
 {
-    // Binance kline array: [openTime, open, high, low, close, volume, ...]
-    var ts = kline[0].GetInt64();
-    var o = kline[1].GetString();
-    var h = kline[2].GetString();
-    var l = kline[3].GetString();
-    var c = kline[4].GetString();
-    var v = kline[5].GetString();
-    writer.WriteLine(string.Create(CultureInfo.InvariantCulture, $"{ts},{o},{h},{l},{c},{v}"));
-    count++;
+    writer.WriteLine(string.Create(CultureInfo.InvariantCulture,
+        $"{(long)k.Timestamp},{k.Open},{k.High},{k.Low},{k.Close},{k.Volume}"));
 }
 
-Console.WriteLine($"Wrote {count} klines to {path}");
+Console.WriteLine($"Wrote {klines.Length} klines to {path}");
