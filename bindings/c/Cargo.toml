@@ -48,8 +48,16 @@ float_cmp = "allow"
 # package's wasm build (r-universe / webR) compiles this crate with
 # --no-default-features to drop rayon; wickra-core falls back to its serial
 # batch path, which is cfg-gated behind the same feature.
-default = ["parallel"]
+#
+# `live-binance` is on by default too so the published C ABI ships the native
+# Binance kline feed (tokio + TLS WebSocket) — the six C-ABI languages with no
+# native WebSocket (C, C++, Go, R, plus Node/Python via their own bindings) get
+# it without a third-party client. The wasm build drops it via
+# --no-default-features (a browser has no raw TCP/TLS sockets; WASM users use the
+# host `WebSocket`), exactly like rayon.
+default = ["parallel", "live-binance"]
 parallel = ["wickra-core/parallel"]
+live-binance = ["wickra-data/live-binance", "dep:tokio"]
 
 [dependencies]
 # Direct path dep rather than `workspace = true`: a member-level
@@ -58,3 +66,7 @@ parallel = ["wickra-core/parallel"]
 # `publish = false`, so no version pin is needed (and none to keep in sync).
 wickra-core = { path = "../../crates/wickra-core", default-features = false }
 wickra-data = { path = "../../crates/wickra-data" }
+# Only pulled in by `live-binance`: a single-thread runtime drives the async
+# Binance feed behind the blocking C-ABI poll. The feed's own I/O features come
+# transitively from wickra-data; this just needs the runtime + timeout.
+tokio = { version = "1", features = ["rt", "net", "time"], optional = true }

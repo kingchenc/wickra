@@ -41508,3 +41508,95 @@ public sealed class Zlema : IDisposable
     public void Dispose() => _handle.Dispose();
 }
 
+/// <summary>Kline interval for the live Binance feed.</summary>
+public enum BinanceInterval : byte
+{
+    OneSecond,
+    OneMinute,
+    ThreeMinutes,
+    FiveMinutes,
+    FifteenMinutes,
+    ThirtyMinutes,
+    OneHour,
+    TwoHours,
+    FourHours,
+    SixHours,
+    EightHours,
+    TwelveHours,
+    OneDay,
+    ThreeDays,
+    OneWeek,
+    OneMonth,
+}
+
+/// <summary>One event from the live Binance feed.</summary>
+public readonly record struct KlineEvent(string Symbol, double Open, double High, double Low, double Close, double Volume, long OpenTime, bool IsClosed);
+
+/// <summary>A live Binance kline stream over the Wickra C ABI.</summary>
+public sealed class BinanceFeed : IDisposable
+{
+    private readonly WickraHandle _handle;
+
+    /// <summary>Connect to Binance's live kline stream for the given comma-separated symbols
+    /// (case-insensitive) at <paramref name="interval"/>. <paramref name="baseUrl"/> overrides the
+    /// endpoint (null = production; pass a ws:// URL to target a test server).</summary>
+    public BinanceFeed(string symbols, BinanceInterval interval, string? baseUrl = null)
+    {
+        ArgumentNullException.ThrowIfNull(symbols);
+        var symBytes = System.Text.Encoding.UTF8.GetBytes(symbols + '\0');
+        var urlBytes = baseUrl is null ? null : System.Text.Encoding.UTF8.GetBytes(baseUrl + '\0');
+        nint ptr;
+        unsafe
+        {
+            fixed (byte* sp = symBytes)
+            fixed (byte* up = urlBytes)
+            {
+                ptr = NativeMethods.wickra_binance_connect(sp, (byte)interval, up);
+            }
+        }
+        if (ptr == nint.Zero)
+        {
+            throw new ArgumentException("invalid BinanceFeed parameters");
+        }
+        _handle = new WickraHandle(ptr, NativeMethods.wickra_binance_free);
+    }
+
+    /// <summary>Poll for the next kline event, waiting up to <paramref name="timeout"/>.
+    /// Returns the event, or null on timeout (call again). Throws once the stream is
+    /// closed or has errored out.</summary>
+    public KlineEvent? Next(TimeSpan timeout)
+    {
+        WickraKlineEvent ev;
+        int code;
+        unsafe
+        {
+            code = NativeMethods.wickra_binance_next(_handle.DangerousGetHandle(), &ev, (long)timeout.TotalMilliseconds);
+        }
+        GC.KeepAlive(_handle);
+        if (code == 0)
+        {
+            return null;
+        }
+        if (code != 1)
+        {
+            throw new InvalidOperationException("binance feed closed");
+        }
+        string symbol;
+        unsafe
+        {
+            symbol = Marshal.PtrToStringUTF8((nint)ev.symbol) ?? string.Empty;
+        }
+        return new KlineEvent(symbol, ev.open, ev.high, ev.low, ev.close, ev.volume, ev.open_time, ev.is_closed != 0);
+    }
+
+    public void Dispose()
+    {
+        unsafe
+        {
+            NativeMethods.wickra_binance_close(_handle.DangerousGetHandle());
+        }
+        GC.KeepAlive(_handle);
+        _handle.Dispose();
+    }
+}
+

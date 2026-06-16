@@ -3959,6 +3959,10 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_CANDLE_READER_COUNT;
     public static MethodHandle WICKRA_CANDLE_READER_READ;
     public static MethodHandle WICKRA_CANDLE_READER_FREE;
+    public static MethodHandle WICKRA_BINANCE_CONNECT;
+    public static MethodHandle WICKRA_BINANCE_NEXT;
+    public static MethodHandle WICKRA_BINANCE_CLOSE;
+    public static MethodHandle WICKRA_BINANCE_FREE;
 
     static {
         init0();
@@ -8039,6 +8043,10 @@ public final class NativeMethods {
         WICKRA_CANDLE_READER_COUNT = h("wickra_candle_reader_count", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_CANDLE_READER_READ = h("wickra_candle_reader_read", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_CANDLE_READER_FREE = h("wickra_candle_reader_free", FunctionDescriptor.ofVoid(ADDRESS));
+        WICKRA_BINANCE_CONNECT = h("wickra_binance_connect", FunctionDescriptor.of(ADDRESS, ADDRESS, JAVA_BYTE, ADDRESS));
+        WICKRA_BINANCE_NEXT = h("wickra_binance_next", FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, JAVA_LONG));
+        WICKRA_BINANCE_CLOSE = h("wickra_binance_close", FunctionDescriptor.ofVoid(ADDRESS));
+        WICKRA_BINANCE_FREE = h("wickra_binance_free", FunctionDescriptor.ofVoid(ADDRESS));
     }
 
 }

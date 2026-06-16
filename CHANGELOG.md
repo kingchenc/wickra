@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and map to the correct wire-format strings.
 
 ### Added
+- **Native live Binance kline feed in 9 languages (data layer).** `BinanceFeed`
+  streams live OHLCV candles straight from Binance's public WebSocket — no
+  third-party WebSocket client (`ws`, `websockets`, `gorilla/websocket`, …) in any
+  binding. Construct it with comma-separated symbols + an interval, then poll
+  `next(timeout)` for the next event (or `null`/`None` on timeout); the connection
+  reconnects transparently. Exposed natively (Node.js / Python — a blocking poll
+  that drives the tested async stream on a tokio runtime) and over the C ABI as Go
+  `Next()`, C# `Next()`, Java `next()`, and the R `binance_next()`; C / C++ call
+  `wickra_binance_connect` / `_next` / `_close` / `_free` directly. The connect →
+  read → reconnect pipeline is covered by the existing mock-WS-server tests. WASM
+  is excluded (a browser has no raw sockets; use the host `WebSocket`). The C ABI
+  ships the feed by default (`live-binance` feature); the wasm build drops it.
 - **CSV candle reading in all 10 languages (data layer).** The `CandleReader`
   parses a `timestamp,open,high,low,close,volume` CSV buffer (a leading UTF-8 BOM
   and field whitespace are tolerated) into candles: construct it from a CSV string

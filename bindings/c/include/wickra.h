@@ -102,6 +102,8 @@ typedef struct BetaNeutralSpread BetaNeutralSpread;
 
 typedef struct BetterVolume BetterVolume;
 
+typedef struct BinanceStream BinanceStream;
+
 typedef struct BipowerVariation BipowerVariation;
 
 typedef struct BodySizePct BodySizePct;
@@ -1689,6 +1691,17 @@ typedef struct WickraCandle {
     double volume;
     int64_t timestamp;
 } WickraCandle;
+
+typedef struct WickraKlineEvent {
+    uint8_t symbol[16];
+    double open;
+    double high;
+    double low;
+    double close;
+    double volume;
+    int64_t open_time;
+    bool is_closed;
+} WickraKlineEvent;
 
 #ifdef __cplusplus
 extern "C" {
@@ -13747,6 +13760,18 @@ uintptr_t wickra_candle_reader_read(struct CandleReader *handle,
                                     uintptr_t cap);
 
 void wickra_candle_reader_free(struct CandleReader *handle);
+
+struct BinanceStream *wickra_binance_connect(const char *symbols,
+                                             uint8_t interval,
+                                             const char *base_url);
+
+int32_t wickra_binance_next(struct BinanceStream *handle,
+                            struct WickraKlineEvent *out,
+                            int64_t timeout_ms);
+
+void wickra_binance_close(struct BinanceStream *handle);
+
+void wickra_binance_free(struct BinanceStream *handle);
 
 #ifdef __cplusplus
 }  // extern "C"

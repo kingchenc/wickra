@@ -12442,6 +12442,18 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_candle_reader_free(nint handle);
 
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nint wickra_binance_connect(byte* symbols, byte interval, byte* baseUrl);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial int wickra_binance_next(nint handle, WickraKlineEvent* @out, long timeoutMs);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial void wickra_binance_close(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial void wickra_binance_free(nint handle);
+
 }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -13296,5 +13308,18 @@ internal static partial class NativeMethods
     {
         public double swing;
         public double direction;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal unsafe struct WickraKlineEvent
+    {
+        public fixed byte symbol[16];
+        public double open;
+        public double high;
+        public double low;
+        public double close;
+        public double volume;
+        public long open_time;
+        public byte is_closed;
     }
 

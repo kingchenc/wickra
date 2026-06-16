@@ -28,3 +28,7 @@ import "errors"
 // ErrInvalidParams is returned by a New<Indicator> constructor when the native
 // constructor rejects the supplied parameters (for example a zero period).
 var ErrInvalidParams = errors.New("wickra: invalid indicator parameters")
+
+// ErrFeedClosed is returned by BinanceFeed.Next once the stream has been closed
+// or has errored out and exhausted its reconnect attempts.
+var ErrFeedClosed = errors.New("wickra: binance feed closed")

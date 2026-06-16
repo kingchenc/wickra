@@ -603,6 +603,17 @@ export interface CandleValue {
   volume: number
   timestamp: number
 }
+/** One event from the live Binance feed. */
+export interface KlineEvent {
+  symbol: string
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+  openTime: number
+  isClosed: boolean
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -5938,6 +5949,30 @@ export declare class VolumeWeightedMacd {
   name(): string
   isReady(): boolean
   warmupPeriod(): number
+}
+export type BinanceFeedNode = BinanceFeed
+/**
+ * A live Binance kline feed. `next` is a blocking poll (it waits up to the
+ * timeout on the calling thread) driving the mock-server-tested wickra-data
+ * `BinanceKlineStream` on a single-thread tokio runtime — use a short timeout in
+ * a loop, or run it on a Worker thread, to keep the event loop responsive.
+ */
+export declare class BinanceFeed {
+  /**
+   * Connect to Binance's live kline stream for the given comma-separated
+   * `symbols` (case-insensitive) at the given `interval` code (`0..=15`).
+   * `baseUrl` overrides the endpoint (omit for production; pass a `ws://` URL
+   * to target a test server).
+   */
+  constructor(symbols: string, interval: number, baseUrl?: string | undefined | null)
+  /**
+   * Poll for the next kline event, waiting up to `timeoutMs` milliseconds.
+   * Returns the event, or `null` on timeout (call again). Throws once the
+   * stream is closed.
+   */
+  next(timeoutMs: number): KlineEvent | null
+  /** Close the stream; subsequent `next` calls throw. */
+  close(): void
 }
 export type TickAggregatorNode = TickAggregator
 /** Roll trade ticks up into fixed-timeframe OHLCV candles. */
