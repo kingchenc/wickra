@@ -3,7 +3,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 
 	wickra "github.com/wickra-lib/wickra/bindings/go"
 	"github.com/wickra-lib/wickra/examples/go/internal/market"
@@ -29,26 +28,21 @@ func resample(source []market.Bar, factor int) []market.Bar {
 	if factor <= 1 {
 		return source
 	}
+	// Native Resampler: bucket by an absolute timeframe (the synthetic bars step
+	// 60_000 ms, so factor minutes == factor*60_000 ms). No hand-written bucketing.
+	r, _ := wickra.NewResampler(int64(factor) * 60_000)
+	defer r.Close()
 	var out []market.Bar
-	for i := 0; i < len(source); i += factor {
-		end := i + factor
-		if end > len(source) {
-			end = len(source)
+	emit := func(c wickra.Candle) {
+		out = append(out, market.Bar{Open: c.Open, High: c.High, Low: c.Low, Close: c.Close, Volume: c.Volume, Timestamp: c.Timestamp})
+	}
+	for _, b := range source {
+		if c, ok := r.Update(b.Open, b.High, b.Low, b.Close, b.Volume, b.Timestamp); ok {
+			emit(c)
 		}
-		high, low, volume := math.Inf(-1), math.Inf(1), 0.0
-		for j := i; j < end; j++ {
-			high = math.Max(high, source[j].High)
-			low = math.Min(low, source[j].Low)
-			volume += source[j].Volume
-		}
-		out = append(out, market.Bar{
-			Open:      source[i].Open,
-			High:      high,
-			Low:       low,
-			Close:     source[end-1].Close,
-			Volume:    volume,
-			Timestamp: source[i].Timestamp,
-		})
+	}
+	if c, ok := r.Flush(); ok {
+		emit(c)
 	}
 	return out
 }
