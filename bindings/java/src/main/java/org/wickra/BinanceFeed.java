@@ -81,6 +81,51 @@ public final class BinanceFeed implements AutoCloseable {
         }
     }
 
+    /** Fetch historical klines from Binance's REST endpoint. symbol is the
+     *  trading pair (case-insensitive), limit the number of candles (1..=1000).
+     *  startMs/endMs are inclusive Unix-millisecond bounds (negative = unset);
+     *  baseUrl overrides the host (null = production). Blocks until done. */
+    public static Candle[] fetchKlines(String symbol, BinanceInterval interval, int limit,
+                                       long startMs, long endMs, String baseUrl) {
+        if (symbol == null) {
+            throw new NullPointerException("symbol");
+        }
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be in 1..=1000");
+        }
+        try (Arena a = Arena.ofConfined()) {
+            byte[] sb = symbol.getBytes(StandardCharsets.UTF_8);
+            MemorySegment sym = a.allocate(sb.length + 1L);
+            MemorySegment.copy(sb, 0, sym, JAVA_BYTE, 0L, sb.length);
+            MemorySegment url = MemorySegment.NULL;
+            if (baseUrl != null) {
+                byte[] ub = baseUrl.getBytes(StandardCharsets.UTF_8);
+                url = a.allocate(ub.length + 1L);
+                MemorySegment.copy(ub, 0, url, JAVA_BYTE, 0L, ub.length);
+            }
+            MemorySegment out = a.allocate(48L * limit);
+            long n = (long) NativeMethods.WICKRA_BINANCE_FETCH_KLINES.invokeExact(
+                sym, (byte) interval.ordinal(), limit, startMs, endMs, url, out, (long) limit);
+            if (n < 0) {
+                throw new IllegalArgumentException("invalid fetchKlines parameters or transport error");
+            }
+            Candle[] result = new Candle[(int) n];
+            for (int i = 0; i < n; i++) {
+                long b = (long) i * 48L;
+                result[i] = new Candle(
+                    out.get(JAVA_DOUBLE, b + 0L),
+                    out.get(JAVA_DOUBLE, b + 8L),
+                    out.get(JAVA_DOUBLE, b + 16L),
+                    out.get(JAVA_DOUBLE, b + 24L),
+                    out.get(JAVA_DOUBLE, b + 32L),
+                    (double) out.get(JAVA_LONG, b + 40L));
+            }
+            return result;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
+    }
+
     @Override public void close() {
         try {
             NativeMethods.WICKRA_BINANCE_CLOSE.invokeExact(handle);

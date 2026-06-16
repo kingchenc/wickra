@@ -41589,6 +41589,43 @@ public sealed class BinanceFeed : IDisposable
         return new KlineEvent(symbol, ev.open, ev.high, ev.low, ev.close, ev.volume, ev.open_time, ev.is_closed != 0);
     }
 
+    /// <summary>Fetch historical klines from Binance's REST endpoint. <paramref name="symbol"/>
+    /// is the trading pair (case-insensitive), <paramref name="limit"/> the number of
+    /// candles (1..=1000). <paramref name="startMs"/>/<paramref name="endMs"/> are inclusive
+    /// Unix-millisecond bounds (negative = unset); <paramref name="baseUrl"/> overrides the
+    /// host (null = production). Blocks until the response arrives.</summary>
+    public static Candle[] FetchKlines(string symbol, BinanceInterval interval, uint limit, long startMs = -1, long endMs = -1, string? baseUrl = null)
+    {
+        ArgumentNullException.ThrowIfNull(symbol);
+        if (limit == 0)
+        {
+            throw new ArgumentException("limit must be in 1..=1000");
+        }
+        var symBytes = System.Text.Encoding.UTF8.GetBytes(symbol + '\0');
+        var urlBytes = baseUrl is null ? null : System.Text.Encoding.UTF8.GetBytes(baseUrl + '\0');
+        var buffer = new WickraCandle[limit];
+        long count;
+        unsafe
+        {
+            fixed (byte* sp = symBytes)
+            fixed (byte* up = urlBytes)
+            fixed (WickraCandle* ptr = buffer)
+            {
+                count = (long)NativeMethods.wickra_binance_fetch_klines(sp, (byte)interval, limit, startMs, endMs, up, ptr, (nuint)limit);
+            }
+        }
+        if (count < 0)
+        {
+            throw new ArgumentException("invalid FetchKlines parameters or transport error");
+        }
+        var result = new Candle[count];
+        for (var i = 0; i < count; i++)
+        {
+            result[i] = new Candle(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume, buffer[i].timestamp);
+        }
+        return result;
+    }
+
     public void Dispose()
     {
         unsafe

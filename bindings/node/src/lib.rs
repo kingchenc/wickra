@@ -22032,7 +22032,10 @@ pub fn fetch_binance_klines(
     base_url: Option<String>,
 ) -> napi::Result<Vec<CandleValue>> {
     let iv = binance_interval(interval).ok_or_else(|| {
-        NapiError::new(Status::InvalidArg, "unknown interval code (expected 0..=15)")
+        NapiError::new(
+            Status::InvalidArg,
+            "unknown interval code (expected 0..=15)",
+        )
     })?;
     let limit = u16::try_from(limit)
         .map_err(|_| NapiError::new(Status::InvalidArg, "limit must be in 1..=1000"))?;

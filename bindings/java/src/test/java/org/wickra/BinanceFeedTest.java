@@ -21,4 +21,18 @@ class BinanceFeedTest {
         assertThrows(IllegalArgumentException.class,
             () -> new BinanceFeed("BTCUSDT", BinanceInterval.ONE_MINUTE, "ws://127.0.0.1:1"));
     }
+
+    // The REST fetcher's parse/HTTP success path is covered by the Rust
+    // mock-HTTP-server tests; here we only assert the binding's error paths.
+    @Test
+    void fetchKlinesRejectsZeroLimit() {
+        assertThrows(IllegalArgumentException.class,
+            () -> BinanceFeed.fetchKlines("BTCUSDT", BinanceInterval.ONE_HOUR, 0, -1L, -1L, null));
+    }
+
+    @Test
+    void fetchKlinesSurfacesUnreachableEndpoint() {
+        assertThrows(IllegalArgumentException.class,
+            () -> BinanceFeed.fetchKlines("BTCUSDT", BinanceInterval.ONE_HOUR, 1, -1L, -1L, "http://127.0.0.1:1"));
+    }
 }

@@ -4180,3 +4180,24 @@ binance_close <- function(feed) {
   invisible(NULL)
 }
 
+#' Fetch historical Binance klines over REST
+#'
+#' Downloads up to `limit` (`1:1000`) historical klines for `symbol` at the given
+#' `interval` code (an integer `0:15`, the same order as the other bindings).
+#' `start_ms`/`end_ms` are optional inclusive Unix-millisecond bounds (a negative
+#' value means unset); `base_url` overrides the host (`NULL` = production). Returns
+#' an `n x 6` numeric matrix with columns `open`, `high`, `low`, `close`,
+#' `volume`, `timestamp`. Blocks until the response arrives. Not available in the
+#' wasm (r-universe/webR) build, which has no raw sockets.
+#'
+#' @keywords internal
+#' @export
+fetch_binance_klines <- function(symbol, interval, limit, start_ms = -1,
+                                 end_ms = -1, base_url = NULL) {
+  m <- .Call("wk_binance_fetch_klines", symbol, as.integer(interval),
+             as.integer(limit), as.numeric(start_ms), as.numeric(end_ms),
+             base_url, PACKAGE = "wickra")
+  colnames(m) <- c("open", "high", "low", "close", "volume", "timestamp")
+  m
+}
+

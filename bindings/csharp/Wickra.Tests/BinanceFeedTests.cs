@@ -27,4 +27,27 @@ public class BinanceFeedTests
         Assert.Throws<ArgumentException>(() =>
             new BinanceFeed("BTCUSDT", BinanceInterval.OneMinute, "ws://127.0.0.1:1"));
     }
+
+    // The REST fetcher's parse/HTTP success path is covered by the Rust
+    // mock-HTTP-server tests; here we only assert the binding's error paths.
+    [Fact]
+    public void FetchKlinesRejectsUnknownInterval()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            BinanceFeed.FetchKlines("BTCUSDT", (BinanceInterval)99, 1));
+    }
+
+    [Fact]
+    public void FetchKlinesRejectsZeroLimit()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            BinanceFeed.FetchKlines("BTCUSDT", BinanceInterval.OneHour, 0));
+    }
+
+    [Fact]
+    public void FetchKlinesSurfacesUnreachableEndpoint()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            BinanceFeed.FetchKlines("BTCUSDT", BinanceInterval.OneHour, 1, baseUrl: "http://127.0.0.1:1"));
+    }
 }

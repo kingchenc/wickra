@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and map to the correct wire-format strings.
 
 ### Added
+- **Native historical Binance REST kline fetcher in 9 languages (data layer).**
+  `fetchBinanceKlines` (Node.js / Python `fetch_binance_klines` / Go
+  `FetchBinanceKlines` / C# `BinanceFeed.FetchKlines` / Java `BinanceFeed.fetchKlines`
+  / R `fetch_binance_klines`; C / C++ call `wickra_binance_fetch_klines`) downloads
+  historical OHLCV candles straight from Binance's public REST endpoint — no
+  third-party HTTP/JSON client (`jackson`, `jsonlite`, `urllib`, …) needed. Pass a
+  symbol, interval, and limit (`1..=1000`) plus optional millisecond start/end
+  bounds; it blocks until the response arrives and returns the parsed candles. It
+  is built on `ureq` with native-tls, sharing the live feed's TLS stack, and is
+  covered by mock-HTTP-server tests. The historical counterpart to the live
+  `BinanceFeed`; WASM is excluded (browsers use the host `fetch`). Ships with the
+  C ABI's default `live-binance` feature.
 - **Native live Binance kline feed in 9 languages (data layer).** `BinanceFeed`
   streams live OHLCV candles straight from Binance's public WebSocket — no
   third-party WebSocket client (`ws`, `websockets`, `gorilla/websocket`, …) in any

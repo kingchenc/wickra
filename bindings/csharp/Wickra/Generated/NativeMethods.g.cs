@@ -12454,6 +12454,9 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_binance_free(nint handle);
 
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nint wickra_binance_fetch_klines(byte* symbol, byte interval, uint limit, long startMs, long endMs, byte* baseUrl, WickraCandle* @out, nuint cap);
+
 }
 
     [StructLayout(LayoutKind.Sequential)]
