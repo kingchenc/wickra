@@ -68572,6 +68572,71 @@ pub unsafe extern "C" fn wickra_binance_free(handle: *mut BinanceStream) {
     }
 }
 
+/// Fetch historical klines from Binance's REST endpoint into `out` (up to `cap`
+/// candles). `symbol` is the trading pair (case-insensitive, e.g. `"BTCUSDT"`),
+/// `interval` the code `0..=15` (the `Interval` declaration order), and `limit`
+/// the number of candles to request (`1..=1000`). `start_ms`/`end_ms` are
+/// inclusive Unix-millisecond bounds; pass a negative value for "unset".
+/// `base_url` overrides the host (`NULL` = production `https://api.binance.com`;
+/// pass an `http://…` URL to target a test server). This blocks until the HTTP
+/// response arrives. Returns the number of candles written (`<= cap`), or `-1`
+/// on a null/invalid symbol, an unknown interval, an out-of-range limit, a
+/// transport/JSON error, or a `NULL` `out`.
+///
+/// # Safety
+/// `symbol` must be a valid NUL-terminated UTF-8 C string; `base_url` must be
+/// `NULL` or a valid NUL-terminated UTF-8 C string; when non-`NULL`, `out` must
+/// cover `cap` `WickraCandle` elements.
+#[cfg(feature = "live-binance")]
+#[no_mangle]
+pub unsafe extern "C" fn wickra_binance_fetch_klines(
+    symbol: *const c_char,
+    interval: u8,
+    limit: u32,
+    start_ms: i64,
+    end_ms: i64,
+    base_url: *const c_char,
+    out: *mut WickraCandle,
+    cap: usize,
+) -> isize {
+    if symbol.is_null() || out.is_null() {
+        return -1;
+    }
+    let Ok(symbol_str) = core::ffi::CStr::from_ptr(symbol).to_str() else {
+        return -1;
+    };
+    let Some(interval) = binance_interval(interval) else {
+        return -1;
+    };
+    let Ok(limit) = u16::try_from(limit) else {
+        return -1;
+    };
+    let start = (start_ms >= 0).then_some(start_ms);
+    let end = (end_ms >= 0).then_some(end_ms);
+    let fetched = if base_url.is_null() {
+        wickra_data::live::binance_rest::fetch_klines(symbol_str, interval, limit, start, end)
+    } else {
+        let Ok(url) = core::ffi::CStr::from_ptr(base_url).to_str() else {
+            return -1;
+        };
+        let config = wickra_data::live::binance_rest::BinanceRestConfig {
+            base_url: url.to_owned(),
+        };
+        wickra_data::live::binance_rest::fetch_klines_with_config(
+            symbol_str, interval, limit, start, end, &config,
+        )
+    };
+    let Ok(candles) = fetched else {
+        return -1;
+    };
+    let count = candles.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, candle) in slots.iter_mut().zip(&candles[..count]) {
+        *slot = candle_to_c(*candle);
+    }
+    isize::try_from(count).unwrap_or(isize::MAX)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68619,6 +68684,57 @@ mod tests {
             assert!(wickra_sma_name(ptr::null_mut()).is_null());
             wickra_sma_reset(ptr::null_mut());
             wickra_sma_free(ptr::null_mut());
+        }
+    }
+
+    #[cfg(feature = "live-binance")]
+    #[test]
+    fn fetch_klines_rejects_invalid_arguments() {
+        // Each of these short-circuits to -1 before any network access, so the
+        // test is deterministic and offline.
+        unsafe {
+            let symbol = c"BTCUSDT".as_ptr();
+            let mut out = [WickraCandle {
+                open: 0.0,
+                high: 0.0,
+                low: 0.0,
+                close: 0.0,
+                volume: 0.0,
+                timestamp: 0,
+            }; 4];
+            // Null symbol.
+            assert_eq!(
+                wickra_binance_fetch_klines(
+                    ptr::null(),
+                    6,
+                    1,
+                    -1,
+                    -1,
+                    ptr::null(),
+                    out.as_mut_ptr(),
+                    4
+                ),
+                -1
+            );
+            // Null output buffer.
+            assert_eq!(
+                wickra_binance_fetch_klines(symbol, 6, 1, -1, -1, ptr::null(), ptr::null_mut(), 4),
+                -1
+            );
+            // Unknown interval code.
+            assert_eq!(
+                wickra_binance_fetch_klines(
+                    symbol,
+                    99,
+                    1,
+                    -1,
+                    -1,
+                    ptr::null(),
+                    out.as_mut_ptr(),
+                    4
+                ),
+                -1
+            );
         }
     }
 }

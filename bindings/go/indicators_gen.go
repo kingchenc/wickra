@@ -43431,3 +43431,32 @@ func (f *BinanceFeed) Close() {
 		runtime.SetFinalizer(f, nil)
 	}
 }
+
+// FetchBinanceKlines fetches historical klines from Binance's REST endpoint.
+// symbol is the trading pair (case-insensitive), interval the kline interval,
+// and limit the number of candles to request (1..=1000). startMs/endMs are
+// inclusive Unix-millisecond bounds (negative = unset); baseURL overrides the
+// host ("" = production https://api.binance.com). It blocks until the response
+// arrives and returns ErrInvalidParams on a bad argument or transport error.
+func FetchBinanceKlines(symbol string, interval BinanceInterval, limit uint32, startMs, endMs int64, baseURL string) ([]Candle, error) {
+	if limit == 0 {
+		return nil, ErrInvalidParams
+	}
+	csym := C.CString(symbol)
+	defer C.free(unsafe.Pointer(csym))
+	var curl *C.char
+	if baseURL != "" {
+		curl = C.CString(baseURL)
+		defer C.free(unsafe.Pointer(curl))
+	}
+	buf := make([]C.struct_WickraCandle, limit)
+	n := int(C.wickra_binance_fetch_klines(csym, C.uint8_t(interval), C.uint32_t(limit), C.int64_t(startMs), C.int64_t(endMs), curl, &buf[0], C.uintptr_t(limit)))
+	if n < 0 {
+		return nil, ErrInvalidParams
+	}
+	out := make([]Candle, n)
+	for i := 0; i < n; i++ {
+		out[i] = Candle{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume), int64(buf[i].timestamp)}
+	}
+	return out, nil
+}

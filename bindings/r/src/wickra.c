@@ -22707,6 +22707,31 @@ SEXP wk_binance_close(SEXP e) {
   wickra_binance_close(h);
   return R_NilValue;
 }
+SEXP wk_binance_fetch_klines(SEXP symbol, SEXP interval, SEXP limit,
+                             SEXP start_ms, SEXP end_ms, SEXP base_url) {
+  const char *url = (base_url == R_NilValue || Rf_xlength(base_url) == 0)
+    ? NULL : CHAR(STRING_ELT(base_url, 0));
+  uint32_t lim = (uint32_t)Rf_asInteger(limit);
+  if (lim == 0) Rf_error("limit must be in 1..=1000");
+  struct WickraCandle *buf =
+    (struct WickraCandle *)R_alloc(lim, sizeof(struct WickraCandle));
+  intptr_t n = wickra_binance_fetch_klines(
+    CHAR(STRING_ELT(symbol, 0)), (uint8_t)Rf_asInteger(interval), lim,
+    (int64_t)Rf_asReal(start_ms), (int64_t)Rf_asReal(end_ms), url, buf,
+    (uintptr_t)lim);
+  if (n < 0) Rf_error("invalid fetch_binance_klines parameters or transport error");
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
+  for (intptr_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = buf[i].open;
+    REAL(r)[i + n * 1] = buf[i].high;
+    REAL(r)[i + n * 2] = buf[i].low;
+    REAL(r)[i + n * 3] = buf[i].close;
+    REAL(r)[i + n * 4] = buf[i].volume;
+    REAL(r)[i + n * 5] = (double)buf[i].timestamp;
+  }
+  UNPROTECT(1);
+  return r;
+}
 #endif
 
 static const R_CallMethodDef CallEntries[] = {
@@ -26141,6 +26166,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_binance_connect", (DL_FUNC)&wk_binance_connect, 3},
   {"wk_binance_next", (DL_FUNC)&wk_binance_next, 2},
   {"wk_binance_close", (DL_FUNC)&wk_binance_close, 1},
+  {"wk_binance_fetch_klines", (DL_FUNC)&wk_binance_fetch_klines, 6},
 #endif
   {NULL, NULL, 0}
 };

@@ -22016,6 +22016,44 @@ impl BinanceFeedNode {
     }
 }
 
+/// Fetch historical klines from Binance's REST endpoint. `symbol` is the trading
+/// pair (case-insensitive, e.g. `"BTCUSDT"`), `interval` the code `0..=15` (the
+/// `Interval` declaration order), and `limit` the number of candles to request
+/// (`1..=1000`). `startMs`/`endMs` are optional inclusive Unix-millisecond
+/// bounds; `baseUrl` overrides the host (omit for production). This is a blocking
+/// call — run it on a Worker thread to keep the event loop responsive.
+#[napi(js_name = "fetchBinanceKlines")]
+pub fn fetch_binance_klines(
+    symbol: String,
+    interval: u8,
+    limit: u32,
+    start_ms: Option<f64>,
+    end_ms: Option<f64>,
+    base_url: Option<String>,
+) -> napi::Result<Vec<CandleValue>> {
+    let iv = binance_interval(interval).ok_or_else(|| {
+        NapiError::new(
+            Status::InvalidArg,
+            "unknown interval code (expected 0..=15)",
+        )
+    })?;
+    let limit = u16::try_from(limit)
+        .map_err(|_| NapiError::new(Status::InvalidArg, "limit must be in 1..=1000"))?;
+    let start = start_ms.map(|v| v as i64);
+    let end = end_ms.map(|v| v as i64);
+    let candles = match base_url {
+        Some(url) => {
+            let config = wickra_data::live::binance_rest::BinanceRestConfig { base_url: url };
+            wickra_data::live::binance_rest::fetch_klines_with_config(
+                &symbol, iv, limit, start, end, &config,
+            )
+        }
+        None => wickra_data::live::binance_rest::fetch_klines(&symbol, iv, limit, start, end),
+    }
+    .map_err(map_data_err)?;
+    Ok(candles.into_iter().map(candle_to_value).collect())
+}
+
 /// Roll trade ticks up into fixed-timeframe OHLCV candles.
 #[napi(js_name = "TickAggregator")]
 pub struct TickAggregatorNode {

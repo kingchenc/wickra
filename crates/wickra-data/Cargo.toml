@@ -38,11 +38,22 @@ tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros", "net", "
 tokio-tungstenite = { version = "0.29", optional = true, features = ["native-tls"] }
 futures-util = { version = "0.3", optional = true }
 url = { version = "2", optional = true }
+# Blocking HTTP client for the historical REST kline fetcher. ureq 2.x with
+# native-tls verifies against the OS trust store (SChannel / Security.framework /
+# OpenSSL) — the same backend tokio-tungstenite uses above — so it ships no
+# bundled CA roots. (ureq 3.x hard-depends on `webpki-root-certs` regardless of
+# TLS backend, which is CDLA-Permissive-2.0 and dead weight under native-tls.)
+ureq = { version = "2", default-features = false, features = ["native-tls"], optional = true }
+# Direct dependency so the agent can be built with a native-tls connector (ureq
+# 2.x does not auto-configure native-tls). Already in the tree via tokio-tungstenite.
+native-tls = { version = "0.2", optional = true }
 
 [features]
 default = []
-# Each exchange is gated so users only pay for the WS stack they actually want.
-live-binance = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util", "dep:url"]
+# Each exchange is gated so users only pay for the WS/REST stack they actually
+# want. `live-binance` covers both the live WebSocket feed and the historical
+# REST kline fetcher.
+live-binance = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util", "dep:url", "dep:ureq", "dep:native-tls"]
 
 [dev-dependencies]
 approx = { workspace = true }

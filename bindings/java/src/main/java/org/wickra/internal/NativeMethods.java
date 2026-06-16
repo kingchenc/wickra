@@ -3963,6 +3963,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_BINANCE_NEXT;
     public static MethodHandle WICKRA_BINANCE_CLOSE;
     public static MethodHandle WICKRA_BINANCE_FREE;
+    public static MethodHandle WICKRA_BINANCE_FETCH_KLINES;
 
     static {
         init0();
@@ -8047,6 +8048,7 @@ public final class NativeMethods {
         WICKRA_BINANCE_NEXT = h("wickra_binance_next", FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_BINANCE_CLOSE = h("wickra_binance_close", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_BINANCE_FREE = h("wickra_binance_free", FunctionDescriptor.ofVoid(ADDRESS));
+        WICKRA_BINANCE_FETCH_KLINES = h("wickra_binance_fetch_klines", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_BYTE, JAVA_INT, JAVA_LONG, JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
     }
 
 }
