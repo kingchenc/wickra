@@ -109,9 +109,11 @@ series through three indicators chosen by call-signature archetype — `SMA(20)`
 (1-in → 1-out), `ATR(14)` (multi-in → 1-out) and `MACD(12,26,9)` (1-in →
 multi-out). Two things fall out of the numbers:
 
-- **Batch converges.** A `batch` call crosses the boundary once and the Rust core
-  computes the whole series internally, so batch throughput is roughly the same
-  in every binding — close to the core speed.
+- **Batch crosses once.** A `batch` call crosses the boundary a single time and the
+  Rust core computes the whole series internally, so batch throughput stays high for
+  most bindings — the exceptions are the ones that copy or box the result array on
+  the way out (Node's JS `Array`, Python's stdlib `array.array` now that NumPy is
+  optional).
 - **Streaming reveals the boundary.** A per-tick `update` crosses the boundary
   once per value, so streaming throughput is where the bindings differ: the raw C
   ABI and P/Invoke-style calls are nearly free, while managed or interpreted
@@ -126,23 +128,23 @@ AMD Ryzen 9 9950X):
 
 | Target               | streaming (Mupd/s) | batch (Mupd/s) |
 |----------------------|-------------------:|---------------:|
-| Rust core (no FFI)   |                391 |            500 |
-| C / C++              |                383 |            330 |
-| C#                   |                337 |            244 |
-| Python               |                 33 |            488 |
-| Java                 |                 28 |            175 |
-| Go                   |                 24 |            400 |
-| WASM                 |                 19 |            167 |
-| Node.js              |                 17 |             10 |
-| R                    |                0.1 |            193 |
+| Rust core (no FFI)   |                380 |            498 |
+| C / C++              |                365 |            358 |
+| C#                   |                348 |            259 |
+| Python               |                 31 |             46 |
+| Java                 |                 38 |            173 |
+| Go                   |                 23 |            394 |
+| WASM                 |                 21 |            169 |
+| Node.js              |                 16 |              9 |
+| R                    |                0.1 |            279 |
 
-Streaming spans more than three orders of magnitude — the raw C ABI (383) is
-nearly the FFI-free Rust ceiling (391), while R's per-call interpreter overhead
-(0.1) makes streaming ~2000× slower than its own batch. Batch converges near the
-core speed for the zero-copy bindings (numpy, slices, typed arrays); the two
-outliers are Node — whose napi `batch` boxes every element into a JS `Array` —
-and R. These are machine-dependent and reflect FFI overhead, not algorithm
-speed.
+Streaming spans more than three orders of magnitude — the raw C ABI (365) sits
+just under the FFI-free Rust ceiling (380), while R's per-call interpreter overhead
+(0.1) makes streaming ~2800× slower than its own batch. Batch stays high for the
+bindings that hand back a contiguous buffer (slices, typed arrays); the two low
+outliers are Node — whose napi `batch` boxes every element into a JS `Array` — and
+Python, which now copies into a stdlib `array.array` since NumPy became optional.
+These are machine-dependent and reflect FFI overhead, not algorithm speed.
 
 These are throughput numbers, not competitive numbers — the "Wickra is fast"
 claim lives in sections 1 and 2 (Rust core + the Python/Rust cross-library runs).

@@ -153,21 +153,21 @@ Full tables (Rust + Python, streaming + batch) and how to reproduce them live in
 
 Every binding calls the **same** Rust core, so this is **not** a speed claim — it
 is the raw cost of crossing each language's FFI boundary (`SMA(20)`, 200 000 bars,
-Ryzen 9 9950X, million updates/sec). **Batch is near-core everywhere; streaming is
-where the boundary shows** — so if you stream tick-by-tick, the table tells you
-which binding keeps up and which to avoid for hot loops.
+Ryzen 9 9950X, million updates/sec). **Batch stays high for most bindings;
+streaming is where the boundary shows** — so if you stream tick-by-tick, the table
+tells you which binding keeps up and which to avoid for hot loops.
 
 | Language        | streaming (Mupd/s) | batch (Mupd/s) |
 |-----------------|-------------------:|---------------:|
-| Rust (no FFI)   |                391 |            500 |
-| C / C++         |                383 |            330 |
-| C#              |                337 |            244 |
-| Python          |                 33 |            488 |
-| Java            |                 28 |            175 |
-| Go              |                 24 |            400 |
-| WASM            |                 19 |            167 |
-| Node.js         |                 17 |             10 |
-| R               |                0.1 |            193 |
+| Rust (no FFI)   |                380 |            498 |
+| C / C++         |                365 |            358 |
+| C#              |                348 |            259 |
+| Python          |                 31 |             46 |
+| Java            |                 38 |            173 |
+| Go              |                 23 |            394 |
+| WASM            |                 21 |            169 |
+| Node.js         |                 16 |              9 |
+| R               |                0.1 |            279 |
 
 All ten share one verified implementation (see the verification badge above), so
 the *numbers* differ but the *values* are bit-for-bit identical. Methodology and
