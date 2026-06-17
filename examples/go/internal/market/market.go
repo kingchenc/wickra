@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	wickra "github.com/wickra-lib/wickra/bindings/go"
 )
@@ -138,4 +140,86 @@ func Summarize(periodReturns []float64, trades int, periodsPerYear float64) Equi
 func Print(name string, r EquityResult) {
 	fmt.Printf("%-26s return=%8.2f%%  sharpe=%6.2f  maxDD=%6.2f%%  trades=%d\n",
 		name, r.TotalReturnPct, r.Sharpe, r.MaxDrawdownPct, r.Trades)
+}
+
+// BundledCandles loads one of the checked-in datasets under examples/data,
+// resolved relative to this source file so it works from any working directory.
+func BundledCandles(filename string) []Bar {
+	_, self, _, _ := runtime.Caller(0)
+	path := filepath.Join(filepath.Dir(self), "..", "..", "..", "data", filename)
+	bars, err := LoadOhlcvCsv(path)
+	if err != nil {
+		panic(err)
+	}
+	return bars
+}
+
+// PrintSummary prints the per-trade backtest summary shared verbatim with the
+// Rust, Python, Node and C example suites (same labels, same numbers).
+func PrintSummary(name string, firstPrice, lastPrice float64, bars int, closedTrades []float64, finalEquity float64, equityCurve []float64) {
+	buyHold := lastPrice / firstPrice
+	stratReturn := finalEquity - 1.0
+	bhReturn := buyHold - 1.0
+	wins, losses := 0, 0
+	best, worst := 0.0, 0.0
+	for i, r := range closedTrades {
+		if r > 0 {
+			wins++
+		} else if r < 0 {
+			losses++
+		}
+		if i == 0 || r > best {
+			best = r
+		}
+		if i == 0 || r < worst {
+			worst = r
+		}
+	}
+	n := len(closedTrades)
+	mean := 0.0
+	if n > 0 {
+		var sum float64
+		for _, r := range closedTrades {
+			sum += r
+		}
+		mean = sum / float64(n)
+	}
+	variance := 0.0
+	if n > 1 {
+		var ss float64
+		for _, r := range closedTrades {
+			ss += (r - mean) * (r - mean)
+		}
+		variance = ss / float64(n-1)
+	}
+	sharpe := 0.0
+	if variance > 0 {
+		sharpe = mean / math.Sqrt(variance)
+	}
+	peak, maxDD := 1.0, 0.0
+	if len(equityCurve) > 0 {
+		peak = equityCurve[0]
+	}
+	for _, eq := range equityCurve {
+		if eq > peak {
+			peak = eq
+		}
+		if dd := (peak - eq) / peak; dd > maxDD {
+			maxDD = dd
+		}
+	}
+
+	fmt.Printf("=== %s ===\n", name)
+	fmt.Printf("%-23s%d\n", "Bars:", bars)
+	fmt.Printf("%-23s%d (W%d / L%d)\n", "Trades:", n, wins, losses)
+	fmt.Printf("%-23s%+.2f%%\n", "Strategy return:", stratReturn*100)
+	fmt.Printf("%-23s%+.2f%%\n", "Buy & Hold return:", bhReturn*100)
+	fmt.Printf("%-23s%+.2f%%\n", "Excess over BH:", (stratReturn-bhReturn)*100)
+	fmt.Printf("%-23s%.2f%%\n", "Max drawdown:", maxDD*100)
+	fmt.Printf("%-23s%.2f  (mean %+.4f, stddev %.4f)\n", "Per-trade Sharpe:", sharpe, mean, math.Sqrt(variance))
+	fmt.Printf("%-23s%+.2f%% / %+.2f%%\n", "Best / worst trade:", best*100, worst*100)
+	fmt.Println()
+	fmt.Println("NOTE: Educational example — fees, slippage, funding costs and tax " +
+		"effects are simplified or omitted. Past performance is not " +
+		"indicative of future results.")
 }

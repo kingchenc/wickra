@@ -58,4 +58,15 @@ public static class MarketData
 
         return bars;
     }
+
+    /// <summary>
+    /// Loads one of the checked-in datasets under examples/data, resolved
+    /// relative to this source file so it works from any working directory.
+    /// </summary>
+    public static Bar[] BundledCandles(string filename,
+        [System.Runtime.CompilerServices.CallerFilePath] string self = "")
+    {
+        var dir = Path.GetDirectoryName(self)!;
+        return LoadOhlcvCsv(Path.Combine(dir, "..", "..", "data", filename));
+    }
 }

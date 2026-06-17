@@ -1,6 +1,7 @@
 package org.wickra.examples;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Minimal long-only backtest helper: turn a stream of per-bar fractional returns
@@ -59,5 +60,75 @@ public final class Equity {
         System.out.printf(
                 "%-26s return=%8.2f%%  sharpe=%6.2f  maxDD=%6.2f%%  trades=%d%n",
                 name, r.totalReturnPct(), r.sharpe(), r.maxDrawdownPct(), r.trades());
+    }
+
+    /**
+     * Prints the per-trade backtest summary shared verbatim with the Rust,
+     * Python, Node, Go, C, C# and R example suites (same labels, same numbers).
+     */
+    public static void printSummary(String name, double firstPrice, double lastPrice, int bars,
+            List<Double> closedTrades, double finalEquity, List<Double> equityCurve) {
+        double buyHold = lastPrice / firstPrice;
+        double stratReturn = finalEquity - 1.0;
+        double bhReturn = buyHold - 1.0;
+        int wins = 0;
+        int losses = 0;
+        double best = 0.0;
+        double worst = 0.0;
+        for (int i = 0; i < closedTrades.size(); i++) {
+            double r = closedTrades.get(i);
+            if (r > 0) {
+                wins++;
+            } else if (r < 0) {
+                losses++;
+            }
+            if (i == 0 || r > best) {
+                best = r;
+            }
+            if (i == 0 || r < worst) {
+                worst = r;
+            }
+        }
+
+        int n = closedTrades.size();
+        double mean = 0.0;
+        for (double r : closedTrades) {
+            mean += r;
+        }
+        mean = n > 0 ? mean / n : 0.0;
+        double variance = 0.0;
+        if (n > 1) {
+            for (double r : closedTrades) {
+                variance += (r - mean) * (r - mean);
+            }
+            variance /= n - 1;
+        }
+        double sharpe = variance > 0 ? mean / Math.sqrt(variance) : 0.0;
+        double peak = equityCurve.isEmpty() ? 1.0 : equityCurve.get(0);
+        double maxDd = 0.0;
+        for (double eq : equityCurve) {
+            if (eq > peak) {
+                peak = eq;
+            }
+            double dd = (peak - eq) / peak;
+            if (dd > maxDd) {
+                maxDd = dd;
+            }
+        }
+
+        System.out.printf(Locale.ROOT, "=== %s ===%n", name);
+        System.out.printf(Locale.ROOT, "%-23s%d%n", "Bars:", bars);
+        System.out.printf(Locale.ROOT, "%-23s%d (W%d / L%d)%n", "Trades:", n, wins, losses);
+        System.out.printf(Locale.ROOT, "%-23s%+.2f%%%n", "Strategy return:", stratReturn * 100);
+        System.out.printf(Locale.ROOT, "%-23s%+.2f%%%n", "Buy & Hold return:", bhReturn * 100);
+        System.out.printf(Locale.ROOT, "%-23s%+.2f%%%n", "Excess over BH:", (stratReturn - bhReturn) * 100);
+        System.out.printf(Locale.ROOT, "%-23s%.2f%%%n", "Max drawdown:", maxDd * 100);
+        System.out.printf(Locale.ROOT, "%-23s%.2f  (mean %+.4f, stddev %.4f)%n",
+                "Per-trade Sharpe:", sharpe, mean, Math.sqrt(variance));
+        System.out.printf(Locale.ROOT, "%-23s%+.2f%% / %+.2f%%%n", "Best / worst trade:", best * 100, worst * 100);
+        System.out.println();
+        System.out.println("NOTE: Educational example — fees, slippage, funding costs and tax "
+                + "effects are simplified or omitted. Past performance is not "
+                + "indicative of future results.");
     }
 }

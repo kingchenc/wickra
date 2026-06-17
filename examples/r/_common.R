@@ -49,3 +49,43 @@ print_equity <- function(name, r) {
   cat(sprintf("%-26s return=%8.2f%%  sharpe=%6.2f  maxDD=%6.2f%%  trades=%d\n",
               name, r$total_return_pct, r$sharpe, r$max_dd_pct, r$trades))
 }
+
+# Loads one of the checked-in datasets under examples/data (the R examples run
+# from this directory, so ../data is examples/data).
+bundled_candles <- function(filename) {
+  load_ohlcv_csv(file.path("..", "data", filename))
+}
+
+# Prints the per-trade backtest summary shared verbatim with the Rust, Python,
+# Node, Go, C and C# example suites (same labels, same numbers).
+print_summary <- function(name, first_price, last_price, bars, closed_trades, final_equity, equity_curve) {
+  buy_hold <- last_price / first_price
+  strat_return <- final_equity - 1
+  bh_return <- buy_hold - 1
+  n <- length(closed_trades)
+  wins <- sum(closed_trades > 0)
+  losses <- sum(closed_trades < 0)
+  best <- if (n > 0) max(closed_trades) else 0
+  worst <- if (n > 0) min(closed_trades) else 0
+  mean_r <- if (n > 0) mean(closed_trades) else 0
+  var_r <- if (n > 1) stats::var(closed_trades) else 0
+  sharpe <- if (var_r > 0) mean_r / sqrt(var_r) else 0
+  peak <- if (length(equity_curve) > 0) equity_curve[1] else 1
+  maxdd <- 0
+  for (eq in equity_curve) {
+    if (eq > peak) peak <- eq
+    dd <- (peak - eq) / peak
+    if (dd > maxdd) maxdd <- dd
+  }
+  cat(sprintf("=== %s ===\n", name))
+  cat(sprintf("%-23s%d\n", "Bars:", bars))
+  cat(sprintf("%-23s%d (W%d / L%d)\n", "Trades:", n, wins, losses))
+  cat(sprintf("%-23s%+.2f%%\n", "Strategy return:", strat_return * 100))
+  cat(sprintf("%-23s%+.2f%%\n", "Buy & Hold return:", bh_return * 100))
+  cat(sprintf("%-23s%+.2f%%\n", "Excess over BH:", (strat_return - bh_return) * 100))
+  cat(sprintf("%-23s%.2f%%\n", "Max drawdown:", maxdd * 100))
+  cat(sprintf("%-23s%.2f  (mean %+.4f, stddev %.4f)\n", "Per-trade Sharpe:", sharpe, mean_r, sqrt(var_r)))
+  cat(sprintf("%-23s%+.2f%% / %+.2f%%\n", "Best / worst trade:", best * 100, worst * 100))
+  cat("\n")
+  cat("NOTE: Educational example — fees, slippage, funding costs and tax effects are simplified or omitted. Past performance is not indicative of future results.\n")
+}

@@ -10,44 +10,69 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Trend follower: enter long on a MACD histogram cross up, but only when ADX(14) &gt; 20
- * confirms a trend; exit when the histogram crosses back below zero.
+ * Strategy example: MACD crossover with ADX trend-strength filter.
+ *
+ * <p>Enters long on a MACD histogram cross up (the histogram turns positive)
+ * while ADX(14) &gt; 20 (a directional market); exits on the opposite MACD
+ * crossover regardless of ADX. 0.1% fees per trade. The Java counterpart of
+ * {@code examples/python/strategy_macd_adx.py}, printing the same summary. Uses
+ * the checked-in {@code examples/data/btcusdt-1h.csv} dataset (pass a CSV path to
+ * override).
  */
 public final class StrategyMacdAdx {
+    private static final double FEE = 0.001;
+    private static final double ADX_FLOOR = 20.0;
+
     public static void main(String[] args) throws Exception {
-        Bar[] bars = args.length > 0 ? MarketData.loadOhlcvCsv(args[0]) : MarketData.syntheticCandles(2000);
+        Bar[] bars = args.length > 0 ? MarketData.loadOhlcvCsv(args[0]) : MarketData.bundledCandles("btcusdt-1h.csv");
 
         try (MacdIndicator macd = new MacdIndicator(12, 26, 9);
              Adx adx = new Adx(14)) {
 
-            List<Double> returns = new ArrayList<>();
-            int trades = 0;
             boolean inPosition = false;
-            double entry = 0.0;
-            double prevHistogram = Double.NaN;
+            double entryPrice = 0.0;
+            List<Double> closedTrades = new ArrayList<>();
+            double equity = 1.0;
+            List<Double> equityCurve = new ArrayList<>();
+            boolean havePrev = false;
+            boolean prevSign = false;
 
             for (Bar b : bars) {
                 MacdOutput m = macd.update(b.close());
                 AdxOutput a = adx.update(b.open(), b.high(), b.low(), b.close(), b.volume(), b.timestamp());
+                double price = b.close();
+                equityCurve.add(inPosition ? equity * (price / entryPrice) : equity);
+
                 if (m == null || a == null) {
                     continue;
                 }
 
-                boolean trending = a.adx() > 20.0;
-                if (!inPosition && trending && Double.isFinite(prevHistogram)
-                        && prevHistogram <= 0.0 && m.histogram() > 0.0) {
+                boolean histSign = m.histogram() > 0.0;
+                boolean crossUp = havePrev && !prevSign && histSign;
+                boolean crossDown = havePrev && prevSign && !histSign;
+                havePrev = true;
+                prevSign = histSign;
+
+                if (!inPosition && crossUp && a.adx() > ADX_FLOOR) {
+                    entryPrice = price;
+                    equity *= 1.0 - FEE;
                     inPosition = true;
-                    entry = b.close();
-                    trades++;
-                } else if (inPosition && m.histogram() < 0.0) {
-                    returns.add((b.close() - entry) / entry);
+                } else if (inPosition && crossDown) {
+                    double tradeRet = price / entryPrice - 1.0;
+                    closedTrades.add(tradeRet);
+                    equity *= (1.0 + tradeRet) * (1.0 - FEE);
                     inPosition = false;
                 }
-
-                prevHistogram = m.histogram();
             }
 
-            Equity.print("MACD + ADX trend", Equity.summarize(returns, trades));
+            if (inPosition) {
+                double tradeRet = bars[bars.length - 1].close() / entryPrice - 1.0;
+                closedTrades.add(tradeRet);
+                equity *= (1.0 + tradeRet) * (1.0 - FEE);
+            }
+
+            Equity.printSummary("MACD + ADX Trend Filter (1h, BTCUSDT)",
+                    bars[0].close(), bars[bars.length - 1].close(), bars.length, closedTrades, equity, equityCurve);
         }
     }
 }

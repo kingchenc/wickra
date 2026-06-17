@@ -68,4 +68,12 @@ public final class MarketData {
             return bars;
         }
     }
+
+    /**
+     * Loads one of the checked-in datasets under examples/data. The Java
+     * examples run from the examples/java directory, so ../data is examples/data.
+     */
+    public static Bar[] bundledCandles(String filename) throws IOException {
+        return loadOhlcvCsv(Path.of("..", "data", filename).toString());
+    }
 }

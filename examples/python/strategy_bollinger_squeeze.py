@@ -115,7 +115,7 @@ def main() -> None:
 
     for c in candles:
         bb_out = bb.update(c["close"])
-        atr_val = atr.update(c["high"], c["low"], c["close"])
+        atr_val = atr.update(c)
         price = c["close"]
         mtm = equity * (price / entry_price) if in_position else equity
         equity_curve.append(mtm)
