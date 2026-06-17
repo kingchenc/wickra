@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4] - 2026-06-17
+
+Packaging fix for the `0.9.3` data layer. No library code changed; `0.9.4` is
+identical to `0.9.3` on every platform that already published. The Linux Python
+wheels are released for the first time here, because `0.9.3` could not build them.
+
+### Fixed
+- **Linux Python wheels (`manylinux` / `musllinux`) now build.** The `live-binance`
+  data layer links `native-tls`, which pulls in `openssl-sys`, and the wheel build
+  containers do not ship the system OpenSSL headers. The release workflow now
+  installs them inside the container before compiling (`openssl-devel` on
+  `manylinux`, `openssl-dev` on `musllinux`). The native macOS and Windows wheels
+  were unaffected. As a result `0.9.3` shipped to crates.io, Maven Central, NuGet,
+  and npm but not to PyPI; PyPI publishes starting with `0.9.4`.
+
+
 ## [0.9.3] - 2026-06-17
 
 ### Changed
@@ -1810,7 +1826,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.3...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.4...HEAD
+[0.9.4]: https://github.com/wickra-lib/wickra/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/wickra-lib/wickra/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/wickra-lib/wickra/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/wickra-lib/wickra/compare/v0.9.0...v0.9.1
