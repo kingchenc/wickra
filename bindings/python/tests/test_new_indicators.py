@@ -16,10 +16,23 @@ import pytest
 import wickra as ta
 
 
-def _eq_nan(a: np.ndarray, b: np.ndarray, tol: float = 1e-9) -> bool:
+def _to_np(x) -> np.ndarray:
+    """Normalize a Wickra batch result to a float64 ndarray.
+
+    Scalar batches return a stdlib ``array.array`` (1-D, wrapped zero-copy);
+    multi-output batches return a ``Matrix`` exposing ``.shape``/``.tolist()``.
+    """
+    if isinstance(x, np.ndarray):
+        return x.astype(np.float64)
+    if hasattr(x, "tolist") and hasattr(x, "shape"):
+        return np.asarray(x.tolist(), dtype=np.float64)
+    return np.asarray(x, dtype=np.float64)
+
+
+def _eq_nan(a, b, tol: float = 1e-9) -> bool:
     """Compare two float arrays treating NaN and matching-sign inf positions as equal."""
-    a = np.asarray(a, dtype=np.float64)
-    b = np.asarray(b, dtype=np.float64)
+    a = _to_np(a)
+    b = _to_np(b)
     if a.shape != b.shape:
         return False
     both_nan = np.isnan(a) & np.isnan(b)
@@ -212,8 +225,8 @@ SCALAR_MULTI = {
 @pytest.mark.parametrize("cls, args", SCALAR, ids=[c.__name__ for c, _ in SCALAR])
 def test_scalar_streaming_matches_batch(cls, args, sine_prices):
     batch = cls(*args).batch(sine_prices)
-    assert batch.shape == sine_prices.shape
-    assert batch.dtype == np.float64
+    assert len(batch) == len(sine_prices)
+    assert batch.typecode == "d"
 
     streamer = cls(*args)
     streamed = []
@@ -250,8 +263,8 @@ def test_pair_streaming_matches_batch(cls, args, sine_prices):
     asset = np.ascontiguousarray(sine_prices.astype(np.float64))
     bench = np.ascontiguousarray((sine_prices * 0.7 + 0.001).astype(np.float64))
     batch = cls(*args).batch(asset, bench)
-    assert batch.shape == asset.shape
-    assert batch.dtype == np.float64
+    assert len(batch) == len(asset)
+    assert batch.typecode == "d"
 
     streamer = cls(*args)
     streamed = []
@@ -270,7 +283,7 @@ def test_lead_lag_detects_lead():
     a = np.array([_ll_signal(t) for t in range(n)])
     # b is a delayed by 3 ⇒ a leads b ⇒ lag = +3, correlation ≈ 1.
     b = np.array([_ll_signal(t - 3) for t in range(n)])
-    out = ta.LeadLagCrossCorrelation(12, 5).batch(a, b)
+    out = _to_np(ta.LeadLagCrossCorrelation(12, 5).batch(a, b))
     assert out.shape == (n, 2)
     assert int(out[-1, 0]) == 3
     assert out[-1, 1] > 0.99
@@ -298,7 +311,7 @@ def test_cointegration_detects_mean_reverting_pair():
     b = np.array([50.0 + 0.5 * t for t in range(n)])
     # a tracks 2*b with a small mean-reverting wobble ⇒ cointegrated.
     a = 2.0 * b + 1.0 + 0.5 * np.sin(np.arange(n) * 0.6)
-    out = ta.Cointegration(40, 1).batch(a, b)
+    out = _to_np(ta.Cointegration(40, 1).batch(a, b))
     assert out.shape == (n, 3)
     assert abs(out[-1, 0] - 2.0) < 0.1  # hedge ratio
     assert out[-1, 2] < -2.0  # ADF statistic: strongly mean-reverting
@@ -361,7 +374,7 @@ def test_relative_strength_constant_ratio():
     n = 30
     a = np.full(n, 200.0)
     b = np.full(n, 100.0)  # ratio is a constant 2
-    out = ta.RelativeStrengthAB(5, 5).batch(a, b)
+    out = _to_np(ta.RelativeStrengthAB(5, 5).batch(a, b))
     assert out.shape == (n, 3)
     assert math.isclose(out[-1, 0], 2.0, abs_tol=1e-12)  # ratio
     assert math.isclose(out[-1, 1], 2.0, abs_tol=1e-12)  # ratio MA
@@ -1009,7 +1022,7 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
     make, batch_call = CANDLE_SCALAR[name]
 
     batch = batch_call(make(), high, low, close, volume)
-    assert batch.shape == close.shape
+    assert len(batch) == len(close)
 
     streamer = make()
     streamed = []
@@ -1527,7 +1540,7 @@ def test_td_pressure_streaming_matches_batch(ohlcv):
     high, low, close, volume = ohlcv
     open_ = close.copy()  # TD Pressure needs open; reuse close as the open column.
     batch = ta.TDPressure(5).batch(open_, high, low, close, volume)
-    assert batch.shape == close.shape
+    assert len(batch) == len(close)
 
     streamer = ta.TDPressure(5)
     streamed = []
@@ -1629,7 +1642,7 @@ def test_plus_dm_reference():
     high = np.array([11.0, 12.0, 13.0, 14.0, 15.0])
     low = np.array([9.0, 9.5, 10.0, 10.5, 11.0])
     close = np.array([10.0, 11.0, 12.0, 13.0, 14.0])
-    out = ta.PLUS_DM(3).batch(high, low, close)
+    out = _to_np(ta.PLUS_DM(3).batch(high, low, close))
     assert math.isnan(out[0]) and math.isnan(out[2])
     assert out[3] == pytest.approx(3.0)
     assert out[4] == pytest.approx(3.0)
@@ -1641,7 +1654,7 @@ def test_minus_dm_reference():
     high = np.array([20.0, 19.5, 19.0, 18.5, 18.0])
     low = np.array([18.0, 17.0, 16.0, 15.0, 14.0])
     close = np.array([19.0, 18.0, 17.0, 16.0, 15.0])
-    out = ta.MINUS_DM(3).batch(high, low, close)
+    out = _to_np(ta.MINUS_DM(3).batch(high, low, close))
     assert math.isnan(out[0]) and math.isnan(out[2])
     assert out[3] == pytest.approx(3.0)
     assert out[4] == pytest.approx(3.0)
@@ -1652,7 +1665,7 @@ def test_plus_di_reference():
     high = np.array([101.0, 103.0, 105.0, 107.0, 109.0, 111.0])
     low = np.array([99.5, 101.5, 103.5, 105.5, 107.5, 109.5])
     close = np.array([100.5, 102.5, 104.5, 106.5, 108.5, 110.5])
-    out = ta.PLUS_DI(3).batch(high, low, close)
+    out = _to_np(ta.PLUS_DI(3).batch(high, low, close))
     assert 0.0 < out[-1] <= 100.0
 
 
@@ -1661,7 +1674,7 @@ def test_minus_di_reference():
     high = np.array([111.0, 109.0, 107.0, 105.0, 103.0, 101.0])
     low = np.array([109.5, 107.5, 105.5, 103.5, 101.5, 99.5])
     close = np.array([110.5, 108.5, 106.5, 104.5, 102.5, 100.5])
-    out = ta.MINUS_DI(3).batch(high, low, close)
+    out = _to_np(ta.MINUS_DI(3).batch(high, low, close))
     assert 0.0 < out[-1] <= 100.0
 
 
@@ -1670,7 +1683,7 @@ def test_dx_reference():
     high = np.array([101.0, 103.0, 105.0, 107.0, 109.0, 111.0])
     low = np.array([99.5, 101.5, 103.5, 105.5, 107.5, 109.5])
     close = np.array([100.5, 102.5, 104.5, 106.5, 108.5, 110.5])
-    out = ta.DX(3).batch(high, low, close)
+    out = _to_np(ta.DX(3).batch(high, low, close))
     assert 50.0 < out[-1] <= 100.0
 
 
@@ -1679,13 +1692,13 @@ def test_mid_price_reference():
     high = np.array([12.0, 14.0, 16.0])
     low = np.array([8.0, 9.0, 10.0])
     close = np.array([10.0, 11.0, 12.0])
-    out = ta.MIDPRICE(3).batch(high, low, close)
+    out = _to_np(ta.MIDPRICE(3).batch(high, low, close))
     assert out[-1] == pytest.approx(12.0)
 
 
 def test_mid_point_reference():
     # Window {8, 12, 10}: (12 + 8) / 2 = 10.
-    out = ta.MIDPOINT(3).batch(np.array([8.0, 12.0, 10.0]))
+    out = _to_np(ta.MIDPOINT(3).batch(np.array([8.0, 12.0, 10.0])))
     assert out[-1] == pytest.approx(10.0)
 
 
@@ -1711,8 +1724,8 @@ def test_linreg_intercept_and_tsf_reference():
 def test_macdfix_matches_macd():
     # MACDFIX(signal) is exactly MACD(12, 26, signal).
     prices = 100.0 + np.sin(np.arange(80) * 0.3) * 5.0
-    fix = ta.MACDFIX(9).batch(prices)
-    classic = ta.MACD(12, 26, 9).batch(prices)
+    fix = _to_np(ta.MACDFIX(9).batch(prices))
+    classic = _to_np(ta.MACD(12, 26, 9).batch(prices))
     np.testing.assert_allclose(fix, classic, equal_nan=True)
 
 
@@ -1720,7 +1733,7 @@ def test_nvi_reference():
     # closes [10, 11], volumes [200, 100]: volume contracts -> NVI absorbs +10%.
     # 1000 * (1 + 0.1) = 1100.
     nvi = ta.NVI()
-    out = nvi.batch(np.array([10.0, 11.0]), np.array([200.0, 100.0]))
+    out = _to_np(nvi.batch(np.array([10.0, 11.0]), np.array([200.0, 100.0])))
     assert out[0] == pytest.approx(1000.0)
     assert out[1] == pytest.approx(1100.0)
 
@@ -1728,7 +1741,7 @@ def test_nvi_reference():
 def test_pvi_reference():
     # closes [10, 11], volumes [100, 200]: volume expands -> PVI absorbs +10%.
     pvi = ta.PVI()
-    out = pvi.batch(np.array([10.0, 11.0]), np.array([100.0, 200.0]))
+    out = _to_np(pvi.batch(np.array([10.0, 11.0]), np.array([100.0, 200.0])))
     assert out[0] == pytest.approx(1000.0)
     assert out[1] == pytest.approx(1100.0)
 
@@ -1737,7 +1750,7 @@ def test_volume_oscillator_reference():
     # fast=2, slow=4 over volumes [10, 20, 30, 40, 50]:
     # bar 4 -> fast=(30+40)/2=35, slow=(10+20+30+40)/4=25 -> VO = 100*(35-25)/25 = 40.
     vo = ta.VolumeOscillator(2, 4)
-    out = vo.batch(np.array([10.0, 20.0, 30.0, 40.0, 50.0]))
+    out = _to_np(vo.batch(np.array([10.0, 20.0, 30.0, 40.0, 50.0])))
     assert math.isnan(out[2])
     assert out[3] == pytest.approx(40.0)
     assert out[4] == pytest.approx(1000.0 / 35.0)
@@ -1751,7 +1764,7 @@ def test_kvo_constant_series_is_zero():
     low = np.full(60, 10.0)
     close = np.full(60, 10.0)
     volume = np.full(60, 100.0)
-    out = kvo.batch(high, low, close, volume)
+    out = _to_np(kvo.batch(high, low, close, volume))
     for v in out[~np.isnan(out)]:
         assert v == pytest.approx(0.0, abs=1e-12)
 
@@ -1766,7 +1779,7 @@ def test_wad_reference():
     high = np.array([11.0, 13.0, 11.0])
     low = np.array([9.0, 8.0, 7.0])
     close = np.array([10.0, 12.0, 7.0])
-    out = ad.batch(high, low, close)
+    out = _to_np(ad.batch(high, low, close))
     assert math.isnan(out[0])
     assert out[1] == pytest.approx(4.0)
     assert out[2] == pytest.approx(-1.0)
@@ -1780,7 +1793,7 @@ def test_anchored_vwap_reference():
     low = np.array([10.0, 20.0, 30.0])
     close = np.array([10.0, 20.0, 30.0])
     volume = np.array([1.0, 1.0, 1.0])
-    out = avwap.batch(high, low, close, volume)
+    out = _to_np(avwap.batch(high, low, close, volume))
     assert out[2] == pytest.approx(20.0)
 
 
@@ -1801,7 +1814,7 @@ def test_anchored_rsi_reference():
     # bar2: sum_gain=1, sum_loss=2 -> rs=0.5 -> 100 - 100/1.5 = 33.3333
     # bar3: sum_gain=4, sum_loss=2 -> rs=2.0 -> 100 - 100/3   = 66.6667
     rsi = ta.AnchoredRSI()
-    out = rsi.batch(np.array([10.0, 11.0, 9.0, 12.0]))
+    out = _to_np(rsi.batch(np.array([10.0, 11.0, 9.0, 12.0])))
     assert np.isnan(out[0])
     assert out[1] == pytest.approx(100.0)
     assert out[2] == pytest.approx(33.333333, abs=1e-4)
@@ -1843,7 +1856,7 @@ def test_tsv_reference():
     tsv = ta.TSV(3)
     close = np.array([10.0, 11.0, 13.0, 12.0, 14.0, 15.0])
     volume = np.array([50.0, 100.0, 200.0, 150.0, 50.0, 200.0])
-    out = tsv.batch(close, volume)
+    out = _to_np(tsv.batch(close, volume))
     assert math.isnan(out[0]) and math.isnan(out[1]) and math.isnan(out[2])
     assert out[3] == pytest.approx(350.0)
     assert out[4] == pytest.approx(350.0)
@@ -1857,7 +1870,7 @@ def test_vzo_strictly_rising_saturates_to_plus_100():
     vzo = ta.VZO(5)
     close = np.array([10.0 + i for i in range(60)])
     volume = np.full(60, 100.0)
-    out = vzo.batch(close, volume)
+    out = _to_np(vzo.batch(close, volume))
     last = out[~np.isnan(out)][-1]
     assert last == pytest.approx(100.0)
 
@@ -1868,7 +1881,7 @@ def test_market_facilitation_index_reference():
     high = np.array([12.0])
     low = np.array([8.0])
     volume = np.array([200.0])
-    out = mfi_bw.batch(high, low, volume)
+    out = _to_np(mfi_bw.batch(high, low, volume))
     assert out[0] == pytest.approx(0.02)
 
 
@@ -1879,7 +1892,7 @@ def test_demand_index_constant_series_is_zero():
     low = np.full(60, 10.0)
     close = np.full(60, 10.0)
     volume = np.full(60, 100.0)
-    out = di.batch(high, low, close, volume)
+    out = _to_np(di.batch(high, low, close, volume))
     for v in out[~np.isnan(out)]:
         assert v == pytest.approx(0.0, abs=1e-12)
 
@@ -1891,13 +1904,13 @@ def test_chaikin_money_flow_reference():
 
 
 def test_linear_regression_reference():
-    out = ta.LinearRegression(3).batch(np.array([1.0, 2.0, 9.0]))
+    out = _to_np(ta.LinearRegression(3).batch(np.array([1.0, 2.0, 9.0])))
     assert math.isnan(out[0]) and math.isnan(out[1])
     assert out[2] == pytest.approx(8.0)
 
 
 def test_linreg_slope_reference():
-    out = ta.LinRegSlope(3).batch(np.array([1.0, 2.0, 9.0]))
+    out = _to_np(ta.LinRegSlope(3).batch(np.array([1.0, 2.0, 9.0])))
     assert math.isnan(out[0]) and math.isnan(out[1])
     assert out[2] == pytest.approx(4.0)
 
@@ -1916,7 +1929,7 @@ def test_true_range_reference():
 
 def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
-    out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
+    out = _to_np(ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])))
     assert out[4] == pytest.approx(45.0)
 
 
@@ -1924,16 +1937,16 @@ def test_wave_trend_flat_market_yields_zero():
     # On a perfectly flat market the flat-tolerance guard keeps both lines
     # at exactly zero (otherwise the ratio ci = (ap - esa) / (0.015 * d)
     # would explode on the first esa ULP).
-    out = ta.WaveTrend.classic().batch(
+    out = _to_np(ta.WaveTrend.classic().batch(
         np.full(80, 10.0), np.full(80, 10.0), np.full(80, 10.0)
-    )
+    ))
     last = out[~np.isnan(out[:, 0])][-1]
     assert last[0] == 0.0
     assert last[1] == 0.0
 
 
 def test_kst_classic_constants_yield_zero():
-    out = ta.KST.classic().batch(np.full(120, 100.0))
+    out = _to_np(ta.KST.classic().batch(np.full(120, 100.0)))
     last_row = out[~np.isnan(out[:, 0])][-1]
     assert last_row[0] == pytest.approx(0.0)
     assert last_row[1] == pytest.approx(0.0)
@@ -1943,13 +1956,13 @@ def test_tii_pure_uptrend_saturates_at_100():
     # On a strictly increasing series every close sits above the lagging
     # SMA, so every deviation is positive and TII reaches 100.
     prices = np.arange(80, dtype=np.float64) + 100.0
-    out = ta.TII(10, 5).batch(prices)
+    out = _to_np(ta.TII(10, 5).batch(prices))
     last = out[~np.isnan(out)][-1]
     assert last == pytest.approx(100.0)
 
 
 def test_tii_flat_market_yields_50():
-    out = ta.TII(5, 4).batch(np.full(30, 10.0))
+    out = _to_np(ta.TII(5, 4).batch(np.full(30, 10.0)))
     last = out[~np.isnan(out)][-1]
     assert last == 50.0
 
@@ -1961,7 +1974,7 @@ def test_rwi_reference_uptrend_dominates_low_line():
     high = base + 1.0
     low = base - 0.5
     close = base + 0.5
-    out = ta.RWI(14).batch(high, low, close)
+    out = _to_np(ta.RWI(14).batch(high, low, close))
     last_row = out[~np.isnan(out[:, 0])][-1]
     assert last_row[0] > last_row[1], f"RWI_High {last_row[0]} must dominate RWI_Low {last_row[1]}"
     assert last_row[0] > 1.0
@@ -1975,14 +1988,14 @@ def test_adxr_reference_on_pure_uptrend():
     high = base + 1.0
     low = base - 0.5
     close = base + 0.5
-    out = ta.ADXR(5).batch(high, low, close)
+    out = _to_np(ta.ADXR(5).batch(high, low, close))
     last = out[~np.isnan(out)][-1]
     assert last == pytest.approx(100.0)
 
 
 def test_z_score_reference():
     # Window [1, 3]: mean 2, population stddev 1; latest 3 -> z = 1.
-    out = ta.ZScore(2).batch(np.array([1.0, 3.0]))
+    out = _to_np(ta.ZScore(2).batch(np.array([1.0, 3.0])))
     assert math.isnan(out[0])
     assert out[1] == pytest.approx(1.0)
 
@@ -1992,44 +2005,44 @@ def test_z_score_reference():
 
 def test_variance_reference():
     # Variance(3) of [2, 4, 6]: mean 4, variance (4 + 0 + 4) / 3 = 8/3.
-    out = ta.Variance(3).batch(np.array([2.0, 4.0, 6.0]))
+    out = _to_np(ta.Variance(3).batch(np.array([2.0, 4.0, 6.0])))
     assert math.isnan(out[1])
     assert out[2] == pytest.approx(8.0 / 3.0)
 
 
 def test_coefficient_of_variation_reference():
     # CV(3) of [2, 4, 6]: sd / mean = sqrt(8/3) / 4.
-    out = ta.CoefficientOfVariation(3).batch(np.array([2.0, 4.0, 6.0]))
+    out = _to_np(ta.CoefficientOfVariation(3).batch(np.array([2.0, 4.0, 6.0])))
     assert out[2] == pytest.approx(math.sqrt(8.0 / 3.0) / 4.0)
 
 
 def test_skewness_symmetric_window_is_zero():
     # Symmetric window has zero Pearson skewness.
-    out = ta.Skewness(5).batch(np.array([-2.0, -1.0, 0.0, 1.0, 2.0]))
+    out = _to_np(ta.Skewness(5).batch(np.array([-2.0, -1.0, 0.0, 1.0, 2.0])))
     assert out[4] == pytest.approx(0.0, abs=1e-9)
 
 
 def test_kurtosis_two_point_distribution_minimum():
     # Alternating {-1, 1} has m4/m2² = 1, so excess kurtosis = -2.
-    out = ta.Kurtosis(4).batch(np.array([-1.0, 1.0, -1.0, 1.0]))
+    out = _to_np(ta.Kurtosis(4).batch(np.array([-1.0, 1.0, -1.0, 1.0])))
     assert out[3] == pytest.approx(-2.0, abs=1e-9)
 
 
 def test_standard_error_perfect_line_is_zero():
     # Residuals are zero on a perfectly linear series.
-    out = ta.StandardError(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64))
+    out = _to_np(ta.StandardError(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64)))
     finite = out[~np.isnan(out)]
     assert np.allclose(finite, 0.0, atol=1e-9)
 
 
 def test_detrended_std_dev_perfect_line_is_zero():
-    out = ta.DetrendedStdDev(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64))
+    out = _to_np(ta.DetrendedStdDev(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64)))
     finite = out[~np.isnan(out)]
     assert np.allclose(finite, 0.0, atol=1e-9)
 
 
 def test_r_squared_perfect_line_is_one():
-    out = ta.RSquared(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64))
+    out = _to_np(ta.RSquared(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64)))
     finite = out[~np.isnan(out)]
     assert np.allclose(finite, 1.0, atol=1e-9)
 
@@ -2037,35 +2050,35 @@ def test_r_squared_perfect_line_is_one():
 def test_median_absolute_deviation_ignores_single_outlier():
     # 9 equal values + 1 huge outlier: MAD is still 0 (more than half agree).
     prices = np.array([5.0] * 9 + [1000.0], dtype=np.float64)
-    out = ta.MedianAbsoluteDeviation(10).batch(prices)
+    out = _to_np(ta.MedianAbsoluteDeviation(10).batch(prices))
     assert out[9] == pytest.approx(0.0, abs=1e-12)
 
 
 def test_autocorrelation_alternating_series_negative():
     # ±1 alternating: lag-1 ACF must be strongly negative.
     prices = np.array([-1.0 if i % 2 == 0 else 1.0 for i in range(20)], dtype=np.float64)
-    out = ta.Autocorrelation(10, 1).batch(prices)
+    out = _to_np(ta.Autocorrelation(10, 1).batch(prices))
     assert out[-1] < -0.5
 
 
 def test_hurst_exponent_trending_above_half():
     # A clean monotone ramp is the textbook persistent series.
     prices = np.arange(200, dtype=np.float64)
-    out = ta.HurstExponent(100, 4).batch(prices)
+    out = _to_np(ta.HurstExponent(100, 4).batch(prices))
     assert out[-1] > 0.5
 
 
 def test_pearson_correlation_perfect_positive_is_one():
     x = np.arange(10, dtype=np.float64)
     y = 2.0 * x + 3.0
-    out = ta.PearsonCorrelation(5).batch(x, y)
+    out = _to_np(ta.PearsonCorrelation(5).batch(x, y))
     assert out[-1] == pytest.approx(1.0, abs=1e-9)
 
 
 def test_beta_perfect_two_to_one():
     benchmark = np.arange(10, dtype=np.float64)
     asset = 2.0 * benchmark
-    out = ta.Beta(5).batch(asset, benchmark)
+    out = _to_np(ta.Beta(5).batch(asset, benchmark))
     assert out[-1] == pytest.approx(2.0, abs=1e-9)
 
 
@@ -2073,7 +2086,7 @@ def test_spearman_correlation_monotone_nonlinear_is_one():
     # y = x^3 is monotone non-linear; Spearman = 1 (Pearson would not be).
     x = np.arange(1.0, 11.0, dtype=np.float64)
     y = x**3
-    out = ta.SpearmanCorrelation(5).batch(x, y)
+    out = _to_np(ta.SpearmanCorrelation(5).batch(x, y))
     assert out[-1] == pytest.approx(1.0, abs=1e-9)
 
 
@@ -2109,32 +2122,32 @@ def test_mama_batch_shape_and_streaming_equivalence(sine_prices):
 
 
 def test_inverse_fisher_transform_zero_input_yields_zero():
-    out = ta.InverseFisherTransform(1.0).batch(np.array([0.0, 0.0, 0.0]))
+    out = _to_np(ta.InverseFisherTransform(1.0).batch(np.array([0.0, 0.0, 0.0])))
     np.testing.assert_allclose(out, [0.0, 0.0, 0.0], atol=1e-12)
 
 
 def test_fisher_transform_flat_series_is_zero():
     # Zero range -> the normaliser yields 0, and tanh(0) chain stays at 0.
-    out = ta.FisherTransform(5).batch(np.full(20, 42.0))
+    out = _to_np(ta.FisherTransform(5).batch(np.full(20, 42.0)))
     ready = out[~np.isnan(out)]
     assert np.all(np.abs(ready) < 1e-6)
 
 
 def test_decycler_flat_series_passes_through():
     # High-pass of a flat input is zero, so the decycler equals the input.
-    out = ta.Decycler(20).batch(np.full(30, 100.0))
+    out = _to_np(ta.Decycler(20).batch(np.full(30, 100.0)))
     ready = out[~np.isnan(out)]
     np.testing.assert_allclose(ready, 100.0, atol=1e-9)
 
 
 def test_center_of_gravity_flat_series_is_zero():
-    out = ta.CenterOfGravity(5).batch(np.full(20, 7.0))
+    out = _to_np(ta.CenterOfGravity(5).batch(np.full(20, 7.0)))
     ready = out[~np.isnan(out)]
     np.testing.assert_allclose(ready, 0.0, atol=1e-12)
 
 
 def test_super_smoother_first_two_outputs_equal_inputs():
-    out = ta.SuperSmoother(10).batch(np.array([100.0, 101.0, 102.0]))
+    out = _to_np(ta.SuperSmoother(10).batch(np.array([100.0, 101.0, 102.0])))
     # The 2-pole filter is seeded with raw values for the first two bars.
     assert out[0] == pytest.approx(100.0)
     assert out[1] == pytest.approx(101.0)
@@ -2145,7 +2158,7 @@ def test_td_setup_pure_uptrend_reaches_minus_9():
     h = np.arange(2.0, 22.0)
     l = h - 1.0
     c = h - 0.5
-    out = ta.TDSetup(4, 9).batch(h, l, c)
+    out = _to_np(ta.TDSetup(4, 9).batch(h, l, c))
     # Setup completes at index 12 (warmup is 5 -> first emit at index 4 with
     # value -1, increments to -9 at index 12).
     assert out[12] == pytest.approx(-9.0)
@@ -2156,7 +2169,7 @@ def test_td_demarker_uptrend_pegs_at_one():
     # -> indicator == 1 after warmup.
     h = np.arange(11.0, 31.0)
     l = h - 2.0
-    out = ta.TDDeMarker(5).batch(h, l)
+    out = _to_np(ta.TDDeMarker(5).batch(h, l))
     assert out[-1] == pytest.approx(1.0)
 
 
@@ -2164,7 +2177,7 @@ def test_td_demarker_flat_market_emits_05():
     # All highs and lows equal -> denominator is zero -> neutral fallback 0.5.
     h = np.full(20, 11.0)
     l = np.full(20, 9.0)
-    out = ta.TDDeMarker(5).batch(h, l)
+    out = _to_np(ta.TDDeMarker(5).batch(h, l))
     assert out[-1] == pytest.approx(0.5)
 
 
@@ -2177,7 +2190,7 @@ def test_td_pressure_pure_bullish_yields_100():
     low = np.full(n, 9.0)
     close = np.full(n, 11.0)
     volume = np.full(n, 100.0)
-    out = ta.TDPressure(5).batch(open_, high, low, close, volume)
+    out = _to_np(ta.TDPressure(5).batch(open_, high, low, close, volume))
     assert out[-1] == pytest.approx(100.0)
 
 
@@ -2189,7 +2202,7 @@ def test_td_combo_uptrend_saturates_at_minus_13():
     high = np.arange(1.0, 1.0 + n) + 0.5
     low = high - 1.0
     close = high - 0.5
-    out = ta.TDCombo().batch(high, low, close)
+    out = _to_np(ta.TDCombo().batch(high, low, close))
     assert out[-1] == pytest.approx(-13.0)
 
 
@@ -2198,7 +2211,7 @@ def test_td_countdown_uptrend_saturates_at_minus_13():
     high = np.arange(1.0, 1.0 + n) + 0.5
     low = high - 1.0
     close = high - 0.5
-    out = ta.TDCountdown().batch(high, low, close)
+    out = _to_np(ta.TDCountdown().batch(high, low, close))
     assert out[-1] == pytest.approx(-13.0)
 
 
@@ -2209,7 +2222,7 @@ def test_td_lines_uptrend_sets_support_at_first_run_low():
     high = np.arange(1.0, 1.0 + n) + 0.5
     low = high - 1.0
     close = high - 0.5
-    out = ta.TDLines().batch(high, low, close)
+    out = _to_np(ta.TDLines().batch(high, low, close))
     # support is column 1; resistance is NaN at -1.
     assert math.isnan(out[-1, 0])
     # low at idx 4 = 5 + 0.5 - 1.0 = 4.5.
@@ -2220,9 +2233,9 @@ def test_td_range_projection_bullish_bar_reference():
     # open=10, high=12, low=9, close=11 (close > open) ->
     # pivot_sum = 2*12 + 9 + 11 = 44; half = 22.
     # projHigh = 22 - 9 = 13; projLow = 22 - 12 = 10.
-    out = ta.TDRangeProjection().batch(
+    out = _to_np(ta.TDRangeProjection().batch(
         np.array([10.0]), np.array([12.0]), np.array([9.0]), np.array([11.0])
-    )
+    ))
     assert out[0, 0] == pytest.approx(13.0)
     assert out[0, 1] == pytest.approx(10.0)
 
@@ -2252,7 +2265,7 @@ def test_td_risk_level_uptrend_sets_sell_risk():
     high = np.arange(1.0, 1.0 + n) + 0.5
     low = high - 1.0
     close = high - 0.5
-    out = ta.TDRiskLevel().batch(high, low, close)
+    out = _to_np(ta.TDRiskLevel().batch(high, low, close))
     # buy_risk is column 0; sell_risk is column 1.
     assert math.isnan(out[12, 0])
     assert out[12, 1] == pytest.approx(15.0)
@@ -2346,7 +2359,7 @@ def test_zigzag_confirms_after_threshold_reversal():
 
 def test_ma_envelope_reference():
     # SMA([10, 20, 30]) = 20; with percent = 0.10: upper = 22, lower = 18.
-    out = ta.MaEnvelope(3, 0.10).batch(np.array([10.0, 20.0, 30.0]))
+    out = _to_np(ta.MaEnvelope(3, 0.10).batch(np.array([10.0, 20.0, 30.0])))
     assert math.isnan(out[0, 0]) and math.isnan(out[1, 0])
     assert out[2, 0] == pytest.approx(22.0)  # upper
     assert out[2, 1] == pytest.approx(20.0)  # middle
@@ -2363,9 +2376,9 @@ def test_acceleration_bands_reference():
 def test_atr_bands_reference():
     # Five identical bars (h=11, l=9, c=10) → ATR=2, close=10, mult=3:
     # upper=16, middle=10, lower=4.
-    out = ta.AtrBands(5, 3.0).batch(
+    out = _to_np(ta.AtrBands(5, 3.0).batch(
         np.array([11.0] * 5), np.array([9.0] * 5), np.array([10.0] * 5)
-    )
+    ))
     assert math.isnan(out[3, 0])
     assert out[4, 0] == pytest.approx(16.0)
     assert out[4, 1] == pytest.approx(10.0)
@@ -2374,9 +2387,9 @@ def test_atr_bands_reference():
 
 def test_hurst_channel_reference():
     # Five identical (h=12, l=8, c=10): SMA(close)=10, range=4, mult=0.5.
-    out = ta.HurstChannel(5, 0.5).batch(
+    out = _to_np(ta.HurstChannel(5, 0.5).batch(
         np.array([12.0] * 5), np.array([8.0] * 5), np.array([10.0] * 5)
-    )
+    ))
     assert out[4, 0] == pytest.approx(12.0)
     assert out[4, 1] == pytest.approx(10.0)
     assert out[4, 2] == pytest.approx(8.0)
@@ -2385,7 +2398,7 @@ def test_hurst_channel_reference():
 def test_linreg_channel_reference():
     # period 3 over [1, 2, 9]: line y=4x, endpoint=8, residuals=[1, -2, 1],
     # population sigma=sqrt(2); mult=2 → upper=8+2√2, lower=8-2√2.
-    out = ta.LinRegChannel(3, 2.0).batch(np.array([1.0, 2.0, 9.0]))
+    out = _to_np(ta.LinRegChannel(3, 2.0).batch(np.array([1.0, 2.0, 9.0])))
     s = math.sqrt(2.0)
     assert out[2, 0] == pytest.approx(8.0 + 2.0 * s)
     assert out[2, 1] == pytest.approx(8.0)
@@ -2395,7 +2408,7 @@ def test_linreg_channel_reference():
 def test_standard_error_bands_reference():
     # Same [1, 2, 9] with n=3: SSE=6, n-2=1, stderr=sqrt(6); mult=2 →
     # upper=8+2√6, lower=8-2√6.
-    out = ta.StandardErrorBands(3, 2.0).batch(np.array([1.0, 2.0, 9.0]))
+    out = _to_np(ta.StandardErrorBands(3, 2.0).batch(np.array([1.0, 2.0, 9.0])))
     s = math.sqrt(6.0)
     assert out[2, 0] == pytest.approx(8.0 + 2.0 * s)
     assert out[2, 1] == pytest.approx(8.0)
@@ -2404,9 +2417,9 @@ def test_standard_error_bands_reference():
 
 def test_double_bollinger_orders_bands():
     # On a non-trivial dispersion, outer >= inner >= middle >= -inner >= -outer.
-    out = ta.DoubleBollinger(5, 1.0, 2.0).batch(
+    out = _to_np(ta.DoubleBollinger(5, 1.0, 2.0).batch(
         np.array([1.0, 5.0, 2.0, 4.0, 3.0, 6.0])
-    )
+    ))
     v = out[5]
     assert v[0] >= v[1] >= v[2] >= v[3] >= v[4]
 
@@ -2427,7 +2440,7 @@ def test_ttm_squeeze_flat_market():
     # Zero volatility: BB and KC both collapse to a point → squeeze=1.0,
     # momentum=0.0.
     candles_h = np.array([10.0] * 25)
-    out = ta.TtmSqueeze(20, 2.0, 1.5).batch(candles_h, candles_h, candles_h)
+    out = _to_np(ta.TtmSqueeze(20, 2.0, 1.5).batch(candles_h, candles_h, candles_h))
     assert out[24, 0] == pytest.approx(1.0)
     assert out[24, 1] == pytest.approx(0.0)
 
@@ -2436,7 +2449,7 @@ def test_fractal_chaos_bands_detects_peak_and_trough():
     # Sequence that creates one fractal high (i=2) and one low (i=3).
     h = np.array([1.0, 2.0, 5.0, 3.0, 2.0, 1.0, 2.0])
     l = np.array([1.0, 2.0, 3.0, 0.5, 2.0, 1.0, 2.0])
-    out = ta.FractalChaosBands(2).batch(h, l)
+    out = _to_np(ta.FractalChaosBands(2).batch(h, l))
     # First bar with both bands set is index 5.
     assert math.isnan(out[4, 0])
     assert out[5, 0] == pytest.approx(5.0)
@@ -2989,7 +3002,7 @@ def test_spread_ar1_coefficient_reference():
     # Spread a - b grows by exactly 1 each bar (unit root) => rho == 1.
     a = np.array([2.0 * i for i in range(40)])
     b = np.array([float(i) for i in range(40)])
-    out = ta.SpreadAr1Coefficient(20).batch(a, b)
+    out = _to_np(ta.SpreadAr1Coefficient(20).batch(a, b))
     assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
 
 
@@ -2998,7 +3011,7 @@ def test_elder_ray_reference():
     high = np.array([11.0, 13.0, 16.0])
     low = np.array([9.0, 11.0, 13.0])
     close = np.array([10.0, 12.0, 14.0])
-    out = er.batch(high, low, close)
+    out = _to_np(er.batch(high, low, close))
     # EMA(3) seeds at the third bar with mean close 12; bar high 16 -> bull 4,
     # low 13 -> bear 1.
     assert out[2][0] == pytest.approx(4.0)
@@ -3011,7 +3024,7 @@ def test_imi_reference():
     high = np.array([12.0, 12.0, 13.0])
     low = np.array([9.0, 9.0, 9.0])
     close = np.array([11.0, 10.0, 12.0])
-    out = imi.batch(open_, high, low, close)
+    out = _to_np(imi.batch(open_, high, low, close))
     # bodies +1, -1, +2 -> gain 3, loss 1 -> 100 * 3 / 4 = 75.
     assert math.isnan(out[0])
     assert math.isnan(out[1])
@@ -3022,7 +3035,7 @@ def test_qstick_reference():
     q = ta.Qstick(3)
     open_ = np.array([10.0, 10.0, 10.0])
     close = np.array([11.0, 11.0, 11.0])
-    out = q.batch(open_, close)
+    out = _to_np(q.batch(open_, close))
     # Each body is close - open = 1; SMA(3) of [1, 1, 1] = 1.
     assert math.isnan(out[0])
     assert math.isnan(out[1])
@@ -3034,7 +3047,7 @@ def test_ttm_trend_reference():
     high = np.array([13.0, 13.0, 13.0])
     low = np.array([9.0, 9.0, 9.0])
     close = np.array([12.0, 12.0, 12.0])
-    out = t.batch(high, low, close)
+    out = _to_np(t.batch(high, low, close))
     # Median (13 + 9) / 2 = 11; close 12 is above the SMA(3) reference -> +1.
     assert math.isnan(out[0])
     assert out[2] == pytest.approx(1.0)
@@ -3043,7 +3056,7 @@ def test_ttm_trend_reference():
 def test_trend_strength_index_reference():
     tsi = ta.TREND_STRENGTH_INDEX(10)
     closes = np.arange(10, dtype=float)
-    out = tsi.batch(closes)
+    out = _to_np(tsi.batch(closes))
     # A clean ramp is a perfect uptrend -> signed r^2 = +1.
     assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
 
@@ -3051,7 +3064,7 @@ def test_trend_strength_index_reference():
 def test_polarized_fractal_efficiency_reference():
     pfe = ta.POLARIZED_FRACTAL_EFFICIENCY(5, 3)
     closes = np.arange(20, dtype=float)
-    out = pfe.batch(closes)
+    out = _to_np(pfe.batch(closes))
     # On a straight ramp the path equals the diagonal -> efficiency 1 -> +100.
     assert math.isclose(out[-1], 100.0, abs_tol=1e-9)
 
@@ -3059,7 +3072,7 @@ def test_polarized_fractal_efficiency_reference():
 def test_wave_pm_reference():
     wpm = ta.WAVE_PM(10, 3)
     closes = np.arange(60, dtype=float) * 5.0
-    out = wpm.batch(closes)
+    out = _to_np(wpm.batch(closes))
     # Constant-slope ramp: momentum equals its energy -> 100 * (1 - e^-0.5).
     baseline = 100.0 * (1.0 - math.exp(-0.5))
     assert math.isclose(out[-1], baseline, abs_tol=1e-9)
@@ -3071,7 +3084,7 @@ def test_gator_oscillator_reference():
     high = np.full(n, 11.0)
     low = np.full(n, 9.0)
     close = np.full(n, 10.0)
-    out = g.batch(high, low, close)
+    out = _to_np(g.batch(high, low, close))
     # Constant median collapses all three Alligator lines -> both bars zero.
     assert out[-1][0] == pytest.approx(0.0)
     assert out[-1][1] == pytest.approx(0.0)
@@ -3081,7 +3094,7 @@ def test_kase_permission_stochastic_reference():
     k = ta.KasePermissionStochastic(4, 2)
     n = 20
     flat = np.full(n, 10.0)
-    out = k.batch(flat, flat, flat)
+    out = _to_np(k.batch(flat, flat, flat))
     # HH == LL -> raw %K defaults to the neutral 50 -> both lines at 50.
     assert out[-1][0] == pytest.approx(50.0)
     assert out[-1][1] == pytest.approx(50.0)
@@ -3416,7 +3429,7 @@ def test_new_indicators_expose_lifecycle():
 def test_ichimoku_batch_shape_and_warmup(ohlcv):
     high, low, close, _ = ohlcv
     ichi = ta.Ichimoku()
-    out = ichi.batch(high, low, close)
+    out = _to_np(ichi.batch(high, low, close))
     assert out.shape == (close.size, 5)
     # Warmup is 77 for the classic (9, 26, 52, 26) configuration.
     assert ichi.warmup_period() == 77
@@ -3454,7 +3467,7 @@ def test_ichimoku_chikou_is_close_displacement_back():
     close = np.full(n, 100.0)
     high = close + 1.0
     low = close - 1.0
-    out = ta.Ichimoku().batch(high, low, close)
+    out = _to_np(ta.Ichimoku().batch(high, low, close))
     # Displacement = 26, so chikou is defined from bar 25 onwards.
     for i in range(25, n):
         assert out[i, 4] == pytest.approx(100.0)
@@ -3706,7 +3719,7 @@ def test_orderbook_indicators_streaming_equals_batch():
         streamed = np.array(
             [streamer.update(*snap) for snap in snaps], dtype=np.float64
         )
-        assert batch.shape == (len(snaps),)
+        assert len(batch) == len(snaps)
         assert _eq_nan(batch, streamed)
 
 
@@ -3731,7 +3744,7 @@ def test_tradeflow_indicators_streaming_equals_batch():
             [streamer.update(price[i], size[i], is_buy[i]) for i in range(n)],
             dtype=np.float64,
         )
-        assert batch.shape == (n,)
+        assert len(batch) == n
         assert _eq_nan(batch, streamed)
 
 
@@ -3779,7 +3792,7 @@ def test_price_impact_indicators_streaming_equals_batch():
             [streamer.update(price[i], size[i], is_buy[i], mid[i]) for i in range(n)],
             dtype=np.float64,
         )
-        assert batch.shape == (n,)
+        assert len(batch) == n
         assert _eq_nan(batch, streamed)
 
 
@@ -3793,7 +3806,7 @@ def test_footprint_streaming_equals_batch():
     assert len(batch) == n
     for i in range(n):
         streamed = streamer.update(price[i], size[i], is_buy[i])
-        assert np.array_equal(streamed, batch[i])
+        assert np.array_equal(_to_np(streamed), _to_np(batch[i]))
 
 
 def test_funding_indicators_streaming_equals_batch():
@@ -3809,7 +3822,7 @@ def test_funding_indicators_streaming_equals_batch():
         streamed = np.array(
             [streamer.update(rate[i]) for i in range(n)], dtype=np.float64
         )
-        assert batch.shape == (n,)
+        assert len(batch) == n
         assert _eq_nan(batch, streamed)
 
 
@@ -3833,7 +3846,7 @@ def test_advance_decline_streaming_equals_batch():
         ],
         dtype=np.float64,
     )
-    assert batch.shape == (3,)
+    assert len(batch) == 3
     assert _eq_nan(batch, streamed)
     # Cumulative line: +2 -> 0 -> 0.
     assert list(batch) == [2.0, 0.0, 0.0]
@@ -3856,7 +3869,7 @@ def _breadth_streaming_equals_batch(indicator, change, volume, new_high, new_low
         ],
         dtype=np.float64,
     )
-    assert batch.shape == (len(change),)
+    assert len(batch) == len(change)
     assert _eq_nan(batch, streamed)
     return batch
 
@@ -4040,7 +4053,7 @@ def test_funding_basis_streaming_equals_batch():
     streamed = np.array(
         [streamer.update(mark[i], index[i]) for i in range(n)], dtype=np.float64
     )
-    assert batch.shape == (n,)
+    assert len(batch) == n
     assert _eq_nan(batch, streamed)
 
 
@@ -4050,7 +4063,7 @@ def test_open_interest_delta_streaming_equals_batch():
     batch = ta.OpenInterestDelta().batch(oi)
     streamer = ta.OpenInterestDelta()
     streamed = np.array([streamer.update(oi[i]) for i in range(n)], dtype=np.float64)
-    assert batch.shape == (n,)
+    assert len(batch) == n
     assert _eq_nan(batch, streamed)
 
 
@@ -4067,7 +4080,7 @@ def test_oi_flow_indicators_streaming_equals_batch():
     streamed = np.array(
         [streamer.update(oi[i], mark[i]) for i in range(n)], dtype=np.float64
     )
-    assert batch.shape == (n,)
+    assert len(batch) == n
     assert _eq_nan(batch, streamed)
 
     # OIWeighted; update(mark_price, open_interest).
@@ -4121,7 +4134,7 @@ def test_basis_indicators_streaming_equals_batch():
     streamed = np.array(
         [streamer.update(futures[i], index[i]) for i in range(n)], dtype=np.float64
     )
-    assert batch.shape == (n,)
+    assert len(batch) == n
     assert _eq_nan(batch, streamed)
 
     # CalendarSpread; update(futures_price, mark_price).
@@ -4166,7 +4179,7 @@ def test_b16_derivatives_streaming_equals_batch():
     streamed = np.array(
         [streamer.update(oi[i], long_sz[i], short_sz[i]) for i in range(n)], dtype=np.float64
     )
-    assert batch.shape == (n,)
+    assert len(batch) == n
     assert _eq_nan(batch, streamed)
 
     # OiToVolumeRatio; update(open_interest, taker_buy_volume, taker_sell_volume).
@@ -4210,7 +4223,7 @@ def test_renko_bars_reference():
 
 def test_renko_bars_batch_shape():
     r = ta.RenkoBars(1.0)
-    out = r.batch(np.array([10.0, 11.0, 12.0, 13.0]))
+    out = _to_np(r.batch(np.array([10.0, 11.0, 12.0, 13.0])))
     assert out.shape == (3, 3)
     np.testing.assert_allclose(out[:, 2], [1.0, 1.0, 1.0])
 
@@ -4247,7 +4260,7 @@ def test_range_bars_reference():
 
 def test_range_bars_batch_shape():
     rb = ta.RangeBars(1.0)
-    out = rb.batch(np.array([10.0, 11.0, 12.0, 13.0]))
+    out = _to_np(rb.batch(np.array([10.0, 11.0, 12.0, 13.0])))
     assert out.shape == (3, 3)
     np.testing.assert_allclose(out[:, 2], [1.0, 1.0, 1.0])
 
@@ -4264,7 +4277,7 @@ def test_tick_bars_batch_shape():
     tb = ta.TickBars(2)
     col = np.array([10.0, 10.0, 10.0, 10.0])
     vol = np.array([1.0, 1.0, 1.0, 1.0])
-    out = tb.batch(col, col, col, col, vol)
+    out = _to_np(tb.batch(col, col, col, col, vol))
     assert out.shape == (2, 5)
 
 
@@ -4315,5 +4328,5 @@ def test_three_line_break_bars_reference():
 
 def test_three_line_break_bars_batch_shape():
     tlb = ta.ThreeLineBreakBars(3)
-    out = tlb.batch(np.array([10.0, 11.0, 12.0, 13.0]))
+    out = _to_np(tlb.batch(np.array([10.0, 11.0, 12.0, 13.0])))
     assert out.shape[1] == 3

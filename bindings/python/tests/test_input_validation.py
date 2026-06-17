@@ -8,20 +8,22 @@ import pytest
 import wickra as ta
 
 
-def test_non_contiguous_array_raises_value_error():
-    # A strided view is not C-contiguous; batch() must reject it cleanly.
+def test_non_contiguous_array_is_accepted():
+    # Inputs are read through the buffer/sequence protocol, so a strided (non
+    # C-contiguous) view is accepted and yields the same result as a dense copy.
     base = np.linspace(1.0, 100.0, 60)
     non_contiguous = base[::2]
     assert not non_contiguous.flags["C_CONTIGUOUS"]
-    with pytest.raises(ValueError):
-        ta.SMA(5).batch(non_contiguous)
+    strided = np.asarray(ta.SMA(5).batch(non_contiguous))
+    dense = np.asarray(ta.SMA(5).batch(np.ascontiguousarray(non_contiguous)))
+    np.testing.assert_array_equal(strided, dense)
 
 
-def test_ascontiguousarray_recovers():
+def test_dense_array_batches():
     base = np.linspace(1.0, 100.0, 60)
     fixed = np.ascontiguousarray(base[::2])
     out = ta.SMA(5).batch(fixed)
-    assert out.shape == fixed.shape
+    assert len(out) == len(fixed)
 
 
 def test_unequal_length_candle_batch_raises(ohlc_series):

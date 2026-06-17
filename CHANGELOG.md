@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Python: zero third-party dependencies — NumPy is no longer required**
+  (breaking). `pip install wickra` now pulls nothing else. Batch inputs accept any
+  sequence or buffer of numbers (`array.array`, `memoryview`, a NumPy array, or a
+  plain `list`); single-output `batch(...)` now returns a stdlib `array.array('d')`
+  and multi-output indicators return a buffer-protocol `Matrix` (with `.shape`,
+  integer-row and `[i, j]` element access, `.tolist()`) instead of 1-D / 2-D NumPy
+  arrays. Both expose the buffer protocol, so `numpy.asarray(result)` still wraps a
+  1-D result zero-copy when NumPy is installed — it is now an optional extra
+  (`pip install wickra[numpy]`). Streaming `update(...)` is unchanged, and results
+  are numerically identical. The other nine languages were already dependency-free.
+
+### Removed
+- **Python: `numpy` runtime dependency** (see *Changed*). NumPy moves to the
+  optional `numpy`/`test`/`bench` extras.
+
 ### Fixed
 - **Binance kline feed: add the missing `3d` and `1M` intervals.** The
   `live-binance` `Interval` enum was missing three-day (`3d`) and one-month (`1M`)

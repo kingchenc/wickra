@@ -25,11 +25,17 @@ classifiers = [
     "Topic :: Office/Business :: Financial :: Investment",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
-dependencies = [
-    "numpy>=1.22",
-]
+# Zero third-party runtime dependencies: batch results are stdlib `array.array`
+# objects (and a buffer-protocol `Matrix` for multi-output indicators), so a plain
+# `pip install wickra` pulls nothing else.
+dependencies = []
 
 [project.optional-dependencies]
+# Optional NumPy interop. Results expose the buffer protocol, so `numpy.asarray(...)`
+# wraps them zero-copy when NumPy is installed — but it is never required.
+numpy = [
+    "numpy>=1.22",
+]
 test = [
     "pytest>=7",
     "numpy>=1.22",
