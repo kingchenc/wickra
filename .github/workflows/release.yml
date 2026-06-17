@@ -36,6 +36,7 @@ jobs:
   # --------------------------------------------------------------------------
   cargo-publish:
     name: Publish to crates.io
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     runs-on: ubuntu-latest
     # The publish jobs run with long-lived registry tokens. Binding them to a
     # protected GitHub environment lets the org require a reviewer to approve
@@ -139,6 +140,7 @@ jobs:
   # --------------------------------------------------------------------------
   python-wheels:
     name: Build wheels (${{ matrix.target }}/${{ matrix.manylinux }} on ${{ matrix.os }})
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     strategy:
       fail-fast: false
       matrix:
@@ -209,6 +211,7 @@ jobs:
 
   python-sdist:
     name: Build Python sdist
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -228,6 +231,7 @@ jobs:
 
   python-publish:
     name: Publish to PyPI
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: [python-wheels, python-sdist]
     runs-on: ubuntu-latest
     environment: release
@@ -251,6 +255,7 @@ jobs:
   # --------------------------------------------------------------------------
   node-build:
     name: Node build (${{ matrix.target }})
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     strategy:
       fail-fast: false
       matrix:
@@ -296,8 +301,13 @@ jobs:
         timeout-minutes: 6
 
       - name: Install Node deps
-        working-directory: bindings/node
-        run: npm ci
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 20
+          command: cd bindings/node && npm ci
+          shell: bash
 
       - name: Build native module
         working-directory: bindings/node
@@ -312,6 +322,7 @@ jobs:
 
   node-publish:
     name: Publish to npm
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: node-build
     runs-on: ubuntu-latest
     environment: release
@@ -351,8 +362,13 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install Node deps
-        working-directory: bindings/node
-        run: npm ci
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 20
+          command: cd bindings/node && npm ci
+          shell: bash
 
       - name: Download all platform binaries
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -484,6 +500,7 @@ jobs:
   # which requires the `id-token: write` permission set at the job level.
   wasm-publish:
     name: Publish wickra-wasm to npm
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     runs-on: ubuntu-latest
     environment: release
     # `id-token: write` lets npm publish embed a Sigstore provenance
@@ -522,6 +539,10 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
 
       - name: Install wasm-pack (latest, via prebuilt binary)
         # See the matching note in ci.yml: jetli's default installs an old
@@ -590,6 +611,7 @@ jobs:
   # --------------------------------------------------------------------------
   c-abi-build:
     name: C ABI library (${{ matrix.target }})
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     strategy:
       fail-fast: false
       matrix:
@@ -645,6 +667,7 @@ jobs:
   # workflow release.yml) exchanges the GitHub OIDC token for a short-lived key.
   csharp-publish:
     name: Publish to NuGet
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: c-abi-build
     runs-on: ubuntu-latest
     environment: release
@@ -689,11 +712,18 @@ jobs:
             echo "staged ${RID[$target]}:"; ls -l "$dest"
           done
 
+      # dotnet pack restores from nuget.org first; retry so a transient restore
+      # blip retries instead of failing the release.
       - name: Pack
-        shell: bash
-        run: |
-          version="${GITHUB_REF_NAME#v}"
-          dotnet pack bindings/csharp/Wickra/Wickra.csproj -c Release -p:Version="$version" -o nupkg
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 15
+          max_attempts: 2
+          retry_wait_seconds: 20
+          shell: bash
+          command: |
+            version="${GITHUB_REF_NAME#v}"
+            dotnet pack bindings/csharp/Wickra/Wickra.csproj -c Release -p:Version="$version" -o nupkg
 
       # Exchange the GitHub OIDC token for a short-lived (~1h) NuGet API key.
       # 'user' is the nuget.org profile name (the package owner), not an email.
@@ -728,6 +758,7 @@ jobs:
   # match the release tag (kept in sync by the version-bump checklist).
   java-publish:
     name: Publish to Maven Central
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: c-abi-build
     runs-on: ubuntu-latest
     environment: release
@@ -799,6 +830,7 @@ jobs:
   # derived artifact, so its bot commit is intentionally unsigned.
   go-mirror:
     name: Mirror the Go module to wickra-go
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: c-abi-build
     runs-on: ubuntu-latest
     steps:
@@ -882,6 +914,7 @@ jobs:
 
   github-release:
     name: Attach assets to the draft GitHub Release
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: [cargo-publish, python-publish, node-publish, wasm-publish, c-abi-build]
     runs-on: ubuntu-latest
     permissions:
@@ -1007,6 +1040,7 @@ jobs:
   # --------------------------------------------------------------------------
   attestations:
     name: Attest build provenance
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: [cargo-publish, python-wheels, python-sdist, github-release]
     runs-on: ubuntu-latest
     # Signed SLSA build-provenance attestations for the published crates and
@@ -1090,6 +1124,7 @@ jobs:
   # --------------------------------------------------------------------------
   publish-release:
     name: Publish the GitHub Release
+    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     needs: [github-release, attestations]
     if: always() && needs.github-release.result == 'success'
     runs-on: ubuntu-latest
