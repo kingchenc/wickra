@@ -30,14 +30,14 @@ Maven:
 <dependency>
   <groupId>org.wickra</groupId>
   <artifactId>wickra</artifactId>
-  <version>0.9.3</version>
+  <version>0.9.4</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("org.wickra:wickra:0.9.3")
+implementation("org.wickra:wickra:0.9.4")
 ```
 
 The native library ships prebuilt per platform (Linux, macOS, Windows — x64 and
