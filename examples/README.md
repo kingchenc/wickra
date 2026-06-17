@@ -150,7 +150,8 @@ build-checked but not run in CI.
 | `strategy_macd_adx.py` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `python -m examples.python.strategy_macd_adx` |
 | `strategy_bollinger_squeeze.py` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `python -m examples.python.strategy_bollinger_squeeze` |
 
-`live_binance.py` additionally needs `pip install websockets`.
+Every Python example runs on Wickra alone — no third-party packages.
+`live_binance.py` uses the native `BinanceFeed` and `fetch_btcusdt.py` the stdlib `urllib`.
 
 ## Node.js — `examples/node/`
 
@@ -158,7 +159,7 @@ Build the native binding once, then link it into the examples directory:
 
 ```bash
 cd bindings/node && npm install && npx napi build --platform --release
-cd ../../examples/node && npm install        # links wickra + installs `ws`
+cd ../../examples/node && npm install        # links wickra (no third-party packages)
 ```
 
 | Example | What it does | Run |
