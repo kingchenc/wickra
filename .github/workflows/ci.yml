@@ -969,6 +969,31 @@ jobs:
           R CMD INSTALL bindings/r
           Rscript -e 'library(testthat); library(wickra); test_dir("bindings/r/tests/testthat", stop_on_failure = TRUE)'
 
+      # Full R CMD check, gated on the documentation problems r-universe surfaces
+      # (undocumented exported objects, codoc mismatches) that R CMD INSTALL above
+      # does not catch — exactly what shipped stale to r-universe with the 0.9.3
+      # data layer. Ubuntu-only; these checks are platform-independent. Vignettes
+      # are skipped here (building them needs pandoc and the vignette is exercised
+      # in the next step), so the two --no-build-vignettes warnings are ignored.
+      - name: R CMD check (documentation & consistency, like r-universe)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          export WICKRA_INCLUDE_DIR="${WICKRA_INCLUDE_DIR//\\//}"
+          export WICKRA_LIB_DIR="${WICKRA_LIB_DIR//\\//}"
+          R CMD build bindings/r --no-build-vignettes --no-manual
+          R CMD check wickra_*.tar.gz --no-manual --no-vignettes --no-tests || true
+          log=$(find . -maxdepth 2 -name 00check.log | head -1)
+          echo "::group::00check.log"; cat "$log"; echo "::endgroup::"
+          problems=$(grep -E '\.\.\. (WARNING|ERROR)' "$log" \
+            | grep -vE "checking (files in .vignettes.|package vignettes)" || true)
+          if [ -n "$problems" ]; then
+            echo "::error::R CMD check found problems (run roxygen2::roxygenise() in bindings/r if the docs are stale):"
+            echo "$problems"
+            exit 1
+          fi
+          echo "R CMD check: documentation and consistency clean."
+
       - name: Build the vignette code
         shell: bash
         # The getting-started vignette runs at R CMD check time on r-universe /
