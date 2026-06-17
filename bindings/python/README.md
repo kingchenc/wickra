@@ -5,8 +5,8 @@
 [![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT_OR_Apache--2.0-blue)](https://github.com/wickra-lib/wickra#license)
 
-**Streaming-first technical indicators for Python. `pip install wickra` — no
-system dependencies, no C build tooling.**
+**Streaming-first technical indicators for Python. `pip install wickra` — zero
+third-party dependencies (not even NumPy), no system dependencies, no C build tooling.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and any
@@ -22,18 +22,20 @@ pip install wickra
 ```
 
 Pre-built wheels ship for Linux, macOS, and Windows — there is nothing to
-compile and no C library to track down.
+compile and no C library to track down. `pip install wickra` pulls **zero**
+third-party packages; NumPy is an optional extra (`pip install wickra[numpy]`)
+for zero-copy interop.
 
 ## Quick start
 
 ```python
-import numpy as np
-import wickra as ta
+import wickra as ta                     # zero third-party deps — not even NumPy
 
-# Batch: classic TA-Lib-style usage over a whole array.
-prices = np.linspace(100, 200, 1000)
+# Batch: classic TA-Lib-style usage over a whole series.
+prices = [100.0 + i * 0.1 for i in range(1000)]   # list, array.array or NumPy all work
 rsi = ta.RSI(14)
-values = rsi.batch(prices)              # numpy array, NaN during warmup
+values = rsi.batch(prices)              # array.array('d'), NaN during warmup
+                                        # np.asarray(values) wraps it zero-copy if you use NumPy
 
 # Streaming: the same indicator, fed tick by tick in O(1).
 rsi = ta.RSI(14)
