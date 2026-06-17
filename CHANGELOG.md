@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5] - 2026-06-17
+
+Maintenance release. The library API and every indicator are unchanged from
+`0.9.4`; the only change that ships to users is to the R package's build script.
+The rest of the release is CI / release-pipeline hardening (dependency caching,
+job timeouts, and network-install retries) that does not affect the artifacts.
+
+### Fixed
+- **R package: retry the C ABI download.** `configure` / `configure.win` fetch the
+  prebuilt `wickra-c-<triple>.tar.gz` from the matching GitHub release. A freshly
+  cut release can briefly return 404 while its assets propagate across the CDN
+  (and a transient network blip would also fail it), so the single-shot download
+  is now retried with a backoff (~2 min) before giving up. Fixes
+  `cannot open URL … 404 Not Found` on r-universe / source installs taken right
+  after a release.
+
+
 ## [0.9.4] - 2026-06-17
 
 Packaging fix for the `0.9.3` data layer. The library is identical to `0.9.3` on
@@ -1836,7 +1853,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.4...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.5...HEAD
+[0.9.5]: https://github.com/wickra-lib/wickra/compare/v0.9.4...v0.9.5
 [0.9.4]: https://github.com/wickra-lib/wickra/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/wickra-lib/wickra/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/wickra-lib/wickra/compare/v0.9.1...v0.9.2
