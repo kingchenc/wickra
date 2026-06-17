@@ -34,7 +34,7 @@ jobs:
   rust:
     name: Rust ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -105,7 +105,7 @@ jobs:
   examples-smoke:
     name: Examples (syntax smoke)
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -195,7 +195,7 @@ jobs:
   clippy-bindings:
     name: Clippy bindings
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -279,7 +279,7 @@ jobs:
   msrv:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -328,7 +328,7 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -370,7 +370,7 @@ jobs:
   supply-chain:
     name: Supply-chain (cargo-deny)
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -389,7 +389,7 @@ jobs:
   fuzz-smoke:
     name: Fuzz (smoke)
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -443,7 +443,7 @@ jobs:
   python:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -525,7 +525,7 @@ jobs:
   wasm:
     name: WASM build
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -575,7 +575,7 @@ jobs:
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -622,9 +622,17 @@ jobs:
           cache: npm
           cache-dependency-path: bindings/node/package-lock.json
 
+      # npm's own fetch-retry (npm_config_fetch_retries) rides out per-request
+      # blips; wrap the whole `npm ci` once more so a longer registry hiccup
+      # retries the install instead of failing the job.
       - name: Install Node dependencies
-        working-directory: bindings/node
-        run: npm ci
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 20
+          command: cd bindings/node && npm ci
+          shell: bash
 
       - name: Build native module
         working-directory: bindings/node
@@ -649,7 +657,7 @@ jobs:
   c-abi:
     name: C ABI on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -705,7 +713,7 @@ jobs:
   csharp:
     name: C# on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -723,6 +731,19 @@ jobs:
         continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
         timeout-minutes: 6
 
+      # Cache the restored NuGet packages so dotnet test/build resolve from the
+      # local store instead of hitting nuget.org every run. No packages.lock.json
+      # exists, so key on the project files; never block the job on a slow restore.
+      - name: Cache NuGet packages
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        continue-on-error: true
+        timeout-minutes: 6
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       # The binding links against the C ABI hub at runtime; build it first so the
       # DllImportResolver finds target/release/wickra.{dll,so,dylib}. .NET 8 SDK is
       # preinstalled on the GitHub runners, so no setup-dotnet step is needed.
@@ -732,8 +753,17 @@ jobs:
       - name: .NET info
         run: dotnet --info
 
+      # dotnet test restores from nuget.org first; retry so a transient restore
+      # blip retries instead of failing the job (the cached packages above make
+      # the retry cheap).
       - name: Test the C# binding
-        run: dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 15
+          max_attempts: 2
+          retry_wait_seconds: 20
+          command: dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
+          shell: bash
 
       - name: Build the C# examples
         shell: bash
@@ -756,7 +786,7 @@ jobs:
   go:
     name: Go on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -879,7 +909,7 @@ jobs:
   r:
     name: R on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -912,10 +942,17 @@ jobs:
           r-version: "release"
           use-public-rspm: true
 
-      # Use the repos configured by setup-r (use-public-rspm) so Linux installs
-      # binary packages — building testthat's deps from source is slow and flaky.
-      - name: Install test dependency
-        run: Rscript -e 'install.packages("testthat")'
+      # Install the R dependencies via setup-r-dependencies: it restores a cached
+      # package library (actions/cache) and pulls RSPM *binaries* instead of
+      # compiling testthat / knitr and their deps from source — the slow, flaky
+      # path that previously blew past the job timeout on the ubuntu runner.
+      - name: Install R dependencies (cached binaries)
+        uses: r-lib/actions/setup-r-dependencies@a51a8012b0aab7c32ef9d19bf54da93f3254335e # v2
+        with:
+          working-directory: bindings/r
+          extra-packages: |
+            any::testthat
+            any::knitr
 
       - name: Install and test the R binding
         shell: bash
@@ -938,8 +975,8 @@ jobs:
         # CRAN (with pandoc); this job only INSTALLs, so execute the vignette's R
         # chunks here (knit, no pandoc needed) to catch a broken example before it
         # reaches the published build.
+        # knitr is installed by the cached setup-r-dependencies step above.
         run: |
-          Rscript -e 'install.packages("knitr", repos = Sys.getenv("RSPM", unset = "https://cloud.r-project.org"))'
           Rscript -e 'knitr::knit("bindings/r/vignettes/getting-started.Rmd", output = tempfile(fileext = ".md"), quiet = TRUE); cat("vignette code OK\n")'
 
       - name: Run the offline R examples
@@ -961,7 +998,7 @@ jobs:
   java:
     name: Java on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
+    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     strategy:
       fail-fast: false
       matrix:
@@ -1016,8 +1053,16 @@ jobs:
 
       # `install` runs the archetype test suite (the real FFI boundary check) and
       # installs the binding to the local repo so the examples can resolve it.
+      # Maven resolves plugins/deps from the network on a cache miss; retry so a
+      # transient Central blip retries instead of failing the job.
       - name: Test and install the Java binding
-        run: mvn -B -f bindings/java install
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 20
+          max_attempts: 2
+          retry_wait_seconds: 20
+          command: mvn -B -f bindings/java install
+          shell: bash
 
       - name: Build the Java examples
         run: mvn -B -f examples/java compile

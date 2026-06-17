@@ -10,6 +10,26 @@
 # WICKRA_LIB_DIR to build against a locally built C ABI instead (dev override).
 set -e
 
+# A freshly-cut GitHub release can briefly return 404 while its assets propagate
+# across the CDN, and a transient network blip should not fail the build either.
+# Retry base R's download.file with a backoff (~2 min total) instead of giving up
+# on the first miss.
+wickra_download() {
+  _url="$1"
+  _dest="$2"
+  _attempt=1
+  while [ "${_attempt}" -le 6 ]; do
+    if "${R_HOME}/bin/Rscript" -e "download.file('${_url}', '${_dest}', mode = 'wb', quiet = TRUE)"; then
+      return 0
+    fi
+    echo "wickra: download attempt ${_attempt}/6 failed (${_url}); the release asset may still be propagating — retrying in 20s..."
+    sleep 20
+    _attempt=$((_attempt + 1))
+  done
+  echo "wickra: failed to download ${_url} after 6 attempts"
+  return 1
+}
+
 if [ -n "${WICKRA_INCLUDE_DIR}" ] && [ -n "${WICKRA_LIB_DIR}" ]; then
   echo "wickra: using C ABI from WICKRA_INCLUDE_DIR / WICKRA_LIB_DIR (dev override)"
   inc="${WICKRA_INCLUDE_DIR}"
@@ -24,8 +44,7 @@ else
   esac
   url="https://github.com/wickra-lib/wickra/releases/download/v${version}/wickra-c-${triple}.tar.gz"
   echo "wickra: downloading C ABI ${triple} for v${version}"
-  "${R_HOME}/bin/Rscript" -e "download.file('${url}', 'src/wickra-c.tar.gz', mode = 'wb', quiet = TRUE)" \
-    || { echo "wickra: failed to download ${url}"; exit 1; }
+  wickra_download "${url}" "src/wickra-c.tar.gz" || exit 1
   "${R_HOME}/bin/Rscript" -e "untar('src/wickra-c.tar.gz', exdir = 'src/wickra-c')"
   inc="src/wickra-c/wickra-c-${triple}/include"
   lib="src/wickra-c/wickra-c-${triple}/lib"
