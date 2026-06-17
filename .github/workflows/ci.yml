@@ -1064,6 +1064,11 @@ jobs:
           # Keep in sync with release.yml: vendored OpenSSL for the Linux wheels.
           args: --release --out dist --features vendored-tls
           manylinux: ${{ matrix.manylinux }}
+          # Building OpenSSL from source needs a couple of Perl modules the
+          # minimal manylinux (CentOS 7) image lacks. The musllinux cross image
+          # ships a complete Perl and has no yum, so this is a no-op there.
+          before-script-linux: |
+            if command -v yum >/dev/null 2>&1; then yum install -y perl-IPC-Cmd perl-Data-Dumper; fi
 
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
