@@ -1031,6 +1031,38 @@ jobs:
             mvn -B -q -f examples/java exec:exec -Dexec.mainClass="org.wickra.examples.$cls"
           done
 
+  # Build one Python wheel inside the manylinux container, mirroring the Linux
+  # wheel build in release.yml. The 3-OS Python jobs build natively on the
+  # runner, which already ships system OpenSSL, so they cannot catch a build-time
+  # system library that is missing only inside the slim manylinux/musllinux
+  # release containers — exactly the gap that broke the 0.9.3 Linux wheels
+  # (the live-binance data layer links native-tls -> openssl-sys, whose headers
+  # the container does not provide). This job exercises that container build on
+  # every PR, so the same class of breakage now fails CI instead of the release.
+  python-wheel-manylinux-smoke:
+    name: Python wheel (manylinux smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Sync root README into bindings/python so the build matches release
+        run: cp README.md bindings/python/README.md
+
+      - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
+        with:
+          working-directory: bindings/python
+          target: x86_64
+          args: --release --out dist
+          manylinux: auto
+          # Keep in sync with release.yml: install the OpenSSL headers the
+          # native-tls/openssl-sys build needs inside the container.
+          before-script-linux: |
+            if command -v yum >/dev/null 2>&1; then yum install -y openssl-devel; fi
+            if command -v apk >/dev/null 2>&1; then apk add --no-cache openssl-dev pkgconfig; fi
+
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on
