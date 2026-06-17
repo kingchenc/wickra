@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3] - 2026-06-17
+
 ### Changed
 - **Python: zero third-party dependencies — NumPy is no longer required**
   (breaking). `pip install wickra` now pulls nothing else. Batch inputs accept any
@@ -17,7 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   arrays. Both expose the buffer protocol, so `numpy.asarray(result)` still wraps a
   1-D result zero-copy when NumPy is installed — it is now an optional extra
   (`pip install wickra[numpy]`). Streaming `update(...)` is unchanged, and results
-  are numerically identical. The other nine languages were already dependency-free.
+  are numerically identical. Single-output `batch(...)` is slower than the previous
+  NumPy path — a stdlib `array.array` cannot take ownership of the Rust result, so
+  it is copied rather than moved — though absolute batch latency stays in the
+  low-millisecond range. The other nine languages were already dependency-free.
 
 ### Removed
 - **Python: `numpy` runtime dependency** (see *Changed*). NumPy moves to the
@@ -1805,7 +1810,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.2...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.3...HEAD
+[0.9.3]: https://github.com/wickra-lib/wickra/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/wickra-lib/wickra/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/wickra-lib/wickra/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/wickra-lib/wickra/compare/v0.8.9...v0.9.0
