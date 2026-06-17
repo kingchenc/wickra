@@ -479,7 +479,14 @@ Camarilla <- function() {
   .wk_obj("camarilla", ptr, "Camarilla")
 }
 
-#' CandleReader: parse OHLCV candles from a CSV string
+#' Parse OHLCV candles from a CSV string
+#'
+#' Builds a reader over an in-memory CSV string with a header row and OHLCV
+#' columns. Pass the result to [read()] to get every parsed candle.
+#'
+#' @param csv A length-one character string of CSV text (a header row followed
+#'   by OHLCV data rows).
+#' @return A `wickra_indicator` candle reader; read its candles with [read()].
 #' @keywords internal
 #' @export
 CandleReader <- function(csv) {
@@ -2687,7 +2694,14 @@ RenkoTrailingStop <- function(block_size) {
   .wk_obj("renko_trailing_stop", ptr, "RenkoTrailingStop")
 }
 
-#' Resampler indicator
+#' Resample candles to a higher timeframe
+#'
+#' Aggregates a stream of candles into higher-timeframe bars. Feed candles with
+#' [update()] (it returns a completed higher-timeframe bar, or `NULL` while the
+#' current bar is still open) and emit the final, still-open bar with [flush()].
+#'
+#' @param timeframe Integer number of input candles per higher-timeframe bar.
+#' @return A `wickra_indicator` resampler.
 #' @keywords internal
 #' @export
 Resampler <- function(timeframe) {
@@ -3487,7 +3501,15 @@ Thrusting <- function() {
   .wk_obj("thrusting", ptr, "Thrusting")
 }
 
-#' TickAggregator indicator
+#' Aggregate trade ticks into time-bucketed candles
+#'
+#' Builds OHLCV candles from a stream of trade ticks. Feed ticks with [push()],
+#' which returns the candles closed by that tick.
+#'
+#' @param bucket Time-bucket width, in the same unit as the tick timestamps.
+#' @param gap_fill Logical; if `TRUE`, empty buckets with no trades are still
+#'   emitted (carried forward) instead of skipped.
+#' @return A `wickra_indicator` tick aggregator; feed it ticks with [push()].
 #' @keywords internal
 #' @export
 TickAggregator <- function(bucket, gap_fill) {
@@ -4151,6 +4173,13 @@ Zlema <- function(period) {
 #' 15 = 1M). `base_url` overrides the endpoint (`NULL` = production). Not
 #' available in the wasm (r-universe/webR) build, which has no raw sockets.
 #'
+#' @param symbols Comma-separated trading symbols (case-insensitive), e.g.
+#'   `"btcusdt,ethusdt"`.
+#' @param interval Integer interval code `0:15` (`0` = 1s, `1` = 1m, ...,
+#'   `12` = 1d, `13` = 3d, `14` = 1w, `15` = 1M).
+#' @param base_url Optional endpoint override; `NULL` uses production.
+#' @return A `wickra_binance_feed`; poll it with [binance_next()] and close it
+#'   with [binance_close()].
 #' @keywords internal
 #' @export
 BinanceFeed <- function(symbols, interval, base_url = NULL) {
@@ -4165,6 +4194,10 @@ BinanceFeed <- function(symbols, interval, base_url = NULL) {
 #' `high`, `low`, `close`, `volume`, `open_time`, `is_closed`) when an event
 #' arrives, or `NULL` on timeout. Errors once the stream is closed.
 #'
+#' @param feed A `wickra_binance_feed` created by [BinanceFeed()].
+#' @param timeout_ms Poll timeout in milliseconds.
+#' @return A named list (`symbol`, `open`, `high`, `low`, `close`, `volume`,
+#'   `open_time`, `is_closed`) for an event, or `NULL` on timeout.
 #' @keywords internal
 #' @export
 binance_next <- function(feed, timeout_ms = 1000) {
@@ -4173,6 +4206,8 @@ binance_next <- function(feed, timeout_ms = 1000) {
 
 #' Close a Binance feed
 #'
+#' @param feed A `wickra_binance_feed` created by [BinanceFeed()].
+#' @return `NULL`, invisibly.
 #' @keywords internal
 #' @export
 binance_close <- function(feed) {
@@ -4190,6 +4225,14 @@ binance_close <- function(feed) {
 #' `volume`, `timestamp`. Blocks until the response arrives. Not available in the
 #' wasm (r-universe/webR) build, which has no raw sockets.
 #'
+#' @param symbol Trading symbol (case-insensitive), e.g. `"btcusdt"`.
+#' @param interval Integer interval code `0:15` (see [BinanceFeed()]).
+#' @param limit Number of klines to fetch (`1:1000`).
+#' @param start_ms,end_ms Optional inclusive Unix-millisecond bounds; a negative
+#'   value means unset.
+#' @param base_url Optional host override; `NULL` uses production.
+#' @return An `n x 6` numeric matrix with columns `open`, `high`, `low`,
+#'   `close`, `volume`, `timestamp`.
 #' @keywords internal
 #' @export
 fetch_binance_klines <- function(symbol, interval, limit, start_ms = -1,

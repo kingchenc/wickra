@@ -7,12 +7,12 @@
 \format{
 A data frame with 250 rows and 6 columns:
 \describe{
-  \item{date}{Trading date (\code{Date}).}
-  \item{open}{Opening price.}
-  \item{high}{Session high.}
-  \item{low}{Session low.}
-  \item{close}{Closing price.}
-  \item{volume}{Traded volume.}
+\item{date}{Trading date (\code{Date}).}
+\item{open}{Opening price.}
+\item{high}{Session high.}
+\item{low}{Session low.}
+\item{close}{Closing price.}
+\item{volume}{Traded volume.}
 }
 }
 \usage{

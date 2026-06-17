@@ -151,7 +151,7 @@ name.wickra_indicator <- function(object) {
 #' @param timestamp Trade timestamp, in the same unit as the aggregator bucket.
 #' @return A numeric matrix with six named columns (possibly zero rows).
 #' @examples
-#' agg <- TickAggregator(1000)
+#' agg <- TickAggregator(1000, FALSE)
 #' push(agg, 100, 1, 0)
 #' push(agg, 102, 1, 1000) # closes the first bucket
 #' @export

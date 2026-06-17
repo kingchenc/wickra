@@ -18,6 +18,7 @@ Useful links:
 \itemize{
   \item \url{https://github.com/wickra-lib/wickra}
   \item \url{https://docs.wickra.org}
+  \item \url{https://wickra-lib.r-universe.dev}
   \item Report bugs at \url{https://github.com/wickra-lib/wickra/issues}
 }
 

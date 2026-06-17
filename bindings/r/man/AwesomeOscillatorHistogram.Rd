@@ -4,7 +4,7 @@
 \alias{AwesomeOscillatorHistogram}
 \title{AwesomeOscillatorHistogram indicator}
 \usage{
-AwesomeOscillatorHistogram(fast, slow, sma_period)
+AwesomeOscillatorHistogram(fast, slow, lookback)
 }
 \description{
 AwesomeOscillatorHistogram indicator
