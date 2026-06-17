@@ -17,6 +17,13 @@ publish = false
 name = "_wickra"
 crate-type = ["cdylib"]
 
+[features]
+# Build the bundled data layer against a statically compiled OpenSSL. The
+# release workflow (and the manylinux/musllinux CI smoke job) enable this so the
+# Linux wheels do not depend on system OpenSSL at build time. See the
+# `vendored-tls` feature in wickra-data for the rationale.
+vendored-tls = ["wickra-data/vendored-tls"]
+
 [lints]
 workspace = true
 

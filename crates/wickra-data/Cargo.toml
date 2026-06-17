@@ -54,6 +54,15 @@ default = []
 # want. `live-binance` covers both the live WebSocket feed and the historical
 # REST kline fetcher.
 live-binance = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util", "dep:url", "dep:ureq", "dep:native-tls"]
+# `live-binance` with a statically built OpenSSL instead of the system one. The
+# native-tls stack (tokio-tungstenite + ureq, unified on the same `native-tls`
+# crate) links `openssl-sys`, which needs OpenSSL at build time. The manylinux
+# and musllinux wheel containers do not provide it — manylinux lacks the headers
+# and the musllinux build cross-compiles against a musl sysroot that has no
+# OpenSSL at all — so the Linux wheels are built with this feature, which
+# compiles OpenSSL from source and links it statically. No-op on macOS/Windows,
+# where native-tls uses Security.framework / SChannel and never pulls openssl-sys.
+vendored-tls = ["live-binance", "native-tls/vendored"]
 
 [dev-dependencies]
 approx = { workspace = true }
