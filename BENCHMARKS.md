@@ -166,3 +166,41 @@ mvn -q -f bindings/java install -DskipTests \
   && mvn -q -f bindings/java/benchmarks exec:exec -Dexec.mainClass=org.wickra.benchmarks.Throughput
 Rscript bindings/r/benchmarks/throughput.R                        # R (.Call)
 ```
+
+## 4. Data layer — native I/O throughput
+
+Wickra ships its own data layer — a CSV candle reader, a tick-to-candle
+aggregator, and a timeframe resampler — so loading and reshaping market data
+needs **no third-party package** (`pandas`, `csv-parse`, manual bucketing,
+`pandas.resample`, …) in any of the ten languages. These run on the same Rust
+core as the indicators, so every binding reaches these speeds minus the FFI
+boundary characterised in section 3 (a `read` / `push` / `flush` call crosses the
+boundary once per batch, like `batch`, so bindings land close to the core).
+
+Rust core, 50 000 real BTCUSDT one-minute candles
+(`examples/data/btcusdt-1m.csv`), median of 100 samples, on the reference machine
+(Windows 11, AMD Ryzen 9 9950X):
+
+| Operation                          | Throughput          | Per element |
+|------------------------------------|--------------------:|------------:|
+| CSV parse (`CandleReader`)         |   3.0 M candles/s   |      329 ns |
+| Tick aggregate → 1m (`TickAggregator`) |  44 M ticks/s   |     22.6 ns |
+| Resample 1m → 5m (`Resampler`)     | 234 M candles/s     |      4.3 ns |
+
+Reading and validating a 50 000-row CSV into typed candles takes ~16 ms;
+aggregating 50 000 ticks into one-minute bars ~1.1 ms; resampling 50 000
+one-minute candles to five-minute bars ~0.2 ms. CSV parsing is the floor because
+it does the most per row (UTF-8 scan, field split, six `f64` parses, finiteness
+checks); aggregation and resampling are pure arithmetic over already-typed
+candles.
+
+The live and historical Binance feeds (`BinanceFeed`, `fetch_binance_klines`) are
+network-bound — their throughput is set by the exchange and the socket, not by
+Wickra — so they are not micro-benchmarked here; the relevant Wickra cost is the
+per-event parse, which is the same arithmetic measured above.
+
+Run it with:
+
+```bash
+cargo bench -p wickra --bench data_layer
+```

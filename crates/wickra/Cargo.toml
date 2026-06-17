@@ -36,3 +36,7 @@ wickra-data = { path = "../wickra-data" }
 [[bench]]
 name = "indicators"
 harness = false
+
+[[bench]]
+name = "data_layer"
+harness = false
