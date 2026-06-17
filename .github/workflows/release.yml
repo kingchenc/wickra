@@ -193,11 +193,13 @@ jobs:
           # CI `python-wheel-container-smoke` job exercises both containers on PRs.
           args: --release --strip --out dist --features vendored-tls
           manylinux: ${{ matrix.manylinux }}
-          # Building OpenSSL from source needs a couple of Perl modules the
-          # minimal manylinux (CentOS 7) image lacks. The musllinux cross image
+          # Building OpenSSL from source needs Perl modules (IPC::Cmd,
+          # Time::Piece, ...) the minimal manylinux (CentOS 7) image lacks.
+          # perl-core pulls the full distribution; the explicit names document
+          # the ones OpenSSL's Configure has required. The musllinux cross image
           # ships a complete Perl and has no yum, so this is a no-op there.
           before-script-linux: |
-            if command -v yum >/dev/null 2>&1; then yum install -y perl-IPC-Cmd perl-Data-Dumper; fi
+            if command -v yum >/dev/null 2>&1; then yum install -y perl-core perl-IPC-Cmd perl-Data-Dumper perl-Time-Piece; fi
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           # Include manylinux in the name so the glibc and musl x86_64/aarch64
