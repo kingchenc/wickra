@@ -20,7 +20,7 @@
 [![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/docs.svg)](https://docs.wickra.org)
 [![Verified across 10 languages](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/verified.svg)](https://docs.wickra.org/FAQ#do-all-the-language-bindings-compute-the-same-values)
 
-**Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
+**Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies, zero third-party packages.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 native bindings for Python, Node.js and WASM, plus a C ABI that C, C++,
@@ -29,13 +29,13 @@ state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
 ```python
-import numpy as np
-import wickra as ta
+import wickra as ta                     # zero third-party deps — not even NumPy
 
 # Batch: classic TA-Lib-style usage
-prices = np.linspace(100, 200, 1000)
+prices = [100.0 + i * 0.1 for i in range(1000)]
 rsi = ta.RSI(14)
-values = rsi.batch(prices)              # numpy array, NaN during warmup
+values = rsi.batch(prices)              # array.array('d'), NaN during warmup
+                                        # np.asarray(values) wraps it zero-copy if you use NumPy
 
 # Streaming: same indicator, fed tick by tick
 rsi = ta.RSI(14)
@@ -104,8 +104,13 @@ times to get there.
 - **Install in one line, anywhere.** `pip install wickra` / `npm install wickra` —
   precompiled wheels and binaries, **no C toolchain, none of TA-Lib's setup pain**.
   macOS · Linux · Windows.
-- **Batteries included.** Indicator chaining, a streaming OHLCV CSV reader, and a
-  live Binance kline feed ship in the box.
+- **Batteries included — zero third-party deps, in every language.** A full native
+  data layer ships in the box: a CSV candle reader, a tick-to-candle aggregator, a
+  timeframe resampler, a live Binance WebSocket feed and a historical Binance REST
+  fetcher — in **all 10 languages**. Loading a CSV, rolling ticks into candles,
+  resampling and streaming live data needs **no foreign package** — no pandas, no
+  `csv-parse`, no `ws`/`websockets`, no `jackson`, no `jsonlite`, not even NumPy.
+  `pip install wickra` / `npm install wickra` / `go get` / … pulls **nothing else**.
 - **Truly permissive.** **MIT OR Apache-2.0** — drop it straight into commercial
   and closed-source work.
 
@@ -281,12 +286,17 @@ chain.update(price);
 
 ## Live data sources
 
-`wickra-data` (separate crate, opt-in) ships:
+Wickra ships a complete, **native data layer** — exposed in **all 10 languages**,
+pulling **zero third-party packages** (no pandas / `csv-parse` / `ws` / `jackson`
+/ `jsonlite`). In Rust it lives in the `wickra-data` crate; every binding exposes
+the same building blocks:
 
-- A streaming OHLCV **CSV reader**.
-- A **tick-to-candle aggregator** with arbitrary timeframes.
-- A **candle resampler** for multi-timeframe analysis (1m → 5m → 1h on the fly).
-- A **Binance Spot WebSocket** kline adapter (feature `live-binance`).
+- A streaming OHLCV **CSV reader** (`CandleReader`).
+- A **tick-to-candle aggregator** with arbitrary timeframes (`TickAggregator`).
+- A **candle resampler** for multi-timeframe analysis (1m → 5m → 1h on the fly, `Resampler`).
+- A live **Binance Spot WebSocket** kline feed (`BinanceFeed`, feature `live-binance`).
+- A historical **Binance REST** kline fetcher (`fetch_binance_klines`) — native
+  HTTP + JSON, no third-party client.
 
 ```rust
 use wickra::{Indicator, Rsi};
@@ -303,8 +313,9 @@ while let Some(event) = stream.next_event().await? {
 }
 ```
 
-A Python live Binance feed example using the public `websockets` package lives at
-`examples/python/live_binance.py`.
+Native live-feed and historical-fetch examples — using `wickra.BinanceFeed` and
+`wickra.fetch_binance_klines`, **with no third-party HTTP/WebSocket client** — live
+under `examples/python/` (and the matching directory for every other language).
 
 ## Project layout
 
