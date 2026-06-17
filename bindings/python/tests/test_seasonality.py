@@ -14,6 +14,15 @@ import wickra as ta
 HOUR_MS = 3_600_000
 
 
+def _to_np(x) -> np.ndarray:
+    """Normalize a Wickra batch result (``array.array`` or ``Matrix``) to an ndarray."""
+    if isinstance(x, np.ndarray):
+        return x.astype(np.float64)
+    if hasattr(x, "tolist") and hasattr(x, "shape"):
+        return np.asarray(x.tolist(), dtype=np.float64)
+    return np.asarray(x, dtype=np.float64)
+
+
 @pytest.fixture(scope="module")
 def candle_columns():
     """240 hourly candles (10 days) with valid OHLCV and epoch-ms timestamps."""
@@ -43,7 +52,7 @@ def _check_scalar(make, cols):
         [np.nan if (v := a.update(c)) is None else v for c in candles],
         dtype=np.float64,
     )
-    batch = np.asarray(b.batch(*cols))
+    batch = _to_np(b.batch(*cols))
     np.testing.assert_allclose(stream, batch, equal_nan=True, rtol=1e-9, atol=1e-9)
 
 
@@ -55,7 +64,7 @@ def _check_matrix(make, k, cols):
         out = a.update(c)
         rows.append(np.full(k, np.nan) if out is None else np.asarray(out, dtype=float))
     stream = np.vstack(rows)
-    batch = np.asarray(b.batch(*cols))
+    batch = _to_np(b.batch(*cols))
     assert batch.shape == (len(candles), k)
     np.testing.assert_allclose(stream, batch, equal_nan=True, rtol=1e-9, atol=1e-9)
 

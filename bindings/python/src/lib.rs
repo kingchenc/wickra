@@ -1,7 +1,10 @@
 //! Python bindings for Wickra. Built with `PyO3` and exposed under the `wickra` package.
 //!
 //! This module is the thin glue between `wickra-core` and Python. Every indicator
-//! has both a streaming class and a batch helper that takes a `NumPy` array.
+//! has both a streaming class and a batch helper. Inputs accept any sequence or
+//! buffer of numbers (`array.array`, `memoryview`, a `NumPy` array, or a list);
+//! results are stdlib `array.array('d')` objects (and a buffer-protocol [`Matrix`]
+//! for multi-output indicators), so the package has zero third-party dependencies.
 
 #![allow(clippy::needless_pass_by_value)]
 // Python `__repr__` is an instance method by protocol, so the `&self` parameter is
@@ -12,12 +15,161 @@
 // (o/h/l/c/v) that match the domain and the NumPy call sites.
 #![allow(clippy::many_single_char_names)]
 
-use numpy::{IntoPyArray, PyArray1, PyArray2, PyReadonlyArray1};
-use pyo3::exceptions::{PyRuntimeError, PyTypeError, PyValueError};
+use pyo3::exceptions::{PyIndexError, PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::PyDict;
+use pyo3::types::{PyBytes, PyDict};
+use pyo3::Borrowed;
 use wickra_core as wc;
 use wickra_core::{BarBuilder, BatchExt, BatchNanExt, Indicator};
+
+/// A one-dimensional `f64` input.
+///
+/// Accepts `array.array('d')`, `memoryview`, a `NumPy` `ndarray`, or any plain Python
+/// sequence of numbers — the same set the previous `NumPy` `PyReadonlyArray1` covered,
+/// now without depending on `NumPy`. The values are copied into an owned `Vec` once.
+struct Buf1 {
+    data: Vec<f64>,
+}
+
+impl<'py> FromPyObject<'_, 'py> for Buf1 {
+    type Error = PyErr;
+
+    fn extract(obj: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
+        Vec::<f64>::extract(obj).map(|data| Self { data })
+    }
+}
+
+impl Buf1 {
+    /// Borrow the values as a slice. The `PyResult` wrapper keeps the ~800 batch call
+    /// sites uniform with the historical `NumPy` code path; extraction already succeeded.
+    #[allow(clippy::unnecessary_wraps)]
+    fn as_slice(&self) -> PyResult<&[f64]> {
+        Ok(&self.data)
+    }
+}
+
+/// A one-dimensional `i64` input (e.g. millisecond timestamps for seasonality).
+///
+/// Mirrors [`Buf1`]: accepts any `i64` buffer-protocol object or a Python sequence
+/// of integers, copied once into an owned `Vec`.
+struct BufI64 {
+    data: Vec<i64>,
+}
+
+impl<'py> FromPyObject<'_, 'py> for BufI64 {
+    type Error = PyErr;
+
+    fn extract(obj: Borrowed<'_, 'py, PyAny>) -> PyResult<Self> {
+        Vec::<i64>::extract(obj).map(|data| Self { data })
+    }
+}
+
+impl BufI64 {
+    #[allow(clippy::unnecessary_wraps)]
+    fn as_slice(&self) -> PyResult<&[i64]> {
+        Ok(&self.data)
+    }
+}
+
+/// Build a stdlib `array.array('d')` from a slice of `f64`s.
+///
+/// `array.array` is a buffer-protocol object, so `numpy.asarray(result)` wraps it
+/// zero-copy for callers who opt into `NumPy` — but importing `NumPy` is never required.
+fn f64_array<'py>(py: Python<'py>, data: &[f64]) -> PyResult<Bound<'py, PyAny>> {
+    let bytes = PyBytes::new(py, bytemuck::cast_slice(data));
+    py.import("array")?.getattr("array")?.call1(("d", bytes))
+}
+
+/// A row-major, two-dimensional `f64` result returned by multi-output batch helpers.
+///
+/// Backed by a flat, buffer-protocol `array.array('d')`, it preserves the ergonomics
+/// of the former `NumPy` return type — `result.shape`, integer row access and
+/// `result[i, j]` element access — without depending on `NumPy`. `numpy.asarray(result)`
+/// rebuilds an `(nrows, ncols)` array for callers who want one.
+#[pyclass(name = "Matrix", module = "wickra._wickra")]
+struct Matrix {
+    data: Vec<f64>,
+    nrows: usize,
+    ncols: usize,
+}
+
+impl Matrix {
+    /// Resolve a possibly-negative index against `len`, mirroring Python semantics.
+    fn resolve(index: isize, len: usize) -> PyResult<usize> {
+        let idx = if index < 0 {
+            let back = index.unsigned_abs();
+            if back > len {
+                return Err(PyIndexError::new_err("index out of range"));
+            }
+            len - back
+        } else {
+            index.unsigned_abs()
+        };
+        if idx >= len {
+            return Err(PyIndexError::new_err("index out of range"));
+        }
+        Ok(idx)
+    }
+}
+
+#[pymethods]
+impl Matrix {
+    #[getter]
+    fn shape(&self) -> (usize, usize) {
+        (self.nrows, self.ncols)
+    }
+
+    fn __len__(&self) -> usize {
+        self.nrows
+    }
+
+    fn __getitem__<'py>(
+        &self,
+        py: Python<'py>,
+        key: &Bound<'py, PyAny>,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        if let Ok((row, col)) = key.extract::<(isize, isize)>() {
+            let r = Self::resolve(row, self.nrows)?;
+            let c = Self::resolve(col, self.ncols)?;
+            return Ok(self.data[r * self.ncols + c].into_pyobject(py)?.into_any());
+        }
+        let row = Self::resolve(key.extract::<isize>()?, self.nrows)?;
+        let start = row * self.ncols;
+        f64_array(py, &self.data[start..start + self.ncols])
+    }
+
+    /// Return the matrix as a list of row lists.
+    fn tolist(&self) -> Vec<Vec<f64>> {
+        self.data.chunks(self.ncols).map(<[f64]>::to_vec).collect()
+    }
+
+    fn __repr__(&self) -> String {
+        format!("Matrix(shape=({}, {}))", self.nrows, self.ncols)
+    }
+}
+
+/// Build a [`Matrix`] from flat row-major data.
+fn matrix(
+    py: Python<'_>,
+    data: Vec<f64>,
+    nrows: usize,
+    ncols: usize,
+) -> PyResult<Bound<'_, PyAny>> {
+    Ok(Bound::new(py, Matrix { data, nrows, ncols })?.into_any())
+}
+
+/// Convert an owned `f64` batch result into its Python representation
+/// (a buffer-protocol `array.array('d')`), keeping the streaming batch call sites
+/// uniform after the `NumPy` return type was dropped.
+trait IntoPyData<'py> {
+    fn into_pydata(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>>;
+}
+
+impl<'py> IntoPyData<'py> for Vec<f64> {
+    fn into_pydata(self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
+        f64_array(py, &self)
+    }
+}
 
 fn map_err(e: wc::Error) -> PyErr {
     match e {
@@ -53,11 +205,11 @@ type ImbalanceBarRows = Vec<(f64, f64, f64, f64, f64, i64)>;
 type RunBarRows = Vec<(f64, f64, f64, f64, i64, i64)>;
 
 /// Extract four equal-length OHLC slices, erroring on non-contiguous or mismatched input.
-fn ohlc_slices<'a, 'py>(
-    open: &'a PyReadonlyArray1<'py, f64>,
-    high: &'a PyReadonlyArray1<'py, f64>,
-    low: &'a PyReadonlyArray1<'py, f64>,
-    close: &'a PyReadonlyArray1<'py, f64>,
+fn ohlc_slices<'a>(
+    open: &'a Buf1,
+    high: &'a Buf1,
+    low: &'a Buf1,
+    close: &'a Buf1,
 ) -> PyResult<OhlcCols<'a>> {
     let o = open
         .as_slice()
@@ -80,12 +232,12 @@ fn ohlc_slices<'a, 'py>(
 }
 
 /// Extract five equal-length OHLCV slices, erroring on non-contiguous or mismatched input.
-fn ohlcv_slices<'a, 'py>(
-    open: &'a PyReadonlyArray1<'py, f64>,
-    high: &'a PyReadonlyArray1<'py, f64>,
-    low: &'a PyReadonlyArray1<'py, f64>,
-    close: &'a PyReadonlyArray1<'py, f64>,
-    volume: &'a PyReadonlyArray1<'py, f64>,
+fn ohlcv_slices<'a>(
+    open: &'a Buf1,
+    high: &'a Buf1,
+    low: &'a Buf1,
+    close: &'a Buf1,
+    volume: &'a Buf1,
 ) -> PyResult<OhlcvCols<'a>> {
     let (o, h, l, c) = ohlc_slices(open, high, low, close)?;
     let v = volume
@@ -135,15 +287,11 @@ impl PySma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -190,15 +338,11 @@ impl PyEma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -249,15 +393,11 @@ impl PyWma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -305,15 +445,11 @@ impl PyRsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -366,19 +502,13 @@ impl PyMacd {
     }
     /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         let n = slice.len();
         let out = self.inner.batch_macd(slice);
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -431,19 +561,13 @@ impl PyBb {
             .map(|o| (o.upper, o.middle, o.lower, o.stddev))
     }
     /// Batch returns shape `(n, 4)` columns `[upper, middle, lower, stddev]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         let n = slice.len();
         let out = self.inner.batch_bands(slice);
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -532,10 +656,10 @@ impl PyAtr {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -563,7 +687,7 @@ impl PyAtr {
                 ));
             }
         }
-        Ok(self.inner.batch_atr(h, l, c).into_pyarray(py))
+        self.inner.batch_atr(h, l, c).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -612,10 +736,10 @@ impl PyPlusDm {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -635,7 +759,7 @@ impl PyPlusDm {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -684,10 +808,10 @@ impl PyMinusDm {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -707,7 +831,7 @@ impl PyMinusDm {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -756,10 +880,10 @@ impl PyPlusDi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -779,7 +903,7 @@ impl PyPlusDi {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -828,10 +952,10 @@ impl PyMinusDi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -851,7 +975,7 @@ impl PyMinusDi {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -900,10 +1024,10 @@ impl PyDx {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -923,7 +1047,7 @@ impl PyDx {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -972,10 +1096,10 @@ impl PyMidPrice {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -995,7 +1119,7 @@ impl PyMidPrice {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1039,15 +1163,11 @@ impl PyMidPoint {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1095,11 +1215,11 @@ impl PyAvgPrice {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -1122,7 +1242,7 @@ impl PyAvgPrice {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1162,15 +1282,11 @@ impl PyRocp {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1214,15 +1330,11 @@ impl PyRocr {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1266,15 +1378,11 @@ impl PyRocr100 {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1322,15 +1430,11 @@ impl PyLinRegIntercept {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1374,15 +1478,11 @@ impl PyTsf {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1431,11 +1531,7 @@ impl PyMacdFix {
     }
     /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -1448,9 +1544,7 @@ impl PyMacdFix {
                 out[i * 3 + 2] = o.histogram;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn signal_period(&self) -> usize {
@@ -1528,10 +1622,10 @@ impl PySarExt {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -1551,7 +1645,7 @@ impl PySarExt {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1620,11 +1714,7 @@ impl PyMacdExt {
     }
     /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -1637,9 +1727,7 @@ impl PyMacdExt {
                 out[i * 3 + 2] = o.histogram;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1681,11 +1769,7 @@ impl PyHtPhasor {
     }
     /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 2)`
     /// with columns `[inphase, quadrature]`. Warmup rows are NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -1697,9 +1781,7 @@ impl PyHtPhasor {
                 out[i * 2 + 1] = o.quadrature;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1739,15 +1821,11 @@ impl PyLogReturn {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1795,15 +1873,11 @@ impl PyRealizedVolatility {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1847,15 +1921,11 @@ impl PyRollingIqr {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1903,15 +1973,11 @@ impl PyRollingPercentileRank {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1959,15 +2025,11 @@ impl PyRollingQuantile {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2023,11 +2085,11 @@ impl PyCloseVsOpen {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -2050,7 +2112,7 @@ impl PyCloseVsOpen {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -2094,11 +2156,11 @@ impl PyBodySizePct {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -2121,7 +2183,7 @@ impl PyBodySizePct {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -2165,11 +2227,11 @@ impl PyWickRatio {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -2192,7 +2254,7 @@ impl PyWickRatio {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -2236,11 +2298,11 @@ impl PyHighLowRange {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -2263,7 +2325,7 @@ impl PyHighLowRange {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -2303,15 +2365,11 @@ impl PyTrendLabel {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2355,15 +2413,11 @@ impl PyJumpIndicator {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2412,15 +2466,11 @@ impl PyRegimeLabel {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn vol_period(&self) -> usize {
@@ -2469,15 +2519,11 @@ impl PyWinRate {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2521,15 +2567,11 @@ impl PyExpectancy {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2573,15 +2615,11 @@ impl PySineWeightedMa {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2625,15 +2663,11 @@ impl PyGeometricMa {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2677,15 +2711,11 @@ impl PyEhma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2729,15 +2759,11 @@ impl PyMedianMa {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2785,15 +2811,11 @@ impl PyAdaptiveLaguerreFilter {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2841,15 +2863,11 @@ impl PyDisparityIndex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2893,15 +2911,11 @@ impl PyFisherRsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2945,15 +2959,11 @@ impl PyRsx {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn length(&self) -> usize {
@@ -3001,15 +3011,11 @@ impl PyDynamicMomentumIndex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3058,10 +3064,10 @@ impl PyStochasticCci {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3081,7 +3087,7 @@ impl PyStochasticCci {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3130,10 +3136,10 @@ impl PyTtmTrend {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3153,7 +3159,7 @@ impl PyTtmTrend {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3201,15 +3207,11 @@ impl PyTrendStrengthIndex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3258,9 +3260,9 @@ impl PyQstick {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3278,7 +3280,7 @@ impl PyQstick {
             let candle = wc::Candle::new(o[i], hi, lo, c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3323,15 +3325,11 @@ impl PyPolarizedFractalEfficiency {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3376,15 +3374,11 @@ impl PyWavePm {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn length(&self) -> usize {
@@ -3440,10 +3434,10 @@ impl PyGatorOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3467,9 +3461,7 @@ impl PyGatorOscillator {
                 out[i * 2 + 1] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3516,10 +3508,10 @@ impl PyKasePermissionStochastic {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3543,9 +3535,7 @@ impl PyKasePermissionStochastic {
                 out[i * 2 + 1] = o.slow;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3582,15 +3572,11 @@ impl PyTsfOscillator {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3634,15 +3620,11 @@ impl PyMacdHistogram {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3683,15 +3665,11 @@ impl PyPpoHistogram {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3736,15 +3714,11 @@ impl PyBipowerVariation {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3797,10 +3771,10 @@ impl PyVolatilityRatio {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3820,7 +3794,7 @@ impl PyVolatilityRatio {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3873,10 +3847,10 @@ impl PyProjectionOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3896,7 +3870,7 @@ impl PyProjectionOscillator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3946,10 +3920,10 @@ impl PyTimeBasedStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -3969,7 +3943,7 @@ impl PyTimeBasedStop {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn max_bars(&self) -> usize {
@@ -4013,15 +3987,11 @@ impl PyJarqueBera {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4065,15 +4035,11 @@ impl PyRollingMinMaxScaler {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4117,15 +4083,11 @@ impl PyHighpassFilter {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4169,15 +4131,11 @@ impl PyReflex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4221,15 +4179,11 @@ impl PyTrendflex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4273,15 +4227,11 @@ impl PyCorrelationTrendIndicator {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4325,15 +4275,11 @@ impl PyAdaptiveRsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4377,15 +4323,11 @@ impl PyUniversalOscillator {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4434,10 +4376,10 @@ impl PyAdaptiveCci {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -4457,7 +4399,7 @@ impl PyAdaptiveCci {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4501,15 +4443,11 @@ impl PySterlingRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4553,15 +4491,11 @@ impl PyBurkeRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4605,15 +4539,11 @@ impl PyMartinRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4657,15 +4587,11 @@ impl PyTailRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4709,15 +4635,11 @@ impl PyKRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4765,15 +4687,11 @@ impl PyCommonSenseRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4821,15 +4739,11 @@ impl PyGainToPainRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4877,11 +4791,11 @@ impl PyImi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -4905,7 +4819,7 @@ impl PyImi {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4949,11 +4863,7 @@ impl PyQqe {
     }
     /// Batch over a numpy array of closes. Returns shape `(n, 2)` with columns
     /// `[rsi_ma, trailing_line]`. Warmup rows are NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -4965,9 +4875,7 @@ impl PyQqe {
                 out[i * 2 + 1] = o.trailing_line;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn factor(&self) -> f64 {
@@ -5012,10 +4920,10 @@ impl PyElderRay {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5039,9 +4947,7 @@ impl PyElderRay {
                 out[i * 2 + 1] = o.bear_power;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5085,10 +4991,10 @@ impl PyStoch {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5112,9 +5018,7 @@ impl PyStoch {
                 out[i * 2 + 1] = o.d;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -5163,9 +5067,9 @@ impl PyObv {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5182,7 +5086,7 @@ impl PyObv {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -5225,15 +5129,11 @@ impl PyDema {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5276,15 +5176,11 @@ impl PyTema {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5327,15 +5223,11 @@ impl PyHma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5379,15 +5271,11 @@ impl PyKama {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5431,11 +5319,11 @@ impl PyInertia {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5458,7 +5346,7 @@ impl PyInertia {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5499,15 +5387,11 @@ impl PyConnorsRsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5548,15 +5432,11 @@ impl PyLaguerreRsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn gamma(&self) -> f64 {
@@ -5604,10 +5484,10 @@ impl PySmi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5627,7 +5507,7 @@ impl PySmi {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5686,11 +5566,7 @@ impl PyKst {
     fn update(&mut self, value: f64) -> Option<(f64, f64)> {
         self.inner.update(value).map(|o| (o.kst, o.signal))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5702,9 +5578,7 @@ impl PyKst {
                 out[i * 2 + 1] = o.signal;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5748,10 +5622,10 @@ impl PyPgo {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5771,7 +5645,7 @@ impl PyPgo {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5819,11 +5693,11 @@ impl PyRvi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5846,7 +5720,7 @@ impl PyRvi {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5890,15 +5764,11 @@ impl PyFrama {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5946,9 +5816,9 @@ impl PyEvwma {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -5965,7 +5835,7 @@ impl PyEvwma {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6013,9 +5883,9 @@ impl PyAlligator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6035,9 +5905,7 @@ impl PyAlligator {
                 out[i * 3 + 2] = o.lips;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6078,15 +5946,11 @@ impl PyJma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6127,15 +5991,11 @@ impl PyVidya {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6180,15 +6040,11 @@ impl PyMcGinleyDynamic {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6232,15 +6088,11 @@ impl PyAlma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6305,9 +6157,9 @@ impl PyAoHist {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6322,7 +6174,7 @@ impl PyAoHist {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6363,15 +6215,11 @@ impl PyStc {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6418,15 +6266,11 @@ impl PyElderImpulse {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6469,11 +6313,7 @@ impl PyZeroLagMacd {
             .update(value)
             .map(|o| (o.macd, o.signal, o.histogram))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6486,9 +6326,7 @@ impl PyZeroLagMacd {
                 out[i * 3 + 2] = o.histogram;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6529,15 +6367,11 @@ impl PyCfo {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6581,15 +6415,11 @@ impl PyApo {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6634,10 +6464,10 @@ impl PyCci {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6657,7 +6487,7 @@ impl PyCci {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6701,15 +6531,11 @@ impl PyRoc {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6757,10 +6583,10 @@ impl PyWilliamsR {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6780,7 +6606,7 @@ impl PyWilliamsR {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6823,10 +6649,10 @@ impl PyAdx {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6851,9 +6677,7 @@ impl PyAdx {
                 out[i * 3 + 2] = o.adx;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6894,10 +6718,10 @@ impl PyAdxr {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6920,7 +6744,7 @@ impl PyAdxr {
                 out[i] = v;
             }
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6972,11 +6796,11 @@ impl PyMfi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -6999,7 +6823,7 @@ impl PyMfi {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7036,15 +6860,11 @@ impl PyTrix {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7085,10 +6905,10 @@ impl PyPsar {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7108,7 +6928,7 @@ impl PyPsar {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7151,10 +6971,10 @@ impl PyKeltner {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7179,9 +6999,7 @@ impl PyKeltner {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7222,9 +7040,9 @@ impl PyDonchian {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7244,9 +7062,7 @@ impl PyDonchian {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7286,11 +7102,11 @@ impl PyVwap {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7313,7 +7129,7 @@ impl PyVwap {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7353,11 +7169,11 @@ impl PyRollingVwap {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7380,7 +7196,7 @@ impl PyRollingVwap {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7432,9 +7248,9 @@ impl PyAo {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7449,7 +7265,7 @@ impl PyAo {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7490,9 +7306,9 @@ impl PyAroon {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7511,9 +7327,7 @@ impl PyAroon {
                 out[i * 2 + 1] = o.down;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -7554,11 +7368,11 @@ impl PyAdl {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7581,7 +7395,7 @@ impl PyAdl {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -7633,9 +7447,9 @@ impl PyVolumePriceTrend {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7652,7 +7466,7 @@ impl PyVolumePriceTrend {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -7700,15 +7514,11 @@ impl PyBollingerBandwidth {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7764,15 +7574,11 @@ impl PyPercentB {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7833,10 +7639,10 @@ impl PyNatr {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -7856,7 +7662,7 @@ impl PyNatr {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7904,15 +7710,11 @@ impl PyStdDev {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7960,15 +7762,11 @@ impl PyUlcerIndex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8020,15 +7818,11 @@ impl PyHistoricalVolatility {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8086,9 +7880,9 @@ impl PyAroonOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -8103,7 +7897,7 @@ impl PyAroonOscillator {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8157,10 +7951,10 @@ impl PyVortex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -8184,9 +7978,7 @@ impl PyVortex {
                 out[i * 2 + 1] = o.minus;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8236,10 +8028,10 @@ impl PyRwi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -8263,9 +8055,7 @@ impl PyRwi {
                 out[i * 2 + 1] = o.low;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8320,10 +8110,10 @@ impl PyWaveTrend {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -8347,9 +8137,7 @@ impl PyWaveTrend {
                 out[i * 2 + 1] = o.wt2;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -8399,9 +8187,9 @@ impl PyMassIndex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -8416,7 +8204,7 @@ impl PyMassIndex {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8465,15 +8253,11 @@ impl PyPpo {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8522,15 +8306,11 @@ impl PyDpo {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8582,15 +8362,11 @@ impl PyCoppock {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -8639,15 +8415,11 @@ impl PyStochRsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8705,10 +8477,10 @@ impl PyUltimateOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -8728,7 +8500,7 @@ impl PyUltimateOscillator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -8777,15 +8549,11 @@ impl PyMom {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8833,15 +8601,11 @@ impl PyCmo {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8889,15 +8653,11 @@ impl PyTsi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8946,15 +8706,11 @@ impl PyPmo {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -9003,15 +8759,11 @@ impl PyTii {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -9059,15 +8811,11 @@ impl PyZlema {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9119,15 +8867,11 @@ impl PyT3 {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9183,15 +8927,11 @@ impl PyGeneralizedDema {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9243,15 +8983,11 @@ impl PyHoltWinters {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn alpha(&self) -> f64 {
@@ -9315,15 +9051,11 @@ impl PyRmi {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9385,15 +9117,11 @@ impl PyDerivativeOscillator {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -9434,9 +9162,9 @@ impl PyVwma {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9453,7 +9181,7 @@ impl PyVwma {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9500,15 +9228,11 @@ impl PySmma {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9555,15 +9279,11 @@ impl PyTrima {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9620,11 +9340,11 @@ impl PyChaikinMoneyFlow {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9647,7 +9367,7 @@ impl PyChaikinMoneyFlow {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9700,11 +9420,11 @@ impl PyChaikinOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9727,7 +9447,7 @@ impl PyChaikinOscillator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -9777,9 +9497,9 @@ impl PyForceIndex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9796,7 +9516,7 @@ impl PyForceIndex {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9845,9 +9565,9 @@ impl PyNvi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9864,7 +9584,7 @@ impl PyNvi {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -9908,9 +9628,9 @@ impl PyPvi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9927,7 +9647,7 @@ impl PyPvi {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -9973,11 +9693,7 @@ impl PyVolumeOscillator {
         Ok(self.inner.update(c))
     }
     /// Batch over a 1-D numpy volume array.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, volume: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let v = volume
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -9986,7 +9702,7 @@ impl PyVolumeOscillator {
             let candle = wc::Candle::new(10.0, 10.0, 10.0, 10.0, vol, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -10036,11 +9752,11 @@ impl PyKvo {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10063,7 +9779,7 @@ impl PyKvo {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -10112,10 +9828,10 @@ impl PyAdOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10135,7 +9851,7 @@ impl PyAdOscillator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -10179,15 +9895,11 @@ impl PyAnchoredRsi {
         self.inner.set_anchor();
     }
     /// Batch over a close-price numpy column.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -10239,11 +9951,11 @@ impl PyAnchoredVwap {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10266,7 +9978,7 @@ impl PyAnchoredVwap {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -10311,11 +10023,11 @@ impl PyDemandIndex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10338,7 +10050,7 @@ impl PyDemandIndex {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -10387,9 +10099,9 @@ impl PyTsv {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10406,7 +10118,7 @@ impl PyTsv {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -10455,9 +10167,9 @@ impl PyVzo {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10474,7 +10186,7 @@ impl PyVzo {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -10526,10 +10238,10 @@ impl PyMarketFacilitationIndex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10549,7 +10261,7 @@ impl PyMarketFacilitationIndex {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -10598,10 +10310,10 @@ impl PyEaseOfMovement {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10621,7 +10333,7 @@ impl PyEaseOfMovement {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -10679,10 +10391,10 @@ impl PySuperTrend {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10706,9 +10418,7 @@ impl PySuperTrend {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -10763,10 +10473,10 @@ impl PyChandelierExit {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10790,9 +10500,7 @@ impl PyChandelierExit {
                 out[i * 2 + 1] = o.short_stop;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -10848,10 +10556,10 @@ impl PyChandeKrollStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10875,9 +10583,7 @@ impl PyChandeKrollStop {
                 out[i * 2 + 1] = o.stop_short;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn params(&self) -> (usize, f64, usize) {
@@ -10933,10 +10639,10 @@ impl PyAtrTrailingStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -10956,7 +10662,7 @@ impl PyAtrTrailingStop {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -11005,10 +10711,10 @@ impl PyHiLoActivator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11028,7 +10734,7 @@ impl PyHiLoActivator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11076,10 +10782,10 @@ impl PyVoltyStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11099,7 +10805,7 @@ impl PyVoltyStop {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -11148,10 +10854,10 @@ impl PyYoyoExit {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11171,7 +10877,7 @@ impl PyYoyoExit {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -11224,9 +10930,9 @@ impl PyDonchianStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11245,9 +10951,7 @@ impl PyDonchianStop {
                 out[i * 2 + 1] = o.stop_short;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11295,15 +10999,11 @@ impl PyPercentageTrailingStop {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn percent(&self) -> f64 {
@@ -11351,15 +11051,11 @@ impl PyStepTrailingStop {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn step_size(&self) -> f64 {
@@ -11407,15 +11103,11 @@ impl PyRenkoTrailingStop {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn block_size(&self) -> f64 {
@@ -11465,10 +11157,10 @@ impl PyKaseDevStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11492,9 +11184,7 @@ impl PyKaseDevStop {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -11545,10 +11235,10 @@ impl PyElderSafeZone {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11572,9 +11262,7 @@ impl PyElderSafeZone {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -11625,10 +11313,10 @@ impl PyAtrRatchet {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11652,9 +11340,7 @@ impl PyAtrRatchet {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn params(&self) -> (usize, f64, f64) {
@@ -11707,10 +11393,10 @@ impl PyNrtr {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11734,9 +11420,7 @@ impl PyNrtr {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn pct(&self) -> f64 {
@@ -11790,10 +11474,10 @@ impl PyModifiedMaStop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11817,9 +11501,7 @@ impl PyModifiedMaStop {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11867,10 +11549,10 @@ impl PyTypicalPrice {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11890,7 +11572,7 @@ impl PyTypicalPrice {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -11934,9 +11616,9 @@ impl PyMedianPrice {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -11951,7 +11633,7 @@ impl PyMedianPrice {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -11995,10 +11677,10 @@ impl PyWeightedClose {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12018,7 +11700,7 @@ impl PyWeightedClose {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -12062,15 +11744,11 @@ impl PyLinearRegression {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -12114,15 +11792,11 @@ impl PyLinRegSlope {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -12176,9 +11850,9 @@ impl PyAcceleratorOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12193,7 +11867,7 @@ impl PyAcceleratorOscillator {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, usize, usize) {
@@ -12246,11 +11920,11 @@ impl PyBalanceOfPower {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12273,7 +11947,7 @@ impl PyBalanceOfPower {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -12322,10 +11996,10 @@ impl PyChoppinessIndex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12345,7 +12019,7 @@ impl PyChoppinessIndex {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -12393,15 +12067,11 @@ impl PyVerticalHorizontalFilter {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -12449,10 +12119,10 @@ impl PyTrueRange {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12472,7 +12142,7 @@ impl PyTrueRange {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -12521,9 +12191,9 @@ impl PyChaikinVolatility {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12538,7 +12208,7 @@ impl PyChaikinVolatility {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -12583,15 +12253,11 @@ impl PyZScore {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -12635,15 +12301,11 @@ impl PyLinRegAngle {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -12694,11 +12356,11 @@ impl PyYangZhangVolatility {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12721,7 +12383,7 @@ impl PyYangZhangVolatility {
             let candle = wc::Candle::new(o[i], h[i], l[i], cl[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -12779,11 +12441,11 @@ impl PyRogersSatchellVolatility {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12806,7 +12468,7 @@ impl PyRogersSatchellVolatility {
             let candle = wc::Candle::new(o[i], h[i], l[i], cl[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -12860,11 +12522,11 @@ impl PyGarmanKlassVolatility {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12887,7 +12549,7 @@ impl PyGarmanKlassVolatility {
             let candle = wc::Candle::new(o[i], h[i], l[i], cl[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -12941,9 +12603,9 @@ impl PyParkinsonVolatility {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -12958,7 +12620,7 @@ impl PyParkinsonVolatility {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -13007,15 +12669,11 @@ impl PyRviVolatility {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -13067,11 +12725,7 @@ impl PyMaEnvelope {
             .map(|o| (o.upper, o.middle, o.lower))
     }
     /// Batch returns shape `(n, 3)` columns `[upper, middle, lower]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13084,9 +12738,7 @@ impl PyMaEnvelope {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13131,10 +12783,10 @@ impl PyAccelerationBands {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13159,9 +12811,7 @@ impl PyAccelerationBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13202,10 +12852,10 @@ impl PyStarcBands {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13230,9 +12880,7 @@ impl PyStarcBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13273,10 +12921,10 @@ impl PyAtrBands {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13301,9 +12949,7 @@ impl PyAtrBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13344,10 +12990,10 @@ impl PyHurstChannel {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13372,9 +13018,7 @@ impl PyHurstChannel {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13413,11 +13057,7 @@ impl PyLinRegChannel {
             .update(value)
             .map(|o| (o.upper, o.middle, o.lower))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13430,9 +13070,7 @@ impl PyLinRegChannel {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13475,11 +13113,7 @@ impl PyStandardErrorBands {
             .update(value)
             .map(|o| (o.upper, o.middle, o.lower))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13492,9 +13126,7 @@ impl PyStandardErrorBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13533,11 +13165,7 @@ impl PyQuartileBands {
             .update(value)
             .map(|o| (o.upper, o.middle, o.lower))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13550,9 +13178,7 @@ impl PyQuartileBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13591,11 +13217,7 @@ impl PyBomarBands {
             .update(value)
             .map(|o| (o.upper, o.middle, o.lower))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13608,9 +13230,7 @@ impl PyBomarBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13649,11 +13269,7 @@ impl PyMedianChannel {
             .update(value)
             .map(|o| (o.upper, o.middle, o.lower))
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13666,9 +13282,7 @@ impl PyMedianChannel {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13713,9 +13327,9 @@ impl PyProjectionBands {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13735,9 +13349,7 @@ impl PyProjectionBands {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13782,10 +13394,10 @@ impl PyCentralPivotRange {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13810,9 +13422,7 @@ impl PyCentralPivotRange {
                 out[i * 3 + 2] = o.bc;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13866,9 +13476,9 @@ impl PyMurreyMathLines {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13894,9 +13504,7 @@ impl PyMurreyMathLines {
                 out[i * 9 + 8] = o.mm0_8;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 9), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 9)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -13942,9 +13550,9 @@ impl PyAndrewsPitchfork {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -13964,9 +13572,7 @@ impl PyAndrewsPitchfork {
                 out[i * 3 + 2] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14012,10 +13618,10 @@ impl PyVolumeWeightedSr {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14039,9 +13645,7 @@ impl PyVolumeWeightedSr {
                 out[i * 2 + 1] = o.resistance;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14083,10 +13687,10 @@ impl PyPivotReversal {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14106,7 +13710,7 @@ impl PyPivotReversal {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14158,11 +13762,7 @@ impl PyDoubleBollinger {
     }
     /// Returns shape `(n, 5)` columns
     /// `[upper_outer, upper_inner, middle, lower_inner, lower_outer]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14177,9 +13777,7 @@ impl PyDoubleBollinger {
                 out[i * 5 + 4] = o.lower_outer;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 5)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14223,10 +13821,10 @@ impl PyTtmSqueeze {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14250,9 +13848,7 @@ impl PyTtmSqueeze {
                 out[i * 2 + 1] = o.momentum;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14299,9 +13895,9 @@ impl PyFractalChaosBands {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14320,9 +13916,7 @@ impl PyFractalChaosBands {
                 out[i * 2 + 1] = o.lower;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14373,11 +13967,11 @@ impl PyVwapStdDevBands {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14406,9 +14000,7 @@ impl PyVwapStdDevBands {
                 out[i * 4 + 3] = o.stddev;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14454,10 +14046,10 @@ impl PyClassicPivots {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14486,9 +14078,7 @@ impl PyClassicPivots {
                 out[i * 7 + 6] = o.s3;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 7)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14535,10 +14125,10 @@ impl PyFibonacciPivots {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14567,9 +14157,7 @@ impl PyFibonacciPivots {
                 out[i * 7 + 6] = o.s3;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 7)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14619,10 +14207,10 @@ impl PyCamarilla {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14653,9 +14241,7 @@ impl PyCamarilla {
                 out[i * 9 + 8] = o.s4;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 9), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 9)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14698,10 +14284,10 @@ impl PyWoodiePivots {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14728,9 +14314,7 @@ impl PyWoodiePivots {
                 out[i * 5 + 4] = o.s2;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 5)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14773,11 +14357,11 @@ impl PyDemarkPivots {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14805,9 +14389,7 @@ impl PyDemarkPivots {
                 out[i * 3 + 2] = v.s1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14860,9 +14442,9 @@ impl PyWilliamsFractals {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14885,9 +14467,7 @@ impl PyWilliamsFractals {
                 }
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -14932,9 +14512,9 @@ impl PyZigZag {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -14953,9 +14533,7 @@ impl PyZigZag {
                 out[i * 2 + 1] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn threshold(&self) -> f64 {
@@ -14999,10 +14577,10 @@ impl PyTdSetup {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15022,7 +14600,7 @@ impl PyTdSetup {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15087,10 +14665,10 @@ impl PyTdSequential {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15115,9 +14693,7 @@ impl PyTdSequential {
                 out[i * 3 + 2] = o.direction;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15158,9 +14734,9 @@ impl PyTdDeMarker {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15175,7 +14751,7 @@ impl PyTdDeMarker {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15227,9 +14803,9 @@ impl PyTdRei {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15244,7 +14820,7 @@ impl PyTdRei {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15297,12 +14873,12 @@ impl PyTdPressure {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15328,7 +14904,7 @@ impl PyTdPressure {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15391,10 +14967,10 @@ impl PyTdCombo {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15414,7 +14990,7 @@ impl PyTdCombo {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15455,10 +15031,10 @@ impl PyTdDWave {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15478,7 +15054,7 @@ impl PyTdDWave {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15524,9 +15100,9 @@ impl PyTdMovingAverage {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15545,9 +15121,7 @@ impl PyTdMovingAverage {
                 out[i * 2 + 1] = o.st2;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15599,10 +15173,10 @@ impl PyTdCountdown {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15622,7 +15196,7 @@ impl PyTdCountdown {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15666,10 +15240,10 @@ impl PyTdLines {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15693,9 +15267,7 @@ impl PyTdLines {
                 out[i * 2 + 1] = o.support;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15741,11 +15313,11 @@ impl PyTdRangeProjection {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15772,9 +15344,7 @@ impl PyTdRangeProjection {
                 out[i * 2 + 1] = p.low;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15818,10 +15388,10 @@ impl PyTdDifferential {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15841,7 +15411,7 @@ impl PyTdDifferential {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15881,11 +15451,11 @@ impl PyTdOpen {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15908,7 +15478,7 @@ impl PyTdOpen {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -15952,10 +15522,10 @@ impl PyTdRiskLevel {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -15979,9 +15549,7 @@ impl PyTdRiskLevel {
                 out[i * 2 + 1] = o.sell_risk;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -16019,15 +15587,11 @@ macro_rules! py_scalar_one_period {
             fn update(&mut self, value: f64) -> Option<f64> {
                 self.inner.update(value)
             }
-            fn batch<'py>(
-                &mut self,
-                py: Python<'py>,
-                prices: PyReadonlyArray1<'py, f64>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+            fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
                 let slice = prices
                     .as_slice()
                     .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                Ok(self.inner.batch_nan(slice).into_pyarray(py))
+                self.inner.batch_nan(slice).into_pydata(py)
             }
             #[getter]
             fn period(&self) -> usize {
@@ -16093,15 +15657,11 @@ impl PyInverseFisherTransform {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn scale(&self) -> f64 {
@@ -16152,15 +15712,11 @@ impl PyDecyclerOscillator {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -16205,15 +15761,11 @@ impl PyRoofingFilter {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -16262,15 +15814,11 @@ impl PyEmd {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -16323,15 +15871,11 @@ macro_rules! py_no_params_scalar {
             fn update(&mut self, value: f64) -> Option<f64> {
                 self.inner.update(value)
             }
-            fn batch<'py>(
-                &mut self,
-                py: Python<'py>,
-                prices: PyReadonlyArray1<'py, f64>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+            fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
                 let slice = prices
                     .as_slice()
                     .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                Ok(self.inner.batch_nan(slice).into_pyarray(py))
+                self.inner.batch_nan(slice).into_pydata(py)
             }
             #[getter]
             fn value(&self) -> Option<f64> {
@@ -16385,15 +15929,11 @@ impl PySineWave {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -16443,11 +15983,7 @@ impl PyMama {
         self.inner.update(value).map(|o| (o.mama, o.fama))
     }
     /// Batch returns shape `(n, 2)` columns `[mama, fama]`. Warmup rows NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -16459,9 +15995,7 @@ impl PyMama {
                 out[i * 2 + 1] = o.fama;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn limits(&self) -> (f64, f64) {
@@ -16506,15 +16040,11 @@ impl PyFama {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn limits(&self) -> (f64, f64) {
@@ -16581,10 +16111,10 @@ impl PyIchimoku {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -16621,9 +16151,7 @@ impl PyIchimoku {
                 }
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 5)
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize, usize) {
@@ -16677,11 +16205,11 @@ impl PyHeikinAshi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -16710,9 +16238,7 @@ impl PyHeikinAshi {
                 out[i * 4 + 3] = v.close;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -16750,15 +16276,11 @@ impl PyVariance {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -16810,11 +16332,11 @@ impl PyHeikinAshiOscillator {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -16837,7 +16359,7 @@ impl PyHeikinAshiOscillator {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -16882,10 +16404,10 @@ impl PyThreeLineBreak {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -16905,7 +16427,7 @@ impl PyThreeLineBreak {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -16954,11 +16476,11 @@ impl PySmoothedHeikinAshi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -16987,9 +16509,7 @@ impl PySmoothedHeikinAshi {
                 out[i * 4 + 3] = v.close;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -17031,10 +16551,10 @@ impl PyEquivolume {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17058,9 +16578,7 @@ impl PyEquivolume {
                 out[i * 2 + 1] = o.width;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -17102,10 +16620,10 @@ impl PyCandleVolume {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17131,9 +16649,7 @@ impl PyCandleVolume {
                 out[i * 2 + 1] = v.width;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -17174,10 +16690,10 @@ impl PyFryPanBottom {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17197,7 +16713,7 @@ impl PyFryPanBottom {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -17238,10 +16754,10 @@ impl PyDumplingTop {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17261,7 +16777,7 @@ impl PyDumplingTop {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -17302,10 +16818,10 @@ impl PyNewPriceLines {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17325,7 +16841,7 @@ impl PyNewPriceLines {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -17366,15 +16882,11 @@ impl PyCoefficientOfVariation {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17418,15 +16930,11 @@ impl PySkewness {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17470,15 +16978,11 @@ impl PyKurtosis {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17522,15 +17026,11 @@ impl PyStandardError {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17578,15 +17078,11 @@ impl PyDetrendedStdDev {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17630,15 +17126,11 @@ impl PyRSquared {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17686,15 +17178,11 @@ impl PyAutocorrelation {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17750,15 +17238,11 @@ impl PyMedianAbsoluteDeviation {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17802,15 +17286,11 @@ impl PyHurstExponent {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(s).into_pyarray(py))
+        self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17867,12 +17347,7 @@ impl PyPearsonCorrelation {
         self.inner.update((x, y))
     }
     /// Batch over two equally-sized numpy arrays.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        x: PyReadonlyArray1<'py, f64>,
-        y: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = x
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17886,7 +17361,7 @@ impl PyPearsonCorrelation {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17934,9 +17409,9 @@ impl PyBeta {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        asset: PyReadonlyArray1<'py, f64>,
-        benchmark: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        asset: Buf1,
+        benchmark: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let a = asset
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -17952,7 +17427,7 @@ impl PyBeta {
         for i in 0..a.len() {
             out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -17997,12 +17472,7 @@ impl PyPairwiseBeta {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18016,7 +17486,7 @@ impl PyPairwiseBeta {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18065,12 +17535,7 @@ impl PySpreadAr1Coefficient {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18084,7 +17549,7 @@ impl PySpreadAr1Coefficient {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18133,12 +17598,7 @@ impl PyPairSpreadZScore {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18152,7 +17612,7 @@ impl PyPairSpreadZScore {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn beta_period(&self) -> usize {
@@ -18212,12 +17672,7 @@ impl PyLeadLagCrossCorrelation {
     }
     /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
     /// `(n, 2)` with columns `[lag, correlation]`. Warmup rows are NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18235,9 +17690,7 @@ impl PyLeadLagCrossCorrelation {
                 out[i * 2 + 1] = o.correlation;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn window(&self) -> usize {
@@ -18295,12 +17748,7 @@ impl PyCointegration {
     /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
     /// `(n, 3)` with columns `[hedge_ratio, spread, adf_stat]`. Warmup rows are
     /// NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18319,9 +17767,7 @@ impl PyCointegration {
                 out[i * 3 + 2] = o.adf_stat;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18383,12 +17829,7 @@ impl PyRelativeStrengthAB {
     /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
     /// `(n, 3)` with columns `[ratio, ratio_ma, ratio_rsi]`. Warmup rows are
     /// NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18407,9 +17848,7 @@ impl PyRelativeStrengthAB {
                 out[i * 3 + 2] = o.ratio_rsi;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn ma_period(&self) -> usize {
@@ -18466,12 +17905,7 @@ impl PyRollingCorrelation {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18485,7 +17919,7 @@ impl PyRollingCorrelation {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18534,12 +17968,7 @@ impl PyHasbrouckInformationShare {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18553,7 +17982,7 @@ impl PyHasbrouckInformationShare {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18602,12 +18031,7 @@ impl PyRollingCovariance {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18621,7 +18045,7 @@ impl PyRollingCovariance {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18666,12 +18090,7 @@ impl PyOuHalfLife {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18685,7 +18104,7 @@ impl PyOuHalfLife {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18730,12 +18149,7 @@ impl PySpreadHurst {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18749,7 +18163,7 @@ impl PySpreadHurst {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18794,12 +18208,7 @@ impl PyDistanceSsd {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18813,7 +18222,7 @@ impl PyDistanceSsd {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18862,12 +18271,7 @@ impl PyBetaNeutralSpread {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18881,7 +18285,7 @@ impl PyBetaNeutralSpread {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -18926,12 +18330,7 @@ impl PyVarianceRatio {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -18945,7 +18344,7 @@ impl PyVarianceRatio {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -19002,12 +18401,7 @@ impl PyGrangerCausality {
         self.inner.update((a, b))
     }
     /// Batch over two equally-sized numpy arrays: `a` and `b`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19021,7 +18415,7 @@ impl PyGrangerCausality {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -19083,12 +18477,7 @@ impl PyKalmanHedgeRatio {
     /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
     /// `(n, 3)` with columns `[hedge_ratio, intercept, spread]`. Warmup rows are
     /// NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19107,9 +18496,7 @@ impl PyKalmanHedgeRatio {
                 out[i * 3 + 2] = o.spread;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn delta(&self) -> f64 {
@@ -19171,12 +18558,7 @@ impl PySpreadBollingerBands {
     /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
     /// `(n, 4)` with columns `[middle, upper, lower, percent_b]`. Warmup rows are
     /// NaN.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        a: PyReadonlyArray1<'py, f64>,
-        b: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19196,9 +18578,7 @@ impl PySpreadBollingerBands {
                 out[i * 4 + 3] = o.percent_b;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -19255,12 +18635,7 @@ impl PySpearmanCorrelation {
         self.inner.update((x, y))
     }
     /// Batch over two equally-sized numpy arrays.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        x: PyReadonlyArray1<'py, f64>,
-        y: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = x
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19274,7 +18649,7 @@ impl PySpearmanCorrelation {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -19324,10 +18699,10 @@ impl PyValueArea {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19354,9 +18729,7 @@ impl PyValueArea {
                 out[i * 3 + 2] = o.val;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn params(&self) -> (usize, usize, f64) {
@@ -19386,7 +18759,7 @@ impl PyValueArea {
 /// Streaming profile output: `(price_low, price_high, per_bin_values)`, or `None`
 /// during warmup. Shared by `VolumeProfile` (volume bins) and `TpoProfile` (TPO
 /// counts).
-type ProfileHistogram<'py> = Option<(f64, f64, Bound<'py, PyArray1<f64>>)>;
+type ProfileHistogram<'py> = Option<(f64, f64, Bound<'py, PyAny>)>;
 
 #[pyclass(name = "VolumeProfile", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
@@ -19410,20 +18783,20 @@ impl PyVolumeProfile {
         candle: &Bound<'_, PyAny>,
     ) -> PyResult<ProfileHistogram<'py>> {
         let c = extract_candle(candle)?;
-        Ok(self
-            .inner
+        self.inner
             .update(c)
-            .map(|o| (o.price_low, o.price_high, o.bins.into_pyarray(py))))
+            .map(|o| PyResult::Ok((o.price_low, o.price_high, f64_array(py, &o.bins)?)))
+            .transpose()
     }
     /// Batch over numpy columns high, low, volume. Returns shape `(n, bin_count + 2)`
     /// with columns `[price_low, price_high, bin_0, ..., bin_{k-1}]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19452,9 +18825,7 @@ impl PyVolumeProfile {
                 }
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, k)
     }
     #[getter]
     fn params(&self) -> (usize, usize) {
@@ -19503,19 +18874,19 @@ impl PyTpoProfile {
         candle: &Bound<'_, PyAny>,
     ) -> PyResult<ProfileHistogram<'py>> {
         let c = extract_candle(candle)?;
-        Ok(self
-            .inner
+        self.inner
             .update(c)
-            .map(|o| (o.price_low, o.price_high, o.counts.into_pyarray(py))))
+            .map(|o| PyResult::Ok((o.price_low, o.price_high, f64_array(py, &o.counts)?)))
+            .transpose()
     }
     /// Batch over numpy columns high, low. Returns shape `(n, bin_count + 2)`
     /// with columns `[price_low, price_high, count_0, ..., count_{k-1}]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19539,9 +18910,7 @@ impl PyTpoProfile {
                 }
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, k)
     }
     #[getter]
     fn params(&self) -> (usize, usize) {
@@ -19596,9 +18965,9 @@ impl PyInitialBalance {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19618,9 +18987,7 @@ impl PyInitialBalance {
                 out[i * 2 + 1] = o.low;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -19676,10 +19043,10 @@ impl PyOpeningRange {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19704,9 +19071,7 @@ impl PyOpeningRange {
                 out[i * 3 + 2] = o.breakout_distance;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -19757,11 +19122,11 @@ impl PyNakedPoc {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19784,7 +19149,7 @@ impl PyNakedPoc {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -19829,9 +19194,9 @@ impl PySinglePrints {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19847,7 +19212,7 @@ impl PySinglePrints {
             let candle = wc::Candle::new(mid, h[i], l[i], mid, 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -19892,10 +19257,10 @@ impl PyProfileShape {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19916,7 +19281,7 @@ impl PyProfileShape {
             let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -19965,10 +19330,10 @@ impl PyHighLowVolumeNodes {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -19993,9 +19358,7 @@ impl PyHighLowVolumeNodes {
                 out[i * 2 + 1] = o.lvn;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20044,10 +19407,10 @@ impl PyCompositeProfile {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -20073,9 +19436,7 @@ impl PyCompositeProfile {
                 out[i * 3 + 2] = o.val;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20126,11 +19487,11 @@ macro_rules! candle_pattern_no_param {
             fn batch<'py>(
                 &mut self,
                 py: Python<'py>,
-                open: PyReadonlyArray1<'py, f64>,
-                high: PyReadonlyArray1<'py, f64>,
-                low: PyReadonlyArray1<'py, f64>,
-                close: PyReadonlyArray1<'py, f64>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                open: Buf1,
+                high: Buf1,
+                low: Buf1,
+                close: Buf1,
+            ) -> PyResult<Bound<'py, PyAny>> {
                 let o = open
                     .as_slice()
                     .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -20154,7 +19515,7 @@ macro_rules! candle_pattern_no_param {
                         wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
                     out.push(self.inner.update(candle).unwrap_or(f64::NAN));
                 }
-                Ok(out.into_pyarray(py))
+                out.into_pydata(py)
             }
             fn reset(&mut self) {
                 self.inner.reset();
@@ -20203,11 +19564,11 @@ impl PyDoji {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let o = open
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -20230,7 +19591,7 @@ impl PyDoji {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20455,13 +19816,13 @@ macro_rules! py_ob_indicator {
                 &mut self,
                 py: Python<'py>,
                 snapshots: Vec<(Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>)>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+            ) -> PyResult<Bound<'py, PyAny>> {
                 let mut out = Vec::with_capacity(snapshots.len());
                 for (bid_px, bid_sz, ask_px, ask_sz) in &snapshots {
                     let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
                     out.push(self.inner.update(book).unwrap_or(f64::NAN));
                 }
-                Ok(out.into_pyarray(py))
+                out.into_pydata(py)
             }
             fn reset(&mut self) {
                 self.inner.reset();
@@ -20531,13 +19892,13 @@ impl PyOrderBookImbalanceTopN {
         &mut self,
         py: Python<'py>,
         snapshots: Vec<(Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>)>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(snapshots.len());
         for (bid_px, bid_sz, ask_px, ask_sz) in &snapshots {
             let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
             out.push(self.inner.update(book).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20597,7 +19958,7 @@ macro_rules! py_trade_indicator {
                 price: Vec<f64>,
                 size: Vec<f64>,
                 is_buy: Vec<bool>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+            ) -> PyResult<Bound<'py, PyAny>> {
                 if price.len() != size.len() || size.len() != is_buy.len() {
                     return Err(PyValueError::new_err(
                         "price, size, is_buy must be equal length",
@@ -20608,7 +19969,7 @@ macro_rules! py_trade_indicator {
                     let trade = build_trade(price[i], size[i], is_buy[i])?;
                     out.push(self.inner.update(trade).unwrap_or(f64::NAN));
                 }
-                Ok(out.into_pyarray(py))
+                out.into_pydata(py)
             }
             fn reset(&mut self) {
                 self.inner.reset();
@@ -20665,7 +20026,7 @@ impl PyTradeImbalance {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -20676,7 +20037,7 @@ impl PyTradeImbalance {
             let trade = build_trade(price[i], size[i], is_buy[i])?;
             out.push(self.inner.update(trade).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20724,7 +20085,7 @@ impl PyTradeSignAutocorrelation {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -20735,7 +20096,7 @@ impl PyTradeSignAutocorrelation {
             let trade = build_trade(price[i], size[i], is_buy[i])?;
             out.push(self.inner.update(trade).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20779,7 +20140,7 @@ impl PyPin {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -20790,7 +20151,7 @@ impl PyPin {
             let trade = build_trade(price[i], size[i], is_buy[i])?;
             out.push(self.inner.update(trade).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20845,13 +20206,13 @@ impl PyOrderFlowImbalance {
         &mut self,
         py: Python<'py>,
         snapshots: Vec<(Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>)>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(snapshots.len());
         for (bid_px, bid_sz, ask_px, ask_sz) in &snapshots {
             let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
             out.push(self.inner.update(book).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20895,7 +20256,7 @@ impl PyVpin {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -20906,7 +20267,7 @@ impl PyVpin {
             let trade = build_trade(price[i], size[i], is_buy[i])?;
             out.push(self.inner.update(trade).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20955,7 +20316,7 @@ impl PyAmihudIlliquidity {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -20966,7 +20327,7 @@ impl PyAmihudIlliquidity {
             let trade = build_trade(price[i], size[i], is_buy[i])?;
             out.push(self.inner.update(trade).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21010,7 +20371,7 @@ impl PyRollMeasure {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -21021,7 +20382,7 @@ impl PyRollMeasure {
             let trade = build_trade(price[i], size[i], is_buy[i])?;
             out.push(self.inner.update(trade).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21087,7 +20448,7 @@ macro_rules! py_trade_quote_indicator {
                 size: Vec<f64>,
                 is_buy: Vec<bool>,
                 mid: Vec<f64>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+            ) -> PyResult<Bound<'py, PyAny>> {
                 if price.len() != size.len()
                     || size.len() != is_buy.len()
                     || is_buy.len() != mid.len()
@@ -21101,7 +20462,7 @@ macro_rules! py_trade_quote_indicator {
                     let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
                     out.push(self.inner.update(quote).unwrap_or(f64::NAN));
                 }
-                Ok(out.into_pyarray(py))
+                out.into_pydata(py)
             }
             fn reset(&mut self) {
                 self.inner.reset();
@@ -21156,7 +20517,7 @@ impl PyRealizedSpread {
         size: Vec<f64>,
         is_buy: Vec<bool>,
         mid: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() || is_buy.len() != mid.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy, mid must be equal length",
@@ -21167,7 +20528,7 @@ impl PyRealizedSpread {
             let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
             out.push(self.inner.update(quote).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21214,7 +20575,7 @@ impl PyKylesLambda {
         size: Vec<f64>,
         is_buy: Vec<bool>,
         mid: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if price.len() != size.len() || size.len() != is_buy.len() || is_buy.len() != mid.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy, mid must be equal length",
@@ -21225,7 +20586,7 @@ impl PyKylesLambda {
             let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
             out.push(self.inner.update(quote).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21256,7 +20617,7 @@ impl PyKylesLambda {
 fn footprint_to_array<'py>(
     py: Python<'py>,
     out: &wc::FootprintOutput,
-) -> Bound<'py, PyArray2<f64>> {
+) -> PyResult<Bound<'py, PyAny>> {
     let rows = out.levels.len();
     let mut data = Vec::with_capacity(rows * 3);
     for level in &out.levels {
@@ -21264,9 +20625,7 @@ fn footprint_to_array<'py>(
         data.push(level.bid_vol);
         data.push(level.ask_vol);
     }
-    numpy::ndarray::Array2::from_shape_vec((rows, 3), data)
-        .expect("shape consistent")
-        .into_pyarray(py)
+    matrix(py, data, rows, 3)
 }
 
 #[pyclass(name = "Footprint", module = "wickra._wickra", skip_from_py_object)]
@@ -21289,12 +20648,12 @@ impl PyFootprint {
         price: f64,
         size: f64,
         is_buy: bool,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let out = self
             .inner
             .update(build_trade(price, size, is_buy)?)
             .expect("footprint emits on every trade");
-        Ok(footprint_to_array(py, &out))
+        footprint_to_array(py, &out)
     }
     fn batch<'py>(
         &mut self,
@@ -21302,7 +20661,7 @@ impl PyFootprint {
         price: Vec<f64>,
         size: Vec<f64>,
         is_buy: Vec<bool>,
-    ) -> PyResult<Vec<Bound<'py, PyArray2<f64>>>> {
+    ) -> PyResult<Vec<Bound<'py, PyAny>>> {
         if price.len() != size.len() || size.len() != is_buy.len() {
             return Err(PyValueError::new_err(
                 "price, size, is_buy must be equal length",
@@ -21314,7 +20673,7 @@ impl PyFootprint {
                 .inner
                 .update(build_trade(price[i], size[i], is_buy[i])?)
                 .expect("footprint emits on every trade");
-            out.push(footprint_to_array(py, &snapshot));
+            out.push(footprint_to_array(py, &snapshot)?);
         }
         Ok(out)
     }
@@ -21564,12 +20923,12 @@ impl PyFundingRate {
         &mut self,
         py: Python<'py>,
         funding_rate: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(funding_rate.len());
         for rate in funding_rate {
             out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21615,12 +20974,12 @@ impl PyFundingRateMean {
         &mut self,
         py: Python<'py>,
         funding_rate: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(funding_rate.len());
         for rate in funding_rate {
             out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21666,12 +21025,12 @@ impl PyFundingRateZScore {
         &mut self,
         py: Python<'py>,
         funding_rate: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(funding_rate.len());
         for rate in funding_rate {
             out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21714,7 +21073,7 @@ impl PyFundingBasis {
         py: Python<'py>,
         mark_price: Vec<f64>,
         index_price: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if mark_price.len() != index_price.len() {
             return Err(PyValueError::new_err(
                 "mark_price and index_price must be equal length",
@@ -21728,7 +21087,7 @@ impl PyFundingBasis {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21774,12 +21133,12 @@ impl PyOpenInterestDelta {
         &mut self,
         py: Python<'py>,
         open_interest: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(open_interest.len());
         for oi in open_interest {
             out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21827,7 +21186,7 @@ impl PyOIPriceDivergence {
         py: Python<'py>,
         open_interest: Vec<f64>,
         mark_price: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if open_interest.len() != mark_price.len() {
             return Err(PyValueError::new_err(
                 "open_interest and mark_price must be equal length",
@@ -21841,7 +21200,7 @@ impl PyOIPriceDivergence {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21884,7 +21243,7 @@ impl PyOIWeighted {
         py: Python<'py>,
         mark_price: Vec<f64>,
         open_interest: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if mark_price.len() != open_interest.len() {
             return Err(PyValueError::new_err(
                 "mark_price and open_interest must be equal length",
@@ -21898,7 +21257,7 @@ impl PyOIWeighted {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -21945,7 +21304,7 @@ impl PyLongShortRatio {
         py: Python<'py>,
         long_size: Vec<f64>,
         short_size: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if long_size.len() != short_size.len() {
             return Err(PyValueError::new_err(
                 "long_size and short_size must be equal length",
@@ -21959,7 +21318,7 @@ impl PyLongShortRatio {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22009,7 +21368,7 @@ impl PyTakerBuySellRatio {
         py: Python<'py>,
         taker_buy_volume: Vec<f64>,
         taker_sell_volume: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if taker_buy_volume.len() != taker_sell_volume.len() {
             return Err(PyValueError::new_err(
                 "taker_buy_volume and taker_sell_volume must be equal length",
@@ -22023,7 +21382,7 @@ impl PyTakerBuySellRatio {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22081,7 +21440,7 @@ impl PyLiquidationFeatures {
         py: Python<'py>,
         long_liquidation: Vec<f64>,
         short_liquidation: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if long_liquidation.len() != short_liquidation.len() {
             return Err(PyValueError::new_err(
                 "long_liquidation and short_liquidation must be equal length",
@@ -22103,9 +21462,7 @@ impl PyLiquidationFeatures {
             data.push(out.total);
             data.push(out.imbalance);
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((rows, 5), data)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, data, rows, 5)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22155,7 +21512,7 @@ impl PyTermStructureBasis {
         py: Python<'py>,
         futures_price: Vec<f64>,
         index_price: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if futures_price.len() != index_price.len() {
             return Err(PyValueError::new_err(
                 "futures_price and index_price must be equal length",
@@ -22169,7 +21526,7 @@ impl PyTermStructureBasis {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22218,7 +21575,7 @@ impl PyCalendarSpread {
         py: Python<'py>,
         futures_price: Vec<f64>,
         mark_price: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if futures_price.len() != mark_price.len() {
             return Err(PyValueError::new_err(
                 "futures_price and mark_price must be equal length",
@@ -22232,7 +21589,7 @@ impl PyCalendarSpread {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22287,7 +21644,7 @@ impl PyEstimatedLeverageRatio {
         open_interest: Vec<f64>,
         long_size: Vec<f64>,
         short_size: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if open_interest.len() != long_size.len() || long_size.len() != short_size.len() {
             return Err(PyValueError::new_err(
                 "open_interest, long_size, short_size must be equal length",
@@ -22305,7 +21662,7 @@ impl PyEstimatedLeverageRatio {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22362,7 +21719,7 @@ impl PyOiToVolumeRatio {
         open_interest: Vec<f64>,
         taker_buy_volume: Vec<f64>,
         taker_sell_volume: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if open_interest.len() != taker_buy_volume.len()
             || taker_buy_volume.len() != taker_sell_volume.len()
         {
@@ -22382,7 +21739,7 @@ impl PyOiToVolumeRatio {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22429,7 +21786,7 @@ impl PyPerpetualPremiumIndex {
         py: Python<'py>,
         mark_price: Vec<f64>,
         index_price: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if mark_price.len() != index_price.len() {
             return Err(PyValueError::new_err(
                 "mark_price and index_price must be equal length",
@@ -22443,7 +21800,7 @@ impl PyPerpetualPremiumIndex {
                     .unwrap_or(f64::NAN),
             );
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22489,12 +21846,12 @@ impl PyFundingImpliedApr {
         &mut self,
         py: Python<'py>,
         funding_rate: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(funding_rate.len());
         for r in funding_rate {
             out.push(self.inner.update(deriv_funding(r)?).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22543,12 +21900,12 @@ impl PyOpenInterestMomentum {
         &mut self,
         py: Python<'py>,
         open_interest: Vec<f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         let mut out = Vec::with_capacity(open_interest.len());
         for oi in open_interest {
             out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22633,7 +21990,7 @@ impl PyAdvanceDecline {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -22647,7 +22004,7 @@ impl PyAdvanceDecline {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22765,7 +22122,7 @@ impl PyAdvanceDeclineRatio {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -22779,7 +22136,7 @@ impl PyAdvanceDeclineRatio {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22831,7 +22188,7 @@ impl PyAdVolumeLine {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -22845,7 +22202,7 @@ impl PyAdVolumeLine {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22901,7 +22258,7 @@ impl PyMcClellanOscillator {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -22915,7 +22272,7 @@ impl PyMcClellanOscillator {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -22971,7 +22328,7 @@ impl PyMcClellanSummationIndex {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -22985,7 +22342,7 @@ impl PyMcClellanSummationIndex {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23037,7 +22394,7 @@ impl PyTrin {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23051,7 +22408,7 @@ impl PyTrin {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23103,7 +22460,7 @@ impl PyBreadthThrust {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23117,7 +22474,7 @@ impl PyBreadthThrust {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23173,7 +22530,7 @@ impl PyNewHighsNewLows {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23187,7 +22544,7 @@ impl PyNewHighsNewLows {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23239,7 +22596,7 @@ impl PyHighLowIndex {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23253,7 +22610,7 @@ impl PyHighLowIndex {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23311,7 +22668,7 @@ impl PyPercentAboveMa {
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
         above_ma: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23332,7 +22689,7 @@ impl PyPercentAboveMa {
             )?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23388,7 +22745,7 @@ impl PyUpDownVolumeRatio {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23402,7 +22759,7 @@ impl PyUpDownVolumeRatio {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23464,7 +22821,7 @@ impl PyBullishPercentIndex {
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
         on_buy_signal: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23485,7 +22842,7 @@ impl PyBullishPercentIndex {
             )?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23541,7 +22898,7 @@ impl PyCumulativeVolumeIndex {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23555,7 +22912,7 @@ impl PyCumulativeVolumeIndex {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23611,7 +22968,7 @@ impl PyAbsoluteBreadthIndex {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23625,7 +22982,7 @@ impl PyAbsoluteBreadthIndex {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23677,7 +23034,7 @@ impl PyTickIndex {
         volume: Vec<Vec<f64>>,
         new_high: Vec<Vec<bool>>,
         new_low: Vec<Vec<bool>>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    ) -> PyResult<Bound<'py, PyAny>> {
         if change.len() != volume.len()
             || change.len() != new_high.len()
             || change.len() != new_low.len()
@@ -23691,7 +23048,7 @@ impl PyTickIndex {
             let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
             out.push(self.inner.update(section).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -23735,15 +23092,11 @@ impl PyUpsidePotentialRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -23793,15 +23146,11 @@ impl PyM2Measure {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -23856,15 +23205,11 @@ impl PySharpeRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -23914,15 +23259,11 @@ impl PySortinoRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -23971,15 +23312,11 @@ impl PyCalmarRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24021,15 +23358,11 @@ impl PyOmegaRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24078,15 +23411,11 @@ impl PyMaxDrawdown {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24131,15 +23460,11 @@ impl PyAverageDrawdown {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24184,11 +23509,7 @@ impl PyDrawdownDuration {
     fn update(&mut self, value: f64) -> Option<u32> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24198,7 +23519,7 @@ impl PyDrawdownDuration {
             .into_iter()
             .map(|v| v.map_or(f64::NAN, f64::from))
             .collect();
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -24235,15 +23556,11 @@ impl PyPainIndex {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24285,15 +23602,11 @@ impl PyValueAtRisk {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24347,15 +23660,11 @@ impl PyConditionalValueAtRisk {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24404,15 +23713,11 @@ impl PyProfitFactor {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24453,15 +23758,11 @@ impl PyGainLossRatio {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24506,15 +23807,11 @@ impl PyRecoveryFactor {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -24555,15 +23852,11 @@ impl PyKellyCriterion {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24610,9 +23903,9 @@ impl PyTreynorRatio {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        asset: PyReadonlyArray1<'py, f64>,
-        benchmark: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        asset: Buf1,
+        benchmark: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let a = asset
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24628,7 +23921,7 @@ impl PyTreynorRatio {
         for i in 0..a.len() {
             out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24684,9 +23977,9 @@ impl PyInformationRatio {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        asset: PyReadonlyArray1<'py, f64>,
-        benchmark: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        asset: Buf1,
+        benchmark: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let a = asset
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24702,7 +23995,7 @@ impl PyInformationRatio {
         for i in 0..a.len() {
             out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24747,9 +24040,9 @@ impl PyAlpha {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        asset: PyReadonlyArray1<'py, f64>,
-        benchmark: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        asset: Buf1,
+        benchmark: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let a = asset
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24765,7 +24058,7 @@ impl PyAlpha {
         for i in 0..a.len() {
             out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -24828,11 +24121,7 @@ impl PyRenkoBars {
             .collect())
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let prices = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24847,9 +24136,7 @@ impl PyRenkoBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 3)
     }
     #[getter]
     fn box_size(&self) -> f64 {
@@ -24892,11 +24179,7 @@ impl PyKagiBars {
             .collect())
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[start, end, direction]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let prices = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24911,9 +24194,7 @@ impl PyKagiBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 3)
     }
     #[getter]
     fn reversal(&self) -> f64 {
@@ -24961,11 +24242,7 @@ impl PyPointAndFigureBars {
             .collect())
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[direction, high, low]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let prices = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -24980,9 +24257,7 @@ impl PyPointAndFigureBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 3)
     }
     #[getter]
     fn box_size(&self) -> f64 {
@@ -25033,11 +24308,7 @@ impl PyRangeBars {
             .collect())
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let prices = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -25052,9 +24323,7 @@ impl PyRangeBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 3)
     }
     #[getter]
     fn range(&self) -> f64 {
@@ -25108,12 +24377,12 @@ impl PyTickBars {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let (o, h, l, c, v) = ohlcv_slices(&open, &high, &low, &close, &volume)?;
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
@@ -25124,9 +24393,7 @@ impl PyTickBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 5), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 5)
     }
     #[getter]
     fn ticks(&self) -> usize {
@@ -25180,12 +24447,12 @@ impl PyVolumeBars {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let (o, h, l, c, v) = ohlcv_slices(&open, &high, &low, &close, &volume)?;
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
@@ -25196,9 +24463,7 @@ impl PyVolumeBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 5), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 5)
     }
     #[getter]
     fn volume_per_bar(&self) -> f64 {
@@ -25252,12 +24517,12 @@ impl PyDollarBars {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let (o, h, l, c, v) = ohlcv_slices(&open, &high, &low, &close, &volume)?;
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
@@ -25268,9 +24533,7 @@ impl PyDollarBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 6), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 6)
     }
     #[getter]
     fn dollar_per_bar(&self) -> f64 {
@@ -25325,11 +24588,11 @@ impl PyImbalanceBars {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let (o, h, l, c) = ohlc_slices(&open, &high, &low, &close)?;
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
@@ -25347,9 +24610,7 @@ impl PyImbalanceBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 6), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 6)
     }
     #[getter]
     fn threshold(&self) -> f64 {
@@ -25404,11 +24665,11 @@ impl PyRunBars {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let (o, h, l, c) = ohlc_slices(&open, &high, &low, &close)?;
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
@@ -25427,9 +24688,7 @@ impl PyRunBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 6), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 6)
     }
     #[getter]
     fn run_length(&self) -> usize {
@@ -25477,11 +24736,7 @@ impl PyThreeLineBreakBars {
             .collect())
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let prices = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -25496,9 +24751,7 @@ impl PyThreeLineBreakBars {
                 k += 1;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, rows, k, 3)
     }
     #[getter]
     fn lines(&self) -> usize {
@@ -25524,13 +24777,13 @@ impl PyThreeLineBreakBars {
 // bindings consume the FULL candle (open, high, low, close, volume, timestamp)
 // — unlike the high/low/close candle indicators above.
 
-fn build_seasonality_candles<'py>(
-    open: &PyReadonlyArray1<'py, f64>,
-    high: &PyReadonlyArray1<'py, f64>,
-    low: &PyReadonlyArray1<'py, f64>,
-    close: &PyReadonlyArray1<'py, f64>,
-    volume: &PyReadonlyArray1<'py, f64>,
-    timestamp: &PyReadonlyArray1<'py, i64>,
+fn build_seasonality_candles(
+    open: &Buf1,
+    high: &Buf1,
+    low: &Buf1,
+    close: &Buf1,
+    volume: &Buf1,
+    timestamp: &BufI64,
 ) -> PyResult<Vec<wc::Candle>> {
     let o = open
         .as_slice()
@@ -25589,20 +24842,20 @@ macro_rules! py_seasonality_offset_scalar {
             fn batch<'py>(
                 &mut self,
                 py: Python<'py>,
-                open: PyReadonlyArray1<'py, f64>,
-                high: PyReadonlyArray1<'py, f64>,
-                low: PyReadonlyArray1<'py, f64>,
-                close: PyReadonlyArray1<'py, f64>,
-                volume: PyReadonlyArray1<'py, f64>,
-                timestamp: PyReadonlyArray1<'py, i64>,
-            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                open: Buf1,
+                high: Buf1,
+                low: Buf1,
+                close: Buf1,
+                volume: Buf1,
+                timestamp: BufI64,
+            ) -> PyResult<Bound<'py, PyAny>> {
                 let candles =
                     build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
                 let out: Vec<f64> = candles
                     .into_iter()
                     .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
                     .collect();
-                Ok(out.into_pyarray(py))
+                out.into_pydata(py)
             }
             #[getter]
             fn utc_offset_minutes(&self) -> i32 {
@@ -25652,21 +24905,24 @@ macro_rules! py_seasonality_bucket_profile {
                 &mut self,
                 py: Python<'py>,
                 candle: &Bound<'_, PyAny>,
-            ) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
+            ) -> PyResult<Option<Bound<'py, PyAny>>> {
                 let c = extract_candle(candle)?;
-                Ok(self.inner.update(c).map(|o| o.bins.into_pyarray(py)))
+                self.inner
+                    .update(c)
+                    .map(|o| f64_array(py, &o.bins))
+                    .transpose()
             }
             #[allow(clippy::too_many_arguments)]
             fn batch<'py>(
                 &mut self,
                 py: Python<'py>,
-                open: PyReadonlyArray1<'py, f64>,
-                high: PyReadonlyArray1<'py, f64>,
-                low: PyReadonlyArray1<'py, f64>,
-                close: PyReadonlyArray1<'py, f64>,
-                volume: PyReadonlyArray1<'py, f64>,
-                timestamp: PyReadonlyArray1<'py, i64>,
-            ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+                open: Buf1,
+                high: Buf1,
+                low: Buf1,
+                close: Buf1,
+                volume: Buf1,
+                timestamp: BufI64,
+            ) -> PyResult<Bound<'py, PyAny>> {
                 let candles =
                     build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
                 let k = self.inner.params().0;
@@ -25679,9 +24935,7 @@ macro_rules! py_seasonality_bucket_profile {
                         }
                     }
                 }
-                Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
-                    .expect("shape consistent")
-                    .into_pyarray(py))
+                matrix(py, out, n, k)
             }
             #[getter]
             fn params(&self) -> (usize, i32) {
@@ -25728,21 +24982,24 @@ macro_rules! py_seasonality_offset_profile {
                 &mut self,
                 py: Python<'py>,
                 candle: &Bound<'_, PyAny>,
-            ) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
+            ) -> PyResult<Option<Bound<'py, PyAny>>> {
                 let c = extract_candle(candle)?;
-                Ok(self.inner.update(c).map(|o| o.bins.into_pyarray(py)))
+                self.inner
+                    .update(c)
+                    .map(|o| f64_array(py, &o.bins))
+                    .transpose()
             }
             #[allow(clippy::too_many_arguments)]
             fn batch<'py>(
                 &mut self,
                 py: Python<'py>,
-                open: PyReadonlyArray1<'py, f64>,
-                high: PyReadonlyArray1<'py, f64>,
-                low: PyReadonlyArray1<'py, f64>,
-                close: PyReadonlyArray1<'py, f64>,
-                volume: PyReadonlyArray1<'py, f64>,
-                timestamp: PyReadonlyArray1<'py, i64>,
-            ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+                open: Buf1,
+                high: Buf1,
+                low: Buf1,
+                close: Buf1,
+                volume: Buf1,
+                timestamp: BufI64,
+            ) -> PyResult<Bound<'py, PyAny>> {
                 let candles =
                     build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
                 let k = $k;
@@ -25755,9 +25012,7 @@ macro_rules! py_seasonality_offset_profile {
                         }
                     }
                 }
-                Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
-                    .expect("shape consistent")
-                    .into_pyarray(py))
+                matrix(py, out, n, k)
             }
             #[getter]
             fn utc_offset_minutes(&self) -> i32 {
@@ -25832,19 +25087,19 @@ impl PyAverageDailyRange {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-        timestamp: PyReadonlyArray1<'py, i64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+        timestamp: BufI64,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
         let out: Vec<f64> = candles
             .into_iter()
             .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
             .collect();
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, i32) {
@@ -25890,19 +25145,19 @@ impl PyTurnOfMonth {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-        timestamp: PyReadonlyArray1<'py, i64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+        timestamp: BufI64,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
         let out: Vec<f64> = candles
             .into_iter()
             .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
             .collect();
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (u32, u32, i32) {
@@ -25953,13 +25208,13 @@ impl PySessionHighLow {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-        timestamp: PyReadonlyArray1<'py, i64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+        timestamp: BufI64,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
         let n = candles.len();
         let mut out = vec![f64::NAN; n * 2];
@@ -25969,9 +25224,7 @@ impl PySessionHighLow {
                 out[i * 2 + 1] = o.low;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn utc_offset_minutes(&self) -> i32 {
@@ -26020,13 +25273,13 @@ impl PySessionRange {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-        timestamp: PyReadonlyArray1<'py, i64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+        timestamp: BufI64,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
         let n = candles.len();
         let mut out = vec![f64::NAN; n * 3];
@@ -26037,9 +25290,7 @@ impl PySessionRange {
                 out[i * 3 + 2] = o.us;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn utc_offset_minutes(&self) -> i32 {
@@ -26092,13 +25343,13 @@ impl PyOvernightIntradayReturn {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        open: PyReadonlyArray1<'py, f64>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-        timestamp: PyReadonlyArray1<'py, i64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        open: Buf1,
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+        timestamp: BufI64,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
         let n = candles.len();
         let mut out = vec![f64::NAN; n * 2];
@@ -26108,9 +25359,7 @@ impl PyOvernightIntradayReturn {
                 out[i * 2 + 1] = o.intraday;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     #[getter]
     fn utc_offset_minutes(&self) -> i32 {
@@ -26184,9 +25433,9 @@ impl PyFibRetracement {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26212,9 +25461,7 @@ impl PyFibRetracement {
                 out[i * 7 + 6] = o.level_1000;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 7)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26265,9 +25512,9 @@ impl PyFibExtension {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26291,9 +25538,7 @@ impl PyFibExtension {
                 out[i * 5 + 4] = o.level_2618;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 5)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26339,9 +25584,9 @@ impl PyFibProjection {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26364,9 +25609,7 @@ impl PyFibProjection {
                 out[i * 4 + 3] = o.level_2618;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26419,9 +25662,9 @@ impl PyAutoFib {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26447,9 +25690,7 @@ impl PyAutoFib {
                 out[i * 7 + 6] = o.level_1000;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 7)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26492,9 +25733,9 @@ impl PyGoldenPocket {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26516,9 +25757,7 @@ impl PyGoldenPocket {
                 out[i * 3 + 2] = o.high;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26561,9 +25800,9 @@ impl PyFibConfluence {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26584,9 +25823,7 @@ impl PyFibConfluence {
                 out[i * 2 + 1] = o.strength;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26632,9 +25869,9 @@ impl PyFibFan {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26656,9 +25893,7 @@ impl PyFibFan {
                 out[i * 3 + 2] = o.fan_618;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26704,9 +25939,9 @@ impl PyFibArcs {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26728,9 +25963,7 @@ impl PyFibArcs {
                 out[i * 3 + 2] = o.arc_618;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26776,9 +26009,9 @@ impl PyFibChannel {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26801,9 +26034,7 @@ impl PyFibChannel {
                 out[i * 4 + 3] = o.level_1618;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 4)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26846,9 +26077,9 @@ impl PyFibTimeZones {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -26869,9 +26100,7 @@ impl PyFibTimeZones {
                 out[i * 2 + 1] = o.bars_to_next;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 2)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -26915,15 +26144,11 @@ impl PyEwmaVolatility {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn lambda_(&self) -> f64 {
@@ -26968,15 +26193,11 @@ impl PyGarch11 {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (f64, f64, f64) {
@@ -27029,15 +26250,11 @@ impl PyVolatilityOfVolatility {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn windows(&self) -> (usize, usize) {
@@ -27093,10 +26310,10 @@ impl PyVolatilityCone {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27123,9 +26340,7 @@ impl PyVolatilityCone {
                 out[i * 5 + 4] = o.percentile;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 5)
     }
     #[getter]
     fn windows(&self) -> (usize, usize) {
@@ -27171,9 +26386,9 @@ impl PyVolumeRsi {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27190,7 +26405,7 @@ impl PyVolumeRsi {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -27238,10 +26453,10 @@ impl PyWad {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27261,7 +26476,7 @@ impl PyWad {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -27310,11 +26525,11 @@ impl PyTwiggsMoneyFlow {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27337,7 +26552,7 @@ impl PyTwiggsMoneyFlow {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], vol[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -27390,9 +26605,9 @@ impl PyTradeVolumeIndex {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27409,7 +26624,7 @@ impl PyTradeVolumeIndex {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn min_tick(&self) -> f64 {
@@ -27461,11 +26676,11 @@ impl PyIntradayIntensity {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27488,7 +26703,7 @@ impl PyIntradayIntensity {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], vol[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -27533,11 +26748,11 @@ impl PyBetterVolume {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        high: PyReadonlyArray1<'py, f64>,
-        low: PyReadonlyArray1<'py, f64>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        high: Buf1,
+        low: Buf1,
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let h = high
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27560,7 +26775,7 @@ impl PyBetterVolume {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], vol[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -27617,9 +26832,9 @@ impl PyVolumeWeightedMacd {
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
-        close: PyReadonlyArray1<'py, f64>,
-        volume: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        close: Buf1,
+        volume: Buf1,
+    ) -> PyResult<Bound<'py, PyAny>> {
         let c = close
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27641,9 +26856,7 @@ impl PyVolumeWeightedMacd {
                 out[i * 3 + 2] = o.histogram;
             }
         }
-        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
-            .expect("shape consistent")
-            .into_pyarray(py))
+        matrix(py, out, n, 3)
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -27688,15 +26901,11 @@ impl PyShannonEntropy {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, usize) {
@@ -27745,15 +26954,11 @@ impl PySampleEntropy {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, usize, f64) {
@@ -27803,12 +27008,7 @@ impl PyKendallTau {
         self.inner.update((x, y))
     }
     /// Batch over two equally-sized numpy arrays.
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        x: PyReadonlyArray1<'py, f64>,
-        y: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = x
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
@@ -27822,7 +27022,7 @@ impl PyKendallTau {
         for i in 0..xs.len() {
             out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray(py))
+        out.into_pydata(py)
     }
     #[getter]
     fn period(&self) -> usize {
@@ -27870,15 +27070,11 @@ impl PyBandpassFilter {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -27931,15 +27127,11 @@ impl PyEvenBetterSinewave {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn params(&self) -> (usize, usize) {
@@ -27988,15 +27180,11 @@ impl PyAutocorrelationPeriodogram {
     fn update(&mut self, value: f64) -> Option<f64> {
         self.inner.update(value)
     }
-    fn batch<'py>(
-        &mut self,
-        py: Python<'py>,
-        prices: PyReadonlyArray1<'py, f64>,
-    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+    fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+        self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {

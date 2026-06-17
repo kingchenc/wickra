@@ -15,8 +15,23 @@ import pytest
 import wickra as ta
 
 
-def _equal_with_nan(a: np.ndarray, b: np.ndarray, tol: float = 1e-9) -> bool:
+def _to_np(x) -> np.ndarray:
+    """Normalize a Wickra batch result to a float64 ndarray.
+
+    Scalar batches return a stdlib ``array.array``; multi-output batches return a
+    ``Matrix`` exposing ``.shape``/``.tolist()``.
+    """
+    if isinstance(x, np.ndarray):
+        return x.astype(np.float64)
+    if hasattr(x, "tolist") and hasattr(x, "shape"):
+        return np.asarray(x.tolist(), dtype=np.float64)
+    return np.asarray(x, dtype=np.float64)
+
+
+def _equal_with_nan(a, b, tol: float = 1e-9) -> bool:
     """NumPy ``==`` treats NaN as not-equal; emulate ``equal_nan`` for floats."""
+    a = _to_np(a)
+    b = _to_np(b)
     if a.shape != b.shape:
         return False
     both_nan = np.isnan(a) & np.isnan(b)

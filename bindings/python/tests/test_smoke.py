@@ -24,8 +24,8 @@ def test_version_is_a_nonempty_string():
 )
 def test_scalar_batch_returns_same_length(cls, args, sine_prices):
     out = cls(*args).batch(sine_prices)
-    assert out.shape == sine_prices.shape
-    assert out.dtype == np.float64
+    assert len(out) == len(sine_prices)
+    assert out.typecode == "d"
 
 
 def test_macd_batch_returns_n_by_3(sine_prices):
@@ -41,7 +41,7 @@ def test_bollinger_batch_returns_n_by_4(sine_prices):
 def test_atr_batch_shape(ohlc_series):
     high, low, close = ohlc_series
     out = ta.ATR(14).batch(high, low, close)
-    assert out.shape == close.shape
+    assert len(out) == len(close)
 
 
 def test_stochastic_batch_shape(ohlc_series):
@@ -54,7 +54,7 @@ def test_obv_batch_shape(ohlc_series):
     _, _, close = ohlc_series
     volume = np.ones_like(close)
     out = ta.OBV().batch(close, volume)
-    assert out.shape == close.shape
+    assert len(out) == len(close)
 
 
 def test_value_area_batch_shape(ohlc_series):
@@ -91,7 +91,7 @@ def test_heikin_ashi_batch_returns_n_by_4(ohlc_series):
 
 def test_ehlers_super_smoother_batch_shape(sine_prices):
     out = ta.SuperSmoother(10).batch(sine_prices)
-    assert out.shape == sine_prices.shape
+    assert len(out) == len(sine_prices)
 
 
 def test_mama_batch_shape(sine_prices):
@@ -118,8 +118,8 @@ def test_orderbook_indicators_construct_and_emit():
 def test_orderbook_batch_returns_one_value_per_snapshot():
     snapshots = [([100.0], [3.0], [101.0], [1.0])] * 5
     out = ta.OrderBookImbalanceTop1().batch(snapshots)
-    assert out.shape == (5,)
-    assert out.dtype == np.float64
+    assert len(out) == 5
+    assert out.typecode == "d"
 
 
 def test_tradeflow_indicators_construct_and_emit():
@@ -134,8 +134,8 @@ def test_tradeflow_batch_returns_one_value_per_trade():
     size = np.array([1.0, 2.0, 3.0, 1.0, 2.0, 3.0])
     is_buy = [True, False, True, False, True, False]
     out = ta.CumulativeVolumeDelta().batch(price, size, is_buy)
-    assert out.shape == (6,)
-    assert out.dtype == np.float64
+    assert len(out) == 6
+    assert out.typecode == "d"
 
 
 def test_price_impact_indicators_construct_and_emit():
@@ -152,14 +152,14 @@ def test_price_impact_batch_returns_one_value_per_trade():
     mid = np.full(4, 100.0)
     for ind in (ta.EffectiveSpread(), ta.RealizedSpread(2), ta.KylesLambda(2)):
         out = ind.batch(price, size, is_buy, mid)
-        assert out.shape == (4,)
-        assert out.dtype == np.float64
+        assert len(out) == 4
+        assert out.typecode == "d"
 
 
 def test_footprint_constructs_and_emits():
     out = ta.Footprint(1.0).update(100.2, 2.0, True)
     assert out.shape == (1, 3)
-    assert out.dtype == np.float64
+    assert isinstance(out[0, 0], float)
 
 
 def test_footprint_batch_returns_list_of_arrays():

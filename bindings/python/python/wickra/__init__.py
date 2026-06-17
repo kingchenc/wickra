@@ -1,23 +1,34 @@
 """Wickra: streaming-first technical indicators.
 
 Every indicator is available both in streaming mode (call ``update(value)`` per
-new data point) and batch mode (call ``batch(numpy_array)`` over a full series).
-Warmup positions in batch output are returned as ``NaN`` so the shape always
+new data point) and batch mode (call ``batch(series)`` over a full series).
+Warmup positions in batch output are returned as ``NaN`` so the length always
 matches the input.
+
+Wickra has **zero third-party dependencies**. Batch inputs accept any sequence or
+buffer of numbers (``array.array``, ``memoryview``, a NumPy array, or a plain
+``list``); single-output batches return a stdlib ``array.array('d')`` and
+multi-output indicators return a ``Matrix`` (with ``.shape`` and ``[i, j]``
+access). Both expose the buffer protocol, so ``numpy.asarray(result)`` wraps a
+1-D result zero-copy when NumPy is installed — but NumPy is never required.
 
 Example::
 
-    import numpy as np
+    import array
     import wickra as ta
 
-    prices = np.linspace(100, 200, 1000)
+    prices = array.array("d", [100.0 + i * 0.1 for i in range(1000)])
     rsi = ta.RSI(14)
-    values = rsi.batch(prices)        # numpy array, NaN during warmup
+    values = rsi.batch(prices)        # array.array('d'), NaN during warmup
 
     # Or streaming:
     rsi = ta.RSI(14)
     for p in prices:
         v = rsi.update(p)             # None during warmup, then float
+
+    # Optional NumPy interop (zero-copy):
+    #   import numpy as np
+    #   np.asarray(values)
 
 """
 
