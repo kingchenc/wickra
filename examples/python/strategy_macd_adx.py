@@ -101,7 +101,7 @@ def main() -> None:
 
     for c in candles:
         macd_out = macd.update(c["close"])
-        adx_out = adx.update(c["high"], c["low"], c["close"])
+        adx_out = adx.update(c)
         price = c["close"]
         mtm = equity * (price / entry_price) if in_position else equity
         equity_curve.append(mtm)
@@ -112,7 +112,7 @@ def main() -> None:
         # MACD output is a (macd, signal, histogram) tuple/object across
         # bindings. The Python binding returns a namedtuple.
         histogram = macd_out[2] if isinstance(macd_out, tuple) else macd_out.histogram
-        adx_value = adx_out[0] if isinstance(adx_out, tuple) else adx_out.adx
+        adx_value = adx_out[2] if isinstance(adx_out, tuple) else adx_out.adx
 
         hist_sign = histogram > 0.0
         cross_up = prev_hist_sign is False and hist_sign

@@ -1,4 +1,11 @@
-// Mean reversion: go long when RSI(14) drops below 30, exit when it recovers above 50.
+// Strategy example: RSI(14) mean-reversion.
+//
+// Go long when RSI(14) drops below 30 (oversold), exit when it recovers above
+// 70 (overbought). 0.1% fees per trade. The Go counterpart of
+// examples/python/strategy_rsi_mean_reversion.py, printing the same summary.
+//
+// Uses the checked-in examples/data/btcusdt-1h.csv dataset (pass a CSV path to
+// override).
 package main
 
 import (
@@ -10,33 +17,57 @@ import (
 	"github.com/wickra-lib/wickra/examples/go/internal/market"
 )
 
+const (
+	fee        = 0.001
+	oversold   = 30.0
+	overbought = 70.0
+)
+
 func main() {
 	bars := loadBars()
 
 	rsi, _ := wickra.NewRsi(14)
 	defer rsi.Close()
 
-	var returns []float64
-	trades := 0
 	inPosition := false
-	entry := 0.0
+	entryPrice := 0.0
+	var closedTrades []float64
+	equity := 1.0
+	var equityCurve []float64
 
 	for _, b := range bars {
 		value := rsi.Update(b.Close)
+		price := b.Close
+		mtm := equity
+		if inPosition {
+			mtm = equity * (price / entryPrice)
+		}
+		equityCurve = append(equityCurve, mtm)
 		if math.IsNaN(value) {
 			continue
 		}
-		if !inPosition && value < 30.0 {
+
+		if !inPosition && value < oversold {
+			entryPrice = price
+			equity *= 1.0 - fee
 			inPosition = true
-			entry = b.Close
-			trades++
-		} else if inPosition && value > 50.0 {
-			returns = append(returns, (b.Close-entry)/entry)
+		} else if inPosition && value > overbought {
+			tradeRet := price/entryPrice - 1.0
+			closedTrades = append(closedTrades, tradeRet)
+			equity *= (1.0 + tradeRet) * (1.0 - fee)
 			inPosition = false
 		}
 	}
 
-	market.Print("RSI mean-reversion", market.Summarize(returns, trades, 252.0))
+	if inPosition {
+		lastPrice := bars[len(bars)-1].Close
+		tradeRet := lastPrice/entryPrice - 1.0
+		closedTrades = append(closedTrades, tradeRet)
+		equity *= (1.0 + tradeRet) * (1.0 - fee)
+	}
+
+	market.PrintSummary("RSI Mean-Reversion (1h, BTCUSDT)",
+		bars[0].Close, bars[len(bars)-1].Close, len(bars), closedTrades, equity, equityCurve)
 }
 
 func loadBars() []market.Bar {
@@ -47,5 +78,5 @@ func loadBars() []market.Bar {
 		}
 		return bars
 	}
-	return market.SyntheticCandles(2000)
+	return market.BundledCandles("btcusdt-1h.csv")
 }
