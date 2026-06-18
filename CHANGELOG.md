@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.6] - 2026-06-18
+
+Documentation release for the R binding. The library API and every indicator
+are unchanged from `0.9.5`; only the R package's help pages change.
+
+### Fixed
+- **R package: document the data-layer exports and refresh the man pages.**
+  r-universe's `R CMD check` reported two warnings against the `0.9.3` data layer
+  it built for the first time in `0.9.5`: twelve undocumented exported objects
+  (`BinanceFeed`, `CandleReader`, `Resampler`, `TickAggregator`,
+  `fetch_binance_klines` and the `name` / `is_ready` / `warmup_period` / `push` /
+  `read` generics) and a codoc mismatch on `AwesomeOscillatorHistogram` (its help
+  page still listed `sma_period` after the argument was renamed to `lookback`).
+  The roxygen sources existed but the `man/*.Rd` had never been regenerated; they
+  are now complete, and a `push()` example that constructed a `TickAggregator`
+  without its required `gap_fill` argument is fixed. CI now runs `R CMD check` so
+  documentation drift fails the pull request instead of surfacing on r-universe.
+
+
 ## [0.9.5] - 2026-06-17
 
 Maintenance release. The library API and every indicator are unchanged from
@@ -1853,7 +1872,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.5...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.6...HEAD
+[0.9.6]: https://github.com/wickra-lib/wickra/compare/v0.9.5...v0.9.6
 [0.9.5]: https://github.com/wickra-lib/wickra/compare/v0.9.4...v0.9.5
 [0.9.4]: https://github.com/wickra-lib/wickra/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/wickra-lib/wickra/compare/v0.9.2...v0.9.3
