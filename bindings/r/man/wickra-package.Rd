@@ -24,11 +24,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Wickra contributors \email{support@wickra.org}
+\strong{Maintainer}: kingchenc \email{support@wickra.org}
 
 Authors:
 \itemize{
-  \item Wickra contributors \email{support@wickra.org}
+  \item kingchenc \email{support@wickra.org}
 }
 
 }
