@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.wickra</groupId>
       <artifactId>wickra</artifactId>
-      <version>0.8.2</version>
+      <version>0.8.8</version>
     </dependency>
   </dependencies>
 
