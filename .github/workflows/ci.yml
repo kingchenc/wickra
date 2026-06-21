@@ -209,7 +209,7 @@ jobs:
       - name: Set up Python
         id: setup_python
         continue-on-error: true
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
 
@@ -222,7 +222,7 @@ jobs:
 
       - name: Set up Python (retry)
         if: steps.setup_python.outcome == 'failure'
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
 
@@ -345,7 +345,7 @@ jobs:
         timeout-minutes: 6
 
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # v2.81.6
+        uses: taiki-e/install-action@7a79fe8c3a13344501c80d99cae481c1c9085912 # v2.81.10
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-llvm-cov
@@ -358,7 +358,7 @@ jobs:
           --lcov --output-path lcov.info
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           files: lcov.info
           fail_ci_if_error: false
@@ -415,7 +415,7 @@ jobs:
         # attributes the modern nightly compiler rejects, so the install
         # never gets off the ground. The prebuilt binary avoids the entire
         # transitive-dep compile.
-        uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # v2.81.6
+        uses: taiki-e/install-action@7a79fe8c3a13344501c80d99cae481c1c9085912 # v2.81.10
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-fuzz
@@ -549,7 +549,7 @@ jobs:
         # same taiki-e prebuilt-binary installer we already use for
         # cargo-llvm-cov and cargo-fuzz; it tracks the latest wasm-pack
         # release, which has `--features` as a top-level flag (since 0.12).
-        uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # v2.81.6
+        uses: taiki-e/install-action@7a79fe8c3a13344501c80d99cae481c1c9085912 # v2.81.10
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: wasm-pack
@@ -676,7 +676,7 @@ jobs:
         timeout-minutes: 6
 
       - name: Install cbindgen
-        uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # v2.81.6
+        uses: taiki-e/install-action@7a79fe8c3a13344501c80d99cae481c1c9085912 # v2.81.10
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cbindgen
