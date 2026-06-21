@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.7] - 2026-06-21
+
+Maintenance release. The library API and every indicator are unchanged from
+`0.9.6`; this release carries an R package metadata fix and routine dependency
+and CI tooling updates.
+
+### Fixed
+- **R package: credit `kingchenc` as the package author and maintainer.** The R
+  `DESCRIPTION` was the only binding still listing "Wickra contributors" as the
+  sole `aut`/`cre` — an outlier introduced when the binding was added. It now
+  matches the Python, Node, and Rust core metadata, the package `.Rd` is
+  regenerated, and the binding `LICENSE` copyright holder is aligned with the
+  root `LICENSE-MIT`.
+
+### Changed
+- **Dependency and CI housekeeping.** Bump the C# test dependencies
+  (`Microsoft.NET.Test.Sdk`, `xunit`, `xunit.runner.visualstudio`), the GitHub
+  Actions used by CI (`setup-python`, `upload-artifact`, `codecov-action`,
+  `taiki-e/install-action`), and the Java benchmark's `org.wickra:wickra`
+  dependency. No runtime code changes.
+
 ## [0.9.6] - 2026-06-18
 
 Documentation release for the R binding. The library API and every indicator
@@ -1872,7 +1893,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.6...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.7...HEAD
+[0.9.7]: https://github.com/wickra-lib/wickra/compare/v0.9.6...v0.9.7
 [0.9.6]: https://github.com/wickra-lib/wickra/compare/v0.9.5...v0.9.6
 [0.9.5]: https://github.com/wickra-lib/wickra/compare/v0.9.4...v0.9.5
 [0.9.4]: https://github.com/wickra-lib/wickra/compare/v0.9.3...v0.9.4
