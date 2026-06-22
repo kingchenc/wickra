@@ -1146,3 +1146,22 @@ jobs:
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on
   # the every-push / every-PR critical path.
+
+  # Non-blocking external-link heads-up on PRs. The authoritative check is the
+  # scheduled links.yml; here it only surfaces link rot early without ever
+  # gating a PR — external sites flake (rate limits, transient outages, moves),
+  # so `continue-on-error` keeps a third-party hiccup from blocking the merge.
+  # Redirects are reported as warnings (lychee only fails on hard errors).
+  links:
+    name: External links (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2
+        with:
+          args: --config lychee.toml --no-progress --root-dir "${{ github.workspace }}" "*.md" "bindings/*/README.md"
+          fail: true
