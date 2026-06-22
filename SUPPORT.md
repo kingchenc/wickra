@@ -11,7 +11,7 @@ Most questions are answered in the documentation:
   data layer, and an FAQ.
 - **README:** <https://github.com/wickra-lib/wickra#readme> — installation and a
   quick overview.
-- **API docs (Rust):** <https://docs.rs/wickra>.
+- **API docs (Rust):** <https://docs.rs/wickra/latest/wickra/>.
 
 ## Questions and help
 
