@@ -17,7 +17,9 @@ exclude_all_private = true
 # non-browser client):
 # - crates.io and npmjs.com return 403/404 to non-browser requests
 #   (anti-scraping); the package pages are live in a browser.
+# TODO(deploy): drop the live.wickra.org exclude once the wickra-live site is up.
 exclude = [
   'crates\.io/crates/',
   'www\.npmjs\.com/package/',
+  'live\.wickra\.org',
 ]
