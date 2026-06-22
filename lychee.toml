@@ -1,0 +1,23 @@
+# lychee external-link checker config (see .github/workflows/links.yml).
+# Only http(s) URLs are checked; relative/internal links are skipped via the
+# scheme filter and --root-dir resolution. Loopback and private addresses are
+# skipped too.
+
+max_retries = 3
+retry_wait_time = 2
+timeout = 20
+
+# Treat these as success: OK, partial content, and rate-limited (transient).
+accept = [200, 206, 429]
+
+scheme = ["https", "http"]
+exclude_all_private = true
+
+# Known false positives (the URLs are valid; lychee just can't verify them as a
+# non-browser client):
+# - crates.io and npmjs.com return 403/404 to non-browser requests
+#   (anti-scraping); the package pages are live in a browser.
+exclude = [
+  'crates\.io/crates/',
+  'www\.npmjs\.com/package/',
+]
