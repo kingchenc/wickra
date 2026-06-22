@@ -5,6 +5,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.wickra/wickra.svg?logo=apache-maven&color=blue)](https://central.sonatype.com/artifact/org.wickra/wickra)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT_OR_Apache--2.0-blue)](https://github.com/wickra-lib/wickra#license)
 
+> **▶ Live demo:** all 514 indicators over real Binance market data, computed live in your browser — **[live.wickra.org](https://live.wickra.org)** · zero backend, powered by `wickra-wasm`.
+
 **Streaming-first technical indicators for the JVM, on the Java Foreign Function
 & Memory API — prebuilt native library, no JNI, no system dependencies.**
 

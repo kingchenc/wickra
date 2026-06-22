@@ -5,6 +5,8 @@
 [![NuGet](https://img.shields.io/nuget/v/Wickra.svg?logo=nuget&color=blue)](https://www.nuget.org/packages/Wickra)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT_OR_Apache--2.0-blue)](https://github.com/wickra-lib/wickra#license)
 
+> **▶ Live demo:** all 514 indicators over real Binance market data, computed live in your browser — **[live.wickra.org](https://live.wickra.org)** · zero backend, powered by `wickra-wasm`.
+
 **Streaming-first technical indicators for C#. `dotnet add package Wickra` —
 prebuilt native library, no system dependencies.**
 
