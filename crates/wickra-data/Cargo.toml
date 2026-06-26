@@ -43,7 +43,7 @@ url = { version = "2", optional = true }
 # OpenSSL) — the same backend tokio-tungstenite uses above — so it ships no
 # bundled CA roots. (ureq 3.x hard-depends on `webpki-root-certs` regardless of
 # TLS backend, which is CDLA-Permissive-2.0 and dead weight under native-tls.)
-ureq = { version = "2", default-features = false, features = ["native-tls"], optional = true }
+ureq = { version = "3", default-features = false, features = ["native-tls"], optional = true }
 # Direct dependency so the agent can be built with a native-tls connector (ureq
 # 2.x does not auto-configure native-tls). Already in the tree via tokio-tungstenite.
 native-tls = { version = "0.2", optional = true }
