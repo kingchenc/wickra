@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.8] - 2026-06-28
+
+Maintenance release. The library API and every indicator are unchanged from
+`0.9.7`; this release migrates the Node.js binding's build to napi-rs 3 and
+carries routine dependency and CI tooling updates.
+
+### Changed
+- **Node binding built with napi-rs 3.** Migrate `napi` 2.16 → 3.9, `napi-derive`
+  2.16 → 3.5 (Rust) and `@napi-rs/cli` 2.18 → 3.7 (npm). The published API and
+  every computed value are unchanged — the generated TypeScript surface is
+  identical (626 symbols), only the code-generation format differs. napi 3's
+  derive macros emit `#[allow(unsafe_code)]`, so the Node crate's `unsafe_code`
+  lint is relaxed from the workspace `forbid` to `deny` for that crate only;
+  `forbid` stays in force for every other crate. The `engines.node` floor is
+  raised to `>= 22` (matching the CI test matrix). `ureq` is intentionally held
+  at 2.x — ureq 3 unconditionally pulls `webpki-root-certs` (CDLA-Permissive-2.0),
+  which the native-tls / OS-trust-store setup deliberately avoids.
+- **Dependency and CI housekeeping.** Bump the Maven
+  `central-publishing-maven-plugin` and the GitHub Actions used by CI
+  (`actions/checkout`, `taiki-e/install-action`, `actions/setup-java`,
+  `softprops/action-gh-release`). No runtime code changes.
+
 ## [0.9.7] - 2026-06-21
 
 Maintenance release. The library API and every indicator are unchanged from
@@ -1893,7 +1915,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.7...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.8...HEAD
+[0.9.8]: https://github.com/wickra-lib/wickra/compare/v0.9.7...v0.9.8
 [0.9.7]: https://github.com/wickra-lib/wickra/compare/v0.9.6...v0.9.7
 [0.9.6]: https://github.com/wickra-lib/wickra/compare/v0.9.5...v0.9.6
 [0.9.5]: https://github.com/wickra-lib/wickra/compare/v0.9.4...v0.9.5
