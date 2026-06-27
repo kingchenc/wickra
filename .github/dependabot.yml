@@ -10,9 +10,22 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(cargo)"
+    # ureq is intentionally pinned to 2.x. ureq 3 unconditionally pulls
+    # webpki-root-certs (CDLA-Permissive-2.0); the native-tls / OS-trust-store
+    # setup in wickra-data deliberately avoids that licence. Block the major
+    # bump (2.x patch/minor still flow through).
+    ignore:
+      - dependency-name: "ureq"
+        update-types: ["version-update:semver-major"]
     groups:
+      # napi-rs (napi / napi-derive / napi-build) is a coordinated major
+      # migration that must move with @napi-rs/cli on the npm side — keep it in
+      # its own PR rather than bundled with unrelated crate bumps.
+      napi:
+        patterns: ["napi", "napi-derive", "napi-build"]
       cargo:
         patterns: ["*"]
+        exclude-patterns: ["napi", "napi-derive", "napi-build"]
 
   # Node binding npm dependencies.
   - package-ecosystem: npm
