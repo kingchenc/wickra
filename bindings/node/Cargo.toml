@@ -20,14 +20,35 @@ publish = false
 [lib]
 crate-type = ["cdylib"]
 
-[lints]
-workspace = true
+# Mirrors [workspace.lints] (the source of truth) EXCEPT `unsafe_code`, which is
+# relaxed from the workspace `forbid` to `deny`: the napi-rs 3 derive macros emit
+# `#[allow(unsafe_code)]`, which `forbid` cannot permit. `deny` still fails the
+# build on any unguarded unsafe in our own code. Keep this list in sync with the
+# workspace if its lints change.
+[lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+unreachable_pub = "warn"
+unused_must_use = "deny"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+similar_names = "allow"
+float_cmp = "allow"
 
 [dependencies]
 wickra-core = { workspace = true }
 wickra-data = { workspace = true, features = ["live-binance"] }
-napi = { version = "2.16", features = ["napi8"] }
-napi-derive = "2.16"
+napi = { version = "3.9", features = ["napi8"] }
+napi-derive = "3.5"
 # Drives the async Binance feed behind the blocking poll.
 tokio = { version = "1", features = ["rt", "net", "time"] }
 

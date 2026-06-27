@@ -44,7 +44,7 @@
     }
   },
   "engines": {
-    "node": ">= 20"
+    "node": ">= 22"
   },
   "optionalDependencies": {
     "wickra-linux-x64-gnu": "0.9.7",
@@ -64,6 +64,6 @@
     "bench": "node benchmarks/throughput.js"
   },
   "devDependencies": {
-    "@napi-rs/cli": "^2.18.0"
+    "@napi-rs/cli": "^3.7.2"
   }
 }
