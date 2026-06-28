@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.9] - 2026-06-28
+
+Maintenance release. No library or binding code changes from `0.9.8`; this
+re-release simply runs through the corrected release workflow (the `0.9.8` npm
+publish required a hotfix to the napi-rs 3 `napi artifacts` invocation, now in
+place), so the published `0.9.9` artifacts are byte-identical to `0.9.8`.
+
 ## [0.9.8] - 2026-06-28
 
 Maintenance release. The library API and every indicator are unchanged from
@@ -1915,7 +1922,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.8...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.9...HEAD
+[0.9.9]: https://github.com/wickra-lib/wickra/compare/v0.9.8...v0.9.9
 [0.9.8]: https://github.com/wickra-lib/wickra/compare/v0.9.7...v0.9.8
 [0.9.7]: https://github.com/wickra-lib/wickra/compare/v0.9.6...v0.9.7
 [0.9.6]: https://github.com/wickra-lib/wickra/compare/v0.9.5...v0.9.6
