@@ -381,7 +381,8 @@ jobs:
       # drop the freshly built .node binary into the matching directory.
       - name: Move binaries into platform package layout
         working-directory: bindings/node
-        run: npx napi artifacts --dir artifacts
+        # napi-rs CLI 3 renamed `--dir` to `--output-dir` (`-d`).
+        run: npx napi artifacts --output-dir artifacts
 
       # Publish each platform package individually. Skip versions that are
       # already on npm. A first-attempt 403 from npm's spam filter is
