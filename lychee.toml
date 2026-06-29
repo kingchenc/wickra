@@ -13,11 +13,16 @@ accept = [200, 206, 429]
 scheme = ["https", "http"]
 exclude_all_private = true
 
-# Known false positives (the URLs are valid; lychee just can't verify them as a
-# non-browser client):
+# Known false positives (the URLs are valid; lychee just can't verify them at
+# check time):
 # - crates.io and npmjs.com return 403/404 to non-browser requests
 #   (anti-scraping); the package pages are live in a browser.
+# - the CHANGELOG version-compare links point at the release tag that is created
+#   *after* the bump is merged. ci.yml runs on push/PR (never on the tag), so the
+#   tag never exists when lychee runs and the compare URL 404s. One pattern
+#   covers every future version — no per-release exclude needed.
 exclude = [
   'crates\.io/crates/',
   'www\.npmjs\.com/package/',
+  'github\.com/wickra-lib/wickra/compare/',
 ]
