@@ -27,6 +27,8 @@
 
 > **▶ Live demo:** all 514 indicators over real Binance market data, computed live in your browser — **[live.wickra.org](https://live.wickra.org)** · zero backend, powered by `wickra-wasm`.
 
+**Part of the [Wickra ecosystem](#ecosystem):** the same data-driven core and ten-language binding surface also power [wickra-exchange](https://github.com/wickra-lib/wickra-exchange), [wickra-backtest](https://github.com/wickra-lib/wickra-backtest), [wickra-terminal](https://github.com/wickra-lib/wickra-terminal), [wickra-screener](https://github.com/wickra-lib/wickra-screener), [wickra-xray](https://github.com/wickra-lib/wickra-xray), [wickra-radar](https://github.com/wickra-lib/wickra-radar), [wickra-copilot](https://github.com/wickra-lib/wickra-copilot) and [wickra-shazam](https://github.com/wickra-lib/wickra-shazam).
+
 Wickra is a multi-language technical-analysis library with a Rust core and
 native bindings for Python, Node.js and WASM, plus a C ABI that C, C++,
 C#, Go, Java, R and any other C-capable language links against. Every indicator is a
@@ -439,6 +441,22 @@ archetype (scalar, multi-output, pairwise, derivatives-tick, cross-section,
 order-book, trade, profile, alt-chart bars, footprint). This catches FFI wiring
 bugs the math-only core tests cannot see — it has already found and fixed real
 cross-language marshalling bugs in the Java and R bindings.
+
+## Ecosystem
+
+Wickra is the core library. The same data-driven core + ten-language binding
+pattern powers a family of products built on it:
+
+- [**wickra-exchange**](https://github.com/wickra-lib/wickra-exchange) — unified market-data + execution across ten crypto exchanges
+- [**wickra-backtest**](https://github.com/wickra-lib/wickra-backtest) — event-driven backtester over the Wickra core
+- [**wickra-terminal**](https://github.com/wickra-lib/wickra-terminal) — the trading terminal: a TUI and a browser renderer over the stack
+- [**wickra-screener**](https://github.com/wickra-lib/wickra-screener) — parallel multi-symbol screening over 514 streaming indicators
+- [**wickra-xray**](https://github.com/wickra-lib/wickra-xray) — market-microstructure explorer: footprint, order-book heatmap, liquidation map, funding/OI divergence
+- [**wickra-radar**](https://github.com/wickra-lib/wickra-radar) — perp-universe alert radar: OI delta, funding flip, book imbalance, liquidation clusters, OI/price divergence
+- [**wickra-copilot**](https://github.com/wickra-lib/wickra-copilot) — local market copilot grounded in real order-book, liquidation and funding microstructure
+- [**wickra-shazam**](https://github.com/wickra-lib/wickra-shazam) — match an asset's current microstructure fingerprint against its entire history
+
+Docs live at [docs.wickra.org](https://docs.wickra.org) ([wickra-docs](https://github.com/wickra-lib/wickra-docs)); the marketing site and in-browser demo at [wickra.org](https://wickra.org) ([webpage](https://github.com/wickra-lib/webpage)).
 
 ## Contributing
 
