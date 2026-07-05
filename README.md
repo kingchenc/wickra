@@ -530,6 +530,6 @@ The library is provided **as is**, without warranty of any kind; see
 <p align="center">
   <a href="https://star-history.com/#wickra-lib/wickra&Date">
     <img alt="Wickra star history" width="640"
-         src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/star-history.svg">
+         src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/star-history.svg?v=2">
   </a>
 </p>
