@@ -23,7 +23,7 @@ runs:
   using: composite
   steps:
     - id: first
-      uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+      uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # zizmor: ignore[impostor-commit] pinned to the stable-tag SHA (2026-03-27); tag-pinned, not a branch commit
       continue-on-error: true
       with:
         toolchain: ${{ inputs.toolchain }}
@@ -39,7 +39,7 @@ runs:
 
     - name: Retry the Rust toolchain install
       if: steps.first.outcome == 'failure'
-      uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+      uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # zizmor: ignore[impostor-commit] pinned to the stable-tag SHA (2026-03-27); tag-pinned, not a branch commit
       with:
         toolchain: ${{ inputs.toolchain }}
         components: ${{ inputs.components }}
