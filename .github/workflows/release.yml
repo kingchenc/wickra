@@ -827,7 +827,7 @@ jobs:
   # mirror commits them per platform under lib/<goos>_<goarch>/ alongside the
   # vendored header. Independent of the GitHub-release job so a Go hiccup never
   # blocks the C/C++ asset release. The push uses a fine-grained PAT
-  # (WICKRA_GO_MIRROR_TOKEN, contents:write on wickra-go); the mirror is a
+  # (GO_MIRROR_TOKEN, contents:write on wickra-go); the mirror is a
   # derived artifact, so its bot commit is intentionally unsigned.
   go-mirror:
     name: Mirror the Go module to wickra-go
@@ -890,7 +890,7 @@ jobs:
       - name: Push to wickra-go and tag the release
         shell: bash
         env:
-          MIRROR_TOKEN: ${{ secrets.WICKRA_GO_MIRROR_TOKEN }}
+          MIRROR_TOKEN: ${{ secrets.GO_MIRROR_TOKEN }}
         run: |
           set -e
           version="${GITHUB_REF_NAME#v}"
