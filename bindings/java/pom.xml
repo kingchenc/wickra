@@ -44,7 +44,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>22</maven.compiler.release>
-    <junit.version>6.1.1</junit.version>
+    <junit.version>6.1.2</junit.version>
     <!-- The FFM API is restricted; grant native access to the unnamed module so
          tests and examples run without warnings. Consumers pass the same flag. -->
     <native.access.arg>--enable-native-access=ALL-UNNAMED</native.access.arg>
