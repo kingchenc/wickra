@@ -80,6 +80,13 @@ updates:
     groups:
       ci-pip:
         patterns: ["*"]
+    ignore:
+      # numpy >=2.5 dropped support for Python < 3.12, but the CI matrix still
+      # tests 3.9/3.10/3.11. Pin numpy in the hash-locked CI tooling so a bump
+      # can't break those rows again (a 2.5.1 bump did, and was reverted). The
+      # CI tooling only needs a working numpy, not the newest.
+      - dependency-name: "numpy"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
 
   # GitHub Actions — keeps the SHA-pinned actions current (Dependabot reads
   # the version comment after each pinned SHA and bumps both together).
