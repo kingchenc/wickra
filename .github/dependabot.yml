@@ -93,6 +93,12 @@ updates:
       # hypothesis so the 3.9 dev-tooling lockfile stays installable.
       - dependency-name: "hypothesis"
         update-types: ["version-update:semver-minor", "version-update:semver-major"]
+      # pytest >=9 requires Python >=3.10 (9.0.0 "Requires-Python >=3.10"), but
+      # ci-dev-py39.txt targets the 3.9 matrix rows. A bump to 9.x made pip fail
+      # ("No matching distribution found for pytest==9.1.1") on every 3.9 job.
+      # Freeze pytest so the 3.9 dev-tooling lockfile stays installable.
+      - dependency-name: "pytest"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
 
   # GitHub Actions — keeps the SHA-pinned actions current (Dependabot reads
   # the version comment after each pinned SHA and bumps both together).
