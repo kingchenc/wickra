@@ -4,5 +4,5 @@
 # Refresh via scripts/update-lockfiles.sh.
 maturin
 pytest
-numpy<2.6
+numpy<2.1
 hypothesis
