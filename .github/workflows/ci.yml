@@ -398,7 +398,10 @@ jobs:
       - name: Install nightly Rust
         uses: ./.github/actions/setup-rust
         with:
-          toolchain: nightly
+          # Pinned to a fixed nightly: a rolling `nightly` regressed with a
+          # codegen ICE (rustc_codegen_ssa operand.rs) building tokio, which is
+          # unrelated to our code. Bump this date deliberately when needed.
+          toolchain: nightly-2026-07-01
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
