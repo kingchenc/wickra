@@ -87,6 +87,12 @@ updates:
       # CI tooling only needs a working numpy, not the newest.
       - dependency-name: "numpy"
         update-types: ["version-update:semver-minor", "version-update:semver-major"]
+      # hypothesis >=6.142 requires Python >=3.10, but ci-dev-py39.txt targets
+      # 3.9. A bump to 6.157 broke every 3.9 matrix row (pip "Ignored the
+      # following versions that require a different python version"). Freeze
+      # hypothesis so the 3.9 dev-tooling lockfile stays installable.
+      - dependency-name: "hypothesis"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
 
   # GitHub Actions — keeps the SHA-pinned actions current (Dependabot reads
   # the version comment after each pinned SHA and bumps both together).
