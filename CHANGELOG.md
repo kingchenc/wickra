@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **R binding: correct C ABI architecture on Windows on ARM.** `configure.win`
+  detected the target with `uname -m`, which reports `x86_64` on the Windows/arm64
+  builder (the shell runs under emulation), so an x64 C ABI was linked into an
+  aarch64 R and failed to load (`%1 is not a valid Win32 application`). It now
+  queries `R.version$arch`, which reflects the R build that loads the library.
+
 ## [0.9.9] - 2026-06-28
 
 Maintenance release. No library or binding code changes from `0.9.8`; this

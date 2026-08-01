@@ -36,7 +36,11 @@ if [ -n "${WICKRA_INCLUDE_DIR}" ] && [ -n "${WICKRA_LIB_DIR}" ]; then
   lib="${WICKRA_LIB_DIR}"
 else
   version=$(sed -n 's/^Version:[[:space:]]*//p' DESCRIPTION)
-  arch=$(uname -m)
+  # Detect the R architecture, not the shell's. On the Windows/arm64 runner
+  # `uname -m` reports x86_64 (the shell runs under emulation), so the x64 C
+  # ABI would be pulled into an arm64 R and fail to load ("%1 is not a valid
+  # Win32 application"). R.version$arch reflects the R build that loads the DLL.
+  arch=$("${R_HOME}/bin/Rscript" -e 'cat(R.version$arch)')
   case "${arch}" in
     x86_64) triple="x86_64-pc-windows-msvc" ;;
     aarch64 | arm64) triple="aarch64-pc-windows-msvc" ;;
