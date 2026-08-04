@@ -56,11 +56,20 @@ fi
 
 cp "${inc}/wickra.h" src/wickra.h
 cp "${lib}/wickra.dll" src/wickra_abi.dll
+# Use the binutils that match R's compiler (and thus the target arch). Bare
+# `objdump`/`dlltool` resolve via PATH to the x64 mingw copies, which cannot read
+# an arm64 wickra_abi.dll ("file format not recognized"). -print-prog-name asks
+# the compiler for the matching GNU tool; fall back to the bare name otherwise.
+CC=$("${R_HOME}/bin/R" CMD config CC | awk '{print $1}')
+OBJDUMP=$("${CC}" -print-prog-name=objdump 2>/dev/null)
+DLLTOOL=$("${CC}" -print-prog-name=dlltool 2>/dev/null)
+case "${OBJDUMP}" in ""|objdump) OBJDUMP=objdump ;; esac
+case "${DLLTOOL}" in ""|dlltool) DLLTOOL=dlltool ;; esac
 {
   echo 'LIBRARY wickra_abi.dll'
   echo 'EXPORTS'
-  objdump -p src/wickra_abi.dll | awk '/\[ *[0-9]+\]/ {print $NF}' | grep '^wickra_'
+  "${OBJDUMP}" -p src/wickra_abi.dll | awk '/\[ *[0-9]+\]/ {print $NF}' | grep '^wickra_'
 } > src/wickra_abi.def
-dlltool --input-def src/wickra_abi.def --dllname wickra_abi.dll \
+"${DLLTOOL}" --input-def src/wickra_abi.def --dllname wickra_abi.dll \
   --output-lib src/libwickra_abi.dll.a
 exit 0
