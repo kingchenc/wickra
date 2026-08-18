@@ -1,9 +1,8 @@
 #!/bin/sh
 # Windows build: the package compiles to wickra.dll, which would collide with the
 # C ABI's own wickra.dll (the loader would resolve the import to the package
-# itself). Stage a renamed copy, wickra_abi.dll, into src/ and build a mingw
-# import library that references it by that name (objdump + dlltool, both shipped
-# with Rtools — no gendef/pexports needed). install.libs.R then bundles the DLL.
+# itself). Stage a renamed copy, wickra_abi.dll, into src/ and build an import
+# library that references it by that name. install.libs.R then bundles the DLL.
 #
 # Self-contained by default: download the prebuilt wickra-c-<triple>.tar.gz
 # release asset matching this package's version. Set WICKRA_INCLUDE_DIR +
@@ -30,22 +29,33 @@ wickra_download() {
   return 1
 }
 
+# Detect the R architecture, not the shell's. On the Windows/arm64 runner
+# `uname -m` reports x86_64 (the shell runs under emulation), so the x64 C ABI
+# would be pulled into an arm64 R and fail to load ("%1 is not a valid Win32
+# application"). R.version$arch reflects the R build that loads the DLL, and it
+# also selects the import library's target machine below.
+arch=$("${R_HOME}/bin/Rscript" -e 'cat(R.version$arch)')
+case "${arch}" in
+  x86_64)
+    triple="x86_64-pc-windows-msvc"
+    dll_machine="i386:x86-64"
+    ;;
+  aarch64 | arm64)
+    triple="aarch64-pc-windows-msvc"
+    dll_machine="arm64"
+    ;;
+  *)
+    echo "wickra: unsupported Windows arch '${arch}' — set WICKRA_INCLUDE_DIR/WICKRA_LIB_DIR"
+    exit 1
+    ;;
+esac
+
 if [ -n "${WICKRA_INCLUDE_DIR}" ] && [ -n "${WICKRA_LIB_DIR}" ]; then
   echo "wickra: using C ABI from WICKRA_INCLUDE_DIR / WICKRA_LIB_DIR (dev override)"
   inc="${WICKRA_INCLUDE_DIR}"
   lib="${WICKRA_LIB_DIR}"
 else
   version=$(sed -n 's/^Version:[[:space:]]*//p' DESCRIPTION)
-  # Detect the R architecture, not the shell's. On the Windows/arm64 runner
-  # `uname -m` reports x86_64 (the shell runs under emulation), so the x64 C
-  # ABI would be pulled into an arm64 R and fail to load ("%1 is not a valid
-  # Win32 application"). R.version$arch reflects the R build that loads the DLL.
-  arch=$("${R_HOME}/bin/Rscript" -e 'cat(R.version$arch)')
-  case "${arch}" in
-    x86_64) triple="x86_64-pc-windows-msvc" ;;
-    aarch64 | arm64) triple="aarch64-pc-windows-msvc" ;;
-    *) echo "wickra: unsupported Windows arch '${arch}' — set WICKRA_INCLUDE_DIR/WICKRA_LIB_DIR"; exit 1 ;;
-  esac
   url="https://github.com/wickra-lib/wickra/releases/download/v${version}/wickra-c-${triple}.tar.gz"
   echo "wickra: downloading C ABI ${triple} for v${version}"
   wickra_download "${url}" "src/wickra-c.tar.gz" || exit 1
@@ -56,20 +66,72 @@ fi
 
 cp "${inc}/wickra.h" src/wickra.h
 cp "${lib}/wickra.dll" src/wickra_abi.dll
-# Use the binutils that match R's compiler (and thus the target arch). Bare
-# `objdump`/`dlltool` resolve via PATH to the x64 mingw copies, which cannot read
-# an arm64 wickra_abi.dll ("file format not recognized"). -print-prog-name asks
-# the compiler for the matching GNU tool; fall back to the bare name otherwise.
-CC=$("${R_HOME}/bin/R" CMD config CC | awk '{print $1}')
-OBJDUMP=$("${CC}" -print-prog-name=objdump 2>/dev/null)
-DLLTOOL=$("${CC}" -print-prog-name=dlltool 2>/dev/null)
-case "${OBJDUMP}" in ""|objdump) OBJDUMP=objdump ;; esac
-case "${DLLTOOL}" in ""|dlltool) DLLTOOL=dlltool ;; esac
+
+# Take the export list from the staged header rather than by dumping the DLL.
+# cbindgen declares exactly the exported symbols, so header and PE export table
+# agree entry for entry, and reading the header needs no binutils at all: the
+# objdump that resolves on Windows/arm64 is the runner image's x86_64 mingw copy,
+# which carries no aarch64 PE backend and rejects an arm64 wickra_abi.dll with
+# "file format not recognized".
 {
   echo 'LIBRARY wickra_abi.dll'
   echo 'EXPORTS'
-  "${OBJDUMP}" -p src/wickra_abi.dll | awk '/\[ *[0-9]+\]/ {print $NF}' | grep '^wickra_'
+  awk '
+    # Strip block and line comments first so a symbol mentioned in the generated
+    # documentation is never mistaken for a declaration.
+    BEGIN { inblock = 0 }
+    {
+      out = ""
+      i = 1
+      n = length($0)
+      while (i <= n) {
+        two = substr($0, i, 2)
+        if (inblock) {
+          if (two == "*/") { inblock = 0; i += 2 } else { i++ }
+        } else if (two == "/*") {
+          inblock = 1
+          i += 2
+        } else if (two == "//") {
+          break
+        } else {
+          out = out substr($0, i, 1)
+          i++
+        }
+      }
+      print out
+    }
+  ' src/wickra.h \
+    | grep -oE '\bwickra_[A-Za-z0-9_]*[[:space:]]*\(' \
+    | sed 's/[[:space:]]*($//' \
+    | LC_ALL=C sort -u
 } > src/wickra_abi.def
-"${DLLTOOL}" --input-def src/wickra_abi.def --dllname wickra_abi.dll \
-  --output-lib src/libwickra_abi.dll.a
+
+# The import library has to target R's architecture. A binutils build only
+# carries the PE backends it was configured with, so the x86_64 mingw dlltool
+# that resolves on PATH cannot emit an arm64 library — asked for one via -m it
+# fails outright ("invalid bfd target") instead of quietly producing the wrong
+# thing. That loud failure is what makes trying candidates in order safe: the
+# first that succeeds is by construction one that can target this architecture.
+# BINPREF is R's own pointer at the matching Rtools toolchain, and llvm-dlltool
+# (shipped with the clang-based aarch64 Rtools) carries every backend.
+BINPREF=$("${R_HOME}/bin/R" CMD config BINPREF 2>/dev/null | tr -d '\r') || BINPREF=""
+dlltool_log="src/dlltool.log"
+: > "${dlltool_log}"
+DLLTOOL=""
+for cand in "${WICKRA_DLLTOOL}" "${BINPREF}llvm-dlltool" "${BINPREF}dlltool" llvm-dlltool dlltool; do
+  [ -n "${cand}" ] || continue
+  echo "wickra: trying ${cand} -m ${dll_machine}" >> "${dlltool_log}"
+  if "${cand}" -m "${dll_machine}" --input-def src/wickra_abi.def \
+      --dllname wickra_abi.dll --output-lib src/libwickra_abi.dll.a >> "${dlltool_log}" 2>&1; then
+    DLLTOOL="${cand}"
+    break
+  fi
+done
+if [ -z "${DLLTOOL}" ]; then
+  echo "wickra: no dlltool could build a ${dll_machine} import library; attempts:"
+  cat "${dlltool_log}"
+  exit 1
+fi
+rm -f "${dlltool_log}"
+echo "wickra: import library built by ${DLLTOOL} (-m ${dll_machine})"
 exit 0

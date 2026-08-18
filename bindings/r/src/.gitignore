@@ -6,6 +6,7 @@
 *.dylib
 wickra.h
 wickra_abi.def
+dlltool.log
 symbols.rds
 wickra-c.tar.gz
 wickra-c/
