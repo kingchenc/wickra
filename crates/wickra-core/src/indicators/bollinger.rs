@@ -1,6 +1,7 @@
 //! Bollinger Bands.
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Bollinger Bands output.
@@ -54,18 +55,11 @@ pub struct BollingerBands {
     head: usize,
     /// Number of slots filled, saturating at `period`.
     count: usize,
-    sum: f64,
-    sum_sq: f64,
-    /// Number of finite updates since the running sums were last reseeded
-    /// from the live window. See [`RECOMPUTE_EVERY`] below.
-    updates_since_recompute: usize,
+    /// Rolling first and second moments, accumulated around a reference point
+    /// inside the window. See [`ShiftedMoments`] for why the textbook
+    /// `E[x²] − E[x]²` form is not usable on raw price levels.
+    moments: ShiftedMoments,
 }
-
-/// How often (in finite updates) the incremental `sum` / `sum_sq` are reseeded
-/// from the live window. The multiplier `16` keeps the amortised cost flat and
-/// caps any cancellation drift to roughly `16 · period · ULP · max(|x|²)` —
-/// negligible on real-world price scales.
-const RECOMPUTE_EVERY: usize = 16;
 
 impl BollingerBands {
     /// Construct a new Bollinger Bands indicator.
@@ -87,9 +81,7 @@ impl BollingerBands {
             buf: vec![0.0; period].into_boxed_slice(),
             head: 0,
             count: 0,
-            sum: 0.0,
-            sum_sq: 0.0,
-            updates_since_recompute: 0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -124,10 +116,9 @@ impl BollingerBands {
     pub fn batch_bands(&mut self, inputs: &[f64]) -> Vec<f64> {
         let p = self.period;
         let n = inputs.len();
-        if self.count != 0
-            || self.updates_since_recompute != 0
-            || !inputs.iter().all(|x| x.is_finite())
-        {
+        // `count == 0` is the only pristine state: the reseed counter can only
+        // be non-zero once a value has been pushed, so it adds nothing here.
+        if self.count != 0 || !inputs.iter().all(|x| x.is_finite()) {
             // Slow path: exact replay of `update` into the flat layout.
             let mut out = vec![f64::NAN; n * 4];
             for (i, &x) in inputs.iter().enumerate() {
@@ -141,39 +132,35 @@ impl BollingerBands {
             return out;
         }
 
-        let p_f64 = p as f64;
         let mult = self.multiplier;
         // Pre-sized output: warmup rows stay NaN, ready rows are written in place
         // by index — no per-row `push` length/capacity check.
         let mut out = vec![f64::NAN; n * 4];
         for (i, &x) in inputs.iter().enumerate() {
             if self.count == p {
-                let old = self.buf[self.head];
-                self.sum -= old;
-                self.sum_sq -= old * old;
+                self.moments.evict(self.buf[self.head]);
                 self.buf[self.head] = x;
-                self.sum += x;
-                self.sum_sq += x * x;
+                self.moments.push(x);
             } else {
                 self.buf[self.head] = x;
-                self.sum += x;
-                self.sum_sq += x * x;
+                self.moments.push(x);
                 self.count += 1;
             }
             self.head += 1;
             if self.head == p {
                 self.head = 0;
             }
-            self.updates_since_recompute += 1;
-            if self.updates_since_recompute >= RECOMPUTE_EVERY * p {
-                let chronological = self.buf[self.head..].iter().chain(&self.buf[..self.head]);
-                self.sum = chronological.clone().copied().sum();
-                self.sum_sq = chronological.map(|&v| v * v).sum();
-                self.updates_since_recompute = 0;
+            if self.moments.needs_reseed(p) {
+                let (older, newer) = if self.count == p {
+                    (&self.buf[self.head..], &self.buf[..self.head])
+                } else {
+                    (&self.buf[..self.count], &self.buf[..0])
+                };
+                self.moments.reseed(older.iter().chain(newer).copied());
             }
             if self.count == p {
-                let mean = self.sum / p_f64;
-                let stddev = (self.sum_sq / p_f64 - mean * mean).max(0.0).sqrt();
+                let mean = self.moments.mean(p);
+                let stddev = self.moments.std_dev(p);
                 let band = mult * stddev;
                 out[i * 4] = mean + band;
                 out[i * 4 + 1] = mean;
@@ -188,12 +175,8 @@ impl BollingerBands {
         if self.count != self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        // Population variance: E[x^2] - (E[x])^2. Clamp small negative values that arise
-        // from catastrophic cancellation on near-constant inputs.
-        let var = (self.sum_sq / n - mean * mean).max(0.0);
-        let stddev = var.sqrt();
+        let mean = self.moments.mean(self.period);
+        let stddev = self.moments.std_dev(self.period);
         Some(BollingerOutput {
             upper: mean + self.multiplier * stddev,
             middle: mean,
@@ -212,30 +195,28 @@ impl Indicator for BollingerBands {
             return self.current();
         }
         if self.count == self.period {
-            let old = self.buf[self.head];
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(self.buf[self.head]);
             self.buf[self.head] = input;
-            self.sum += input;
-            self.sum_sq += input * input;
+            self.moments.push(input);
         } else {
             self.buf[self.head] = input;
-            self.sum += input;
-            self.sum_sq += input * input;
+            self.moments.push(input);
             self.count += 1;
         }
         self.head += 1;
         if self.head == self.period {
             self.head = 0;
         }
-        self.updates_since_recompute += 1;
-        if self.updates_since_recompute >= RECOMPUTE_EVERY * self.period {
-            // Reseed in chronological order (oldest at `head`) to keep the running
-            // sums bit-equivalent to a fresh from-scratch pass on stable inputs.
-            let chronological = self.buf[self.head..].iter().chain(&self.buf[..self.head]);
-            self.sum = chronological.clone().copied().sum();
-            self.sum_sq = chronological.map(|&x| x * x).sum();
-            self.updates_since_recompute = 0;
+        if self.moments.needs_reseed(self.period) {
+            // Reseed in chronological order (oldest at `head`) so the accumulator
+            // matches a fresh from-scratch pass and the reference point is
+            // re-anchored on the live window.
+            let (older, newer) = if self.count == self.period {
+                (&self.buf[self.head..], &self.buf[..self.head])
+            } else {
+                (&self.buf[..self.count], &self.buf[..0])
+            };
+            self.moments.reseed(older.iter().chain(newer).copied());
         }
         self.current()
     }
@@ -243,9 +224,7 @@ impl Indicator for BollingerBands {
     fn reset(&mut self) {
         self.head = 0;
         self.count = 0;
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
-        self.updates_since_recompute = 0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {
@@ -330,6 +309,31 @@ mod tests {
             assert!(bb.update(v).is_none());
         }
         assert!(bb.update(5.0).is_some());
+    }
+
+    /// The band width is a standard deviation, so it inherits the accumulator's
+    /// numerics. With the textbook `E[x²] − E[x]²` form this drifted by 4.3e-06
+    /// at a price level of 1e5 and collapsed to exactly zero at 1e8 — bands of
+    /// zero width, and a permanent squeeze reading downstream.
+    #[test]
+    fn bands_stay_accurate_when_the_level_dwarfs_the_spread() {
+        for level in [1.0e2_f64, 1.0e5, 1.0e8] {
+            let prices: Vec<f64> = (0..60)
+                .map(|i| level + (f64::from(i) * 0.7).sin())
+                .collect();
+            let mut bb = BollingerBands::new(20, 2.0).unwrap();
+            let mut got = 0.0;
+            for price in &prices {
+                if let Some(o) = bb.update(*price) {
+                    got = o.stddev;
+                }
+            }
+            let window = &prices[40..];
+            let n = window.len() as f64;
+            let mean = window.iter().sum::<f64>() / n;
+            let want = (window.iter().map(|x| (x - mean) * (x - mean)).sum::<f64>() / n).sqrt();
+            assert_relative_eq!(got, want, max_relative = 1e-9);
+        }
     }
 
     #[test]

@@ -44,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   point taken from inside the window, re-anchored once per window, which brings
   the error to the 1e-16 floor at every level while keeping the same O(1)
   per-tick cost. Migrated in this release: `StdDev`, `Variance`, `ZScore`,
-  `CoefficientOfVariation`.
+  `CoefficientOfVariation`, `BollingerBands` (both the streaming path and the
+  vectorized `batch_bands` fast path, which stay bit-identical to each other).
 - **`warmup_period()` was one too small for the directional-movement family.**
   `PlusDm`, `MinusDm`, `PlusDi`, `MinusDi` and `Dx` reported `period`, but the
   first candle only seeds the previous bar, so seeding starts on bar 2 and the
