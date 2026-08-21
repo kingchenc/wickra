@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Relative Volatility Index — Donald Dorsey's RSI-shaped volatility gauge.
@@ -43,8 +44,7 @@ pub struct RviVolatility {
     period: usize,
     // Rolling-stddev state.
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
     // Direction tracking.
     prev_close: Option<f64>,
     // Wilder-smoothed up/down volatility.
@@ -79,8 +79,7 @@ impl RviVolatility {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
             prev_close: None,
             seed_up: Vec::with_capacity(period),
             seed_down: Vec::with_capacity(period),
@@ -124,12 +123,13 @@ impl Indicator for RviVolatility {
         // 1. Roll the standard-deviation window.
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(input);
-        self.sum += input;
-        self.sum_sq += input * input;
+        self.moments.push(input);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             // Track previous close from the very first input so that the first
@@ -139,10 +139,7 @@ impl Indicator for RviVolatility {
         }
 
         let n = self.period as f64;
-        let mean = self.sum / n;
-        // Population variance with a non-negativity clamp for FP cancellation.
-        let variance = (self.sum_sq / n - mean * mean).max(0.0);
-        let sd = variance.sqrt();
+        let sd = self.moments.std_dev(self.period);
 
         // 2. Classify the stddev sample as up- or down-volatility.
         let prev = self
@@ -184,8 +181,7 @@ impl Indicator for RviVolatility {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
         self.prev_close = None;
         self.seed_up.clear();
         self.seed_down.clear();

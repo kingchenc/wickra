@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Output of [`SpreadBollingerBands`].
@@ -65,8 +66,7 @@ pub struct SpreadBollingerBands {
     period: usize,
     num_std: f64,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
 }
 
 impl SpreadBollingerBands {
@@ -94,8 +94,7 @@ impl SpreadBollingerBands {
             period,
             num_std,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -122,19 +121,18 @@ impl Indicator for SpreadBollingerBands {
         let spread = a - b;
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(spread);
-        self.sum += spread;
-        self.sum_sq += spread * spread;
+        self.moments.push(spread);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let middle = self.sum / n;
-        let variance = (self.sum_sq / n - middle * middle).max(0.0);
-        let sigma = variance.sqrt();
+        let middle = self.moments.mean(self.period);
+        let sigma = self.moments.std_dev(self.period);
         let half_width = self.num_std * sigma;
         let upper = middle + half_width;
         let lower = middle - half_width;
@@ -153,8 +151,7 @@ impl Indicator for SpreadBollingerBands {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {

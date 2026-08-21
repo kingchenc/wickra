@@ -5,6 +5,7 @@ use std::collections::VecDeque;
 
 use crate::derivatives::DerivativesTick;
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Funding Rate Z-Score — the latest funding rate expressed in standard
@@ -44,8 +45,7 @@ use crate::traits::Indicator;
 pub struct FundingRateZScore {
     window: usize,
     history: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
 }
 
 impl FundingRateZScore {
@@ -61,8 +61,7 @@ impl FundingRateZScore {
         Ok(Self {
             window,
             history: VecDeque::with_capacity(window),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -81,20 +80,18 @@ impl Indicator for FundingRateZScore {
         let value = tick.funding_rate;
         if self.history.len() == self.window {
             let old = self.history.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.history.push_back(value);
-        self.sum += value;
-        self.sum_sq += value * value;
+        self.moments.push(value);
+        if self.moments.needs_reseed(self.window) {
+            self.moments.reseed(self.history.iter().copied());
+        }
         if self.history.len() < self.window {
             return None;
         }
-        let n = self.window as f64;
-        let mean = self.sum / n;
-        // Population variance E[x²] − E[x]²; clamp away tiny negative drift.
-        let variance = (self.sum_sq / n - mean * mean).max(0.0);
-        let std = variance.sqrt();
+        let mean = self.moments.mean(self.window);
+        let std = self.moments.std_dev(self.window);
         if std == 0.0 {
             // A window with no dispersion: funding is exactly its own mean.
             return Some(0.0);
@@ -104,8 +101,7 @@ impl Indicator for FundingRateZScore {
 
     fn reset(&mut self) {
         self.history.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {
