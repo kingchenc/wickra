@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedHigherMoments;
 use crate::traits::Indicator;
 
 /// Rolling Pearson skewness of the last `period` values.
@@ -43,9 +44,7 @@ use crate::traits::Indicator;
 pub struct Skewness {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
-    sum_cu: f64,
+    moments: ShiftedHigherMoments,
 }
 
 impl Skewness {
@@ -62,9 +61,7 @@ impl Skewness {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
-            sum_cu: 0.0,
+            moments: ShiftedHigherMoments::new(),
         })
     }
 
@@ -84,23 +81,18 @@ impl Indicator for Skewness {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
-            self.sum_cu -= old * old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(value);
-        self.sum += value;
-        self.sum_sq += value * value;
-        self.sum_cu += value * value * value;
+        self.moments.push(value);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        // m2 = E[x²] − E[x]²
-        let m2 = (self.sum_sq / n - mean * mean).max(0.0);
-        // m3 = E[x³] − 3·mean·E[x²] + 2·mean³ (binomial expansion).
-        let m3 = self.sum_cu / n - 3.0 * mean * (self.sum_sq / n) + 2.0 * mean * mean * mean;
+        let m2 = self.moments.m2(self.period);
+        let m3 = self.moments.m3(self.period);
         if m2 == 0.0 {
             // A window with no dispersion has no defined shape; return 0.
             return Some(0.0);
@@ -110,9 +102,7 @@ impl Indicator for Skewness {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
-        self.sum_cu = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {

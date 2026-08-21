@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedHigherMoments;
 use crate::traits::Indicator;
 
 /// Rolling **excess** kurtosis of the last `period` values.
@@ -42,10 +43,7 @@ use crate::traits::Indicator;
 pub struct Kurtosis {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
-    sum_cu: f64,
-    sum_qu: f64,
+    moments: ShiftedHigherMoments,
 }
 
 impl Kurtosis {
@@ -62,10 +60,7 @@ impl Kurtosis {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
-            sum_cu: 0.0,
-            sum_qu: 0.0,
+            moments: ShiftedHigherMoments::new(),
         })
     }
 
@@ -85,42 +80,28 @@ impl Indicator for Kurtosis {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            let sq = old * old;
-            self.sum -= old;
-            self.sum_sq -= sq;
-            self.sum_cu -= old * sq;
-            self.sum_qu -= sq * sq;
+            self.moments.evict(old);
         }
         self.window.push_back(value);
-        let sq = value * value;
-        self.sum += value;
-        self.sum_sq += sq;
-        self.sum_cu += value * sq;
-        self.sum_qu += sq * sq;
+        self.moments.push(value);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        let m2 = (self.sum_sq / n - mean * mean).max(0.0);
+        let m2 = self.moments.m2(self.period);
         if m2 == 0.0 {
             // Flat window: kurtosis is undefined, return 0 (Gaussian baseline).
             return Some(0.0);
         }
-        // m4 = E[x⁴] − 4·mean·E[x³] + 6·mean²·E[x²] − 3·mean⁴.
-        let mean_sq = mean * mean;
-        let m4 = self.sum_qu / n - 4.0 * mean * (self.sum_cu / n)
-            + 6.0 * mean_sq * (self.sum_sq / n)
-            - 3.0 * mean_sq * mean_sq;
+        let m4 = self.moments.m4(self.period);
         Some(m4 / (m2 * m2) - 3.0)
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
-        self.sum_cu = 0.0;
-        self.sum_qu = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {

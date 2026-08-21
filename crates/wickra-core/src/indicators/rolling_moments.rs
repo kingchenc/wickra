@@ -1,4 +1,4 @@
-//! Numerically stable rolling first and second moments.
+//! Numerically stable rolling moments.
 //!
 //! The textbook incremental variance `E[x²] − E[x]²` is cheap and O(1), but it
 //! cancels catastrophically once the values are large relative to their spread —
@@ -167,6 +167,147 @@ impl ShiftedMoments {
     }
 }
 
+/// Rolling central moments up to the fourth, for the shape statistics.
+///
+/// Skewness and kurtosis reconstruct `m3` and `m4` from raw power sums by
+/// binomial expansion (`m4 = E[x⁴] − 4·mean·E[x³] + 6·mean²·E[x²] − 3·mean⁴`).
+/// Every term there is of order `level⁴`, while the result is of order
+/// `spread⁴`, so the cancellation is worse than for the variance by two further
+/// powers of the level — a 1e5 price leaves nothing at all of a 1e-2 spread.
+///
+/// Accumulating the same power sums for `x − offset` keeps every term on the
+/// scale of the spread, so the expansions stay meaningful. The reference point
+/// is maintained exactly as in [`ShiftedMoments`].
+#[derive(Debug, Clone)]
+pub(crate) struct ShiftedHigherMoments {
+    /// Reference point the accumulated power sums are relative to.
+    offset: f64,
+    /// Whether `offset` has been chosen yet.
+    seeded: bool,
+    /// `Σ(x − offset)`.
+    s1: f64,
+    /// `Σ(x − offset)²`.
+    s2: f64,
+    /// `Σ(x − offset)³`.
+    s3: f64,
+    /// `Σ(x − offset)⁴`.
+    s4: f64,
+    /// Pushes since the last reseed.
+    pushes_since_reseed: usize,
+}
+
+impl ShiftedHigherMoments {
+    /// A fresh accumulator with no reference point yet.
+    pub(crate) const fn new() -> Self {
+        Self {
+            offset: 0.0,
+            seeded: false,
+            s1: 0.0,
+            s2: 0.0,
+            s3: 0.0,
+            s4: 0.0,
+            pushes_since_reseed: 0,
+        }
+    }
+
+    /// Add `value` to the accumulated power sums.
+    pub(crate) fn push(&mut self, value: f64) {
+        if !self.seeded {
+            self.offset = value;
+            self.seeded = true;
+        }
+        let d = value - self.offset;
+        let d2 = d * d;
+        self.s1 += d;
+        self.s2 += d2;
+        self.s3 += d * d2;
+        self.s4 += d2 * d2;
+        self.pushes_since_reseed += 1;
+    }
+
+    /// Remove `value` from the accumulated power sums.
+    pub(crate) fn evict(&mut self, value: f64) {
+        let d = value - self.offset;
+        let d2 = d * d;
+        self.s1 -= d;
+        self.s2 -= d2;
+        self.s3 -= d * d2;
+        self.s4 -= d2 * d2;
+    }
+
+    /// Second central moment (population variance) of the `n` values.
+    pub(crate) fn m2(&self, n: usize) -> f64 {
+        let nf = n as f64;
+        let a = self.s1 / nf;
+        (self.s2 / nf - a * a).max(0.0)
+    }
+
+    /// Third central moment of the `n` values.
+    pub(crate) fn m3(&self, n: usize) -> f64 {
+        let nf = n as f64;
+        let a = self.s1 / nf;
+        self.s3 / nf - 3.0 * a * (self.s2 / nf) + 2.0 * a * a * a
+    }
+
+    /// Fourth central moment of the `n` values.
+    pub(crate) fn m4(&self, n: usize) -> f64 {
+        let nf = n as f64;
+        let a = self.s1 / nf;
+        let a2 = a * a;
+        self.s4 / nf - 4.0 * a * (self.s3 / nf) + 6.0 * a2 * (self.s2 / nf) - 3.0 * a2 * a2
+    }
+
+    /// Whether enough pushes have accumulated to justify a reseed.
+    pub(crate) const fn needs_reseed(&self, period: usize) -> bool {
+        self.pushes_since_reseed >= period
+    }
+
+    /// Recompute every power sum from the live window, re-centring `offset` on
+    /// its mean. `values` must yield exactly the live window.
+    pub(crate) fn reseed<I>(&mut self, values: I)
+    where
+        I: IntoIterator<Item = f64> + Clone,
+    {
+        let mut count = 0_usize;
+        let mut total = 0.0;
+        for v in values.clone() {
+            total += v;
+            count += 1;
+        }
+        if count == 0 {
+            self.reset();
+            return;
+        }
+        let mean = total / count as f64;
+        self.offset = mean;
+        self.seeded = true;
+        self.s1 = 0.0;
+        self.s2 = 0.0;
+        self.s3 = 0.0;
+        self.s4 = 0.0;
+        for v in values {
+            let d = v - mean;
+            let d2 = d * d;
+            self.s1 += d;
+            self.s2 += d2;
+            self.s3 += d * d2;
+            self.s4 += d2 * d2;
+        }
+        self.pushes_since_reseed = 0;
+    }
+
+    /// Drop every accumulated value and the reference point.
+    pub(crate) fn reset(&mut self) {
+        self.offset = 0.0;
+        self.seeded = false;
+        self.s1 = 0.0;
+        self.s2 = 0.0;
+        self.s3 = 0.0;
+        self.s4 = 0.0;
+        self.pushes_since_reseed = 0;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -281,6 +422,96 @@ mod tests {
         moments.push(3.0);
         assert_relative_eq!(moments.mean(2), 2.0, epsilon = 1e-15);
         assert_relative_eq!(moments.variance(2), 1.0, epsilon = 1e-15);
+    }
+
+    /// Two-pass central moment of order `k` — the stable reference.
+    fn reference_central_moment(window: &[f64], k: i32) -> f64 {
+        let n = window.len() as f64;
+        let mean = window.iter().sum::<f64>() / n;
+        window.iter().map(|x| (x - mean).powi(k)).sum::<f64>() / n
+    }
+
+    /// Drive a rolling window through the four-moment accumulator.
+    fn roll4(values: &[f64], period: usize) -> (ShiftedHigherMoments, Vec<f64>) {
+        let mut moments = ShiftedHigherMoments::new();
+        let mut window: Vec<f64> = Vec::with_capacity(period);
+        for &v in values {
+            if window.len() == period {
+                moments.evict(window.remove(0));
+            }
+            window.push(v);
+            moments.push(v);
+            if moments.needs_reseed(period) {
+                moments.reseed(window.iter().copied());
+            }
+        }
+        (moments, window)
+    }
+
+    #[test]
+    fn higher_moments_match_the_two_pass_reference_at_extreme_levels() {
+        for level in [1.0e2_f64, 1.0e5, 1.0e8] {
+            let values: Vec<f64> = (0..60)
+                .map(|i| level + (f64::from(i) * 0.7).sin() + (f64::from(i) * 0.13).cos() * 0.4)
+                .collect();
+            let (moments, window) = roll4(&values, 20);
+            assert_relative_eq!(
+                moments.m2(20),
+                reference_central_moment(&window, 2),
+                max_relative = 1e-9
+            );
+            assert_relative_eq!(
+                moments.m3(20),
+                reference_central_moment(&window, 3),
+                max_relative = 1e-7
+            );
+            assert_relative_eq!(
+                moments.m4(20),
+                reference_central_moment(&window, 4),
+                max_relative = 1e-8
+            );
+        }
+    }
+
+    #[test]
+    fn higher_moments_of_a_constant_window_are_zero() {
+        let (moments, _) = roll4(&[1.0e8_f64; 40], 16);
+        assert_relative_eq!(moments.m2(16), 0.0, epsilon = 1e-12);
+        assert_relative_eq!(moments.m3(16), 0.0, epsilon = 1e-12);
+        assert_relative_eq!(moments.m4(16), 0.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn higher_moments_reset_clears_the_reference_point() {
+        let mut moments = ShiftedHigherMoments::new();
+        moments.push(1.0e8);
+        moments.reset();
+        moments.push(-1.0);
+        moments.push(1.0);
+        // Symmetric pair about zero: variance 1, zero skew, fourth moment 1.
+        assert_relative_eq!(moments.m2(2), 1.0, epsilon = 1e-15);
+        assert_relative_eq!(moments.m3(2), 0.0, epsilon = 1e-15);
+        assert_relative_eq!(moments.m4(2), 1.0, epsilon = 1e-15);
+    }
+
+    #[test]
+    fn higher_moments_reseed_on_an_empty_window_clears_the_accumulator() {
+        let mut moments = ShiftedHigherMoments::new();
+        moments.push(5.0);
+        moments.reseed(std::iter::empty());
+        assert_relative_eq!(moments.m2(1), 0.0, epsilon = 1e-15);
+        assert_relative_eq!(moments.m4(1), 0.0, epsilon = 1e-15);
+    }
+
+    #[test]
+    fn higher_moments_needs_reseed_triggers_once_per_window() {
+        let mut moments = ShiftedHigherMoments::new();
+        for _ in 0..4 {
+            moments.push(1.0);
+        }
+        assert!(!moments.needs_reseed(5));
+        moments.push(1.0);
+        assert!(moments.needs_reseed(5));
     }
 
     #[test]
