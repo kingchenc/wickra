@@ -119,7 +119,7 @@ impl Indicator for PlusDi {
     }
 
     fn warmup_period(&self) -> usize {
-        self.period
+        self.period + 1
     }
 
     fn is_ready(&self) -> bool {
@@ -151,8 +151,27 @@ mod tests {
         let di = PlusDi::new(7).unwrap();
         assert_eq!(di.period(), 7);
         assert_eq!(di.name(), "PLUS_DI");
-        assert_eq!(di.warmup_period(), 7);
+        assert_eq!(di.warmup_period(), 8);
         assert!(!di.is_ready());
+    }
+
+    #[test]
+    fn warmup_period_matches_the_first_emitted_value() {
+        // The first candle only seeds `prev`, so seeding starts on bar 2 and the
+        // first value lands on bar `period + 1`. Pin that against the declared
+        // warmup so the two can never drift apart again.
+        let candles: Vec<Candle> = (0..12)
+            .map(|i| {
+                let x = f64::from(i);
+                c(11.0 + x, 9.0 + 0.5 * x, 10.0 + x)
+            })
+            .collect();
+        for period in 1..=5 {
+            let mut di = PlusDi::new(period).unwrap();
+            let out: Vec<Option<f64>> = di.batch(&candles);
+            let first = out.iter().position(Option::is_some).unwrap();
+            assert_eq!(first + 1, di.warmup_period());
+        }
     }
 
     #[test]

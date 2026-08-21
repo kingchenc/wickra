@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **`warmup_period()` was one too small for the directional-movement family.**
+  `PlusDm`, `MinusDm`, `PlusDi`, `MinusDi` and `Dx` reported `period`, but the
+  first candle only seeds the previous bar, so seeding starts on bar 2 and the
+  first value lands on bar `period + 1` — which is what each module's own
+  documentation already said. A caller slicing `output[warmup_period()..]` kept
+  a leading `None` in what it believed was the dense region. They now report
+  `period + 1`, and each carries a test pinning the declared warmup against the
+  index of the first emitted value so the two cannot drift apart again. `Adx`
+  (`2 * period`) and `Adxr` (`3 * period - 1`) were already correct and are
+  unchanged.
 - **R binding: correct C ABI architecture on Windows on ARM.** `configure.win`
   detected the target with `uname -m`, which reports `x86_64` on the Windows/arm64
   builder (the shell runs under emulation), so an x64 C ABI was linked into an
