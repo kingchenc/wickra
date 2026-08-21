@@ -13,9 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   builder (the shell runs under emulation), so an x64 C ABI was linked into an
   aarch64 R and failed to load (`%1 is not a valid Win32 application`). It now
   queries `R.version$arch`, which reflects the R build that loads the library.
-  The import-library step now also resolves `objdump`/`dlltool` through the
-  compiler (`-print-prog-name`) instead of PATH, so the arch-matching GNU
-  binutils read the aarch64 DLL rather than the x64 mingw copies.
+  The import-library step no longer dumps the DLL with `objdump` at all: the
+  export list is taken from the staged cbindgen header, which declares exactly
+  the exported symbols. The `objdump` that resolves on the Windows/arm64 builder
+  is the runner image's x86_64 mingw copy, which carries no aarch64 PE backend
+  and rejects an arm64 DLL outright. `dlltool` is still needed for the import
+  library, so the target machine is now passed explicitly (`-m arm64`) and the
+  candidates R can point at (`BINPREF`, `llvm-dlltool`) are tried ahead of the
+  bare name — a binutils build without the requested backend fails loudly
+  instead of quietly emitting a wrong-architecture archive.
 
 ## [0.9.9] - 2026-06-28
 
