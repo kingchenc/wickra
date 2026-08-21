@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -58,10 +59,8 @@ pub struct YangZhangVolatility {
     overnight: VecDeque<f64>,
     open_close: VecDeque<f64>,
     rs_samples: VecDeque<f64>,
-    sum_on: f64,
-    sum_sq_on: f64,
-    sum_oc: f64,
-    sum_sq_oc: f64,
+    on_moments: ShiftedMoments,
+    oc_moments: ShiftedMoments,
     sum_rs: f64,
     last: Option<f64>,
 }
@@ -97,10 +96,8 @@ impl YangZhangVolatility {
             overnight: VecDeque::with_capacity(period),
             open_close: VecDeque::with_capacity(period),
             rs_samples: VecDeque::with_capacity(period),
-            sum_on: 0.0,
-            sum_sq_on: 0.0,
-            sum_oc: 0.0,
-            sum_sq_oc: 0.0,
+            on_moments: ShiftedMoments::new(),
+            oc_moments: ShiftedMoments::new(),
             sum_rs: 0.0,
             last: None,
         })
@@ -149,20 +146,20 @@ impl Indicator for YangZhangVolatility {
         // Roll the three windows.
         if self.overnight.len() == self.period {
             let old_on = self.overnight.pop_front().expect("window non-empty");
-            self.sum_on -= old_on;
-            self.sum_sq_on -= old_on * old_on;
+            self.on_moments.evict(old_on);
             let old_oc = self.open_close.pop_front().expect("window non-empty");
-            self.sum_oc -= old_oc;
-            self.sum_sq_oc -= old_oc * old_oc;
+            self.oc_moments.evict(old_oc);
             let old_rs = self.rs_samples.pop_front().expect("window non-empty");
             self.sum_rs -= old_rs;
         }
         self.overnight.push_back(on_sample);
-        self.sum_on += on_sample;
-        self.sum_sq_on += on_sample * on_sample;
+        self.on_moments.push(on_sample);
         self.open_close.push_back(oc_sample);
-        self.sum_oc += oc_sample;
-        self.sum_sq_oc += oc_sample * oc_sample;
+        self.oc_moments.push(oc_sample);
+        if self.on_moments.needs_reseed(self.period) {
+            self.on_moments.reseed(self.overnight.iter().copied());
+            self.oc_moments.reseed(self.open_close.iter().copied());
+        }
         self.rs_samples.push_back(rs_sample);
         self.sum_rs += rs_sample;
 
@@ -171,12 +168,10 @@ impl Indicator for YangZhangVolatility {
         }
 
         let n = self.period as f64;
-        let mean_on = self.sum_on / n;
-        let mean_oc = self.sum_oc / n;
-        // Sample variances (Bessel's correction). Clamp to zero against
-        // FP cancellation noise.
-        let var_on = ((self.sum_sq_on - n * mean_on * mean_on) / (n - 1.0)).max(0.0);
-        let var_oc = ((self.sum_sq_oc - n * mean_oc * mean_oc) / (n - 1.0)).max(0.0);
+        // Sample variances (Bessel's correction), accumulated around a window
+        // reference point so the two terms cannot cancel each other away.
+        let var_on = self.on_moments.sample_variance(self.period);
+        let var_oc = self.oc_moments.sample_variance(self.period);
         // Rogers-Satchell mean: each per-bar sample is already >= 0 by
         // construction, so the mean cannot be negative outside of FP.
         let var_rs = (self.sum_rs / n).max(0.0);
@@ -193,10 +188,8 @@ impl Indicator for YangZhangVolatility {
         self.overnight.clear();
         self.open_close.clear();
         self.rs_samples.clear();
-        self.sum_on = 0.0;
-        self.sum_sq_on = 0.0;
-        self.sum_oc = 0.0;
-        self.sum_sq_oc = 0.0;
+        self.on_moments.reset();
+        self.oc_moments.reset();
         self.sum_rs = 0.0;
         self.last = None;
     }

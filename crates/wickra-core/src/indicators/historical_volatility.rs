@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Historical Volatility — the annualised standard deviation of log returns.
@@ -40,8 +41,7 @@ pub struct HistoricalVolatility {
     prev_price: Option<f64>,
     /// Rolling window of the last `period` log returns.
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
     last: Option<f64>,
 }
 
@@ -71,8 +71,7 @@ impl HistoricalVolatility {
             trading_periods,
             prev_price: None,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
             last: None,
         })
     }
@@ -115,19 +114,17 @@ impl Indicator for HistoricalVolatility {
         let log_return = (input / prev).ln();
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(log_return);
-        self.sum += log_return;
-        self.sum_sq += log_return * log_return;
+        self.moments.push(log_return);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        // Sample variance (Bessel's correction): Σ(x−mean)² / (n−1).
-        let variance = ((self.sum_sq - n * mean * mean) / (n - 1.0)).max(0.0);
+        let variance = self.moments.sample_variance(self.period);
         let hv = variance.sqrt() * (self.trading_periods as f64).sqrt() * 100.0;
         self.last = Some(hv);
         Some(hv)
@@ -136,8 +133,7 @@ impl Indicator for HistoricalVolatility {
     fn reset(&mut self) {
         self.prev_price = None;
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
         self.last = None;
     }
 

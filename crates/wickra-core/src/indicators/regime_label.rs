@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::indicators::rolling_quantile::quantile_sorted;
 use crate::traits::Indicator;
 
@@ -51,8 +52,7 @@ pub struct RegimeLabel {
     prev_price: Option<f64>,
     /// Trailing window of the last `vol_period` log returns.
     ret_window: VecDeque<f64>,
-    ret_sum: f64,
-    ret_sum_sq: f64,
+    ret_moments: ShiftedMoments,
     /// Trailing window of the last `lookback` volatility readings.
     vol_window: VecDeque<f64>,
     /// Reusable scratch buffer for the quantile sort.
@@ -86,8 +86,7 @@ impl RegimeLabel {
             lookback,
             prev_price: None,
             ret_window: VecDeque::with_capacity(vol_period),
-            ret_sum: 0.0,
-            ret_sum_sq: 0.0,
+            ret_moments: ShiftedMoments::new(),
             vol_window: VecDeque::with_capacity(lookback),
             scratch: Vec::with_capacity(lookback),
             last: None,
@@ -117,19 +116,17 @@ impl Indicator for RegimeLabel {
         // Roll the return window and its running moments.
         if self.ret_window.len() == self.vol_period {
             let old = self.ret_window.pop_front().expect("non-empty");
-            self.ret_sum -= old;
-            self.ret_sum_sq -= old * old;
+            self.ret_moments.evict(old);
         }
         self.ret_window.push_back(r);
-        self.ret_sum += r;
-        self.ret_sum_sq += r * r;
+        self.ret_moments.push(r);
+        if self.ret_moments.needs_reseed(self.vol_period) {
+            self.ret_moments.reseed(self.ret_window.iter().copied());
+        }
         if self.ret_window.len() < self.vol_period {
             return None;
         }
-        let n = self.vol_period as f64;
-        let mean = self.ret_sum / n;
-        let var = ((self.ret_sum_sq - n * mean * mean) / (n - 1.0)).max(0.0);
-        let vol = var.sqrt();
+        let vol = self.ret_moments.sample_variance(self.vol_period).sqrt();
         // Roll the volatility window.
         if self.vol_window.len() == self.lookback {
             self.vol_window.pop_front();
@@ -158,8 +155,7 @@ impl Indicator for RegimeLabel {
     fn reset(&mut self) {
         self.prev_price = None;
         self.ret_window.clear();
-        self.ret_sum = 0.0;
-        self.ret_sum_sq = 0.0;
+        self.ret_moments.reset();
         self.vol_window.clear();
         self.scratch.clear();
         self.last = None;

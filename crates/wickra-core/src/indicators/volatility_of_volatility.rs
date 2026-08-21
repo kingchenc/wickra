@@ -3,18 +3,8 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
-
-/// Sample standard deviation from a running `(sum, sum_of_squares, count)`.
-///
-/// Uses Bessel's correction (divisor `n − 1`) and clamps a tiny negative
-/// floating-point residual to zero before the square root.
-fn sample_stddev(sum: f64, sum_sq: f64, count: usize) -> f64 {
-    let n = count as f64;
-    let mean = sum / n;
-    let variance = ((sum_sq - n * mean * mean) / (n - 1.0)).max(0.0);
-    variance.sqrt()
-}
 
 /// Volatility of Volatility — the standard deviation of a rolling realized-
 /// volatility series ("vol-of-vol").
@@ -57,12 +47,10 @@ pub struct VolatilityOfVolatility {
     prev_price: Option<f64>,
     /// Rolling window of log returns (stage one).
     returns: VecDeque<f64>,
-    ret_sum: f64,
-    ret_sum_sq: f64,
+    ret_moments: ShiftedMoments,
     /// Rolling window of realized-volatility readings (stage two).
     vols: VecDeque<f64>,
-    vol_sum: f64,
-    vol_sum_sq: f64,
+    vol_moments: ShiftedMoments,
     last: Option<f64>,
 }
 
@@ -90,11 +78,9 @@ impl VolatilityOfVolatility {
             vov_window,
             prev_price: None,
             returns: VecDeque::with_capacity(vol_window),
-            ret_sum: 0.0,
-            ret_sum_sq: 0.0,
+            ret_moments: ShiftedMoments::new(),
             vols: VecDeque::with_capacity(vov_window),
-            vol_sum: 0.0,
-            vol_sum_sq: 0.0,
+            vol_moments: ShiftedMoments::new(),
             last: None,
         })
     }
@@ -132,30 +118,32 @@ impl Indicator for VolatilityOfVolatility {
         // Stage one: rolling sample volatility of log returns.
         if self.returns.len() == self.vol_window {
             let old = self.returns.pop_front().expect("returns window non-empty");
-            self.ret_sum -= old;
-            self.ret_sum_sq -= old * old;
+            self.ret_moments.evict(old);
         }
         self.returns.push_back(r);
-        self.ret_sum += r;
-        self.ret_sum_sq += r * r;
+        self.ret_moments.push(r);
+        if self.ret_moments.needs_reseed(self.vol_window) {
+            self.ret_moments.reseed(self.returns.iter().copied());
+        }
         if self.returns.len() < self.vol_window {
             return None;
         }
-        let vol = sample_stddev(self.ret_sum, self.ret_sum_sq, self.vol_window);
+        let vol = self.ret_moments.sample_variance(self.vol_window).sqrt();
 
         // Stage two: rolling sample dispersion of the volatility series.
         if self.vols.len() == self.vov_window {
             let old = self.vols.pop_front().expect("vols window non-empty");
-            self.vol_sum -= old;
-            self.vol_sum_sq -= old * old;
+            self.vol_moments.evict(old);
         }
         self.vols.push_back(vol);
-        self.vol_sum += vol;
-        self.vol_sum_sq += vol * vol;
+        self.vol_moments.push(vol);
+        if self.vol_moments.needs_reseed(self.vov_window) {
+            self.vol_moments.reseed(self.vols.iter().copied());
+        }
         if self.vols.len() < self.vov_window {
             return None;
         }
-        let vov = sample_stddev(self.vol_sum, self.vol_sum_sq, self.vov_window);
+        let vov = self.vol_moments.sample_variance(self.vov_window).sqrt();
         self.last = Some(vov);
         Some(vov)
     }
@@ -163,11 +151,9 @@ impl Indicator for VolatilityOfVolatility {
     fn reset(&mut self) {
         self.prev_price = None;
         self.returns.clear();
-        self.ret_sum = 0.0;
-        self.ret_sum_sq = 0.0;
+        self.ret_moments.reset();
         self.vols.clear();
-        self.vol_sum = 0.0;
-        self.vol_sum_sq = 0.0;
+        self.vol_moments.reset();
         self.last = None;
     }
 
@@ -256,11 +242,13 @@ mod tests {
             .flatten()
             .map(|v| v / 100.0)
             .collect();
-        // Sample stddev of the last `vov_window` volatilities.
+        // Sample stddev of the last `vov_window` volatilities, computed two-pass
+        // so the expectation is independent of the accumulator under test.
         let tail = &vol_series[vol_series.len() - vov_window..];
-        let sum: f64 = tail.iter().sum();
-        let sum_sq: f64 = tail.iter().map(|v| v * v).sum();
-        let expected = sample_stddev(sum, sum_sq, vov_window);
+        let n = vov_window as f64;
+        let mean = tail.iter().sum::<f64>() / n;
+        let expected =
+            (tail.iter().map(|v| (v - mean) * (v - mean)).sum::<f64>() / (n - 1.0)).sqrt();
 
         let mut vov = VolatilityOfVolatility::new(vol_window, vov_window).unwrap();
         let out = vov.batch(&prices);

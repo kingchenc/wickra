@@ -4,6 +4,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -15,13 +16,6 @@ pub struct KaseDevStopOutput {
     pub value: f64,
     /// Trend direction: `+1.0` long (stop below price), `-1.0` short.
     pub direction: f64,
-}
-
-/// Sample standard deviation from a running `(sum, sum_of_squares, count)`.
-fn sample_stddev(sum: f64, sum_sq: f64, count: usize) -> f64 {
-    let n = count as f64;
-    let mean = sum / n;
-    (((sum_sq - n * mean * mean) / (n - 1.0)).max(0.0)).sqrt()
 }
 
 /// Kase `DevStop` — Cynthia Kase's volatility stop, built on the **standard
@@ -65,8 +59,7 @@ pub struct KaseDevStop {
     dev: f64,
     prev: Option<Candle>,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
     direction: f64,
     extreme: f64,
     stop: f64,
@@ -96,8 +89,7 @@ impl KaseDevStop {
             dev,
             prev: None,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
             direction: 0.0,
             extreme: 0.0,
             stop: 0.0,
@@ -130,17 +122,18 @@ impl Indicator for KaseDevStop {
 
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(dtr);
-        self.sum += dtr;
-        self.sum_sq += dtr * dtr;
+        self.moments.push(dtr);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let mean = self.sum / self.period as f64;
-        let band = mean + self.dev * sample_stddev(self.sum, self.sum_sq, self.period);
+        let mean = self.moments.mean(self.period);
+        let band = mean + self.dev * self.moments.sample_variance(self.period).sqrt();
 
         if self.direction == 0.0 {
             // Seed the trend as long off the first fully-warmed bar.
@@ -178,8 +171,7 @@ impl Indicator for KaseDevStop {
     fn reset(&mut self) {
         self.prev = None;
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
         self.direction = 0.0;
         self.extreme = 0.0;
         self.stop = 0.0;

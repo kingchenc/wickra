@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Jump Indicator — a discrete `{−1, 0, +1}` flag for whether the current log
@@ -50,8 +51,7 @@ pub struct JumpIndicator {
     prev_price: Option<f64>,
     /// Trailing window of the `period` returns preceding the current one.
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
     last: Option<f64>,
 }
 
@@ -81,8 +81,7 @@ impl JumpIndicator {
             threshold,
             prev_price: None,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
             last: None,
         })
     }
@@ -110,16 +109,13 @@ impl Indicator for JumpIndicator {
         if self.window.len() < self.period {
             // Still filling the trailing window; no baseline yet.
             self.window.push_back(r);
-            self.sum += r;
-            self.sum_sq += r * r;
+            self.moments.push(r);
             return None;
         }
         // Trailing window is full: classify `r` against the volatility of the
         // `period` returns that precede it.
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        let var = ((self.sum_sq - n * mean * mean) / (n - 1.0)).max(0.0);
-        let sd = var.sqrt();
+        let mean = self.moments.mean(self.period);
+        let sd = self.moments.sample_variance(self.period).sqrt();
         let deviation = r - mean;
         let label = if sd == 0.0 {
             0.0
@@ -132,11 +128,12 @@ impl Indicator for JumpIndicator {
         };
         // Slide the trailing window forward to include `r`.
         let old = self.window.pop_front().expect("window is non-empty");
-        self.sum -= old;
-        self.sum_sq -= old * old;
+        self.moments.evict(old);
         self.window.push_back(r);
-        self.sum += r;
-        self.sum_sq += r * r;
+        self.moments.push(r);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         self.last = Some(label);
         Some(label)
     }
@@ -144,8 +141,7 @@ impl Indicator for JumpIndicator {
     fn reset(&mut self) {
         self.prev_price = None;
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
         self.last = None;
     }
 

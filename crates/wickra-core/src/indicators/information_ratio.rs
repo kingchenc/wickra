@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Rolling Information Ratio.
@@ -29,8 +30,7 @@ use crate::traits::Indicator;
 pub struct InformationRatio {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
 }
 
 impl InformationRatio {
@@ -47,8 +47,7 @@ impl InformationRatio {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -70,18 +69,18 @@ impl Indicator for InformationRatio {
         let active = a - b;
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(active);
-        self.sum += active;
-        self.sum_sq += active * active;
+        self.moments.push(active);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        let var = ((self.sum_sq - n * mean * mean) / (n - 1.0)).max(0.0);
+        let mean = self.moments.mean(self.period);
+        let var = self.moments.sample_variance(self.period);
         let te = var.sqrt();
         if te == 0.0 {
             return Some(0.0);
@@ -91,8 +90,7 @@ impl Indicator for InformationRatio {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {

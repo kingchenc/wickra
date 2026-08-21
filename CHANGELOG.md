@@ -46,8 +46,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per-tick cost. Migrated in this release: `StdDev`, `Variance`, `ZScore`,
   `CoefficientOfVariation`, `BollingerBands` (both the streaming path and the
   vectorized `batch_bands` fast path, which stay bit-identical to each other),
-  `Skewness`, `Kurtosis`, `RviVolatility`, `SpreadBollingerBands` and
-  `FundingRateZScore`. The shape statistics were affected worse still:
+  `Skewness`, `Kurtosis`, `RviVolatility`, `SpreadBollingerBands`,
+  `FundingRateZScore`, and the Bessel-corrected family — `HistoricalVolatility`,
+  `InformationRatio`, `JumpIndicator`, `KaseDevStop`, `M2Measure`, `RegimeLabel`,
+  `SharpeRatio`, `VolatilityCone`, `VolatilityOfVolatility` and `YangZhang`.
+  No indicator in the catalogue computes a variance as `E[x²] − E[x]²` any more. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
 - **`warmup_period()` was one too small for the directional-movement family.**

@@ -107,6 +107,18 @@ impl ShiftedMoments {
         (self.sum_sq / n - mean_shifted * mean_shifted).max(0.0)
     }
 
+    /// Sample variance (divisor `n − 1`, Bessel's correction) of the `n` values.
+    ///
+    /// Returns `0.0` for `n < 2`, where the sample variance is undefined.
+    pub(crate) fn sample_variance(&self, n: usize) -> f64 {
+        if n < 2 {
+            return 0.0;
+        }
+        let nf = n as f64;
+        let mean_shifted = self.sum / nf;
+        (nf.mul_add(-(mean_shifted * mean_shifted), self.sum_sq) / (nf - 1.0)).max(0.0)
+    }
+
     /// Population standard deviation of the `n` values in the window.
     pub(crate) fn std_dev(&self, n: usize) -> f64 {
         self.variance(n).sqrt()
@@ -366,6 +378,35 @@ mod tests {
         let (moments, _) = roll(&values, 8, false);
         // Population variance of this classic set is exactly 4.
         assert_relative_eq!(moments.variance(8), 4.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn sample_variance_applies_bessels_correction() {
+        let values = [2.0_f64, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0];
+        let (moments, _) = roll(&values, 8, false);
+        // Population variance of this classic set is 4, sample variance 32/7.
+        assert_relative_eq!(moments.variance(8), 4.0, epsilon = 1e-12);
+        assert_relative_eq!(moments.sample_variance(8), 32.0 / 7.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn sample_variance_is_zero_below_two_values() {
+        let (moments, _) = roll(&[3.0], 1, false);
+        assert_relative_eq!(moments.sample_variance(1), 0.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn sample_variance_stays_accurate_at_extreme_levels() {
+        for level in [1.0e2_f64, 1.0e5, 1.0e8] {
+            let values: Vec<f64> = (0..60)
+                .map(|i| level + (f64::from(i) * 0.7).sin())
+                .collect();
+            let (moments, window) = roll(&values, 20, true);
+            let n = window.len() as f64;
+            let mean = window.iter().sum::<f64>() / n;
+            let want = window.iter().map(|x| (x - mean) * (x - mean)).sum::<f64>() / (n - 1.0);
+            assert_relative_eq!(moments.sample_variance(20), want, max_relative = 1e-9);
+        }
     }
 
     #[test]

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// M² (Modigliani–Modigliani) measure over a trailing window of `period` returns.
@@ -46,8 +47,7 @@ pub struct M2Measure {
     risk_free: f64,
     benchmark_stddev: f64,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
 }
 
 impl M2Measure {
@@ -75,8 +75,7 @@ impl M2Measure {
             risk_free,
             benchmark_stddev,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -106,18 +105,18 @@ impl Indicator for M2Measure {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(ret);
-        self.sum += ret;
-        self.sum_sq += ret * ret;
+        self.moments.push(ret);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        let var = (self.sum_sq - n * mean * mean).max(0.0) / (n - 1.0);
+        let mean = self.moments.mean(self.period);
+        let var = self.moments.sample_variance(self.period);
         let sd = var.sqrt();
         if sd == 0.0 {
             return Some(0.0);
@@ -128,8 +127,7 @@ impl Indicator for M2Measure {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {

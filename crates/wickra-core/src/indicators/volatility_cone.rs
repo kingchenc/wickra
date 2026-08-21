@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -21,14 +22,6 @@ pub struct VolatilityConeOutput {
     /// Percentile rank of `current` within the lookback distribution, in
     /// `[0, 100]` — the share of stored volatilities `<= current`, times 100.
     pub percentile: f64,
-}
-
-/// Sample standard deviation from a running `(sum, sum_of_squares, count)`.
-fn sample_stddev(sum: f64, sum_sq: f64, count: usize) -> f64 {
-    let n = count as f64;
-    let mean = sum / n;
-    let variance = ((sum_sq - n * mean * mean) / (n - 1.0)).max(0.0);
-    variance.sqrt()
 }
 
 /// Volatility Cone — the current realized volatility positioned within the
@@ -77,8 +70,7 @@ pub struct VolatilityCone {
     prev_close: Option<f64>,
     /// Rolling window of log returns for the inner realized-volatility series.
     returns: VecDeque<f64>,
-    ret_sum: f64,
-    ret_sum_sq: f64,
+    ret_moments: ShiftedMoments,
     /// Rolling window of realized-volatility readings (the cone envelope).
     vols: VecDeque<f64>,
     last: Option<VolatilityConeOutput>,
@@ -108,8 +100,7 @@ impl VolatilityCone {
             lookback,
             prev_close: None,
             returns: VecDeque::with_capacity(window),
-            ret_sum: 0.0,
-            ret_sum_sq: 0.0,
+            ret_moments: ShiftedMoments::new(),
             vols: VecDeque::with_capacity(lookback),
             last: None,
         })
@@ -148,16 +139,17 @@ impl Indicator for VolatilityCone {
         // Stage one: rolling sample volatility of log returns.
         if self.returns.len() == self.window {
             let old = self.returns.pop_front().expect("returns window non-empty");
-            self.ret_sum -= old;
-            self.ret_sum_sq -= old * old;
+            self.ret_moments.evict(old);
         }
         self.returns.push_back(r);
-        self.ret_sum += r;
-        self.ret_sum_sq += r * r;
+        self.ret_moments.push(r);
+        if self.ret_moments.needs_reseed(self.window) {
+            self.ret_moments.reseed(self.returns.iter().copied());
+        }
         if self.returns.len() < self.window {
             return None;
         }
-        let current = sample_stddev(self.ret_sum, self.ret_sum_sq, self.window);
+        let current = self.ret_moments.sample_variance(self.window).sqrt();
 
         // Stage two: maintain the lookback envelope of volatility readings.
         if self.vols.len() == self.lookback {
@@ -195,8 +187,7 @@ impl Indicator for VolatilityCone {
     fn reset(&mut self) {
         self.prev_close = None;
         self.returns.clear();
-        self.ret_sum = 0.0;
-        self.ret_sum_sq = 0.0;
+        self.ret_moments.reset();
         self.vols.clear();
         self.last = None;
     }
