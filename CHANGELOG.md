@@ -32,6 +32,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   first value. It now tracks the emission itself, which also propagates to every
   binding's `isReady`/`is_ready` and to `Chain::is_ready`. `warmup_period()`
   (`3 * period - 1`) was already correct and is unchanged.
+- **Rolling variance lost accuracy at realistic price levels.** The dispersion
+  family computed its variance as `E[x²] - E[x]²` over raw price levels and
+  clamped the result at zero. That form cancels catastrophically once the values
+  are large relative to their spread, which is exactly the shape of a price
+  series, and the clamp hid the failure instead of exposing it. Measured against
+  a two-pass reference over a 20-bar window: at a level of 1e5 the relative error
+  was 4.3e-06, at 1e5 with a 0.01 range it reached 9.4e-02, and at 1e8 the result
+  collapsed to exactly zero — a permanent squeeze reading, and a z-score dividing
+  by zero dispersion. The moments are now accumulated relative to a reference
+  point taken from inside the window, re-anchored once per window, which brings
+  the error to the 1e-16 floor at every level while keeping the same O(1)
+  per-tick cost. Migrated in this release: `StdDev`, `Variance`, `ZScore`,
+  `CoefficientOfVariation`.
 - **`warmup_period()` was one too small for the directional-movement family.**
   `PlusDm`, `MinusDm`, `PlusDi`, `MinusDi` and `Dx` reported `period`, but the
   first candle only seeds the previous bar, so seeding starts on bar 2 and the

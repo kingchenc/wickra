@@ -3,22 +3,26 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Rolling population standard deviation over the last `period` values.
 ///
 /// ```text
 /// mean     = (1/n) · Σ price
-/// variance = (1/n) · Σ price² − mean²
+/// variance = (1/n) · Σ (price − mean)²
 /// StdDev   = √variance
 /// ```
 ///
 /// This is the **population** standard deviation (divisor `n`, not `n − 1`) —
 /// the same dispersion measure that drives [`BollingerBands`](crate::BollingerBands).
-/// It is maintained as an O(1) rolling state machine: a running sum and a
-/// running sum-of-squares, updated by one add and one subtract per bar. Tiny
-/// negative variances from floating-point cancellation are clamped to zero
-/// before the square root.
+/// It is maintained as an O(1) rolling state machine: running first and second
+/// moments, updated by one add and one subtract per bar. The moments are
+/// accumulated relative to a reference point inside the window
+/// ([`ShiftedMoments`]) rather than around zero, because `E[x²] - E[x]²` on raw
+/// price levels cancels catastrophically — at a level of 1e5 with a tight range
+/// it loses most of its significant digits, and at 1e8 it collapses to exactly
+/// zero.
 ///
 /// # Example
 ///
@@ -36,8 +40,7 @@ use crate::traits::Indicator;
 pub struct StdDev {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
     last: Option<f64>,
 }
 
@@ -54,8 +57,7 @@ impl StdDev {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
             last: None,
         })
     }
@@ -82,28 +84,24 @@ impl Indicator for StdDev {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(input);
-        self.sum += input;
-        self.sum_sq += input * input;
+        self.moments.push(input);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        // Clamp floating-point cancellation noise: variance is never negative.
-        let variance = (self.sum_sq / n - mean * mean).max(0.0);
-        let sd = variance.sqrt();
+        let sd = self.moments.std_dev(self.period);
         self.last = Some(sd);
         Some(sd)
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
         self.last = None;
     }
 
@@ -125,6 +123,35 @@ mod tests {
     use super::*;
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
+
+    /// Two-pass population standard deviation — the numerically stable form,
+    /// used as the reference the rolling state machine must match.
+    fn reference_std_dev(window: &[f64]) -> f64 {
+        let n = window.len() as f64;
+        let mean = window.iter().sum::<f64>() / n;
+        (window.iter().map(|x| (x - mean) * (x - mean)).sum::<f64>() / n).sqrt()
+    }
+
+    /// The rolling moments must stay accurate when the values are large relative
+    /// to their spread — exactly the shape of a real price series. The textbook
+    /// `E[x²] - E[x]²` form cancels catastrophically here: at a level of 1e5 it
+    /// loses most of its significant digits, and at 1e8 it collapses to zero.
+    #[test]
+    fn stays_accurate_when_the_level_dwarfs_the_spread() {
+        for level in [1.0e2_f64, 1.0e5, 1.0e8] {
+            let prices: Vec<f64> = (0..60)
+                .map(|i| level + (f64::from(i) * 0.7).sin())
+                .collect();
+            let mut sd = StdDev::new(20).unwrap();
+            let mut got = 0.0;
+            for price in &prices {
+                if let Some(v) = sd.update(*price) {
+                    got = v;
+                }
+            }
+            assert_relative_eq!(got, reference_std_dev(&prices[40..]), max_relative = 1e-9);
+        }
+    }
 
     #[test]
     fn new_rejects_zero_period() {

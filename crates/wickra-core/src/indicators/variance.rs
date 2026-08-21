@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Rolling population variance over the last `period` values.
@@ -38,8 +39,7 @@ use crate::traits::Indicator;
 pub struct Variance {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
 }
 
 impl Variance {
@@ -54,8 +54,7 @@ impl Variance {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -75,24 +74,22 @@ impl Indicator for Variance {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(value);
-        self.sum += value;
-        self.sum_sq += value * value;
+        self.moments.push(value);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        Some((self.sum_sq / n - mean * mean).max(0.0))
+        Some(self.moments.variance(self.period))
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {

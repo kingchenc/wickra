@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedMoments;
 use crate::traits::Indicator;
 
 /// Z-Score — how many standard deviations the latest price sits from its
@@ -34,8 +35,7 @@ use crate::traits::Indicator;
 pub struct ZScore {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
-    sum_sq: f64,
+    moments: ShiftedMoments,
 }
 
 impl ZScore {
@@ -50,8 +50,7 @@ impl ZScore {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
-            sum_sq: 0.0,
+            moments: ShiftedMoments::new(),
         })
     }
 
@@ -71,20 +70,18 @@ impl Indicator for ZScore {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
-            self.sum_sq -= old * old;
+            self.moments.evict(old);
         }
         self.window.push_back(value);
-        self.sum += value;
-        self.sum_sq += value * value;
+        self.moments.push(value);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean = self.sum / n;
-        // Population variance E[x²] − E[x]²; clamp away tiny negative drift.
-        let variance = (self.sum_sq / n - mean * mean).max(0.0);
-        let std = variance.sqrt();
+        let mean = self.moments.mean(self.period);
+        let std = self.moments.std_dev(self.period);
         if std == 0.0 {
             // A window with no dispersion: the price is exactly its own mean.
             return Some(0.0);
@@ -94,8 +91,7 @@ impl Indicator for ZScore {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
-        self.sum_sq = 0.0;
+        self.moments.reset();
     }
 
     fn warmup_period(&self) -> usize {
