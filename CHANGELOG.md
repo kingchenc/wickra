@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **A zero `max_reconnect_attempts` could panic the Binance stream task.**
+  `BinanceConfig::max_reconnect_attempts` is a public field documented as
+  "must be >= 1", but nothing enforced it: `connect_with_config` validated only
+  the symbol list. With zero attempts the reconnect loop body never runs, so
+  there is no last error to surface and the final `expect` fired on the first
+  dropped connection. The value is now rejected at the only entry point that
+  accepts a configuration, which makes that `expect` unreachable by
+  construction.
 - **`Trix::is_ready()` reported ready one input early.** Readiness was keyed off
   `prev_tr`, but the bar that first fills it is the rate-of-change baseline and
   still returns `None`, so `is_ready()` flipped to `true` one input before the

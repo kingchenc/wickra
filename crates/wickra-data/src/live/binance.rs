@@ -244,6 +244,16 @@ impl BinanceKlineStream {
                 "BinanceKlineStream requires at least one symbol".into(),
             ));
         }
+        // `reconnect` loops `0..max_reconnect_attempts` and then surfaces the
+        // last error. With zero attempts the loop body never runs, so there is
+        // no last error to surface. Reject the configuration here, at the only
+        // entry point that accepts one, rather than letting it become an
+        // unwrap on the first dropped connection.
+        if config.max_reconnect_attempts == 0 {
+            return Err(Error::Malformed(
+                "BinanceConfig::max_reconnect_attempts must be at least 1".into(),
+            ));
+        }
         let symbols: Vec<String> = symbols.iter().map(|s| s.to_lowercase()).collect();
         let socket = Self::open(&symbols, interval, &config).await?;
         Ok(Self {
@@ -281,7 +291,10 @@ impl BinanceKlineStream {
                 }
             }
         }
-        Err(last_err.expect("max_reconnect_attempts is non-zero"))
+        // `connect_with_config` rejects a zero attempt count, so the loop above
+        // ran at least once and every iteration that did not return recorded an
+        // error.
+        Err(last_err.expect("connect_with_config rejects max_reconnect_attempts == 0"))
     }
 
     /// Receive the next kline event. A dropped, errored or stalled connection
@@ -443,6 +456,26 @@ mod tests {
         let err = BinanceKlineStream::connect(&[], Interval::OneMinute)
             .await
             .unwrap_err();
+        assert!(matches!(err, Error::Malformed(_)));
+    }
+
+    /// `reconnect` surfaces `last_err` after exhausting its attempt loop; with
+    /// zero attempts the loop body never runs and there is no error to surface.
+    /// The configuration is rejected up front so that state is unreachable. The
+    /// check runs before any socket is opened, so this needs no server.
+    #[tokio::test]
+    async fn connect_rejects_zero_reconnect_attempts() {
+        let cfg = BinanceConfig {
+            max_reconnect_attempts: 0,
+            ..BinanceConfig::default()
+        };
+        let err = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            cfg,
+        )
+        .await
+        .unwrap_err();
         assert!(matches!(err, Error::Malformed(_)));
     }
 
