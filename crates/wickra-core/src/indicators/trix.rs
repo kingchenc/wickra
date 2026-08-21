@@ -27,6 +27,11 @@ pub struct Trix {
     ema2: Ema,
     ema3: Ema,
     prev_tr: Option<f64>,
+    /// Whether a value has been emitted since the last reset. `prev_tr` cannot
+    /// stand in for this: the bar that first fills it is the rate-of-change
+    /// baseline and returns `None`, so keying readiness off it would report
+    /// ready one input early.
+    has_emitted: bool,
     period: usize,
 }
 
@@ -39,6 +44,7 @@ impl Trix {
             ema2: Ema::new(period)?,
             ema3: Ema::new(period)?,
             prev_tr: None,
+            has_emitted: false,
             period,
         })
     }
@@ -61,10 +67,12 @@ impl Indicator for Trix {
             Some(prev) if prev != 0.0 => {
                 let trix = 100.0 * (e3 - prev) / prev;
                 self.prev_tr = Some(e3);
+                self.has_emitted = true;
                 Some(trix)
             }
             Some(_) => {
                 self.prev_tr = Some(e3);
+                self.has_emitted = true;
                 Some(0.0)
             }
             None => {
@@ -79,6 +87,7 @@ impl Indicator for Trix {
         self.ema2.reset();
         self.ema3.reset();
         self.prev_tr = None;
+        self.has_emitted = false;
     }
 
     fn warmup_period(&self) -> usize {
@@ -87,7 +96,7 @@ impl Indicator for Trix {
     }
 
     fn is_ready(&self) -> bool {
-        self.prev_tr.is_some() && self.ema3.is_ready()
+        self.has_emitted
     }
 
     fn name(&self) -> &'static str {
@@ -140,6 +149,25 @@ mod tests {
     #[test]
     fn rejects_zero_period() {
         assert!(Trix::new(0).is_err());
+    }
+
+    /// `is_ready()` used to key off `prev_tr`, which the rate-of-change baseline
+    /// bar fills while still returning `None` — so readiness flipped one input
+    /// before the first value. Pin readiness to the emission itself, and the
+    /// declared warmup to the index of that emission.
+    #[test]
+    fn readiness_flips_exactly_when_the_first_value_lands() {
+        let prices: Vec<f64> = (1..=80).map(|i| 100.0 + f64::from(i) * 0.7).collect();
+        let mut trix = Trix::new(3).unwrap();
+        let mut first = None;
+        for (i, price) in prices.iter().enumerate() {
+            let out = trix.update(*price);
+            assert_eq!(out.is_some(), trix.is_ready());
+            if out.is_some() && first.is_none() {
+                first = Some(i);
+            }
+        }
+        assert_eq!(first.unwrap() + 1, trix.warmup_period());
     }
 
     /// Cover the const accessor `period` (47-49) and the Indicator-impl

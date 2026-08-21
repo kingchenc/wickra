@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **`Trix::is_ready()` reported ready one input early.** Readiness was keyed off
+  `prev_tr`, but the bar that first fills it is the rate-of-change baseline and
+  still returns `None`, so `is_ready()` flipped to `true` one input before the
+  first value. It now tracks the emission itself, which also propagates to every
+  binding's `isReady`/`is_ready` and to `Chain::is_ready`. `warmup_period()`
+  (`3 * period - 1`) was already correct and is unchanged.
 - **`warmup_period()` was one too small for the directional-movement family.**
   `PlusDm`, `MinusDm`, `PlusDi`, `MinusDi` and `Dx` reported `period`, but the
   first candle only seeds the previous bar, so seeding starts on bar 2 and the
