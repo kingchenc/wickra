@@ -3,7 +3,12 @@
 use thiserror::Error;
 
 /// Errors that can occur when constructing or operating on an indicator.
+///
+/// Marked `#[non_exhaustive]`: the set of validation failures grows as the
+/// catalogue does, so downstream code must carry a wildcard arm and a new
+/// variant stays a minor-version change rather than a breaking one.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
+#[non_exhaustive]
 pub enum Error {
     /// A period (window length) must be at least one.
     #[error("period must be greater than zero")]

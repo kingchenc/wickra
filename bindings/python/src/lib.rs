@@ -172,19 +172,10 @@ impl<'py> IntoPyData<'py> for Vec<f64> {
 }
 
 fn map_err(e: wc::Error) -> PyErr {
-    match e {
-        wc::Error::PeriodZero
-        | wc::Error::InvalidPeriod { .. }
-        | wc::Error::NonPositiveMultiplier
-        | wc::Error::NonFiniteInput
-        | wc::Error::InvalidCandle { .. }
-        | wc::Error::InvalidTick { .. }
-        | wc::Error::InvalidOrderBook { .. }
-        | wc::Error::InvalidTrade { .. }
-        | wc::Error::InvalidDerivatives { .. }
-        | wc::Error::InvalidCrossSection { .. }
-        | wc::Error::InvalidParameter { .. } => PyValueError::new_err(e.to_string()),
-    }
+    // Every `wickra_core::Error` is a rejected argument, so they all map to the
+    // same Python exception. Listing the variants added nothing but a match that
+    // has to be revisited whenever the enum grows (it is `#[non_exhaustive]`).
+    PyValueError::new_err(e.to_string())
 }
 
 /// Raised instead of panicking when a `NumPy` input is not C-contiguous.

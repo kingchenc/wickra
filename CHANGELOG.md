@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **`wickra_core::Error` and `wickra_data::Error` are now `#[non_exhaustive]`.**
+  The core enum has already grown from 4 to 11 variants, and the data enum's
+  variant set is feature-dependent (`live-binance`), so a downstream exhaustive
+  `match` was already fragile. Adding a variant is now a minor-version change
+  rather than a breaking one. Downstream code that matched every variant needs a
+  wildcard arm. The Python binding's `map_err` mapped all 11 variants to the same
+  `ValueError`, so the match was dropped entirely rather than given a dead
+  catch-all; the raised exception and message are unchanged.
+
 ### Fixed
 - **A zero `max_reconnect_attempts` could panic the Binance stream task.**
   `BinanceConfig::max_reconnect_attempts` is a public field documented as

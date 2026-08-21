@@ -3,7 +3,12 @@
 use thiserror::Error;
 
 /// Errors produced by the data layer.
+///
+/// Marked `#[non_exhaustive]`: several variants are feature-gated, so the set a
+/// downstream crate sees already depends on which features are enabled. A
+/// wildcard arm is required either way.
 #[derive(Debug, Error)]
+#[non_exhaustive]
 pub enum Error {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
