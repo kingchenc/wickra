@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedPairMoments;
 use crate::traits::Indicator;
 
 /// Rolling Jensen's Alpha.
@@ -34,10 +35,7 @@ pub struct Alpha {
     period: usize,
     risk_free: f64,
     window: VecDeque<(f64, f64)>,
-    sum_a: f64,
-    sum_b: f64,
-    sum_bb: f64,
-    sum_ab: f64,
+    moments: ShiftedPairMoments,
 }
 
 impl Alpha {
@@ -60,10 +58,7 @@ impl Alpha {
             period,
             risk_free,
             window: VecDeque::with_capacity(period),
-            sum_a: 0.0,
-            sum_b: 0.0,
-            sum_bb: 0.0,
-            sum_ab: 0.0,
+            moments: ShiftedPairMoments::new(),
         })
     }
 
@@ -90,38 +85,31 @@ impl Indicator for Alpha {
         }
         if self.window.len() == self.period {
             let (oa, ob) = self.window.pop_front().expect("non-empty");
-            self.sum_a -= oa;
-            self.sum_b -= ob;
-            self.sum_bb -= ob * ob;
-            self.sum_ab -= oa * ob;
+            self.moments.evict(oa, ob);
         }
         self.window.push_back((a, b));
-        self.sum_a += a;
-        self.sum_b += b;
-        self.sum_bb += b * b;
-        self.sum_ab += a * b;
+        self.moments.push(a, b);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean_a = self.sum_a / n;
-        let mean_b = self.sum_b / n;
-        let var_b = (self.sum_bb / n) - mean_b * mean_b;
+        let mean_a = self.moments.mean_a(self.period);
+        let mean_b = self.moments.mean_b(self.period);
+        let var_b = self.moments.var_b(self.period);
         if var_b <= 0.0 {
             // Undefined beta: report unadjusted excess.
             return Some(mean_a - self.risk_free);
         }
-        let cov_ab = (self.sum_ab / n) - mean_a * mean_b;
+        let cov_ab = self.moments.cov(self.period);
         let beta = cov_ab / var_b;
         Some(mean_a - (self.risk_free + beta * (mean_b - self.risk_free)))
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_a = 0.0;
-        self.sum_b = 0.0;
-        self.sum_bb = 0.0;
-        self.sum_ab = 0.0;
+        self.moments.reset();
     }
 
     #[inline]

@@ -260,6 +260,16 @@ impl ShiftedPairMoments {
         self.sum_ab -= da * db;
     }
 
+    /// Mean of the first channel over `n` observations.
+    pub(crate) fn mean_a(&self, n: usize) -> f64 {
+        self.offset_a + self.sum_a / n as f64
+    }
+
+    /// Mean of the second channel over `n` observations.
+    pub(crate) fn mean_b(&self, n: usize) -> f64 {
+        self.offset_b + self.sum_b / n as f64
+    }
+
     /// Population variance of the first channel, clamped at zero.
     pub(crate) fn var_a(&self, n: usize) -> f64 {
         let nf = n as f64;

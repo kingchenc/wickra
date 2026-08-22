@@ -67,8 +67,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a 0.01 spread, and a complete collapse at 1e8 — the same magnitudes the
   variance showed. A paired accumulator now centres both channels on their own
   reference point; the error drops to the 1e-16 floor. `PearsonCorrelation` and
-  `RollingCorrelation` are migrated. Their golden fixtures move in the last
-  digits only (worst 3.9e-13).
+  `RollingCorrelation` are migrated, and with them the pairwise regression
+  family: `Alpha`, `Beta`, `BetaNeutralSpread`, `Cointegration`,
+  `PairwiseBeta` and `TreynorRatio`. Exposure varied and was checked per
+  indicator: `Cointegration` takes price levels and `BetaNeutralSpread` a
+  price pair, so both were fully exposed, while `Alpha`, `TreynorRatio` and
+  `PairwiseBeta` accumulate returns and were barely affected. `Beta` takes a
+  generic pair of series, so a caller feeding prices was exposed; it now
+  measures exactly zero deviation from a two-pass reference at a price level
+  of 1e5. Golden fixtures move in the last digits only (worst 1.3e-09).
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and

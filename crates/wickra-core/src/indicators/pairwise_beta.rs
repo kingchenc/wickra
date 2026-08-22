@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedPairMoments;
 use crate::traits::Indicator;
 
 /// Rolling Beta of asset `a`'s **log-returns** on asset `b`'s log-returns.
@@ -61,10 +62,7 @@ pub struct PairwiseBeta {
     period: usize,
     prev: Option<(f64, f64)>,
     window: VecDeque<(f64, f64)>,
-    sum_a: f64,
-    sum_b: f64,
-    sum_bb: f64,
-    sum_ab: f64,
+    moments: ShiftedPairMoments,
 }
 
 impl PairwiseBeta {
@@ -88,10 +86,7 @@ impl PairwiseBeta {
             period,
             prev: None,
             window: VecDeque::with_capacity(period),
-            sum_a: 0.0,
-            sum_b: 0.0,
-            sum_bb: 0.0,
-            sum_ab: 0.0,
+            moments: ShiftedPairMoments::new(),
         })
     }
 
@@ -103,24 +98,18 @@ impl PairwiseBeta {
     fn push_return(&mut self, ra: f64, rb: f64) -> Option<f64> {
         if self.window.len() == self.period {
             let (oa, ob) = self.window.pop_front().expect("non-empty");
-            self.sum_a -= oa;
-            self.sum_b -= ob;
-            self.sum_bb -= ob * ob;
-            self.sum_ab -= oa * ob;
+            self.moments.evict(oa, ob);
         }
         self.window.push_back((ra, rb));
-        self.sum_a += ra;
-        self.sum_b += rb;
-        self.sum_bb += rb * rb;
-        self.sum_ab += ra * rb;
+        self.moments.push(ra, rb);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean_a = self.sum_a / n;
-        let mean_b = self.sum_b / n;
-        let var_b = (self.sum_bb / n - mean_b * mean_b).max(0.0);
-        let cov = self.sum_ab / n - mean_a * mean_b;
+        let var_b = self.moments.var_b(self.period);
+        let cov = self.moments.cov(self.period);
         if var_b == 0.0 {
             // A flat benchmark-return window has no defined beta.
             return Some(0.0);
@@ -155,10 +144,7 @@ impl Indicator for PairwiseBeta {
     fn reset(&mut self) {
         self.prev = None;
         self.window.clear();
-        self.sum_a = 0.0;
-        self.sum_b = 0.0;
-        self.sum_bb = 0.0;
-        self.sum_ab = 0.0;
+        self.moments.reset();
     }
 
     #[inline]
