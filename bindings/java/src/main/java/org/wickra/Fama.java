@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** Streaming Fama indicator over the Wickra C ABI. Not thread-safe; close when done. */
 public final class Fama implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     public Fama(double fastLimit, double slowLimit) {
         MemorySegment h;
@@ -30,9 +32,11 @@ public final class Fama implements AutoCloseable {
     /** Push one observation; returns the indicator value (NaN during warmup). */
     public double update(double value) {
         try {
-            return (double) NativeMethods.WICKRA_FAMA_UPDATE.invokeExact(handle, value);
+            return (double) NativeMethods.WICKRA_FAMA_UPDATE.invokeExact(handle(), value);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
@@ -42,55 +46,77 @@ public final class Fama implements AutoCloseable {
         try (Arena a = Arena.ofConfined()) {
             MemorySegment inputSeg = a.allocateFrom(JAVA_DOUBLE, input);
             MemorySegment outSeg = a.allocate(JAVA_DOUBLE.byteSize() * n);
-            NativeMethods.WICKRA_FAMA_BATCH.invokeExact(handle, inputSeg, outSeg, (long) n);
+            NativeMethods.WICKRA_FAMA_BATCH.invokeExact(handle(), inputSeg, outSeg, (long) n);
             double[] out = new double[n];
             MemorySegment.copy(outSeg, JAVA_DOUBLE, 0L, out, 0, n);
             return out;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {
-            long n = (long) NativeMethods.WICKRA_FAMA_WARMUP_PERIOD.invokeExact(handle);
+            long n = (long) NativeMethods.WICKRA_FAMA_WARMUP_PERIOD.invokeExact(handle());
             return (int) n;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Whether the indicator has consumed enough input to emit a value. */
     public boolean isReady() {
         try {
-            byte r = (byte) NativeMethods.WICKRA_FAMA_IS_READY.invokeExact(handle);
+            byte r = (byte) NativeMethods.WICKRA_FAMA_IS_READY.invokeExact(handle());
             return r != 0;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** The indicator's canonical name. */
     public String name() {
         try {
-            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_FAMA_NAME.invokeExact(handle);
+            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_FAMA_NAME.invokeExact(handle());
             return s.address() == 0 ? "" : s.reinterpret(Long.MAX_VALUE).getString(0);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Reset to the just-constructed state. */
     public void reset() {
         try {
-            NativeMethods.WICKRA_FAMA_RESET.invokeExact(handle);
+            NativeMethods.WICKRA_FAMA_RESET.invokeExact(handle());
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("Fama has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }

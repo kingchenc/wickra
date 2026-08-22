@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** Streaming TdRiskLevel indicator over the Wickra C ABI. Not thread-safe; close when done. */
 public final class TdRiskLevel implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     public TdRiskLevel(int lookback, int target) {
         if (lookback < 0) {
@@ -37,7 +39,7 @@ public final class TdRiskLevel implements AutoCloseable {
     public TdRiskLevelOutput update(double open, double high, double low, double close, double volume, long timestamp) {
         try (Arena a = Arena.ofConfined()) {
             MemorySegment out = a.allocate(16L);
-            byte ok = (byte) NativeMethods.WICKRA_TD_RISK_LEVEL_UPDATE.invokeExact(handle, open, high, low, close, volume, timestamp, out);
+            byte ok = (byte) NativeMethods.WICKRA_TD_RISK_LEVEL_UPDATE.invokeExact(handle(), open, high, low, close, volume, timestamp, out);
             if (ok == 0) {
                 return null;
             }
@@ -46,49 +48,71 @@ public final class TdRiskLevel implements AutoCloseable {
                 out.get(JAVA_DOUBLE, 8L));
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {
-            long n = (long) NativeMethods.WICKRA_TD_RISK_LEVEL_WARMUP_PERIOD.invokeExact(handle);
+            long n = (long) NativeMethods.WICKRA_TD_RISK_LEVEL_WARMUP_PERIOD.invokeExact(handle());
             return (int) n;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Whether the indicator has consumed enough input to emit a value. */
     public boolean isReady() {
         try {
-            byte r = (byte) NativeMethods.WICKRA_TD_RISK_LEVEL_IS_READY.invokeExact(handle);
+            byte r = (byte) NativeMethods.WICKRA_TD_RISK_LEVEL_IS_READY.invokeExact(handle());
             return r != 0;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** The indicator's canonical name. */
     public String name() {
         try {
-            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_TD_RISK_LEVEL_NAME.invokeExact(handle);
+            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_TD_RISK_LEVEL_NAME.invokeExact(handle());
             return s.address() == 0 ? "" : s.reinterpret(Long.MAX_VALUE).getString(0);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Reset to the just-constructed state. */
     public void reset() {
         try {
-            NativeMethods.WICKRA_TD_RISK_LEVEL_RESET.invokeExact(handle);
+            NativeMethods.WICKRA_TD_RISK_LEVEL_RESET.invokeExact(handle());
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("TdRiskLevel has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }

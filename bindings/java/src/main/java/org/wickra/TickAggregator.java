@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** Streaming TickAggregator indicator over the Wickra C ABI. Not thread-safe; close when done. */
 public final class TickAggregator implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     public TickAggregator(long bucket, boolean gapFill) {
         MemorySegment h;
@@ -31,13 +33,13 @@ public final class TickAggregator implements AutoCloseable {
     /** Feed one trade tick; returns the candles it closed (possibly empty). */
     public Candle[] push(double price, double size, long timestamp) {
         try {
-            long n = (long) NativeMethods.WICKRA_TICK_AGGREGATOR_PUSH.invokeExact(handle, price, size, timestamp);
+            long n = (long) NativeMethods.WICKRA_TICK_AGGREGATOR_PUSH.invokeExact(handle(), price, size, timestamp);
             if (n <= 0) {
                 return new Candle[0];
             }
             try (Arena a = Arena.ofConfined()) {
                 MemorySegment out = a.allocate(48L * n);
-                long w = (long) NativeMethods.WICKRA_TICK_AGGREGATOR_DRAIN.invokeExact(handle, out, n);
+                long w = (long) NativeMethods.WICKRA_TICK_AGGREGATOR_DRAIN.invokeExact(handle(), out, n);
                 Candle[] result = new Candle[(int) w];
                 for (int i = 0; i < w; i++) {
                     long b = (long) i * 48L;
@@ -53,10 +55,24 @@ public final class TickAggregator implements AutoCloseable {
             }
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("TickAggregator has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }

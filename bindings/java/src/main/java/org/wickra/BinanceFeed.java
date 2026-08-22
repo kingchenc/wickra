@@ -6,6 +6,7 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import java.nio.charset.StandardCharsets;
 import static java.lang.foreign.ValueLayout.*;
 
@@ -13,6 +14,7 @@ import static java.lang.foreign.ValueLayout.*;
 public final class BinanceFeed implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     /** Connect to Binance's live kline stream for the given comma-separated
      *  symbols (case-insensitive) at interval. baseUrl overrides the endpoint
@@ -54,7 +56,7 @@ public final class BinanceFeed implements AutoCloseable {
     public KlineEvent next(long timeoutMillis) {
         try (Arena a = Arena.ofConfined()) {
             MemorySegment out = a.allocate(72L);
-            int code = (int) NativeMethods.WICKRA_BINANCE_NEXT.invokeExact(handle, out, timeoutMillis);
+            int code = (int) NativeMethods.WICKRA_BINANCE_NEXT.invokeExact(handle(), out, timeoutMillis);
             if (code == 0) {
                 return null;
             }
@@ -126,12 +128,26 @@ public final class BinanceFeed implements AutoCloseable {
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("BinanceFeed has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
         try {
-            NativeMethods.WICKRA_BINANCE_CLOSE.invokeExact(handle);
+            NativeMethods.WICKRA_BINANCE_CLOSE.invokeExact(handle());
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
+        closed = true;
         cleanable.clean();
     }
 }

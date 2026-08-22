@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** Streaming RenkoBars indicator over the Wickra C ABI. Not thread-safe; close when done. */
 public final class RenkoBars implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     public RenkoBars(double boxSize) {
         MemorySegment h;
@@ -32,7 +34,7 @@ public final class RenkoBars implements AutoCloseable {
         final long cap = 64L;
         try (Arena a = Arena.ofConfined()) {
             MemorySegment out = a.allocate(24L * cap);
-            long n = (long) NativeMethods.WICKRA_RENKO_BARS_UPDATE.invokeExact(handle, open, high, low, close, volume, timestamp, out, cap);
+            long n = (long) NativeMethods.WICKRA_RENKO_BARS_UPDATE.invokeExact(handle(), open, high, low, close, volume, timestamp, out, cap);
             if (n <= 0) {
                 return new RenkoBrick[0];
             }
@@ -47,29 +49,47 @@ public final class RenkoBars implements AutoCloseable {
             return result;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** The indicator's canonical name. */
     public String name() {
         try {
-            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_RENKO_BARS_NAME.invokeExact(handle);
+            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_RENKO_BARS_NAME.invokeExact(handle());
             return s.address() == 0 ? "" : s.reinterpret(Long.MAX_VALUE).getString(0);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Reset to the just-constructed state. */
     public void reset() {
         try {
-            NativeMethods.WICKRA_RENKO_BARS_RESET.invokeExact(handle);
+            NativeMethods.WICKRA_RENKO_BARS_RESET.invokeExact(handle());
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("RenkoBars has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }

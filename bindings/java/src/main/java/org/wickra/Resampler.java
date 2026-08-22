@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** Streaming Resampler indicator over the Wickra C ABI. Not thread-safe; close when done. */
 public final class Resampler implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     public Resampler(long timeframe) {
         MemorySegment h;
@@ -31,7 +33,7 @@ public final class Resampler implements AutoCloseable {
     public Candle update(double open, double high, double low, double close, double volume, long timestamp) {
         try (Arena a = Arena.ofConfined()) {
             MemorySegment out = a.allocate(48L);
-            byte ok = (byte) NativeMethods.WICKRA_RESAMPLER_UPDATE.invokeExact(handle, open, high, low, close, volume, timestamp, out);
+            byte ok = (byte) NativeMethods.WICKRA_RESAMPLER_UPDATE.invokeExact(handle(), open, high, low, close, volume, timestamp, out);
             if (ok == 0) {
                 return null;
             }
@@ -44,6 +46,8 @@ public final class Resampler implements AutoCloseable {
                 (double) out.get(JAVA_LONG, 40L));
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
@@ -51,7 +55,7 @@ public final class Resampler implements AutoCloseable {
     public Candle flush() {
         try (Arena a = Arena.ofConfined()) {
             MemorySegment out = a.allocate(48L);
-            byte ok = (byte) NativeMethods.WICKRA_RESAMPLER_FLUSH.invokeExact(handle, out);
+            byte ok = (byte) NativeMethods.WICKRA_RESAMPLER_FLUSH.invokeExact(handle(), out);
             if (ok == 0) {
                 return null;
             }
@@ -64,10 +68,24 @@ public final class Resampler implements AutoCloseable {
                 (double) out.get(JAVA_LONG, 40L));
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("Resampler has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }

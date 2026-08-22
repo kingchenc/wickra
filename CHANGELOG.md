@@ -56,6 +56,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **Java binding: calling any method after `close()` crashed the JVM.** Every
+  generated method read the `handle` field directly, so a call made after
+  `close()` had already run the cleaner dereferenced freed memory and the JVM
+  died with an access violation — exactly what the Panama FFM API is meant to
+  make impossible from safe Java. There was no `closed` flag anywhere in the
+  binding. Calls now go through a guarded accessor that raises
+  `IllegalStateException`, `close()` is idempotent, and every downcall is wrapped
+  in `Reference.reachabilityFence(this)` so the cleaner cannot run while a native
+  call is still in flight.
+- **Java binding: candle timestamps were marshalled as doubles.** The C ABI
+  declares them `const int64_t *`, but the generated `batch` methods typed every
+  input array as `double[]` and allocated it with `JAVA_DOUBLE`, so the native
+  side reinterpreted the IEEE-754 bit pattern as an integer — a millisecond
+  epoch of 1700000000000 arrived as roughly 4.8e18. This was inert for
+  indicators that ignore the timestamp and silently wrong for every session- or
+  calendar-aware one (`SessionVwap`, `TurnOfMonth`, `SeasonalZScore`,
+  `OvernightGap`, and 182 others). Array parameter types and layouts are now
+  derived from the C declaration, so those 186 methods take `long[]`. In the
+  same pass, cross-section flag arrays declared `const bool *` changed from
+  `double[]` to `boolean[]`, matching what the C# binding already exposed.
 - **C# binding: calling any method on a disposed indicator read freed memory.**
   Every generated method reached the native library through
   `_handle.DangerousGetHandle()`, which keeps returning the pointer after

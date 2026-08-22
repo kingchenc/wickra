@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** Streaming OrderBookImbalanceTopN indicator over the Wickra C ABI. Not thread-safe; close when done. */
 public final class OrderBookImbalanceTopN implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     public OrderBookImbalanceTopN(int levels) {
         if (levels < 0) {
@@ -43,52 +45,74 @@ public final class OrderBookImbalanceTopN implements AutoCloseable {
             MemorySegment bidSizeSeg = a.allocateFrom(JAVA_DOUBLE, bidSize);
             MemorySegment askPriceSeg = a.allocateFrom(JAVA_DOUBLE, askPrice);
             MemorySegment askSizeSeg = a.allocateFrom(JAVA_DOUBLE, askSize);
-            return (double) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_UPDATE.invokeExact(handle, bidPriceSeg, bidSizeSeg, (long) bidPrice.length, askPriceSeg, askSizeSeg, (long) askPrice.length);
+            return (double) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_UPDATE.invokeExact(handle(), bidPriceSeg, bidSizeSeg, (long) bidPrice.length, askPriceSeg, askSizeSeg, (long) askPrice.length);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {
-            long n = (long) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_WARMUP_PERIOD.invokeExact(handle);
+            long n = (long) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_WARMUP_PERIOD.invokeExact(handle());
             return (int) n;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Whether the indicator has consumed enough input to emit a value. */
     public boolean isReady() {
         try {
-            byte r = (byte) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_IS_READY.invokeExact(handle);
+            byte r = (byte) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_IS_READY.invokeExact(handle());
             return r != 0;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** The indicator's canonical name. */
     public String name() {
         try {
-            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_NAME.invokeExact(handle);
+            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_NAME.invokeExact(handle());
             return s.address() == 0 ? "" : s.reinterpret(Long.MAX_VALUE).getString(0);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
     /** Reset to the just-constructed state. */
     public void reset() {
         try {
-            NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_RESET.invokeExact(handle);
+            NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_RESET.invokeExact(handle());
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("OrderBookImbalanceTopN has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }

@@ -6,12 +6,14 @@ import org.wickra.internal.WickraNative;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import static java.lang.foreign.ValueLayout.*;
 
 /** CSV candle reader over the Wickra C ABI. Not thread-safe; close when done. */
 public final class CandleReader implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
+    private boolean closed;
 
     /** Parse a timestamp,open,high,low,close,volume CSV string (a leading
      *  UTF-8 BOM and field whitespace are tolerated). */
@@ -38,13 +40,13 @@ public final class CandleReader implements AutoCloseable {
     /** Every candle parsed from the CSV, in file order. */
     public Candle[] read() {
         try {
-            long n = (long) NativeMethods.WICKRA_CANDLE_READER_COUNT.invokeExact(handle);
+            long n = (long) NativeMethods.WICKRA_CANDLE_READER_COUNT.invokeExact(handle());
             if (n <= 0) {
                 return new Candle[0];
             }
             try (Arena a = Arena.ofConfined()) {
                 MemorySegment out = a.allocate(48L * n);
-                long w = (long) NativeMethods.WICKRA_CANDLE_READER_READ.invokeExact(handle, out, n);
+                long w = (long) NativeMethods.WICKRA_CANDLE_READER_READ.invokeExact(handle(), out, n);
                 Candle[] result = new Candle[(int) w];
                 for (int i = 0; i < w; i++) {
                     long b = (long) i * 48L;
@@ -60,10 +62,24 @@ public final class CandleReader implements AutoCloseable {
             }
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
         }
     }
 
+    /** The native handle, refusing to hand out one that has been released. */
+    private MemorySegment handle() {
+        if (closed) {
+            throw new IllegalStateException("CandleReader has been closed");
+        }
+        return handle;
+    }
+
     @Override public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         cleanable.clean();
     }
 }
