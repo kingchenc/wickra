@@ -144,6 +144,7 @@ impl Indicator for Kst {
     type Input = f64;
     type Output = KstOutput;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<KstOutput> {
         // Feed every inner state machine on every input so they warm up in
         // parallel. The KST line waits for all four RCMA branches; the signal
@@ -179,6 +180,7 @@ impl Indicator for Kst {
         self.last_signal = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Each RCMA_i emits once the inner ROC has warmed up (roc_i + 1
         // inputs) AND the SMA has filled (sma_i inputs through it). All four
@@ -192,10 +194,12 @@ impl Indicator for Kst {
         slowest + self.signal_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_signal.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KST"
     }

@@ -124,16 +124,19 @@ impl Indicator for Mfi {
         self.neg_sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed candle establishes the first previous typical price, then
         // `period` flow comparisons fill the window.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.pos_window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MFI"
     }

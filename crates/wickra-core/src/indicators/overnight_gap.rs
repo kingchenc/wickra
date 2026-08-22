@@ -62,6 +62,7 @@ impl Indicator for OvernightGap {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let key = (civil.year, civil.month, civil.day);
@@ -85,14 +86,17 @@ impl Indicator for OvernightGap {
         self.gap = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.gap.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OvernightGap"
     }

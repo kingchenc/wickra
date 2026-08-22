@@ -96,6 +96,7 @@ impl Indicator for RelativeStrengthAB {
     type Input = (f64, f64);
     type Output = RelativeStrengthOutput;
 
+    #[inline]
     fn update(&mut self, input: (f64, f64)) -> Option<RelativeStrengthOutput> {
         let (a, b) = input;
         if b == 0.0 || !a.is_finite() || !b.is_finite() {
@@ -120,14 +121,17 @@ impl Indicator for RelativeStrengthAB {
         self.rsi.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.ma.warmup_period().max(self.rsi.warmup_period())
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ma.is_ready() && self.rsi.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RelativeStrengthAB"
     }

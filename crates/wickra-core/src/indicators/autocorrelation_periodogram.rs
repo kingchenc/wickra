@@ -201,14 +201,17 @@ impl Indicator for AutocorrelationPeriodogram {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.max_period + AVG_LENGTH
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AutocorrelationPeriodogram"
     }

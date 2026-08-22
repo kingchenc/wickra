@@ -50,6 +50,7 @@ impl Indicator for PerpetualPremiumIndex {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         let premium = (tick.mark_price - tick.index_price) / tick.index_price;
         self.ready = true;
@@ -60,14 +61,17 @@ impl Indicator for PerpetualPremiumIndex {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PerpetualPremiumIndex"
     }

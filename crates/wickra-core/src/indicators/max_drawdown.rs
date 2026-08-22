@@ -143,14 +143,17 @@ impl Indicator for MaxDrawdown {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MaxDrawdown"
     }

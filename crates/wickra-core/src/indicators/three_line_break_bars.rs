@@ -187,6 +187,7 @@ impl BarBuilder for ThreeLineBreakBars {
         self.recent.clear();
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ThreeLineBreakBars"
     }

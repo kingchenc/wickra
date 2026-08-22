@@ -100,6 +100,7 @@ impl Indicator for FractalChaosBands {
     type Input = Candle;
     type Output = FractalChaosBandsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FractalChaosBandsOutput> {
         let window_len = 2 * self.k + 1;
         if self.window.len() == window_len {
@@ -146,14 +147,17 @@ impl Indicator for FractalChaosBands {
         self.last_lower = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2 * self.k + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_upper.is_some() && self.last_lower.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FractalChaosBands"
     }

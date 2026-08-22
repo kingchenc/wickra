@@ -203,10 +203,12 @@ impl Indicator for Psar {
         self.af = self.af_start;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         // Match the convention of every other indicator: `is_ready` flips to
         // `true` only once a real value has been returned. The previous
@@ -217,6 +219,7 @@ impl Indicator for Psar {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PSAR"
     }

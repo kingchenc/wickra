@@ -44,6 +44,7 @@ impl Indicator for CloseVsOpen {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         self.has_emitted = true;
         let out = if candle.open == 0.0 {
@@ -59,14 +60,17 @@ impl Indicator for CloseVsOpen {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CloseVsOpen"
     }

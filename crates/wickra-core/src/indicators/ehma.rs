@@ -74,6 +74,7 @@ impl Indicator for Ehma {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Feed both component EMAs on every input so they warm up in parallel;
         // gating the longer one behind the shorter would delay the first
@@ -91,6 +92,7 @@ impl Indicator for Ehma {
         self.smooth_ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // full_ema seeds at `period`, then smooth_ema needs another
         // (round(sqrt(period)) - 1) values to seed.
@@ -98,10 +100,12 @@ impl Indicator for Ehma {
         self.period + sm.max(1) - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.smooth_ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "EHMA"
     }

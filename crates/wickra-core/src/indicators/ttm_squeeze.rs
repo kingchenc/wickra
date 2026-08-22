@@ -186,14 +186,17 @@ impl Indicator for TtmSqueeze {
         self.closes.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.bb.is_ready() && self.sma_close.is_ready() && self.atr.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TtmSqueeze"
     }

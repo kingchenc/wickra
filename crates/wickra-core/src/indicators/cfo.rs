@@ -64,6 +64,7 @@ impl Indicator for Cfo {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             return None;
@@ -84,14 +85,17 @@ impl Indicator for Cfo {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CFO"
     }

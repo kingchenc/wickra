@@ -90,6 +90,7 @@ impl Indicator for SeasonalZScore {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let hour = civil.hour as usize;
@@ -120,14 +121,17 @@ impl Indicator for SeasonalZScore {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SeasonalZScore"
     }

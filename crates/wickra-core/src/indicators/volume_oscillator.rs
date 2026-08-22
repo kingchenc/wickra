@@ -75,6 +75,7 @@ impl Indicator for VolumeOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let f = self.fast.update(candle.volume);
         let s = self.slow.update(candle.volume);
@@ -91,14 +92,17 @@ impl Indicator for VolumeOscillator {
         self.slow.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.slow_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.slow.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeOscillator"
     }

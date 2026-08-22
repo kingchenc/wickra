@@ -90,6 +90,7 @@ impl Indicator for Adxr {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let adx_value = self.adx.update(candle)?.adx;
         if self.window.len() == self.period {
@@ -111,6 +112,7 @@ impl Indicator for Adxr {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // ADX warmup is `2 * period` and emits one `ADX` per subsequent candle;
         // the ADXR ring then needs `period - 1` more candles to fill, so the
@@ -118,10 +120,12 @@ impl Indicator for Adxr {
         3 * self.period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ADXR"
     }

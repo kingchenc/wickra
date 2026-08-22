@@ -105,6 +105,7 @@ impl Indicator for FibConfluence {
     type Input = Candle;
     type Output = FibConfluenceOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibConfluenceOutput> {
         self.swing.update(candle);
         self.confluence()
@@ -114,14 +115,17 @@ impl Indicator for FibConfluence {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 3
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibConfluence"
     }

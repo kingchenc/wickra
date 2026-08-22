@@ -105,6 +105,7 @@ impl Indicator for VolumeRsi {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let volume = candle.volume;
         let Some(prev) = self.prev_volume else {
@@ -153,14 +154,17 @@ impl Indicator for VolumeRsi {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeRsi"
     }

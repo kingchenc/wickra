@@ -68,6 +68,7 @@ impl Indicator for Camarilla {
     type Input = Candle;
     type Output = CamarillaPivotsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<CamarillaPivotsOutput> {
         let (h, l, c) = (candle.high, candle.low, candle.close);
         let range = h - l;
@@ -95,14 +96,17 @@ impl Indicator for Camarilla {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Camarilla"
     }

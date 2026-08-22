@@ -255,12 +255,14 @@ impl Indicator for Ichimoku {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // First fully-populated row needs senkou_b's midpoint to have travelled
         // `displacement` bars forward.
         self.senkou_b_period + self.displacement - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some_and(|o| {
             o.tenkan.is_some()
@@ -271,6 +273,7 @@ impl Indicator for Ichimoku {
         })
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Ichimoku"
     }

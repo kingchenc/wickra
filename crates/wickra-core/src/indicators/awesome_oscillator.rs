@@ -65,6 +65,7 @@ impl Indicator for AwesomeOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let median = candle.median_price();
         let f = self.fast.update(median);
@@ -80,14 +81,17 @@ impl Indicator for AwesomeOscillator {
         self.slow.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.slow_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.slow.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AwesomeOscillator"
     }

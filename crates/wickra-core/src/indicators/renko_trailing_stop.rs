@@ -124,14 +124,17 @@ impl Indicator for RenkoTrailingStop {
         self.long = true;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.anchor.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RenkoTrailingStop"
     }

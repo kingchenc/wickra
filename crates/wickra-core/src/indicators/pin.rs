@@ -90,6 +90,7 @@ impl Indicator for Pin {
     type Input = Trade;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<f64> {
         let is_buy = trade.side.sign() > 0.0;
         if self.sides.len() == self.window {
@@ -122,14 +123,17 @@ impl Indicator for Pin {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.window
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PIN"
     }

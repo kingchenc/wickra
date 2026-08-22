@@ -80,6 +80,7 @@ impl Indicator for StochRsi {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
@@ -118,16 +119,19 @@ impl Indicator for StochRsi {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // RSI emits its first value at input `rsi_period + 1`; the stochastic
         // window then needs `stoch_period` RSI values.
         self.rsi_period + self.stoch_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "StochRSI"
     }

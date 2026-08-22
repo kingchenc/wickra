@@ -59,6 +59,7 @@ impl Indicator for Trix {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let e1 = self.ema1.update(input)?;
         let e2 = self.ema2.update(e1)?;
@@ -90,15 +91,18 @@ impl Indicator for Trix {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Triple EMA seeds at 3*period-2; plus one extra for the rate of change.
         3 * self.period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TRIX"
     }

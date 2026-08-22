@@ -63,6 +63,7 @@ impl Indicator for FisherRsi {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let rsi = self.rsi.update(input)?;
         let x = ((rsi - 50.0) / 50.0).clamp(-0.999, 0.999);
@@ -73,14 +74,17 @@ impl Indicator for FisherRsi {
         self.rsi.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.rsi.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.rsi.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FisherRSI"
     }

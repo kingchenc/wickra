@@ -195,15 +195,18 @@ impl Indicator for Rwi {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // First emission once the rolling window holds `period` candles.
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RWI"
     }

@@ -119,6 +119,7 @@ impl Indicator for ProjectionBands {
     type Input = Candle;
     type Output = ProjectionBandsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ProjectionBandsOutput> {
         if self.highs.len() == self.period {
             self.highs.pop_front();
@@ -160,14 +161,17 @@ impl Indicator for ProjectionBands {
         self.lows.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.highs.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ProjectionBands"
     }

@@ -108,6 +108,7 @@ impl Indicator for ChandeKrollStop {
     type Input = Candle;
     type Output = ChandeKrollStopOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ChandeKrollStopOutput> {
         let atr = self.atr.update(candle);
         if self.highs.len() == self.atr_period {
@@ -156,16 +157,19 @@ impl Indicator for ChandeKrollStop {
         self.low_stops.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The preliminary stop first appears on candle `atr_period`; the
         // smoothing window then needs `stop_period` of them.
         self.atr_period + self.stop_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.high_stops.len() == self.stop_period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ChandeKrollStop"
     }

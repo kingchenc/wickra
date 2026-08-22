@@ -91,6 +91,7 @@ impl Indicator for EwmaVolatility {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Non-finite / non-positive prices are skipped: `ln(input / prev)` is
         // undefined, so the tick must not enter the variance recursion.
@@ -124,16 +125,19 @@ impl Indicator for EwmaVolatility {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The first log return needs a previous price; the estimate is seeded
         // and emitted on that first return.
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "EwmaVolatility"
     }

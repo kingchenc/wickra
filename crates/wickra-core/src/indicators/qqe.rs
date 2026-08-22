@@ -169,6 +169,7 @@ impl Indicator for Qqe {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // RSI (rsi_period + 1) -> rsi_ma EMA -> one bar for the first atr_rsi ->
         // ma_atr EMA -> dar EMA. Expressed via the component warmups so it stays
@@ -180,10 +181,12 @@ impl Indicator for Qqe {
             - 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "QQE"
     }

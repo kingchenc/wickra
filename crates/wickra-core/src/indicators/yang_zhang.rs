@@ -199,6 +199,7 @@ impl Indicator for YangZhangVolatility {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One bar to seed `prev_close`, then `period` more bars to fill
         // the rolling windows. First emit lands at index `period`, i.e.
@@ -206,10 +207,12 @@ impl Indicator for YangZhangVolatility {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "YangZhangVolatility"
     }

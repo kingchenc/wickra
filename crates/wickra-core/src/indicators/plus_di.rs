@@ -77,6 +77,7 @@ impl Indicator for PlusDi {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev else {
             self.prev = Some(candle);
@@ -123,14 +124,17 @@ impl Indicator for PlusDi {
         self.tr_smooth = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.dm_smooth.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PLUS_DI"
     }

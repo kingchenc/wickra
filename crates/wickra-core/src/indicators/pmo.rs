@@ -87,6 +87,7 @@ impl Indicator for Pmo {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
@@ -117,16 +118,19 @@ impl Indicator for Pmo {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The first ROC needs a previous price; both customEMAs seed from
         // their first input, so the first PMO lands on the second update.
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PMO"
     }

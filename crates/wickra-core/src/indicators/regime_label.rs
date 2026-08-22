@@ -171,16 +171,19 @@ impl Indicator for RegimeLabel {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One price seeds `prev`, `vol_period` returns yield the first vol, then
         // `lookback` vols fill the regime window.
         self.vol_period + self.lookback
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RegimeLabel"
     }

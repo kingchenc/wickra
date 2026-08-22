@@ -112,6 +112,7 @@ impl Indicator for Vpin {
     type Input = Trade;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<f64> {
         let mut remaining = trade.size;
         let buy = trade.side == Side::Buy;
@@ -144,14 +145,17 @@ impl Indicator for Vpin {
         self.sum_imbalance.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.num_buckets
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.num_buckets
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Vpin"
     }

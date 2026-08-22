@@ -112,6 +112,7 @@ impl Indicator for MurreyMathLines {
     type Input = Candle;
     type Output = MurreyMathLinesOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<MurreyMathLinesOutput> {
         if self.highs.len() == self.period {
             self.highs.pop_front();
@@ -147,14 +148,17 @@ impl Indicator for MurreyMathLines {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MurreyMathLines"
     }

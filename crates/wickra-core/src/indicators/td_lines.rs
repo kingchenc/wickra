@@ -200,14 +200,17 @@ impl Indicator for TdLines {
     /// Lower bound only: a TDST line needs a *completed* setup, which depends on
     /// the data, so the first value can arrive arbitrarily later than this — and
     /// on a series that never completes a setup, never.
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.lookback + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDLines"
     }

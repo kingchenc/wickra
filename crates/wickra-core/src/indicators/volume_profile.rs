@@ -156,6 +156,7 @@ impl Indicator for VolumeProfile {
     type Input = Candle;
     type Output = VolumeProfileOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<VolumeProfileOutput> {
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -174,14 +175,17 @@ impl Indicator for VolumeProfile {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeProfile"
     }

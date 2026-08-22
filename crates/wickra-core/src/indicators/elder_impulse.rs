@@ -93,6 +93,7 @@ impl Indicator for ElderImpulse {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Feed both branches on every input so they warm in parallel.
         let ema_now = self.ema.update(input);
@@ -132,6 +133,7 @@ impl Indicator for ElderImpulse {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // MACD's warmup is slow + signal − 1; EMA's is ema_period. The
         // slowest branch fires the *first* impulse-ready reading, but
@@ -140,10 +142,12 @@ impl Indicator for ElderImpulse {
         self.ema_period.max(macd_warmup) + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ElderImpulse"
     }

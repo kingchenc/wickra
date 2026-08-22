@@ -96,6 +96,7 @@ impl Indicator for ParkinsonVolatility {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // `Candle::new` already guarantees finite, positive `high` and `low`
         // with `high >= low`, so the log ratio is always well-defined and
@@ -131,14 +132,17 @@ impl Indicator for ParkinsonVolatility {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ParkinsonVolatility"
     }

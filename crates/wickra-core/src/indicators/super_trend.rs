@@ -165,14 +165,17 @@ impl Indicator for SuperTrend {
         self.prev = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.atr_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.prev.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SuperTrend"
     }

@@ -75,6 +75,7 @@ impl Indicator for LiquidationFeatures {
     type Input = DerivativesTick;
     type Output = LiquidationFeaturesOutput;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<LiquidationFeaturesOutput> {
         self.has_emitted = true;
         let long = tick.long_liquidation;
@@ -95,14 +96,17 @@ impl Indicator for LiquidationFeatures {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "LiquidationFeatures"
     }

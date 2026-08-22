@@ -134,6 +134,7 @@ impl Indicator for KendallTau {
     type Input = (f64, f64);
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         if !input.0.is_finite() || !input.1.is_finite() {
             return None;
@@ -155,14 +156,17 @@ impl Indicator for KendallTau {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KendallTau"
     }

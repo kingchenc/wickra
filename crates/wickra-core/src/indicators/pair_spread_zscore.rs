@@ -164,6 +164,7 @@ impl Indicator for PairSpreadZScore {
     type Input = (f64, f64);
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
         if !(a > 0.0 && b > 0.0 && a.is_finite() && b.is_finite()) {
@@ -200,16 +201,19 @@ impl Indicator for PairSpreadZScore {
         self.sum_ss = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // `beta_period` samples to define the hedge ratio (and the first
         // spread), then `z_period − 1` more to fill the spread window.
         self.beta_period + self.z_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.spreads.len() == self.z_period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PairSpreadZScore"
     }

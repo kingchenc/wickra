@@ -148,14 +148,17 @@ impl Indicator for LaguerreRsi {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "LaguerreRSI"
     }

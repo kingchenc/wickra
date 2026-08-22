@@ -94,6 +94,7 @@ impl Indicator for ThreeLineBreak {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let close = candle.close;
         let Some(&prior) = self.line_values.last() else {
@@ -140,14 +141,17 @@ impl Indicator for ThreeLineBreak {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ThreeLineBreak"
     }

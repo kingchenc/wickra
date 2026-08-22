@@ -82,6 +82,7 @@ impl Indicator for Cmo {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
@@ -128,14 +129,17 @@ impl Indicator for Cmo {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CMO"
     }

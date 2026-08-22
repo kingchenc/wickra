@@ -114,6 +114,7 @@ impl Indicator for WaveTrend {
     type Input = Candle;
     type Output = WaveTrendOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<WaveTrendOutput> {
         let ap = (candle.high + candle.low + candle.close) / 3.0;
 
@@ -156,6 +157,7 @@ impl Indicator for WaveTrend {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // EMA(esa) first emits at input `channel_period`; the second EMA
         // (deviation) takes its input from the same bar and emits at the
@@ -181,10 +183,12 @@ impl Indicator for WaveTrend {
         2 * self.channel_period + self.average_period + self.signal_period - 3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "WaveTrend"
     }

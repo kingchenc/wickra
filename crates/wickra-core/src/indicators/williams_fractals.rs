@@ -72,6 +72,7 @@ impl Indicator for WilliamsFractals {
     type Input = Candle;
     type Output = WilliamsFractalsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<WilliamsFractalsOutput> {
         if self.window.len() == 5 {
             self.window.pop_front();
@@ -107,14 +108,17 @@ impl Indicator for WilliamsFractals {
         self.window.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         5
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == 5
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "WilliamsFractals"
     }

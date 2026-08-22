@@ -96,6 +96,7 @@ impl VolumeBars {
 impl BarBuilder for VolumeBars {
     type Bar = VolumeBar;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Vec<VolumeBar> {
         if self.count == 0 {
             self.open = candle.open;
@@ -128,6 +129,7 @@ impl BarBuilder for VolumeBars {
         self.accumulated = 0.0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeBars"
     }

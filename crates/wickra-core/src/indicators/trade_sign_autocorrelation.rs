@@ -86,6 +86,7 @@ impl Indicator for TradeSignAutocorrelation {
     type Input = Trade;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<f64> {
         if self.signs.len() == self.period {
             self.signs.pop_front();
@@ -112,14 +113,17 @@ impl Indicator for TradeSignAutocorrelation {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TradeSignAutocorrelation"
     }

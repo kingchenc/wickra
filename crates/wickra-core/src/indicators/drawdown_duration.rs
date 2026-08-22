@@ -61,6 +61,7 @@ impl Indicator for DrawdownDuration {
     type Input = f64;
     type Output = u32;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<u32> {
         if !input.is_finite() {
             return self.value();
@@ -81,14 +82,17 @@ impl Indicator for DrawdownDuration {
         self.seen = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.seen
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DrawdownDuration"
     }

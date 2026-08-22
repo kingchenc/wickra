@@ -94,6 +94,7 @@ impl Indicator for BetterVolume {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let range = candle.high - candle.low;
         if self.volumes.len() == self.period {
@@ -133,14 +134,17 @@ impl Indicator for BetterVolume {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "BetterVolume"
     }

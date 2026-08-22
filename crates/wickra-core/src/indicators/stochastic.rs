@@ -140,6 +140,7 @@ impl Indicator for Stochastic {
     type Input = Candle;
     type Output = StochasticOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<StochasticOutput> {
         self.push_window(candle);
         if self.candles.len() < self.k_period {
@@ -167,14 +168,17 @@ impl Indicator for Stochastic {
         self.last_k = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.k_period + self.d_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.d_sma.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Stochastic"
     }

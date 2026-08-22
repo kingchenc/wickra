@@ -56,6 +56,7 @@ impl Indicator for TdRangeProjection {
     type Input = Candle;
     type Output = TdRangeProjectionOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<TdRangeProjectionOutput> {
         let pivot_sum = if candle.close < candle.open {
             candle.high + 2.0 * candle.low + candle.close
@@ -77,14 +78,17 @@ impl Indicator for TdRangeProjection {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDRangeProjection"
     }

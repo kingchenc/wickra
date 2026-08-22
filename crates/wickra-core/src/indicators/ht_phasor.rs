@@ -165,14 +165,17 @@ impl Indicator for HtPhasor {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         19
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HT_PHASOR"
     }

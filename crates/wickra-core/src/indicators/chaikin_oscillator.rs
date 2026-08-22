@@ -82,6 +82,7 @@ impl Indicator for ChaikinOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // The ADL emits a value from the very first candle, so both EMAs are
         // fed on every bar and warm up in parallel.
@@ -97,15 +98,18 @@ impl Indicator for ChaikinOscillator {
         self.slow.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // ADL is ready at candle 1; the slow EMA gates the first emission.
         self.slow_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.fast.is_ready() && self.slow.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ChaikinOscillator"
     }

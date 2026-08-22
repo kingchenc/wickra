@@ -77,6 +77,7 @@ impl Indicator for Pgo {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let mean = self.sma.update(candle.close);
         // TrueRange always emits (it falls back to high − low without a
@@ -102,16 +103,19 @@ impl Indicator for Pgo {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Both inner state machines reach readiness at exactly `period`
         // candles, so PGO emits at the same boundary.
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PGO"
     }

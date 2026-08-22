@@ -75,6 +75,7 @@ impl Indicator for ChaikinVolatility {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let spread = candle.high - candle.low;
         let smoothed = self.ema.update(spread)?;
@@ -86,16 +87,19 @@ impl Indicator for ChaikinVolatility {
         self.roc.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The EMA emits at candle `ema_period`; the ROC then needs
         // `roc_period` more smoothed values to span its lookback.
         self.ema_period + self.roc_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.roc.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ChaikinVolatility"
     }

@@ -64,6 +64,7 @@ impl Indicator for CentralPivotRange {
     type Input = Candle;
     type Output = CentralPivotRangeOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<CentralPivotRangeOutput> {
         let pivot = (candle.high + candle.low + candle.close) / 3.0;
         let bc_raw = f64::midpoint(candle.high, candle.low);
@@ -78,14 +79,17 @@ impl Indicator for CentralPivotRange {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CentralPivotRange"
     }

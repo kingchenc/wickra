@@ -79,6 +79,7 @@ impl Indicator for FundingRateMean {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         self.history.push_back(tick.funding_rate);
         self.sum.push(tick.funding_rate);
@@ -100,14 +101,17 @@ impl Indicator for FundingRateMean {
         self.sum.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.window
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.history.len() >= self.window
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FundingRateMean"
     }

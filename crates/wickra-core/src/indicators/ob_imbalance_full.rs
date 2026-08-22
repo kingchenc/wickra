@@ -50,6 +50,7 @@ impl Indicator for OrderBookImbalanceFull {
     type Input = OrderBook;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, book: OrderBook) -> Option<f64> {
         self.has_emitted = true;
         let bid_depth: f64 = book.bids.iter().map(|l| l.size).sum();
@@ -65,14 +66,17 @@ impl Indicator for OrderBookImbalanceFull {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OrderBookImbalanceFull"
     }

@@ -73,6 +73,7 @@ impl Indicator for RecoveryFactor {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             return self.value();
@@ -104,14 +105,17 @@ impl Indicator for RecoveryFactor {
         self.seen = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.seen && self.first != 0.0
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RecoveryFactor"
     }

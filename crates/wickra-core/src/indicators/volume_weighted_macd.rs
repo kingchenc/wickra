@@ -106,6 +106,7 @@ impl Indicator for VolumeWeightedMacd {
     type Input = Candle;
     type Output = VolumeWeightedMacdOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<VolumeWeightedMacdOutput> {
         let fast = self.fast.update(candle);
         let slow = self.slow.update(candle);
@@ -130,14 +131,17 @@ impl Indicator for VolumeWeightedMacd {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.slow_period + self.signal_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeWeightedMacd"
     }

@@ -73,6 +73,7 @@ impl Indicator for MinusDm {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev else {
             self.prev = Some(candle);
@@ -105,14 +106,17 @@ impl Indicator for MinusDm {
         self.smooth = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.smooth.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MINUS_DM"
     }

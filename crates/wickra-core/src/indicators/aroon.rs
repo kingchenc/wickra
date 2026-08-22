@@ -67,6 +67,7 @@ impl Indicator for Aroon {
     type Input = Candle;
     type Output = AroonOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<AroonOutput> {
         if self.candles.len() == self.period + 1 {
             self.candles.pop_front();
@@ -98,14 +99,17 @@ impl Indicator for Aroon {
         self.candles.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.candles.len() == self.period + 1
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Aroon"
     }

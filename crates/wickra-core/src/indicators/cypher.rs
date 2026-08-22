@@ -41,6 +41,7 @@ impl Indicator for Cypher {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         self.has_emitted = true;
         if !self.swing.update(candle) {
@@ -72,14 +73,17 @@ impl Indicator for Cypher {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         6
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Cypher"
     }

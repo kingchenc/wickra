@@ -66,6 +66,7 @@ impl Indicator for TtmTrend {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let median = f64::midpoint(candle.high, candle.low);
         let reference = self.sma.update(median)?;
@@ -76,14 +77,17 @@ impl Indicator for TtmTrend {
         self.sma.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.sma.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TtmTrend"
     }

@@ -55,6 +55,7 @@ impl Indicator for Trin {
     type Input = CrossSection;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, section: CrossSection) -> Option<f64> {
         let advancers = section.advancers() as f64;
         let decliners = section.decliners().max(1) as f64;
@@ -70,14 +71,17 @@ impl Indicator for Trin {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Trin"
     }

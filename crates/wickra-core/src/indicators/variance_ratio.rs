@@ -101,6 +101,7 @@ impl Indicator for VarianceRatio {
     type Input = (f64, f64);
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
         if !a.is_finite() || !b.is_finite() {
@@ -139,14 +140,17 @@ impl Indicator for VarianceRatio {
         self.window.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VarianceRatio"
     }

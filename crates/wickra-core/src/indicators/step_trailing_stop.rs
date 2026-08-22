@@ -83,6 +83,7 @@ impl Indicator for StepTrailingStop {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, close: f64) -> Option<f64> {
         if !close.is_finite() {
             return None;
@@ -114,14 +115,17 @@ impl Indicator for StepTrailingStop {
         self.long = true;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.prev_stop.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "StepTrailingStop"
     }

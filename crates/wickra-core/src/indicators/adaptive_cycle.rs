@@ -48,6 +48,7 @@ impl Indicator for AdaptiveCycle {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let period = self.cycle.update(input)?;
         let half = (period * 0.5).round().clamp(3.0, 25.0);
@@ -60,14 +61,17 @@ impl Indicator for AdaptiveCycle {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.cycle.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AdaptiveCycle"
     }

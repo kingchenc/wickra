@@ -58,6 +58,7 @@ impl Indicator for OpenInterestDelta {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         let oi = tick.open_interest;
         let delta = self.prev.map(|prev| oi - prev);
@@ -73,14 +74,17 @@ impl Indicator for OpenInterestDelta {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OpenInterestDelta"
     }

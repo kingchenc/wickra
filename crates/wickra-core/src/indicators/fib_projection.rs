@@ -87,6 +87,7 @@ impl Indicator for FibProjection {
     type Input = Candle;
     type Output = FibProjectionOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibProjectionOutput> {
         self.swing.update(candle);
         self.levels()
@@ -96,14 +97,17 @@ impl Indicator for FibProjection {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 3
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibProjection"
     }

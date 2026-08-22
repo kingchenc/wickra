@@ -82,6 +82,7 @@ impl Indicator for AdOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev_close else {
             // The first bar only establishes the previous close anchor.
@@ -112,16 +113,19 @@ impl Indicator for AdOscillator {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed bar establishes the prior close; the line then feeds the
         // 13-bar signal SMA, which is full after `SIGNAL_PERIOD` line values.
         1 + SIGNAL_PERIOD
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ADOSC"
     }

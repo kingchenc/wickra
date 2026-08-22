@@ -58,6 +58,7 @@ impl Indicator for TdTrap {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let (Some(trap), Some(before)) = (self.prev1, self.prev2) else {
             // Not enough history yet: emit a neutral 0.0 while seeding.
@@ -86,14 +87,17 @@ impl Indicator for TdTrap {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDTrap"
     }

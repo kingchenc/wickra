@@ -155,14 +155,17 @@ impl Indicator for TwiggsMoneyFlow {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TwiggsMoneyFlow"
     }

@@ -113,6 +113,7 @@ impl Indicator for InitialBalance {
     type Input = Candle;
     type Output = InitialBalanceOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<InitialBalanceOutput> {
         if self.locked {
             return Some(InitialBalanceOutput {
@@ -143,14 +144,17 @@ impl Indicator for InitialBalance {
         self.locked = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.bars_seen > 0
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "InitialBalance"
     }

@@ -51,6 +51,7 @@ impl Indicator for Tema {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let e1 = self.ema1.update(input)?;
         let e2 = self.ema2.update(e1)?;
@@ -64,14 +65,17 @@ impl Indicator for Tema {
         self.ema3.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3 * self.period - 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema3.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TEMA"
     }

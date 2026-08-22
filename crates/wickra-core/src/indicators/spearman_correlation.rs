@@ -186,14 +186,17 @@ impl Indicator for SpearmanCorrelation {
         self.ry.iter_mut().for_each(|r| *r = 0.0);
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SpearmanCorrelation"
     }

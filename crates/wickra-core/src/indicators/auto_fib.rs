@@ -99,6 +99,7 @@ impl Indicator for AutoFib {
     type Input = Candle;
     type Output = AutoFibOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<AutoFibOutput> {
         self.swing.update(candle);
         self.levels()
@@ -108,14 +109,17 @@ impl Indicator for AutoFib {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 2
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AutoFib"
     }

@@ -71,6 +71,7 @@ impl Indicator for LogReturn {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Non-finite or non-positive prices are ignored: `ln` of a non-positive
         // price is undefined, so the tick must not enter the window. Return the
@@ -98,14 +99,17 @@ impl Indicator for LogReturn {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period + 1
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "LogReturn"
     }

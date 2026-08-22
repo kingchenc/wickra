@@ -89,6 +89,7 @@ impl Indicator for ZeroLagMacd {
     type Input = f64;
     type Output = ZeroLagMacdOutput;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<ZeroLagMacdOutput> {
         // Feed both inner ZLEMAs on every input so the slow one warms in
         // parallel with the fast one.
@@ -110,6 +111,7 @@ impl Indicator for ZeroLagMacd {
         self.signal.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // ZLEMA(period) warmup is `(period − 1) / 2 + period` = `lag + period`.
         // Both fast and slow run in parallel; the slow one dominates. The
@@ -118,10 +120,12 @@ impl Indicator for ZeroLagMacd {
         zlema_warmup(self.slow_period) + zlema_warmup(self.signal_period) - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.signal.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ZeroLagMACD"
     }

@@ -90,6 +90,7 @@ impl Indicator for FibTimeZones {
     type Input = Candle;
     type Output = FibTimeZonesOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibTimeZonesOutput> {
         self.swing.update(candle);
         self.zones()
@@ -99,14 +100,17 @@ impl Indicator for FibTimeZones {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         !self.swing.pivots().is_empty()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibTimeZones"
     }

@@ -75,6 +75,7 @@ impl Ma {
         })
     }
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<f64> {
         match self {
             Self::Sma(m) => m.update(value),
@@ -97,6 +98,7 @@ impl Ma {
         }
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         match self {
             Self::Sma(m) => m.warmup_period(),
@@ -175,6 +177,7 @@ impl Indicator for MacdExt {
     type Input = f64;
     type Output = MacdOutput;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<MacdOutput> {
         let fast_v = self.fast.update(value);
         let slow_v = self.slow.update(value);
@@ -198,14 +201,17 @@ impl Indicator for MacdExt {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.slow.warmup_period() + self.signal.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MACDEXT"
     }

@@ -81,6 +81,7 @@ impl Indicator for FundingRateZScore {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         let value = tick.funding_rate;
         if self.history.len() == self.window {
@@ -109,14 +110,17 @@ impl Indicator for FundingRateZScore {
         self.moments.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.window
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.history.len() == self.window
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FundingRateZScore"
     }

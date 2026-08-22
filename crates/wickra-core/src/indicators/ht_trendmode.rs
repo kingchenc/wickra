@@ -251,14 +251,17 @@ impl Indicator for HtTrendMode {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         50
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HT_TRENDMODE"
     }

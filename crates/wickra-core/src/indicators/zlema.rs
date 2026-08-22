@@ -83,6 +83,7 @@ impl Indicator for Zlema {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
@@ -105,14 +106,17 @@ impl Indicator for Zlema {
         self.ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.lag + self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ZLEMA"
     }

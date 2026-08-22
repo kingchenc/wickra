@@ -52,6 +52,7 @@ impl Indicator for HeadAndShoulders {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         self.has_emitted = true;
         if !self.swing.update(candle) {
@@ -92,15 +93,18 @@ impl Indicator for HeadAndShoulders {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Five confirmed pivots; the earliest confirmation of the fifth is bar 6.
         6
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HeadAndShoulders"
     }

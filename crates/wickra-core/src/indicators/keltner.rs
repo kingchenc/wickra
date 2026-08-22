@@ -74,6 +74,7 @@ impl Indicator for Keltner {
     type Input = Candle;
     type Output = KeltnerOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<KeltnerOutput> {
         // Feed both sub-indicators on every candle so they warm up in parallel.
         // Gating `atr.update` behind `ema.update(...)?` would starve the ATR of
@@ -95,14 +96,17 @@ impl Indicator for Keltner {
         self.atr.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.ema_period.max(self.atr_period)
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema.is_ready() && self.atr.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KeltnerChannels"
     }

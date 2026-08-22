@@ -174,6 +174,7 @@ impl Indicator for Stc {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Slow EMA emits at `slow` inputs. Then the macd-window needs
         // `schaff_period − 1` more inputs to fill, and the d-window another
@@ -181,10 +182,12 @@ impl Indicator for Stc {
         self.slow_period + 2 * (self.schaff_period - 1)
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some() && self.d_window.len() == self.schaff_period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "STC"
     }

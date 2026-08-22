@@ -71,6 +71,7 @@ impl Indicator for Kama {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             return self.state;
@@ -112,14 +113,17 @@ impl Indicator for Kama {
         self.state = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.er_period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.state.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KAMA"
     }

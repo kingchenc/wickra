@@ -80,6 +80,7 @@ impl Indicator for AtrBands {
     type Input = Candle;
     type Output = AtrBandsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<AtrBandsOutput> {
         let atr = self.atr.update(candle)?;
         Some(AtrBandsOutput {
@@ -93,14 +94,17 @@ impl Indicator for AtrBands {
         self.atr.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.atr.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.atr.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AtrBands"
     }

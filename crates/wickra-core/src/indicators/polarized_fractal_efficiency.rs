@@ -86,6 +86,7 @@ impl Indicator for PolarizedFractalEfficiency {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, close: f64) -> Option<f64> {
         if !close.is_finite() {
             return None;
@@ -132,14 +133,17 @@ impl Indicator for PolarizedFractalEfficiency {
         self.ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + self.smoothing
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PolarizedFractalEfficiency"
     }

@@ -54,6 +54,7 @@ impl Indicator for BullishPercentIndex {
     type Input = CrossSection;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, section: CrossSection) -> Option<f64> {
         let bullish = section.on_buy_signal_count() as f64;
         let total = section.members.len() as f64;
@@ -65,14 +66,17 @@ impl Indicator for BullishPercentIndex {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "BullishPercentIndex"
     }

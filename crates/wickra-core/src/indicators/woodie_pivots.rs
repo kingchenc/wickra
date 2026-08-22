@@ -56,6 +56,7 @@ impl Indicator for WoodiePivots {
     type Input = Candle;
     type Output = WoodiePivotsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<WoodiePivotsOutput> {
         let (h, l, c) = (candle.high, candle.low, candle.close);
         let pp = (h + l + 2.0 * c) / 4.0;
@@ -75,14 +76,17 @@ impl Indicator for WoodiePivots {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "WoodiePivots"
     }

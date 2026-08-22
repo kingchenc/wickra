@@ -114,6 +114,7 @@ impl Indicator for KalmanHedgeRatio {
     type Input = (f64, f64);
     type Output = KalmanHedgeRatioOutput;
 
+    #[inline]
     fn update(&mut self, input: (f64, f64)) -> Option<KalmanHedgeRatioOutput> {
         let (a, b) = input;
         if !a.is_finite() || !b.is_finite() {
@@ -162,14 +163,17 @@ impl Indicator for KalmanHedgeRatio {
         self.count = 0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.count >= 1
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KalmanHedgeRatio"
     }

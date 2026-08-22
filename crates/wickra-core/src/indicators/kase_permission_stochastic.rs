@@ -100,6 +100,7 @@ impl Indicator for KasePermissionStochastic {
     type Input = Candle;
     type Output = KasePermissionStochasticOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<KasePermissionStochasticOutput> {
         self.window.push_back((candle.high, candle.low));
         if self.window.len() > self.length {
@@ -128,15 +129,18 @@ impl Indicator for KasePermissionStochastic {
         self.slow_ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // raw%K ready after `length` bars; each EMA seeds over `smooth` values.
         self.length + 2 * self.smooth - 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.slow_ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KasePermissionStochastic"
     }

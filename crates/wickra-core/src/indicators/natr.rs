@@ -70,6 +70,7 @@ impl Indicator for Natr {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let atr = self.atr.update(candle)?;
         let natr = if candle.close == 0.0 {
@@ -87,14 +88,17 @@ impl Indicator for Natr {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.atr.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "NATR"
     }

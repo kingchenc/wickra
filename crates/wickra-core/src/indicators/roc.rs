@@ -58,6 +58,7 @@ impl Indicator for Roc {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Non-finite inputs are ignored: return the last value, leave state as is.
         if !input.is_finite() {
@@ -85,14 +86,17 @@ impl Indicator for Roc {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period + 1
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ROC"
     }

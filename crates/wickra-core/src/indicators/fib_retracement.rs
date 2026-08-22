@@ -106,6 +106,7 @@ impl Indicator for FibRetracement {
     type Input = Candle;
     type Output = FibRetracementOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibRetracementOutput> {
         self.swing.update(candle);
         self.levels()
@@ -115,14 +116,17 @@ impl Indicator for FibRetracement {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 2
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibRetracement"
     }

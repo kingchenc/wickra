@@ -86,6 +86,7 @@ impl Indicator for AwesomeOscillatorHistogram {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let ao = self.ao.update(candle)?;
         self.history.push_back(ao);
@@ -103,16 +104,19 @@ impl Indicator for AwesomeOscillatorHistogram {
         self.emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // AO first emits at `slow` candles; `lookback` more AO values are then
         // needed before `AO_t − AO_{t−lookback}` can be formed.
         self.slow_period + self.lookback
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AwesomeOscillatorHistogram"
     }

@@ -95,6 +95,7 @@ impl Indicator for FibExtension {
     type Input = Candle;
     type Output = FibExtensionOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibExtensionOutput> {
         self.swing.update(candle);
         self.levels()
@@ -104,14 +105,17 @@ impl Indicator for FibExtension {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 2
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibExtension"
     }

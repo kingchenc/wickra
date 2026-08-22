@@ -96,6 +96,7 @@ impl Indicator for Kvo {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let dm = candle.high + candle.low + candle.close;
         let Some(prev_dm) = self.prev_dm else {
@@ -145,15 +146,18 @@ impl Indicator for Kvo {
         self.cm = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One bar to seed `prev_dm`, then the slow EMA needs `slow` raw `vf` values.
         self.slow_period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.fast.is_ready() && self.slow.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KVO"
     }

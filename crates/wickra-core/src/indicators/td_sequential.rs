@@ -255,14 +255,17 @@ impl Indicator for TdSequential {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.setup_lookback.max(self.countdown_lookback) + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDSequential"
     }

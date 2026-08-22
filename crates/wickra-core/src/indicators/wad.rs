@@ -64,6 +64,7 @@ impl Indicator for Wad {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev_close) = self.prev_close else {
             self.prev_close = Some(candle.close);
@@ -88,16 +89,19 @@ impl Indicator for Wad {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The first bar only seeds the reference close; the first value lands on
         // the second bar.
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Wad"
     }

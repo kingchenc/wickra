@@ -202,6 +202,7 @@ impl Indicator for MacdIndicator {
     type Input = f64;
     type Output = MacdOutput;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<MacdOutput> {
         if !input.is_finite() {
             return self.last;
@@ -233,15 +234,18 @@ impl Indicator for MacdIndicator {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Slow EMA needs `slow` inputs to seed; signal EMA needs another `signal - 1`.
         self.slow_period + self.signal_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MACD"
     }

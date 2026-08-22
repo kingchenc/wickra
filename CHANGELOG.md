@@ -56,6 +56,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **Indicator methods are now `#[inline]`, so a downstream crate can inline
+  them.** None of the 514 indicator files carried a single `#[inline]`. A
+  trait-impl body is not generic, so without link-time optimisation it is not
+  available across a crate boundary — and a downstream Rust crate on Cargo's
+  default release profile has LTO off. Every tick therefore paid a function
+  call into a body that in many cases is a handful of arithmetic operations.
+  Measured from a crate built with `lto = false`, over two million updates:
+  `Sma(20)` goes from 369 to 1322 Mupd/s, `Atr(14)` from 312 to 342, `Rsi(14)`
+  from 292 to 314; `Ema(20)` is unchanged. The no-LTO build now matches what the
+  same crate gets with `lto = "fat"`. Applied to `update` where the body is 40
+  lines or fewer (438 of 513, the rest being large enough that the hint would
+  only export metadata LLVM declines to use anyway) and unconditionally to
+  `is_ready`, `warmup_period` and `name`, which are one-liners. The C ABI cdylib
+  grows 1.8%.
 - **Seven sort-based indicators allocated on every tick.** Each copied its
   window into a freshly allocated `Vec` inside `update` before sorting, while
   seven siblings doing the same work already reused a scratch buffer. Measured

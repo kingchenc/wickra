@@ -72,6 +72,7 @@ impl Indicator for VerticalHorizontalFilter {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<f64> {
         if !value.is_finite() {
             return None;
@@ -114,16 +115,19 @@ impl Indicator for VerticalHorizontalFilter {
         self.diff_sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // `period` closes fill the high/low window; the `period`-th diff needs
         // one extra input because the first input has nothing to diff against.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.diffs.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VerticalHorizontalFilter"
     }

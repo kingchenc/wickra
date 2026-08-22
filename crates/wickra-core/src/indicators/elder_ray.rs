@@ -77,6 +77,7 @@ impl Indicator for ElderRay {
     type Input = Candle;
     type Output = ElderRayOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ElderRayOutput> {
         let ema = self.ema.update(candle.close)?;
         Some(ElderRayOutput {
@@ -89,14 +90,17 @@ impl Indicator for ElderRay {
         self.ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ElderRay"
     }

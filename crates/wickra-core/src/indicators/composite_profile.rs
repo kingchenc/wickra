@@ -170,6 +170,7 @@ impl Indicator for CompositeProfile {
     type Input = Candle;
     type Output = CompositeProfileOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<CompositeProfileOutput> {
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -188,14 +189,17 @@ impl Indicator for CompositeProfile {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CompositeProfile"
     }

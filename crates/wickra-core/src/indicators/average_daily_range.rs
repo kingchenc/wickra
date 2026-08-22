@@ -87,6 +87,7 @@ impl Indicator for AverageDailyRange {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let key = (civil.year, civil.month, civil.day);
@@ -130,14 +131,17 @@ impl Indicator for AverageDailyRange {
         self.sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         !self.completed.is_empty()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AverageDailyRange"
     }

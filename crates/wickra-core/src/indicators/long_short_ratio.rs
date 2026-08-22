@@ -50,6 +50,7 @@ impl Indicator for LongShortRatio {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         self.has_emitted = true;
         if tick.short_size == 0.0 {
@@ -63,14 +64,17 @@ impl Indicator for LongShortRatio {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "LongShortRatio"
     }

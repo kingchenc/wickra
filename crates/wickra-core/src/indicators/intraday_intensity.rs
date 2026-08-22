@@ -60,6 +60,7 @@ impl Indicator for IntradayIntensity {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let range = candle.high - candle.low;
         let ii = if range > 0.0 {
@@ -75,14 +76,17 @@ impl Indicator for IntradayIntensity {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "IntradayIntensity"
     }

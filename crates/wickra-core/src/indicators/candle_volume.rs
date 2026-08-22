@@ -92,6 +92,7 @@ impl Indicator for CandleVolume {
     type Input = Candle;
     type Output = CandleVolumeOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<CandleVolumeOutput> {
         let avg_vol = self.vol_sma.update(candle.volume)?;
         let body = candle.close - candle.open;
@@ -110,14 +111,17 @@ impl Indicator for CandleVolume {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CandleVolume"
     }

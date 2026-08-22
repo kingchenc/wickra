@@ -80,6 +80,7 @@ impl Indicator for DemandIndex {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev_close else {
             self.prev_close = Some(candle.close);
@@ -102,16 +103,19 @@ impl Indicator for DemandIndex {
         self.prev_close = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed bar to establish the previous close, then the EMA needs
         // `period` samples to seed.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DemandIndex"
     }

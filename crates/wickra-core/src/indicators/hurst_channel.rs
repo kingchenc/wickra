@@ -90,6 +90,7 @@ impl Indicator for HurstChannel {
     type Input = Candle;
     type Output = HurstChannelOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<HurstChannelOutput> {
         if self.highs.len() == self.period {
             self.highs.pop_front();
@@ -115,14 +116,17 @@ impl Indicator for HurstChannel {
         self.lows.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.sma.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HurstChannel"
     }

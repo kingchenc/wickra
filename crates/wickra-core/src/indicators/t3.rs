@@ -116,6 +116,7 @@ impl Indicator for T3 {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the cascade is not advanced.
@@ -142,14 +143,17 @@ impl Indicator for T3 {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         6 * self.period - 5
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "T3"
     }

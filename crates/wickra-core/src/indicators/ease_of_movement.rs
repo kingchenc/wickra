@@ -99,6 +99,7 @@ impl Indicator for EaseOfMovement {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let mid = f64::midpoint(candle.high, candle.low);
         let Some(prev_mid) = self.prev_mid else {
@@ -133,16 +134,19 @@ impl Indicator for EaseOfMovement {
         self.sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed candle establishes the first previous midpoint, then
         // `period` EMV values fill the averaging window.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "EaseOfMovement"
     }

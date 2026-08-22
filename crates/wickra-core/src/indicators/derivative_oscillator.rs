@@ -86,6 +86,7 @@ impl Indicator for DerivativeOscillator {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let rsi = self.rsi.update(input)?;
         let s1 = self.ema1.update(rsi)?;
@@ -101,14 +102,17 @@ impl Indicator for DerivativeOscillator {
         self.signal.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.warmup
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.signal.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DerivativeOscillator"
     }

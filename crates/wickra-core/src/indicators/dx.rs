@@ -140,14 +140,17 @@ impl Indicator for Dx {
         self.tr_smooth = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.tr_smooth.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DX"
     }

@@ -59,6 +59,7 @@ impl Indicator for BreadthThrust {
     type Input = CrossSection;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, section: CrossSection) -> Option<f64> {
         let advancers = section.advancers();
         let decliners = section.decliners();
@@ -71,14 +72,17 @@ impl Indicator for BreadthThrust {
         self.sma.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.sma.period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.sma.value().is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "BreadthThrust"
     }

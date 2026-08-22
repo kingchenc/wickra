@@ -98,6 +98,7 @@ impl DollarBars {
 impl BarBuilder for DollarBars {
     type Bar = DollarBar;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Vec<DollarBar> {
         if self.count == 0 {
             self.open = candle.open;
@@ -134,6 +135,7 @@ impl BarBuilder for DollarBars {
         self.dollar = 0.0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DollarBars"
     }

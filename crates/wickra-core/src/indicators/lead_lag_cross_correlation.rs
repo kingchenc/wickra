@@ -208,14 +208,17 @@ impl Indicator for LeadLagCrossCorrelation {
         self.b_buf.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.len
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.a_buf.len() == self.len
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "LeadLagCrossCorrelation"
     }

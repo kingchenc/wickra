@@ -61,6 +61,7 @@ impl Indicator for McClellanSummationIndex {
     type Input = CrossSection;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, section: CrossSection) -> Option<f64> {
         let oscillator = self.oscillator.step(&section);
         self.sum += oscillator;
@@ -74,14 +75,17 @@ impl Indicator for McClellanSummationIndex {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "McClellanSummationIndex"
     }

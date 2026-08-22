@@ -108,6 +108,7 @@ impl ImbalanceBars {
 impl BarBuilder for ImbalanceBars {
     type Bar = ImbalanceBar;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Vec<ImbalanceBar> {
         if self.count == 0 {
             self.open = candle.open;
@@ -155,6 +156,7 @@ impl BarBuilder for ImbalanceBars {
         self.theta = 0.0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ImbalanceBars"
     }

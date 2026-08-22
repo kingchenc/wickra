@@ -88,6 +88,7 @@ impl Indicator for DonchianStop {
     type Input = Candle;
     type Output = DonchianStopOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<DonchianStopOutput> {
         if self.highs.len() == self.period {
             self.highs.pop_front();
@@ -111,14 +112,17 @@ impl Indicator for DonchianStop {
         self.lows.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.highs.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DonchianStop"
     }

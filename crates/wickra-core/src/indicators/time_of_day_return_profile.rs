@@ -101,6 +101,7 @@ impl Indicator for TimeOfDayReturnProfile {
     type Input = Candle;
     type Output = TimeOfDayReturnProfileOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<TimeOfDayReturnProfileOutput> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let result = if let Some(prev) = self.prev_close {
@@ -129,14 +130,17 @@ impl Indicator for TimeOfDayReturnProfile {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TimeOfDayReturnProfile"
     }

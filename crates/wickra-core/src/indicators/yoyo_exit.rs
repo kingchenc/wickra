@@ -91,6 +91,7 @@ impl Indicator for YoyoExit {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let atr = self.atr.update(candle)?;
         let band = self.multiplier * atr;
@@ -128,14 +129,17 @@ impl Indicator for YoyoExit {
         self.in_trade = true;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.atr_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.trail.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "YoyoExit"
     }

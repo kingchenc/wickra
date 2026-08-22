@@ -133,14 +133,17 @@ impl Indicator for SineWave {
         self.count = 0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         50
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_sine.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SineWave"
     }

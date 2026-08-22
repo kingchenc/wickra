@@ -70,6 +70,7 @@ impl Indicator for BollingerBandwidth {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let o = self.bands.update(input)?;
         let bandwidth = if o.middle == 0.0 {
@@ -87,14 +88,17 @@ impl Indicator for BollingerBandwidth {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.bands.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "BollingerBandwidth"
     }

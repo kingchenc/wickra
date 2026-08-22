@@ -99,6 +99,7 @@ impl Indicator for HiLoActivator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if self.highs.len() == self.period {
             self.sum_high -= self.highs.pop_front().expect("non-empty by check");
@@ -150,14 +151,17 @@ impl Indicator for HiLoActivator {
         self.started = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.started
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HiLoActivator"
     }

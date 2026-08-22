@@ -179,14 +179,17 @@ impl Indicator for EmpiricalModeDecomposition {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.bp_history_len
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "EmpiricalModeDecomposition"
     }

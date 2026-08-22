@@ -68,6 +68,7 @@ impl Indicator for AroonOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let osc = self.aroon.update(candle).map(|o| o.up - o.down)?;
         self.last = Some(osc);
@@ -79,14 +80,17 @@ impl Indicator for AroonOscillator {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.aroon.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AroonOscillator"
     }

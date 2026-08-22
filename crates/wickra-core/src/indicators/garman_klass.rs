@@ -100,6 +100,7 @@ impl Indicator for GarmanKlassVolatility {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // `Candle::new` enforces finite, positive OHLC with `high >= max(open,
         // low, close)` and `low <= min(open, high, close)`, so every log
@@ -140,14 +141,17 @@ impl Indicator for GarmanKlassVolatility {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "GarmanKlassVolatility"
     }

@@ -157,6 +157,7 @@ impl Indicator for VolatilityOfVolatility {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One previous price for the first return, `vol_window` returns for the
         // first volatility, then `vov_window` volatilities for the dispersion.
@@ -164,10 +165,12 @@ impl Indicator for VolatilityOfVolatility {
         self.vol_window + self.vov_window
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolatilityOfVolatility"
     }

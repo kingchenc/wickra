@@ -62,6 +62,7 @@ impl Indicator for MarketFacilitationIndex {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if candle.volume == 0.0 {
             // No trade activity -> facilitation is undefined.
@@ -78,14 +79,17 @@ impl Indicator for MarketFacilitationIndex {
         self.last_value = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MarketFacilitationIndex"
     }

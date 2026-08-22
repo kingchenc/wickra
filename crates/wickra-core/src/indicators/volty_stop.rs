@@ -85,6 +85,7 @@ impl Indicator for VoltyStop {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let atr = self.atr.update(candle)?;
         let band = self.multiplier * atr;
@@ -124,14 +125,17 @@ impl Indicator for VoltyStop {
         self.long = true;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.atr_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.anchor.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VoltyStop"
     }

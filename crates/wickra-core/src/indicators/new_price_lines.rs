@@ -95,6 +95,7 @@ impl Indicator for NewPriceLines {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let close = candle.close;
         let Some(prev) = self.prev_close else {
@@ -131,14 +132,17 @@ impl Indicator for NewPriceLines {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "NewPriceLines"
     }

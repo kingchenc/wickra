@@ -85,6 +85,7 @@ impl RangeBars {
 impl BarBuilder for RangeBars {
     type Bar = RangeBar;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Vec<RangeBar> {
         let close = candle.close;
         let Some(mut anchor) = self.anchor else {
@@ -117,6 +118,7 @@ impl BarBuilder for RangeBars {
         self.anchor = None;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RangeBars"
     }

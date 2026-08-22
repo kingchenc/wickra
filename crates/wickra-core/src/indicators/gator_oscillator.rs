@@ -81,6 +81,7 @@ impl Indicator for GatorOscillator {
     type Input = Candle;
     type Output = GatorOscillatorOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<GatorOscillatorOutput> {
         let lines = self.alligator.update(candle)?;
         Some(GatorOscillatorOutput {
@@ -93,14 +94,17 @@ impl Indicator for GatorOscillator {
         self.alligator.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.alligator.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.alligator.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "GatorOscillator"
     }

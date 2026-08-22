@@ -71,6 +71,7 @@ impl Indicator for Apo {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Feed both EMAs on every input so the slow one warms in parallel.
         let f = self.fast.update(input);
@@ -83,15 +84,18 @@ impl Indicator for Apo {
         self.slow.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Slow EMA dominates; both EMAs emit at their `period` th input.
         self.slow_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.slow.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "APO"
     }

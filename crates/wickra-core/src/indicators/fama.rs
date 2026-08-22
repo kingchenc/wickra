@@ -67,6 +67,7 @@ impl Indicator for Fama {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let v = self.inner.update(input)?.fama;
         self.last_value = Some(v);
@@ -78,14 +79,17 @@ impl Indicator for Fama {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FAMA"
     }

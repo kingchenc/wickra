@@ -77,6 +77,7 @@ impl Indicator for TdPressure {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let range = candle.high - candle.low;
         let bar_pressure = if range > 0.0 {
@@ -112,14 +113,17 @@ impl Indicator for TdPressure {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDPressure"
     }

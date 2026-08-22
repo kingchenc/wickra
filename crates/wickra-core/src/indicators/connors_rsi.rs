@@ -143,6 +143,7 @@ impl Indicator for ConnorsRsi {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The slowest branch is the percent-rank: it needs period_rank + 1
         // prices (period_rank one-period returns). The close-RSI needs
@@ -155,10 +156,12 @@ impl Indicator for ConnorsRsi {
         rsi_close.max(rsi_streak).max(rank)
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ConnorsRSI"
     }

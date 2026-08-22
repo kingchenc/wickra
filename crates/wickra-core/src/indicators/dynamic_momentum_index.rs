@@ -171,16 +171,19 @@ impl Indicator for DynamicMomentumIndex {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The change buffer (MAX_RSI_LOOKBACK changes => MAX_RSI_LOOKBACK + 1 inputs) is the
         // binding constraint; the volatility chain (5 + 10 - 1 = 14) is shorter.
         MAX_RSI_LOOKBACK + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DynamicMomentumIndex"
     }

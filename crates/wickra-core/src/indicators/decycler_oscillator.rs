@@ -69,6 +69,7 @@ impl Indicator for DecyclerOscillator {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             return self.last_value;
@@ -90,14 +91,17 @@ impl Indicator for DecyclerOscillator {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.fast.warmup_period().max(self.slow.warmup_period())
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DecyclerOscillator"
     }

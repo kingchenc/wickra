@@ -81,6 +81,7 @@ impl Indicator for RollMeasure {
     type Input = Trade;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<f64> {
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(trade.price);
@@ -114,14 +115,17 @@ impl Indicator for RollMeasure {
         self.window.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RollMeasure"
     }

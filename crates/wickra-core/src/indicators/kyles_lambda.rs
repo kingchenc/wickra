@@ -135,6 +135,7 @@ impl Indicator for KylesLambda {
     type Input = TradeQuote;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, quote: TradeQuote) -> Option<f64> {
         let mid = quote.mid;
         let signed_vol = quote.trade.size * quote.trade.side.sign();
@@ -155,14 +156,17 @@ impl Indicator for KylesLambda {
         self.sum_qdm = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.window + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.pairs.len() == self.window
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KylesLambda"
     }

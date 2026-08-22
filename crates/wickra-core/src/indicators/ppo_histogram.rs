@@ -90,6 +90,7 @@ impl Indicator for PpoHistogram {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Guard before touching either stage so a non-finite input never
         // advances the signal EMA on a stale, re-fed PPO value.
@@ -109,15 +110,18 @@ impl Indicator for PpoHistogram {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Slow EMA seeds the PPO, then the signal EMA needs `signal − 1` more.
         self.ppo.warmup_period() + self.signal_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PpoHistogram"
     }

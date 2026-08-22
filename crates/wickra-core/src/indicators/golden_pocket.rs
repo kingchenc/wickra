@@ -87,6 +87,7 @@ impl Indicator for GoldenPocket {
     type Input = Candle;
     type Output = GoldenPocketOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<GoldenPocketOutput> {
         self.swing.update(candle);
         self.zone()
@@ -96,14 +97,17 @@ impl Indicator for GoldenPocket {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 2
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "GoldenPocket"
     }

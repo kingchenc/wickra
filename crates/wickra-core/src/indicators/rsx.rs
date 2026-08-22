@@ -181,15 +181,18 @@ impl Indicator for Rsx {
         *self = Self::new(self.length).expect("length already validated");
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One input to seed `prev`, then `length` changes to settle the cascade.
         self.length + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.count >= self.length
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RSX"
     }

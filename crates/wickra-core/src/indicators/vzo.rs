@@ -80,6 +80,7 @@ impl Indicator for Vzo {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let signed_volume = match self.prev_close {
             None => {
@@ -113,15 +114,18 @@ impl Indicator for Vzo {
         self.prev_close = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed bar plus the EMA seed.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.vp.is_ready() && self.tv.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VZO"
     }

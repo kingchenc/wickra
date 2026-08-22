@@ -100,6 +100,7 @@ impl Indicator for AtrRatchet {
     type Input = Candle;
     type Output = AtrRatchetOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<AtrRatchetOutput> {
         let atr = self.atr.update(candle)?;
         let close = candle.close;
@@ -136,14 +137,17 @@ impl Indicator for AtrRatchet {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.atr_period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AtrRatchet"
     }

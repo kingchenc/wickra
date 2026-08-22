@@ -90,6 +90,7 @@ impl Indicator for GeneralizedDema {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         let e1 = self.ema1.update(input)?;
         let e2 = self.ema2.update(e1)?;
@@ -101,15 +102,18 @@ impl Indicator for GeneralizedDema {
         self.ema2.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // EMA1 seeds at period, then EMA2 needs another (period - 1) values.
         2 * self.period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema2.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "GD"
     }

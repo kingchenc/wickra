@@ -93,6 +93,7 @@ impl Indicator for IntradayMomentumIndex {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let body = candle.close - candle.open;
         let gain = if body > 0.0 { body } else { 0.0 };
@@ -115,14 +116,17 @@ impl Indicator for IntradayMomentumIndex {
         self.sum_loss = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "IMI"
     }

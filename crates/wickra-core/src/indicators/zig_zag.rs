@@ -157,6 +157,7 @@ impl Indicator for ZigZag {
         self.state = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Bootstrap takes one bar; confirmation of the first swing needs at
         // least one more move past the threshold. Best-case the first swing
@@ -164,10 +165,12 @@ impl Indicator for ZigZag {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.state.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ZigZag"
     }

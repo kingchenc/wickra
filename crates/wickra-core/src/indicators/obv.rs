@@ -55,6 +55,7 @@ impl Indicator for Obv {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // The first candle establishes the baseline at 0; subsequent candles
         // add/subtract their volume based on close direction. Equal closes do nothing.
@@ -76,14 +77,17 @@ impl Indicator for Obv {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OBV"
     }

@@ -130,6 +130,7 @@ impl Indicator for NakedPoc {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // Test outstanding naked POCs against this candle's range.
         self.naked
@@ -170,14 +171,17 @@ impl Indicator for NakedPoc {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.session_len
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "NakedPoc"
     }

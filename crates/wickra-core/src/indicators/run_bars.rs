@@ -165,6 +165,7 @@ impl BarBuilder for RunBars {
         self.run_len = 0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RunBars"
     }

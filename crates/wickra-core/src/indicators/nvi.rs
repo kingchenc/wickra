@@ -88,6 +88,7 @@ impl Indicator for Nvi {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // First bar establishes the baseline at `index`; the `if let` handles
         // every later bar, which has both predecessors recorded by construction.
@@ -110,14 +111,17 @@ impl Indicator for Nvi {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "NVI"
     }

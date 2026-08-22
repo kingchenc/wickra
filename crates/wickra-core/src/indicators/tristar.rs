@@ -69,6 +69,7 @@ impl Indicator for Tristar {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let (Some(first), Some(middle)) = (self.c1, self.c2) else {
             self.c1 = self.c2;
@@ -102,14 +103,17 @@ impl Indicator for Tristar {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Tristar"
     }

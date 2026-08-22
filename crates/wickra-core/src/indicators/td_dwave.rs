@@ -118,6 +118,7 @@ impl Indicator for TdDWave {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let span = 2 * self.strength + 1;
         if self.window.len() == span {
@@ -153,14 +154,17 @@ impl Indicator for TdDWave {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2 * self.strength + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDDWave"
     }

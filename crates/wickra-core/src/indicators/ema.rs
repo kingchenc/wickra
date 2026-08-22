@@ -194,6 +194,7 @@ impl Indicator for Ema {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             return self.value();
@@ -207,14 +208,17 @@ impl Indicator for Ema {
         self.warmup_buf.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.seeded
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "EMA"
     }

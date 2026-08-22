@@ -85,6 +85,7 @@ impl Indicator for Alligator {
     type Input = Candle;
     type Output = AlligatorOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<AlligatorOutput> {
         let median = f64::midpoint(candle.high, candle.low);
         // Feed every `SMMA` on every bar so they warm up in parallel; gating
@@ -106,16 +107,19 @@ impl Indicator for Alligator {
         self.lips.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // All three SMMAs run on every bar, so readiness is gated by the
         // longest period — the Jaw with the default parameters.
         self.jaw_period.max(self.teeth_period).max(self.lips_period)
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.jaw.is_ready() && self.teeth.is_ready() && self.lips.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Alligator"
     }

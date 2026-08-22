@@ -98,6 +98,7 @@ impl Indicator for TdMovingAverage {
     type Input = Candle;
     type Output = TdMovingAverageOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<TdMovingAverageOutput> {
         let price = candle.median_price();
         let fast = self.st1.update(price);
@@ -116,14 +117,17 @@ impl Indicator for TdMovingAverage {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period_st2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDMovingAverage"
     }

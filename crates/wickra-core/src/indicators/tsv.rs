@@ -79,6 +79,7 @@ impl Indicator for Tsv {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev_close else {
             self.prev_close = Some(candle.close);
@@ -104,15 +105,18 @@ impl Indicator for Tsv {
         self.sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed bar for `prev_close`, then `period` flows to fill the window.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TSV"
     }

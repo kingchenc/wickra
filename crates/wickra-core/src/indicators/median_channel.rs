@@ -100,6 +100,7 @@ impl Indicator for MedianChannel {
     type Input = f64;
     type Output = MedianChannelOutput;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<MedianChannelOutput> {
         if !value.is_finite() {
             return None;
@@ -137,14 +138,17 @@ impl Indicator for MedianChannel {
         self.deviations.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MedianChannel"
     }

@@ -50,6 +50,7 @@ impl Indicator for TrueRange {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let tr = candle.true_range(self.prev_close);
         self.prev_close = Some(candle.close);
@@ -62,14 +63,17 @@ impl Indicator for TrueRange {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TrueRange"
     }

@@ -89,6 +89,7 @@ impl Indicator for StarcBands {
     type Input = Candle;
     type Output = StarcBandsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<StarcBandsOutput> {
         // Feed both unconditionally so SMA and ATR warm up in parallel.
         let mid = self.sma.update(candle.close);
@@ -106,14 +107,17 @@ impl Indicator for StarcBands {
         self.atr.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.sma_period.max(self.atr_period)
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.sma.is_ready() && self.atr.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "StarcBands"
     }

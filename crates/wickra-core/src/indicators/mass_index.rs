@@ -91,6 +91,7 @@ impl Indicator for MassIndex {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let range = candle.high - candle.low;
         let single = self.ema1.update(range)?;
@@ -121,16 +122,19 @@ impl Indicator for MassIndex {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // ema1 seeds at `ema_period`, ema2 at `2·ema_period − 1`, then the sum
         // window needs `sum_period` ratios.
         2 * self.ema_period + self.sum_period - 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MassIndex"
     }

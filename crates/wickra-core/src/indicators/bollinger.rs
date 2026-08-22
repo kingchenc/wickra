@@ -195,6 +195,7 @@ impl Indicator for BollingerBands {
     type Input = f64;
     type Output = BollingerOutput;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<BollingerOutput> {
         if !input.is_finite() {
             return self.current();
@@ -232,14 +233,17 @@ impl Indicator for BollingerBands {
         self.moments.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.count == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "BollingerBands"
     }

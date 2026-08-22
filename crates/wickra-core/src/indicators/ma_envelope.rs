@@ -82,6 +82,7 @@ impl Indicator for MaEnvelope {
     type Input = f64;
     type Output = MaEnvelopeOutput;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<MaEnvelopeOutput> {
         let middle = self.sma.update(input)?;
         Some(MaEnvelopeOutput {
@@ -95,14 +96,17 @@ impl Indicator for MaEnvelope {
         self.sma.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.sma.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.sma.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MaEnvelope"
     }

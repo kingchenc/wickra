@@ -85,6 +85,7 @@ impl Indicator for DumplingTop {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if self.closes.len() == self.period {
             self.closes.pop_front();
@@ -117,14 +118,17 @@ impl Indicator for DumplingTop {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DumplingTop"
     }

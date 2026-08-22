@@ -110,6 +110,7 @@ impl Indicator for StandardErrorBands {
     type Input = f64;
     type Output = StandardErrorBandsOutput;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<StandardErrorBandsOutput> {
         if !value.is_finite() {
             return None;
@@ -154,14 +155,17 @@ impl Indicator for StandardErrorBands {
         self.window.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "StandardErrorBands"
     }

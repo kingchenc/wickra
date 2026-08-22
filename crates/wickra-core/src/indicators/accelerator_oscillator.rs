@@ -75,6 +75,7 @@ impl Indicator for AcceleratorOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let ao = self.ao.update(candle)?;
         let signal = self.signal.update(ao)?;
@@ -86,16 +87,19 @@ impl Indicator for AcceleratorOscillator {
         self.signal.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The AO emits at candle `ao_slow`; the signal SMA then needs
         // `signal_period` AO values.
         self.ao_slow + self.signal_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.signal.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AcceleratorOscillator"
     }

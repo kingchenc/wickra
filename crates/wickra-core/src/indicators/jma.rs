@@ -115,6 +115,7 @@ impl Indicator for Jma {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             return self.output;
@@ -144,14 +145,17 @@ impl Indicator for Jma {
         self.output = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.output.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "JMA"
     }

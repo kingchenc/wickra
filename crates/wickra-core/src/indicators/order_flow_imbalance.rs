@@ -81,6 +81,7 @@ impl Indicator for OrderFlowImbalance {
     type Input = OrderBook;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, book: OrderBook) -> Option<f64> {
         // A book with no levels on a side carries no best-level information.
         let (Some(bid), Some(ask)) = (book.best_bid(), book.best_ask()) else {
@@ -123,16 +124,19 @@ impl Indicator for OrderFlowImbalance {
         self.sum.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One snapshot seeds the reference quotes, then `period` events fill the
         // window.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OrderFlowImbalance"
     }

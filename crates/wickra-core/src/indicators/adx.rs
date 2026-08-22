@@ -201,14 +201,17 @@ impl Indicator for Adx {
         self.last_minus_di = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2 * self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.adx_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ADX"
     }

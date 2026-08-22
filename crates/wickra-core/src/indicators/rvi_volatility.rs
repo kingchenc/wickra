@@ -195,6 +195,7 @@ impl Indicator for RviVolatility {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // `period` bars to fill the stddev window plus another `period − 1`
         // bars to seed the Wilder averages with up/down samples. The two
@@ -205,10 +206,12 @@ impl Indicator for RviVolatility {
         2 * self.period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RVIVolatility"
     }

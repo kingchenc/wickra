@@ -150,6 +150,7 @@ impl Indicator for TpoProfile {
     type Input = Candle;
     type Output = TpoProfileOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<TpoProfileOutput> {
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -168,14 +169,17 @@ impl Indicator for TpoProfile {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TpoProfile"
     }

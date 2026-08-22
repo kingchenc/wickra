@@ -95,6 +95,7 @@ impl Indicator for Nrtr {
     type Input = Candle;
     type Output = NrtrOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<NrtrOutput> {
         let close = candle.close;
         let down = self.pct / 100.0;
@@ -138,14 +139,17 @@ impl Indicator for Nrtr {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Nrtr"
     }

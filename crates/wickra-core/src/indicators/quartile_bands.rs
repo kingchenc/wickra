@@ -84,6 +84,7 @@ impl Indicator for QuartileBands {
     type Input = f64;
     type Output = QuartileBandsOutput;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<QuartileBandsOutput> {
         if !value.is_finite() {
             return None;
@@ -110,14 +111,17 @@ impl Indicator for QuartileBands {
         self.scratch.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "QuartileBands"
     }

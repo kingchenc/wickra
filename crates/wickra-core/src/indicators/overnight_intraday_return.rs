@@ -79,6 +79,7 @@ impl Indicator for OvernightIntradayReturn {
     type Input = Candle;
     type Output = OvernightIntradayReturnOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<OvernightIntradayReturnOutput> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let key = (civil.year, civil.month, civil.day);
@@ -116,14 +117,17 @@ impl Indicator for OvernightIntradayReturn {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OvernightIntradayReturn"
     }

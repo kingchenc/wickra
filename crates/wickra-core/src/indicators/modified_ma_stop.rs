@@ -96,6 +96,7 @@ impl Indicator for ModifiedMaStop {
     type Input = Candle;
     type Output = ModifiedMaStopOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ModifiedMaStopOutput> {
         let ma = self.smma.update(candle.close)?;
         let close = candle.close;
@@ -132,14 +133,17 @@ impl Indicator for ModifiedMaStop {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ModifiedMaStop"
     }

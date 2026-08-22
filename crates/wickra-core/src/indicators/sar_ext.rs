@@ -248,14 +248,17 @@ impl Indicator for SarExt {
         self.af = self.long.init;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SAREXT"
     }

@@ -50,6 +50,7 @@ impl Indicator for Microprice {
     type Input = OrderBook;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, book: OrderBook) -> Option<f64> {
         self.has_emitted = true;
         let (Some(bid), Some(ask)) = (book.best_bid(), book.best_ask()) else {
@@ -66,14 +67,17 @@ impl Indicator for Microprice {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Microprice"
     }

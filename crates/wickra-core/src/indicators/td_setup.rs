@@ -100,6 +100,7 @@ impl Indicator for TdSetup {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // Maintain a rolling window of the last `lookback + 1` closes so the
         // oldest entry (front) is exactly the close `lookback` bars ago.
@@ -143,14 +144,17 @@ impl Indicator for TdSetup {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.lookback + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TDSetup"
     }

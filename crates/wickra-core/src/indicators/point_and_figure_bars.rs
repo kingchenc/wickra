@@ -165,6 +165,7 @@ impl BarBuilder for PointAndFigureBars {
         self.seeded = false;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PointAndFigureBars"
     }

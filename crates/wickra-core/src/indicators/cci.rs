@@ -80,6 +80,7 @@ impl Indicator for Cci {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let tp = candle.typical_price();
         if self.window.len() == self.period {
@@ -108,14 +109,17 @@ impl Indicator for Cci {
         self.sum.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CCI"
     }

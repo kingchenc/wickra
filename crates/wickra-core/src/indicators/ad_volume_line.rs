@@ -55,6 +55,7 @@ impl Indicator for AdVolumeLine {
     type Input = CrossSection;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, section: CrossSection) -> Option<f64> {
         let net = section.advancing_volume() - section.declining_volume();
         self.line += net;
@@ -67,14 +68,17 @@ impl Indicator for AdVolumeLine {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AdVolumeLine"
     }

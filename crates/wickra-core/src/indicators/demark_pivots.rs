@@ -58,6 +58,7 @@ impl Indicator for DemarkPivots {
     type Input = Candle;
     type Output = DemarkPivotsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<DemarkPivotsOutput> {
         let open = candle.open;
         let high = candle.high;
@@ -85,14 +86,17 @@ impl Indicator for DemarkPivots {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DemarkPivots"
     }

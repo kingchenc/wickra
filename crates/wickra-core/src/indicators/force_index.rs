@@ -64,6 +64,7 @@ impl Indicator for ForceIndex {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev_close else {
             // The first candle only establishes the previous close.
@@ -80,16 +81,19 @@ impl Indicator for ForceIndex {
         self.ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One seed candle establishes the first previous close, then the EMA
         // needs `period` raw values.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ForceIndex"
     }

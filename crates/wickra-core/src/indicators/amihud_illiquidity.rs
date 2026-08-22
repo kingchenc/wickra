@@ -76,6 +76,7 @@ impl Indicator for AmihudIlliquidity {
     type Input = Trade;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<f64> {
         // A zero-size trade has no traded value: the ratio is undefined, so the
         // trade is skipped without touching the reference price.
@@ -116,14 +117,17 @@ impl Indicator for AmihudIlliquidity {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AmihudIlliquidity"
     }

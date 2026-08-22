@@ -69,6 +69,7 @@ impl Indicator for FundingImpliedApr {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         self.ready = true;
         Some(tick.funding_rate * self.intervals_per_year)
@@ -78,14 +79,17 @@ impl Indicator for FundingImpliedApr {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FundingImpliedApr"
     }

@@ -76,6 +76,7 @@ impl Indicator for Rvi {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let num = candle.close - candle.open;
         let den = candle.high - candle.low;
@@ -107,14 +108,17 @@ impl Indicator for Rvi {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RVI"
     }

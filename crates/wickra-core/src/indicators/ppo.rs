@@ -82,6 +82,7 @@ impl Indicator for Ppo {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the EMAs are not advanced.
@@ -110,15 +111,18 @@ impl Indicator for Ppo {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The slow EMA is the last to seed.
         self.slow
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "PPO"
     }

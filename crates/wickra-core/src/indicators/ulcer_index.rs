@@ -152,6 +152,7 @@ impl Indicator for UlcerIndex {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // `period` inputs fill the trailing-max window; the first drawdown is
         // computable on bar `period` (the window is full for the first time);
@@ -160,10 +161,12 @@ impl Indicator for UlcerIndex {
         2 * self.period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "UlcerIndex"
     }

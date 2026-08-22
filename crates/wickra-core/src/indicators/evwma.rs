@@ -85,6 +85,7 @@ impl Indicator for Evwma {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let close = candle.close;
         let volume = candle.volume;
@@ -117,14 +118,17 @@ impl Indicator for Evwma {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "EVWMA"
     }

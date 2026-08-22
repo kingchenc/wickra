@@ -76,6 +76,7 @@ impl Indicator for FibFan {
     type Input = Candle;
     type Output = FibFanOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibFanOutput> {
         self.swing.update(candle);
         self.fan()
@@ -85,14 +86,17 @@ impl Indicator for FibFan {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 2
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibFan"
     }

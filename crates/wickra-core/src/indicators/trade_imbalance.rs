@@ -75,6 +75,7 @@ impl Indicator for TradeImbalance {
     type Input = Trade;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<f64> {
         let (buy, sell) = if trade.side.sign() > 0.0 {
             (trade.size, 0.0)
@@ -105,14 +106,17 @@ impl Indicator for TradeImbalance {
         self.sell_sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.window
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.history.len() >= self.window
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TradeImbalance"
     }

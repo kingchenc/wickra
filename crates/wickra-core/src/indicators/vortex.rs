@@ -100,6 +100,7 @@ impl Indicator for Vortex {
     type Input = Candle;
     type Output = VortexOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<VortexOutput> {
         let Some(prev) = self.prev else {
             // The first bar has no predecessor to measure against.
@@ -150,15 +151,18 @@ impl Indicator for Vortex {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The first VM/TR triple needs a previous bar, then the window fills.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Vortex"
     }

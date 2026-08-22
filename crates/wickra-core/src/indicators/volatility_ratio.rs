@@ -100,6 +100,7 @@ impl Indicator for VolatilityRatio {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         // The first bar has no previous close, so no true range can be formed.
         let Some(prev_close) = self.prev_close else {
@@ -139,16 +140,19 @@ impl Indicator for VolatilityRatio {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // Bar 1 sets the previous close; bars 2..=period+1 seed the EMA; the
         // first ratio is emitted on bar period + 2.
         self.period + 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolatilityRatio"
     }

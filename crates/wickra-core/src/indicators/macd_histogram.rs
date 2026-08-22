@@ -69,6 +69,7 @@ impl Indicator for MacdHistogram {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         self.macd.update(input).map(|out| out.histogram)
     }
@@ -77,14 +78,17 @@ impl Indicator for MacdHistogram {
         self.macd.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.macd.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.macd.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MacdHistogram"
     }

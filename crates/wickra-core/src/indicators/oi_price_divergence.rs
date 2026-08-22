@@ -81,6 +81,7 @@ impl Indicator for OIPriceDivergence {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         self.history
             .push_back((tick.open_interest, tick.mark_price));
@@ -109,14 +110,17 @@ impl Indicator for OIPriceDivergence {
         self.history.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.window + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.history.len() == self.window + 1
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OIPriceDivergence"
     }

@@ -59,6 +59,7 @@ impl Indicator for Vwap {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let tp = candle.typical_price();
         self.sum_pv += tp * candle.volume;
@@ -76,14 +77,17 @@ impl Indicator for Vwap {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VWAP"
     }
@@ -145,6 +149,7 @@ impl Indicator for RollingVwap {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let pv = candle.typical_price() * candle.volume;
         if self.window.len() == self.period {
@@ -167,14 +172,17 @@ impl Indicator for RollingVwap {
         self.sum_v = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period && self.sum_v > 0.0
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RollingVWAP"
     }

@@ -64,6 +64,7 @@ impl Indicator for HeikinAshi {
     type Input = Candle;
     type Output = HeikinAshiOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<HeikinAshiOutput> {
         let ha_close = (candle.open + candle.high + candle.low + candle.close) / 4.0;
         let ha_open = match self.prev {
@@ -87,14 +88,17 @@ impl Indicator for HeikinAshi {
         self.prev = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.prev.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HeikinAshi"
     }

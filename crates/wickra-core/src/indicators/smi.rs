@@ -90,6 +90,7 @@ impl Indicator for Smi {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if self.highs.len() == self.period {
             self.highs.pop_front();
@@ -135,16 +136,19 @@ impl Indicator for Smi {
         self.current = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The high-low window needs `period` candles; then both EMA stacks
         // need `d_period + d2_period - 1` more values to fully warm up.
         self.period + self.d_period + self.d2_period - 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.current.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SMI"
     }

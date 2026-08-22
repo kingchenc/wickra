@@ -86,6 +86,7 @@ impl Indicator for VwapStdDevBands {
     type Input = Candle;
     type Output = VwapStdDevBandsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<VwapStdDevBandsOutput> {
         let tp = candle.typical_price();
         self.sum_pv += tp * candle.volume;
@@ -115,14 +116,17 @@ impl Indicator for VwapStdDevBands {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VwapStdDevBands"
     }

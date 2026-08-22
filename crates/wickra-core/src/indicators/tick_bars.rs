@@ -98,6 +98,7 @@ impl TickBars {
 impl BarBuilder for TickBars {
     type Bar = TickBar;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Vec<TickBar> {
         if self.count == 0 {
             self.open = candle.open;
@@ -129,6 +130,7 @@ impl BarBuilder for TickBars {
         self.volume = 0.0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TickBars"
     }

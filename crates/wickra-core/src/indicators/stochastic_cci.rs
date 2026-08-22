@@ -73,6 +73,7 @@ impl Indicator for StochasticCci {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let cci = self.cci.update(candle)?;
         if self.window.len() == self.period {
@@ -105,15 +106,18 @@ impl Indicator for StochasticCci {
         self.window.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // CCI seeds at `period`, then `period` CCI values fill the stochastic window.
         2 * self.period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "StochasticCCI"
     }

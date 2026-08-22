@@ -97,6 +97,7 @@ impl Indicator for VolumeByTimeProfile {
     type Input = Candle;
     type Output = VolumeByTimeProfileOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<VolumeByTimeProfileOutput> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let bucket = self.bucket_of(civil.minute_of_day());
@@ -113,14 +114,17 @@ impl Indicator for VolumeByTimeProfile {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeByTimeProfile"
     }

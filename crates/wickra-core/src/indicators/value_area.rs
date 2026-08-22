@@ -203,6 +203,7 @@ impl Indicator for ValueArea {
     type Input = Candle;
     type Output = ValueAreaOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ValueAreaOutput> {
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -221,14 +222,17 @@ impl Indicator for ValueArea {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ValueArea"
     }

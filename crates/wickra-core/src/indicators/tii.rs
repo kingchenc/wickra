@@ -145,6 +145,7 @@ impl Indicator for Tii {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // SMA emits its first value at input `sma_period`; the deviation ring
         // then needs `dev_period − 1` more inputs to fill, so first TII lands
@@ -152,10 +153,12 @@ impl Indicator for Tii {
         self.sma_period + self.dev_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TII"
     }

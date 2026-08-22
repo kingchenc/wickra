@@ -143,6 +143,7 @@ impl BarBuilder for KagiBars {
         self.segment_start = 0.0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "KagiBars"
     }

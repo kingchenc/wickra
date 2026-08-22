@@ -81,6 +81,7 @@ impl Indicator for Expectancy {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, ret: f64) -> Option<f64> {
         if !ret.is_finite() {
             return None;
@@ -118,14 +119,17 @@ impl Indicator for Expectancy {
         self.loss_count = 0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Expectancy"
     }

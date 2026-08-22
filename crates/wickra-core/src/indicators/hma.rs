@@ -62,6 +62,7 @@ impl Indicator for Hma {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Feed both windowed WMAs on every input so they warm up in parallel.
         // Gating `full_wma.update` behind `half_wma.update(...)?` would starve
@@ -80,15 +81,18 @@ impl Indicator for Hma {
         self.smooth_wma.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         let sm = (self.period as f64).sqrt().round() as usize;
         self.period + sm.max(1) - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.smooth_wma.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HMA"
     }

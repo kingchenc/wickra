@@ -83,6 +83,7 @@ impl Indicator for OpenInterestMomentum {
     type Input = DerivativesTick;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         if self.window.len() == self.period + 1 {
             self.window.pop_front();
@@ -107,14 +108,17 @@ impl Indicator for OpenInterestMomentum {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OpenInterestMomentum"
     }

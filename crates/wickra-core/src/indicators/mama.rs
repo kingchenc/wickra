@@ -265,14 +265,17 @@ impl Indicator for Mama {
         self.last_value = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         33
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last_value.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MAMA"
     }

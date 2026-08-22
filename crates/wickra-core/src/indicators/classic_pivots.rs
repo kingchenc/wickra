@@ -68,6 +68,7 @@ impl Indicator for ClassicPivots {
     type Input = Candle;
     type Output = ClassicPivotsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ClassicPivotsOutput> {
         let (h, l, c) = (candle.high, candle.low, candle.close);
         let pp = (h + l + c) / 3.0;
@@ -89,14 +90,17 @@ impl Indicator for ClassicPivots {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ClassicPivots"
     }

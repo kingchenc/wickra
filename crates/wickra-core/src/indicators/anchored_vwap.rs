@@ -80,6 +80,7 @@ impl Indicator for AnchoredVwap {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if self.pending_anchor {
             // Drop the old window before folding in this bar.
@@ -105,14 +106,17 @@ impl Indicator for AnchoredVwap {
         self.pending_anchor = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AnchoredVWAP"
     }

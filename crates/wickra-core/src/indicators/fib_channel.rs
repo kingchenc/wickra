@@ -83,6 +83,7 @@ impl Indicator for FibChannel {
     type Input = Candle;
     type Output = FibChannelOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibChannelOutput> {
         self.swing.update(candle);
         self.channel()
@@ -92,14 +93,17 @@ impl Indicator for FibChannel {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 3
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibChannel"
     }

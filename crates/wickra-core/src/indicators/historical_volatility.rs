@@ -96,6 +96,7 @@ impl Indicator for HistoricalVolatility {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         // Non-finite *and* non-positive prices are both ignored: state is left
         // untouched and `self.last` is returned. The log-return `ln(input /
@@ -142,15 +143,18 @@ impl Indicator for HistoricalVolatility {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The first log return needs a previous price, then the window fills.
         self.period + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HistoricalVolatility"
     }

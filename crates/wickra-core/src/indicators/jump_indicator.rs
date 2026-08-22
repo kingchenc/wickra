@@ -150,16 +150,19 @@ impl Indicator for JumpIndicator {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One price seeds `prev`, `period` returns fill the trailing window,
         // then the next return is the first one classified.
         self.period + 2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "JumpIndicator"
     }

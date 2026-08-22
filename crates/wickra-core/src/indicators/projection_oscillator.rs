@@ -68,6 +68,7 @@ impl Indicator for ProjectionOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let bands = self.bands.update(candle)?;
         let width = bands.upper - bands.lower;
@@ -81,14 +82,17 @@ impl Indicator for ProjectionOscillator {
         self.bands.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.bands.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.bands.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ProjectionOscillator"
     }

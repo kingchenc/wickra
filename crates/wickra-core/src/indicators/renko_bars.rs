@@ -138,6 +138,7 @@ impl BarBuilder for RenkoBars {
         self.dir = 0;
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RenkoBars"
     }

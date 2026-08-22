@@ -94,6 +94,7 @@ impl Indicator for AccelerationBands {
     type Input = Candle;
     type Output = AccelerationBandsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<AccelerationBandsOutput> {
         // (high + low) == 0 is geometrically impossible for valid OHLC
         // (high >= low and a zero-sum requires both equal to 0, which would
@@ -126,14 +127,17 @@ impl Indicator for AccelerationBands {
         self.lower_sma.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.middle_sma.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "AccelerationBands"
     }

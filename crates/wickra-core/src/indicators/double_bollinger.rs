@@ -103,6 +103,7 @@ impl Indicator for DoubleBollinger {
     type Input = f64;
     type Output = DoubleBollingerOutput;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<DoubleBollingerOutput> {
         let o = self.inner.update(value)?;
         Some(DoubleBollingerOutput {
@@ -118,14 +119,17 @@ impl Indicator for DoubleBollinger {
         self.inner.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DoubleBollinger"
     }

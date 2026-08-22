@@ -87,6 +87,7 @@ impl Indicator for WavePm {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, close: f64) -> Option<f64> {
         self.closes.push_back(close);
         if self.closes.len() > self.length + 1 {
@@ -113,14 +114,17 @@ impl Indicator for WavePm {
         self.smooth_ema.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2 * self.length + self.smoothing - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.smooth_ema.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "WavePm"
     }

@@ -92,6 +92,7 @@ impl Indicator for TimeBasedStop {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, _candle: Candle) -> Option<f64> {
         self.bars_held += 1;
         let progress = (self.bars_held as f64 / self.max_bars as f64).min(1.0);
@@ -104,14 +105,17 @@ impl Indicator for TimeBasedStop {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TimeBasedStop"
     }

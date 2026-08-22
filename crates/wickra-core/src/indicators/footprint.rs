@@ -123,6 +123,7 @@ impl Indicator for Footprint {
     type Input = Trade;
     type Output = FootprintOutput;
 
+    #[inline]
     fn update(&mut self, trade: Trade) -> Option<FootprintOutput> {
         self.has_emitted = true;
         let index = self.bucket_index(trade.price);
@@ -140,14 +141,17 @@ impl Indicator for Footprint {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Footprint"
     }

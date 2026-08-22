@@ -91,6 +91,7 @@ impl Indicator for RealizedSpread {
     type Input = TradeQuote;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, quote: TradeQuote) -> Option<f64> {
         let sign = quote.trade.side.sign();
         self.pending.push_back((sign, quote.trade.price, quote.mid));
@@ -109,14 +110,17 @@ impl Indicator for RealizedSpread {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.horizon + 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "RealizedSpread"
     }

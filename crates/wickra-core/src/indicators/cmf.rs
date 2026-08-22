@@ -82,6 +82,7 @@ impl Indicator for ChaikinMoneyFlow {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let range = candle.high - candle.low;
         let mfv = if range == 0.0 {
@@ -118,14 +119,17 @@ impl Indicator for ChaikinMoneyFlow {
         self.vol_sum = 0.0;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.mfv_window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "CMF"
     }

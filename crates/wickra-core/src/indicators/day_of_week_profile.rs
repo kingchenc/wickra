@@ -81,6 +81,7 @@ impl Indicator for DayOfWeekProfile {
     type Input = Candle;
     type Output = DayOfWeekProfileOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<DayOfWeekProfileOutput> {
         let civil = civil_from_timestamp(candle.timestamp, self.utc_offset_minutes);
         let result = if let Some(prev) = self.prev_close {
@@ -109,14 +110,17 @@ impl Indicator for DayOfWeekProfile {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DayOfWeekProfile"
     }

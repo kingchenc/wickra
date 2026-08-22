@@ -91,6 +91,7 @@ impl Indicator for Equivolume {
     type Input = Candle;
     type Output = EquivolumeOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<EquivolumeOutput> {
         let avg_vol = self.vol_sma.update(candle.volume)?;
         let height = candle.high - candle.low;
@@ -109,14 +110,17 @@ impl Indicator for Equivolume {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Equivolume"
     }

@@ -106,6 +106,7 @@ impl Indicator for SinglePrints {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -124,14 +125,17 @@ impl Indicator for SinglePrints {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SinglePrints"
     }

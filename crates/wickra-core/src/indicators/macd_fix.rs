@@ -50,6 +50,7 @@ impl Indicator for MacdFix {
     type Input = f64;
     type Output = MacdOutput;
 
+    #[inline]
     fn update(&mut self, value: f64) -> Option<MacdOutput> {
         self.inner.update(value)
     }
@@ -58,14 +59,17 @@ impl Indicator for MacdFix {
         self.inner.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "MACDFIX"
     }

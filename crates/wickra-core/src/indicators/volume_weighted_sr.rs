@@ -108,6 +108,7 @@ impl Indicator for VolumeWeightedSr {
     type Input = Candle;
     type Output = VolumeWeightedSrOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<VolumeWeightedSrOutput> {
         if self.highs.len() == self.period {
             let h = self.highs.pop_front().expect("non-empty");
@@ -156,14 +157,17 @@ impl Indicator for VolumeWeightedSr {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolumeWeightedSr"
     }

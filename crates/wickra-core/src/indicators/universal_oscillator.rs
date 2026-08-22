@@ -91,6 +91,7 @@ impl Indicator for UniversalOscillator {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
             return self.last;
@@ -132,14 +133,17 @@ impl Indicator for UniversalOscillator {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         3
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "UniversalOscillator"
     }

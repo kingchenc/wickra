@@ -70,6 +70,7 @@ impl Indicator for Inertia {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let rvi = self.rvi.update(candle)?;
         self.linreg.update(rvi)
@@ -80,16 +81,19 @@ impl Indicator for Inertia {
         self.linreg.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // RVI emits at `rvi_period` candles; the LinearRegression then needs
         // `linreg_period − 1` more RVI values to fill its window.
         self.rvi_period + self.linreg_period - 1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.linreg.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "Inertia"
     }

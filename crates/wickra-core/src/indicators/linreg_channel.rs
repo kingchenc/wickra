@@ -150,14 +150,17 @@ impl Indicator for LinRegChannel {
         self.window.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.window.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "LinRegChannel"
     }

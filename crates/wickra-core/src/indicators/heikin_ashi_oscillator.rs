@@ -87,6 +87,7 @@ impl Indicator for HeikinAshiOscillator {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let ha = self.ha.update(candle).expect("HeikinAshi emits every bar");
         let body = ha.close - ha.open;
@@ -101,14 +102,17 @@ impl Indicator for HeikinAshiOscillator {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "HeikinAshiOscillator"
     }

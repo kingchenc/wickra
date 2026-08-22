@@ -104,6 +104,7 @@ impl Indicator for SmoothedHeikinAshi {
     type Input = Candle;
     type Output = SmoothedHeikinAshiOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<SmoothedHeikinAshiOutput> {
         let eo = self.ema_open.update(candle.open);
         let eh = self.ema_high.update(candle.high);
@@ -139,14 +140,17 @@ impl Indicator for SmoothedHeikinAshi {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "SmoothedHeikinAshi"
     }

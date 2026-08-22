@@ -77,6 +77,7 @@ impl Indicator for FibArcs {
     type Input = Candle;
     type Output = FibArcsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibArcsOutput> {
         self.swing.update(candle);
         self.arcs()
@@ -86,14 +87,17 @@ impl Indicator for FibArcs {
         self.swing.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         2
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.swing.pivots().len() >= 2
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibArcs"
     }

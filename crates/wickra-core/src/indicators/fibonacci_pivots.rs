@@ -68,6 +68,7 @@ impl Indicator for FibonacciPivots {
     type Input = Candle;
     type Output = FibonacciPivotsOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<FibonacciPivotsOutput> {
         let (h, l, c) = (candle.high, candle.low, candle.close);
         let pp = (h + l + c) / 3.0;
@@ -89,14 +90,17 @@ impl Indicator for FibonacciPivots {
         self.ready = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.ready
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "FibonacciPivots"
     }

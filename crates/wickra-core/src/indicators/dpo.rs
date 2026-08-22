@@ -95,6 +95,7 @@ impl Indicator for Dpo {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the window is left untouched.
@@ -134,14 +135,17 @@ impl Indicator for Dpo {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.capacity
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DPO"
     }

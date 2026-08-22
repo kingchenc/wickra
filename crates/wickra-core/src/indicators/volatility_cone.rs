@@ -197,16 +197,19 @@ impl Indicator for VolatilityCone {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // One previous close for the first return, `window` returns for the
         // first volatility, then `lookback` volatilities for the envelope.
         self.window + self.lookback
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.last.is_some()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "VolatilityCone"
     }

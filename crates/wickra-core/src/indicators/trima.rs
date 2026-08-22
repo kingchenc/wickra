@@ -75,6 +75,7 @@ impl Indicator for Trima {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; do not double-feed the inner SMA's
@@ -93,14 +94,17 @@ impl Indicator for Trima {
         self.outer.reset();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.outer.is_ready()
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TRIMA"
     }

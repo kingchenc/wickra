@@ -79,6 +79,7 @@ impl Indicator for TrendStrengthIndex {
     type Input = f64;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
             return None;
@@ -120,14 +121,17 @@ impl Indicator for TrendStrengthIndex {
         self.buf.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.buf.len() >= self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "TrendStrengthIndex"
     }

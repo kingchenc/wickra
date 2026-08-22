@@ -77,6 +77,7 @@ impl Indicator for DoubleTopBottom {
     type Input = Candle;
     type Output = f64;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         self.has_emitted = true;
         if !self.swing.update(candle) {
@@ -101,16 +102,19 @@ impl Indicator for DoubleTopBottom {
         self.has_emitted = false;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         // The first complete pattern needs three confirmed pivots; the earliest
         // bar that can confirm a third pivot is the fifth.
         5
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.has_emitted
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "DoubleTopBottom"
     }

@@ -123,6 +123,7 @@ impl Indicator for OpeningRange {
     type Input = Candle;
     type Output = OpeningRangeOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<OpeningRangeOutput> {
         if !self.locked {
             if candle.high > self.high {
@@ -151,14 +152,17 @@ impl Indicator for OpeningRange {
         self.last = None;
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         1
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.bars_seen > 0
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "OpeningRange"
     }

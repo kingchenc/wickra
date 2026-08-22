@@ -89,6 +89,7 @@ impl Indicator for ChandelierExit {
     type Input = Candle;
     type Output = ChandelierExitOutput;
 
+    #[inline]
     fn update(&mut self, candle: Candle) -> Option<ChandelierExitOutput> {
         let atr = self.atr.update(candle);
         if self.highs.len() == self.period {
@@ -117,14 +118,17 @@ impl Indicator for ChandelierExit {
         self.lows.clear();
     }
 
+    #[inline]
     fn warmup_period(&self) -> usize {
         self.period
     }
 
+    #[inline]
     fn is_ready(&self) -> bool {
         self.highs.len() == self.period
     }
 
+    #[inline]
     fn name(&self) -> &'static str {
         "ChandelierExit"
     }
