@@ -83,11 +83,18 @@ impl CorrelationTrendIndicator {
 
     fn compute(&self) -> f64 {
         let n = self.period as f64;
+        // Built on deviations from the window mean: the correlation is
+        // invariant under that shift, and on raw prices `n·Σx² − (Σx)²` is a
+        // difference of two numbers of order `level²` yielding one of order
+        // `deviation²`. At a price level of 1e8 it collapsed to zero and the
+        // indicator reported no correlation at all.
+        let mean = self.window.iter().sum::<f64>() / n;
         let mut sum_x = 0.0;
         let mut sum_xx = 0.0;
         let mut sum_xt = 0.0;
-        for (i, &x) in self.window.iter().enumerate() {
+        for (i, &raw) in self.window.iter().enumerate() {
             let t = i as f64;
+            let x = raw - mean;
             sum_x += x;
             sum_xx += x * x;
             sum_xt += x * t;
@@ -263,5 +270,47 @@ mod tests {
         let mut b = CorrelationTrendIndicator::new(20).unwrap();
         let streamed: Vec<_> = xs.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    /// Same defect as `TrendStrengthIndex`, which correlates the same two
+    /// series: `n·Σx² − (Σx)²` over raw prices collapsed at a price level of
+    /// 1e8, the denominator reached exactly zero and the indicator reported no
+    /// correlation whatever the data did. Centred on the window mean -- under
+    /// which a correlation is invariant -- it now measures 1.2e-14.
+    #[test]
+    fn correlation_at_a_high_price_level_is_still_detected() {
+        const P: usize = 20;
+        let data: Vec<f64> = (0..400)
+            .map(|i| {
+                let t = f64::from(i);
+                1e8 + ((t * 0.11).sin() + 0.4 * (t * 0.37).cos())
+            })
+            .collect();
+
+        let mut ind = CorrelationTrendIndicator::new(P).unwrap();
+        let mean_x = (P as f64 - 1.0) / 2.0;
+        let mut compared = 0_usize;
+        let mut saw_strong_correlation = false;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(got) = ind.update(v) else { continue };
+            let window = &data[i + 1 - P..=i];
+            let mean_y = window.iter().sum::<f64>() / P as f64;
+            let (mut sxy, mut sxx, mut syy) = (0.0, 0.0, 0.0);
+            for (j, &y) in window.iter().enumerate() {
+                let dx = j as f64 - mean_x;
+                let dy = y - mean_y;
+                sxy += dx * dy;
+                sxx += dx * dx;
+                syy += dy * dy;
+            }
+            let want = (sxy / (sxx * syy).sqrt()).clamp(-1.0, 1.0);
+            if want.abs() > 0.7 {
+                saw_strong_correlation = true;
+            }
+            compared += 1;
+            assert_relative_eq!(got, want, max_relative = 1e-9);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
+        assert!(saw_strong_correlation);
     }
 }

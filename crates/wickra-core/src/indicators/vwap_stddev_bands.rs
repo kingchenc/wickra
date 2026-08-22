@@ -22,10 +22,10 @@ pub struct VwapStdDevBandsOutput {
 /// ```text
 /// tp_i        = typical_price(candle_i)         // (high + low + close) / 3
 /// sum_v       = Σ volume_i
-/// sum_pv      = Σ tp_i · volume_i
-/// sum_p2v     = Σ tp_i² · volume_i
-/// vwap        = sum_pv / sum_v
-/// variance    = sum_p2v / sum_v − vwap²         // volume-weighted population variance
+/// sum_dv      = Σ (tp_i − c) · volume_i         // c is a reference price
+/// sum_d2v     = Σ (tp_i − c)² · volume_i
+/// vwap        = c + sum_dv / sum_v
+/// variance    = sum_d2v / sum_v − (sum_dv / sum_v)²   // volume-weighted, population
 /// sigma       = sqrt(max(variance, 0))
 /// upper/lower = vwap ± multiplier · sigma
 /// ```
@@ -53,8 +53,15 @@ pub struct VwapStdDevBandsOutput {
 #[derive(Debug, Clone)]
 pub struct VwapStdDevBands {
     multiplier: f64,
-    sum_pv: f64,
-    sum_p2v: f64,
+    /// Reference price the weighted moments are held relative to, seeded from
+    /// the first bar of the session. The variance is invariant under this
+    /// shift, and it keeps both moments on the scale of the deviation from
+    /// that price rather than of the price itself.
+    reference: f64,
+    /// Whether `reference` has been seeded.
+    seeded: bool,
+    sum_dv: f64,
+    sum_d2v: f64,
     sum_v: f64,
     has_emitted: bool,
 }
@@ -69,8 +76,10 @@ impl VwapStdDevBands {
         }
         Ok(Self {
             multiplier,
-            sum_pv: 0.0,
-            sum_p2v: 0.0,
+            reference: 0.0,
+            seeded: false,
+            sum_dv: 0.0,
+            sum_d2v: 0.0,
             sum_v: 0.0,
             has_emitted: false,
         })
@@ -89,17 +98,25 @@ impl Indicator for VwapStdDevBands {
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<VwapStdDevBandsOutput> {
         let tp = candle.typical_price();
-        self.sum_pv += tp * candle.volume;
-        self.sum_p2v += tp * tp * candle.volume;
+        if !self.seeded {
+            self.reference = tp;
+            self.seeded = true;
+        }
+        let d = tp - self.reference;
+        self.sum_dv += d * candle.volume;
+        self.sum_d2v += d * d * candle.volume;
         self.sum_v += candle.volume;
         if self.sum_v == 0.0 {
             return None;
         }
         self.has_emitted = true;
-        let vwap = self.sum_pv / self.sum_v;
+        // The weighted mean deviation carries the whole of the VWAP except the
+        // reference price, which comes back only for the absolute band levels.
+        let mean_d = self.sum_dv / self.sum_v;
+        let vwap = self.reference + mean_d;
         // Volume-weighted population variance; clamp tiny negative cancellation
         // noise back to zero on near-constant inputs.
-        let var = (self.sum_p2v / self.sum_v - vwap * vwap).max(0.0);
+        let var = (self.sum_d2v / self.sum_v - mean_d * mean_d).max(0.0);
         let sigma = var.sqrt();
         Some(VwapStdDevBandsOutput {
             upper: vwap + self.multiplier * sigma,
@@ -110,8 +127,10 @@ impl Indicator for VwapStdDevBands {
     }
 
     fn reset(&mut self) {
-        self.sum_pv = 0.0;
-        self.sum_p2v = 0.0;
+        self.reference = 0.0;
+        self.seeded = false;
+        self.sum_dv = 0.0;
+        self.sum_d2v = 0.0;
         self.sum_v = 0.0;
         self.has_emitted = false;
     }
@@ -251,5 +270,50 @@ mod tests {
         assert_relative_eq!(out.stddev, 2.0, epsilon = 1e-9);
         assert_relative_eq!(out.upper, 13.0, epsilon = 1e-9);
         assert_relative_eq!(out.lower, 7.0, epsilon = 1e-9);
+    }
+
+    /// The volume-weighted variance was `Σtp²v/Σv − vwap²` on raw typical
+    /// prices, and this indicator accumulates over a whole session rather than
+    /// a window, so there was nothing to bound it either. At a price level of
+    /// 1e8 the deviation came out 32 times too large; against a two-pass
+    /// weighted reference it now measures 7.6e-14.
+    #[test]
+    fn deviation_at_a_high_price_level_matches_a_two_pass_reference() {
+        let closes: Vec<f64> = (0..400)
+            .map(|i| {
+                let t = f64::from(i);
+                1e8 + ((t * 0.11).sin() + 0.4 * (t * 0.37).cos())
+            })
+            .collect();
+
+        let mut ind = VwapStdDevBands::new(2.0).unwrap();
+        let (mut prices, mut volumes): (Vec<f64>, Vec<f64>) = (Vec::new(), Vec::new());
+        let mut compared = 0_usize;
+        for (i, &c) in closes.iter().enumerate() {
+            let volume = 10.0 + (i % 7) as f64;
+            // Converted rather than cast: the workspace lint set rejects
+            // `usize as i64` as a possible wrap.
+            let timestamp = i64::try_from(i).unwrap();
+            let candle = Candle::new_unchecked(c, c + 0.5, c - 0.5, c, volume, timestamp);
+            let out = ind.update(candle);
+            prices.push(candle.typical_price());
+            volumes.push(volume);
+            let Some(out) = out else { continue };
+
+            // Two passes over the session: the weighted mean first, then the
+            // weighted spread about it.
+            let total: f64 = volumes.iter().sum();
+            let vwap: f64 = prices.iter().zip(&volumes).map(|(p, v)| p * v).sum::<f64>() / total;
+            let var: f64 = prices
+                .iter()
+                .zip(&volumes)
+                .map(|(p, v)| v * (p - vwap) * (p - vwap))
+                .sum::<f64>()
+                / total;
+            compared += 1;
+            assert_relative_eq!(out.middle, vwap, max_relative = 1e-14);
+            assert_relative_eq!(out.stddev, var.sqrt(), max_relative = 1e-9);
+        }
+        assert_eq!(compared, closes.len());
     }
 }

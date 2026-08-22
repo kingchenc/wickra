@@ -154,6 +154,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   prices and a half-width of 0.7 on a price of 1e8 is quantised at 1.5e-08 by
   the output representation alone. `TtmSqueeze` was checked and needs no change:
   it already regresses a detrended series.
+- **A catalogue-wide sweep found three more, two of them silently reporting
+  nothing at all.** The earlier sweep for this pattern matched only a bare
+  `mean * mean` and missed every other spelling, so it was redone against the
+  shapes that actually occur -- suffixed identifiers, `n * mean_y * mean_y`,
+  cross-sum products, and `mul_add`, which is what had been hiding
+  `TrendStrengthIndex`. At a price level of 1e8 with a one-unit wobble, against
+  a centred reference:
+
+  | | before | after |
+  |---|---|---|
+  | `TrendStrengthIndex` | 1.0 | 2.4e-14 |
+  | `CorrelationTrendIndicator` | 1.0 | 1.2e-14 |
+  | `VwapStdDevBands` (deviation) | 32.2 | 7.6e-14 |
+
+  A relative error of exactly 1 is not a rounding problem: both correlations
+  collapsed past their own zero guard and returned 0 for a clean sine wave,
+  reporting no trend and no correlation whatever the data did. `VwapStdDevBands`
+  reported a band width 32 times too wide, and it accumulates over a whole
+  session rather than a window, so nothing bounded it. All three now hold their
+  moments on the scale of the deviation -- the two correlations about the window
+  mean, the session VWAP about a reference price seeded from its first bar.
+
+  The sweep also confirmed what does *not* need changing, so it does not get
+  revisited: `SpearmanCorrelation` correlates ranks,
+  `AutocorrelationPeriodogram` a roofing-filtered series that oscillates about
+  zero, `HurstExponent` a log-log fit, and `DepthSlope` distances from the mid.
+  The index-based OLS denominators (`n·Σx² − (Σx)²` over `0..period`) are exact
+  arithmetic on small integers.
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and
