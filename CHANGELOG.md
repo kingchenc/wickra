@@ -56,6 +56,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **Fuzz coverage closed the last two gaps, and gained a chain target.**
+  `BollingerBandwidth` and `PercentB` were the only two of the 514 catalogue
+  entries no fuzz target reached. A new `indicator_chain` target covers
+  `Chain`, which exercises a path no single-indicator target can: the second
+  stage consumes a stream produced by the first, which starts later, can be
+  constant for long stretches, and for a rate of change can be infinite or NaN
+  from finite input. CI now also runs `cargo fuzz build` over every target —
+  `fuzz run` builds only the target it names, so eight of the thirteen were
+  neither run nor compiled and could drift out of sync with the core API
+  unnoticed.
 - **Indicator methods are now `#[inline]`, so a downstream crate can inline
   them.** None of the 514 indicator files carried a single `#[inline]`. A
   trait-impl body is not generic, so without link-time optimisation it is not

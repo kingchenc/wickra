@@ -100,3 +100,10 @@ path = "fuzz_targets/bar_builder_update_candle.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "indicator_chain"
+path = "fuzz_targets/indicator_chain.rs"
+test = false
+doc = false
+bench = false

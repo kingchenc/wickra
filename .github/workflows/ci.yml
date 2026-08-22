@@ -423,6 +423,13 @@ jobs:
         with:
           tool: cargo-fuzz
 
+      # `fuzz run <target>` builds only that target, so the targets not listed
+      # below were never compiled here and could drift out of sync with the core
+      # API unnoticed. Build them all first.
+      - name: Build every fuzz target
+        run: cargo +nightly-2026-07-01 fuzz build --target x86_64-unknown-linux-gnu
+        working-directory: fuzz
+
       - name: Fuzz csv_reader (30 s)
         run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu csv_reader -- -max_total_time=30
         working-directory: fuzz
@@ -441,6 +448,10 @@ jobs:
 
       - name: Fuzz tick_aggregator (30 s)
         run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu tick_aggregator -- -max_total_time=30
+        working-directory: fuzz
+
+      - name: Fuzz indicator_chain (30 s)
+        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu indicator_chain -- -max_total_time=30
         working-directory: fuzz
 
   python:
