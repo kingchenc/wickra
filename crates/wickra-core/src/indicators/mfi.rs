@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -33,8 +34,8 @@ pub struct Mfi {
     prev_tp: Option<f64>,
     pos_window: VecDeque<f64>,
     neg_window: VecDeque<f64>,
-    pos_sum: f64,
-    neg_sum: f64,
+    pos_sum: RollingSum,
+    neg_sum: RollingSum,
 }
 
 impl Mfi {
@@ -54,8 +55,8 @@ impl Mfi {
             prev_tp: None,
             pos_window: VecDeque::with_capacity(period),
             neg_window: VecDeque::with_capacity(period),
-            pos_sum: 0.0,
-            neg_sum: 0.0,
+            pos_sum: RollingSum::new(),
+            neg_sum: RollingSum::new(),
         })
     }
 
@@ -91,13 +92,19 @@ impl Indicator for Mfi {
         };
 
         if self.pos_window.len() == self.period {
-            self.pos_sum -= self.pos_window.pop_front().expect("non-empty");
-            self.neg_sum -= self.neg_window.pop_front().expect("non-empty");
+            let old_pos = self.pos_window.pop_front().expect("non-empty");
+            let old_neg = self.neg_window.pop_front().expect("non-empty");
+            self.pos_sum.evict(old_pos);
+            self.neg_sum.evict(old_neg);
         }
         self.pos_window.push_back(pos_flow);
         self.neg_window.push_back(neg_flow);
-        self.pos_sum += pos_flow;
-        self.neg_sum += neg_flow;
+        self.pos_sum.push(pos_flow);
+        self.neg_sum.push(neg_flow);
+        if self.pos_sum.needs_reseed(self.period) {
+            self.pos_sum.reseed(self.pos_window.iter().copied());
+            self.neg_sum.reseed(self.neg_window.iter().copied());
+        }
 
         self.prev_tp = Some(tp);
 
@@ -106,13 +113,14 @@ impl Indicator for Mfi {
         }
         // A fully flat window (every typical price equal) has zero flow on
         // both sides; by convention MFI is then 50.
-        if self.pos_sum == 0.0 && self.neg_sum == 0.0 {
+        let (pos_sum, neg_sum) = (self.pos_sum.value(), self.neg_sum.value());
+        if pos_sum == 0.0 && neg_sum == 0.0 {
             return Some(50.0);
         }
-        if self.neg_sum == 0.0 {
+        if neg_sum == 0.0 {
             return Some(100.0);
         }
-        let mr = self.pos_sum / self.neg_sum;
+        let mr = pos_sum / neg_sum;
         Some(100.0 - 100.0 / (1.0 + mr))
     }
 
@@ -120,8 +128,8 @@ impl Indicator for Mfi {
         self.prev_tp = None;
         self.pos_window.clear();
         self.neg_window.clear();
-        self.pos_sum = 0.0;
-        self.neg_sum = 0.0;
+        self.pos_sum.reset();
+        self.neg_sum.reset();
     }
 
     #[inline]

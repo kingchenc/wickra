@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -42,9 +43,9 @@ pub struct Vwma {
     period: usize,
     /// Rolling window of `(close, volume)` pairs, oldest at the front.
     window: VecDeque<(f64, f64)>,
-    sum_pv: f64,
-    sum_v: f64,
-    sum_close: f64,
+    sum_pv: RollingSum,
+    sum_v: RollingSum,
+    sum_close: RollingSum,
     current: Option<f64>,
 }
 
@@ -66,9 +67,9 @@ impl Vwma {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum_pv: 0.0,
-            sum_v: 0.0,
-            sum_close: 0.0,
+            sum_pv: RollingSum::new(),
+            sum_v: RollingSum::new(),
+            sum_close: RollingSum::new(),
             current: None,
         })
     }
@@ -94,23 +95,28 @@ impl Indicator for Vwma {
         let volume = candle.volume;
         if self.window.len() == self.period {
             let (old_close, old_volume) = self.window.pop_front().expect("window is non-empty");
-            self.sum_pv -= old_close * old_volume;
-            self.sum_v -= old_volume;
-            self.sum_close -= old_close;
+            self.sum_pv.evict(old_close * old_volume);
+            self.sum_v.evict(old_volume);
+            self.sum_close.evict(old_close);
         }
         self.window.push_back((close, volume));
-        self.sum_pv += close * volume;
-        self.sum_v += volume;
-        self.sum_close += close;
+        self.sum_pv.push(close * volume);
+        self.sum_v.push(volume);
+        self.sum_close.push(close);
+        if self.sum_pv.needs_reseed(self.period) {
+            self.sum_pv.reseed(self.window.iter().map(|&(c, v)| c * v));
+            self.sum_v.reseed(self.window.iter().map(|&(_, v)| v));
+            self.sum_close.reseed(self.window.iter().map(|&(c, _)| c));
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let value = if self.sum_v > 0.0 {
-            self.sum_pv / self.sum_v
+        let value = if self.sum_v.value() > 0.0 {
+            self.sum_pv.value() / self.sum_v.value()
         } else {
             // Degenerate window: every bar had zero volume. Fall back to the
             // plain mean of the closes so the output stays finite.
-            self.sum_close / self.period as f64
+            self.sum_close.value() / self.period as f64
         };
         self.current = Some(value);
         Some(value)
@@ -118,9 +124,9 @@ impl Indicator for Vwma {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_pv = 0.0;
-        self.sum_v = 0.0;
-        self.sum_close = 0.0;
+        self.sum_pv.reset();
+        self.sum_v.reset();
+        self.sum_close.reset();
         self.current = None;
     }
 

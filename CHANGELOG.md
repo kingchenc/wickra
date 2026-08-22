@@ -311,6 +311,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every floating-point operation happens in the same order as before, including
   the ascending summation in the back-substitution and the residual pass.
 
+- **Nine more rolling sums now shed their accumulated rounding.** `sum += new;
+  sum -= old` is O(1) but never forgets a rounding error, so the deviation from
+  a from-scratch sum grows without bound. Measured over three million updates by
+  comparing a long run against a fresh instance fed only the trailing window:
+
+  | | before | after |
+  |---|---|---|
+  | `EaseOfMovement` | 1.3e-13 | 1.9e-16 |
+  | `BipowerVariation` | 9.4e-14 | 1.4e-16 |
+  | `Mfi` | 2.8e-14 | exact |
+  | `Vwma` | 2.1e-14 | exact |
+  | `RollingVwap` | 1.3e-14 | exact |
+  | `UlcerIndex` | 6.6e-15 | 1.2e-16 |
+  | `VolumeWeightedSr` | 4.1e-15 | exact |
+  | `HiLoActivator` | 4.1e-15 | 2.7e-16 |
+  | `RealizedVolatility` | 4.4e-16 | exact |
+
+  The audit expected fifty files here; there are thirty-five with a sliding
+  accumulator, and measuring them first showed only these nine actually drift.
+  Sixteen are already exact, and the rest carry an exponential term, which has
+  unbounded memory by design — `AdaptiveRsi` differs from a window-only replay by
+  0.57, and that is the indicator working, not drifting. Measuring first is what
+  separated the two.
+
+  The pairing was the risk: `RealizedVolatility` accumulates `r²` for each `r`
+  in its window, `BipowerVariation` the product of each adjacent pair, `Vwma`
+  three different projections of one `(close, volume)` window, and
+  `VolumeWeightedSr` five across three parallel windows. Each reseed source was
+  written from the eviction it mirrors rather than inferred from the field name.
+
 
 
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**

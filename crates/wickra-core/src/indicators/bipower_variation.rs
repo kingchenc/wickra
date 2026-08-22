@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Realized Bipower Variation — the sum of *adjacent* absolute log-return
@@ -53,7 +54,7 @@ pub struct BipowerVariation {
     /// Rolling window of the last `period` log returns.
     window: VecDeque<f64>,
     /// Running sum of adjacent absolute-return products inside the window.
-    sum_adjacent: f64,
+    sum_adjacent: RollingSum,
     last: Option<f64>,
 }
 
@@ -85,7 +86,7 @@ impl BipowerVariation {
             period,
             prev_price: None,
             window: VecDeque::with_capacity(period),
-            sum_adjacent: 0.0,
+            sum_adjacent: RollingSum::new(),
             last: None,
         })
     }
@@ -120,21 +121,29 @@ impl Indicator for BipowerVariation {
         let r = (input / prev).ln();
         // The incoming return forms a product with the current last return.
         if let Some(&back) = self.window.back() {
-            self.sum_adjacent += back.abs() * r.abs();
+            self.sum_adjacent.push(back.abs() * r.abs());
         }
         self.window.push_back(r);
         if self.window.len() > self.period {
             let first = self.window.pop_front().expect("window is non-empty");
             // The product between the dropped return and the new front leaves.
             let second = *self.window.front().expect("window still has >= 1 element");
-            self.sum_adjacent -= first.abs() * second.abs();
+            self.sum_adjacent.evict(first.abs() * second.abs());
+            if self.sum_adjacent.needs_reseed(self.period) {
+                self.sum_adjacent.reseed(
+                    self.window
+                        .iter()
+                        .zip(self.window.iter().skip(1))
+                        .map(|(a, b)| a.abs() * b.abs()),
+                );
+            }
         }
         if self.window.len() < self.period {
             return None;
         }
         // Products are non-negative; the rolling subtraction can leave a tiny
         // negative residual when returns are ~0, so clamp before scaling.
-        let bv = MU1_INV_SQ * self.sum_adjacent.max(0.0);
+        let bv = MU1_INV_SQ * self.sum_adjacent.value().max(0.0);
         self.last = Some(bv);
         Some(bv)
     }
@@ -142,7 +151,7 @@ impl Indicator for BipowerVariation {
     fn reset(&mut self) {
         self.prev_price = None;
         self.window.clear();
-        self.sum_adjacent = 0.0;
+        self.sum_adjacent.reset();
         self.last = None;
     }
 

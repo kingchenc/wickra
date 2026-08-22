@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -43,7 +44,7 @@ pub struct EaseOfMovement {
     divisor: f64,
     prev_mid: Option<f64>,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
 }
 
 impl EaseOfMovement {
@@ -80,7 +81,7 @@ impl EaseOfMovement {
             divisor,
             prev_mid: None,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
         })
     }
 
@@ -118,20 +119,24 @@ impl Indicator for EaseOfMovement {
         self.prev_mid = Some(mid);
 
         if self.window.len() == self.period {
-            self.sum -= self.window.pop_front().expect("non-empty");
+            let oldest = self.window.pop_front().expect("non-empty");
+            self.sum.evict(oldest);
         }
         self.window.push_back(emv);
-        self.sum += emv;
+        self.sum.push(emv);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        Some(self.sum / self.period as f64)
+        Some(self.sum.value() / self.period as f64)
     }
 
     fn reset(&mut self) {
         self.prev_mid = None;
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
     }
 
     #[inline]

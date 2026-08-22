@@ -7,6 +7,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -115,8 +116,8 @@ impl Indicator for Vwap {
 pub struct RollingVwap {
     period: usize,
     window: VecDeque<(f64, f64)>, // (typical_price * volume, volume)
-    sum_pv: f64,
-    sum_v: f64,
+    sum_pv: RollingSum,
+    sum_v: RollingSum,
 }
 
 impl RollingVwap {
@@ -134,8 +135,8 @@ impl RollingVwap {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum_pv: 0.0,
-            sum_v: 0.0,
+            sum_pv: RollingSum::new(),
+            sum_v: RollingSum::new(),
         })
     }
 
@@ -154,22 +155,26 @@ impl Indicator for RollingVwap {
         let pv = candle.typical_price() * candle.volume;
         if self.window.len() == self.period {
             let (old_pv, old_v) = self.window.pop_front().expect("non-empty");
-            self.sum_pv -= old_pv;
-            self.sum_v -= old_v;
+            self.sum_pv.evict(old_pv);
+            self.sum_v.evict(old_v);
         }
         self.window.push_back((pv, candle.volume));
-        self.sum_pv += pv;
-        self.sum_v += candle.volume;
-        if self.window.len() < self.period || self.sum_v == 0.0 {
+        self.sum_pv.push(pv);
+        self.sum_v.push(candle.volume);
+        if self.sum_pv.needs_reseed(self.period) {
+            self.sum_pv.reseed(self.window.iter().map(|&(p, _)| p));
+            self.sum_v.reseed(self.window.iter().map(|&(_, v)| v));
+        }
+        if self.window.len() < self.period || self.sum_v.value() == 0.0 {
             return None;
         }
-        Some(self.sum_pv / self.sum_v)
+        Some(self.sum_pv.value() / self.sum_v.value())
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_pv = 0.0;
-        self.sum_v = 0.0;
+        self.sum_pv.reset();
+        self.sum_v.reset();
     }
 
     #[inline]
@@ -179,7 +184,7 @@ impl Indicator for RollingVwap {
 
     #[inline]
     fn is_ready(&self) -> bool {
-        self.window.len() == self.period && self.sum_v > 0.0
+        self.window.len() == self.period && self.sum_v.value() > 0.0
     }
 
     #[inline]

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Realized Volatility — the square root of the sum of squared log returns over
@@ -48,7 +49,7 @@ pub struct RealizedVolatility {
     prev_price: Option<f64>,
     /// Rolling window of the last `period` log returns.
     window: VecDeque<f64>,
-    sum_sq: f64,
+    sum_sq: RollingSum,
     last: Option<f64>,
 }
 
@@ -72,7 +73,7 @@ impl RealizedVolatility {
             period,
             prev_price: None,
             window: VecDeque::with_capacity(period),
-            sum_sq: 0.0,
+            sum_sq: RollingSum::new(),
             last: None,
         })
     }
@@ -104,16 +105,19 @@ impl Indicator for RealizedVolatility {
         let r = (input / prev).ln();
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum_sq -= old * old;
+            self.sum_sq.evict(old * old);
         }
         self.window.push_back(r);
-        self.sum_sq += r * r;
+        self.sum_sq.push(r * r);
+        if self.sum_sq.needs_reseed(self.period) {
+            self.sum_sq.reseed(self.window.iter().map(|v| v * v));
+        }
         if self.window.len() < self.period {
             return None;
         }
         // Floating-point subtraction in the rolling sum can leave a tiny
         // negative residual when every return is ~0; clamp before the sqrt.
-        let rv = self.sum_sq.max(0.0).sqrt();
+        let rv = self.sum_sq.value().max(0.0).sqrt();
         self.last = Some(rv);
         Some(rv)
     }
@@ -121,7 +125,7 @@ impl Indicator for RealizedVolatility {
     fn reset(&mut self) {
         self.prev_price = None;
         self.window.clear();
-        self.sum_sq = 0.0;
+        self.sum_sq.reset();
         self.last = None;
     }
 

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -47,8 +48,8 @@ pub struct HiLoActivator {
     period: usize,
     highs: VecDeque<f64>,
     lows: VecDeque<f64>,
-    sum_high: f64,
-    sum_low: f64,
+    sum_high: RollingSum,
+    sum_low: RollingSum,
     /// Last bar's `(hi_sma, lo_sma)`, used so today's signal is based on
     /// yesterday's SMAs (no look-ahead).
     prev_smas: Option<(f64, f64)>,
@@ -76,8 +77,8 @@ impl HiLoActivator {
             period,
             highs: VecDeque::with_capacity(period),
             lows: VecDeque::with_capacity(period),
-            sum_high: 0.0,
-            sum_low: 0.0,
+            sum_high: RollingSum::new(),
+            sum_low: RollingSum::new(),
             prev_smas: None,
             long: true,
             started: false,
@@ -102,13 +103,19 @@ impl Indicator for HiLoActivator {
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if self.highs.len() == self.period {
-            self.sum_high -= self.highs.pop_front().expect("non-empty by check");
-            self.sum_low -= self.lows.pop_front().expect("non-empty by check");
+            let old_high = self.highs.pop_front().expect("non-empty by check");
+            let old_low = self.lows.pop_front().expect("non-empty by check");
+            self.sum_high.evict(old_high);
+            self.sum_low.evict(old_low);
         }
         self.highs.push_back(candle.high);
         self.lows.push_back(candle.low);
-        self.sum_high += candle.high;
-        self.sum_low += candle.low;
+        self.sum_high.push(candle.high);
+        self.sum_low.push(candle.low);
+        if self.sum_high.needs_reseed(self.period) {
+            self.sum_high.reseed(self.highs.iter().copied());
+            self.sum_low.reseed(self.lows.iter().copied());
+        }
 
         // Need today's SMA + yesterday's SMA to compare close vs the *previous*
         // bar's bands — so the very first ready bar only computes today's SMA
@@ -117,8 +124,8 @@ impl Indicator for HiLoActivator {
             return None;
         }
         let p = self.period as f64;
-        let hi_sma = self.sum_high / p;
-        let lo_sma = self.sum_low / p;
+        let hi_sma = self.sum_high.value() / p;
+        let lo_sma = self.sum_low.value() / p;
 
         let out = if let Some((prev_hi, prev_lo)) = self.prev_smas {
             if candle.close > prev_hi {
@@ -144,8 +151,8 @@ impl Indicator for HiLoActivator {
     fn reset(&mut self) {
         self.highs.clear();
         self.lows.clear();
-        self.sum_high = 0.0;
-        self.sum_low = 0.0;
+        self.sum_high.reset();
+        self.sum_low.reset();
         self.prev_smas = None;
         self.long = true;
         self.started = false;

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -56,11 +57,11 @@ pub struct VolumeWeightedSr {
     highs: VecDeque<f64>,
     lows: VecDeque<f64>,
     volumes: VecDeque<f64>,
-    sum_hv: f64,
-    sum_lv: f64,
-    sum_v: f64,
-    sum_h: f64,
-    sum_l: f64,
+    sum_hv: RollingSum,
+    sum_lv: RollingSum,
+    sum_v: RollingSum,
+    sum_h: RollingSum,
+    sum_l: RollingSum,
     last: Option<VolumeWeightedSrOutput>,
 }
 
@@ -84,11 +85,11 @@ impl VolumeWeightedSr {
             highs: VecDeque::with_capacity(period),
             lows: VecDeque::with_capacity(period),
             volumes: VecDeque::with_capacity(period),
-            sum_hv: 0.0,
-            sum_lv: 0.0,
-            sum_v: 0.0,
-            sum_h: 0.0,
-            sum_l: 0.0,
+            sum_hv: RollingSum::new(),
+            sum_lv: RollingSum::new(),
+            sum_v: RollingSum::new(),
+            sum_h: RollingSum::new(),
+            sum_l: RollingSum::new(),
             last: None,
         })
     }
@@ -114,28 +115,42 @@ impl Indicator for VolumeWeightedSr {
             let h = self.highs.pop_front().expect("non-empty");
             let l = self.lows.pop_front().expect("non-empty");
             let v = self.volumes.pop_front().expect("non-empty");
-            self.sum_hv -= h * v;
-            self.sum_lv -= l * v;
-            self.sum_v -= v;
-            self.sum_h -= h;
-            self.sum_l -= l;
+            self.sum_hv.evict(h * v);
+            self.sum_lv.evict(l * v);
+            self.sum_v.evict(v);
+            self.sum_h.evict(h);
+            self.sum_l.evict(l);
         }
         self.highs.push_back(candle.high);
         self.lows.push_back(candle.low);
         self.volumes.push_back(candle.volume);
-        self.sum_hv += candle.high * candle.volume;
-        self.sum_lv += candle.low * candle.volume;
-        self.sum_v += candle.volume;
-        self.sum_h += candle.high;
-        self.sum_l += candle.low;
+        self.sum_hv.push(candle.high * candle.volume);
+        self.sum_lv.push(candle.low * candle.volume);
+        self.sum_v.push(candle.volume);
+        self.sum_h.push(candle.high);
+        self.sum_l.push(candle.low);
+        if self.sum_v.needs_reseed(self.period) {
+            let volumes = &self.volumes;
+            self.sum_hv
+                .reseed(self.highs.iter().zip(volumes).map(|(h, v)| h * v));
+            self.sum_lv
+                .reseed(self.lows.iter().zip(volumes).map(|(l, v)| l * v));
+            self.sum_v.reseed(volumes.iter().copied());
+            self.sum_h.reseed(self.highs.iter().copied());
+            self.sum_l.reseed(self.lows.iter().copied());
+        }
         if self.highs.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let (support, resistance) = if self.sum_v > 0.0 {
-            (self.sum_lv / self.sum_v, self.sum_hv / self.sum_v)
+        let total_volume = self.sum_v.value();
+        let (support, resistance) = if total_volume > 0.0 {
+            (
+                self.sum_lv.value() / total_volume,
+                self.sum_hv.value() / total_volume,
+            )
         } else {
-            (self.sum_l / n, self.sum_h / n)
+            (self.sum_l.value() / n, self.sum_h.value() / n)
         };
         let out = VolumeWeightedSrOutput {
             support,
@@ -149,11 +164,11 @@ impl Indicator for VolumeWeightedSr {
         self.highs.clear();
         self.lows.clear();
         self.volumes.clear();
-        self.sum_hv = 0.0;
-        self.sum_lv = 0.0;
-        self.sum_v = 0.0;
-        self.sum_h = 0.0;
-        self.sum_l = 0.0;
+        self.sum_hv.reset();
+        self.sum_lv.reset();
+        self.sum_v.reset();
+        self.sum_h.reset();
+        self.sum_l.reset();
         self.last = None;
     }
 

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Ulcer Index — Peter Martin's downside-only volatility / risk measure.
@@ -50,7 +51,7 @@ pub struct UlcerIndex {
     max_dq: VecDeque<(u64, f64)>,
     /// Rolling window of the last `period` squared percentage drawdowns.
     drawdowns_sq: VecDeque<f64>,
-    sum_sq: f64,
+    sum_sq: RollingSum,
     last: Option<f64>,
 }
 
@@ -74,7 +75,7 @@ impl UlcerIndex {
             count: 0,
             max_dq: VecDeque::with_capacity(period),
             drawdowns_sq: VecDeque::with_capacity(period),
-            sum_sq: 0.0,
+            sum_sq: RollingSum::new(),
             last: None,
         })
     }
@@ -132,14 +133,18 @@ impl Indicator for UlcerIndex {
         let sq = drawdown * drawdown;
 
         if self.drawdowns_sq.len() == self.period {
-            self.sum_sq -= self.drawdowns_sq.pop_front().expect("window is non-empty");
+            let oldest = self.drawdowns_sq.pop_front().expect("window is non-empty");
+            self.sum_sq.evict(oldest);
         }
         self.drawdowns_sq.push_back(sq);
-        self.sum_sq += sq;
+        self.sum_sq.push(sq);
+        if self.sum_sq.needs_reseed(self.period) {
+            self.sum_sq.reseed(self.drawdowns_sq.iter().copied());
+        }
         if self.drawdowns_sq.len() < self.period {
             return None;
         }
-        let ui = (self.sum_sq / self.period as f64).sqrt();
+        let ui = (self.sum_sq.value() / self.period as f64).sqrt();
         self.last = Some(ui);
         Some(ui)
     }
@@ -148,7 +153,7 @@ impl Indicator for UlcerIndex {
         self.count = 0;
         self.max_dq.clear();
         self.drawdowns_sq.clear();
-        self.sum_sq = 0.0;
+        self.sum_sq.reset();
         self.last = None;
     }
 
