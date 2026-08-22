@@ -33,6 +33,10 @@ use crate::traits::Indicator;
 pub struct MedianMa {
     period: usize,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
+    /// Median of the current window, recomputed by `update`.
+    last: Option<f64>,
 }
 
 impl MedianMa {
@@ -53,6 +57,8 @@ impl MedianMa {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
+            last: None,
         })
     }
 
@@ -62,18 +68,30 @@ impl MedianMa {
     }
 
     /// Current value if the window is full.
-    pub fn value(&self) -> Option<f64> {
+    ///
+    /// Cheap: the median is computed once per `update` rather than on every
+    /// read, which also keeps the sort off the caller's path.
+    pub const fn value(&self) -> Option<f64> {
+        self.last
+    }
+
+    /// Recompute the median of the live window into `last`.
+    fn recompute(&mut self) {
         if self.window.len() != self.period {
-            return None;
+            self.last = None;
+            return;
         }
-        let mut sorted: Vec<f64> = self.window.iter().copied().collect();
-        sorted.sort_by(|a, b| a.partial_cmp(b).expect("window holds only finite values"));
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        // Total ordering rather than `partial_cmp`: the window only ever holds
+        // finite values, but this needs no justification to stay correct.
+        self.scratch.sort_unstable_by(f64::total_cmp);
         let mid = self.period / 2;
-        if self.period % 2 == 1 {
-            Some(sorted[mid])
+        self.last = Some(if self.period % 2 == 1 {
+            self.scratch[mid]
         } else {
-            Some(f64::midpoint(sorted[mid - 1], sorted[mid]))
-        }
+            f64::midpoint(self.scratch[mid - 1], self.scratch[mid])
+        });
     }
 }
 
@@ -89,11 +107,14 @@ impl Indicator for MedianMa {
             self.window.pop_front();
         }
         self.window.push_back(input);
-        self.value()
+        self.recompute();
+        self.last
     }
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
+        self.last = None;
     }
 
     fn warmup_period(&self) -> usize {

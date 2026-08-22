@@ -73,6 +73,8 @@ pub struct VolatilityCone {
     ret_moments: ShiftedMoments,
     /// Rolling window of realized-volatility readings (the cone envelope).
     vols: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
     last: Option<VolatilityConeOutput>,
 }
 
@@ -102,6 +104,7 @@ impl VolatilityCone {
             returns: VecDeque::with_capacity(window),
             ret_moments: ShiftedMoments::new(),
             vols: VecDeque::with_capacity(lookback),
+            scratch: Vec::with_capacity(lookback),
             last: None,
         })
     }
@@ -160,15 +163,16 @@ impl Indicator for VolatilityCone {
             return None;
         }
 
-        let mut sorted: Vec<f64> = self.vols.iter().copied().collect();
-        sorted.sort_by(f64::total_cmp);
-        let min = sorted[0];
-        let max = sorted[self.lookback - 1];
+        self.scratch.clear();
+        self.scratch.extend(self.vols.iter().copied());
+        self.scratch.sort_unstable_by(f64::total_cmp);
+        let min = self.scratch[0];
+        let max = self.scratch[self.lookback - 1];
         let mid = self.lookback / 2;
         let median = if self.lookback % 2 == 1 {
-            sorted[mid]
+            self.scratch[mid]
         } else {
-            f64::midpoint(sorted[mid - 1], sorted[mid])
+            f64::midpoint(self.scratch[mid - 1], self.scratch[mid])
         };
         let count_le = self.vols.iter().filter(|&&v| v <= current).count();
         let percentile = count_le as f64 / self.lookback as f64 * 100.0;
@@ -189,6 +193,7 @@ impl Indicator for VolatilityCone {
         self.returns.clear();
         self.ret_moments.reset();
         self.vols.clear();
+        self.scratch.clear();
         self.last = None;
     }
 

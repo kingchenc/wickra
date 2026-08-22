@@ -43,6 +43,8 @@ use crate::traits::Indicator;
 pub struct TailRatio {
     period: usize,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
 }
 
 impl TailRatio {
@@ -66,6 +68,7 @@ impl TailRatio {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
         })
     }
 
@@ -74,11 +77,12 @@ impl TailRatio {
         self.period
     }
 
-    fn compute(&self) -> f64 {
-        let mut sorted: Vec<f64> = self.window.iter().copied().collect();
-        sorted.sort_unstable_by(f64::total_cmp);
-        let upper = percentile(&sorted, 95.0);
-        let lower = percentile(&sorted, 5.0).abs();
+    fn compute(&mut self) -> f64 {
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        self.scratch.sort_unstable_by(f64::total_cmp);
+        let upper = percentile(&self.scratch, 95.0);
+        let lower = percentile(&self.scratch, 5.0).abs();
         if lower > 0.0 {
             upper / lower
         } else {
@@ -123,6 +127,7 @@ impl Indicator for TailRatio {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
     }
 
     fn warmup_period(&self) -> usize {

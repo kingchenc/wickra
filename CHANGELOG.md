@@ -56,6 +56,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **Seven sort-based indicators allocated on every tick.** Each copied its
+  window into a freshly allocated `Vec` inside `update` before sorting, while
+  seven siblings doing the same work already reused a scratch buffer. Measured
+  over a million updates: `MedianMa` 16.2 to 21.3 Mupd/s, `ValueAtRisk` 15.3 to
+  19.6, `TailRatio` 14.3 to 19.7 — all now level with `RollingQuantile`, the
+  sibling that already had the buffer and which is unchanged as a control.
+  `CommonSenseRatio`, `ConditionalValueAtRisk`, `VolatilityCone` and
+  `AdaptiveLaguerreFilter` get the same treatment. `MedianMa::value()` used to
+  sort on every read; the median is now computed once per `update` and the
+  accessor just returns it. No output changes.
+- **Comparators unified on `f64::total_cmp`.** Three of the sort-based
+  indicators ordered with `partial_cmp` and either swallowed the `None`
+  (`unwrap_or(Equal)`) or unwrapped it. No `partial_cmp` remains in indicator
+  production code.
 - **Rolling sums drifted without bound on long streams.** `sum += new;
   sum -= old` is O(1) but never forgets a rounding error, so an accumulator's
   deviation from a from-scratch sum grows with the length of the stream — the

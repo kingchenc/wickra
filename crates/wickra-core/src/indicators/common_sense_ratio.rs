@@ -46,6 +46,8 @@ use crate::traits::Indicator;
 pub struct CommonSenseRatio {
     period: usize,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
 }
 
 impl CommonSenseRatio {
@@ -69,6 +71,7 @@ impl CommonSenseRatio {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
         })
     }
 
@@ -77,7 +80,7 @@ impl CommonSenseRatio {
         self.period
     }
 
-    fn compute(&self) -> f64 {
+    fn compute(&mut self) -> f64 {
         let mut gains = 0.0;
         let mut losses = 0.0;
         for ret in &self.window {
@@ -87,14 +90,15 @@ impl CommonSenseRatio {
         if losses <= 0.0 {
             return 0.0;
         }
-        let mut sorted: Vec<f64> = self.window.iter().copied().collect();
-        sorted.sort_unstable_by(f64::total_cmp);
-        let lower_tail = percentile(&sorted, 5.0).abs();
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        self.scratch.sort_unstable_by(f64::total_cmp);
+        let lower_tail = percentile(&self.scratch, 5.0).abs();
         if lower_tail <= 0.0 {
             return 0.0;
         }
         let profit_factor = gains / losses;
-        let tail_ratio = percentile(&sorted, 95.0) / lower_tail;
+        let tail_ratio = percentile(&self.scratch, 95.0) / lower_tail;
         profit_factor * tail_ratio
     }
 }
@@ -135,6 +139,7 @@ impl Indicator for CommonSenseRatio {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
     }
 
     fn warmup_period(&self) -> usize {

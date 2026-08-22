@@ -44,6 +44,8 @@ pub struct ValueAtRisk {
     period: usize,
     confidence: f64,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
 }
 
 impl ValueAtRisk {
@@ -72,6 +74,7 @@ impl ValueAtRisk {
             period,
             confidence,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
         })
     }
 
@@ -115,16 +118,18 @@ impl Indicator for ValueAtRisk {
         if self.window.len() < self.period {
             return None;
         }
-        let mut sorted: Vec<f64> = self.window.iter().copied().collect();
-        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        self.scratch.sort_unstable_by(f64::total_cmp);
         let q = 1.0 - self.confidence;
-        let cut = percentile_sorted(&sorted, q);
+        let cut = percentile_sorted(&self.scratch, q);
         // Loss magnitude (sign-flipped); 0 if quantile is non-negative.
         Some((-cut).max(0.0))
     }
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
     }
 
     fn warmup_period(&self) -> usize {

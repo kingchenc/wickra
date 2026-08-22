@@ -60,6 +60,8 @@ pub struct AdaptiveLaguerreFilter {
     filter: Option<f64>,
     /// The last `period` absolute errors `|price − filter|`.
     diffs: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
 }
 
 impl AdaptiveLaguerreFilter {
@@ -86,6 +88,7 @@ impl AdaptiveLaguerreFilter {
             l3: 0.0,
             filter: None,
             diffs: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
         })
     }
 
@@ -106,7 +109,7 @@ impl AdaptiveLaguerreFilter {
     /// Median of the normalised errors currently in the window. Returns `0.0`
     /// when every error is equal (e.g. during a constant warmup), which makes
     /// the filter maximally fast.
-    fn adaptive_gamma(&self) -> f64 {
+    fn adaptive_gamma(&mut self) -> f64 {
         let mut hh = f64::MIN;
         let mut ll = f64::MAX;
         for &d in &self.diffs {
@@ -121,16 +124,18 @@ impl AdaptiveLaguerreFilter {
         if range <= 0.0 {
             return 0.0;
         }
-        let mut norm: Vec<f64> = self.diffs.iter().map(|&d| (d - ll) / range).collect();
+        self.scratch.clear();
+        self.scratch
+            .extend(self.diffs.iter().map(|&d| (d - ll) / range));
         // `total_cmp` never panics — under pathological (e.g. overflowing) fuzz
         // inputs a normalised error can be non-finite; a total order keeps the
         // sort sound where `partial_cmp` would return `None`.
-        norm.sort_by(f64::total_cmp);
-        let mid = norm.len() / 2;
-        if norm.len() % 2 == 1 {
-            norm[mid]
+        self.scratch.sort_unstable_by(f64::total_cmp);
+        let mid = self.scratch.len() / 2;
+        if self.scratch.len() % 2 == 1 {
+            self.scratch[mid]
         } else {
-            f64::midpoint(norm[mid - 1], norm[mid])
+            f64::midpoint(self.scratch[mid - 1], self.scratch[mid])
         }
     }
 }
@@ -175,6 +180,7 @@ impl Indicator for AdaptiveLaguerreFilter {
         self.l3 = 0.0;
         self.filter = None;
         self.diffs.clear();
+        self.scratch.clear();
     }
 
     fn warmup_period(&self) -> usize {
