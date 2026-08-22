@@ -50,6 +50,17 @@ pub struct GrangerCausality {
     period: usize,
     lag: usize,
     window: VecDeque<(f64, f64)>,
+    /// Regressand: the value of channel `a` at each observation.
+    target: Vec<f64>,
+    /// Design matrix of the restricted model, row-major with stride `lag + 1`.
+    restricted: Vec<f64>,
+    /// Design matrix of the unrestricted model, stride `2 * lag + 1`.
+    unrestricted: Vec<f64>,
+    /// Normal-equation workspace, sized for the larger of the two models:
+    /// `xtx` is row-major with stride `num_reg`.
+    xtx: Vec<f64>,
+    xty: Vec<f64>,
+    theta: Vec<f64>,
 }
 
 impl GrangerCausality {
@@ -82,6 +93,12 @@ impl GrangerCausality {
             period,
             lag,
             window: VecDeque::with_capacity(period),
+            target: Vec::with_capacity(period),
+            restricted: Vec::with_capacity(period * (lag + 1)),
+            unrestricted: Vec::with_capacity(period * (2 * lag + 1)),
+            xtx: Vec::with_capacity((2 * lag + 1) * (2 * lag + 1)),
+            xty: Vec::with_capacity(2 * lag + 1),
+            theta: Vec::with_capacity(2 * lag + 1),
         })
     }
 
@@ -112,33 +129,46 @@ impl Indicator for GrangerCausality {
             return None;
         }
         let lag = self.lag;
-        let a: Vec<f64> = self.window.iter().map(|&(av, _)| av).collect();
-        let b: Vec<f64> = self.window.iter().map(|&(_, bv)| bv).collect();
         let num_obs = self.period - lag;
 
-        let mut target = Vec::with_capacity(num_obs);
-        let mut restricted = Vec::with_capacity(num_obs);
-        let mut unrestricted = Vec::with_capacity(num_obs);
+        // The channels are read at single positions, which a `VecDeque` indexes
+        // directly; the design matrices are flat and row-major so neither the
+        // rows nor the matrices themselves need an allocation per update.
+        self.target.clear();
+        self.restricted.clear();
+        self.unrestricted.clear();
         for k in 0..num_obs {
             let now = lag + k;
-            target.push(a[now]);
-            let mut row_r = Vec::with_capacity(lag + 1);
-            row_r.push(1.0);
+            self.target.push(self.window[now].0);
+            self.restricted.push(1.0);
             for back in 1..=lag {
-                row_r.push(a[now - back]);
+                self.restricted.push(self.window[now - back].0);
             }
-            let mut row_u = row_r.clone();
+            // The unrestricted row is the restricted one with the cross-channel
+            // lags appended, exactly as the cloned row built it before.
+            let row_start = k * (lag + 1);
+            for offset in 0..=lag {
+                let value = self.restricted[row_start + offset];
+                self.unrestricted.push(value);
+            }
             for back in 1..=lag {
-                row_u.push(b[now - back]);
+                self.unrestricted.push(self.window[now - back].1);
             }
-            restricted.push(row_r);
-            unrestricted.push(row_u);
         }
 
-        let Some(rss_r) = ols_rss(&restricted, &target, lag + 1) else {
+        let Self {
+            target,
+            restricted,
+            unrestricted,
+            xtx,
+            xty,
+            theta,
+            ..
+        } = self;
+        let Some(rss_r) = ols_rss(restricted, lag + 1, target, xtx, xty, theta) else {
             return Some(0.0);
         };
-        let Some(rss_u) = ols_rss(&unrestricted, &target, 2 * lag + 1) else {
+        let Some(rss_u) = ols_rss(unrestricted, 2 * lag + 1, target, xtx, xty, theta) else {
             return Some(0.0);
         };
         let dof = (num_obs - (2 * lag + 1)) as f64;
@@ -149,6 +179,12 @@ impl Indicator for GrangerCausality {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.target.clear();
+        self.restricted.clear();
+        self.unrestricted.clear();
+        self.xtx.clear();
+        self.xty.clear();
+        self.theta.clear();
     }
 
     #[inline]
@@ -167,26 +203,36 @@ impl Indicator for GrangerCausality {
     }
 }
 
-/// Residual sum of squares of the OLS fit of `target` on the design `rows`
-/// (each a length-`num_reg` regressor vector). Returns `None` if the normal
+/// Residual sum of squares of the OLS fit of `target` on the design `rows`,
+/// row-major with stride `num_reg`. The workspace buffers are supplied by the
+/// caller so nothing is allocated per update. Returns `None` if the normal
 /// equations are singular.
-fn ols_rss(rows: &[Vec<f64>], target: &[f64], num_reg: usize) -> Option<f64> {
-    let mut xtx = vec![vec![0.0; num_reg]; num_reg];
-    let mut xty = vec![0.0; num_reg];
-    for (row, &observed) in rows.iter().zip(target) {
+fn ols_rss(
+    rows: &[f64],
+    num_reg: usize,
+    target: &[f64],
+    xtx: &mut Vec<f64>,
+    xty: &mut Vec<f64>,
+    theta: &mut Vec<f64>,
+) -> Option<f64> {
+    xtx.clear();
+    xtx.resize(num_reg * num_reg, 0.0);
+    xty.clear();
+    xty.resize(num_reg, 0.0);
+    for (row, &observed) in rows.chunks_exact(num_reg).zip(target) {
         for (ri, &left) in row.iter().enumerate() {
             xty[ri] += left * observed;
             for (ci, &right) in row.iter().enumerate() {
-                xtx[ri][ci] += left * right;
+                xtx[ri * num_reg + ci] += left * right;
             }
         }
     }
-    let theta = solve(xtx, xty)?;
+    solve(xtx, num_reg, xty, theta)?;
     let mut rss = 0.0;
-    for (row, &observed) in rows.iter().zip(target) {
+    for (row, &observed) in rows.chunks_exact(num_reg).zip(target) {
         let pred: f64 = row
             .iter()
-            .zip(&theta)
+            .zip(theta.iter())
             .map(|(coeff, value)| coeff * value)
             .sum();
         let resid = observed - pred;
@@ -195,35 +241,43 @@ fn ols_rss(rows: &[Vec<f64>], target: &[f64], num_reg: usize) -> Option<f64> {
     Some(rss)
 }
 
-/// Solve the linear system `mat·x = rhs` by Gaussian elimination, returning
-/// `None` if the matrix is (numerically) singular. `mat` is row-major.
-fn solve(mut mat: Vec<Vec<f64>>, mut rhs: Vec<f64>) -> Option<Vec<f64>> {
+/// Solve the linear system `mat·x = rhs` by Gaussian elimination, writing the
+/// solution into `sol` and returning `None` if the matrix is (numerically)
+/// singular. `mat` is row-major with the given stride, and both it and `rhs`
+/// are consumed in place.
+fn solve(mat: &mut [f64], stride: usize, rhs: &mut [f64], sol: &mut Vec<f64>) -> Option<()> {
     let dim = rhs.len();
     for col in 0..dim {
-        let pivot = mat[col][col];
+        let pivot = mat[col * stride + col];
         if pivot.abs() < 1e-12 {
             return None;
         }
-        let pivot_row = mat[col].clone();
+        // The pivot row is only read and the rows below it only written, so
+        // splitting the matrix hands out both without copying the pivot row.
+        let (above, below) = mat.split_at_mut((col + 1) * stride);
+        let pivot_row = &above[col * stride..col * stride + stride];
         for row in (col + 1)..dim {
-            let factor = mat[row][col] / pivot;
-            for (cell, &above) in mat[row].iter_mut().zip(&pivot_row).skip(col) {
-                *cell -= factor * above;
+            let offset = (row - col - 1) * stride;
+            let target_row = &mut below[offset..offset + stride];
+            let factor = target_row[col] / pivot;
+            for (cell, &value) in target_row.iter_mut().zip(pivot_row).skip(col) {
+                *cell -= factor * value;
             }
             rhs[row] -= factor * rhs[col];
         }
     }
-    let mut sol = vec![0.0; dim];
+    sol.clear();
+    sol.resize(dim, 0.0);
     for row in (0..dim).rev() {
-        let known: f64 = mat[row]
+        let known: f64 = mat[row * stride..row * stride + stride]
             .iter()
-            .zip(&sol)
+            .zip(sol.iter())
             .skip(row + 1)
             .map(|(coeff, value)| coeff * value)
             .sum();
-        sol[row] = (rhs[row] - known) / mat[row][row];
+        sol[row] = (rhs[row] - known) / mat[row * stride + row];
     }
-    Some(sol)
+    Some(())
 }
 
 #[cfg(test)]

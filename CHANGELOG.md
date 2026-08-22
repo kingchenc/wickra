@@ -290,6 +290,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Every golden fixture is byte-identical afterwards, which is the point of a
   change that is meant to be free.
+- **`GrangerCausality` was allocating about a hundred times per update; now it
+  allocates none.** It is the slowest indicator in the catalogue, and the reason
+  was structural rather than arithmetic: two channel copies, three outer
+  vectors, a freshly allocated design-matrix *row* for each of the `period − lag`
+  observations in each of two models, a `Vec<Vec<f64>>` normal-equation matrix
+  built inside `ols_rss` twice, and a pivot row cloned per column inside
+  `solve`. At `period = 40, lag = 2` that is roughly 103 allocations for one
+  bar.
+
+  Both design matrices are now flat and row-major behind a stride, `ols_rss` and
+  `solve` take slices and a caller-supplied workspace, and `solve` reaches its
+  pivot row through `split_at_mut` instead of cloning it. The channels are read
+  at single positions, which a `VecDeque` indexes directly, so the two copies
+  are gone entirely. Throughput goes from 0.24 to 1.09 Mupd/s at that
+  configuration — about four and a half times — and 0.54 Mupd/s at
+  `period = 60, lag = 3`.
+
+  The golden fixture is byte-identical, which is the only acceptable outcome:
+  every floating-point operation happens in the same order as before, including
+  the ascending summation in the back-substitution and the residual pass.
+
 
 
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
