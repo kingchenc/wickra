@@ -16,11 +16,24 @@ use crate::traits::Indicator;
 /// ```
 ///
 /// Omega expresses how many units of "above-threshold" return the strategy
-/// produces per unit of "below-threshold" shortfall. By construction `Omega
-/// ≥ 0`; a window where every return clears the threshold has zero losses and
-/// the indicator returns `f64::INFINITY` (in keeping with the standard
-/// definition). The Sharpe Ratio collapses risk into a single second-moment
+/// produces per unit of "below-threshold" shortfall. By construction
+/// `Omega ≥ 0`. The Sharpe Ratio collapses risk into a single second-moment
 /// number; Omega keeps the full shape of the loss tail.
+///
+/// # Unbounded output
+///
+/// A window where every return clears the threshold has zero shortfall, and
+/// the indicator returns `f64::INFINITY`, in keeping with the standard
+/// definition. This is not an edge case to be discovered in production: any
+/// `period`-bar window that stays above the threshold produces it. The value
+/// is correct -- the ratio really is unbounded -- but it propagates, and
+/// `inf - inf` is `NaN`, so a caller feeding this into further arithmetic
+/// should test for it. `f64::is_finite` is the guard.
+///
+/// The threshold decides what "flat" means here, and the two ends differ:
+/// with `threshold = 0.0` a window of zero returns has neither gains nor
+/// shortfall and yields `0.0`, while with a *negative* threshold every zero
+/// return clears it, so the same flat window yields `f64::INFINITY`.
 ///
 /// Each `update` is O(period) because the partial sums are recomputed across
 /// the window — adequate for typical backtest windows (`period ≤ 252`).
@@ -199,5 +212,24 @@ mod tests {
         let mut s = OmegaRatio::new(10, 0.0).unwrap();
         let streamed: Vec<_> = returns.iter().map(|r| s.update(*r)).collect();
         assert_eq!(batch, streamed);
+    }
+    /// With a negative threshold every flat return counts as clearing it, so a
+    /// window that did not move at all reports an unbounded ratio rather than
+    /// the `0.0` the same window gives at a threshold of zero. Worth pinning
+    /// because it is the opposite answer to the obvious one.
+    #[test]
+    fn a_negative_threshold_makes_a_flat_window_unbounded() {
+        let flat = [0.0_f64; 20];
+
+        let mut at_zero = OmegaRatio::new(14, 0.0).unwrap();
+        let mut below = OmegaRatio::new(14, -0.005).unwrap();
+        let (mut last_at_zero, mut last_below) = (None, None);
+        for &r in &flat {
+            last_at_zero = at_zero.update(r).or(last_at_zero);
+            last_below = below.update(r).or(last_below);
+        }
+
+        assert_eq!(last_at_zero, Some(0.0));
+        assert_eq!(last_below, Some(f64::INFINITY));
     }
 }

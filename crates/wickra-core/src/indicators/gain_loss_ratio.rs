@@ -17,9 +17,19 @@ use crate::traits::Indicator;
 ///
 /// Where Profit Factor sums gains and losses, the Gain/Loss Ratio averages
 /// them: it answers "for the typical winning bar, how big is the win
-/// compared to the typical losing bar?". If there are no losers the
-/// indicator returns `f64::INFINITY`; if there are no winners and no losers
-/// it returns `0.0`.
+/// compared to the typical losing bar?".
+///
+/// # Unbounded output
+///
+/// A window with winners but no losers has no denominator, and the indicator
+/// returns `f64::INFINITY`. This is not an edge case to be discovered in
+/// production: any `period`-bar window without a single down bar produces it,
+/// which on a trending instrument happens routinely. The value is correct --
+/// the ratio really is unbounded -- but it propagates, and `inf - inf` is
+/// `NaN`, so a caller feeding this into further arithmetic should test for it.
+/// `f64::is_finite` is the guard.
+///
+/// A window with neither winners nor losers returns `0.0`.
 ///
 /// Each `update` is O(period).
 #[derive(Debug, Clone)]

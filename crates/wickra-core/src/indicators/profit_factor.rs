@@ -16,10 +16,19 @@ use crate::traits::Indicator;
 /// PF           = gross_profit / gross_loss
 /// ```
 ///
-/// `PF > 1` means the strategy made more than it lost in the window. If
-/// there were no losing returns the gross loss is zero and the indicator
-/// returns `f64::INFINITY` (or `0.0` when there were also no gains —
-/// a flat window).
+/// `PF > 1` means the strategy made more than it lost in the window.
+///
+/// # Unbounded output
+///
+/// With no losing returns the gross loss is zero and the indicator returns
+/// `f64::INFINITY`. This is not an edge case to be discovered in production:
+/// any `period`-bar window without a single down bar produces it, which on a
+/// trending instrument happens routinely. The value is correct -- the ratio
+/// really is unbounded -- but it propagates, and `inf - inf` is `NaN`, so a
+/// caller feeding this into further arithmetic should test for it.
+/// `f64::is_finite` is the guard.
+///
+/// A flat window, with neither gains nor losses, returns `0.0`.
 ///
 /// Each `update` is O(period).
 ///

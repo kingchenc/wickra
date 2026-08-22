@@ -413,6 +413,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bindings they now assert that the accessor is *unchanged* after the rejection,
   which is the half of each test that still means something. No golden fixture
   moves: `gen_golden` feeds only finite data.
+- **The three ratio indicators document their unbounded output instead of
+  clamping it.** `GainLossRatio`, `ProfitFactor` and `OmegaRatio` return
+  `f64::INFINITY` when a window has gains but no losses. That value is correct
+  — the ratio genuinely has no denominator — the tests already pinned it, and
+  the whole binding stack carries infinity end to end, so clamping would have
+  substituted an invented number for a right one.
+
+  What was missing is the practical part. Nothing in the wording told a reader
+  that `+inf` is an ordinary occurrence rather than an exotic edge: any
+  `period`-bar window without a single down bar produces it, which on a trending
+  instrument happens routinely. Each now says so, and says that it propagates —
+  `inf - inf` is `NaN` — with `f64::is_finite` named as the guard.
+
+  The audit recorded this as "+inf on a flat market", which measurement did not
+  support: a flat window returns `0.0`, not `+inf`. `OmegaRatio` is the
+  exception, and only with a negative threshold, where every flat return clears
+  the threshold and the same window becomes unbounded — the opposite answer to
+  the obvious one. That was undocumented and untested, and is now both.
+
 
 
 
