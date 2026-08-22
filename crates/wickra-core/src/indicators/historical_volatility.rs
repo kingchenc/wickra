@@ -106,7 +106,7 @@ impl Indicator for HistoricalVolatility {
         // movement". Skipping them entirely is consistent with how the rest
         // of the library handles invalid inputs (see SMA / EMA / ROC).
         if !input.is_finite() || input <= 0.0 {
-            return self.last;
+            return None;
         }
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(input);
@@ -256,8 +256,8 @@ mod tests {
         let out = hv.batch(&(1..=20).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(hv.update(f64::NAN), last);
-        assert_eq!(hv.update(f64::INFINITY), last);
+        assert_eq!(hv.update(f64::NAN), None);
+        assert_eq!(hv.update(f64::INFINITY), None);
     }
 
     /// Audit finding R13. Non-positive prices are now skipped (state left
@@ -270,7 +270,7 @@ mod tests {
         // Warm up with positive prices.
         let warmup_prices = (1..=20).map(f64::from).collect::<Vec<_>>();
         let warmup = hv.batch(&warmup_prices);
-        let baseline = warmup
+        let _baseline = warmup
             .last()
             .copied()
             .flatten()
@@ -280,8 +280,8 @@ mod tests {
         // baseline, and the next real positive tick must use the previous
         // valid price as `prev` (not the bad one), so the next log return is
         // exactly `ln(21 / 20)`, not `ln(21 / -5)` or anything else.
-        assert_eq!(hv.update(-5.0), Some(baseline));
-        assert_eq!(hv.update(0.0), Some(baseline));
+        assert_eq!(hv.update(-5.0), None);
+        assert_eq!(hv.update(0.0), None);
 
         // Snapshot the indicator's state, then advance with a real positive
         // tick on a clone. The clone must agree with a from-scratch run that

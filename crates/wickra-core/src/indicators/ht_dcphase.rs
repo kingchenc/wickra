@@ -74,7 +74,7 @@ impl Indicator for HtDcPhase {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         self.count += 1;
 
@@ -281,7 +281,9 @@ mod tests {
         let mut ht = HtDcPhase::new();
         let _ = ht.batch(&sine_prices(120));
         let before = ht.value();
-        assert_eq!(ht.update(f64::NAN), before);
+        assert_eq!(ht.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(ht.value(), before);
     }
 
     #[test]

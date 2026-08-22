@@ -86,7 +86,7 @@ impl Indicator for Ppo {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the EMAs are not advanced.
-            return self.current;
+            return None;
         }
         let fast = self.ema_fast.update(input);
         let slow = self.ema_slow.update(input);
@@ -210,8 +210,8 @@ mod tests {
         let out = ppo.batch(&(1..=30).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(ppo.update(f64::NAN), last);
-        assert_eq!(ppo.update(f64::INFINITY), last);
+        assert_eq!(ppo.update(f64::NAN), None);
+        assert_eq!(ppo.update(f64::INFINITY), None);
     }
 
     #[test]

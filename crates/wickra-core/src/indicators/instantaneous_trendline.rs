@@ -90,7 +90,7 @@ impl Indicator for InstantaneousTrendline {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         self.count += 1;
 
@@ -207,7 +207,7 @@ mod tests {
         it.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         let before = it.value();
         assert!(before.is_some());
-        assert_eq!(it.update(f64::NAN), before);
+        assert_eq!(it.update(f64::NAN), None);
     }
 
     #[test]

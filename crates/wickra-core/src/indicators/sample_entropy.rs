@@ -159,7 +159,7 @@ impl Indicator for SampleEntropy {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -302,8 +302,8 @@ mod tests {
     fn ignores_non_finite() {
         let mut s = SampleEntropy::new(10, 2, 0.2).unwrap();
         let xs: Vec<f64> = (0..10).map(|i| (f64::from(i) * 0.5).sin()).collect();
-        let ready = s.batch(&xs).into_iter().flatten().last().unwrap();
-        assert_eq!(s.update(f64::NAN), Some(ready));
+        s.batch(&xs).into_iter().flatten().last().unwrap();
+        assert_eq!(s.update(f64::NAN), None);
     }
 
     #[test]

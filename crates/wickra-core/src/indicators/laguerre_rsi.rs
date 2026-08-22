@@ -90,7 +90,7 @@ impl Indicator for LaguerreRsi {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         if !self.seeded {
             // Seed all four polynomial stages with the first input so a
@@ -267,9 +267,9 @@ mod tests {
     #[test]
     fn ignores_non_finite_input() {
         let mut lrsi = LaguerreRsi::classic();
-        let before = lrsi.update(10.0).unwrap();
-        assert_eq!(lrsi.update(f64::NAN), Some(before));
-        assert_eq!(lrsi.update(f64::INFINITY), Some(before));
+        lrsi.update(10.0).unwrap();
+        assert_eq!(lrsi.update(f64::NAN), None);
+        assert_eq!(lrsi.update(f64::INFINITY), None);
     }
 
     #[test]

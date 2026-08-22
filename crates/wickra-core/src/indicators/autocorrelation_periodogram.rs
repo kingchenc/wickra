@@ -131,7 +131,7 @@ impl Indicator for AutocorrelationPeriodogram {
 
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let filt = self.roof.update(price)?;
         if self.buffer.len() == self.max_period + AVG_LENGTH {
@@ -297,7 +297,9 @@ mod tests {
                 .collect::<Vec<_>>(),
         );
         let before = p.value();
-        assert_eq!(p.update(f64::NAN), before);
+        assert_eq!(p.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(p.value(), before);
     }
 
     #[test]

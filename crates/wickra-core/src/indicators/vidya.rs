@@ -74,7 +74,7 @@ impl Indicator for Vidya {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         let cmo = self.cmo.update(input)?;
         let alpha = self.alpha_base * (cmo.abs() / 100.0);
@@ -190,8 +190,8 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut v = Vidya::new(14, 4).unwrap();
         v.batch(&(1..=20).map(f64::from).collect::<Vec<_>>());
-        let before = v.update(21.0).unwrap();
-        assert_eq!(v.update(f64::NAN), Some(before));
-        assert_eq!(v.update(f64::INFINITY), Some(before));
+        v.update(21.0).unwrap();
+        assert_eq!(v.update(f64::NAN), None);
+        assert_eq!(v.update(f64::INFINITY), None);
     }
 }

@@ -121,7 +121,7 @@ impl Indicator for CorrelationTrendIndicator {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -241,13 +241,13 @@ mod tests {
     #[test]
     fn ignores_non_finite() {
         let mut cti = CorrelationTrendIndicator::new(4).unwrap();
-        let ready = cti
+        let _ready = cti
             .batch(&[1.0, 2.0, 3.0, 4.0])
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(cti.update(f64::NAN), Some(ready));
+        assert_eq!(cti.update(f64::NAN), None);
     }
 
     #[test]

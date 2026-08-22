@@ -88,17 +88,43 @@ where
     I: Indicator<Input = f64>,
     I::Output: std::fmt::Debug,
 {
+    const BAD: [f64; 3] = [f64::NAN, f64::INFINITY, f64::NEG_INFINITY];
+
     let mut s = make();
     let clean: Vec<_> = xs.iter().map(|&x| s.update(x)).collect();
+
+    // Injected before any real input: the state has nothing to lose yet.
     let mut g = make();
-    prop_assert!(g.update(f64::NAN).is_none(), "NaN not rejected");
-    prop_assert!(g.update(f64::INFINITY).is_none(), "inf not rejected");
-    prop_assert!(g.update(f64::NEG_INFINITY).is_none(), "-inf not rejected");
+    for bad in BAD {
+        prop_assert!(g.update(bad).is_none(), "{} not rejected", bad);
+    }
     let poisoned: Vec<_> = xs.iter().map(|&x| g.update(x)).collect();
     prop_assert_eq!(
         format!("{poisoned:?}"),
         format!("{clean:?}"),
         "non-finite poisoned state"
+    );
+
+    // Injected mid-stream, after the indicator has warmed up and has a value to
+    // hand back. This is the case that went untested, and the one where
+    // returning a cached value instead of `None` diverges.
+    let mut g = make();
+    let mut interleaved = Vec::with_capacity(xs.len());
+    for (i, &x) in xs.iter().enumerate() {
+        interleaved.push(g.update(x));
+        for bad in BAD {
+            prop_assert!(
+                g.update(bad).is_none(),
+                "{} accepted after {} inputs",
+                bad,
+                i + 1
+            );
+        }
+    }
+    prop_assert_eq!(
+        format!("{interleaved:?}"),
+        format!("{clean:?}"),
+        "a rejected input changed the values around it"
     );
     Ok(())
 }
@@ -112,16 +138,45 @@ where
     I: Indicator<Input = (f64, f64)>,
     I::Output: std::fmt::Debug,
 {
+    const BAD: [(f64, f64); 4] = [
+        (f64::NAN, 1.0),
+        (1.0, f64::NAN),
+        (f64::INFINITY, 1.0),
+        (1.0, f64::NEG_INFINITY),
+    ];
+
     let mut s = make();
     let clean: Vec<_> = xs.iter().map(|&p| s.update(p)).collect();
+
     let mut g = make();
-    prop_assert!(g.update((f64::NAN, 1.0)).is_none(), "NaN not rejected");
-    prop_assert!(g.update((1.0, f64::INFINITY)).is_none(), "inf not rejected");
+    for bad in BAD {
+        prop_assert!(g.update(bad).is_none(), "{:?} not rejected", bad);
+    }
     let poisoned: Vec<_> = xs.iter().map(|&p| g.update(p)).collect();
     prop_assert_eq!(
         format!("{poisoned:?}"),
         format!("{clean:?}"),
         "non-finite poisoned state"
+    );
+
+    // The same injection after warmup, where a cached-value policy would show.
+    let mut g = make();
+    let mut interleaved = Vec::with_capacity(xs.len());
+    for (i, &p) in xs.iter().enumerate() {
+        interleaved.push(g.update(p));
+        for bad in BAD {
+            prop_assert!(
+                g.update(bad).is_none(),
+                "{:?} accepted after {} inputs",
+                bad,
+                i + 1
+            );
+        }
+    }
+    prop_assert_eq!(
+        format!("{interleaved:?}"),
+        format!("{clean:?}"),
+        "a rejected input changed the values around it"
     );
     Ok(())
 }

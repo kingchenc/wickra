@@ -94,7 +94,7 @@ impl Indicator for UniversalOscillator {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let Some(p2) = self.prev_price_2 else {
             self.prev_price_2 = self.prev_price_1;
@@ -221,7 +221,9 @@ mod tests {
                 .collect::<Vec<_>>(),
         );
         let before = u.value();
-        assert_eq!(u.update(f64::NAN), before);
+        assert_eq!(u.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(u.value(), before);
     }
 
     #[test]

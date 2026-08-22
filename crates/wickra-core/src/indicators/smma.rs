@@ -77,7 +77,7 @@ impl Indicator for Smma {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored, leaving state untouched.
-            return self.current;
+            return None;
         }
         if let Some(prev) = self.current {
             let period = self.period as f64;
@@ -182,8 +182,8 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut smma = Smma::new(3).unwrap();
         smma.batch(&[1.0, 2.0, 3.0]);
-        assert_eq!(smma.update(f64::NAN), Some(2.0));
-        assert_eq!(smma.update(f64::INFINITY), Some(2.0));
+        assert_eq!(smma.update(f64::NAN), None);
+        assert_eq!(smma.update(f64::INFINITY), None);
     }
 
     #[test]

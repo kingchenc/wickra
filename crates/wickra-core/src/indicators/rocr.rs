@@ -65,7 +65,7 @@ impl Indicator for Rocr {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period + 1 {
             self.window.pop_front();
@@ -150,8 +150,8 @@ mod tests {
     fn non_finite_input_holds_last() {
         let mut r = Rocr::new(1).unwrap();
         assert_eq!(r.update(10.0), None);
-        let v = r.update(11.0).unwrap();
-        assert_eq!(r.update(f64::INFINITY), Some(v));
+        r.update(11.0).unwrap();
+        assert_eq!(r.update(f64::INFINITY), None);
     }
 
     #[test]

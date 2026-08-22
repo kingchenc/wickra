@@ -103,7 +103,7 @@ impl Indicator for JumpIndicator {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() || input <= 0.0 {
-            return self.last;
+            return None;
         }
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(input);
@@ -267,9 +267,9 @@ mod tests {
         let out = ji.batch(&prices);
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(ji.update(f64::NAN), last);
-        assert_eq!(ji.update(-1.0), last);
-        assert_eq!(ji.update(0.0), last);
+        assert_eq!(ji.update(f64::NAN), None);
+        assert_eq!(ji.update(-1.0), None);
+        assert_eq!(ji.update(0.0), None);
     }
 
     #[test]

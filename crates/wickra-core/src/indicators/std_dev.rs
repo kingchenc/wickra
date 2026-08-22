@@ -86,7 +86,7 @@ impl Indicator for StdDev {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the window is left untouched.
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
@@ -225,8 +225,8 @@ mod tests {
         let out = sd.batch(&[2.0, 4.0, 6.0]);
         let last = out[2];
         assert!(last.is_some());
-        assert_eq!(sd.update(f64::NAN), last);
-        assert_eq!(sd.update(f64::INFINITY), last);
+        assert_eq!(sd.update(f64::NAN), None);
+        assert_eq!(sd.update(f64::INFINITY), None);
     }
 
     #[test]

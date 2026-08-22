@@ -98,7 +98,7 @@ impl Indicator for UlcerIndex {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
-            return self.last;
+            return None;
         }
         self.count += 1;
         // Drop tail entries that can never be the trailing max again — every
@@ -270,8 +270,8 @@ mod tests {
         let out = ui.batch(&[10.0, 8.0, 12.0, 9.0]);
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(ui.update(f64::NAN), last);
-        assert_eq!(ui.update(f64::INFINITY), last);
+        assert_eq!(ui.update(f64::NAN), None);
+        assert_eq!(ui.update(f64::INFINITY), None);
     }
 
     #[test]

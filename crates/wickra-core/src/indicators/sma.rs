@@ -183,7 +183,7 @@ impl Indicator for Sma {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         if self.count == self.period {
             // Window full: overwrite the oldest slot (at `head`). Each step is a
@@ -308,8 +308,8 @@ mod tests {
         sma.update(1.0);
         sma.update(2.0);
         sma.update(3.0);
-        assert_eq!(sma.update(f64::NAN), Some(2.0));
-        assert_eq!(sma.update(f64::INFINITY), Some(2.0));
+        assert_eq!(sma.update(f64::NAN), None);
+        assert_eq!(sma.update(f64::INFINITY), None);
         // Non-finite inputs were not pushed; window still holds 1,2,3.
         assert_eq!(sma.update(6.0), Some((2.0 + 3.0 + 6.0) / 3.0));
     }

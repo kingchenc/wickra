@@ -85,7 +85,7 @@ impl Indicator for Tsi {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
-            return self.current;
+            return None;
         }
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(input);
@@ -215,8 +215,8 @@ mod tests {
         let out = tsi.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(tsi.update(f64::NAN), last);
-        assert_eq!(tsi.update(f64::INFINITY), last);
+        assert_eq!(tsi.update(f64::NAN), None);
+        assert_eq!(tsi.update(f64::INFINITY), None);
     }
 
     #[test]

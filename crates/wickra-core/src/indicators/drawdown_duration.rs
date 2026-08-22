@@ -64,7 +64,7 @@ impl Indicator for DrawdownDuration {
     #[inline]
     fn update(&mut self, input: f64) -> Option<u32> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         if !self.seen || input >= self.peak {
             self.peak = input;
@@ -151,8 +151,10 @@ mod tests {
         d.update(100.0);
         d.update(90.0);
         let v = d.value();
-        assert_eq!(d.update(f64::NAN), v);
-        assert_eq!(d.update(f64::INFINITY), v);
+        assert_eq!(d.update(f64::NAN), None);
+        assert_eq!(d.update(f64::INFINITY), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(d.value(), v);
     }
 
     #[test]

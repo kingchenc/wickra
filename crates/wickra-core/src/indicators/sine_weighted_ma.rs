@@ -105,7 +105,7 @@ impl Indicator for SineWeightedMa {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -246,9 +246,9 @@ mod tests {
         let mut swma = SineWeightedMa::new(3).unwrap();
         swma.update(1.0);
         swma.update(2.0);
-        let ready = swma.update(3.0).expect("SWMA(3) ready after three inputs");
-        assert_eq!(swma.update(f64::NAN), Some(ready));
-        assert_eq!(swma.update(f64::INFINITY), Some(ready));
+        swma.update(3.0).expect("SWMA(3) ready after three inputs");
+        assert_eq!(swma.update(f64::NAN), None);
+        assert_eq!(swma.update(f64::INFINITY), None);
         // The window still holds 1, 2, 3 -> next real input slides it to 2, 3, 4.
         let s = std::f64::consts::FRAC_1_SQRT_2;
         let total = s + 1.0 + s;

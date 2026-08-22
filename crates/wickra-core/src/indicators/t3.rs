@@ -120,7 +120,7 @@ impl Indicator for T3 {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the cascade is not advanced.
-            return self.current;
+            return None;
         }
         let e1 = self.e1.update(input)?;
         let e2 = self.e2.update(e1)?;
@@ -260,8 +260,8 @@ mod tests {
         let out = t3.batch(&(1..=60).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(t3.update(f64::NAN), last);
-        assert_eq!(t3.update(f64::INFINITY), last);
+        assert_eq!(t3.update(f64::NAN), None);
+        assert_eq!(t3.update(f64::INFINITY), None);
     }
 
     #[test]

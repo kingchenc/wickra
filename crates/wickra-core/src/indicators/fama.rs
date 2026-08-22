@@ -161,7 +161,7 @@ mod tests {
         fama.batch(&prices);
         let before = fama.value();
         assert!(before.is_some());
-        assert_eq!(fama.update(f64::NAN), before);
+        assert_eq!(fama.update(f64::NAN), None);
     }
 
     #[test]

@@ -104,7 +104,7 @@ impl Indicator for SuperSmoother {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.prev_output_1;
+            return None;
         }
         self.count += 1;
         let output = match (self.prev_input, self.prev_output_1, self.prev_output_2) {
@@ -210,8 +210,8 @@ mod tests {
         ss.batch(&(1..=20).map(f64::from).collect::<Vec<_>>());
         let before = ss.value();
         assert!(before.is_some());
-        assert_eq!(ss.update(f64::NAN), before);
-        assert_eq!(ss.update(f64::INFINITY), before);
+        assert_eq!(ss.update(f64::NAN), None);
+        assert_eq!(ss.update(f64::INFINITY), None);
     }
 
     #[test]

@@ -114,7 +114,7 @@ impl Indicator for BandpassFilter {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let bp = match self.prev_price_2 {
             Some(p2) => {
@@ -226,7 +226,9 @@ mod tests {
         let mut bp = BandpassFilter::new(20, 0.3).unwrap();
         bp.batch(&(0..40).map(f64::from).collect::<Vec<_>>());
         let before = bp.value();
-        assert_eq!(bp.update(f64::NAN), before);
+        assert_eq!(bp.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(bp.value(), before);
     }
 
     #[test]

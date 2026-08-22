@@ -93,7 +93,7 @@ impl Indicator for RealizedVolatility {
         // Non-finite / non-positive prices are skipped: `ln(input / prev)` is
         // undefined, so the tick must not enter the return window.
         if !input.is_finite() || input <= 0.0 {
-            return self.last;
+            return None;
         }
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(input);
@@ -213,17 +213,17 @@ mod tests {
         let out = rv.batch(&(1..=20).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(rv.update(f64::NAN), last);
-        assert_eq!(rv.update(f64::INFINITY), last);
+        assert_eq!(rv.update(f64::NAN), None);
+        assert_eq!(rv.update(f64::INFINITY), None);
     }
 
     #[test]
     fn skips_non_positive_prices() {
         let mut rv = RealizedVolatility::new(5).unwrap();
         let warmup = rv.batch(&(1..=20).map(f64::from).collect::<Vec<_>>());
-        let baseline = warmup.last().copied().flatten().expect("warmed up");
-        assert_eq!(rv.update(-5.0), Some(baseline));
-        assert_eq!(rv.update(0.0), Some(baseline));
+        warmup.last().copied().flatten().expect("warmed up");
+        assert_eq!(rv.update(-5.0), None);
+        assert_eq!(rv.update(0.0), None);
         // State untouched: a clone advanced by the same real tick agrees.
         let mut control = rv.clone();
         let after = rv.update(21.0).expect("ready");

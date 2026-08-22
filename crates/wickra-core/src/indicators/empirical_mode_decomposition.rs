@@ -123,7 +123,7 @@ impl Indicator for EmpiricalModeDecomposition {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         // 2nd-order resonant bandpass per Ehlers ch. 6.
         let bp = if let (Some(_x1), Some(x2)) = (self.prev_in_1, self.prev_in_2) {
@@ -257,7 +257,7 @@ mod tests {
         emd.batch(&prices);
         let before = emd.value();
         assert!(before.is_some());
-        assert_eq!(emd.update(f64::NAN), before);
+        assert_eq!(emd.update(f64::NAN), None);
     }
 
     #[test]

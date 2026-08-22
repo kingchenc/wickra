@@ -71,7 +71,7 @@ impl Indicator for SineWave {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_sine;
+            return None;
         }
         self.count += 1;
         // Drive the dominant-cycle estimator first; its smoothing state is
@@ -203,7 +203,7 @@ mod tests {
         sw.batch(&prices);
         let before = sw.value();
         assert!(before.is_some());
-        assert_eq!(sw.update(f64::NAN), before);
+        assert_eq!(sw.update(f64::NAN), None);
     }
 
     #[test]

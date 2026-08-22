@@ -79,7 +79,7 @@ impl Indicator for FisherTransform {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_fisher;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -192,8 +192,8 @@ mod tests {
         ft.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
         let before = ft.value();
         assert!(before.is_some());
-        assert_eq!(ft.update(f64::NAN), before);
-        assert_eq!(ft.update(f64::INFINITY), before);
+        assert_eq!(ft.update(f64::NAN), None);
+        assert_eq!(ft.update(f64::INFINITY), None);
     }
 
     #[test]

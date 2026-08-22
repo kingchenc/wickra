@@ -104,7 +104,7 @@ impl Indicator for EvenBetterSinewave {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let hp = match self.prev_price {
             Some(prev) => 0.5 * (1.0 + self.alpha1) * (price - prev) + self.alpha1 * self.hp,
@@ -228,7 +228,9 @@ mod tests {
                 .collect::<Vec<_>>(),
         );
         let before = e.value();
-        assert_eq!(e.update(f64::NAN), before);
+        assert_eq!(e.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(e.value(), before);
     }
 
     #[test]

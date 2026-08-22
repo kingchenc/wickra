@@ -97,7 +97,7 @@ impl Indicator for HighpassFilter {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let hp = match (self.prev_price_1, self.prev_price_2) {
             (Some(p1), Some(p2)) => {
@@ -198,7 +198,9 @@ mod tests {
         let mut hp = HighpassFilter::new(48).unwrap();
         hp.batch(&(0..40).map(f64::from).collect::<Vec<_>>());
         let before = hp.value();
-        assert_eq!(hp.update(f64::NAN), before);
+        assert_eq!(hp.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(hp.value(), before);
     }
 
     #[test]

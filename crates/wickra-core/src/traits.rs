@@ -23,8 +23,18 @@ pub trait Indicator {
     /// Type of one output value.
     type Output;
 
-    /// Feed one new data point into the indicator and return the freshly computed
-    /// output, or `None` if the indicator is still warming up.
+    /// Feed one new data point into the indicator and return the freshly
+    /// computed output, or `None` if there is no value for this input.
+    ///
+    /// `None` covers exactly two cases:
+    ///
+    /// * the indicator is still warming up, and
+    /// * the input was rejected as non-finite.
+    ///
+    /// A rejected input is *skipped*: it does not enter the indicator's state,
+    /// so a single bad tick cannot corrupt the values that follow it. The
+    /// alternative — repeating the last computed value — was rejected because
+    /// it hands the caller a stale number that looks exactly like a fresh one.
     fn update(&mut self, input: Self::Input) -> Option<Self::Output>;
 
     /// Reset all internal state, leaving the indicator equivalent to a freshly

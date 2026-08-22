@@ -89,6 +89,11 @@ impl Indicator for WavePm {
 
     #[inline]
     fn update(&mut self, close: f64) -> Option<f64> {
+        if !close.is_finite() {
+            // There was no guard here at all, so a single NaN entered the
+            // window and poisoned every value that followed it.
+            return None;
+        }
         self.closes.push_back(close);
         if self.closes.len() > self.length + 1 {
             self.closes.pop_front();

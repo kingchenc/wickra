@@ -89,7 +89,7 @@ impl Indicator for MaxDrawdown {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
         self.count += 1;
         // Drop tail entries dominated by the new value (running peak from the
@@ -216,8 +216,10 @@ mod tests {
         let mut mdd = MaxDrawdown::new(3).unwrap();
         mdd.batch(&[100.0, 90.0, 80.0]);
         let last = mdd.value();
-        assert_eq!(mdd.update(f64::NAN), last);
-        assert_eq!(mdd.update(f64::INFINITY), last);
+        assert_eq!(mdd.update(f64::NAN), None);
+        assert_eq!(mdd.update(f64::INFINITY), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(mdd.value(), last);
     }
 
     #[test]

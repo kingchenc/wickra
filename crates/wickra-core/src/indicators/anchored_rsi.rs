@@ -100,7 +100,7 @@ impl Indicator for AnchoredRsi {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
 
         if self.pending_anchor {
@@ -239,8 +239,8 @@ mod tests {
         indicator.batch(&[10.0, 11.0, 12.0]);
         let before = indicator.value();
         assert!(before.is_some());
-        assert_eq!(indicator.update(f64::NAN), before);
-        assert_eq!(indicator.update(f64::INFINITY), before);
+        assert_eq!(indicator.update(f64::NAN), None);
+        assert_eq!(indicator.update(f64::INFINITY), None);
         assert_eq!(indicator.value(), before);
     }
 

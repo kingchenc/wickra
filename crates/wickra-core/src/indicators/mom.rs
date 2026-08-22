@@ -76,7 +76,7 @@ impl Indicator for Mom {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the window is left untouched.
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period + 1 {
             self.window.pop_front();
@@ -163,9 +163,9 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut mom = Mom::new(3).unwrap();
         let out = mom.batch(&[1.0, 2.0, 3.0, 4.0]);
-        let ready = out[3].expect("MOM(3) ready after four inputs");
-        assert_eq!(mom.update(f64::NAN), Some(ready));
-        assert_eq!(mom.update(f64::INFINITY), Some(ready));
+        out[3].expect("MOM(3) ready after four inputs");
+        assert_eq!(mom.update(f64::NAN), None);
+        assert_eq!(mom.update(f64::INFINITY), None);
         // Window untouched: the next finite input still references price 2.
         assert_relative_eq!(mom.update(10.0).unwrap(), 10.0 - 2.0, epsilon = 1e-12);
     }

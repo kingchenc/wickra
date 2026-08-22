@@ -122,7 +122,7 @@ impl Indicator for Rsx {
 
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last_value;
+            return None;
         }
         let Some(prev) = self.prev else {
             self.prev = Some(price);
@@ -264,14 +264,14 @@ mod tests {
     #[test]
     fn ignores_non_finite_input() {
         let mut rsx = Rsx::new(3).unwrap();
-        let ready = rsx
+        let _ready = rsx
             .batch(&[1.0, 2.0, 3.0, 4.0, 5.0])
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(rsx.update(f64::NAN), Some(ready));
-        assert_eq!(rsx.update(f64::INFINITY), Some(ready));
+        assert_eq!(rsx.update(f64::NAN), None);
+        assert_eq!(rsx.update(f64::INFINITY), None);
     }
 
     #[test]

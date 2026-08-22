@@ -83,7 +83,7 @@ impl Indicator for Coppock {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; no component is advanced.
-            return self.current;
+            return None;
         }
         let long = self.roc_long.update(input);
         let short = self.roc_short.update(input);
@@ -231,8 +231,8 @@ mod tests {
         let out = c.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(c.update(f64::NAN), last);
-        assert_eq!(c.update(f64::INFINITY), last);
+        assert_eq!(c.update(f64::NAN), None);
+        assert_eq!(c.update(f64::INFINITY), None);
     }
 
     #[test]

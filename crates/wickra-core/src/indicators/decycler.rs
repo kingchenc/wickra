@@ -120,7 +120,7 @@ impl Indicator for Decycler {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         let hp = self.step_hp(input);
         let v = input - hp;
@@ -207,8 +207,8 @@ mod tests {
         dc.batch(&(1..=30).map(f64::from).collect::<Vec<_>>());
         let before = dc.value();
         assert!(before.is_some());
-        assert_eq!(dc.update(f64::NAN), before);
-        assert_eq!(dc.update(f64::INFINITY), before);
+        assert_eq!(dc.update(f64::NAN), None);
+        assert_eq!(dc.update(f64::INFINITY), None);
     }
 
     #[test]

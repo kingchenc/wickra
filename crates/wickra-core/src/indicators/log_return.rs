@@ -77,7 +77,7 @@ impl Indicator for LogReturn {
         // price is undefined, so the tick must not enter the window. Return the
         // last value and leave state untouched (SMA / EMA / HV convention).
         if !input.is_finite() || input <= 0.0 {
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period + 1 {
             self.window.pop_front();
@@ -179,9 +179,9 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut lr = LogReturn::new(1).unwrap();
         let out = lr.batch(&[100.0, 110.0]);
-        let ready = out[1].expect("ready after two inputs");
-        assert_eq!(lr.update(f64::NAN), Some(ready));
-        assert_eq!(lr.update(f64::INFINITY), Some(ready));
+        out[1].expect("ready after two inputs");
+        assert_eq!(lr.update(f64::NAN), None);
+        assert_eq!(lr.update(f64::INFINITY), None);
         // Window untouched: the next finite price still references prev = 110.
         assert_relative_eq!(
             lr.update(121.0).unwrap(),
@@ -194,10 +194,10 @@ mod tests {
     fn skips_non_positive_prices() {
         let mut lr = LogReturn::new(1).unwrap();
         let out = lr.batch(&[100.0, 110.0]);
-        let baseline = out[1].expect("ready");
+        out[1].expect("ready");
         // A non-positive tick is ignored and the previous valid price is kept.
-        assert_eq!(lr.update(-5.0), Some(baseline));
-        assert_eq!(lr.update(0.0), Some(baseline));
+        assert_eq!(lr.update(-5.0), None);
+        assert_eq!(lr.update(0.0), None);
         let mut control = lr.clone();
         let after = lr.update(121.0).expect("ready");
         assert_eq!(control.update(121.0).expect("ready"), after);

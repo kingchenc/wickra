@@ -84,7 +84,7 @@ impl Indicator for HtTrendMode {
     #[allow(clippy::too_many_lines)]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         self.count += 1;
 
@@ -357,7 +357,9 @@ mod tests {
         let mut ht = HtTrendMode::new();
         let _ = ht.batch(&mixed_prices());
         let before = ht.value();
-        assert_eq!(ht.update(f64::NAN), before);
+        assert_eq!(ht.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(ht.value(), before);
     }
 
     #[test]

@@ -94,7 +94,7 @@ impl Indicator for Trendflex {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let filt = self.smoother.update(price)?;
         if self.filt.len() == self.period + 1 {
@@ -217,7 +217,9 @@ mod tests {
         let mut t = Trendflex::new(10).unwrap();
         t.batch(&(0..40).map(f64::from).collect::<Vec<_>>());
         let before = t.value();
-        assert_eq!(t.update(f64::NAN), before);
+        assert_eq!(t.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(t.value(), before);
     }
 
     #[test]

@@ -107,7 +107,7 @@ impl Indicator for Rmi {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         if self.window.len() < self.momentum {
             // Still filling the momentum lookback; no change to measure yet.
@@ -245,14 +245,14 @@ mod tests {
     #[test]
     fn ignores_non_finite_input() {
         let mut rmi = Rmi::new(2, 2).unwrap();
-        let ready = rmi
+        let _ready = rmi
             .batch(&[1.0, 2.0, 3.0, 4.0, 5.0])
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(rmi.update(f64::NAN), Some(ready));
-        assert_eq!(rmi.update(f64::INFINITY), Some(ready));
+        assert_eq!(rmi.update(f64::NAN), None);
+        assert_eq!(rmi.update(f64::INFINITY), None);
     }
 
     #[test]

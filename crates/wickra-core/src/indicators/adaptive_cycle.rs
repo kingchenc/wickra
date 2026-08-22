@@ -130,7 +130,7 @@ mod tests {
         ac.batch(&prices);
         let before = ac.value();
         assert!(before.is_some());
-        assert_eq!(ac.update(f64::NAN), before);
+        assert_eq!(ac.update(f64::NAN), None);
     }
 
     #[test]

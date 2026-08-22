@@ -84,7 +84,7 @@ impl Indicator for StochRsi {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
-            return self.last;
+            return None;
         }
         let rsi_value = self.rsi.update(input)?;
 
@@ -219,8 +219,8 @@ mod tests {
         let out = sr.batch(&prices);
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(sr.update(f64::NAN), last);
-        assert_eq!(sr.update(f64::INFINITY), last);
+        assert_eq!(sr.update(f64::NAN), None);
+        assert_eq!(sr.update(f64::INFINITY), None);
     }
 
     #[test]

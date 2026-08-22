@@ -87,7 +87,7 @@ impl Indicator for EhlersStochastic {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         let filtered = self.roofing.update(input)?;
         if self.filtered_buf.len() == self.period {
@@ -208,7 +208,7 @@ mod tests {
         es.batch(&prices);
         let before = es.value();
         assert!(before.is_some());
-        assert_eq!(es.update(f64::NAN), before);
+        assert_eq!(es.update(f64::NAN), None);
     }
 
     #[test]

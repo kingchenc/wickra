@@ -132,7 +132,7 @@ impl Indicator for Alma {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -336,9 +336,9 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut alma = Alma::new(5, 0.85, 6.0).unwrap();
         alma.batch(&(1..=5).map(f64::from).collect::<Vec<_>>());
-        let before = alma.update(6.0).unwrap();
+        alma.update(6.0).unwrap();
         // Non-finite inputs leave the window/current untouched.
-        assert_eq!(alma.update(f64::NAN), Some(before));
-        assert_eq!(alma.update(f64::INFINITY), Some(before));
+        assert_eq!(alma.update(f64::NAN), None);
+        assert_eq!(alma.update(f64::INFINITY), None);
     }
 }

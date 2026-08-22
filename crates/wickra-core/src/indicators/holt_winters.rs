@@ -109,7 +109,7 @@ impl Indicator for HoltWinters {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.value();
+            return None;
         }
         match self.state {
             None => {
@@ -311,9 +311,9 @@ mod tests {
         // Non-finite before any state returns None.
         assert_eq!(hw.update(f64::NAN), None);
         hw.update(10.0);
-        let ready = hw.update(12.0).expect("seeded on second finite input");
+        hw.update(12.0).expect("seeded on second finite input");
         // Non-finite after seeding returns the current forecast unchanged.
-        assert_eq!(hw.update(f64::NAN), Some(ready));
-        assert_eq!(hw.update(f64::INFINITY), Some(ready));
+        assert_eq!(hw.update(f64::NAN), None);
+        assert_eq!(hw.update(f64::INFINITY), None);
     }
 }

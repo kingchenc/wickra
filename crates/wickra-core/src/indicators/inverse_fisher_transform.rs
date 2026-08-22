@@ -69,7 +69,7 @@ impl Indicator for InverseFisherTransform {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         let scaled = self.scale * input;
         // tanh is numerically safe for any finite input.
@@ -162,7 +162,9 @@ mod tests {
         let mut ift = InverseFisherTransform::new(1.0).unwrap();
         ift.update(1.0);
         let before = ift.value();
-        assert_eq!(ift.update(f64::NAN), before);
-        assert_eq!(ift.update(f64::INFINITY), before);
+        assert_eq!(ift.update(f64::NAN), None);
+        assert_eq!(ift.update(f64::INFINITY), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(ift.value(), before);
     }
 }

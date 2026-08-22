@@ -102,7 +102,7 @@ impl Indicator for MedianMa {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -224,11 +224,11 @@ mod tests {
         let mut mma = MedianMa::new(3).unwrap();
         mma.update(5.0);
         mma.update(1.0);
-        let ready = mma
+        let _ready = mma
             .update(3.0)
             .expect("MedianMA(3) ready after three inputs");
-        assert_eq!(mma.update(f64::NAN), Some(ready));
-        assert_eq!(mma.update(f64::INFINITY), Some(ready));
+        assert_eq!(mma.update(f64::NAN), None);
+        assert_eq!(mma.update(f64::INFINITY), None);
         // Window still [5, 1, 3] -> next real input slides to [1, 3, 8] -> median 3.
         assert_relative_eq!(mma.update(8.0).unwrap(), 3.0, epsilon = 1e-12);
     }

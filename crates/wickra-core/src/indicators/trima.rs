@@ -80,7 +80,7 @@ impl Indicator for Trima {
         if !input.is_finite() {
             // Non-finite input is ignored; do not double-feed the inner SMA's
             // stale value into the outer SMA.
-            return self.outer.value();
+            return None;
         }
         // Genuine stacking: the outer SMA consumes the inner SMA's output.
         match self.inner.update(input) {
@@ -176,7 +176,7 @@ mod tests {
         let ready = trima.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
         let last = ready[4];
         assert!(last.is_some());
-        assert_eq!(trima.update(f64::NAN), last);
+        assert_eq!(trima.update(f64::NAN), None);
     }
 
     #[test]

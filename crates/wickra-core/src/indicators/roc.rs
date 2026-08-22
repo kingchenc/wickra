@@ -62,7 +62,7 @@ impl Indicator for Roc {
     fn update(&mut self, input: f64) -> Option<f64> {
         // Non-finite inputs are ignored: return the last value, leave state as is.
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period + 1 {
             self.window.pop_front();
@@ -178,10 +178,10 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut roc = Roc::new(3).unwrap();
         let out = roc.batch(&[100.0, 105.0, 108.0, 110.0]);
-        let ready = out[3].expect("ROC(3) ready after four inputs");
+        out[3].expect("ROC(3) ready after four inputs");
         // Non-finite inputs return the last value without sliding the window.
-        assert_eq!(roc.update(f64::NAN), Some(ready));
-        assert_eq!(roc.update(f64::INFINITY), Some(ready));
+        assert_eq!(roc.update(f64::NAN), None);
+        assert_eq!(roc.update(f64::INFINITY), None);
         // Window untouched: the next finite input still references prev = 105.
         assert_relative_eq!(
             roc.update(115.0).unwrap(),

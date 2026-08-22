@@ -92,7 +92,7 @@ impl Indicator for GeometricMa {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() || input <= 0.0 {
-            return self.value();
+            return None;
         }
         if self.logs.len() == self.period {
             let oldest = self.logs.pop_front().expect("window non-empty");
@@ -251,12 +251,12 @@ mod tests {
         let mut gma = GeometricMa::new(3).unwrap();
         gma.update(1.0);
         gma.update(4.0);
-        let ready = gma.update(2.0).expect("GMA(3) ready after three inputs");
+        gma.update(2.0).expect("GMA(3) ready after three inputs");
         // Non-finite and non-positive inputs are skipped (geometric mean needs
         // strictly positive values) and the window is left unchanged.
-        assert_eq!(gma.update(f64::NAN), Some(ready));
-        assert_eq!(gma.update(0.0), Some(ready));
-        assert_eq!(gma.update(-3.0), Some(ready));
+        assert_eq!(gma.update(f64::NAN), None);
+        assert_eq!(gma.update(0.0), None);
+        assert_eq!(gma.update(-3.0), None);
         // The window still holds 1, 4, 2 -> next real input slides it to 4, 2, 16.
         let want = (4.0_f64 * 2.0 * 16.0).powf(1.0 / 3.0);
         assert_relative_eq!(gma.update(16.0).unwrap(), want, epsilon = 1e-9);

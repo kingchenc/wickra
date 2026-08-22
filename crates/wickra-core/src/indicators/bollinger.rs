@@ -198,7 +198,7 @@ impl Indicator for BollingerBands {
     #[inline]
     fn update(&mut self, input: f64) -> Option<BollingerOutput> {
         if !input.is_finite() {
-            return self.current();
+            return None;
         }
         if self.count == self.period {
             self.moments.evict(self.buf[self.head]);
@@ -517,11 +517,10 @@ mod tests {
     #[test]
     fn ignores_non_finite_input() {
         let mut bb = BollingerBands::new(5, 2.0).unwrap();
-        let ready = bb.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
-        let last = ready.last().unwrap().unwrap();
-        // Non-finite inputs return the current bands without mutating the window.
-        assert_eq!(bb.update(f64::NAN).unwrap(), last);
-        assert_eq!(bb.update(f64::INFINITY).unwrap(), last);
+        bb.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
+        // A non-finite input has no value and does not mutate the window.
+        assert_eq!(bb.update(f64::NAN), None);
+        assert_eq!(bb.update(f64::INFINITY), None);
         // The window still holds 1..=5, so a real input slides it to 2..=6.
         let after = bb.update(6.0).unwrap();
         assert_relative_eq!(

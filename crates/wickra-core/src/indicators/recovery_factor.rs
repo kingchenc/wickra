@@ -76,7 +76,7 @@ impl Indicator for RecoveryFactor {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         if self.seen {
             if input > self.peak {
@@ -161,8 +161,10 @@ mod tests {
         r.update(100.0);
         r.update(90.0);
         let v = r.value();
-        assert_eq!(r.update(f64::NAN), v);
-        assert_eq!(r.update(f64::INFINITY), v);
+        assert_eq!(r.update(f64::NAN), None);
+        assert_eq!(r.update(f64::INFINITY), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(r.value(), v);
     }
 
     #[test]

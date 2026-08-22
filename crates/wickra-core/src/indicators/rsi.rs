@@ -177,7 +177,7 @@ impl Indicator for Rsi {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
 
         if !self.has_prev {
@@ -449,8 +449,8 @@ mod tests {
         rsi.batch(&[1.0, 2.0, 3.0, 4.0]);
         let before = rsi.value();
         assert!(before.is_some());
-        assert_eq!(rsi.update(f64::NAN), before);
-        assert_eq!(rsi.update(f64::INFINITY), before);
+        assert_eq!(rsi.update(f64::NAN), None);
+        assert_eq!(rsi.update(f64::INFINITY), None);
         assert_eq!(rsi.value(), before);
     }
 

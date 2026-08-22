@@ -66,7 +66,7 @@ impl Indicator for HilbertDominantCycle {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         self.count += 1;
 
@@ -257,7 +257,7 @@ mod tests {
         ht.batch(&prices);
         let before = ht.value();
         assert!(before.is_some());
-        assert_eq!(ht.update(f64::NAN), before);
+        assert_eq!(ht.update(f64::NAN), None);
     }
 
     #[test]

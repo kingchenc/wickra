@@ -99,7 +99,7 @@ impl Indicator for Dpo {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; the window is left untouched.
-            return self.last;
+            return None;
         }
         self.window.push_back(input);
         self.sum.push(input);
@@ -214,8 +214,8 @@ mod tests {
         let out = dpo.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(dpo.update(f64::NAN), last);
-        assert_eq!(dpo.update(f64::INFINITY), last);
+        assert_eq!(dpo.update(f64::NAN), None);
+        assert_eq!(dpo.update(f64::INFINITY), None);
     }
 
     #[test]

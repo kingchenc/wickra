@@ -80,7 +80,7 @@ impl Indicator for CenterOfGravity {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -179,7 +179,7 @@ mod tests {
         cg.batch(&(1..=10).map(f64::from).collect::<Vec<_>>());
         let before = cg.value();
         assert!(before.is_some());
-        assert_eq!(cg.update(f64::NAN), before);
+        assert_eq!(cg.update(f64::NAN), None);
     }
 
     #[test]

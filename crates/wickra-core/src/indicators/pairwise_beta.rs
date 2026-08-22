@@ -127,8 +127,11 @@ impl Indicator for PairwiseBeta {
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
         if !(a > 0.0 && b > 0.0 && a.is_finite() && b.is_finite()) {
-            // Bad tick: drop it and restart the return chain.
-            self.prev = None;
+            // Bad tick: skipped without touching `prev`, so the next good pair
+            // measures its return from the last price actually observed. The
+            // previous behaviour cleared `prev` and silently dropped one
+            // return, which changed the values after the bad tick -- the one
+            // thing a rejected input must not do.
             return None;
         }
         let Some((pa, pb)) = self.prev else {

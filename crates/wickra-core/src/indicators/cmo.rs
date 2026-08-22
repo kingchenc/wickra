@@ -86,7 +86,7 @@ impl Indicator for Cmo {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
-            return self.current;
+            return None;
         }
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(input);
@@ -214,9 +214,9 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut cmo = Cmo::new(3).unwrap();
         let out = cmo.batch(&[10.0, 11.0, 10.0, 12.0]);
-        let ready = out[3].expect("CMO(3) ready after four inputs");
-        assert_eq!(cmo.update(f64::NAN), Some(ready));
-        assert_eq!(cmo.update(f64::INFINITY), Some(ready));
+        out[3].expect("CMO(3) ready after four inputs");
+        assert_eq!(cmo.update(f64::NAN), None);
+        assert_eq!(cmo.update(f64::INFINITY), None);
     }
 
     #[test]

@@ -118,7 +118,7 @@ impl Indicator for Jma {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.output;
+            return None;
         }
         let Some(prev_jma) = self.output else {
             // Seed e0 and JMA to the first input so a flat series is
@@ -278,9 +278,9 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut jma = Jma::new(14, 0.0, 2).unwrap();
         jma.batch(&(1..=15).map(f64::from).collect::<Vec<_>>());
-        let before = jma.update(16.0).unwrap();
-        assert_eq!(jma.update(f64::NAN), Some(before));
-        assert_eq!(jma.update(f64::INFINITY), Some(before));
+        jma.update(16.0).unwrap();
+        assert_eq!(jma.update(f64::NAN), None);
+        assert_eq!(jma.update(f64::INFINITY), None);
     }
 
     #[test]

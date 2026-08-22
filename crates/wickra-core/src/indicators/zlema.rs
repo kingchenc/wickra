@@ -87,7 +87,7 @@ impl Indicator for Zlema {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input is ignored; state is left untouched.
-            return self.ema.value();
+            return None;
         }
         if self.window.len() == self.lag + 1 {
             self.window.pop_front();
@@ -186,8 +186,8 @@ mod tests {
         let out = zlema.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
         let last = out[4];
         assert!(last.is_some());
-        assert_eq!(zlema.update(f64::NAN), last);
-        assert_eq!(zlema.update(f64::INFINITY), last);
+        assert_eq!(zlema.update(f64::NAN), None);
+        assert_eq!(zlema.update(f64::INFINITY), None);
     }
 
     #[test]

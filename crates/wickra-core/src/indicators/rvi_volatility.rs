@@ -122,7 +122,7 @@ impl Indicator for RviVolatility {
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
             // Non-finite input leaves state untouched, mirrors `StdDev` / `Rsi`.
-            return self.last_value;
+            return None;
         }
 
         // 1. Roll the standard-deviation window.
@@ -336,7 +336,7 @@ mod tests {
         let out = rvi.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());
-        assert_eq!(rvi.update(f64::NAN), last);
-        assert_eq!(rvi.update(f64::INFINITY), last);
+        assert_eq!(rvi.update(f64::NAN), None);
+        assert_eq!(rvi.update(f64::INFINITY), None);
     }
 }

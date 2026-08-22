@@ -108,7 +108,7 @@ impl Indicator for CyberneticCycle {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         self.count += 1;
         Self::push4(&mut self.in_buf, input);
@@ -234,7 +234,7 @@ mod tests {
         cc.batch(&(1..=30).map(f64::from).collect::<Vec<_>>());
         let before = cc.value();
         assert!(before.is_some());
-        assert_eq!(cc.update(f64::NAN), before);
+        assert_eq!(cc.update(f64::NAN), None);
     }
 
     #[test]

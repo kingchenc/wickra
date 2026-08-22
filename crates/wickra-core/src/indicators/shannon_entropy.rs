@@ -94,7 +94,7 @@ impl Indicator for ShannonEntropy {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -236,13 +236,13 @@ mod tests {
     #[test]
     fn ignores_non_finite() {
         let mut e = ShannonEntropy::new(4, 4).unwrap();
-        let ready = e
+        let _ready = e
             .batch(&[1.0, 2.0, 3.0, 4.0])
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(e.update(f64::NAN), Some(ready));
+        assert_eq!(e.update(f64::NAN), None);
     }
 
     #[test]

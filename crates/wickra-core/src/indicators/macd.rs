@@ -205,7 +205,7 @@ impl Indicator for MacdIndicator {
     #[inline]
     fn update(&mut self, input: f64) -> Option<MacdOutput> {
         if !input.is_finite() {
-            return self.last;
+            return None;
         }
 
         let fast = self.fast.update(input);
@@ -450,8 +450,8 @@ mod tests {
         let before = macd.value();
         assert!(before.is_some());
         // Non-finite inputs return the last value without advancing any EMA.
-        assert_eq!(macd.update(f64::NAN), before);
-        assert_eq!(macd.update(f64::INFINITY), before);
+        assert_eq!(macd.update(f64::NAN), None);
+        assert_eq!(macd.update(f64::INFINITY), None);
         assert_eq!(macd.value(), before);
     }
 }

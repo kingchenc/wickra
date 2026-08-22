@@ -88,7 +88,7 @@ impl Indicator for ConnorsRsi {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         // Run the close-RSI on every input so it warms up regardless of the
         // streak / percent-rank branches.
@@ -287,8 +287,10 @@ mod tests {
         let prices: Vec<f64> = (1..=200).map(f64::from).collect();
         crsi.batch(&prices);
         let before = crsi.current;
-        assert_eq!(crsi.update(f64::NAN), before);
-        assert_eq!(crsi.update(f64::INFINITY), before);
+        assert_eq!(crsi.update(f64::NAN), None);
+        assert_eq!(crsi.update(f64::INFINITY), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(crsi.current, before);
     }
 
     #[test]

@@ -72,7 +72,7 @@ impl Indicator for DecyclerOscillator {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         // Both child `Decycler` instances emit `Some` from the first bar
         // (Ehlers' convention is "output = input" until the recursion warms),
@@ -172,7 +172,7 @@ mod tests {
         dco.batch(&(1..=50).map(f64::from).collect::<Vec<_>>());
         let before = dco.value();
         assert!(before.is_some());
-        assert_eq!(dco.update(f64::NAN), before);
+        assert_eq!(dco.update(f64::NAN), None);
     }
 
     #[test]

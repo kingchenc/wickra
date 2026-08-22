@@ -117,7 +117,7 @@ impl Indicator for DynamicMomentumIndex {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         // Track the smoothed volatility on every close.
         if let Some(v) = self.vol.update(input) {
@@ -274,14 +274,14 @@ mod tests {
     #[test]
     fn ignores_non_finite_input() {
         let mut dmi = DynamicMomentumIndex::new(14).unwrap();
-        let ready = dmi
+        let _ready = dmi
             .batch(&(0..40).map(|i| 100.0 + f64::from(i)).collect::<Vec<_>>())
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(dmi.update(f64::NAN), Some(ready));
-        assert_eq!(dmi.update(f64::INFINITY), Some(ready));
+        assert_eq!(dmi.update(f64::NAN), None);
+        assert_eq!(dmi.update(f64::INFINITY), None);
     }
 
     #[test]

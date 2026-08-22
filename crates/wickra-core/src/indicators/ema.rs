@@ -197,7 +197,7 @@ impl Indicator for Ema {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         self.step_unchecked(input)
     }
@@ -377,8 +377,10 @@ mod tests {
         let mut ema = Ema::new(3).unwrap();
         ema.batch(&[1.0, 2.0, 3.0]);
         let before = ema.value();
-        assert_eq!(ema.update(f64::NAN), before);
-        assert_eq!(ema.update(f64::INFINITY), before);
+        assert_eq!(ema.update(f64::NAN), None);
+        assert_eq!(ema.update(f64::INFINITY), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(ema.value(), before);
     }
 
     fn bits_eq(a: &[f64], b: &[f64]) -> bool {

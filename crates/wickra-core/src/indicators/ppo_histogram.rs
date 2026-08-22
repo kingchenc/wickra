@@ -95,7 +95,7 @@ impl Indicator for PpoHistogram {
         // Guard before touching either stage so a non-finite input never
         // advances the signal EMA on a stale, re-fed PPO value.
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         let ppo = self.ppo.update(input)?;
         let signal = self.signal_ema.update(ppo)?;
@@ -209,8 +209,8 @@ mod tests {
         let out = osc.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         let before = *out.last().unwrap();
         assert!(before.is_some());
-        assert_eq!(osc.update(f64::NAN), before);
-        assert_eq!(osc.update(f64::INFINITY), before);
+        assert_eq!(osc.update(f64::NAN), None);
+        assert_eq!(osc.update(f64::INFINITY), None);
         assert_eq!(osc.value(), before);
     }
 

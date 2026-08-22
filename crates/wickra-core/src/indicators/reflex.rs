@@ -97,7 +97,7 @@ impl Indicator for Reflex {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let filt = self.smoother.update(price)?;
         if self.filt.len() == self.period + 1 {
@@ -212,7 +212,9 @@ mod tests {
                 .collect::<Vec<_>>(),
         );
         let before = r.value();
-        assert_eq!(r.update(f64::NAN), before);
+        assert_eq!(r.update(f64::NAN), None);
+        // The rejected input must not have disturbed the state.
+        assert_eq!(r.value(), before);
     }
 
     #[test]

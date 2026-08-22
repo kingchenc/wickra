@@ -90,7 +90,7 @@ impl Indicator for RoofingFilter {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         let hp = if let Some(x1) = self.prev_in_1 {
             let one_minus_half_alpha = 1.0 - self.alpha / 2.0;
@@ -194,7 +194,7 @@ mod tests {
         rf.batch(&(1..=100).map(f64::from).collect::<Vec<_>>());
         let before = rf.value();
         assert!(before.is_some());
-        assert_eq!(rf.update(f64::NAN), before);
+        assert_eq!(rf.update(f64::NAN), None);
     }
 
     #[test]

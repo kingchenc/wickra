@@ -121,7 +121,7 @@ impl Indicator for AdaptiveRsi {
 
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.last;
+            return None;
         }
         let Some(prev) = self.prev else {
             self.prev = Some(price);
@@ -271,13 +271,13 @@ mod tests {
     #[test]
     fn ignores_non_finite() {
         let mut r = AdaptiveRsi::new(4).unwrap();
-        let ready = r
+        let _ready = r
             .batch(&[1.0, 2.0, 3.0, 4.0, 5.0])
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(r.update(f64::NAN), Some(ready));
+        assert_eq!(r.update(f64::NAN), None);
     }
 
     #[test]

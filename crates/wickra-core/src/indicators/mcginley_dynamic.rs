@@ -84,7 +84,7 @@ impl Indicator for McGinleyDynamic {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         if let Some(prev) = self.current {
             // The recurrence divides by `(price / prev)^4`; if either side is
@@ -212,9 +212,9 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut md = McGinleyDynamic::new(3).unwrap();
         md.batch(&[10.0_f64, 20.0, 30.0]);
-        let before = md.value().unwrap();
-        assert_eq!(md.update(f64::NAN), Some(before));
-        assert_eq!(md.update(f64::INFINITY), Some(before));
+        md.value().unwrap();
+        assert_eq!(md.update(f64::NAN), None);
+        assert_eq!(md.update(f64::INFINITY), None);
     }
 
     #[test]

@@ -136,7 +136,7 @@ impl Indicator for Mama {
 
     fn update(&mut self, input: f64) -> Option<MamaOutput> {
         if !input.is_finite() {
-            return self.last_value;
+            return None;
         }
         self.count += 1;
 
@@ -355,7 +355,7 @@ mod tests {
         mama.batch(&prices);
         let before = mama.value();
         assert!(before.is_some());
-        assert_eq!(mama.update(f64::NAN), before);
+        assert_eq!(mama.update(f64::NAN), None);
     }
 
     #[test]

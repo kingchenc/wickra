@@ -381,6 +381,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   68 golden fixtures move, every one of them by withholding a leading run of
   rows and nothing else — checked cell by cell, in both directions, that no
   value outside that prefix changed and that nothing non-zero was withheld.
+- **BREAKING: one policy for a non-finite input, and it is `None`.** Half the
+  catalogue rejected a NaN or an infinity by returning `None` and half by
+  repeating the last computed value; the property test only ever injected
+  *before* the first real input, so the divergence was never exercised.
+
+  `None` wins. Repeating the previous value hands a caller a stale number that
+  is indistinguishable from a fresh one, which is the failure that costs money,
+  and it needs a cached field to do it — so the safer answer is also the one
+  that carries less state. The trait now says exactly this: `None` means the
+  indicator is warming up *or* the input was rejected, and a rejected input is
+  skipped rather than absorbed.
+
+  88 indicators changed. Two of them were doing something else again, and only
+  the extended test found them:
+
+  * `WavePm` had no non-finite guard at all, so a single NaN entered its window
+    and poisoned every value after it.
+  * `PairwiseBeta` cleared its previous price on a bad tick to "restart the
+    return chain", which silently dropped one return and changed the values
+    that followed. It now leaves the state alone, so the next good pair
+    measures from the last price actually observed.
+
+  `check_scalar_nonfinite` and `check_pairwise_nonfinite` now inject after every
+  input as well as before the first, and compare the whole interleaved series
+  against a clean run — so "a rejected input changed the values around it" is a
+  test failure across all 513 indicators rather than an assumption.
+
+  157 unit assertions pinned the old behaviour and were updated. Fifteen of them
+  captured a cached value purely to compare against it; rather than delete those
+  bindings they now assert that the accessor is *unchanged* after the rejection,
+  which is the half of each test that still means something. No golden fixture
+  moves: `gen_golden` feeds only finite data.
+
 
 
 

@@ -74,7 +74,7 @@ impl Indicator for Kama {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.state;
+            return None;
         }
         if self.window.len() == self.er_period + 1 {
             self.window.pop_front();
@@ -193,7 +193,7 @@ mod tests {
         let before = k.update(41.0);
         assert!(before.is_some());
         // Non-finite inputs return the last state without sliding the window.
-        assert_eq!(k.update(f64::NAN), before);
-        assert_eq!(k.update(f64::INFINITY), before);
+        assert_eq!(k.update(f64::NAN), None);
+        assert_eq!(k.update(f64::INFINITY), None);
     }
 }

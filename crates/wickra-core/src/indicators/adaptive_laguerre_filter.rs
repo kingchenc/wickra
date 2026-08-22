@@ -147,7 +147,7 @@ impl Indicator for AdaptiveLaguerreFilter {
     #[inline]
     fn update(&mut self, price: f64) -> Option<f64> {
         if !price.is_finite() {
-            return self.value();
+            return None;
         }
         // Absolute tracking error against the previous filter (0 on the first
         // bar, where there is no prior filter value).
@@ -352,8 +352,8 @@ mod tests {
         let mut alf = AdaptiveLaguerreFilter::new(3).unwrap();
         alf.update(10.0);
         alf.update(11.0);
-        let ready = alf.update(12.0).expect("ready after three inputs");
-        assert_eq!(alf.update(f64::NAN), Some(ready));
-        assert_eq!(alf.update(f64::INFINITY), Some(ready));
+        alf.update(12.0).expect("ready after three inputs");
+        assert_eq!(alf.update(f64::NAN), None);
+        assert_eq!(alf.update(f64::INFINITY), None);
     }
 }

@@ -90,7 +90,7 @@ impl Indicator for Frama {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.current;
+            return None;
         }
         if self.window.len() == self.period {
             self.window.pop_front();
@@ -260,8 +260,8 @@ mod tests {
     fn ignores_non_finite_input() {
         let mut frama = Frama::new(4).unwrap();
         frama.batch(&[1.0, 2.0, 3.0, 4.0]);
-        let before = frama.update(5.0).unwrap();
-        assert_eq!(frama.update(f64::NAN), Some(before));
-        assert_eq!(frama.update(f64::INFINITY), Some(before));
+        frama.update(5.0).unwrap();
+        assert_eq!(frama.update(f64::NAN), None);
+        assert_eq!(frama.update(f64::INFINITY), None);
     }
 }

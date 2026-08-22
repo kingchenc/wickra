@@ -79,7 +79,7 @@ impl Indicator for Wma {
     #[inline]
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.value();
+            return None;
         }
         if self.window.len() < self.period {
             // Warmup. Just accumulate; compute weight_sum once when the window first
@@ -241,10 +241,10 @@ mod tests {
         let mut wma = Wma::new(3).unwrap();
         wma.update(1.0);
         wma.update(2.0);
-        let ready = wma.update(3.0).expect("WMA(3) ready after three inputs");
+        wma.update(3.0).expect("WMA(3) ready after three inputs");
         // Non-finite inputs return the last value without mutating the window.
-        assert_eq!(wma.update(f64::NAN), Some(ready));
-        assert_eq!(wma.update(f64::INFINITY), Some(ready));
+        assert_eq!(wma.update(f64::NAN), None);
+        assert_eq!(wma.update(f64::INFINITY), None);
         // The window still holds 1, 2, 3 -> next real input slides it to 2, 3, 4.
         assert_relative_eq!(
             wma.update(4.0).unwrap(),

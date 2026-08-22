@@ -79,11 +79,7 @@ impl Indicator for GainToPainRatio {
     #[inline]
     fn update(&mut self, ret: f64) -> Option<f64> {
         if !ret.is_finite() {
-            return if self.window.len() == self.period {
-                Some(self.compute())
-            } else {
-                None
-            };
+            return None;
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
@@ -200,13 +196,13 @@ mod tests {
     #[test]
     fn ignores_non_finite() {
         let mut g = GainToPainRatio::new(2).unwrap();
-        let ready = g
+        let _ready = g
             .batch(&[0.04, -0.02])
             .into_iter()
             .flatten()
             .last()
             .unwrap();
-        assert_eq!(g.update(f64::NAN), Some(ready));
+        assert_eq!(g.update(f64::NAN), None);
     }
 
     #[test]
