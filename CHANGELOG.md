@@ -50,7 +50,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `FundingRateZScore`, and the Bessel-corrected family — `HistoricalVolatility`,
   `InformationRatio`, `JumpIndicator`, `KaseDevStop`, `M2Measure`, `RegimeLabel`,
   `SharpeRatio`, `VolatilityCone`, `VolatilityOfVolatility` and `YangZhang`.
-  No indicator in the catalogue computes a variance as `E[x²] − E[x]²` any more. The shape statistics were affected worse still:
+  No indicator in the catalogue computes a variance as `E[x²] − E[x]²` any more.
+  The golden fixtures in `testdata/golden/` that these indicators feed were
+  regenerated: 21 files move in their trailing digits, and every changed value
+  is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
 - **R binding: `batch()` with mismatched column lengths crashed R.** The native
