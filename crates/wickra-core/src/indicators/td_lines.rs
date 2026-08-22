@@ -36,8 +36,16 @@ use crate::traits::Indicator;
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct TdLinesOutput {
     /// Latest TDST resistance, or `NAN` if no buy setup has completed yet.
+    ///
+    /// The two levels are established independently, so one can be a real price
+    /// while the other is still `NAN`. `update` withholds the output entirely
+    /// (`None`) until at least one of them exists, so a returned value always
+    /// carries at least one level. `NAN` is the encoding because the C ABI
+    /// mirrors this struct as two plain `double`s.
     pub resistance: f64,
     /// Latest TDST support, or `NAN` if no sell setup has completed yet.
+    ///
+    /// See [`Self::resistance`] for when a level can be `NAN`.
     pub support: f64,
 }
 
@@ -69,8 +77,12 @@ pub struct TdLines {
     buy_run_max_high: f64,
     /// Lowest low observed during the *current* sell-setup run.
     sell_run_min_low: f64,
-    resistance: f64,
-    support: f64,
+    /// Set once a buy setup completes; `None` means no TDST resistance exists
+    /// yet. Kept as an `Option` rather than a `NAN` sentinel so "unset" is not
+    /// inferred from the bit pattern of a value that is supposed to be a price.
+    resistance: Option<f64>,
+    /// Set once a sell setup completes; `None` means no TDST support exists yet.
+    support: Option<f64>,
     ready: bool,
 }
 
@@ -93,8 +105,8 @@ impl TdLines {
             sell_count: 0,
             buy_run_max_high: f64::NEG_INFINITY,
             sell_run_min_low: f64::INFINITY,
-            resistance: f64::NAN,
-            support: f64::NAN,
+            resistance: None,
+            support: None,
             ready: false,
         })
     }
@@ -137,7 +149,7 @@ impl Indicator for TdLines {
             self.sell_count = 0;
             self.sell_run_min_low = f64::INFINITY;
             if self.buy_count == self.target {
-                self.resistance = self.buy_run_max_high;
+                self.resistance = Some(self.buy_run_max_high);
             }
         } else if candle.close > reference {
             if self.sell_count == 0 {
@@ -149,7 +161,7 @@ impl Indicator for TdLines {
             self.buy_count = 0;
             self.buy_run_max_high = f64::NEG_INFINITY;
             if self.sell_count == self.target {
-                self.support = self.sell_run_min_low;
+                self.support = Some(self.sell_run_min_low);
             }
         } else {
             // Equality breaks both runs.
@@ -159,10 +171,18 @@ impl Indicator for TdLines {
             self.sell_run_min_low = f64::INFINITY;
         }
 
+        // Neither level established means there is nothing to report yet. The
+        // trait defines `None` as "insufficient inputs to produce a defined
+        // value", and a pair of NaNs is exactly that — on a flat series the old
+        // code emitted it on every bar forever, and it reached the bindings as
+        // two NaNs in a flat output buffer.
+        if self.resistance.is_none() && self.support.is_none() {
+            return None;
+        }
         self.ready = true;
         Some(TdLinesOutput {
-            resistance: self.resistance,
-            support: self.support,
+            resistance: self.resistance.unwrap_or(f64::NAN),
+            support: self.support.unwrap_or(f64::NAN),
         })
     }
 
@@ -172,11 +192,14 @@ impl Indicator for TdLines {
         self.sell_count = 0;
         self.buy_run_max_high = f64::NEG_INFINITY;
         self.sell_run_min_low = f64::INFINITY;
-        self.resistance = f64::NAN;
-        self.support = f64::NAN;
+        self.resistance = None;
+        self.support = None;
         self.ready = false;
     }
 
+    /// Lower bound only: a TDST line needs a *completed* setup, which depends on
+    /// the data, so the first value can arrive arbitrarily later than this — and
+    /// on a series that never completes a setup, never.
     fn warmup_period(&self) -> usize {
         self.lookback + 1
     }
@@ -217,13 +240,12 @@ mod tests {
             .collect();
         let mut lines = TdLines::classic();
         let out = lines.batch(&candles);
-        // Before completion, support is NaN; resistance is NaN throughout
-        // (no buy setup ever completes).
-        let early = out[5].expect("ready");
-        assert!(early.support.is_nan());
-        assert!(early.resistance.is_nan());
+        // Nothing is emitted before a setup completes: neither level exists, so
+        // there is no defined value to report.
+        assert!(out[..12].iter().all(Option::is_none));
         // After completion at idx 12, support is the low of bar idx 4 = 4.5.
-        let after = out[12].expect("ready");
+        // Resistance stays NaN because no buy setup ever completes here.
+        let after = out[12].expect("the completed sell setup emits");
         assert!(after.resistance.is_nan());
         assert_relative_eq!(after.support, 4.5, epsilon = 1e-12);
         // Subsequent bars (still increasing, sell setup saturating) keep
@@ -258,14 +280,15 @@ mod tests {
     }
 
     #[test]
-    fn flat_series_never_sets_levels() {
-        // All closes equal -> neither setup advances -> both levels stay NaN.
+    fn flat_series_never_emits() {
+        // All closes equal -> neither setup advances -> no level ever exists, so
+        // nothing is emitted. This used to yield `Some` with two NaNs on every
+        // bar past the warmup.
         let candles: Vec<Candle> = (0..30).map(|i| c(10.5, 9.5, 10.0, i64::from(i))).collect();
         let mut lines = TdLines::classic();
-        for v in lines.batch(&candles).into_iter().flatten() {
-            assert!(v.support.is_nan());
-            assert!(v.resistance.is_nan());
-        }
+        let out = lines.batch(&candles);
+        assert!(out.iter().all(Option::is_none));
+        assert!(!lines.is_ready());
     }
 
     #[test]

@@ -35,9 +35,17 @@ use crate::traits::Indicator;
 pub struct TdRiskLevelOutput {
     /// Protective-stop level for a long position taken on a completed
     /// buy setup. `NAN` until the first buy setup completes.
+    ///
+    /// The two levels are established independently, so one can be a real price
+    /// while the other is still `NAN`. `update` withholds the output entirely
+    /// (`None`) until at least one of them exists, so a returned value always
+    /// carries at least one level. `NAN` is the encoding because the C ABI
+    /// mirrors this struct as two plain `double`s.
     pub buy_risk: f64,
     /// Protective-stop level for a short position taken on a completed
     /// sell setup. `NAN` until the first sell setup completes.
+    ///
+    /// See [`Self::buy_risk`] for when a level can be `NAN`.
     pub sell_risk: f64,
 }
 
@@ -77,8 +85,12 @@ pub struct TdRiskLevel {
     buy_extreme: Option<ExtremeBar>,
     /// Extreme (highest high) bar of the active sell-setup run.
     sell_extreme: Option<ExtremeBar>,
-    buy_risk: f64,
-    sell_risk: f64,
+    /// Set once a buy setup completes; `None` means no level exists yet. Kept as
+    /// an `Option` rather than a `NAN` sentinel so "unset" is not inferred from
+    /// the bit pattern of a value that is supposed to be a price.
+    buy_risk: Option<f64>,
+    /// Set once a sell setup completes; `None` means no level exists yet.
+    sell_risk: Option<f64>,
     ready: bool,
 }
 
@@ -113,8 +125,8 @@ impl TdRiskLevel {
             sell_count: 0,
             buy_extreme: None,
             sell_extreme: None,
-            buy_risk: f64::NAN,
-            sell_risk: f64::NAN,
+            buy_risk: None,
+            sell_risk: None,
             ready: false,
         })
     }
@@ -162,7 +174,7 @@ impl Indicator for TdRiskLevel {
             self.sell_extreme = None;
             if self.buy_count == self.target {
                 let e = self.buy_extreme.expect("set above when buy_count > 0");
-                self.buy_risk = e.price - e.true_range;
+                self.buy_risk = Some(e.price - e.true_range);
             }
         } else if candle.close > reference {
             // Sell setup run.
@@ -179,7 +191,7 @@ impl Indicator for TdRiskLevel {
             self.buy_extreme = None;
             if self.sell_count == self.target {
                 let e = self.sell_extreme.expect("set above when sell_count > 0");
-                self.sell_risk = e.price + e.true_range;
+                self.sell_risk = Some(e.price + e.true_range);
             }
         } else {
             self.buy_count = 0;
@@ -189,10 +201,18 @@ impl Indicator for TdRiskLevel {
         }
 
         self.prev = Some(candle);
+        // Neither level established means there is nothing to report yet. The
+        // trait defines `None` as "insufficient inputs to produce a defined
+        // value", and a pair of NaNs is exactly that — on a flat series the old
+        // code emitted it on every bar forever, and it reached the bindings as
+        // two NaNs in a flat output buffer.
+        if self.buy_risk.is_none() && self.sell_risk.is_none() {
+            return None;
+        }
         self.ready = true;
         Some(TdRiskLevelOutput {
-            buy_risk: self.buy_risk,
-            sell_risk: self.sell_risk,
+            buy_risk: self.buy_risk.unwrap_or(f64::NAN),
+            sell_risk: self.sell_risk.unwrap_or(f64::NAN),
         })
     }
 
@@ -203,11 +223,14 @@ impl Indicator for TdRiskLevel {
         self.sell_count = 0;
         self.buy_extreme = None;
         self.sell_extreme = None;
-        self.buy_risk = f64::NAN;
-        self.sell_risk = f64::NAN;
+        self.buy_risk = None;
+        self.sell_risk = None;
         self.ready = false;
     }
 
+    /// Lower bound only: a risk level needs a *completed* setup, which depends
+    /// on the data, so the first value can arrive arbitrarily later than this —
+    /// and on a series that never completes a setup, never.
     fn warmup_period(&self) -> usize {
         self.lookback + 1
     }
@@ -258,13 +281,14 @@ mod tests {
     }
 
     #[test]
-    fn flat_series_never_sets_levels() {
+    fn flat_series_never_emits() {
+        // Neither setup advances, so no level ever exists and nothing is
+        // emitted. This used to yield `Some` with two NaNs on every bar.
         let candles: Vec<Candle> = (0..30).map(|i| c(10.5, 9.5, 10.0, i64::from(i))).collect();
         let mut td = TdRiskLevel::classic();
-        for v in td.batch(&candles).into_iter().flatten() {
-            assert!(v.buy_risk.is_nan());
-            assert!(v.sell_risk.is_nan());
-        }
+        let out = td.batch(&candles);
+        assert!(out.iter().all(Option::is_none));
+        assert!(!td.is_ready());
     }
 
     #[test]

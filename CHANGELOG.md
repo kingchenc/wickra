@@ -56,6 +56,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **`TdLines` and `TdRiskLevel` reported a value when they had none.** Both
+  emitted `Some` with two `NAN` fields from the end of warmup onwards, before
+  either of their two levels existed — on a series that never completes a TD
+  setup, on every bar forever. They were the only two indicators in the
+  catalogue encoding "no value" as anything other than `None`, and in the
+  bindings it surfaced as NaNs in a flat output buffer that silently poison
+  downstream arithmetic. They now return `None` until at least one level exists.
+  A single `NAN` field is still how "this one level is not established yet" is
+  expressed, because the two levels are set independently and the C ABI mirrors
+  each output as two plain `double`s; that is now documented on the fields.
+  `warmup_period()` is a lower bound for both, since a completed setup is
+  data-dependent.
 - **A panic inside a binding killed the host process.** The workspace release
   profile set `panic = "abort"`, and the Python, Node, WASM and C ABI cdylibs are
   workspace members, so they inherited it — Cargo refuses `panic` in a
