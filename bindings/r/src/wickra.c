@@ -41,7 +41,14 @@ SEXP wk_abandoned_baby_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_abandoned_baby_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -86,7 +93,14 @@ SEXP wk_abcd_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_abcd_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -213,7 +227,14 @@ SEXP wk_accelerator_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
 }
 SEXP wk_accelerator_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -258,7 +279,14 @@ SEXP wk_ad_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_ad_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -338,7 +366,14 @@ SEXP wk_adaptive_cci_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_adaptive_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -383,6 +418,8 @@ SEXP wk_adaptive_cycle_update(SEXP e, SEXP a0) {
 }
 SEXP wk_adaptive_cycle_batch(SEXP e, SEXP a0) {
   struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_adaptive_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -426,6 +463,8 @@ SEXP wk_adaptive_laguerre_filter_update(SEXP e, SEXP a0) {
 }
 SEXP wk_adaptive_laguerre_filter_batch(SEXP e, SEXP a0) {
   struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_adaptive_laguerre_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -469,6 +508,8 @@ SEXP wk_adaptive_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_adaptive_rsi_batch(SEXP e, SEXP a0) {
   struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_adaptive_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -512,7 +553,14 @@ SEXP wk_adl_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_adl_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -557,7 +605,14 @@ SEXP wk_advance_block_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_advance_block_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -719,7 +774,14 @@ SEXP wk_adxr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_adxr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -811,6 +873,8 @@ SEXP wk_alma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_alma_batch(SEXP e, SEXP a0) {
   struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_alma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -854,7 +918,10 @@ SEXP wk_alpha_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_alpha_batch(SEXP e, SEXP a0, SEXP a1) {
   struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_alpha_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -932,6 +999,8 @@ SEXP wk_anchored_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_anchored_rsi_batch(SEXP e, SEXP a0) {
   struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_anchored_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -975,7 +1044,14 @@ SEXP wk_anchored_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_anchored_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1067,6 +1143,8 @@ SEXP wk_apo_update(SEXP e, SEXP a0) {
 }
 SEXP wk_apo_batch(SEXP e, SEXP a0) {
   struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_apo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -1155,7 +1233,14 @@ SEXP wk_aroon_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_aroon_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1200,7 +1285,14 @@ SEXP wk_atr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_atr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1337,7 +1429,14 @@ SEXP wk_atr_trailing_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_atr_trailing_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1437,6 +1536,8 @@ SEXP wk_autocorrelation_update(SEXP e, SEXP a0) {
 }
 SEXP wk_autocorrelation_batch(SEXP e, SEXP a0) {
   struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_autocorrelation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -1480,6 +1581,8 @@ SEXP wk_autocorrelation_periodogram_update(SEXP e, SEXP a0) {
 }
 SEXP wk_autocorrelation_periodogram_batch(SEXP e, SEXP a0) {
   struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_autocorrelation_periodogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -1523,7 +1626,14 @@ SEXP wk_average_daily_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
 }
 SEXP wk_average_daily_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1568,6 +1678,8 @@ SEXP wk_average_drawdown_update(SEXP e, SEXP a0) {
 }
 SEXP wk_average_drawdown_batch(SEXP e, SEXP a0) {
   struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_average_drawdown_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -1611,7 +1723,14 @@ SEXP wk_avg_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_avg_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1656,7 +1775,14 @@ SEXP wk_awesome_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_awesome_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1701,7 +1827,14 @@ SEXP wk_awesome_oscillator_histogram_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, S
 }
 SEXP wk_awesome_oscillator_histogram_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1746,7 +1879,14 @@ SEXP wk_balance_of_power_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_balance_of_power_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1791,6 +1931,8 @@ SEXP wk_bandpass_filter_update(SEXP e, SEXP a0) {
 }
 SEXP wk_bandpass_filter_batch(SEXP e, SEXP a0) {
   struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_bandpass_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -1834,7 +1976,14 @@ SEXP wk_bat_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_bat_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1879,7 +2028,14 @@ SEXP wk_belt_hold_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_belt_hold_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -1924,7 +2080,10 @@ SEXP wk_beta_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_beta_batch(SEXP e, SEXP a0, SEXP a1) {
   struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_beta_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -1967,7 +2126,10 @@ SEXP wk_beta_neutral_spread_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_beta_neutral_spread_batch(SEXP e, SEXP a0, SEXP a1) {
   struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_beta_neutral_spread_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -2010,7 +2172,14 @@ SEXP wk_better_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_better_volume_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2055,6 +2224,8 @@ SEXP wk_bipower_variation_update(SEXP e, SEXP a0) {
 }
 SEXP wk_bipower_variation_batch(SEXP e, SEXP a0) {
   struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_bipower_variation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -2098,7 +2269,14 @@ SEXP wk_body_size_pct_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_body_size_pct_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2192,6 +2370,8 @@ SEXP wk_bollinger_bandwidth_update(SEXP e, SEXP a0) {
 }
 SEXP wk_bollinger_bandwidth_batch(SEXP e, SEXP a0) {
   struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_bollinger_bandwidth_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -2317,7 +2497,14 @@ SEXP wk_breakaway_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_breakaway_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2397,6 +2584,8 @@ SEXP wk_burke_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_burke_ratio_batch(SEXP e, SEXP a0) {
   struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_burke_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -2440,7 +2629,14 @@ SEXP wk_butterfly_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_butterfly_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2520,6 +2716,8 @@ SEXP wk_calmar_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_calmar_ratio_batch(SEXP e, SEXP a0) {
   struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_calmar_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -2701,7 +2899,14 @@ SEXP wk_cci_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2746,6 +2951,8 @@ SEXP wk_center_of_gravity_update(SEXP e, SEXP a0) {
 }
 SEXP wk_center_of_gravity_batch(SEXP e, SEXP a0) {
   struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_center_of_gravity_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -2836,6 +3043,8 @@ SEXP wk_cfo_update(SEXP e, SEXP a0) {
 }
 SEXP wk_cfo_batch(SEXP e, SEXP a0) {
   struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_cfo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -2879,7 +3088,14 @@ SEXP wk_chaikin_money_flow_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_chaikin_money_flow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2924,7 +3140,14 @@ SEXP wk_chaikin_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_chaikin_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -2969,7 +3192,14 @@ SEXP wk_chaikin_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_chaikin_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3104,7 +3334,14 @@ SEXP wk_choppiness_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_choppiness_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3204,7 +3441,14 @@ SEXP wk_close_vs_open_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_close_vs_open_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3249,7 +3493,14 @@ SEXP wk_closing_marubozu_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_closing_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3294,6 +3545,8 @@ SEXP wk_cmo_update(SEXP e, SEXP a0) {
 }
 SEXP wk_cmo_batch(SEXP e, SEXP a0) {
   struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_cmo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3337,6 +3590,8 @@ SEXP wk_coefficient_of_variation_update(SEXP e, SEXP a0) {
 }
 SEXP wk_coefficient_of_variation_batch(SEXP e, SEXP a0) {
   struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_coefficient_of_variation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3427,6 +3682,8 @@ SEXP wk_common_sense_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_common_sense_ratio_batch(SEXP e, SEXP a0) {
   struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_common_sense_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3517,7 +3774,14 @@ SEXP wk_concealing_baby_swallow_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
 }
 SEXP wk_concealing_baby_swallow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3562,6 +3826,8 @@ SEXP wk_conditional_value_at_risk_update(SEXP e, SEXP a0) {
 }
 SEXP wk_conditional_value_at_risk_batch(SEXP e, SEXP a0) {
   struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_conditional_value_at_risk_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3605,6 +3871,8 @@ SEXP wk_connors_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_connors_rsi_batch(SEXP e, SEXP a0) {
   struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_connors_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3648,6 +3916,8 @@ SEXP wk_coppock_update(SEXP e, SEXP a0) {
 }
 SEXP wk_coppock_batch(SEXP e, SEXP a0) {
   struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_coppock_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3691,6 +3961,8 @@ SEXP wk_correlation_trend_indicator_update(SEXP e, SEXP a0) {
 }
 SEXP wk_correlation_trend_indicator_batch(SEXP e, SEXP a0) {
   struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_correlation_trend_indicator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3734,7 +4006,14 @@ SEXP wk_counterattack_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_counterattack_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3779,7 +4058,14 @@ SEXP wk_crab_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_crab_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3894,7 +4180,14 @@ SEXP wk_cup_and_handle_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_cup_and_handle_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -3939,6 +4232,8 @@ SEXP wk_cybernetic_cycle_update(SEXP e, SEXP a0) {
 }
 SEXP wk_cybernetic_cycle_batch(SEXP e, SEXP a0) {
   struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_cybernetic_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -3982,7 +4277,14 @@ SEXP wk_cypher_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
 }
 SEXP wk_cypher_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4069,6 +4371,8 @@ SEXP wk_decycler_update(SEXP e, SEXP a0) {
 }
 SEXP wk_decycler_batch(SEXP e, SEXP a0) {
   struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_decycler_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4112,6 +4416,8 @@ SEXP wk_decycler_oscillator_update(SEXP e, SEXP a0) {
 }
 SEXP wk_decycler_oscillator_batch(SEXP e, SEXP a0) {
   struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_decycler_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4155,6 +4461,8 @@ SEXP wk_dema_update(SEXP e, SEXP a0) {
 }
 SEXP wk_dema_batch(SEXP e, SEXP a0) {
   struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_dema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4198,7 +4506,14 @@ SEXP wk_demand_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_demand_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4325,6 +4640,8 @@ SEXP wk_derivative_oscillator_update(SEXP e, SEXP a0) {
 }
 SEXP wk_derivative_oscillator_batch(SEXP e, SEXP a0) {
   struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_derivative_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4368,6 +4685,8 @@ SEXP wk_detrended_std_dev_update(SEXP e, SEXP a0) {
 }
 SEXP wk_detrended_std_dev_batch(SEXP e, SEXP a0) {
   struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_detrended_std_dev_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4411,6 +4730,8 @@ SEXP wk_disparity_index_update(SEXP e, SEXP a0) {
 }
 SEXP wk_disparity_index_batch(SEXP e, SEXP a0) {
   struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_disparity_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4454,7 +4775,10 @@ SEXP wk_distance_ssd_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_distance_ssd_batch(SEXP e, SEXP a0, SEXP a1) {
   struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_distance_ssd_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -4497,7 +4821,14 @@ SEXP wk_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4542,7 +4873,14 @@ SEXP wk_doji_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4779,7 +5117,14 @@ SEXP wk_double_top_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_double_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4824,7 +5169,14 @@ SEXP wk_downside_gap_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
 }
 SEXP wk_downside_gap_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4869,6 +5221,8 @@ SEXP wk_dpo_update(SEXP e, SEXP a0) {
 }
 SEXP wk_dpo_batch(SEXP e, SEXP a0) {
   struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_dpo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -4912,7 +5266,14 @@ SEXP wk_dragonfly_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_dragonfly_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -4957,6 +5318,8 @@ SEXP wk_drawdown_duration_update(SEXP e, SEXP a0) {
 }
 SEXP wk_drawdown_duration_batch(SEXP e, SEXP a0) {
   struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_drawdown_duration_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5000,7 +5363,14 @@ SEXP wk_dumpling_top_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_dumpling_top_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5045,7 +5415,14 @@ SEXP wk_dx_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
 }
 SEXP wk_dx_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5090,6 +5467,8 @@ SEXP wk_dynamic_momentum_index_update(SEXP e, SEXP a0) {
 }
 SEXP wk_dynamic_momentum_index_batch(SEXP e, SEXP a0) {
   struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_dynamic_momentum_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5133,7 +5512,14 @@ SEXP wk_ease_of_movement_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_ease_of_movement_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5213,6 +5599,8 @@ SEXP wk_ehlers_stochastic_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ehlers_stochastic_batch(SEXP e, SEXP a0) {
   struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ehlers_stochastic_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5256,6 +5644,8 @@ SEXP wk_ehma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ehma_batch(SEXP e, SEXP a0) {
   struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ehma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5299,6 +5689,8 @@ SEXP wk_elder_impulse_update(SEXP e, SEXP a0) {
 }
 SEXP wk_elder_impulse_batch(SEXP e, SEXP a0) {
   struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_elder_impulse_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5432,6 +5824,8 @@ SEXP wk_ema_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ema_batch(SEXP e, SEXP a0) {
   struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5475,6 +5869,8 @@ SEXP wk_empirical_mode_decomposition_update(SEXP e, SEXP a0) {
 }
 SEXP wk_empirical_mode_decomposition_batch(SEXP e, SEXP a0) {
   struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_empirical_mode_decomposition_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5518,7 +5914,14 @@ SEXP wk_engulfing_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_engulfing_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5643,6 +6046,8 @@ SEXP wk_even_better_sinewave_update(SEXP e, SEXP a0) {
 }
 SEXP wk_even_better_sinewave_batch(SEXP e, SEXP a0) {
   struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_even_better_sinewave_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5686,7 +6091,14 @@ SEXP wk_evening_doji_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_evening_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5731,7 +6143,14 @@ SEXP wk_evwma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
 }
 SEXP wk_evwma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5776,6 +6195,8 @@ SEXP wk_ewma_volatility_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ewma_volatility_batch(SEXP e, SEXP a0) {
   struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ewma_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5819,6 +6240,8 @@ SEXP wk_expectancy_update(SEXP e, SEXP a0) {
 }
 SEXP wk_expectancy_batch(SEXP e, SEXP a0) {
   struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_expectancy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -5862,7 +6285,14 @@ SEXP wk_falling_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
 }
 SEXP wk_falling_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -5907,6 +6337,8 @@ SEXP wk_fama_update(SEXP e, SEXP a0) {
 }
 SEXP wk_fama_batch(SEXP e, SEXP a0) {
   struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_fama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -6393,6 +6825,8 @@ SEXP wk_fisher_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_fisher_rsi_batch(SEXP e, SEXP a0) {
   struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_fisher_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -6436,6 +6870,8 @@ SEXP wk_fisher_transform_update(SEXP e, SEXP a0) {
 }
 SEXP wk_fisher_transform_batch(SEXP e, SEXP a0) {
   struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_fisher_transform_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -6479,7 +6915,14 @@ SEXP wk_flag_pennant_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_flag_pennant_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -6575,7 +7018,14 @@ SEXP wk_force_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
 }
 SEXP wk_force_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -6665,6 +7115,8 @@ SEXP wk_frama_update(SEXP e, SEXP a0) {
 }
 SEXP wk_frama_batch(SEXP e, SEXP a0) {
   struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_frama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -6708,7 +7160,14 @@ SEXP wk_fry_pan_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_fry_pan_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -6928,6 +7387,8 @@ SEXP wk_gain_loss_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_gain_loss_ratio_batch(SEXP e, SEXP a0) {
   struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_gain_loss_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -6971,6 +7432,8 @@ SEXP wk_gain_to_pain_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_gain_to_pain_ratio_batch(SEXP e, SEXP a0) {
   struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_gain_to_pain_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -7014,7 +7477,14 @@ SEXP wk_gap_side_by_side_white_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
 }
 SEXP wk_gap_side_by_side_white_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7059,6 +7529,8 @@ SEXP wk_garch11_update(SEXP e, SEXP a0) {
 }
 SEXP wk_garch11_batch(SEXP e, SEXP a0) {
   struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_garch11_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -7102,7 +7574,14 @@ SEXP wk_garman_klass_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
 }
 SEXP wk_garman_klass_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7147,7 +7626,14 @@ SEXP wk_gartley_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_gartley_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7237,6 +7723,8 @@ SEXP wk_generalized_dema_update(SEXP e, SEXP a0) {
 }
 SEXP wk_generalized_dema_batch(SEXP e, SEXP a0) {
   struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_generalized_dema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -7280,6 +7768,8 @@ SEXP wk_geometric_ma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_geometric_ma_batch(SEXP e, SEXP a0) {
   struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_geometric_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -7370,7 +7860,10 @@ SEXP wk_granger_causality_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_granger_causality_batch(SEXP e, SEXP a0, SEXP a1) {
   struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_granger_causality_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -7413,7 +7906,14 @@ SEXP wk_gravestone_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_gravestone_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7458,7 +7958,14 @@ SEXP wk_hammer_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
 }
 SEXP wk_hammer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7503,7 +8010,14 @@ SEXP wk_hanging_man_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
 }
 SEXP wk_hanging_man_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7548,7 +8062,14 @@ SEXP wk_harami_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
 }
 SEXP wk_harami_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7593,7 +8114,14 @@ SEXP wk_harami_cross_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_harami_cross_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7638,7 +8166,10 @@ SEXP wk_hasbrouck_information_share_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_hasbrouck_information_share_batch(SEXP e, SEXP a0, SEXP a1) {
   struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_hasbrouck_information_share_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -7681,7 +8212,14 @@ SEXP wk_head_and_shoulders_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_head_and_shoulders_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7775,7 +8313,14 @@ SEXP wk_heikin_ashi_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
 }
 SEXP wk_heikin_ashi_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7820,7 +8365,14 @@ SEXP wk_hi_lo_activator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_hi_lo_activator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7900,7 +8452,14 @@ SEXP wk_high_low_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_high_low_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -7990,7 +8549,14 @@ SEXP wk_high_wave_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_high_wave_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8035,6 +8601,8 @@ SEXP wk_highpass_filter_update(SEXP e, SEXP a0) {
 }
 SEXP wk_highpass_filter_batch(SEXP e, SEXP a0) {
   struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_highpass_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8078,7 +8646,14 @@ SEXP wk_hikkake_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_hikkake_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8123,7 +8698,14 @@ SEXP wk_hikkake_modified_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_hikkake_modified_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8168,6 +8750,8 @@ SEXP wk_hilbert_dominant_cycle_update(SEXP e, SEXP a0) {
 }
 SEXP wk_hilbert_dominant_cycle_batch(SEXP e, SEXP a0) {
   struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_hilbert_dominant_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8211,6 +8795,8 @@ SEXP wk_historical_volatility_update(SEXP e, SEXP a0) {
 }
 SEXP wk_historical_volatility_batch(SEXP e, SEXP a0) {
   struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_historical_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8254,6 +8840,8 @@ SEXP wk_hma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_hma_batch(SEXP e, SEXP a0) {
   struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_hma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8297,6 +8885,8 @@ SEXP wk_holt_winters_update(SEXP e, SEXP a0) {
 }
 SEXP wk_holt_winters_batch(SEXP e, SEXP a0) {
   struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_holt_winters_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8340,7 +8930,14 @@ SEXP wk_homing_pigeon_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_homing_pigeon_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8385,6 +8982,8 @@ SEXP wk_ht_dc_phase_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ht_dc_phase_batch(SEXP e, SEXP a0) {
   struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ht_dc_phase_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8473,6 +9072,8 @@ SEXP wk_ht_trend_mode_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ht_trend_mode_batch(SEXP e, SEXP a0) {
   struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ht_trend_mode_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8563,6 +9164,8 @@ SEXP wk_hurst_exponent_update(SEXP e, SEXP a0) {
 }
 SEXP wk_hurst_exponent_batch(SEXP e, SEXP a0) {
   struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_hurst_exponent_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8657,7 +9260,14 @@ SEXP wk_identical_three_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
 }
 SEXP wk_identical_three_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8751,7 +9361,14 @@ SEXP wk_in_neck_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_in_neck_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8796,7 +9413,14 @@ SEXP wk_inertia_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_inertia_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -8841,7 +9465,10 @@ SEXP wk_information_ratio_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_information_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
   struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_information_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -8929,6 +9556,8 @@ SEXP wk_instantaneous_trendline_update(SEXP e, SEXP a0) {
 }
 SEXP wk_instantaneous_trendline_batch(SEXP e, SEXP a0) {
   struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_instantaneous_trendline_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -8972,7 +9601,14 @@ SEXP wk_intraday_intensity_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_intraday_intensity_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -9017,7 +9653,14 @@ SEXP wk_intraday_momentum_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
 }
 SEXP wk_intraday_momentum_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -9104,6 +9747,8 @@ SEXP wk_inverse_fisher_transform_update(SEXP e, SEXP a0) {
 }
 SEXP wk_inverse_fisher_transform_batch(SEXP e, SEXP a0) {
   struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_inverse_fisher_transform_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9147,7 +9792,14 @@ SEXP wk_inverted_hammer_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_inverted_hammer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -9192,6 +9844,8 @@ SEXP wk_jarque_bera_update(SEXP e, SEXP a0) {
 }
 SEXP wk_jarque_bera_batch(SEXP e, SEXP a0) {
   struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_jarque_bera_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9235,6 +9889,8 @@ SEXP wk_jma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_jma_batch(SEXP e, SEXP a0) {
   struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_jma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9278,6 +9934,8 @@ SEXP wk_jump_indicator_update(SEXP e, SEXP a0) {
 }
 SEXP wk_jump_indicator_batch(SEXP e, SEXP a0) {
   struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_jump_indicator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9321,6 +9979,8 @@ SEXP wk_k_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_k_ratio_batch(SEXP e, SEXP a0) {
   struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_k_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9454,6 +10114,8 @@ SEXP wk_kama_update(SEXP e, SEXP a0) {
 }
 SEXP wk_kama_batch(SEXP e, SEXP a0) {
   struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_kama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9587,6 +10249,8 @@ SEXP wk_kelly_criterion_update(SEXP e, SEXP a0) {
 }
 SEXP wk_kelly_criterion_batch(SEXP e, SEXP a0) {
   struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_kelly_criterion_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9677,7 +10341,10 @@ SEXP wk_kendall_tau_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_kendall_tau_batch(SEXP e, SEXP a0, SEXP a1) {
   struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_kendall_tau_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -9720,7 +10387,14 @@ SEXP wk_kicking_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_kicking_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -9765,7 +10439,14 @@ SEXP wk_kicking_by_length_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_kicking_by_length_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -9855,6 +10536,8 @@ SEXP wk_kurtosis_update(SEXP e, SEXP a0) {
 }
 SEXP wk_kurtosis_batch(SEXP e, SEXP a0) {
   struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_kurtosis_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -9898,7 +10581,14 @@ SEXP wk_kvo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_kvo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -9978,7 +10668,14 @@ SEXP wk_ladder_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_ladder_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -10023,6 +10720,8 @@ SEXP wk_laguerre_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_laguerre_rsi_batch(SEXP e, SEXP a0) {
   struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_laguerre_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10111,6 +10810,8 @@ SEXP wk_lin_reg_angle_update(SEXP e, SEXP a0) {
 }
 SEXP wk_lin_reg_angle_batch(SEXP e, SEXP a0) {
   struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_lin_reg_angle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10201,6 +10902,8 @@ SEXP wk_lin_reg_intercept_update(SEXP e, SEXP a0) {
 }
 SEXP wk_lin_reg_intercept_batch(SEXP e, SEXP a0) {
   struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_lin_reg_intercept_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10244,6 +10947,8 @@ SEXP wk_lin_reg_slope_update(SEXP e, SEXP a0) {
 }
 SEXP wk_lin_reg_slope_batch(SEXP e, SEXP a0) {
   struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_lin_reg_slope_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10287,6 +10992,8 @@ SEXP wk_linear_regression_update(SEXP e, SEXP a0) {
 }
 SEXP wk_linear_regression_batch(SEXP e, SEXP a0) {
   struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_linear_regression_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10381,6 +11088,8 @@ SEXP wk_log_return_update(SEXP e, SEXP a0) {
 }
 SEXP wk_log_return_batch(SEXP e, SEXP a0) {
   struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_log_return_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10424,7 +11133,14 @@ SEXP wk_long_legged_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_long_legged_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -10469,7 +11185,14 @@ SEXP wk_long_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_long_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -10549,6 +11272,8 @@ SEXP wk_m2_measure_update(SEXP e, SEXP a0) {
 }
 SEXP wk_m2_measure_batch(SEXP e, SEXP a0) {
   struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_m2_measure_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10733,6 +11458,8 @@ SEXP wk_macd_histogram_update(SEXP e, SEXP a0) {
 }
 SEXP wk_macd_histogram_batch(SEXP e, SEXP a0) {
   struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_macd_histogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10868,7 +11595,14 @@ SEXP wk_market_facilitation_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
 }
 SEXP wk_market_facilitation_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -10913,6 +11647,8 @@ SEXP wk_martin_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_martin_ratio_batch(SEXP e, SEXP a0) {
   struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_martin_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -10956,7 +11692,14 @@ SEXP wk_marubozu_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11001,7 +11744,14 @@ SEXP wk_mass_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_mass_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11046,7 +11796,14 @@ SEXP wk_mat_hold_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_mat_hold_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11091,7 +11848,14 @@ SEXP wk_matching_low_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_matching_low_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11136,6 +11900,8 @@ SEXP wk_max_drawdown_update(SEXP e, SEXP a0) {
 }
 SEXP wk_max_drawdown_batch(SEXP e, SEXP a0) {
   struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_max_drawdown_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -11249,6 +12015,8 @@ SEXP wk_mc_ginley_dynamic_update(SEXP e, SEXP a0) {
 }
 SEXP wk_mc_ginley_dynamic_batch(SEXP e, SEXP a0) {
   struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_mc_ginley_dynamic_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -11292,6 +12060,8 @@ SEXP wk_median_absolute_deviation_update(SEXP e, SEXP a0) {
 }
 SEXP wk_median_absolute_deviation_batch(SEXP e, SEXP a0) {
   struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_median_absolute_deviation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -11382,6 +12152,8 @@ SEXP wk_median_ma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_median_ma_batch(SEXP e, SEXP a0) {
   struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_median_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -11425,7 +12197,14 @@ SEXP wk_median_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_median_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11470,7 +12249,14 @@ SEXP wk_mfi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_mfi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11550,6 +12336,8 @@ SEXP wk_mid_point_update(SEXP e, SEXP a0) {
 }
 SEXP wk_mid_point_batch(SEXP e, SEXP a0) {
   struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_mid_point_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -11593,7 +12381,14 @@ SEXP wk_mid_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_mid_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11638,7 +12433,14 @@ SEXP wk_minus_di_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_minus_di_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11683,7 +12485,14 @@ SEXP wk_minus_dm_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_minus_dm_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11773,6 +12582,8 @@ SEXP wk_mom_update(SEXP e, SEXP a0) {
 }
 SEXP wk_mom_batch(SEXP e, SEXP a0) {
   struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_mom_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -11816,7 +12627,14 @@ SEXP wk_morning_doji_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_morning_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11861,7 +12679,14 @@ SEXP wk_morning_evening_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
 }
 SEXP wk_morning_evening_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -11965,7 +12790,14 @@ SEXP wk_naked_poc_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_naked_poc_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12010,7 +12842,14 @@ SEXP wk_natr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_natr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12090,7 +12929,14 @@ SEXP wk_new_price_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_new_price_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12180,7 +13026,14 @@ SEXP wk_nvi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_nvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12225,7 +13078,14 @@ SEXP wk_obv_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_obv_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12375,6 +13235,8 @@ SEXP wk_omega_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_omega_ratio_batch(SEXP e, SEXP a0) {
   struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_omega_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -12418,7 +13280,14 @@ SEXP wk_on_neck_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_on_neck_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12533,7 +13402,14 @@ SEXP wk_opening_marubozu_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_opening_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12765,7 +13641,10 @@ SEXP wk_ou_half_life_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_ou_half_life_batch(SEXP e, SEXP a0, SEXP a1) {
   struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ou_half_life_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -12808,7 +13687,14 @@ SEXP wk_overnight_gap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_overnight_gap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -12898,6 +13784,8 @@ SEXP wk_pain_index_update(SEXP e, SEXP a0) {
 }
 SEXP wk_pain_index_batch(SEXP e, SEXP a0) {
   struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_pain_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -12941,7 +13829,10 @@ SEXP wk_pair_spread_z_score_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_pair_spread_z_score_batch(SEXP e, SEXP a0, SEXP a1) {
   struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_pair_spread_z_score_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -12984,7 +13875,10 @@ SEXP wk_pairwise_beta_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_pairwise_beta_batch(SEXP e, SEXP a0, SEXP a1) {
   struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_pairwise_beta_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -13027,7 +13921,14 @@ SEXP wk_parkinson_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
 }
 SEXP wk_parkinson_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13072,7 +13973,10 @@ SEXP wk_pearson_correlation_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_pearson_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
   struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_pearson_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -13150,6 +14054,8 @@ SEXP wk_percent_b_update(SEXP e, SEXP a0) {
 }
 SEXP wk_percent_b_batch(SEXP e, SEXP a0) {
   struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_percent_b_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13193,6 +14099,8 @@ SEXP wk_percentage_trailing_stop_update(SEXP e, SEXP a0) {
 }
 SEXP wk_percentage_trailing_stop_batch(SEXP e, SEXP a0) {
   struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_percentage_trailing_stop_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13271,7 +14179,14 @@ SEXP wk_pgo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_pgo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13316,7 +14231,14 @@ SEXP wk_piercing_dark_cloud_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
 }
 SEXP wk_piercing_dark_cloud_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13396,7 +14318,14 @@ SEXP wk_pivot_reversal_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_pivot_reversal_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13441,7 +14370,14 @@ SEXP wk_plus_di_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_plus_di_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13486,7 +14422,14 @@ SEXP wk_plus_dm_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_plus_dm_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13531,6 +14474,8 @@ SEXP wk_pmo_update(SEXP e, SEXP a0) {
 }
 SEXP wk_pmo_batch(SEXP e, SEXP a0) {
   struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_pmo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13617,6 +14562,8 @@ SEXP wk_polarized_fractal_efficiency_update(SEXP e, SEXP a0) {
 }
 SEXP wk_polarized_fractal_efficiency_batch(SEXP e, SEXP a0) {
   struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_polarized_fractal_efficiency_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13660,6 +14607,8 @@ SEXP wk_ppo_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ppo_batch(SEXP e, SEXP a0) {
   struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ppo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13703,6 +14652,8 @@ SEXP wk_ppo_histogram_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ppo_histogram_batch(SEXP e, SEXP a0) {
   struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ppo_histogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13746,7 +14697,14 @@ SEXP wk_profile_shape_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_profile_shape_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13791,6 +14749,8 @@ SEXP wk_profit_factor_update(SEXP e, SEXP a0) {
 }
 SEXP wk_profit_factor_batch(SEXP e, SEXP a0) {
   struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_profit_factor_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -13881,7 +14841,14 @@ SEXP wk_projection_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
 }
 SEXP wk_projection_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13926,7 +14893,14 @@ SEXP wk_psar_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_psar_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -13971,7 +14945,14 @@ SEXP wk_pvi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_pvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -14061,7 +15042,14 @@ SEXP wk_qstick_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
 }
 SEXP wk_qstick_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -14188,6 +15176,8 @@ SEXP wk_r_squared_update(SEXP e, SEXP a0) {
 }
 SEXP wk_r_squared_batch(SEXP e, SEXP a0) {
   struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_r_squared_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14309,6 +15299,8 @@ SEXP wk_realized_volatility_update(SEXP e, SEXP a0) {
 }
 SEXP wk_realized_volatility_batch(SEXP e, SEXP a0) {
   struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_realized_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14352,6 +15344,8 @@ SEXP wk_recovery_factor_update(SEXP e, SEXP a0) {
 }
 SEXP wk_recovery_factor_batch(SEXP e, SEXP a0) {
   struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_recovery_factor_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14395,7 +15389,14 @@ SEXP wk_rectangle_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_rectangle_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -14440,6 +15441,8 @@ SEXP wk_reflex_update(SEXP e, SEXP a0) {
 }
 SEXP wk_reflex_batch(SEXP e, SEXP a0) {
   struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_reflex_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14483,6 +15486,8 @@ SEXP wk_regime_label_update(SEXP e, SEXP a0) {
 }
 SEXP wk_regime_label_batch(SEXP e, SEXP a0) {
   struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_regime_label_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14616,6 +15621,8 @@ SEXP wk_renko_trailing_stop_update(SEXP e, SEXP a0) {
 }
 SEXP wk_renko_trailing_stop_batch(SEXP e, SEXP a0) {
   struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_renko_trailing_stop_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14717,7 +15724,14 @@ SEXP wk_rickshaw_man_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_rickshaw_man_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -14762,7 +15776,14 @@ SEXP wk_rising_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
 }
 SEXP wk_rising_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -14807,6 +15828,8 @@ SEXP wk_rmi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rmi_batch(SEXP e, SEXP a0) {
   struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rmi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14850,6 +15873,8 @@ SEXP wk_roc_update(SEXP e, SEXP a0) {
 }
 SEXP wk_roc_batch(SEXP e, SEXP a0) {
   struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_roc_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14893,6 +15918,8 @@ SEXP wk_rocp_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rocp_batch(SEXP e, SEXP a0) {
   struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rocp_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14936,6 +15963,8 @@ SEXP wk_rocr_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rocr_batch(SEXP e, SEXP a0) {
   struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rocr_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -14979,6 +16008,8 @@ SEXP wk_rocr100_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rocr100_batch(SEXP e, SEXP a0) {
   struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rocr100_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15022,7 +16053,14 @@ SEXP wk_rogers_satchell_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
 }
 SEXP wk_rogers_satchell_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -15102,7 +16140,10 @@ SEXP wk_rolling_correlation_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_rolling_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
   struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rolling_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -15145,7 +16186,10 @@ SEXP wk_rolling_covariance_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_rolling_covariance_batch(SEXP e, SEXP a0, SEXP a1) {
   struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rolling_covariance_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -15188,6 +16232,8 @@ SEXP wk_rolling_iqr_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rolling_iqr_batch(SEXP e, SEXP a0) {
   struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rolling_iqr_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15231,6 +16277,8 @@ SEXP wk_rolling_min_max_scaler_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rolling_min_max_scaler_batch(SEXP e, SEXP a0) {
   struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rolling_min_max_scaler_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15274,6 +16322,8 @@ SEXP wk_rolling_percentile_rank_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rolling_percentile_rank_batch(SEXP e, SEXP a0) {
   struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rolling_percentile_rank_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15317,6 +16367,8 @@ SEXP wk_rolling_quantile_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rolling_quantile_batch(SEXP e, SEXP a0) {
   struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rolling_quantile_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15360,7 +16412,14 @@ SEXP wk_rolling_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_rolling_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -15405,6 +16464,8 @@ SEXP wk_roofing_filter_update(SEXP e, SEXP a0) {
 }
 SEXP wk_roofing_filter_batch(SEXP e, SEXP a0) {
   struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_roofing_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15448,6 +16509,8 @@ SEXP wk_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rsi_batch(SEXP e, SEXP a0) {
   struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15491,6 +16554,8 @@ SEXP wk_rsx_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rsx_batch(SEXP e, SEXP a0) {
   struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rsx_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15583,7 +16648,14 @@ SEXP wk_rvi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_rvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -15628,6 +16700,8 @@ SEXP wk_rvi_volatility_update(SEXP e, SEXP a0) {
 }
 SEXP wk_rvi_volatility_batch(SEXP e, SEXP a0) {
   struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_rvi_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15716,6 +16790,8 @@ SEXP wk_sample_entropy_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sample_entropy_batch(SEXP e, SEXP a0) {
   struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sample_entropy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -15759,7 +16835,14 @@ SEXP wk_sar_ext_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_sar_ext_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -15804,7 +16887,14 @@ SEXP wk_seasonal_z_score_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_seasonal_z_score_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -15849,7 +16939,14 @@ SEXP wk_separating_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_separating_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -15986,7 +17083,14 @@ SEXP wk_session_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_session_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16031,6 +17135,8 @@ SEXP wk_shannon_entropy_update(SEXP e, SEXP a0) {
 }
 SEXP wk_shannon_entropy_batch(SEXP e, SEXP a0) {
   struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_shannon_entropy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16074,7 +17180,14 @@ SEXP wk_shark_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
 }
 SEXP wk_shark_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16119,6 +17232,8 @@ SEXP wk_sharpe_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sharpe_ratio_batch(SEXP e, SEXP a0) {
   struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sharpe_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16162,7 +17277,14 @@ SEXP wk_shooting_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_shooting_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16207,7 +17329,14 @@ SEXP wk_short_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_short_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16287,6 +17416,8 @@ SEXP wk_sine_wave_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sine_wave_batch(SEXP e, SEXP a0) {
   struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sine_wave_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16330,6 +17461,8 @@ SEXP wk_sine_weighted_ma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sine_weighted_ma_batch(SEXP e, SEXP a0) {
   struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sine_weighted_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16373,7 +17506,14 @@ SEXP wk_single_prints_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_single_prints_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16418,6 +17558,8 @@ SEXP wk_skewness_update(SEXP e, SEXP a0) {
 }
 SEXP wk_skewness_batch(SEXP e, SEXP a0) {
   struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_skewness_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16461,6 +17603,8 @@ SEXP wk_sma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sma_batch(SEXP e, SEXP a0) {
   struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16504,7 +17648,14 @@ SEXP wk_smi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_smi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16549,6 +17700,8 @@ SEXP wk_smma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_smma_batch(SEXP e, SEXP a0) {
   struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_smma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16641,6 +17794,8 @@ SEXP wk_sortino_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sortino_ratio_batch(SEXP e, SEXP a0) {
   struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sortino_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -16684,7 +17839,10 @@ SEXP wk_spearman_correlation_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_spearman_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
   struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_spearman_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -16727,7 +17885,14 @@ SEXP wk_spinning_top_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_spinning_top_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16772,7 +17937,10 @@ SEXP wk_spread_ar1_coefficient_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_spread_ar1_coefficient_batch(SEXP e, SEXP a0, SEXP a1) {
   struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_spread_ar1_coefficient_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -16864,7 +18032,10 @@ SEXP wk_spread_hurst_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_spread_hurst_batch(SEXP e, SEXP a0, SEXP a1) {
   struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_spread_hurst_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -16907,7 +18078,14 @@ SEXP wk_stalled_pattern_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_stalled_pattern_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -16952,6 +18130,8 @@ SEXP wk_standard_error_update(SEXP e, SEXP a0) {
 }
 SEXP wk_standard_error_batch(SEXP e, SEXP a0) {
   struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_standard_error_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17089,6 +18269,8 @@ SEXP wk_stc_update(SEXP e, SEXP a0) {
 }
 SEXP wk_stc_batch(SEXP e, SEXP a0) {
   struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_stc_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17132,6 +18314,8 @@ SEXP wk_std_dev_update(SEXP e, SEXP a0) {
 }
 SEXP wk_std_dev_batch(SEXP e, SEXP a0) {
   struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_std_dev_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17175,6 +18359,8 @@ SEXP wk_step_trailing_stop_update(SEXP e, SEXP a0) {
 }
 SEXP wk_step_trailing_stop_batch(SEXP e, SEXP a0) {
   struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_step_trailing_stop_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17218,6 +18404,8 @@ SEXP wk_sterling_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_sterling_ratio_batch(SEXP e, SEXP a0) {
   struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_sterling_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17261,7 +18449,14 @@ SEXP wk_stick_sandwich_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_stick_sandwich_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17306,6 +18501,8 @@ SEXP wk_stoch_rsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_stoch_rsi_batch(SEXP e, SEXP a0) {
   struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_stoch_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17394,7 +18591,14 @@ SEXP wk_stochastic_cci_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_stochastic_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17439,6 +18643,8 @@ SEXP wk_super_smoother_update(SEXP e, SEXP a0) {
 }
 SEXP wk_super_smoother_batch(SEXP e, SEXP a0) {
   struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_super_smoother_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17527,6 +18733,8 @@ SEXP wk_t3_update(SEXP e, SEXP a0) {
 }
 SEXP wk_t3_batch(SEXP e, SEXP a0) {
   struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_t3_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17570,6 +18778,8 @@ SEXP wk_tail_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_tail_ratio_batch(SEXP e, SEXP a0) {
   struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_tail_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -17648,7 +18858,14 @@ SEXP wk_takuri_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
 }
 SEXP wk_takuri_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17693,7 +18910,14 @@ SEXP wk_tasuki_gap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_tasuki_gap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17738,7 +18962,14 @@ SEXP wk_td_camouflage_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_td_camouflage_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17783,7 +19014,14 @@ SEXP wk_td_clop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_td_clop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17828,7 +19066,14 @@ SEXP wk_td_clopwin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_td_clopwin_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17873,7 +19118,14 @@ SEXP wk_td_combo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_td_combo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17918,7 +19170,14 @@ SEXP wk_td_countdown_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_td_countdown_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -17963,7 +19222,14 @@ SEXP wk_td_d_wave_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_td_d_wave_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18008,7 +19274,14 @@ SEXP wk_td_de_marker_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_td_de_marker_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18053,7 +19326,14 @@ SEXP wk_td_differential_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_td_differential_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18188,7 +19468,14 @@ SEXP wk_td_open_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_td_open_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18233,7 +19520,14 @@ SEXP wk_td_pressure_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
 }
 SEXP wk_td_pressure_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18278,7 +19572,14 @@ SEXP wk_td_propulsion_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_td_propulsion_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18368,7 +19669,14 @@ SEXP wk_td_rei_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
 }
 SEXP wk_td_rei_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18505,7 +19813,14 @@ SEXP wk_td_setup_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_td_setup_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18550,7 +19865,14 @@ SEXP wk_td_trap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_td_trap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18595,6 +19917,8 @@ SEXP wk_tema_update(SEXP e, SEXP a0) {
 }
 SEXP wk_tema_batch(SEXP e, SEXP a0) {
   struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_tema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -18673,7 +19997,14 @@ SEXP wk_three_drives_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_three_drives_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18718,7 +20049,14 @@ SEXP wk_three_inside_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
 }
 SEXP wk_three_inside_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18763,7 +20101,14 @@ SEXP wk_three_line_break_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_three_line_break_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18851,7 +20196,14 @@ SEXP wk_three_line_strike_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_three_line_strike_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18896,7 +20248,14 @@ SEXP wk_three_outside_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_three_outside_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18941,7 +20300,14 @@ SEXP wk_three_soldiers_or_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
 }
 SEXP wk_three_soldiers_or_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -18986,7 +20352,14 @@ SEXP wk_three_stars_in_south_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
 }
 SEXP wk_three_stars_in_south_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19031,7 +20404,14 @@ SEXP wk_thrusting_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_thrusting_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19190,6 +20570,8 @@ SEXP wk_tii_update(SEXP e, SEXP a0) {
 }
 SEXP wk_tii_batch(SEXP e, SEXP a0) {
   struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_tii_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -19233,7 +20615,14 @@ SEXP wk_time_based_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
 }
 SEXP wk_time_based_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19320,7 +20709,14 @@ SEXP wk_tower_top_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_tower_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19487,7 +20883,14 @@ SEXP wk_trade_volume_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_trade_volume_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19532,6 +20935,8 @@ SEXP wk_trend_label_update(SEXP e, SEXP a0) {
 }
 SEXP wk_trend_label_batch(SEXP e, SEXP a0) {
   struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_trend_label_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -19575,6 +20980,8 @@ SEXP wk_trend_strength_index_update(SEXP e, SEXP a0) {
 }
 SEXP wk_trend_strength_index_batch(SEXP e, SEXP a0) {
   struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_trend_strength_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -19618,6 +21025,8 @@ SEXP wk_trendflex_update(SEXP e, SEXP a0) {
 }
 SEXP wk_trendflex_batch(SEXP e, SEXP a0) {
   struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_trendflex_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -19661,7 +21070,10 @@ SEXP wk_treynor_ratio_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_treynor_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
   struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_treynor_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -19704,7 +21116,14 @@ SEXP wk_triangle_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
 }
 SEXP wk_triangle_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19749,6 +21168,8 @@ SEXP wk_trima_update(SEXP e, SEXP a0) {
 }
 SEXP wk_trima_batch(SEXP e, SEXP a0) {
   struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_trima_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -19827,7 +21248,14 @@ SEXP wk_triple_top_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_triple_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19872,7 +21300,14 @@ SEXP wk_tristar_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_tristar_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -19917,6 +21352,8 @@ SEXP wk_trix_update(SEXP e, SEXP a0) {
 }
 SEXP wk_trix_batch(SEXP e, SEXP a0) {
   struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_trix_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -19960,7 +21397,14 @@ SEXP wk_true_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_true_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20005,6 +21449,8 @@ SEXP wk_tsf_update(SEXP e, SEXP a0) {
 }
 SEXP wk_tsf_batch(SEXP e, SEXP a0) {
   struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_tsf_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20048,6 +21494,8 @@ SEXP wk_tsf_oscillator_update(SEXP e, SEXP a0) {
 }
 SEXP wk_tsf_oscillator_batch(SEXP e, SEXP a0) {
   struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_tsf_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20091,6 +21539,8 @@ SEXP wk_tsi_update(SEXP e, SEXP a0) {
 }
 SEXP wk_tsi_batch(SEXP e, SEXP a0) {
   struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_tsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20134,7 +21584,14 @@ SEXP wk_tsv_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_tsv_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20224,7 +21681,14 @@ SEXP wk_ttm_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_ttm_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20269,7 +21733,14 @@ SEXP wk_turn_of_month_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_turn_of_month_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20314,7 +21785,14 @@ SEXP wk_tweezer_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
 }
 SEXP wk_tweezer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20359,7 +21837,14 @@ SEXP wk_twiggs_money_flow_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_twiggs_money_flow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20404,7 +21889,14 @@ SEXP wk_two_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_two_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20449,7 +21941,14 @@ SEXP wk_typical_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
 }
 SEXP wk_typical_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20494,6 +21993,8 @@ SEXP wk_ulcer_index_update(SEXP e, SEXP a0) {
 }
 SEXP wk_ulcer_index_batch(SEXP e, SEXP a0) {
   struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_ulcer_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20537,7 +22038,14 @@ SEXP wk_ultimate_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
 }
 SEXP wk_ultimate_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20582,7 +22090,14 @@ SEXP wk_unique_three_river_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_unique_three_river_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20627,6 +22142,8 @@ SEXP wk_universal_oscillator_update(SEXP e, SEXP a0) {
 }
 SEXP wk_universal_oscillator_batch(SEXP e, SEXP a0) {
   struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_universal_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20705,7 +22222,14 @@ SEXP wk_upside_gap_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP 
 }
 SEXP wk_upside_gap_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20750,7 +22274,14 @@ SEXP wk_upside_gap_two_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
 }
 SEXP wk_upside_gap_two_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -20795,6 +22326,8 @@ SEXP wk_upside_potential_ratio_update(SEXP e, SEXP a0) {
 }
 SEXP wk_upside_potential_ratio_batch(SEXP e, SEXP a0) {
   struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_upside_potential_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20885,6 +22418,8 @@ SEXP wk_value_at_risk_update(SEXP e, SEXP a0) {
 }
 SEXP wk_value_at_risk_batch(SEXP e, SEXP a0) {
   struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_value_at_risk_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20928,6 +22463,8 @@ SEXP wk_variance_update(SEXP e, SEXP a0) {
 }
 SEXP wk_variance_batch(SEXP e, SEXP a0) {
   struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_variance_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -20971,7 +22508,10 @@ SEXP wk_variance_ratio_update(SEXP e, SEXP a0, SEXP a1) {
 }
 SEXP wk_variance_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
   struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_variance_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
@@ -21014,6 +22554,8 @@ SEXP wk_vertical_horizontal_filter_update(SEXP e, SEXP a0) {
 }
 SEXP wk_vertical_horizontal_filter_batch(SEXP e, SEXP a0) {
   struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_vertical_horizontal_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -21057,6 +22599,8 @@ SEXP wk_vidya_update(SEXP e, SEXP a0) {
 }
 SEXP wk_vidya_batch(SEXP e, SEXP a0) {
   struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_vidya_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -21151,6 +22695,8 @@ SEXP wk_volatility_of_volatility_update(SEXP e, SEXP a0) {
 }
 SEXP wk_volatility_of_volatility_batch(SEXP e, SEXP a0) {
   struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_volatility_of_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -21194,7 +22740,14 @@ SEXP wk_volatility_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
 }
 SEXP wk_volatility_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21239,7 +22792,14 @@ SEXP wk_volty_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_volty_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21373,7 +22933,14 @@ SEXP wk_volume_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
 }
 SEXP wk_volume_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21418,7 +22985,14 @@ SEXP wk_volume_price_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
 }
 SEXP wk_volume_price_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21515,7 +23089,14 @@ SEXP wk_volume_rsi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_volume_rsi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21732,7 +23313,14 @@ SEXP wk_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21826,7 +23414,14 @@ SEXP wk_vwma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
 }
 SEXP wk_vwma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21871,7 +23466,14 @@ SEXP wk_vzo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_vzo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21916,7 +23518,14 @@ SEXP wk_wad_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
 }
 SEXP wk_wad_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -21961,6 +23570,8 @@ SEXP wk_wave_pm_update(SEXP e, SEXP a0) {
 }
 SEXP wk_wave_pm_batch(SEXP e, SEXP a0) {
   struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_wave_pm_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -22049,7 +23660,14 @@ SEXP wk_wedge_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
 }
 SEXP wk_wedge_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -22094,7 +23712,14 @@ SEXP wk_weighted_close_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
 }
 SEXP wk_weighted_close_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -22139,7 +23764,14 @@ SEXP wk_wick_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_wick_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -22229,7 +23861,14 @@ SEXP wk_williams_r_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
 }
 SEXP wk_williams_r_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -22274,6 +23913,8 @@ SEXP wk_win_rate_update(SEXP e, SEXP a0) {
 }
 SEXP wk_win_rate_batch(SEXP e, SEXP a0) {
   struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_win_rate_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -22317,6 +23958,8 @@ SEXP wk_wma_update(SEXP e, SEXP a0) {
 }
 SEXP wk_wma_batch(SEXP e, SEXP a0) {
   struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_wma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -22411,7 +24054,14 @@ SEXP wk_yang_zhang_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
 }
 SEXP wk_yang_zhang_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -22456,7 +24106,14 @@ SEXP wk_yoyo_exit_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
 }
 SEXP wk_yoyo_exit_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
   for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
@@ -22501,6 +24158,8 @@ SEXP wk_z_score_update(SEXP e, SEXP a0) {
 }
 SEXP wk_z_score_batch(SEXP e, SEXP a0) {
   struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_z_score_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
@@ -22636,6 +24295,8 @@ SEXP wk_zlema_update(SEXP e, SEXP a0) {
 }
 SEXP wk_zlema_batch(SEXP e, SEXP a0) {
   struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
   R_xlen_t n = Rf_xlength(a0);
   SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
   wickra_zlema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);

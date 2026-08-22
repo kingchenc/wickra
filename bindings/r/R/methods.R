@@ -53,8 +53,29 @@ batch <- function(object, ...) {
 #' @rdname batch
 #' @export
 batch.wickra_indicator <- function(object, ...) {
+  cols <- list(...)
+  if (length(cols) == 0L) {
+    stop("batch() needs at least one input column", call. = FALSE)
+  }
+  # The native routine takes its row count from the first column and indexes
+  # every other column with it, so a shorter column would be read past its end.
+  # It also expects doubles: an integer vector such as `1:100` has a different
+  # internal representation, and reading it as doubles yields nonsense.
+  cols <- lapply(seq_along(cols), function(i) {
+    column <- cols[[i]]
+    if (!is.numeric(column)) {
+      stop(sprintf("batch() column %d must be numeric, got %s",
+                   i, class(column)[1L]), call. = FALSE)
+    }
+    as.double(column)
+  })
+  sizes <- vapply(cols, length, integer(1L))
+  if (any(sizes != sizes[1L])) {
+    stop(sprintf("batch() columns must all have the same length; got %s",
+                 paste(sizes, collapse = ", ")), call. = FALSE)
+  }
   do.call(".Call", c(list(paste0("wk_", object$prefix, "_batch"), object$ptr),
-                     list(...), list(PACKAGE = "wickra")))
+                     cols, list(PACKAGE = "wickra")))
 }
 
 #' Reset an indicator to its warmup state

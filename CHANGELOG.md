@@ -53,6 +53,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   No indicator in the catalogue computes a variance as `E[x²] − E[x]²` any more. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **R binding: `batch()` with mismatched column lengths crashed R.** The native
+  routine takes its row count from the first column and indexes every other
+  column with it, so a shorter column was read past its end — a segfault
+  reachable from ordinary R code, e.g. passing a three-element timestamp
+  alongside full OHLCV vectors. `batch()` now coerces every column with
+  `as.double()` (an integer vector such as `1:100` was previously reinterpreted
+  as doubles) and rejects a length or type mismatch with a clear message. The
+  generated C carries the same guards plus a null-handle check, so a direct
+  `.Call` that bypasses the R layer is refused too.
 - **`warmup_period()` was one too small for the directional-movement family.**
   `PlusDm`, `MinusDm`, `PlusDi`, `MinusDi` and `Dx` reported `period`, but the
   first candle only seeds the previous bar, so seeding starts on bar 2 and the
