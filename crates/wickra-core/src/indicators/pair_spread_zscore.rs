@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::{ShiftedMoments, ShiftedPairMoments};
 use crate::traits::Indicator;
 
 /// Z-score of the log-spread `ln(a) − β·ln(b)` between two assets.
@@ -24,8 +25,11 @@ use crate::traits::Indicator;
 /// `beta_period` controls how much history the hedge ratio adapts over, and
 /// `z_period` controls the look-back for the mean and dispersion of the spread.
 ///
-/// Each `update` is O(1): five running sums maintain the rolling OLS and two
-/// more maintain the rolling spread mean/variance. A flat `ln(b)` window has
+/// Each `update` is O(1): one shifted pair accumulator maintains the rolling
+/// OLS and one shifted scalar accumulator the rolling spread mean/variance.
+/// Both are centred on a reference point drawn from inside their own window, so
+/// the moments stay on the scale of the spread rather than of the log-level.
+/// A flat `ln(b)` window has
 /// zero variance and the hedge ratio is undefined; `β` is then taken as `0`,
 /// reducing the spread to `ln(a)`. A flat spread window (zero dispersion)
 /// yields a z-score of `0` rather than `NaN`.
@@ -52,16 +56,13 @@ use crate::traits::Indicator;
 pub struct PairSpreadZScore {
     beta_period: usize,
     z_period: usize,
-    // Rolling OLS of y = ln(a) on x = ln(b).
+    // Rolling OLS of y = ln(a) on x = ln(b). Channel `a` of the accumulator is
+    // the regressor x, channel `b` the regressand y.
     reg: VecDeque<(f64, f64)>,
-    sum_x: f64,
-    sum_y: f64,
-    sum_xx: f64,
-    sum_xy: f64,
+    reg_moments: ShiftedPairMoments,
     // Rolling mean/variance of the spread.
     spreads: VecDeque<f64>,
-    sum_s: f64,
-    sum_ss: f64,
+    spread_moments: ShiftedMoments,
 }
 
 impl PairSpreadZScore {
@@ -98,13 +99,9 @@ impl PairSpreadZScore {
             beta_period,
             z_period,
             reg: VecDeque::with_capacity(beta_period),
-            sum_x: 0.0,
-            sum_y: 0.0,
-            sum_xx: 0.0,
-            sum_xy: 0.0,
+            reg_moments: ShiftedPairMoments::new(),
             spreads: VecDeque::with_capacity(z_period),
-            sum_s: 0.0,
-            sum_ss: 0.0,
+            spread_moments: ShiftedMoments::new(),
         })
     }
 
@@ -124,33 +121,29 @@ impl PairSpreadZScore {
         if self.reg.len() < self.beta_period {
             return None;
         }
-        let n = self.beta_period as f64;
-        let mean_x = self.sum_x / n;
-        let mean_y = self.sum_y / n;
-        let var_x = (self.sum_xx / n - mean_x * mean_x).max(0.0);
+        let n = self.beta_period;
+        let var_x = self.reg_moments.var_a(n);
         if var_x == 0.0 {
             return Some(0.0);
         }
-        let cov = self.sum_xy / n - mean_x * mean_y;
-        Some(cov / var_x)
+        Some(self.reg_moments.cov(n) / var_x)
     }
 
     fn push_spread(&mut self, s: f64) -> Option<f64> {
         if self.spreads.len() == self.z_period {
             let old = self.spreads.pop_front().expect("non-empty");
-            self.sum_s -= old;
-            self.sum_ss -= old * old;
+            self.spread_moments.evict(old);
         }
         self.spreads.push_back(s);
-        self.sum_s += s;
-        self.sum_ss += s * s;
+        self.spread_moments.push(s);
+        if self.spread_moments.needs_reseed(self.z_period) {
+            self.spread_moments.reseed(self.spreads.iter().copied());
+        }
         if self.spreads.len() < self.z_period {
             return None;
         }
-        let m = self.z_period as f64;
-        let mean_s = self.sum_s / m;
-        let var_s = (self.sum_ss / m - mean_s * mean_s).max(0.0);
-        let std_s = var_s.sqrt();
+        let mean_s = self.spread_moments.mean(self.z_period);
+        let std_s = self.spread_moments.std_dev(self.z_period);
         if std_s == 0.0 {
             // A flat spread window has no dispersion to standardise against.
             return Some(0.0);
@@ -175,16 +168,13 @@ impl Indicator for PairSpreadZScore {
         let y = a.ln();
         if self.reg.len() == self.beta_period {
             let (ox, oy) = self.reg.pop_front().expect("non-empty");
-            self.sum_x -= ox;
-            self.sum_y -= oy;
-            self.sum_xx -= ox * ox;
-            self.sum_xy -= ox * oy;
+            self.reg_moments.evict(ox, oy);
         }
         self.reg.push_back((x, y));
-        self.sum_x += x;
-        self.sum_y += y;
-        self.sum_xx += x * x;
-        self.sum_xy += x * y;
+        self.reg_moments.push(x, y);
+        if self.reg_moments.needs_reseed(self.beta_period) {
+            self.reg_moments.reseed(self.reg.iter().copied());
+        }
         let beta = self.hedge_ratio()?;
         let spread = y - beta * x;
         self.push_spread(spread)
@@ -192,13 +182,9 @@ impl Indicator for PairSpreadZScore {
 
     fn reset(&mut self) {
         self.reg.clear();
-        self.sum_x = 0.0;
-        self.sum_y = 0.0;
-        self.sum_xx = 0.0;
-        self.sum_xy = 0.0;
+        self.reg_moments.reset();
         self.spreads.clear();
-        self.sum_s = 0.0;
-        self.sum_ss = 0.0;
+        self.spread_moments.reset();
     }
 
     #[inline]
@@ -247,8 +233,8 @@ mod tests {
         let mut z = PairSpreadZScore::new(2, 2).unwrap();
         assert_eq!(z.update((100.0, 100.0)), None);
         assert_eq!(z.update((100.0, 100.0)), None);
-        // The ±1 result is exact in real arithmetic; the variance is computed
-        // via Σs²−mean² so a few ulps of cancellation error remain.
+        // The ±1 result is exact in real arithmetic; a few ulps of rounding
+        // remain in the centred variance.
         assert_relative_eq!(z.update((110.0, 100.0)).unwrap(), 1.0, epsilon = 1e-9);
         assert_relative_eq!(z.update((105.0, 100.0)).unwrap(), -1.0, epsilon = 1e-9);
         assert_relative_eq!(z.update((130.0, 100.0)).unwrap(), 1.0, epsilon = 1e-9);
@@ -293,6 +279,80 @@ mod tests {
         z.reset();
         assert!(!z.is_ready());
         assert_eq!(z.update((100.0, 100.0)), None);
+    }
+
+    /// Both windows used to accumulate raw power sums of the log-prices, which
+    /// cancel catastrophically once the log-level is large relative to the
+    /// log-spread — and a tight spread between two high-priced legs is exactly
+    /// the regime this indicator exists for. Measured against the two-pass
+    /// reference below, a 0.01% spread at a price level of 1e5 came out with a
+    /// relative error of 66 — the sign of the signal was not even reliable.
+    /// Centring both accumulators takes the same case to 3.7e-11.
+    #[test]
+    fn tight_spread_at_a_high_price_level_matches_a_two_pass_reference() {
+        const N: usize = 600;
+        const BETA_P: usize = 20;
+        const Z_P: usize = 30;
+        const LEVEL: f64 = 1e5;
+        const SPREAD: f64 = 1e-4;
+
+        let pairs: Vec<(f64, f64)> = (0..N)
+            .map(|i| {
+                let t = i as f64;
+                let a = LEVEL * (1.0 + SPREAD * (t * 0.11).sin());
+                let b = LEVEL * (1.0 + SPREAD * 0.8 * (t * 0.07).cos());
+                (a, b)
+            })
+            .collect();
+
+        // Two-pass reference: every window statistic is computed from the live
+        // window about its own mean, which has no cancellation to speak of.
+        let xs: Vec<f64> = pairs.iter().map(|&(_, b)| b.ln()).collect();
+        let ys: Vec<f64> = pairs.iter().map(|&(a, _)| a.ln()).collect();
+        let mut spreads: Vec<f64> = Vec::new();
+        let mut expected: Vec<Option<f64>> = vec![None; N];
+        for (i, slot) in expected.iter_mut().enumerate().skip(BETA_P - 1) {
+            let window = i + 1 - BETA_P..=i;
+            let (xw, yw) = (&xs[window.clone()], &ys[window]);
+            let count = BETA_P as f64;
+            let mean_x = xw.iter().sum::<f64>() / count;
+            let mean_y = yw.iter().sum::<f64>() / count;
+            let var_x = xw.iter().map(|v| (v - mean_x) * (v - mean_x)).sum::<f64>() / count;
+            let cov = xw
+                .iter()
+                .zip(yw)
+                .map(|(u, v)| (u - mean_x) * (v - mean_y))
+                .sum::<f64>()
+                / count;
+            let spread = yw[BETA_P - 1] - (cov / var_x) * xw[BETA_P - 1];
+            spreads.push(spread);
+            if spreads.len() < Z_P {
+                continue;
+            }
+            let recent = &spreads[spreads.len() - Z_P..];
+            let count = Z_P as f64;
+            let mean_s = recent.iter().sum::<f64>() / count;
+            let dispersion = (recent
+                .iter()
+                .map(|v| (v - mean_s) * (v - mean_s))
+                .sum::<f64>()
+                / count)
+                .sqrt();
+            *slot = Some((spread - mean_s) / dispersion);
+        }
+
+        let mut z = PairSpreadZScore::new(BETA_P, Z_P).unwrap();
+        let mut compared = 0_usize;
+        for (got, want) in pairs.iter().map(|p| z.update(*p)).zip(&expected) {
+            assert_eq!(got.is_some(), want.is_some());
+            if let (Some(got), Some(want)) = (got, *want) {
+                compared += 1;
+                assert_relative_eq!(got, want, max_relative = 1e-9);
+            }
+        }
+        // `warmup_period` samples are consumed before the first emission, so
+        // every later sample yields one value.
+        assert_eq!(compared, N - z.warmup_period() + 1);
     }
 
     #[test]

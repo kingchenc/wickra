@@ -76,6 +76,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   generic pair of series, so a caller feeding prices was exposed; it now
   measures exactly zero deviation from a two-pass reference at a price level
   of 1e5. Golden fixtures move in the last digits only (worst 1.3e-09).
+- **`PairSpreadZScore` was the worst case of the same defect, and its own
+  purpose was what exposed it.** It regresses `ln(a)` on `ln(b)` and z-scores
+  the residual, so the quantity it measures — the spread between two
+  cointegrated legs — is by construction tiny next to the log-levels it is
+  derived from, and both of its accumulators were raw power sums. Two legs
+  priced at 1e5 with a 0.01% spread, the regime a statistical-arbitrage signal
+  is built for, measured a relative error of 66 against a two-pass reference:
+  the magnitude was meaningless and the sign was not reliable either. At 1e8 it
+  reached 125. Centring the regression on a shifted pair accumulator and the
+  spread window on a shifted scalar one takes the same two cases to 3.7e-11 and
+  6.0e-11; the residual is the z-score's own division by a small dispersion,
+  not the accumulator. The golden fixture moves in 42 of its 80 cells, all
+  toward the reference: its worst deviation from an independent two-pass
+  computation falls from 4.7e-09 to 1.5e-13.
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and
