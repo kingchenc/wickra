@@ -3,7 +3,6 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
-use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// Standard Error of the regression line fit over the last `period` inputs.
@@ -27,11 +26,20 @@ use crate::traits::Indicator;
 /// drives [`crate::BollingerBands`]-style bands around a regression instead of
 /// around an SMA — when the price hugs its trend, `StdErr` is small.
 ///
-/// Each `update` is O(1): the `Σx` and `Σxx` terms depend only on `period`
-/// and are precomputed once, while `Σy`, `Σxy`, and `Σy²` are maintained
-/// incrementally as the window slides. Tiny floating-point cancellation
-/// noise that could drive the residual sum of squares slightly negative is
-/// clamped to zero before the square root.
+/// Each `update` is O(period): the `Σx` and `Σxx` terms depend only on
+/// `period` and are precomputed once, but the residuals are summed directly
+/// over the window rather than reconstructed from rolling sums.
+///
+/// That is a deliberate trade. The residual sum of squares *can* be written as
+/// `Σ(y − ȳ)² − slope²·S_xx`, which slides in constant time, and this indicator
+/// did exactly that. But the two terms converge as the fit improves, so the
+/// subtraction cancels precisely when the answer is smallest: on a line
+/// carrying a wobble of 1e-4 around a price of 100 the constant-time form was
+/// 6.2e-08 out, and at a wobble of 1e-8 it was off by 215% — for the case the
+/// indicator is most likely to be asked about, a market hugging its trend.
+/// Summing the residuals costs one further pass over a window the indicator
+/// already holds, and is what the sibling [`crate::StandardErrorBands`] and
+/// [`crate::LinRegChannel`] have always done.
 ///
 /// # Example
 ///
@@ -49,10 +57,8 @@ use crate::traits::Indicator;
 pub struct StandardError {
     period: usize,
     window: VecDeque<f64>,
-    sum_x: f64,
     /// `n·Σxx − (Σx)²` — OLS denominator, constant in `period`.
     denom: f64,
-    trend: ShiftedTrend,
 }
 
 impl StandardError {
@@ -78,9 +84,7 @@ impl StandardError {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            trend: ShiftedTrend::new(),
         })
     }
 
@@ -100,35 +104,48 @@ impl Indicator for StandardError {
             return None;
         }
         if self.window.len() == self.period {
-            let front = self.window.pop_front().expect("non-empty");
-            self.trend.slide(front);
+            self.window.pop_front();
         }
-        let index = self.window.len();
         self.window.push_back(value);
-        self.trend.push(value, index);
-        if self.trend.needs_reseed(self.period) {
-            self.trend.reseed(self.window.iter().copied());
-        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let slope = (n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom;
-        // Invariant under the shift, and this is the expression that was
-        // collapsing: on shifted values its terms are of the order of the
-        // deviation inside the window rather than of the price level.
-        let mean_y = self.trend.sum_y() / n;
-        let ss_total = self.trend.sum_y_sq() - n * mean_y * mean_y;
-        // S_xx = denom / n
+        // Two passes over the window, on deviations from its mean. On that
+        // scale the fitted line passes through `(mean_x, 0)`, so a residual is
+        // never formed as the difference of two numbers the size of the price,
+        // and the residual sum of squares is never rebuilt by subtraction.
+        let mean_x = (n - 1.0) / 2.0;
+        // `S_xx = Σ(x − x̄)²` over the index, which is `denom / n` and depends
+        // only on `period`.
         let s_xx = self.denom / n;
-        let rss = (ss_total - slope * slope * s_xx).max(0.0);
+        // Anchored on a value from inside the window rather than on its mean.
+        // The mean is a computed quantity carrying rounding at the scale of the
+        // price -- around 1e-08 at a level of 1e8 -- and every residual would
+        // inherit it. Subtracting a stored input instead is exact whenever the
+        // two share an exponent, which prices within one window always do.
+        let anchor = *self.window.front().expect("the window is full");
+        let mut sum_z = 0.0;
+        for &y in &self.window {
+            sum_z += y - anchor;
+        }
+        let mean_z = sum_z / n;
+        let mut sum_xz = 0.0;
+        for (i, &y) in self.window.iter().enumerate() {
+            sum_xz += (i as f64 - mean_x) * (y - anchor - mean_z);
+        }
+        let slope = sum_xz / s_xx;
+        let mut rss = 0.0;
+        for (i, &y) in self.window.iter().enumerate() {
+            let residual = (y - anchor - mean_z) - slope * (i as f64 - mean_x);
+            rss += residual * residual;
+        }
         Some((rss / (n - 2.0)).sqrt())
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.trend.reset();
     }
 
     #[inline]
@@ -293,7 +310,7 @@ mod tests {
     /// sums of the price. At a level of 1e8 the total collapsed far enough that
     /// the subtraction clamped to zero, so the indicator reported a *perfect*
     /// fit for a series it had not fitted at all -- a relative error of exactly
-    /// 1. Scored against an exact rational computation it is now 8.7e-15.
+    /// 1. Scored against an exact rational computation it is now 3.1e-16.
     #[test]
     fn standard_error_at_a_high_price_level_does_not_collapse() {
         const P: usize = 20;
@@ -309,6 +326,66 @@ mod tests {
             assert!(stderr > 0.0, "collapsed to zero at bar {i}");
             compared += 1;
             assert_relative_eq!(stderr, want, max_relative = 1e-9);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
+    }
+    /// The residual sum of squares used to be rebuilt as
+    /// `Σ(y − ȳ)² − slope²·S_xx`, which slides in constant time but cancels
+    /// exactly when the fit is good and the answer is smallest. Scored against
+    /// exact rational arithmetic on a straight line carrying a small wobble:
+    ///
+    /// ```text
+    ///   wobble 1e-4 on a price of 100     6.2e-08  ->  5.5e-14
+    ///   wobble 1e-8 on a price of 100     2.148    ->  7.4e-10
+    ///   wobble 1e-4 on a price of 1e8     3.4e-02  ->  7.2e-11
+    /// ```
+    ///
+    /// A relative error of 2.148 is not a rounding problem; the reported spread
+    /// had no relationship to the data. A market hugging its trend is precisely
+    /// what this indicator is asked about, so the constant-time form failed in
+    /// its own best case.
+    #[test]
+    fn a_near_perfect_fit_still_reports_a_meaningful_spread() {
+        const P: usize = 20;
+        const BARS: usize = 240;
+        const WOBBLE: f64 = 1e-8;
+
+        let data: Vec<f64> = (0..BARS)
+            .map(|i| {
+                let t = i as f64;
+                100.0 + 0.05 * t + WOBBLE * ((t * 1.7).sin() + 0.3 * (t * 0.41).cos())
+            })
+            .collect();
+
+        let mut ind = StandardError::new(P).unwrap();
+        let mean_x = (P as f64 - 1.0) / 2.0;
+        let mut compared = 0_usize;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(stderr) = ind.update(v) else {
+                continue;
+            };
+            let window = &data[i + 1 - P..=i];
+            let mean = window.iter().sum::<f64>() / P as f64;
+            let (mut sxy, mut sxx) = (0.0, 0.0);
+            for (j, &y) in window.iter().enumerate() {
+                let dx = j as f64 - mean_x;
+                sxy += dx * (y - mean);
+                sxx += dx * dx;
+            }
+            let slope = sxy / sxx;
+            let sse: f64 = window
+                .iter()
+                .enumerate()
+                .map(|(j, &y)| {
+                    let r = (y - mean) - slope * (j as f64 - mean_x);
+                    r * r
+                })
+                .sum();
+            let want = (sse / (P as f64 - 2.0)).sqrt();
+            // The old form clamped to zero here and reported a perfect fit.
+            assert!(stderr > 0.0, "collapsed to zero at bar {i}");
+            compared += 1;
+            assert_relative_eq!(stderr, want, max_relative = 1e-6);
         }
         assert_eq!(compared, data.len() - ind.warmup_period() + 1);
     }

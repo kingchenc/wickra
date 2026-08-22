@@ -3,7 +3,6 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
-use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// Detrended (residual) standard deviation over the last `period` inputs.
@@ -31,10 +30,12 @@ use crate::traits::Indicator;
 /// textbook standard error of estimate with `n − 2` residual degrees of
 /// freedom.
 ///
-/// Each `update` is O(1) via the same rolling sums as
-/// [`crate::LinearRegression`], plus a running `Σy²`. Floating-point
-/// cancellation noise in the residual is clamped to zero before the square
-/// root.
+/// Each `update` is O(period): the residuals are summed directly over the
+/// window rather than reconstructed as `Σ(y − ȳ)² − slope²·S_xx`. That
+/// constant-time form cancels exactly when the fit is good and the answer is
+/// smallest — on a line carrying a wobble of 1e-4 around a price of 100 it was
+/// 6.2e-08 out, and at 1e-8 it was off by 215%. See [`crate::StandardError`],
+/// which shares the expression and differs only in the divisor.
 ///
 /// # Example
 ///
@@ -52,10 +53,8 @@ use crate::traits::Indicator;
 pub struct DetrendedStdDev {
     period: usize,
     window: VecDeque<f64>,
-    sum_x: f64,
     /// `n·Σxx − (Σx)²` — OLS denominator, constant in `period`.
     denom: f64,
-    trend: ShiftedTrend,
 }
 
 impl DetrendedStdDev {
@@ -81,9 +80,7 @@ impl DetrendedStdDev {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            trend: ShiftedTrend::new(),
         })
     }
 
@@ -103,34 +100,48 @@ impl Indicator for DetrendedStdDev {
             return None;
         }
         if self.window.len() == self.period {
-            let front = self.window.pop_front().expect("non-empty");
-            self.trend.slide(front);
+            self.window.pop_front();
         }
-        let index = self.window.len();
         self.window.push_back(value);
-        self.trend.push(value, index);
-        if self.trend.needs_reseed(self.period) {
-            self.trend.reseed(self.window.iter().copied());
-        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let slope = (n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom;
-        // Invariant under the shift, and this is the expression that was
-        // collapsing: on shifted values its terms are of the order of the
-        // deviation inside the window rather than of the price level.
-        let mean_y = self.trend.sum_y() / n;
-        let ss_total = self.trend.sum_y_sq() - n * mean_y * mean_y;
+        // Two passes over the window, on deviations from its mean. On that
+        // scale the fitted line passes through `(mean_x, 0)`, so a residual is
+        // never formed as the difference of two numbers the size of the price,
+        // and the residual sum of squares is never rebuilt by subtraction.
+        let mean_x = (n - 1.0) / 2.0;
+        // `S_xx = Σ(x − x̄)²` over the index, which is `denom / n` and depends
+        // only on `period`.
         let s_xx = self.denom / n;
-        let rss = (ss_total - slope * slope * s_xx).max(0.0);
+        // Anchored on a value from inside the window rather than on its mean.
+        // The mean is a computed quantity carrying rounding at the scale of the
+        // price -- around 1e-08 at a level of 1e8 -- and every residual would
+        // inherit it. Subtracting a stored input instead is exact whenever the
+        // two share an exponent, which prices within one window always do.
+        let anchor = *self.window.front().expect("the window is full");
+        let mut sum_z = 0.0;
+        for &y in &self.window {
+            sum_z += y - anchor;
+        }
+        let mean_z = sum_z / n;
+        let mut sum_xz = 0.0;
+        for (i, &y) in self.window.iter().enumerate() {
+            sum_xz += (i as f64 - mean_x) * (y - anchor - mean_z);
+        }
+        let slope = sum_xz / s_xx;
+        let mut rss = 0.0;
+        for (i, &y) in self.window.iter().enumerate() {
+            let residual = (y - anchor - mean_z) - slope * (i as f64 - mean_x);
+            rss += residual * residual;
+        }
         Some((rss / n).sqrt())
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.trend.reset();
     }
 
     #[inline]
@@ -269,7 +280,7 @@ mod tests {
     /// Same defect and same collapse as `StandardError`, which shares the
     /// expression and differs only in the divisor: at a price level of 1e8 the
     /// reconstructed residual sum of squares clamped to zero, reporting no
-    /// dispersion around the trend at all. Now 8.8e-15 against an exact
+    /// dispersion around the trend at all. Now 2.7e-16 against an exact
     /// rational computation.
     #[test]
     fn deviation_at_a_high_price_level_does_not_collapse() {
@@ -283,6 +294,52 @@ mod tests {
             assert!(sigma > 0.0, "collapsed to zero at bar {i}");
             compared += 1;
             assert_relative_eq!(sigma, (sse / P as f64).sqrt(), max_relative = 1e-9);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
+    }
+    /// Shares the expression, and the failure, with [`crate::StandardError`]:
+    /// rebuilding the residual sum of squares as `Σ(y − ȳ)² − slope²·S_xx`
+    /// cancels when the fit is good. On a straight line carrying a wobble of
+    /// 1e-8 around a price of 100 that form was off by 215%; summing the
+    /// residuals directly gives 7.4e-10.
+    #[test]
+    fn a_near_perfect_fit_still_reports_a_meaningful_deviation() {
+        const P: usize = 20;
+        const BARS: usize = 240;
+        const WOBBLE: f64 = 1e-8;
+
+        let data: Vec<f64> = (0..BARS)
+            .map(|i| {
+                let t = i as f64;
+                100.0 + 0.05 * t + WOBBLE * ((t * 1.7).sin() + 0.3 * (t * 0.41).cos())
+            })
+            .collect();
+
+        let mut ind = DetrendedStdDev::new(P).unwrap();
+        let mean_x = (P as f64 - 1.0) / 2.0;
+        let mut compared = 0_usize;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(sigma) = ind.update(v) else { continue };
+            let window = &data[i + 1 - P..=i];
+            let mean = window.iter().sum::<f64>() / P as f64;
+            let (mut sxy, mut sxx) = (0.0, 0.0);
+            for (j, &y) in window.iter().enumerate() {
+                let dx = j as f64 - mean_x;
+                sxy += dx * (y - mean);
+                sxx += dx * dx;
+            }
+            let slope = sxy / sxx;
+            let sse: f64 = window
+                .iter()
+                .enumerate()
+                .map(|(j, &y)| {
+                    let r = (y - mean) - slope * (j as f64 - mean_x);
+                    r * r
+                })
+                .sum();
+            assert!(sigma > 0.0, "collapsed to zero at bar {i}");
+            compared += 1;
+            assert_relative_eq!(sigma, (sse / P as f64).sqrt(), max_relative = 1e-6);
         }
         assert_eq!(compared, data.len() - ind.warmup_period() + 1);
     }

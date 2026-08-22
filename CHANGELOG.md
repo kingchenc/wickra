@@ -182,6 +182,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   zero, `HurstExponent` a log-log fit, and `DepthSlope` distances from the mid.
   The index-based OLS denominators (`n·Σx² − (Σx)²` over `0..period`) are exact
   arithmetic on small integers.
+- **`StandardError` and `DetrendedStdDev` no longer rebuild the residual sum of
+  squares by subtraction, and are now O(period) rather than O(1).** Both wrote
+  it as `Σ(y − ȳ)² − slope²·S_xx`, which slides in constant time but converges
+  to a difference of two nearly equal numbers as the fit improves — so it
+  cancels precisely when the answer is smallest, which is the case these
+  indicators exist to report. On a straight line carrying a small wobble,
+  scored against exact rational arithmetic:
+
+  | | before | after |
+  |---|---|---|
+  | wobble 1e-4 on a price of 100 | 6.2e-08 | 5.5e-14 |
+  | wobble 1e-8 on a price of 100 | 2.148 | 7.4e-10 |
+  | wobble 1e-4 on a price of 1e8 | 3.4e-02 | 7.2e-11 |
+  | one-unit wobble on 1e8, r² 0.88 | 8.7e-15 | 3.1e-16 |
+
+  A relative error of 2.148 means the reported spread had no relationship to the
+  data at all. The residuals are now summed directly over the window the
+  indicator already holds, which is what the siblings `StandardErrorBands` and
+  `LinRegChannel` have always done — `LinRegChannel` even documents why.
+
+  The residuals are anchored on a value taken from inside the window rather than
+  on the window mean. Centring on the mean is the obvious choice and is measured
+  as the worse one: the mean is a computed quantity carrying rounding at the
+  scale of the price, about 1e-08 at a level of 1e8, and every residual inherits
+  it. That alone put the last row of the table at 2.3e-14, worse than the
+  constant-time form it replaced; anchoring on a stored input, which is an exact
+  subtraction whenever the two share an exponent, brings it to 3.1e-16.
+
+  The cost is real and is stated rather than implied. At period 20 throughput
+  falls from an O(1) 126 Mupd/s to 27 Mupd/s, and at period 200 to 2.7 Mupd/s;
+  both now sit alongside `StandardErrorBands` (25 and 2.9), which was always
+  O(period). Correctness in the indicator's own best case is worth that.
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and
