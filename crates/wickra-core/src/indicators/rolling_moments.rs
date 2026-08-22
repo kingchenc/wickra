@@ -561,6 +561,64 @@ impl ShiftedHigherMoments {
     }
 }
 
+/// Population variance of each channel and their covariance, over a paired
+/// window, computed about that window's own means.
+///
+/// This is the same defect [`ShiftedPairMoments`] exists for, in the case where
+/// no accumulator is needed. Some indicators recompute their statistics from
+/// the live window on every update instead of maintaining running sums, and
+/// they were still doing it in the one-pass form `E[xy] − E[x]E[y]`, which
+/// cancels exactly as badly whether the power sums were carried across updates
+/// or built a microsecond ago. Recomputing does bound the *drift*; it does
+/// nothing at all about the cancellation.
+///
+/// Making a second pass costs one extra traversal of a window these callers
+/// already traverse, and there is no reference point to maintain because
+/// nothing survives the call.
+///
+/// The window must be non-empty; an empty one divides by zero, exactly as the
+/// hand-rolled accumulation it replaces did.
+pub(crate) fn centred_moments<I>(pairs: I) -> CentredMoments
+where
+    I: IntoIterator<Item = (f64, f64)> + Clone,
+{
+    let (mut sum_x, mut sum_y) = (0.0, 0.0);
+    let mut count = 0_usize;
+    for (x, y) in pairs.clone() {
+        sum_x += x;
+        sum_y += y;
+        count += 1;
+    }
+    let n = count as f64;
+    let (mean_x, mean_y) = (sum_x / n, sum_y / n);
+    let (mut var_x, mut var_y, mut cov) = (0.0, 0.0, 0.0);
+    for (x, y) in pairs {
+        let dx = x - mean_x;
+        let dy = y - mean_y;
+        var_x += dx * dx;
+        var_y += dy * dy;
+        cov += dx * dy;
+    }
+    CentredMoments {
+        // Clamped for the same reason [`ShiftedMoments::variance`] clamps: what
+        // is left is rounding noise, not a negative variance.
+        var_x: (var_x / n).max(0.0),
+        var_y: (var_y / n).max(0.0),
+        // Not clamped: a covariance is legitimately negative.
+        cov: cov / n,
+    }
+}
+
+/// The result of [`centred_moments`].
+pub(crate) struct CentredMoments {
+    /// Population variance of the first channel.
+    pub(crate) var_x: f64,
+    /// Population variance of the second channel.
+    pub(crate) var_y: f64,
+    /// Population covariance of the two channels.
+    pub(crate) cov: f64,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

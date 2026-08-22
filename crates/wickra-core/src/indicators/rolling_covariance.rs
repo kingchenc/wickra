@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedPairMoments;
 use crate::traits::Indicator;
 
 /// Rolling covariance of the **returns** of two synchronised series.
@@ -47,9 +48,7 @@ pub struct RollingCovariance {
     period: usize,
     prev: Option<(f64, f64)>,
     window: VecDeque<(f64, f64)>,
-    sum_x: f64,
-    sum_y: f64,
-    sum_xy: f64,
+    moments: ShiftedPairMoments,
 }
 
 impl RollingCovariance {
@@ -73,9 +72,7 @@ impl RollingCovariance {
             period,
             prev: None,
             window: VecDeque::with_capacity(period),
-            sum_x: 0.0,
-            sum_y: 0.0,
-            sum_xy: 0.0,
+            moments: ShiftedPairMoments::new(),
         })
     }
 
@@ -103,29 +100,23 @@ impl Indicator for RollingCovariance {
         let (rx, ry) = (x - px, y - py);
         if self.window.len() == self.period {
             let (ox, oy) = self.window.pop_front().expect("non-empty");
-            self.sum_x -= ox;
-            self.sum_y -= oy;
-            self.sum_xy -= ox * oy;
+            self.moments.evict(ox, oy);
         }
         self.window.push_back((rx, ry));
-        self.sum_x += rx;
-        self.sum_y += ry;
-        self.sum_xy += rx * ry;
+        self.moments.push(rx, ry);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean_x = self.sum_x / n;
-        let mean_y = self.sum_y / n;
-        Some(self.sum_xy / n - mean_x * mean_y)
+        Some(self.moments.cov(self.period))
     }
 
     fn reset(&mut self) {
         self.prev = None;
         self.window.clear();
-        self.sum_x = 0.0;
-        self.sum_y = 0.0;
-        self.sum_xy = 0.0;
+        self.moments.reset();
     }
 
     #[inline]
@@ -262,5 +253,52 @@ mod tests {
         assert_eq!(rc.update((1.0, 1.0)), None);
         assert_eq!(rc.update((2.0, 3.0)), None);
         assert!(rc.update((3.0, 5.0)).is_some());
+    }
+
+    /// The covariance was accumulated as `E[xy] - E[x]E[y]` over running sums
+    /// that were never rebuilt, so it carried both the cancellation of the
+    /// one-pass form and unbounded drift. A centred accumulator with a periodic
+    /// rebuild takes 2000 updates from 1.5e-11 to 3.3e-12 against a two-pass
+    /// reference, and bounds where that residual can go.
+    #[test]
+    fn matches_a_two_pass_reference_over_a_long_stream() {
+        const PERIOD: usize = 20;
+        let series: Vec<(f64, f64)> = (0..2000)
+            .map(|i| {
+                let t = i as f64;
+                (
+                    1e5 * (1.0 + 0.05 * (t * 0.11).sin()),
+                    1e5 * (1.0 + 0.04 * (t * 0.07).cos()),
+                )
+            })
+            .collect();
+
+        let mut ind = RollingCovariance::new(PERIOD).unwrap();
+        let (mut dx, mut dy): (Vec<f64>, Vec<f64>) = (Vec::new(), Vec::new());
+        let mut prev: Option<(f64, f64)> = None;
+        let mut compared = 0_usize;
+        for &(x, y) in &series {
+            let got = ind.update((x, y));
+            if let Some((px, py)) = prev {
+                dx.push(x - px);
+                dy.push(y - py);
+            }
+            prev = Some((x, y));
+            let Some(cov) = got else { continue };
+            let k = dx.len();
+            let (xs, ys) = (&dx[k - PERIOD..], &dy[k - PERIOD..]);
+            let n = PERIOD as f64;
+            let mean_x = xs.iter().sum::<f64>() / n;
+            let mean_y = ys.iter().sum::<f64>() / n;
+            let want = xs
+                .iter()
+                .zip(ys)
+                .map(|(u, v)| (u - mean_x) * (v - mean_y))
+                .sum::<f64>()
+                / n;
+            compared += 1;
+            assert_relative_eq!(cov, want, max_relative = 1e-10);
+        }
+        assert_eq!(compared, series.len() - ind.warmup_period() + 1);
     }
 }

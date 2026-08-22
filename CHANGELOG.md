@@ -90,6 +90,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   not the accumulator. The golden fixture moves in 42 of its 80 cells, all
   toward the reference: its worst deviation from an independent two-pass
   computation falls from 4.7e-09 to 1.5e-13.
+- **Recomputing a statistic from scratch does not fix the cancellation.**
+  Three indicators rebuilt their regression from the live window on every
+  update rather than carrying running sums, and were still doing it in the
+  one-pass form. Recomputing bounds the *drift*; it does nothing at all about
+  `E[xy] - E[x]E[y]`. `SpreadAr1Coefficient` and `OuHalfLife` were the exposed
+  pair: a cointegrated spread sits at a large constant offset with a small
+  wobble on top, which is the worst possible ratio for that expression. At a
+  spread of 5000 wobbling by 0.1 the half-life deviated 2.8e-06 from a two-pass
+  reference, and 2.6e-04 once the wobble tightened to 0.01.
+  `LeadLagCrossCorrelation` computed a correlation at every candidate lag the
+  same way and reached 2.2e-05 on a quantity bounded to [-1, 1]. All three now
+  make a second pass about the window means and match the reference exactly.
+  The two spread regressions also stop allocating a `Vec` per update, since the
+  pairs are now produced lazily and traversed twice instead of collected.
+- **Two more pairwise accumulators are centred.** `RollingCovariance` and
+  `KylesLambda` carried running sums that were never rebuilt, so they had both
+  the one-pass cancellation and unbounded drift. `KylesLambda` is the less
+  obvious of the two: signed volume is only centred on zero while order flow is
+  balanced, and a persistent one-sided imbalance moves its mean far from zero.
+  At a trade size around 1e8 with a 99% buy imbalance it measured 2.9e-09
+  against a two-pass reference, now 2.1e-12; `RollingCovariance` goes from
+  1.5e-11 to 3.3e-12.
+  `SpearmanCorrelation` was checked and deliberately left alone: it correlates
+  ranks, which are bounded by the window length, so the ratio that drives the
+  cancellation is O(1) by construction. Measured at 1.4e-14 and flat across
+  price levels from 1e2 to 1e8.
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and

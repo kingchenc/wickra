@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::centred_moments;
 use crate::traits::Indicator;
 
 /// Half-life of mean reversion of the spread `a − b`, from an Ornstein–Uhlenbeck
@@ -95,30 +96,20 @@ impl Indicator for OuHalfLife {
         if self.window.len() < self.period {
             return None;
         }
-        // OLS slope λ of Δsₜ on sₜ₋₁ over the window.
-        let spreads: Vec<f64> = self.window.iter().copied().collect();
-        let count = (spreads.len() - 1) as f64;
-        let mut sum_level = 0.0;
-        let mut sum_delta = 0.0;
-        let mut sum_ll = 0.0;
-        let mut sum_ld = 0.0;
-        for pair in spreads.windows(2) {
-            let level = pair[0];
-            let delta = pair[1] - pair[0];
-            sum_level += level;
-            sum_delta += delta;
-            sum_ll += level * level;
-            sum_ld += level * delta;
-        }
-        let mean_level = sum_level / count;
-        let mean_delta = sum_delta / count;
-        let var_level = sum_ll / count - mean_level * mean_level;
-        if var_level <= 0.0 {
+        // OLS slope λ of Δsₜ on sₜ₋₁ over the window. The (level, change)
+        // pairs are produced lazily and traversed twice rather than collected,
+        // so this no longer allocates per update either.
+        let moments = centred_moments(
+            self.window
+                .iter()
+                .zip(self.window.iter().skip(1))
+                .map(|(&level, &next)| (level, next - level)),
+        );
+        if moments.var_x <= 0.0 {
             // Flat spread: the regression has no defined slope.
             return Some(0.0);
         }
-        let cov = sum_ld / count - mean_level * mean_delta;
-        let lambda = cov / var_level;
+        let lambda = moments.cov / moments.var_x;
         if lambda >= 0.0 {
             // Not mean-reverting (random walk or diverging): no finite half-life.
             return Some(0.0);
@@ -150,6 +141,7 @@ impl Indicator for OuHalfLife {
 mod tests {
     use super::*;
     use crate::traits::BatchExt;
+    use approx::assert_relative_eq;
 
     #[test]
     fn rejects_period_below_three() {
@@ -264,5 +256,65 @@ mod tests {
         assert_eq!(hl.update((2.0, 0.0)), None);
         assert_eq!(hl.update((3.0, 0.0)), None);
         assert!(hl.update((4.0, 0.0)).is_some());
+    }
+
+    /// Same defect and same regime as `SpreadAr1Coefficient`: the spread of a
+    /// cointegrated pair sits at a large constant offset with only a small
+    /// wobble on top, and the regression accumulated raw power sums of that
+    /// offset level. On the series below -- a spread of 5000 wobbling by 0.1 --
+    /// the one-pass form deviates from a two-pass reference by 2.8e-06, and it
+    /// degrades as the spread tightens: 2.6e-04 at a wobble of 0.01. The
+    /// half-life is the more sensitive of the two spread regressions because it
+    /// inverts the slope. Centring the window makes it exact.
+    #[test]
+    fn offset_spread_matches_a_two_pass_reference() {
+        const PERIOD: usize = 20;
+        const BARS: usize = 400;
+
+        // The wobble oscillates fast enough to mean-revert several times inside
+        // a 20-bar window, so the regression reports a finite half-life rather
+        // than taking the not-mean-reverting branch.
+        let series: Vec<(f64, f64)> = (0..BARS)
+            .map(|i| {
+                let t = i as f64;
+                let base = 1e5 * (1.0 + 0.002 * (t * 0.01).sin());
+                (base + 5000.0 + 0.1 * (t * 0.9).sin(), base)
+            })
+            .collect();
+
+        let mut ind = OuHalfLife::new(PERIOD).unwrap();
+        let mut spreads: Vec<f64> = Vec::new();
+        let mut mean_reverting = 0_usize;
+        for &(a, b) in &series {
+            let got = ind.update((a, b));
+            spreads.push(a - b);
+            let Some(half_life) = got else { continue };
+            let window = &spreads[spreads.len() - PERIOD..];
+            let levels = &window[..PERIOD - 1];
+            let deltas: Vec<f64> = window.windows(2).map(|p| p[1] - p[0]).collect();
+            let n = (PERIOD - 1) as f64;
+            let mean_level = levels.iter().sum::<f64>() / n;
+            let mean_delta = deltas.iter().sum::<f64>() / n;
+            let var_level = levels
+                .iter()
+                .map(|v| (v - mean_level) * (v - mean_level))
+                .sum::<f64>()
+                / n;
+            let lambda = levels
+                .iter()
+                .zip(&deltas)
+                .map(|(u, v)| (u - mean_level) * (v - mean_delta))
+                .sum::<f64>()
+                / n
+                / var_level;
+            assert!(lambda < 0.0, "the probe series must mean-revert");
+            mean_reverting += 1;
+            assert_relative_eq!(
+                half_life,
+                -std::f64::consts::LN_2 / lambda,
+                max_relative = 1e-12
+            );
+        }
+        assert_eq!(mean_reverting, BARS - ind.warmup_period() + 1);
     }
 }

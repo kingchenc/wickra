@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::centred_moments;
 use crate::traits::Indicator;
 
 /// First-order autoregression coefficient `ρ` of the spread `a − b`.
@@ -105,30 +106,20 @@ impl Indicator for SpreadAr1Coefficient {
         if self.window.len() < self.period {
             return None;
         }
-        // OLS slope ρ of the level on its own lag over the window.
-        let spreads: Vec<f64> = self.window.iter().copied().collect();
-        let count = (spreads.len() - 1) as f64;
-        let mut sum_level = 0.0;
-        let mut sum_next = 0.0;
-        let mut sum_ll = 0.0;
-        let mut sum_ln = 0.0;
-        for pair in spreads.windows(2) {
-            let level = pair[0];
-            let next = pair[1];
-            sum_level += level;
-            sum_next += next;
-            sum_ll += level * level;
-            sum_ln += level * next;
-        }
-        let mean_level = sum_level / count;
-        let mean_next = sum_next / count;
-        let var_level = sum_ll / count - mean_level * mean_level;
-        if var_level <= 0.0 {
+        // OLS slope ρ of the level on its own lag over the window. The pairs
+        // are produced lazily and traversed twice rather than collected, so
+        // this no longer allocates per update either.
+        let moments = centred_moments(
+            self.window
+                .iter()
+                .zip(self.window.iter().skip(1))
+                .map(|(&level, &next)| (level, next)),
+        );
+        if moments.var_x <= 0.0 {
             // Flat spread: the regression has no defined slope.
             return Some(0.0);
         }
-        let cov = sum_ln / count - mean_level * mean_next;
-        Some(cov / var_level)
+        Some(moments.cov / moments.var_x)
     }
 
     fn reset(&mut self) {
@@ -271,5 +262,51 @@ mod tests {
         assert_eq!(ar1.update((2.0, 0.0)), None);
         assert_eq!(ar1.update((3.0, 0.0)), None);
         assert!(ar1.update((4.0, 0.0)).is_some());
+    }
+
+    /// A cointegrated pair trades at two different price levels, so the spread
+    /// carries a large constant offset with only a small wobble on top -- and
+    /// the regression was accumulating raw power sums of that offset level.
+    /// Two legs around 1e5 whose spread wobbles by 1e-3 measured 4.9e-08
+    /// against a two-pass reference. Centring the window makes it exact.
+    #[test]
+    fn offset_spread_matches_a_two_pass_reference() {
+        const PERIOD: usize = 20;
+        let series: Vec<(f64, f64)> = (0..400)
+            .map(|i| {
+                let t = f64::from(i);
+                let base = 1e5 * (1.0 + 0.01 * (t * 0.03).sin());
+                (base * 1.05 + 1e-3 * (t * 0.23).sin(), base)
+            })
+            .collect();
+
+        let mut ind = SpreadAr1Coefficient::new(PERIOD).unwrap();
+        let mut spreads: Vec<f64> = Vec::new();
+        let mut compared = 0_usize;
+        for &(a, b) in &series {
+            let got = ind.update((a, b));
+            spreads.push(a - b);
+            let Some(rho) = got else { continue };
+            let window = &spreads[spreads.len() - PERIOD..];
+            let levels = &window[..PERIOD - 1];
+            let nexts = &window[1..];
+            let n = (PERIOD - 1) as f64;
+            let mean_level = levels.iter().sum::<f64>() / n;
+            let mean_next = nexts.iter().sum::<f64>() / n;
+            let var_level = levels
+                .iter()
+                .map(|v| (v - mean_level) * (v - mean_level))
+                .sum::<f64>()
+                / n;
+            let cov = levels
+                .iter()
+                .zip(nexts)
+                .map(|(u, v)| (u - mean_level) * (v - mean_next))
+                .sum::<f64>()
+                / n;
+            compared += 1;
+            assert_relative_eq!(rho, cov / var_level, max_relative = 1e-12);
+        }
+        assert_eq!(compared, series.len() - ind.warmup_period() + 1);
     }
 }

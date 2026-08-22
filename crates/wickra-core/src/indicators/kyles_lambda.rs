@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedPairMoments;
 use crate::microstructure::TradeQuote;
 use crate::traits::Indicator;
 
@@ -62,10 +63,7 @@ pub struct KylesLambda {
     window: usize,
     prev_mid: Option<f64>,
     pairs: VecDeque<(f64, f64)>,
-    sum_q: f64,
-    sum_dm: f64,
-    sum_qq: f64,
-    sum_qdm: f64,
+    moments: ShiftedPairMoments,
 }
 
 impl KylesLambda {
@@ -90,10 +88,7 @@ impl KylesLambda {
             window,
             prev_mid: None,
             pairs: VecDeque::with_capacity(window),
-            sum_q: 0.0,
-            sum_dm: 0.0,
-            sum_qq: 0.0,
-            sum_qdm: 0.0,
+            moments: ShiftedPairMoments::new(),
         })
     }
 
@@ -105,29 +100,22 @@ impl KylesLambda {
     fn push_pair(&mut self, signed_vol: f64, delta_mid: f64) -> Option<f64> {
         if self.pairs.len() == self.window {
             let (old_q, old_dm) = self.pairs.pop_front().expect("non-empty");
-            self.sum_q -= old_q;
-            self.sum_dm -= old_dm;
-            self.sum_qq -= old_q * old_q;
-            self.sum_qdm -= old_q * old_dm;
+            self.moments.evict(old_q, old_dm);
         }
         self.pairs.push_back((signed_vol, delta_mid));
-        self.sum_q += signed_vol;
-        self.sum_dm += delta_mid;
-        self.sum_qq += signed_vol * signed_vol;
-        self.sum_qdm += signed_vol * delta_mid;
+        self.moments.push(signed_vol, delta_mid);
+        if self.moments.needs_reseed(self.window) {
+            self.moments.reseed(self.pairs.iter().copied());
+        }
         if self.pairs.len() < self.window {
             return None;
         }
-        let n = self.window as f64;
-        let mean_q = self.sum_q / n;
-        let mean_dm = self.sum_dm / n;
-        let var_q = (self.sum_qq / n - mean_q * mean_q).max(0.0);
-        let cov = self.sum_qdm / n - mean_q * mean_dm;
+        let var_q = self.moments.var_a(self.window);
         if var_q == 0.0 {
             // Constant signed-volume window has no defined slope.
             return Some(0.0);
         }
-        Some(cov / var_q)
+        Some(self.moments.cov(self.window) / var_q)
     }
 }
 
@@ -150,10 +138,7 @@ impl Indicator for KylesLambda {
     fn reset(&mut self) {
         self.prev_mid = None;
         self.pairs.clear();
-        self.sum_q = 0.0;
-        self.sum_dm = 0.0;
-        self.sum_qq = 0.0;
-        self.sum_qdm = 0.0;
+        self.moments.reset();
     }
 
     #[inline]
@@ -286,5 +271,57 @@ mod tests {
         kl.reset();
         assert!(!kl.is_ready());
         assert_eq!(kl.update(quotes_with_impact(1, 0.2)[0]), None);
+    }
+
+    /// Signed volume is only centred on zero while order flow is balanced. A
+    /// persistent one-sided imbalance moves its mean far from zero, and the
+    /// variance was then computed as `E[q^2] - E[q]^2` over running sums. At a
+    /// trade size around 1e8 with a 99% buy imbalance that measured 2.9e-09
+    /// against a two-pass reference; a centred accumulator gives 2.1e-12.
+    #[test]
+    fn one_sided_flow_at_size_matches_a_two_pass_reference() {
+        const WINDOW: usize = 20;
+        const BARS: i64 = 600;
+
+        let mut ind = KylesLambda::new(WINDOW).unwrap();
+        let (mut qs, mut deltas): (Vec<f64>, Vec<f64>) = (Vec::new(), Vec::new());
+        let mut prev_mid = 100.0;
+        let mut compared = 0_usize;
+        for i in 0..BARS {
+            let t = i as f64;
+            // Sells only where the sine dips below -0.99: a 99% buy imbalance.
+            let side = if (t * 0.37).sin() > -0.99 {
+                Side::Buy
+            } else {
+                Side::Sell
+            };
+            let size = 1e8 * (1.0 + 0.02 * (t * 0.19).cos());
+            let mid = 100.0 + 0.5 * (t * 0.05).sin();
+            let quote = TradeQuote::new(Trade::new(mid, size, side, i).unwrap(), mid).unwrap();
+            let got = ind.update(quote);
+            qs.push(if matches!(side, Side::Buy) {
+                size
+            } else {
+                -size
+            });
+            deltas.push(mid - prev_mid);
+            prev_mid = mid;
+            let Some(lambda) = got else { continue };
+            let k = qs.len();
+            let (xs, ys) = (&qs[k - WINDOW..], &deltas[k - WINDOW..]);
+            let n = WINDOW as f64;
+            let mean_q = xs.iter().sum::<f64>() / n;
+            let mean_d = ys.iter().sum::<f64>() / n;
+            let var_q = xs.iter().map(|v| (v - mean_q) * (v - mean_q)).sum::<f64>() / n;
+            let cov = xs
+                .iter()
+                .zip(ys)
+                .map(|(u, v)| (u - mean_q) * (v - mean_d))
+                .sum::<f64>()
+                / n;
+            compared += 1;
+            assert_relative_eq!(lambda, cov / var_q, max_relative = 1e-10);
+        }
+        assert_eq!(compared, BARS as usize - ind.warmup_period() + 1);
     }
 }
