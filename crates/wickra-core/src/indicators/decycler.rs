@@ -59,6 +59,11 @@ impl Decycler {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let arg = 0.707 * 2.0 * PI / period as f64;
         let c = arg.cos();
         let alpha = (c + arg.sin() - 1.0) / c;

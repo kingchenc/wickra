@@ -81,6 +81,11 @@ impl KaseDevStop {
                 message: "Kase DevStop period must be >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !dev.is_finite() || dev <= 0.0 {
             return Err(Error::NonPositiveMultiplier);
         }

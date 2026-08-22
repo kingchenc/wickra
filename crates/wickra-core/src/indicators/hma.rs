@@ -36,6 +36,11 @@ impl Hma {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let half = (period / 2).max(1);
         let smooth = (period as f64).sqrt().round() as usize;
         let smooth = smooth.max(1);

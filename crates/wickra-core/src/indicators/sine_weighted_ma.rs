@@ -59,6 +59,11 @@ impl SineWeightedMa {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let denom = period as f64 + 1.0;
         let weights: Vec<f64> = (0..period)
             .map(|i| (std::f64::consts::PI * (i as f64 + 1.0) / denom).sin())

@@ -65,6 +65,11 @@ impl SpreadHurst {
                 message: "spread Hurst needs period >= 8",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             max_lag: (period / 4).max(2),

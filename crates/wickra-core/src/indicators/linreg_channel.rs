@@ -69,6 +69,11 @@ impl LinRegChannel {
                 message: "linear regression channel needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !multiplier.is_finite() || multiplier <= 0.0 {
             return Err(Error::NonPositiveMultiplier);
         }

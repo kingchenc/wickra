@@ -58,6 +58,11 @@ impl DumplingTop {
                 message: "dumpling top needs period >= 5",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             closes: VecDeque::with_capacity(period),

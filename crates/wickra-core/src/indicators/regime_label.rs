@@ -76,9 +76,19 @@ impl RegimeLabel {
                 message: "regime label needs vol_period >= 2",
             });
         }
+        if vol_period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if lookback < 2 {
             return Err(Error::InvalidPeriod {
                 message: "regime label needs lookback >= 2",
+            });
+        }
+        if lookback > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
             });
         }
         Ok(Self {

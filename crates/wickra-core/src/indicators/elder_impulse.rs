@@ -55,6 +55,11 @@ impl ElderImpulse {
         if ema_period == 0 {
             return Err(Error::PeriodZero);
         }
+        if ema_period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             ema_period,
             macd_fast,

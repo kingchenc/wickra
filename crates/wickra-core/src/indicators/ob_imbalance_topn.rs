@@ -52,6 +52,11 @@ impl OrderBookImbalanceTopN {
         if levels == 0 {
             return Err(Error::PeriodZero);
         }
+        if levels > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             levels,
             has_emitted: false,

@@ -67,6 +67,11 @@ impl EaseOfMovement {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !divisor.is_finite() || divisor <= 0.0 {
             return Err(Error::NonPositiveMultiplier);
         }

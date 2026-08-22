@@ -85,6 +85,11 @@ impl SpreadBollingerBands {
                 message: "spread bollinger bands needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !num_std.is_finite() || num_std <= 0.0 {
             return Err(Error::InvalidParameter {
                 message: "spread bollinger bands needs num_std > 0",

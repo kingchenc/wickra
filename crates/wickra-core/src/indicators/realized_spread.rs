@@ -69,6 +69,11 @@ impl RealizedSpread {
         if horizon == 0 {
             return Err(Error::PeriodZero);
         }
+        if horizon > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             horizon,
             pending: VecDeque::with_capacity(horizon + 1),

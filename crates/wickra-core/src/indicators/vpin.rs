@@ -64,6 +64,11 @@ impl Vpin {
         if num_buckets == 0 {
             return Err(Error::PeriodZero);
         }
+        if num_buckets > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !bucket_volume.is_finite() || bucket_volume <= 0.0 {
             return Err(Error::InvalidParameter {
                 message: "VPIN bucket_volume must be finite and positive",

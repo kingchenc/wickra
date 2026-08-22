@@ -58,6 +58,11 @@ impl SuperSmoother {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let arg = std::f64::consts::SQRT_2 * PI / period as f64;
         let a1 = (-arg).exp();
         let b1 = 2.0 * a1 * arg.cos();

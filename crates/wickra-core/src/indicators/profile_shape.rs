@@ -61,9 +61,19 @@ impl ProfileShape {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if bins < 3 {
             return Err(Error::InvalidPeriod {
                 message: "profile shape needs bins >= 3",
+            });
+        }
+        if bins > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
             });
         }
         Ok(Self {

@@ -65,6 +65,11 @@ impl Alma {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !offset.is_finite() || !(0.0..=1.0).contains(&offset) {
             return Err(Error::InvalidPeriod {
                 message: "ALMA offset must be a finite value in [0, 1]",

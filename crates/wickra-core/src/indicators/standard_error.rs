@@ -68,6 +68,11 @@ impl StandardError {
                 message: "standard error needs period >= 3",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let n = period as f64;
         let sum_x = n * (n - 1.0) / 2.0;
         let sum_xx = (n - 1.0) * n * (2.0 * n - 1.0) / 6.0;

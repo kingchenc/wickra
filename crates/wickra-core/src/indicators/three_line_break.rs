@@ -58,6 +58,11 @@ impl ThreeLineBreak {
         if lines == 0 {
             return Err(Error::PeriodZero);
         }
+        if lines > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             lines,
             line_values: Vec::with_capacity(lines + 1),

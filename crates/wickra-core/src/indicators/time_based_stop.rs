@@ -55,6 +55,11 @@ impl TimeBasedStop {
         if max_bars == 0 {
             return Err(Error::PeriodZero);
         }
+        if max_bars > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             max_bars,
             bars_held: 0,

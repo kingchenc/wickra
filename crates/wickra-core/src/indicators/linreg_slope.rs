@@ -62,6 +62,11 @@ impl LinRegSlope {
                 message: "linear regression slope needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let n = period as f64;
         // Closed forms for x = 0, 1, …, period − 1.
         let sum_x = n * (n - 1.0) / 2.0;

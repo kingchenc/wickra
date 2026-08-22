@@ -47,6 +47,11 @@ impl Ema {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let alpha = 2.0 / (period as f64 + 1.0);
         Ok(Self {
             period,
@@ -218,6 +223,28 @@ impl Indicator for Ema {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Constructors size their buffers from the period, so an absurd value used
+    /// to abort the process before the caller saw anything: `usize::MAX` hit a
+    /// capacity overflow inside `Vec`, and a billion quietly reserved eight
+    /// gigabytes. Both are now rejected as an ordinary error.
+    #[test]
+    fn rejects_a_period_above_the_maximum() {
+        assert!(matches!(
+            Ema::new(usize::MAX),
+            Err(Error::InvalidPeriod { .. })
+        ));
+        assert!(matches!(
+            Ema::new(crate::error::MAX_PERIOD + 1),
+            Err(Error::InvalidPeriod { .. })
+        ));
+        assert!(matches!(
+            Ema::new(1_000_000_000),
+            Err(Error::InvalidPeriod { .. })
+        ));
+        // A sane period is untouched.
+        assert!(Ema::new(14).is_ok());
+    }
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 

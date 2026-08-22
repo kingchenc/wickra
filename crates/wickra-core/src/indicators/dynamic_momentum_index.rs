@@ -11,7 +11,7 @@ use crate::traits::Indicator;
 const STD_PERIOD: usize = 5; // volatility window
 const STD_AVG_PERIOD: usize = 10; // smoothing of the volatility
 const MIN_PERIOD: usize = 5; // fastest RSI lookback
-const MAX_PERIOD: usize = 30; // slowest RSI lookback
+const MAX_RSI_LOOKBACK: usize = 30; // slowest RSI lookback
 
 /// Dynamic Momentum Index — Tushar Chande's RSI whose lookback shrinks in
 /// volatile markets and lengthens in calm ones.
@@ -35,7 +35,7 @@ const MAX_PERIOD: usize = 30; // slowest RSI lookback
 /// the window length flexes. Output is bounded in `[0, 100]`; a flat market
 /// returns the neutral `50`.
 ///
-/// The first value lands after `MAX_PERIOD + 1 = 31` inputs, so the change
+/// The first value lands after `MAX_RSI_LOOKBACK + 1 = 31` inputs, so the change
 /// buffer always holds enough history for any dynamic lookback up to `30`.
 ///
 /// # Example
@@ -56,7 +56,7 @@ pub struct DynamicMomentumIndex {
     vol: StdDev,
     vol_avg: Sma,
     prev_close: Option<f64>,
-    /// The last `MAX_PERIOD` price changes, oldest at the front.
+    /// The last `MAX_RSI_LOOKBACK` price changes, oldest at the front.
     changes: VecDeque<f64>,
     last_vol_avg: Option<f64>,
     last_value: Option<f64>,
@@ -72,12 +72,17 @@ impl DynamicMomentumIndex {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             vol: StdDev::new(STD_PERIOD)?,
             vol_avg: Sma::new(STD_AVG_PERIOD)?,
             prev_close: None,
-            changes: VecDeque::with_capacity(MAX_PERIOD),
+            changes: VecDeque::with_capacity(MAX_RSI_LOOKBACK),
             last_vol_avg: None,
             last_value: None,
         })
@@ -97,12 +102,12 @@ impl DynamicMomentumIndex {
     fn dynamic_period(&self, vol: f64, vol_avg: f64) -> usize {
         if vol_avg <= 0.0 || vol <= 0.0 {
             // No measurable volatility -> slowest (calmest) lookback.
-            return MAX_PERIOD;
+            return MAX_RSI_LOOKBACK;
         }
         let vi = vol / vol_avg;
         let td = (self.period as f64 / vi).round();
         // td is finite and positive here; clamp into the valid band.
-        (td as usize).clamp(MIN_PERIOD, MAX_PERIOD)
+        (td as usize).clamp(MIN_PERIOD, MAX_RSI_LOOKBACK)
     }
 }
 
@@ -122,7 +127,7 @@ impl Indicator for DynamicMomentumIndex {
         // Record the price change.
         if let Some(prev) = self.prev_close {
             let change = input - prev;
-            if self.changes.len() == MAX_PERIOD {
+            if self.changes.len() == MAX_RSI_LOOKBACK {
                 self.changes.pop_front();
             }
             self.changes.push_back(change);
@@ -131,7 +136,7 @@ impl Indicator for DynamicMomentumIndex {
 
         let vol = self.vol.value()?;
         let vol_avg = self.last_vol_avg?;
-        if self.changes.len() < MAX_PERIOD {
+        if self.changes.len() < MAX_RSI_LOOKBACK {
             return None;
         }
 
@@ -139,7 +144,7 @@ impl Indicator for DynamicMomentumIndex {
         // Average gains and losses over the last `td` changes.
         let mut sum_gain = 0.0;
         let mut sum_loss = 0.0;
-        for &c in self.changes.iter().skip(MAX_PERIOD - td) {
+        for &c in self.changes.iter().skip(MAX_RSI_LOOKBACK - td) {
             if c > 0.0 {
                 sum_gain += c;
             } else if c < 0.0 {
@@ -167,9 +172,9 @@ impl Indicator for DynamicMomentumIndex {
     }
 
     fn warmup_period(&self) -> usize {
-        // The change buffer (MAX_PERIOD changes => MAX_PERIOD + 1 inputs) is the
+        // The change buffer (MAX_RSI_LOOKBACK changes => MAX_RSI_LOOKBACK + 1 inputs) is the
         // binding constraint; the volatility chain (5 + 10 - 1 = 14) is shorter.
-        MAX_PERIOD + 1
+        MAX_RSI_LOOKBACK + 1
     }
 
     fn is_ready(&self) -> bool {
@@ -255,12 +260,12 @@ mod tests {
         assert_eq!(dmi.dynamic_period(2.0, 1.0), 7);
         // Vi = 0.5 (calm) -> td = round(14 / 0.5) = 28.
         assert_eq!(dmi.dynamic_period(0.5, 1.0), 28);
-        // Extreme calm clamps to MAX_PERIOD; extreme volatility clamps to MIN.
-        assert_eq!(dmi.dynamic_period(0.1, 1.0), MAX_PERIOD);
+        // Extreme calm clamps to MAX_RSI_LOOKBACK; extreme volatility clamps to MIN.
+        assert_eq!(dmi.dynamic_period(0.1, 1.0), MAX_RSI_LOOKBACK);
         assert_eq!(dmi.dynamic_period(100.0, 1.0), MIN_PERIOD);
         // Zero volatility -> slowest lookback.
-        assert_eq!(dmi.dynamic_period(0.0, 1.0), MAX_PERIOD);
-        assert_eq!(dmi.dynamic_period(1.0, 0.0), MAX_PERIOD);
+        assert_eq!(dmi.dynamic_period(0.0, 1.0), MAX_RSI_LOOKBACK);
+        assert_eq!(dmi.dynamic_period(1.0, 0.0), MAX_RSI_LOOKBACK);
     }
 
     #[test]

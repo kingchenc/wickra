@@ -64,6 +64,11 @@ impl UpsidePotentialRatio {
                 message: "upside potential ratio needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !mar.is_finite() {
             return Err(Error::InvalidParameter {
                 message: "mar must be finite",

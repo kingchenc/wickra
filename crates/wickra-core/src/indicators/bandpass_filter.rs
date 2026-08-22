@@ -69,6 +69,11 @@ impl BandpassFilter {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !bandwidth.is_finite() || bandwidth <= 0.0 || bandwidth >= 1.0 {
             return Err(Error::InvalidParameter {
                 message: "bandpass bandwidth must be in (0, 1)",

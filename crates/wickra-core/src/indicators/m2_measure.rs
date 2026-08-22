@@ -65,6 +65,11 @@ impl M2Measure {
                 message: "m2 measure needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !risk_free.is_finite() || !benchmark_stddev.is_finite() || benchmark_stddev < 0.0 {
             return Err(Error::InvalidParameter {
                 message: "risk_free must be finite and benchmark_stddev finite and non-negative",

@@ -69,6 +69,11 @@ impl VarianceRatio {
                 message: "variance ratio needs q >= 2",
             });
         }
+        if q > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if period < q + 2 {
             return Err(Error::InvalidPeriod {
                 message: "variance ratio needs period >= q + 2",

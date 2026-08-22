@@ -69,6 +69,11 @@ impl Rsx {
         if length == 0 {
             return Err(Error::PeriodZero);
         }
+        if length > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let f18 = 3.0 / (length as f64 + 2.0);
         Ok(Self {
             length,

@@ -54,7 +54,7 @@ pub mod indicators;
 
 pub use cross_section::{CrossSection, Member};
 pub use derivatives::DerivativesTick;
-pub use error::{Error, Result};
+pub use error::{Error, Result, MAX_PERIOD};
 pub use indicators::DollarBar;
 pub use indicators::ImbalanceBar;
 pub use indicators::LineBreakBar;

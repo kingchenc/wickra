@@ -88,6 +88,11 @@ impl TtmSqueeze {
                 message: "TTM squeeze needs period >= 2 for the momentum regression",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !bb_mult.is_finite() || bb_mult <= 0.0 || !kc_mult.is_finite() || kc_mult <= 0.0 {
             return Err(Error::NonPositiveMultiplier);
         }

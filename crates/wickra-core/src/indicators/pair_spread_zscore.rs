@@ -79,9 +79,19 @@ impl PairSpreadZScore {
                 message: "pair spread z-score needs beta_period >= 2",
             });
         }
+        if beta_period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if z_period < 2 {
             return Err(Error::InvalidPeriod {
                 message: "pair spread z-score needs z_period >= 2",
+            });
+        }
+        if z_period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
             });
         }
         Ok(Self {

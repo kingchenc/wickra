@@ -64,6 +64,11 @@ impl ShannonEntropy {
                 message: "Shannon entropy needs bins >= 2",
             });
         }
+        if bins > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             bins,

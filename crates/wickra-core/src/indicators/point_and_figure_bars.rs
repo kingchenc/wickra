@@ -72,6 +72,11 @@ impl PointAndFigureBars {
         if reversal == 0 {
             return Err(Error::PeriodZero);
         }
+        if reversal > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             box_size,
             reversal,

@@ -57,6 +57,11 @@ impl RollingQuantile {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !quantile.is_finite() || !(0.0..=1.0).contains(&quantile) {
             return Err(Error::InvalidParameter {
                 message: "rolling quantile must be a finite value in [0.0, 1.0]",

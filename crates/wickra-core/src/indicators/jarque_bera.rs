@@ -58,6 +58,11 @@ impl JarqueBera {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if period < 4 {
             return Err(Error::InvalidPeriod {
                 message: "Jarque-Bera needs period >= 4",

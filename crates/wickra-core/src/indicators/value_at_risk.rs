@@ -58,6 +58,11 @@ impl ValueAtRisk {
                 message: "value-at-risk needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !confidence.is_finite() || confidence <= 0.0 || confidence >= 1.0 {
             return Err(Error::InvalidPeriod {
                 message: "confidence must lie strictly between 0 and 1",

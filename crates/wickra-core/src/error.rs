@@ -2,6 +2,26 @@
 
 use thiserror::Error;
 
+/// Largest window length any indicator will accept.
+///
+/// Nothing in the maths needs a bound, but the allocation does: a constructor
+/// sizes its buffers from the period, so `Ema::new(usize::MAX)` aborts with a
+/// capacity overflow and `Ema::new(1_000_000_000)` reserves eight gigabytes
+/// before the caller sees anything go wrong. Bindings make that easy to reach
+/// by accident — a mistyped literal, a period read from a config file.
+///
+/// `1 << 24` is 16777216: a single `f64` buffer of that length is 128 MiB, which
+/// is far past any real window while leaving `period` arithmetic such as
+/// `6 * period - 5` nowhere near overflowing. Exceeding it is reported as
+/// [`Error::InvalidPeriod`] rather than a panic.
+pub const MAX_PERIOD: usize = 1 << 24;
+
+/// Message carried by [`Error::InvalidPeriod`] when a period exceeds
+/// [`MAX_PERIOD`]. Deliberately does not repeat the number, so the two cannot
+/// drift apart.
+pub(crate) const PERIOD_ABOVE_MAX: &str =
+    "period exceeds the maximum supported window length (see MAX_PERIOD)";
+
 /// Errors that can occur when constructing or operating on an indicator.
 ///
 /// Marked `#[non_exhaustive]`: the set of validation failures grows as the

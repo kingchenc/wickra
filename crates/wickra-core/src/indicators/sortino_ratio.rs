@@ -54,6 +54,11 @@ impl SortinoRatio {
                 message: "sortino ratio needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             mar,

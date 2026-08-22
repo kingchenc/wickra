@@ -64,6 +64,11 @@ impl HasbrouckInformationShare {
                 message: "information share needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             prev: None,

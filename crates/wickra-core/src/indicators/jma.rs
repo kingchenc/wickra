@@ -67,6 +67,11 @@ impl Jma {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !phase.is_finite() {
             return Err(Error::InvalidPeriod {
                 message: "JMA phase must be a finite value",

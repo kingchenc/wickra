@@ -61,6 +61,11 @@ impl NewPriceLines {
                 message: "new price lines count must be >= 2",
             });
         }
+        if count > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             count,
             prev_close: None,

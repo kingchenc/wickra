@@ -62,6 +62,11 @@ impl Pin {
         if window == 0 {
             return Err(Error::PeriodZero);
         }
+        if window > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             window,
             sides: VecDeque::with_capacity(window),

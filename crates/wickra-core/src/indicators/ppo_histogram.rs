@@ -56,6 +56,11 @@ impl PpoHistogram {
         if signal == 0 {
             return Err(Error::PeriodZero);
         }
+        if signal > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             ppo: Ppo::new(fast, slow)?,
             signal_ema: Ema::new(signal)?,

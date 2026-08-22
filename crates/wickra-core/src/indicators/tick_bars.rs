@@ -68,6 +68,11 @@ impl TickBars {
         if ticks == 0 {
             return Err(Error::PeriodZero);
         }
+        if ticks > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             ticks,
             count: 0,

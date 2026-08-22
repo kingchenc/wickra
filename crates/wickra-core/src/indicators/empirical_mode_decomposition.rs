@@ -68,6 +68,11 @@ impl EmpiricalModeDecomposition {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !fraction.is_finite() || fraction <= 0.0 || fraction > 1.0 {
             return Err(Error::InvalidPeriod {
                 message: "fraction must be in (0, 1]",

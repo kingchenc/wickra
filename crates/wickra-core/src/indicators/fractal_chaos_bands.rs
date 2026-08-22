@@ -72,6 +72,11 @@ impl FractalChaosBands {
         if k == 0 {
             return Err(Error::PeriodZero);
         }
+        if k > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             k,
             window: VecDeque::with_capacity(2 * k + 1),

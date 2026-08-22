@@ -88,6 +88,11 @@ impl LeadLagCrossCorrelation {
                 message: "lead-lag cross-correlation needs window >= 2",
             });
         }
+        if window > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if max_lag == 0 {
             return Err(Error::InvalidPeriod {
                 message: "lead-lag cross-correlation needs max_lag >= 1",

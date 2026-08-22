@@ -77,6 +77,11 @@ impl BomarBands {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !coverage.is_finite() || coverage <= 0.0 || coverage > 1.0 {
             return Err(Error::InvalidParameter {
                 message: "bomar bands coverage must be a finite value in (0.0, 1.0]",

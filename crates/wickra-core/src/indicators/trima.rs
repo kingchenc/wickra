@@ -43,6 +43,11 @@ impl Trima {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let (n1, n2) = if period % 2 == 1 {
             (period.div_ceil(2), period.div_ceil(2))
         } else {

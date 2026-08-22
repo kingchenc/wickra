@@ -61,6 +61,11 @@ impl HighpassFilter {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let a = 0.707 * 2.0 * PI / period as f64;
         let alpha1 = (a.cos() + a.sin() - 1.0) / a.cos();
         Ok(Self {

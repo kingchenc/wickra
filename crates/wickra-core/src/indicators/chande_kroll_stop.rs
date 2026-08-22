@@ -76,6 +76,11 @@ impl ChandeKrollStop {
         if stop_period == 0 {
             return Err(Error::PeriodZero);
         }
+        if stop_period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             atr_period,
             atr_multiplier,

@@ -68,6 +68,11 @@ impl GrangerCausality {
                 message: "granger causality needs lag >= 1",
             });
         }
+        if lag > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if period < 3 * lag + 2 {
             return Err(Error::InvalidPeriod {
                 message: "granger causality needs period >= 3*lag + 2",

@@ -71,6 +71,11 @@ impl JumpIndicator {
                 message: "jump indicator needs period >= 2",
             });
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         if !threshold.is_finite() || threshold <= 0.0 {
             return Err(Error::InvalidParameter {
                 message: "jump indicator threshold must be finite and positive",

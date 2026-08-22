@@ -63,6 +63,11 @@ impl Sma {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         Ok(Self {
             period,
             buf: vec![0.0; period].into_boxed_slice(),
@@ -206,6 +211,21 @@ impl Indicator for Sma {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The same bound applies to every constructor that sizes a buffer from its
+    /// period; SMA allocates eagerly, so it is the sharpest case.
+    #[test]
+    fn rejects_a_period_above_the_maximum() {
+        assert!(matches!(
+            Sma::new(usize::MAX),
+            Err(Error::InvalidPeriod { .. })
+        ));
+        assert!(matches!(
+            Sma::new(crate::error::MAX_PERIOD + 1),
+            Err(Error::InvalidPeriod { .. })
+        ));
+        assert!(Sma::new(20).is_ok());
+    }
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
     use std::collections::VecDeque;

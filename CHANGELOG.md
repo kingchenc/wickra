@@ -56,6 +56,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **An absurd period aborted the process instead of returning an error.**
+  Constructors size their buffers from the period, and only `period == 0` was
+  rejected: `Ema::new(usize::MAX)` hit a capacity overflow inside `Vec` and
+  aborted, while `Ema::new(1_000_000_000)` quietly reserved eight gigabytes.
+  Bindings make that easy to reach by accident — a mistyped literal, a period
+  read from a config file. Every constructor that takes a window length now
+  also rejects anything above the new public `MAX_PERIOD` (`1 << 24`, i.e.
+  16777216) with `Error::InvalidPeriod`. A single `f64` buffer of that length is
+  128 MiB, far past any real window, and it leaves period arithmetic such as
+  `6 * period - 5` nowhere near overflowing. 222 bounds were added across 219
+  indicator files. The file-local `MAX_PERIOD` in `DynamicMomentumIndex`, which
+  meant something else entirely (its slowest RSI lookback), is renamed
+  `MAX_RSI_LOOKBACK`.
 - **Java binding: calling any method after `close()` crashed the JVM.** Every
   generated method read the `handle` field directly, so a call made after
   `close()` had already run the cleaner dereferenced freed memory and the JVM

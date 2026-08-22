@@ -55,6 +55,11 @@ impl Dpo {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let shift = period / 2 + 1;
         // The window must cover both the SMA (`period` prices) and the
         // look-back (`shift + 1` prices: the current bar plus `shift` history).

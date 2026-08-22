@@ -41,6 +41,11 @@ impl Wma {
         if period == 0 {
             return Err(Error::PeriodZero);
         }
+        if period > crate::error::MAX_PERIOD {
+            return Err(Error::InvalidPeriod {
+                message: crate::error::PERIOD_ABOVE_MAX,
+            });
+        }
         let n = period as f64;
         let weights_total = n * (n + 1.0) / 2.0;
         Ok(Self {
