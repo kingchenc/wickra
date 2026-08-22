@@ -116,6 +116,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ranks, which are bounded by the window length, so the ratio that drives the
   cancellation is O(1) by construction. Measured at 1.4e-14 and flat across
   price levels from 1e2 to 1e8.
+- **The whole linear-regression family was fitting on raw power sums.** Twelve
+  indicators built a least-squares fit of a window against its own index from
+  `Σy`, `Σxy` and `Σy²` of the raw prices. The slope is mathematically invariant
+  when a constant is subtracted from `y`, so this was avoidable throughout.
+  Scored against an *exact rational* computation of the same fit over 301
+  windows at a price level of 1e8 with a one-unit wobble:
+
+  | | before | after |
+  |---|---|---|
+  | `LinRegSlope`, `LinRegAngle` | 5.1e-04 | 1.0e-16 |
+  | `RSquared` | 5.5e+04 | 1.1e-14 |
+  | `StandardError` | 1.0 | 8.7e-15 |
+  | `DetrendedStdDev` | 1.0 | 8.8e-15 |
+  | `LinearRegression`, `LinRegIntercept`, `Tsf` | 2.2e-14 | 1.4e-16 |
+
+  `RSquared` was off by four orders of magnitude on a value defined to lie in
+  `[0, 1]`; only the clamp kept it in range. `StandardError` and
+  `DetrendedStdDev` are worse than they look at a relative error of exactly 1:
+  they reconstruct the residual sum of squares by subtracting the explained
+  variation from a collapsed total, the subtraction clamped at zero, and both
+  reported a *perfect* fit for a series they had not fitted at all.
+
+  The seven incremental ones now share a `ShiftedTrend` accumulator that holds
+  its sums relative to a reference point drawn from inside the window and
+  rebuilds once per window; the reference point is added back only where an
+  absolute price level is returned. `ProjectionBands` recomputes per bar and
+  centres its slope directly. `Cfo`, `Inertia`, `ProjectionOscillator` and
+  `TsfOscillator` inherit the fix through the indicators they wrap.
+- **`StandardErrorBands` and `LinRegChannel` formed their residuals at the price
+  level.** Both computed `y − (intercept + slope·i)` with each side the size of
+  the price, which throws away eight digits of a residual at a level of 1e8
+  before it is ever squared. Both now fit and take residuals on deviations from
+  the window mean, restoring it only for the band levels. The middle line
+  improves from 1.2e-15 to 1.4e-16 against the exact reference; the band levels
+  themselves cannot improve further, because they are returned as absolute
+  prices and a half-width of 0.7 on a price of 1e8 is quantised at 1.5e-08 by
+  the output representation alone. `TtmSqueeze` was checked and needs no change:
+  it already regresses a detrended series.
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and

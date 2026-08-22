@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// Time Series Forecast (`TSF`): the rolling least-squares line projected one bar
@@ -40,8 +41,7 @@ pub struct Tsf {
     window: VecDeque<f64>,
     sum_x: f64,
     denom: f64,
-    sum_y: f64,
-    sum_xy: f64,
+    trend: ShiftedTrend,
 }
 
 impl Tsf {
@@ -69,8 +69,7 @@ impl Tsf {
             window: VecDeque::with_capacity(period),
             sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            sum_y: 0.0,
-            sum_xy: 0.0,
+            trend: ShiftedTrend::new(),
         })
     }
 
@@ -90,28 +89,30 @@ impl Indicator for Tsf {
             return None;
         }
         if self.window.len() == self.period {
-            let y0 = self.window.pop_front().expect("non-empty");
-            self.sum_xy = self.sum_xy - self.sum_y + y0;
-            self.sum_y -= y0;
+            let front = self.window.pop_front().expect("non-empty");
+            self.trend.slide(front);
         }
-        let k = self.window.len() as f64;
+        let index = self.window.len();
         self.window.push_back(value);
-        self.sum_y += value;
-        self.sum_xy += k * value;
+        self.trend.push(value, index);
+        if self.trend.needs_reseed(self.period) {
+            self.trend.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let slope = (n * self.sum_xy - self.sum_x * self.sum_y) / self.denom;
-        let intercept = (self.sum_y - slope * self.sum_x) / n;
+        let slope = (n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom;
+        // A forecast of an absolute price level, so the reference point comes
+        // back here; the slope it is projected along is invariant.
+        let intercept = (self.trend.sum_y() - slope * self.sum_x) / n + self.trend.offset();
         Some(intercept + slope * n)
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_y = 0.0;
-        self.sum_xy = 0.0;
+        self.trend.reset();
     }
 
     #[inline]
@@ -177,5 +178,65 @@ mod tests {
         tsf.reset();
         assert!(!tsf.is_ready());
         assert_eq!(tsf.update(1.0), None);
+    }
+
+    /// Least-squares fit of a window against its own index, computed entirely
+    /// on deviations. Returns `(slope, mean, sse)`.
+    ///
+    /// Forming the residuals as `y - (intercept + slope*i)` instead, with both
+    /// sides the size of the price, is exactly what this file stopped doing:
+    /// at a price level of 1e8 that subtraction alone costs eight digits. On
+    /// the centred scale the fitted line is just `slope * (i - mean_x)`.
+    fn centred_fit(window: &[f64]) -> (f64, f64, f64) {
+        let n = window.len() as f64;
+        let mean = window.iter().sum::<f64>() / n;
+        let mean_x = (n - 1.0) / 2.0;
+        let (mut sxy, mut sxx) = (0.0, 0.0);
+        for (i, &y) in window.iter().enumerate() {
+            let dx = i as f64 - mean_x;
+            sxy += dx * (y - mean);
+            sxx += dx * dx;
+        }
+        let slope = sxy / sxx;
+        let mut sse = 0.0;
+        for (i, &y) in window.iter().enumerate() {
+            let r = (y - mean) - slope * (i as f64 - mean_x);
+            sse += r * r;
+        }
+        (slope, mean, sse)
+    }
+
+    /// A one-unit wobble on top of a large price level: the level-to-deviation
+    /// ratio is what drives the cancellation, and scaling the wobble with the
+    /// level instead keeps that ratio constant and hides the defect entirely.
+    fn high_level_series(bars: usize) -> Vec<f64> {
+        (0..bars)
+            .map(|i| {
+                let t = i as f64;
+                1e8 + ((t * 0.11).sin() + 0.4 * (t * 0.37).cos())
+            })
+            .collect()
+    }
+
+    /// The forecast is an absolute price level, so it restores the reference
+    /// point the sums are held relative to. Matching a centred fit at a level
+    /// of 1e8 pins that restoration together with the slope it projects along.
+    #[test]
+    fn forecast_at_a_high_price_level_matches_a_centred_fit() {
+        const P: usize = 20;
+        let data = high_level_series(400);
+        let mut ind = Tsf::new(P).unwrap();
+        let mut compared = 0_usize;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(forecast) = ind.update(v) else {
+                continue;
+            };
+            let (slope, mean, _) = centred_fit(&data[i + 1 - P..=i]);
+            let mean_x = (P as f64 - 1.0) / 2.0;
+            let want = mean + slope * (P as f64 - mean_x);
+            compared += 1;
+            assert_relative_eq!(forecast, want, max_relative = 1e-14);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
     }
 }

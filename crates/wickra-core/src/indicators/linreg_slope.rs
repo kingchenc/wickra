@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// Linear Regression Slope — the slope of a rolling least-squares fit.
@@ -44,10 +45,8 @@ pub struct LinRegSlope {
     sum_x: f64,
     /// Closed form of `n · Σxx − (Σx)²` — constant in `period`.
     denom: f64,
-    /// Running sum of the values currently in the window.
-    sum_y: f64,
-    /// Running `Σ(x · y)` where `x` is the position within the trailing window.
-    sum_xy: f64,
+    /// Rolling fit sums, held relative to a reference point inside the window.
+    trend: ShiftedTrend,
 }
 
 impl LinRegSlope {
@@ -76,8 +75,7 @@ impl LinRegSlope {
             window: VecDeque::with_capacity(period),
             sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            sum_y: 0.0,
-            sum_xy: 0.0,
+            trend: ShiftedTrend::new(),
         })
     }
 
@@ -97,30 +95,26 @@ impl Indicator for LinRegSlope {
             return None;
         }
         if self.window.len() == self.period {
-            // Sliding-window identity: when the window slides one step forward
-            // the indices `x` for every kept entry shift down by 1, so
-            //   new_sum_xy = old_sum_xy − old_sum_y + y0
-            // (`y0` is the popped front value).
-            let y0 = self.window.pop_front().expect("non-empty");
-            self.sum_xy = self.sum_xy - self.sum_y + y0;
-            self.sum_y -= y0;
+            let front = self.window.pop_front().expect("non-empty");
+            self.trend.slide(front);
         }
-        let k = self.window.len() as f64;
+        let index = self.window.len();
         self.window.push_back(value);
-        self.sum_y += value;
-        self.sum_xy += k * value;
+        self.trend.push(value, index);
+        if self.trend.needs_reseed(self.period) {
+            self.trend.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        Some((n * self.sum_xy - self.sum_x * self.sum_y) / self.denom)
+        Some((n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom)
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_y = 0.0;
-        self.sum_xy = 0.0;
+        self.trend.reset();
     }
 
     #[inline]
@@ -278,5 +272,63 @@ mod tests {
         let mut step = vec![1.0; 30];
         step.extend(std::iter::repeat_n(100.0, 30));
         check(&step, 7);
+    }
+
+    /// Least-squares fit of a window against its own index, computed entirely
+    /// on deviations. Returns `(slope, mean, sse)`.
+    ///
+    /// Forming the residuals as `y - (intercept + slope*i)` instead, with both
+    /// sides the size of the price, is exactly what this file stopped doing:
+    /// at a price level of 1e8 that subtraction alone costs eight digits. On
+    /// the centred scale the fitted line is just `slope * (i - mean_x)`.
+    fn centred_fit(window: &[f64]) -> (f64, f64, f64) {
+        let n = window.len() as f64;
+        let mean = window.iter().sum::<f64>() / n;
+        let mean_x = (n - 1.0) / 2.0;
+        let (mut sxy, mut sxx) = (0.0, 0.0);
+        for (i, &y) in window.iter().enumerate() {
+            let dx = i as f64 - mean_x;
+            sxy += dx * (y - mean);
+            sxx += dx * dx;
+        }
+        let slope = sxy / sxx;
+        let mut sse = 0.0;
+        for (i, &y) in window.iter().enumerate() {
+            let r = (y - mean) - slope * (i as f64 - mean_x);
+            sse += r * r;
+        }
+        (slope, mean, sse)
+    }
+
+    /// A one-unit wobble on top of a large price level: the level-to-deviation
+    /// ratio is what drives the cancellation, and scaling the wobble with the
+    /// level instead keeps that ratio constant and hides the defect entirely.
+    fn high_level_series(bars: usize) -> Vec<f64> {
+        (0..bars)
+            .map(|i| {
+                let t = i as f64;
+                1e8 + ((t * 0.11).sin() + 0.4 * (t * 0.37).cos())
+            })
+            .collect()
+    }
+
+    /// The slope came from `(n·Σxy − Σx·Σy)/denom` over raw power sums of the
+    /// price. Scored against an exact rational computation of the same fit over
+    /// 301 windows at a price level of 1e8, that form was 5.1e-04 out; holding
+    /// the sums relative to a reference point inside the window brings it to
+    /// 1.0e-16, the double floor.
+    #[test]
+    fn slope_at_a_high_price_level_matches_a_centred_fit() {
+        const P: usize = 20;
+        let data = high_level_series(400);
+        let mut ind = LinRegSlope::new(P).unwrap();
+        let mut compared = 0_usize;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(slope) = ind.update(v) else { continue };
+            let (want, _, _) = centred_fit(&data[i + 1 - P..=i]);
+            compared += 1;
+            assert_relative_eq!(slope, want, max_relative = 1e-12);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
     }
 }

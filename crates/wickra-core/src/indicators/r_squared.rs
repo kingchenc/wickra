@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// R² (coefficient of determination) of the rolling least-squares fit.
@@ -53,9 +54,7 @@ pub struct RSquared {
     sum_x: f64,
     /// `n·Σxx − (Σx)²` — OLS denominator, constant in `period`.
     denom: f64,
-    sum_y: f64,
-    sum_xy: f64,
-    sum_y_sq: f64,
+    trend: ShiftedTrend,
 }
 
 impl RSquared {
@@ -83,9 +82,7 @@ impl RSquared {
             window: VecDeque::with_capacity(period),
             sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            sum_y: 0.0,
-            sum_xy: 0.0,
-            sum_y_sq: 0.0,
+            trend: ShiftedTrend::new(),
         })
     }
 
@@ -105,24 +102,26 @@ impl Indicator for RSquared {
             return None;
         }
         if self.window.len() == self.period {
-            let y0 = self.window.pop_front().expect("non-empty");
-            self.sum_xy = self.sum_xy - self.sum_y + y0;
-            self.sum_y -= y0;
-            self.sum_y_sq -= y0 * y0;
+            let front = self.window.pop_front().expect("non-empty");
+            self.trend.slide(front);
         }
-        let k = self.window.len() as f64;
+        let index = self.window.len();
         self.window.push_back(value);
-        self.sum_y += value;
-        self.sum_xy += k * value;
-        self.sum_y_sq += value * value;
+        self.trend.push(value, index);
+        if self.trend.needs_reseed(self.period) {
+            self.trend.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let slope = (n * self.sum_xy - self.sum_x * self.sum_y) / self.denom;
-        let mean_y = self.sum_y / n;
-        let ss_total = (self.sum_y_sq - n * mean_y * mean_y).max(0.0);
+        let slope = (n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom;
+        // Invariant under the shift, and this is the expression that was
+        // collapsing: on shifted values its terms are of the order of the
+        // deviation inside the window rather than of the price level.
+        let mean_y = self.trend.sum_y() / n;
+        let ss_total = (self.trend.sum_y_sq() - n * mean_y * mean_y).max(0.0);
         let s_xx = self.denom / n;
         let ss_explained = slope * slope * s_xx;
         if ss_total <= 0.0 {
@@ -134,9 +133,7 @@ impl Indicator for RSquared {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_y = 0.0;
-        self.sum_xy = 0.0;
-        self.sum_y_sq = 0.0;
+        self.trend.reset();
     }
 
     #[inline]
@@ -224,5 +221,73 @@ mod tests {
         let mut b = RSquared::new(14).unwrap();
         let streamed: Vec<_> = prices.iter().map(|p| b.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    /// Least-squares fit of a window against its own index, computed entirely
+    /// on deviations. Returns `(slope, mean, sse)`.
+    ///
+    /// Forming the residuals as `y - (intercept + slope*i)` instead, with both
+    /// sides the size of the price, is exactly what this file stopped doing:
+    /// at a price level of 1e8 that subtraction alone costs eight digits. On
+    /// the centred scale the fitted line is just `slope * (i - mean_x)`.
+    fn centred_fit(window: &[f64]) -> (f64, f64, f64) {
+        let n = window.len() as f64;
+        let mean = window.iter().sum::<f64>() / n;
+        let mean_x = (n - 1.0) / 2.0;
+        let (mut sxy, mut sxx) = (0.0, 0.0);
+        for (i, &y) in window.iter().enumerate() {
+            let dx = i as f64 - mean_x;
+            sxy += dx * (y - mean);
+            sxx += dx * dx;
+        }
+        let slope = sxy / sxx;
+        let mut sse = 0.0;
+        for (i, &y) in window.iter().enumerate() {
+            let r = (y - mean) - slope * (i as f64 - mean_x);
+            sse += r * r;
+        }
+        (slope, mean, sse)
+    }
+
+    /// A one-unit wobble on top of a large price level: the level-to-deviation
+    /// ratio is what drives the cancellation, and scaling the wobble with the
+    /// level instead keeps that ratio constant and hides the defect entirely.
+    fn high_level_series(bars: usize) -> Vec<f64> {
+        (0..bars)
+            .map(|i| {
+                let t = i as f64;
+                1e8 + ((t * 0.11).sin() + 0.4 * (t * 0.37).cos())
+            })
+            .collect()
+    }
+
+    /// This was the worst of the family. The coefficient divides one quantity
+    /// built from raw power sums by another, so both collapse and the ratio
+    /// keeps no meaning at all: scored against an exact rational computation
+    /// over 301 windows at a price level of 1e8, the old form was 5.5e+04 out
+    /// -- on a value defined to lie in [0, 1] -- and the clamp was the only
+    /// thing keeping the output in range. It now sits at 1.1e-14.
+    #[test]
+    fn coefficient_at_a_high_price_level_matches_a_centred_fit() {
+        const P: usize = 20;
+        let data = high_level_series(400);
+        let mut ind = RSquared::new(P).unwrap();
+        let mut compared = 0_usize;
+        let mut saw_imperfect_fit = false;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(r2) = ind.update(v) else { continue };
+            let window = &data[i + 1 - P..=i];
+            let (_, mean, sse) = centred_fit(window);
+            let tss: f64 = window.iter().map(|y| (y - mean) * (y - mean)).sum();
+            let want = 1.0 - sse / tss;
+            if want < 0.99 {
+                saw_imperfect_fit = true;
+            }
+            compared += 1;
+            assert_relative_eq!(r2, want, max_relative = 1e-9);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
+        // Without this the clamp at 1.0 could carry the whole assertion.
+        assert!(saw_imperfect_fit);
     }
 }

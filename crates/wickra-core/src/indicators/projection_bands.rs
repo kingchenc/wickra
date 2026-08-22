@@ -102,13 +102,20 @@ impl ProjectionBands {
     }
 
     /// OLS slope of `(0..period, values)` over the live window.
+    ///
+    /// Computed about the window mean rather than from raw power sums: the
+    /// slope is invariant under a shift of `y`, and the shifted form keeps
+    /// every term on the scale of the deviation inside the window instead of
+    /// the price level.
     fn slope(&self, values: &VecDeque<f64>) -> f64 {
         let n = self.period as f64;
+        let mean_y = values.iter().sum::<f64>() / n;
         let mut sum_y = 0.0;
         let mut sum_xy = 0.0;
         for (i, &y) in values.iter().enumerate() {
-            sum_y += y;
-            sum_xy += (i as f64) * y;
+            let d = y - mean_y;
+            sum_y += d;
+            sum_xy += (i as f64) * d;
         }
         let denom = n * self.sum_xx - self.sum_x * self.sum_x;
         (n * sum_xy - self.sum_x * sum_y) / denom

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// Linear Regression Intercept (`LINEARREG_INTERCEPT`): the intercept `a` of the
@@ -37,8 +38,7 @@ pub struct LinRegIntercept {
     window: VecDeque<f64>,
     sum_x: f64,
     denom: f64,
-    sum_y: f64,
-    sum_xy: f64,
+    trend: ShiftedTrend,
 }
 
 impl LinRegIntercept {
@@ -66,8 +66,7 @@ impl LinRegIntercept {
             window: VecDeque::with_capacity(period),
             sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            sum_y: 0.0,
-            sum_xy: 0.0,
+            trend: ShiftedTrend::new(),
         })
     }
 
@@ -87,28 +86,29 @@ impl Indicator for LinRegIntercept {
             return None;
         }
         if self.window.len() == self.period {
-            let y0 = self.window.pop_front().expect("non-empty");
-            self.sum_xy = self.sum_xy - self.sum_y + y0;
-            self.sum_y -= y0;
+            let front = self.window.pop_front().expect("non-empty");
+            self.trend.slide(front);
         }
-        let k = self.window.len() as f64;
+        let index = self.window.len();
         self.window.push_back(value);
-        self.sum_y += value;
-        self.sum_xy += k * value;
+        self.trend.push(value, index);
+        if self.trend.needs_reseed(self.period) {
+            self.trend.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let slope = (n * self.sum_xy - self.sum_x * self.sum_y) / self.denom;
-        let intercept = (self.sum_y - slope * self.sum_x) / n;
+        let slope = (n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom;
+        // An absolute price level, so the reference point comes back here.
+        let intercept = (self.trend.sum_y() - slope * self.sum_x) / n + self.trend.offset();
         Some(intercept)
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_y = 0.0;
-        self.sum_xy = 0.0;
+        self.trend.reset();
     }
 
     #[inline]

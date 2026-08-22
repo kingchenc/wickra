@@ -619,6 +619,154 @@ pub(crate) struct CentredMoments {
     pub(crate) cov: f64,
 }
 
+/// Rolling sums for a least-squares fit of a window against its own index,
+/// centred on a reference point.
+///
+/// The OLS slope of `y` on the position index is mathematically invariant when
+/// a constant is subtracted from `y`, and so is everything derived from the
+/// residuals -- the coefficient of determination, the standard error, the
+/// detrended deviation. Only quantities that name an absolute price level (the
+/// intercept, the endpoint, a forecast) need the reference point added back.
+///
+/// That invariance is what makes the fix cheap, and the defect it fixes is
+/// severe. Measured on a 20-bar window carrying a one-unit wobble on top of a
+/// price level, against a two-pass reference: the raw form
+/// `(n·Σxy − Σx·Σy)/denom` put the slope 8.8e-09 out at a level of 100, 7.9e-06
+/// at 1e5 and 2.2e-02 at 1e8. `RSquared` divides one cancelled quantity by
+/// another and reached 8.3e+04 -- on a value defined to lie in `[0, 1]` -- and
+/// the standard error collapsed to exactly zero, reporting a perfect fit for a
+/// series that was not fitted at all.
+///
+/// The caller owns the window and drives the accumulator with it: [`push`] for
+/// an arrival at the end, [`slide`] for the departure from the front, which
+/// also shifts every remaining index down by one.
+///
+/// [`push`]: Self::push
+/// [`slide`]: Self::slide
+#[derive(Debug, Clone)]
+pub(crate) struct ShiftedTrend {
+    /// Reference point the accumulated sums are relative to.
+    offset: f64,
+    /// Whether `offset` has been chosen yet. The first pushed value seeds it.
+    seeded: bool,
+    /// `Σ(y − offset)` over the live window.
+    sum_y: f64,
+    /// `Σ i·(yᵢ − offset)`, with `i` the position within the live window.
+    sum_xy: f64,
+    /// `Σ(y − offset)²` over the live window.
+    sum_y_sq: f64,
+    /// Pushes since the last reseed.
+    pushes_since_reseed: usize,
+}
+
+impl ShiftedTrend {
+    /// A fresh accumulator with no reference point yet.
+    pub(crate) const fn new() -> Self {
+        Self {
+            offset: 0.0,
+            seeded: false,
+            sum_y: 0.0,
+            sum_xy: 0.0,
+            sum_y_sq: 0.0,
+            pushes_since_reseed: 0,
+        }
+    }
+
+    /// Add `value`, arriving at position `index` of the window.
+    ///
+    /// The first value seeds the reference point, which makes its own
+    /// contribution exactly zero.
+    pub(crate) fn push(&mut self, value: f64, index: usize) {
+        if !self.seeded {
+            self.offset = value;
+            self.seeded = true;
+        }
+        let d = value - self.offset;
+        self.sum_y += d;
+        self.sum_xy += index as f64 * d;
+        self.sum_y_sq += d * d;
+        self.pushes_since_reseed += 1;
+    }
+
+    /// Drop the value at position 0 and shift every remaining index down by one.
+    ///
+    /// `front` is the raw value leaving the window. Shifting the indices uses
+    /// the identity `Σ((i−1)·yᵢ) = Σ(i·yᵢ) − Σ(yᵢ) + y₀`, which is linear in
+    /// `y` and therefore holds just as well for the shifted values.
+    pub(crate) fn slide(&mut self, front: f64) {
+        let d = front - self.offset;
+        self.sum_xy = self.sum_xy - self.sum_y + d;
+        self.sum_y -= d;
+        self.sum_y_sq -= d * d;
+    }
+
+    /// The reference point, to be added back to any absolute level derived from
+    /// these sums.
+    pub(crate) const fn offset(&self) -> f64 {
+        self.offset
+    }
+
+    /// `Σ(y − offset)` over the live window.
+    pub(crate) const fn sum_y(&self) -> f64 {
+        self.sum_y
+    }
+
+    /// `Σ i·(yᵢ − offset)` over the live window.
+    pub(crate) const fn sum_xy(&self) -> f64 {
+        self.sum_xy
+    }
+
+    /// `Σ(y − offset)²` over the live window.
+    pub(crate) const fn sum_y_sq(&self) -> f64 {
+        self.sum_y_sq
+    }
+
+    /// Whether enough pushes have accumulated to justify a reseed.
+    pub(crate) const fn needs_reseed(&self, period: usize) -> bool {
+        self.pushes_since_reseed >= period
+    }
+
+    /// Rebuild every sum from the live window, re-centring `offset` on its mean.
+    /// `values` must yield exactly the live window, in position order.
+    pub(crate) fn reseed<I>(&mut self, values: I)
+    where
+        I: IntoIterator<Item = f64> + Clone,
+    {
+        let mut total = 0.0;
+        let mut count = 0_usize;
+        for v in values.clone() {
+            total += v;
+            count += 1;
+        }
+        if count == 0 {
+            self.reset();
+            return;
+        }
+        self.offset = total / count as f64;
+        self.seeded = true;
+        self.sum_y = 0.0;
+        self.sum_xy = 0.0;
+        self.sum_y_sq = 0.0;
+        for (index, v) in values.into_iter().enumerate() {
+            let d = v - self.offset;
+            self.sum_y += d;
+            self.sum_xy += index as f64 * d;
+            self.sum_y_sq += d * d;
+        }
+        self.pushes_since_reseed = 0;
+    }
+
+    /// Drop every accumulated value and the reference point.
+    pub(crate) fn reset(&mut self) {
+        self.offset = 0.0;
+        self.seeded = false;
+        self.sum_y = 0.0;
+        self.sum_xy = 0.0;
+        self.sum_y_sq = 0.0;
+        self.pushes_since_reseed = 0;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

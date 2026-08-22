@@ -265,7 +265,7 @@ mod tests {
         const PERIOD: usize = 20;
         let series: Vec<(f64, f64)> = (0..2000)
             .map(|i| {
-                let t = i as f64;
+                let t = f64::from(i);
                 (
                     1e5 * (1.0 + 0.05 * (t * 0.11).sin()),
                     1e5 * (1.0 + 0.04 * (t * 0.07).cos()),

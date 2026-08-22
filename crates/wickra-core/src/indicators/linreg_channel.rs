@@ -119,26 +119,33 @@ impl Indicator for LinRegChannel {
         // residual; recomputing both keeps the code simple and is O(period)
         // per update — entirely acceptable for the periods used in practice.
         let n = self.period as f64;
+        // The fit runs on deviations from the window mean. The slope is
+        // invariant under that shift, and the residuals -- which the channel
+        // width is built from -- stay on their own scale instead of being
+        // formed as a difference of two numbers the size of the price.
+        let mean = self.window.iter().sum::<f64>() / n;
         let mut sum_y = 0.0;
         let mut sum_xy = 0.0;
         for (i, &y) in self.window.iter().enumerate() {
             let x = i as f64;
-            sum_y += y;
-            sum_xy += x * y;
+            let d = y - mean;
+            sum_y += d;
+            sum_xy += x * d;
         }
         let denom = n * self.sum_xx - self.sum_x * self.sum_x;
         let slope = (n * sum_xy - self.sum_x * sum_y) / denom;
         let intercept = (sum_y - slope * self.sum_x) / n;
 
-        // Residuals about the fitted line.
+        // Residuals about the fitted line, on the same centred scale.
         let mut sum_sq = 0.0;
         for (i, &y) in self.window.iter().enumerate() {
             let fitted = intercept + slope * (i as f64);
-            let r = y - fitted;
+            let r = (y - mean) - fitted;
             sum_sq += r * r;
         }
         let sigma = (sum_sq / n).sqrt();
-        let middle = intercept + slope * (n - 1.0);
+        // An absolute price level, so the window mean comes back here.
+        let middle = mean + intercept + slope * (n - 1.0);
         Some(LinRegChannelOutput {
             upper: middle + self.multiplier * sigma,
             middle,

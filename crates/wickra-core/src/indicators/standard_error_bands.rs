@@ -123,12 +123,18 @@ impl Indicator for StandardErrorBands {
             return None;
         }
         let n = self.period as f64;
+        // The whole fit runs on deviations from the window mean. The slope is
+        // invariant under that shift, and the residuals -- which are what the
+        // band width is built from -- stay on their own scale instead of being
+        // formed as a difference of two numbers the size of the price.
+        let mean = self.window.iter().sum::<f64>() / n;
         let mut sum_y = 0.0;
         let mut sum_xy = 0.0;
         for (i, &y) in self.window.iter().enumerate() {
             let x = i as f64;
-            sum_y += y;
-            sum_xy += x * y;
+            let d = y - mean;
+            sum_y += d;
+            sum_xy += x * d;
         }
         let denom = n * self.sum_xx - self.sum_x * self.sum_x;
         let slope = (n * sum_xy - self.sum_x * sum_y) / denom;
@@ -137,13 +143,14 @@ impl Indicator for StandardErrorBands {
         let mut sse = 0.0;
         for (i, &y) in self.window.iter().enumerate() {
             let fitted = intercept + slope * (i as f64);
-            let r = y - fitted;
+            let r = (y - mean) - fitted;
             sse += r * r;
         }
         // OLS standard error with `n − 2` degrees of freedom. `n − 2` is at
         // least 1 because the constructor enforces `period >= 3`.
         let stderr = (sse / (n - 2.0)).sqrt();
-        let middle = intercept + slope * (n - 1.0);
+        // An absolute price level, so the window mean comes back here.
+        let middle = mean + intercept + slope * (n - 1.0);
         Some(StandardErrorBandsOutput {
             upper: middle + self.multiplier * stderr,
             middle,

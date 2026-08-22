@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedTrend;
 use crate::traits::Indicator;
 
 /// Linear Regression — the endpoint of a rolling least-squares fit.
@@ -55,11 +56,8 @@ pub struct LinearRegression {
     /// Closed form of `n · Σxx − (Σx)²` — constant in `period`, the OLS
     /// denominator.
     denom: f64,
-    /// Running sum of the values currently in the window.
-    sum_y: f64,
-    /// Running `Σ(x · y)` where `x` is the position of each value within the
-    /// trailing window (`0` for the oldest, `period − 1` for the newest).
-    sum_xy: f64,
+    /// Rolling fit sums, held relative to a reference point inside the window.
+    trend: ShiftedTrend,
 }
 
 impl LinearRegression {
@@ -88,8 +86,7 @@ impl LinearRegression {
             window: VecDeque::with_capacity(period),
             sum_x,
             denom: n * sum_xx - sum_x * sum_x,
-            sum_y: 0.0,
-            sum_xy: 0.0,
+            trend: ShiftedTrend::new(),
         })
     }
 
@@ -109,35 +106,31 @@ impl Indicator for LinearRegression {
             return None;
         }
         if self.window.len() == self.period {
-            // Sliding phase: pop the oldest, then shift every remaining index
-            // down by 1 in the running `sum_xy`. The identity
-            //   Σ((i − 1) · y_i for i = 1..n−1) = Σ(i · y_i) − Σ(y_i) + y_0
-            // gives the closed-form update below.
-            let y0 = self.window.pop_front().expect("non-empty");
-            self.sum_xy = self.sum_xy - self.sum_y + y0;
-            self.sum_y -= y0;
+            let front = self.window.pop_front().expect("non-empty");
+            self.trend.slide(front);
         }
-        // Append at position `k = current length` before the push. During
-        // warmup `k` ranges over `0..period − 1`; once the window is full it
-        // is always `period − 1`.
-        let k = self.window.len() as f64;
+        let index = self.window.len();
         self.window.push_back(value);
-        self.sum_y += value;
-        self.sum_xy += k * value;
+        self.trend.push(value, index);
+        if self.trend.needs_reseed(self.period) {
+            self.trend.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let slope = (n * self.sum_xy - self.sum_x * self.sum_y) / self.denom;
-        let intercept = (self.sum_y - slope * self.sum_x) / n;
+        let slope = (n * self.trend.sum_xy() - self.sum_x * self.trend.sum_y()) / self.denom;
+        // The intercept names an absolute price level, so the reference point
+        // the sums are held relative to has to come back here. The slope does
+        // not: it is invariant under that shift.
+        let intercept = (self.trend.sum_y() - slope * self.sum_x) / n + self.trend.offset();
         Some(intercept + slope * (n - 1.0))
     }
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_y = 0.0;
-        self.sum_xy = 0.0;
+        self.trend.reset();
     }
 
     #[inline]
@@ -302,5 +295,70 @@ mod tests {
         let constant = vec![42.0; 50];
         check(&constant, 8);
         check(&constant, 25);
+    }
+
+    /// Least-squares fit of a window against its own index, computed entirely
+    /// on deviations. Returns `(slope, mean, sse)`.
+    ///
+    /// Forming the residuals as `y - (intercept + slope*i)` instead, with both
+    /// sides the size of the price, is exactly what this file stopped doing:
+    /// at a price level of 1e8 that subtraction alone costs eight digits. On
+    /// the centred scale the fitted line is just `slope * (i - mean_x)`.
+    fn centred_fit(window: &[f64]) -> (f64, f64, f64) {
+        let n = window.len() as f64;
+        let mean = window.iter().sum::<f64>() / n;
+        let mean_x = (n - 1.0) / 2.0;
+        let (mut sxy, mut sxx) = (0.0, 0.0);
+        for (i, &y) in window.iter().enumerate() {
+            let dx = i as f64 - mean_x;
+            sxy += dx * (y - mean);
+            sxx += dx * dx;
+        }
+        let slope = sxy / sxx;
+        let mut sse = 0.0;
+        for (i, &y) in window.iter().enumerate() {
+            let r = (y - mean) - slope * (i as f64 - mean_x);
+            sse += r * r;
+        }
+        (slope, mean, sse)
+    }
+
+    /// A one-unit wobble on top of a large price level: the level-to-deviation
+    /// ratio is what drives the cancellation, and scaling the wobble with the
+    /// level instead keeps that ratio constant and hides the defect entirely.
+    fn high_level_series(bars: usize) -> Vec<f64> {
+        (0..bars)
+            .map(|i| {
+                let t = i as f64;
+                1e8 + ((t * 0.11).sin() + 0.4 * (t * 0.37).cos())
+            })
+            .collect()
+    }
+
+    /// The endpoint is an absolute price level, so it is the one place the
+    /// reference point the sums are held relative to has to be added back. A
+    /// sign error there would show up immediately as an output near zero rather
+    /// than near the price; matching a centred fit at a level of 1e8 pins both
+    /// the restoration and the slope it is projected along.
+    #[test]
+    fn endpoint_at_a_high_price_level_matches_a_centred_fit() {
+        const P: usize = 20;
+        let data = high_level_series(400);
+        let mut ind = LinearRegression::new(P).unwrap();
+        let mut compared = 0_usize;
+        for (i, &v) in data.iter().enumerate() {
+            let Some(endpoint) = ind.update(v) else {
+                continue;
+            };
+            let window = &data[i + 1 - P..=i];
+            let (slope, mean, _) = centred_fit(window);
+            let mean_x = (P as f64 - 1.0) / 2.0;
+            // On the centred scale the fit passes through (mean_x, 0), so the
+            // endpoint is the window mean plus the slope run from there.
+            let want = mean + slope * (P as f64 - 1.0 - mean_x);
+            compared += 1;
+            assert_relative_eq!(endpoint, want, max_relative = 1e-14);
+        }
+        assert_eq!(compared, data.len() - ind.warmup_period() + 1);
     }
 }
