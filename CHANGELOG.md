@@ -56,6 +56,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **C# binding: calling any method on a disposed indicator read freed memory.**
+  Every generated method reached the native library through
+  `_handle.DangerousGetHandle()`, which keeps returning the pointer after
+  `Dispose()` has already freed it; the accompanying `GC.KeepAlive` guarded only
+  against the collector, not against an explicit dispose. Using an indicator
+  after disposing it — a captured lambda, a cached dictionary, an async
+  continuation outliving its `using` block — therefore read freed memory,
+  yielding silently wrong numbers or an access violation depending on the heap
+  layout. The 2914 affected call sites now pass the `SafeHandle` itself, so the
+  `LibraryImport` marshaller ref-counts it for the duration of the call and
+  raises `ObjectDisposedException` on a released handle. `DangerousGetHandle` and
+  the hand-written `GC.KeepAlive` are gone from the generated binding entirely.
 - **R binding: `batch()` with mismatched column lengths crashed R.** The native
   routine takes its row count from the first column and indexes every other
   column with it, so a shorter column was read past its end — a segfault
