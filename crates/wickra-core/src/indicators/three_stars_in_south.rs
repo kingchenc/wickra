@@ -95,14 +95,14 @@ impl Indicator for ThreeStarsInSouth {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let tol = self.tolerance * candle.high.abs().max(candle.low.abs());
         let bar1_body = bar1.open - bar1.close;
         let bar1_lower_shadow = bar1.close - bar1.low;
@@ -183,8 +183,8 @@ mod tests {
     #[test]
     fn three_stars_in_south_is_plus_one() {
         let mut t = ThreeStarsInSouth::new();
-        assert_eq!(t.update(c(20.0, 20.1, 8.0, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(18.0, 18.1, 12.0, 16.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 8.0, 15.0, 0)), None);
+        assert_eq!(t.update(c(18.0, 18.1, 12.0, 16.0, 1)), None);
         assert_eq!(t.update(c(15.0, 15.0, 14.0, 14.0, 2)), Some(1.0));
     }
 
@@ -202,15 +202,15 @@ mod tests {
         let mut t = ThreeStarsInSouth::new();
         t.update(c(20.0, 20.1, 8.0, 15.0, 0));
         // bar2 dips below bar1's low -> no higher low.
-        assert_eq!(t.update(c(18.0, 18.1, 7.0, 16.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(18.0, 18.1, 7.0, 16.0, 1)), None);
         assert_eq!(t.update(c(15.0, 15.0, 14.0, 14.0, 2)), Some(0.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = ThreeStarsInSouth::new();
-        assert_eq!(t.update(c(20.0, 20.1, 8.0, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(18.0, 18.1, 12.0, 16.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 8.0, 15.0, 0)), None);
+        assert_eq!(t.update(c(18.0, 18.1, 12.0, 16.0, 1)), None);
     }
 
     #[test]
@@ -238,6 +238,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(20.0, 20.1, 8.0, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 8.0, 15.0, 0)), None);
     }
 }

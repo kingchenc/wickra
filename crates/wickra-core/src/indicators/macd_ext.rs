@@ -203,7 +203,9 @@ impl Indicator for MacdExt {
 
     #[inline]
     fn warmup_period(&self) -> usize {
-        self.slow.warmup_period() + self.signal.warmup_period()
+        // The signal line is fed the MACD series, so it receives its first
+        // input on the bar the slow average emits: the warmups overlap by one.
+        self.slow.warmup_period() + self.signal.warmup_period() - 1
     }
 
     #[inline]

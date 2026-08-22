@@ -74,8 +74,8 @@ impl Indicator for Tristar {
         let (Some(first), Some(middle)) = (self.c1, self.c2) else {
             self.c1 = self.c2;
             self.c2 = Some(candle);
-            self.last_value = Some(0.0);
-            return Some(0.0);
+            self.last_value = None;
+            return None;
         };
         let v = if is_doji(first) && is_doji(middle) && is_doji(candle) {
             let mid = body_mid(middle);
@@ -153,8 +153,8 @@ mod tests {
     #[test]
     fn first_two_bars_seed_without_signal() {
         let mut t = Tristar::new();
-        assert_eq!(t.update(doji(100.0)), Some(0.0));
-        assert_eq!(t.update(doji(100.0)), Some(0.0));
+        assert_eq!(t.update(doji(100.0)), None);
+        assert_eq!(t.update(doji(100.0)), None);
         assert!(t.update(doji(100.0)).is_some());
     }
 
@@ -192,7 +192,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(doji(100.0)), Some(0.0));
+        assert_eq!(t.update(doji(100.0)), None);
     }
 
     #[test]

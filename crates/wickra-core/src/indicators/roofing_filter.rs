@@ -116,8 +116,10 @@ impl Indicator for RoofingFilter {
 
     #[inline]
     fn warmup_period(&self) -> usize {
-        // SuperSmoother is ready after one input; we need two to compute HP.
-        2
+        // The super-smoother emits on its first input, so this filter does
+        // too. Two bars are what the high-pass stage needs to be meaningful,
+        // which is a different question from when a value first appears.
+        1
     }
 
     #[inline]
@@ -155,7 +157,7 @@ mod tests {
     fn accessors_and_metadata() {
         let mut rf = RoofingFilter::new(10, 48).unwrap();
         assert_eq!(rf.periods(), (10, 48));
-        assert_eq!(rf.warmup_period(), 2);
+        assert_eq!(rf.warmup_period(), 1);
         assert_eq!(rf.name(), "RoofingFilter");
         assert!(!rf.is_ready());
         rf.update(100.0);

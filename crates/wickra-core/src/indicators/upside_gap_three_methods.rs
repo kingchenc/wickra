@@ -63,14 +63,14 @@ impl Indicator for UpsideGapThreeMethods {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         self.c1 = self.c2;
         self.c2 = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         // bar1 and bar2 are both white.
         if bar1.close <= bar1.open || bar2.close <= bar2.open {
             return Some(0.0);
@@ -136,16 +136,16 @@ mod tests {
     #[test]
     fn upside_gap_three_methods_is_plus_one() {
         let mut t = UpsideGapThreeMethods::new();
-        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 13.2, 11.9, 13.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
+        assert_eq!(t.update(c(12.0, 13.2, 11.9, 13.0, 1)), None);
         assert_eq!(t.update(c(12.5, 12.6, 10.4, 10.5, 2)), Some(1.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = UpsideGapThreeMethods::new();
-        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 13.2, 11.9, 13.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
+        assert_eq!(t.update(c(12.0, 13.2, 11.9, 13.0, 1)), None);
     }
 
     #[test]
@@ -209,6 +209,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
     }
 }

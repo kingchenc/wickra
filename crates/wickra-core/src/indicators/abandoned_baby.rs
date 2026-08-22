@@ -96,14 +96,14 @@ impl Indicator for AbandonedBaby {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let tol = self.tolerance * bar2.open.abs().max(bar2.close.abs());
         let bar2_is_doji = (bar2.close - bar2.open).abs() <= tol;
         if !bar2_is_doji {
@@ -183,16 +183,16 @@ mod tests {
     #[test]
     fn bullish_abandoned_baby_is_plus_one() {
         let mut t = AbandonedBaby::new();
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(13.0, 13.1, 12.9, 13.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
+        assert_eq!(t.update(c(13.0, 13.1, 12.9, 13.0, 1)), None);
         assert_eq!(t.update(c(16.0, 18.1, 15.9, 18.0, 2)), Some(1.0));
     }
 
     #[test]
     fn bearish_abandoned_baby_is_minus_one() {
         let mut t = AbandonedBaby::new();
-        assert_eq!(t.update(c(15.0, 20.1, 14.9, 20.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(22.0, 22.1, 21.9, 22.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 20.1, 14.9, 20.0, 0)), None);
+        assert_eq!(t.update(c(22.0, 22.1, 21.9, 22.0, 1)), None);
         assert_eq!(t.update(c(19.0, 19.1, 16.9, 17.0, 2)), Some(-1.0));
     }
 
@@ -201,7 +201,7 @@ mod tests {
         let mut t = AbandonedBaby::new();
         t.update(c(20.0, 20.1, 14.9, 15.0, 0));
         // Middle bar has a wide body -> not a doji.
-        assert_eq!(t.update(c(13.0, 14.0, 11.0, 11.5, 1)), Some(0.0));
+        assert_eq!(t.update(c(13.0, 14.0, 11.0, 11.5, 1)), None);
         assert_eq!(t.update(c(16.0, 18.1, 15.9, 18.0, 2)), Some(0.0));
     }
 
@@ -210,15 +210,15 @@ mod tests {
         let mut t = AbandonedBaby::new();
         t.update(c(20.0, 20.1, 14.9, 15.0, 0));
         // Doji overlaps bar1's range -> no gap.
-        assert_eq!(t.update(c(15.0, 15.1, 14.9, 15.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 14.9, 15.0, 1)), None);
         assert_eq!(t.update(c(16.0, 18.1, 15.9, 18.0, 2)), Some(0.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = AbandonedBaby::new();
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(13.0, 13.1, 12.9, 13.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
+        assert_eq!(t.update(c(13.0, 13.1, 12.9, 13.0, 1)), None);
     }
 
     #[test]
@@ -246,6 +246,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
     }
 }

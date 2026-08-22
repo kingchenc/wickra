@@ -70,7 +70,6 @@ impl Indicator for FallingThreeMethods {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         let bar3 = self.c3;
@@ -80,8 +79,9 @@ impl Indicator for FallingThreeMethods {
         self.c3 = self.c4;
         self.c4 = Some(candle);
         let (Some(bar1), Some(bar2), Some(bar3), Some(bar4)) = (bar1, bar2, bar3, bar4) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let range1 = bar1.high - bar1.low;
         if range1 <= 0.0 {
             return Some(0.0);
@@ -147,10 +147,10 @@ mod tests {
     #[test]
     fn falling_three_methods_is_minus_one() {
         let mut t = FallingThreeMethods::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 12.1, 10.9, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.5, 12.6, 11.4, 12.5, 2)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 13.1, 11.9, 13.0, 3)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
+        assert_eq!(t.update(c(11.0, 12.1, 10.9, 12.0, 1)), None);
+        assert_eq!(t.update(c(11.5, 12.6, 11.4, 12.5, 2)), None);
+        assert_eq!(t.update(c(12.0, 13.1, 11.9, 13.0, 3)), None);
         assert_eq!(t.update(c(12.5, 12.6, 8.9, 9.0, 4)), Some(-1.0));
     }
 
@@ -179,10 +179,10 @@ mod tests {
     #[test]
     fn first_four_bars_return_zero() {
         let mut t = FallingThreeMethods::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 12.1, 10.9, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.5, 12.6, 11.4, 12.5, 2)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 13.1, 11.9, 13.0, 3)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
+        assert_eq!(t.update(c(11.0, 12.1, 10.9, 12.0, 1)), None);
+        assert_eq!(t.update(c(11.5, 12.6, 11.4, 12.5, 2)), None);
+        assert_eq!(t.update(c(12.0, 13.1, 11.9, 13.0, 3)), None);
     }
 
     #[test]
@@ -212,7 +212,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
     }
 
     #[test]

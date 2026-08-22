@@ -67,12 +67,10 @@ impl Indicator for PiercingDarkCloud {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(p) = prev else {
-            return Some(0.0);
-        };
+        let p = prev?;
+        self.has_emitted = true;
         let prev_red = p.close < p.open;
         let prev_green = p.close > p.open;
         let curr_green = candle.close > candle.open;
@@ -140,7 +138,7 @@ mod tests {
         let mut p = PiercingDarkCloud::new();
         // Prev red: open 12, close 10. Curr green: opens at 9.8 (< prev low 10),
         // closes at 11.5 (> midpoint 11, < prev open 12).
-        assert_eq!(p.update(c(12.0, 12.5, 10.0, 10.0, 0)), Some(0.0));
+        assert_eq!(p.update(c(12.0, 12.5, 10.0, 10.0, 0)), None);
         assert_eq!(p.update(c(9.8, 11.8, 9.5, 11.5, 1)), Some(1.0));
     }
 
@@ -149,7 +147,7 @@ mod tests {
         let mut p = PiercingDarkCloud::new();
         // Prev green: open 10, close 12. Curr red: opens 12.3 (> prev high 12.2),
         // closes 10.5 (< midpoint 11, > prev open 10).
-        assert_eq!(p.update(c(10.0, 12.2, 9.5, 12.0, 0)), Some(0.0));
+        assert_eq!(p.update(c(10.0, 12.2, 9.5, 12.0, 0)), None);
         assert_eq!(p.update(c(12.3, 12.4, 10.4, 10.5, 1)), Some(-1.0));
     }
 
@@ -172,7 +170,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut p = PiercingDarkCloud::new();
-        assert_eq!(p.update(c(12.0, 12.5, 10.0, 10.0, 0)), Some(0.0));
+        assert_eq!(p.update(c(12.0, 12.5, 10.0, 10.0, 0)), None);
     }
 
     #[test]
@@ -203,6 +201,6 @@ mod tests {
         assert!(p.is_ready());
         p.reset();
         assert!(!p.is_ready());
-        assert_eq!(p.update(c(12.0, 12.5, 10.0, 10.0, 0)), Some(0.0));
+        assert_eq!(p.update(c(12.0, 12.5, 10.0, 10.0, 0)), None);
     }
 }

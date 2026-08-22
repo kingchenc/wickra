@@ -242,8 +242,14 @@ where
     }
 
     fn warmup_period(&self) -> usize {
-        // Conservative upper bound: both stages must warm up.
-        self.first.warmup_period() + self.second.warmup_period()
+        // Not an upper bound: this method promises the input count before the
+        // first value, so over-declaring it is as wrong as under-declaring it.
+        // The second stage receives its first input on the bar the first stage
+        // emits, so the two warmups overlap by exactly one.
+        // A stage declaring 0 still needs its first input to produce anything,
+        // so each side counts as at least one bar before the overlap is taken
+        // off -- otherwise two pass-through stages underflow.
+        self.first.warmup_period().max(1) + self.second.warmup_period().max(1) - 1
     }
 
     fn is_ready(&self) -> bool {
@@ -380,11 +386,11 @@ mod tests {
         // so Doubler::name (lines 234-236) is also exercised.
         assert_eq!(chain.first().name(), "Doubler");
         assert_eq!(chain.second().name(), "Doubler");
-        // Doubler::warmup_period (lines 228-230) is 0; Chain::warmup_period
-        // sums the two, so the result must also be 0.
+        // Doubler::warmup_period (lines 228-230) is 0, meaning it emits on its
+        // first input; chaining two of them still emits on the first input.
         assert_eq!(chain.first().warmup_period(), 0);
         assert_eq!(chain.second().warmup_period(), 0);
-        assert_eq!(chain.warmup_period(), 0);
+        assert_eq!(chain.warmup_period(), 1);
         // Chain::name returns the literal "Chain" (line 177).
         assert_eq!(chain.name(), "Chain");
     }

@@ -147,7 +147,10 @@ impl Indicator for Vpin {
 
     #[inline]
     fn warmup_period(&self) -> usize {
-        self.num_buckets
+        // Buckets close on cumulative volume, so one large trade can fill
+        // every bucket at once and no input count guarantees readiness. The
+        // honest lower bound is one; `is_ready` is what callers should test.
+        1
     }
 
     #[inline]
@@ -188,7 +191,7 @@ mod tests {
     fn accessors_and_metadata() {
         let vpin = Vpin::new(10.0, 50).unwrap();
         assert_eq!(vpin.params(), (10.0, 50));
-        assert_eq!(vpin.warmup_period(), 50);
+        assert_eq!(vpin.warmup_period(), 1);
         assert_eq!(vpin.name(), "Vpin");
         assert!(!vpin.is_ready());
     }

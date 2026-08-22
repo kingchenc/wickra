@@ -61,14 +61,14 @@ impl Indicator for MorningEveningStar {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(b1), Some(b2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let body1 = (b1.close - b1.open).abs();
         let body2 = (b2.close - b2.open).abs();
         let body3 = (candle.close - candle.open).abs();
@@ -137,8 +137,8 @@ mod tests {
         let mut m = MorningEveningStar::new();
         // Long red 12 -> 10 (body 2). Star small body. Long green 10.1 -> 11.8 (body 1.7).
         // Mid of bar 1 = 11. Bar 3 closes at 11.8 > 11.
-        assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), Some(0.0));
-        assert_eq!(m.update(c(9.9, 10.1, 9.7, 9.95, 1)), Some(0.0));
+        assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), None);
+        assert_eq!(m.update(c(9.9, 10.1, 9.7, 9.95, 1)), None);
         assert_eq!(m.update(c(10.1, 12.0, 10.0, 11.8, 2)), Some(1.0));
     }
 
@@ -147,8 +147,8 @@ mod tests {
         let mut m = MorningEveningStar::new();
         // Long green 10 -> 12, star, long red 11.9 -> 10.2 (body 1.7).
         // Mid of bar 1 = 11. Bar 3 closes at 10.2 < 11.
-        assert_eq!(m.update(c(10.0, 12.2, 9.8, 12.0, 0)), Some(0.0));
-        assert_eq!(m.update(c(12.1, 12.3, 11.9, 12.05, 1)), Some(0.0));
+        assert_eq!(m.update(c(10.0, 12.2, 9.8, 12.0, 0)), None);
+        assert_eq!(m.update(c(12.1, 12.3, 11.9, 12.05, 1)), None);
         assert_eq!(m.update(c(11.9, 12.0, 10.1, 10.2, 2)), Some(-1.0));
     }
 
@@ -164,8 +164,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut m = MorningEveningStar::new();
-        assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), Some(0.0));
-        assert_eq!(m.update(c(9.9, 10.1, 9.7, 9.95, 1)), Some(0.0));
+        assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), None);
+        assert_eq!(m.update(c(9.9, 10.1, 9.7, 9.95, 1)), None);
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests {
         assert!(m.is_ready());
         m.reset();
         assert!(!m.is_ready());
-        assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), Some(0.0));
+        assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), None);
     }
 
     #[test]

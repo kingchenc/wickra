@@ -98,14 +98,14 @@ impl Indicator for MorningDojiStar {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.prev_prev;
         let bar2 = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let range1 = bar1.high - bar1.low;
         let range2 = bar2.high - bar2.low;
         if range1 <= 0.0 || range2 <= 0.0 {
@@ -185,8 +185,8 @@ mod tests {
     #[test]
     fn morning_doji_star_is_plus_one() {
         let mut t = MorningDojiStar::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(8.0, 8.1, 7.9, 8.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
+        assert_eq!(t.update(c(8.0, 8.1, 7.9, 8.0, 1)), None);
         assert_eq!(t.update(c(9.0, 13.1, 8.9, 13.0, 2)), Some(1.0));
     }
 
@@ -211,8 +211,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = MorningDojiStar::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(8.0, 8.1, 7.9, 8.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
+        assert_eq!(t.update(c(8.0, 8.1, 7.9, 8.0, 1)), None);
     }
 
     #[test]
@@ -240,7 +240,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
     }
 
     #[test]

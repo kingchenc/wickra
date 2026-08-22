@@ -66,7 +66,6 @@ impl Indicator for ThreeLineStrike {
     type Output = f64;
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         let bar3 = self.c3;
@@ -74,8 +73,9 @@ impl Indicator for ThreeLineStrike {
         self.c2 = self.c3;
         self.c3 = Some(candle);
         let (Some(bar1), Some(bar2), Some(bar3)) = (bar1, bar2, bar3) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         // Bullish: three rising green candles struck by a red bar4.
         if bar1.close > bar1.open
             && bar2.close > bar2.open
@@ -154,18 +154,18 @@ mod tests {
     #[test]
     fn bullish_three_line_strike_is_plus_one() {
         let mut t = ThreeLineStrike::new();
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.5, 12.1, 10.4, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.5, 13.1, 11.4, 13.0, 2)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), None);
+        assert_eq!(t.update(c(10.5, 12.1, 10.4, 12.0, 1)), None);
+        assert_eq!(t.update(c(11.5, 13.1, 11.4, 13.0, 2)), None);
         assert_eq!(t.update(c(13.5, 13.6, 9.4, 9.5, 3)), Some(1.0));
     }
 
     #[test]
     fn bearish_three_line_strike_is_minus_one() {
         let mut t = ThreeLineStrike::new();
-        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.5, 12.6, 10.9, 11.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.5, 11.6, 9.9, 10.0, 2)), Some(0.0));
+        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(12.5, 12.6, 10.9, 11.0, 1)), None);
+        assert_eq!(t.update(c(11.5, 11.6, 9.9, 10.0, 2)), None);
         assert_eq!(t.update(c(9.5, 13.6, 9.4, 13.5, 3)), Some(-1.0));
     }
 
@@ -182,9 +182,9 @@ mod tests {
     #[test]
     fn first_three_bars_return_zero() {
         let mut t = ThreeLineStrike::new();
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.5, 12.1, 10.4, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.5, 13.1, 11.4, 13.0, 2)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), None);
+        assert_eq!(t.update(c(10.5, 12.1, 10.4, 12.0, 1)), None);
+        assert_eq!(t.update(c(11.5, 13.1, 11.4, 13.0, 2)), None);
     }
 
     #[test]
@@ -213,6 +213,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), None);
     }
 }

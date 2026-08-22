@@ -63,12 +63,10 @@ impl Indicator for Engulfing {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(p) = prev else {
-            return Some(0.0);
-        };
+        let p = prev?;
+        self.has_emitted = true;
         let prev_body = (p.close - p.open).abs();
         let curr_body = (candle.close - candle.open).abs();
         if prev_body <= 0.0 || curr_body <= prev_body {
@@ -129,7 +127,7 @@ mod tests {
     fn bullish_engulfing_is_plus_one() {
         let mut e = Engulfing::new();
         // Prior red 11 -> 10, current green 9.5 -> 11.5 (body 2 > 1).
-        assert_eq!(e.update(c(11.0, 11.2, 9.8, 10.0, 0)), Some(0.0));
+        assert_eq!(e.update(c(11.0, 11.2, 9.8, 10.0, 0)), None);
         assert_eq!(e.update(c(9.5, 12.0, 9.5, 11.5, 1)), Some(1.0));
     }
 
@@ -137,7 +135,7 @@ mod tests {
     fn bearish_engulfing_is_minus_one() {
         let mut e = Engulfing::new();
         // Prior green 10 -> 11, current red 12 -> 9.
-        assert_eq!(e.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
+        assert_eq!(e.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
         assert_eq!(e.update(c(12.0, 12.0, 9.0, 9.0, 1)), Some(-1.0));
     }
 
@@ -160,7 +158,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut e = Engulfing::new();
-        assert_eq!(e.update(c(10.0, 11.0, 9.0, 11.0, 0)), Some(0.0));
+        assert_eq!(e.update(c(10.0, 11.0, 9.0, 11.0, 0)), None);
     }
 
     #[test]
@@ -192,6 +190,6 @@ mod tests {
         e.reset();
         assert!(!e.is_ready());
         // After reset the next bar again has no prev.
-        assert_eq!(e.update(c(11.0, 11.2, 9.8, 10.0, 0)), Some(0.0));
+        assert_eq!(e.update(c(11.0, 11.2, 9.8, 10.0, 0)), None);
     }
 }

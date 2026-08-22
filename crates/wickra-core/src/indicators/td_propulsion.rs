@@ -59,8 +59,8 @@ impl Indicator for TdPropulsion {
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev else {
             self.prev = Some(candle);
-            self.last_value = Some(0.0);
-            return Some(0.0);
+            self.last_value = None;
+            return None;
         };
         let v = if candle.open >= prev.close && candle.close > prev.high {
             1.0
@@ -116,7 +116,7 @@ mod tests {
     #[test]
     fn first_bar_seeds_without_signal() {
         let mut td = TdPropulsion::new();
-        assert_eq!(td.update(c(10.0, 11.0, 9.0, 10.0)), Some(0.0));
+        assert_eq!(td.update(c(10.0, 11.0, 9.0, 10.0)), None);
         assert!(td.update(c(10.5, 12.0, 10.0, 11.5)).is_some());
     }
 
@@ -152,7 +152,7 @@ mod tests {
         assert!(td.is_ready());
         td.reset();
         assert!(!td.is_ready());
-        assert_eq!(td.update(c(9.5, 11.0, 9.0, 10.0)), Some(0.0));
+        assert_eq!(td.update(c(9.5, 11.0, 9.0, 10.0)), None);
     }
 
     #[test]

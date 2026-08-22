@@ -64,14 +64,14 @@ impl Indicator for UniqueThreeRiver {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         self.c1 = self.c2;
         self.c2 = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         // bar1 is a long black body.
         if bar1.open <= bar1.close {
             return Some(0.0);
@@ -146,16 +146,16 @@ mod tests {
     #[test]
     fn unique_three_river_is_plus_one() {
         let mut t = UniqueThreeRiver::new();
-        assert_eq!(t.update(c(15.0, 15.1, 10.0, 10.5, 0)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 14.1, 9.0, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 10.0, 10.5, 0)), None);
+        assert_eq!(t.update(c(14.0, 14.1, 9.0, 11.0, 1)), None);
         assert_eq!(t.update(c(10.2, 10.9, 9.5, 10.4, 2)), Some(1.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = UniqueThreeRiver::new();
-        assert_eq!(t.update(c(15.0, 15.1, 10.0, 10.5, 0)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 14.1, 9.0, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 10.0, 10.5, 0)), None);
+        assert_eq!(t.update(c(14.0, 14.1, 9.0, 11.0, 1)), None);
     }
 
     #[test]
@@ -255,6 +255,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(15.0, 15.1, 10.0, 10.5, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 10.0, 10.5, 0)), None);
     }
 }

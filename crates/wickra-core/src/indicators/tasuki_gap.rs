@@ -64,14 +64,14 @@ impl Indicator for TasukiGap {
     type Output = f64;
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         self.c1 = self.c2;
         self.c2 = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
 
         let up = bar1.close > bar1.open && bar2.close > bar2.open;
         let down = bar1.close < bar1.open && bar2.close < bar2.open;
@@ -150,24 +150,24 @@ mod tests {
     #[test]
     fn upside_tasuki_gap_is_plus_one() {
         let mut t = TasukiGap::new();
-        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 14.0, 11.9, 13.5, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
+        assert_eq!(t.update(c(12.0, 14.0, 11.9, 13.5, 1)), None);
         assert_eq!(t.update(c(13.0, 13.1, 11.4, 11.5, 2)), Some(1.0));
     }
 
     #[test]
     fn downside_tasuki_gap_is_minus_one() {
         let mut t = TasukiGap::new();
-        assert_eq!(t.update(c(13.0, 13.2, 11.8, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 11.1, 9.5, 10.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(13.0, 13.2, 11.8, 12.0, 0)), None);
+        assert_eq!(t.update(c(11.0, 11.1, 9.5, 10.0, 1)), None);
         assert_eq!(t.update(c(10.5, 11.6, 10.4, 11.5, 2)), Some(-1.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = TasukiGap::new();
-        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 14.0, 11.9, 13.5, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
+        assert_eq!(t.update(c(12.0, 14.0, 11.9, 13.5, 1)), None);
     }
 
     #[test]
@@ -276,6 +276,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.2, 9.8, 11.0, 0)), None);
     }
 }

@@ -153,6 +153,31 @@ where
     Ok(())
 }
 
+fn check_warmup<I>(make: impl Fn() -> I, xs: &[I::Input]) -> std::result::Result<(), TestCaseError>
+where
+    I: Indicator,
+    I::Input: Clone,
+{
+    let mut ind = make();
+    let declared = ind.warmup_period();
+    for (i, x) in xs.iter().enumerate() {
+        let emitted = ind.update(x.clone()).is_some();
+        // The trait defines `warmup_period` as the number of inputs required
+        // before the first non-`None` output, so emitting earlier than that is
+        // a broken promise. Emitting LATER is not: several indicators declare a
+        // bound that is correct for their intended bar size and only look late
+        // on a probe series of a different one, so only this direction is
+        // asserted.
+        prop_assert!(
+            !emitted || i + 1 >= declared,
+            "emitted at input {} but declares a warmup of {}",
+            i + 1,
+            declared
+        );
+    }
+    Ok(())
+}
+
 // --- per-family roll-out macros ----------------------------------------------
 
 macro_rules! scalar_inv {
@@ -164,6 +189,7 @@ macro_rules! scalar_inv {
                 check_seq(|| { $($ctor)+ }, &xs)?;
                 check_scalar_nonfinite(|| { $($ctor)+ }, &xs)?;
                 check_ready(|| { $($ctor)+ }, &xs)?;
+                check_warmup(|| { $($ctor)+ }, &xs)?;
             }
         }
     };
@@ -190,6 +216,7 @@ macro_rules! candle_inv {
                     .collect();
                 check_seq(|| { $($ctor)+ }, &candles)?;
                 check_ready(|| { $($ctor)+ }, &candles)?;
+                check_warmup(|| { $($ctor)+ }, &candles)?;
             }
         }
     };
@@ -205,6 +232,7 @@ macro_rules! pair_inv {
             ) {
                 check_seq(|| { $($ctor)+ }, &xs)?;
                 check_ready(|| { $($ctor)+ }, &xs)?;
+                check_warmup(|| { $($ctor)+ }, &xs)?;
                 check_pairwise_nonfinite(|| { $($ctor)+ }, &xs)?;
             }
         }
@@ -237,6 +265,7 @@ macro_rules! cross_section_inv {
                     .collect();
                 check_seq(|| { $($ctor)+ }, &ticks)?;
                 check_ready(|| { $($ctor)+ }, &ticks)?;
+                check_warmup(|| { $($ctor)+ }, &ticks)?;
             }
         }
     };
@@ -254,6 +283,7 @@ macro_rules! trade_inv {
                     .collect();
                 check_seq(|| { $($ctor)+ }, &ticks)?;
                 check_ready(|| { $($ctor)+ }, &ticks)?;
+                check_warmup(|| { $($ctor)+ }, &ticks)?;
             }
         }
     };
@@ -282,6 +312,7 @@ macro_rules! deriv_inv {
                     .collect();
                 check_seq(|| { $($ctor)+ }, &ticks)?;
                 check_ready(|| { $($ctor)+ }, &ticks)?;
+                check_warmup(|| { $($ctor)+ }, &ticks)?;
             }
         }
     };
@@ -304,6 +335,7 @@ macro_rules! orderbook_inv {
                     .collect();
                 check_seq(|| { $($ctor)+ }, &books)?;
                 check_ready(|| { $($ctor)+ }, &books)?;
+                check_warmup(|| { $($ctor)+ }, &books)?;
             }
         }
     };
@@ -324,6 +356,7 @@ macro_rules! tradequote_inv {
                     .collect();
                 check_seq(|| { $($ctor)+ }, &tqs)?;
                 check_ready(|| { $($ctor)+ }, &tqs)?;
+                check_warmup(|| { $($ctor)+ }, &tqs)?;
             }
         }
     };

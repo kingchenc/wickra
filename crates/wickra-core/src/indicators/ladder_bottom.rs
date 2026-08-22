@@ -68,7 +68,6 @@ impl Indicator for LadderBottom {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         let bar3 = self.c3;
@@ -78,8 +77,9 @@ impl Indicator for LadderBottom {
         self.c3 = self.c4;
         self.c4 = Some(candle);
         let (Some(bar1), Some(bar2), Some(bar3), Some(bar4)) = (bar1, bar2, bar3, bar4) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         if bar1.close < bar1.open
             && bar2.close < bar2.open
             && bar3.close < bar3.open
@@ -141,10 +141,10 @@ mod tests {
     #[test]
     fn ladder_bottom_is_plus_one() {
         let mut t = LadderBottom::new();
-        assert_eq!(t.update(c(20.0, 20.1, 17.9, 18.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(18.0, 18.1, 15.9, 16.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(16.0, 16.1, 13.9, 14.0, 2)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 15.0, 12.4, 12.5, 3)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 17.9, 18.0, 0)), None);
+        assert_eq!(t.update(c(18.0, 18.1, 15.9, 16.0, 1)), None);
+        assert_eq!(t.update(c(16.0, 16.1, 13.9, 14.0, 2)), None);
+        assert_eq!(t.update(c(14.0, 15.0, 12.4, 12.5, 3)), None);
         assert_eq!(t.update(c(15.0, 17.1, 14.9, 17.0, 4)), Some(1.0));
     }
 
@@ -173,10 +173,10 @@ mod tests {
     #[test]
     fn first_four_bars_return_zero() {
         let mut t = LadderBottom::new();
-        assert_eq!(t.update(c(20.0, 20.1, 17.9, 18.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(18.0, 18.1, 15.9, 16.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(16.0, 16.1, 13.9, 14.0, 2)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 15.0, 12.4, 12.5, 3)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 17.9, 18.0, 0)), None);
+        assert_eq!(t.update(c(18.0, 18.1, 15.9, 16.0, 1)), None);
+        assert_eq!(t.update(c(16.0, 16.1, 13.9, 14.0, 2)), None);
+        assert_eq!(t.update(c(14.0, 15.0, 12.4, 12.5, 3)), None);
     }
 
     #[test]
@@ -206,6 +206,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(20.0, 20.1, 17.9, 18.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 17.9, 18.0, 0)), None);
     }
 }

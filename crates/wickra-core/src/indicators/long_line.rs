@@ -102,14 +102,14 @@ impl Indicator for LongLine {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        // Every path below emits, so readiness begins with the first bar.
-        self.has_emitted = true;
         let range = candle.high - candle.low;
         let body = candle.close - candle.open;
         if self.ranges.len() < self.period {
             self.ranges.push_back(range);
-            return Some(0.0);
+            return None;
         }
+        // Past the window gate every path emits, so readiness starts here.
+        self.has_emitted = true;
         let avg = self.ranges.iter().sum::<f64>() / self.period as f64;
         self.ranges.push_back(range);
         self.ranges.pop_front();
@@ -151,7 +151,7 @@ mod tests {
 
     fn warm(t: &mut LongLine) {
         for ts in 0..5 {
-            assert_eq!(t.update(c(10.0, 10.5, 9.5, 10.2, ts)), Some(0.0));
+            assert_eq!(t.update(c(10.0, 10.5, 9.5, 10.2, ts)), None);
         }
     }
 
@@ -179,7 +179,9 @@ mod tests {
     fn long_white_line_is_plus_one() {
         let mut t = LongLine::new();
         warm(&mut t);
-        assert!(t.is_ready());
+        // The window is full but nothing has been emitted yet, so the
+        // indicator is not ready until the next bar produces a value.
+        assert!(!t.is_ready());
         assert_eq!(t.update(c(10.0, 13.0, 9.9, 12.9, 5)), Some(1.0));
     }
 
@@ -207,10 +209,10 @@ mod tests {
     }
 
     #[test]
-    fn warmup_returns_zero() {
+    fn warmup_withholds() {
         let mut t = LongLine::new();
         for ts in 0..5 {
-            assert_eq!(t.update(c(10.0, 13.0, 9.9, 12.9, ts)), Some(0.0));
+            assert_eq!(t.update(c(10.0, 13.0, 9.9, 12.9, ts)), None);
         }
     }
 
@@ -242,7 +244,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 13.0, 9.9, 12.9, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 13.0, 9.9, 12.9, 0)), None);
     }
 
     #[test]

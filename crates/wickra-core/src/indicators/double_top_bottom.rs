@@ -45,9 +45,10 @@ use crate::traits::Indicator;
 /// .enumerate()
 /// {
 ///     let c = Candle::new(low, high, low, low, 1.0, i as i64).unwrap();
-///     let signal = indicator.update(c).unwrap();
+///     let signal = indicator.update(c);
+///     // Nothing is reported until three pivots exist to compare.
 ///     if i == 4 {
-///         assert_eq!(signal, -1.0);
+///         assert_eq!(signal, Some(-1.0));
 ///     }
 /// }
 /// ```
@@ -79,12 +80,17 @@ impl Indicator for DoubleTopBottom {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
-        if !self.swing.update(candle) {
-            return Some(0.0);
-        }
+        let advanced = self.swing.update(candle);
         let pivots = self.swing.pivots();
+        // Too few pivots to form the shape at all: the indicator cannot
+        // judge yet, which is what `None` means.
         if pivots.len() < 3 {
+            return None;
+        }
+        self.has_emitted = true;
+        // Armed, but this bar did not close a new pivot, so there is
+        // nothing new to match against.
+        if !advanced {
             return Some(0.0);
         }
         let first = pivots[pivots.len() - 3];
@@ -104,9 +110,10 @@ impl Indicator for DoubleTopBottom {
 
     #[inline]
     fn warmup_period(&self) -> usize {
-        // The first complete pattern needs three confirmed pivots; the earliest
-        // bar that can confirm a third pivot is the fifth.
-        5
+        // Three confirmed pivots. The tracker seeds on the first bar without
+        // confirming anything and can confirm at most one pivot per bar after
+        // that, so the third arrives on the fourth bar at the earliest.
+        4
     }
 
     #[inline]
@@ -130,7 +137,7 @@ mod tests {
         let mut indicator = DoubleTopBottom::new();
         candles_for_pivots(pivots)
             .into_iter()
-            .map(|c| indicator.update(c).unwrap())
+            .filter_map(|c| indicator.update(c))
             .collect()
     }
 
@@ -138,7 +145,7 @@ mod tests {
     fn accessors_and_metadata() {
         let indicator = DoubleTopBottom::new();
         assert_eq!(indicator.name(), "DoubleTopBottom");
-        assert_eq!(indicator.warmup_period(), 5);
+        assert_eq!(indicator.warmup_period(), 4);
         assert!(!indicator.is_ready());
         assert!(!DoubleTopBottom::default().is_ready());
     }
@@ -176,7 +183,7 @@ mod tests {
         indicator.reset();
         assert!(!indicator.is_ready());
         let c = Candle::new(99.5, 100.0, 99.5, 99.5, 1.0, 0).unwrap();
-        assert_eq!(indicator.update(c), Some(0.0));
+        assert_eq!(indicator.update(c), None);
     }
 
     #[test]

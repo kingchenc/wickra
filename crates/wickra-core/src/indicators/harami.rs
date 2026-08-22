@@ -63,12 +63,10 @@ impl Indicator for Harami {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(p) = prev else {
-            return Some(0.0);
-        };
+        let p = prev?;
+        self.has_emitted = true;
         let prev_body = (p.close - p.open).abs();
         let curr_body = (candle.close - candle.open).abs();
         if prev_body <= 0.0 || curr_body <= 0.0 || curr_body >= prev_body {
@@ -130,7 +128,7 @@ mod tests {
     fn bullish_harami_is_plus_one() {
         let mut h = Harami::new();
         // Prior red 12 -> 10 (body 2). Current green 10.5 -> 11 inside.
-        assert_eq!(h.update(c(12.0, 12.5, 9.5, 10.0, 0)), Some(0.0));
+        assert_eq!(h.update(c(12.0, 12.5, 9.5, 10.0, 0)), None);
         assert_eq!(h.update(c(10.5, 11.5, 10.4, 11.0, 1)), Some(1.0));
     }
 
@@ -138,7 +136,7 @@ mod tests {
     fn bearish_harami_is_minus_one() {
         let mut h = Harami::new();
         // Prior green 10 -> 12 (body 2). Current red 11.5 -> 11 inside.
-        assert_eq!(h.update(c(10.0, 12.5, 9.5, 12.0, 0)), Some(0.0));
+        assert_eq!(h.update(c(10.0, 12.5, 9.5, 12.0, 0)), None);
         assert_eq!(h.update(c(11.5, 11.6, 10.9, 11.0, 1)), Some(-1.0));
     }
 
@@ -161,7 +159,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut h = Harami::new();
-        assert_eq!(h.update(c(10.0, 11.0, 9.0, 11.0, 0)), Some(0.0));
+        assert_eq!(h.update(c(10.0, 11.0, 9.0, 11.0, 0)), None);
     }
 
     #[test]
@@ -193,6 +191,6 @@ mod tests {
         h.reset();
         assert!(!h.is_ready());
         // After reset the next bar again has no prev.
-        assert_eq!(h.update(c(12.0, 12.5, 9.5, 10.0, 0)), Some(0.0));
+        assert_eq!(h.update(c(12.0, 12.5, 9.5, 10.0, 0)), None);
     }
 }

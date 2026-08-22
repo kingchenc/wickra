@@ -61,8 +61,8 @@ impl Indicator for TdClop {
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev else {
             self.prev = Some(candle);
-            self.last_value = Some(0.0);
-            return Some(0.0);
+            self.last_value = None;
+            return None;
         };
         let below_body = candle.open < prev.open && candle.open < prev.close;
         let above_body = candle.close > prev.open && candle.close > prev.close;
@@ -124,7 +124,7 @@ mod tests {
     #[test]
     fn first_bar_seeds_without_signal() {
         let mut td = TdClop::new();
-        assert_eq!(td.update(c(10.0, 11.0)), Some(0.0));
+        assert_eq!(td.update(c(10.0, 11.0)), None);
         assert!(td.update(c(9.0, 12.0)).is_some());
     }
 
@@ -159,7 +159,7 @@ mod tests {
         assert!(td.is_ready());
         td.reset();
         assert!(!td.is_ready());
-        assert_eq!(td.update(c(10.0, 11.0)), Some(0.0));
+        assert_eq!(td.update(c(10.0, 11.0)), None);
     }
 
     #[test]

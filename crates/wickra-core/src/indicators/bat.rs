@@ -44,12 +44,17 @@ impl Indicator for Bat {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
-        if !self.swing.update(candle) {
-            return Some(0.0);
-        }
+        let advanced = self.swing.update(candle);
         let pivots = self.swing.pivots();
+        // Too few pivots to form the shape at all: the indicator cannot
+        // judge yet, which is what `None` means.
         if pivots.len() < 5 {
+            return None;
+        }
+        self.has_emitted = true;
+        // Armed, but this bar did not close a new pivot, so there is
+        // nothing new to match against.
+        if !advanced {
             return Some(0.0);
         }
         let p = xabcd(pivots);
@@ -101,7 +106,7 @@ mod tests {
         let mut indicator = Bat::new();
         candles_for_pivots(pivots)
             .into_iter()
-            .map(|c| indicator.update(c).unwrap())
+            .filter_map(|c| indicator.update(c))
             .collect()
     }
 
@@ -142,7 +147,7 @@ mod tests {
         indicator.reset();
         assert!(!indicator.is_ready());
         let c = Candle::new(99.5, 100.0, 99.5, 99.5, 1.0, 0).unwrap();
-        assert_eq!(indicator.update(c), Some(0.0));
+        assert_eq!(indicator.update(c), None);
     }
 
     #[test]

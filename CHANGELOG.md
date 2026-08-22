@@ -340,6 +340,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   three different projections of one `(close, volume)` window, and
   `VolumeWeightedSr` five across three parallel windows. Each reseed source was
   written from the eviction it mirrors rather than inferred from the field name.
+- **BREAKING: the pattern indicators now withhold during warmup instead of
+  reporting "no pattern".** 73 indicators declared a warmup of 3 to 6 bars and
+  then answered `Some(0.0)` from the very first bar, which conflates *I looked
+  and found nothing* with *I cannot look yet*. The trait defines `None` as the
+  warming-up answer, so the gate that fires for want of history now returns it.
+
+  Callers that treated a leading `0.0` as "no pattern" will now see `None` there
+  instead. The value stream after warmup is unchanged, and `is_ready()` and
+  `warmup_period()` finally agree with what `update` does.
+
+  A new `check_warmup` invariant asserts the bound across all 513 indicators. It
+  only forbids emitting *earlier* than declared: several indicators declare a
+  bound that is right for their intended bar size and merely look late on a
+  probe series of another, so the other direction is not an error.
+
+  Six declarations were wrong rather than the emission, and are corrected:
+
+  | | was | is |
+  |---|---|---|
+  | `Chain` | `first + second` | `max(first,1) + max(second,1) − 1` |
+  | `MacdExt` | `slow + signal` | `slow + signal − 1` |
+  | `EhlersStochastic` | `period + roofing` | `period + roofing − 1` |
+  | `RoofingFilter` | 2 | 1 |
+  | `Ichimoku` | 77 | 1 |
+  | `Vpin` | `num_buckets` | 1 |
+  | `DoubleTopBottom` | 5 | 4 |
+  | `LongLine` / `ShortLine` | `period` | `period + 1` |
+
+  The three compositions each double-counted the bar on which the first stage
+  emits, which is also the second stage's first input. `Chain` called its sum a
+  "conservative upper bound", but this method promises the input count before
+  the first value, so over-declaring is as wrong as under-declaring.
+  `Ichimoku` really does emit from bar 1 — its components are `Option` fields
+  that fill in progressively — and 77 is when the last one arrives, a different
+  question. `Vpin` declared a bucket count where an input count belongs: one
+  large trade can fill every bucket, so no number of trades guarantees
+  readiness.
+
+  68 golden fixtures move, every one of them by withholding a leading run of
+  rows and nothing else — checked cell by cell, in both directions, that no
+  value outside that prefix changed and that nothing non-zero was withheld.
+
 
 
 

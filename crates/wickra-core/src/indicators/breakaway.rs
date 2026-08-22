@@ -82,7 +82,6 @@ impl Indicator for Breakaway {
     type Output = f64;
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         let bar3 = self.c3;
@@ -92,8 +91,9 @@ impl Indicator for Breakaway {
         self.c3 = self.c4;
         self.c4 = Some(candle);
         let (Some(bar1), Some(bar2), Some(bar3), Some(bar4)) = (bar1, bar2, bar3, bar4) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         // Bullish: a decline gaps lower, runs two more bars down, then a green
         // bar5 closes back inside the bar1/bar2 body gap.
         if bar1.close < bar1.open
@@ -173,20 +173,20 @@ mod tests {
     #[test]
     fn bullish_breakaway_is_plus_one() {
         let mut t = Breakaway::new();
-        assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 14.1, 11.9, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(12.5, 13.0, 10.5, 11.0, 2)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 11.5, 9.0, 9.5, 3)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), None);
+        assert_eq!(t.update(c(14.0, 14.1, 11.9, 12.0, 1)), None);
+        assert_eq!(t.update(c(12.5, 13.0, 10.5, 11.0, 2)), None);
+        assert_eq!(t.update(c(11.0, 11.5, 9.0, 9.5, 3)), None);
         assert_eq!(t.update(c(9.5, 14.7, 9.4, 14.5, 4)), Some(1.0));
     }
 
     #[test]
     fn bearish_breakaway_is_minus_one() {
         let mut t = Breakaway::new();
-        assert_eq!(t.update(c(15.0, 20.2, 14.8, 20.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(21.0, 23.1, 20.9, 23.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(22.5, 24.5, 21.5, 24.0, 2)), Some(0.0));
-        assert_eq!(t.update(c(24.0, 26.5, 23.0, 26.0, 3)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 20.2, 14.8, 20.0, 0)), None);
+        assert_eq!(t.update(c(21.0, 23.1, 20.9, 23.0, 1)), None);
+        assert_eq!(t.update(c(22.5, 24.5, 21.5, 24.0, 2)), None);
+        assert_eq!(t.update(c(24.0, 26.5, 23.0, 26.0, 3)), None);
         assert_eq!(t.update(c(27.0, 27.2, 20.4, 20.5, 4)), Some(-1.0));
     }
 
@@ -215,10 +215,10 @@ mod tests {
     #[test]
     fn first_four_bars_return_zero() {
         let mut t = Breakaway::new();
-        assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 14.1, 11.9, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(12.5, 13.0, 10.5, 11.0, 2)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 11.5, 9.0, 9.5, 3)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), None);
+        assert_eq!(t.update(c(14.0, 14.1, 11.9, 12.0, 1)), None);
+        assert_eq!(t.update(c(12.5, 13.0, 10.5, 11.0, 2)), None);
+        assert_eq!(t.update(c(11.0, 11.5, 9.0, 9.5, 3)), None);
     }
 
     #[test]
@@ -248,6 +248,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), None);
     }
 }

@@ -95,14 +95,14 @@ impl Indicator for IdenticalThreeCrows {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let tol2 = self.tolerance * bar2.open.abs().max(bar1.close.abs());
         let tol3 = self.tolerance * candle.open.abs().max(bar2.close.abs());
         if bar1.close < bar1.open
@@ -174,8 +174,8 @@ mod tests {
     fn identical_three_crows_is_minus_one() {
         let mut t = IdenticalThreeCrows::new();
         // Three red candles, each opening at the prior close, declining.
-        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 12.1, 10.9, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(12.0, 12.1, 10.9, 11.0, 1)), None);
         assert_eq!(t.update(c(11.0, 11.1, 9.9, 10.0, 2)), Some(-1.0));
     }
 
@@ -200,8 +200,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = IdenticalThreeCrows::new();
-        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(12.0, 12.1, 10.9, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(12.0, 12.1, 10.9, 11.0, 1)), None);
     }
 
     #[test]
@@ -229,6 +229,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(13.0, 13.1, 11.9, 12.0, 0)), None);
     }
 }

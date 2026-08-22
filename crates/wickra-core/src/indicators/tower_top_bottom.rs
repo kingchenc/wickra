@@ -81,8 +81,8 @@ impl Indicator for TowerTopBottom {
         let (Some(first), Some(middle)) = (self.c1, self.c2) else {
             self.c1 = self.c2;
             self.c2 = Some(candle);
-            self.last_value = Some(0.0);
-            return Some(0.0);
+            self.last_value = None;
+            return None;
         };
         let pause = is_small(middle);
         let first_tall = is_tall(first);
@@ -162,8 +162,8 @@ mod tests {
     #[test]
     fn first_two_bars_seed_without_signal() {
         let mut t = TowerTopBottom::new();
-        assert_eq!(t.update(tall(100.0, 110.0)), Some(0.0));
-        assert_eq!(t.update(small(105.0)), Some(0.0));
+        assert_eq!(t.update(tall(100.0, 110.0)), None);
+        assert_eq!(t.update(small(105.0)), None);
         assert!(t.update(tall(110.0, 100.0)).is_some());
     }
 
@@ -210,7 +210,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(tall(100.0, 110.0)), Some(0.0));
+        assert_eq!(t.update(tall(100.0, 110.0)), None);
     }
 
     #[test]

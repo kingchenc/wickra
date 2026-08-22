@@ -60,14 +60,14 @@ impl Indicator for ThreeInside {
     type Output = f64;
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(b1), Some(b2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let body1 = (b1.close - b1.open).abs();
         let body2 = (b2.close - b2.open).abs();
         if body1 <= 0.0 || body2 <= 0.0 || body2 >= body1 {
@@ -144,8 +144,8 @@ mod tests {
     #[test]
     fn three_inside_up_is_plus_one() {
         let mut t = ThreeInside::new();
-        assert_eq!(t.update(c(12.0, 12.5, 9.5, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.5, 11.5, 10.4, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(12.0, 12.5, 9.5, 10.0, 0)), None);
+        assert_eq!(t.update(c(10.5, 11.5, 10.4, 11.0, 1)), None);
         // Bar 3 closes 12.5 > Bar 1 open 12.
         assert_eq!(t.update(c(11.0, 13.0, 10.9, 12.5, 2)), Some(1.0));
     }
@@ -153,8 +153,8 @@ mod tests {
     #[test]
     fn three_inside_down_is_minus_one() {
         let mut t = ThreeInside::new();
-        assert_eq!(t.update(c(10.0, 12.5, 9.5, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(11.5, 11.6, 10.9, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.5, 9.5, 12.0, 0)), None);
+        assert_eq!(t.update(c(11.5, 11.6, 10.9, 11.0, 1)), None);
         // Bar 3 closes 9.5 < Bar 1 open 10.
         assert_eq!(t.update(c(11.0, 11.1, 9.3, 9.5, 2)), Some(-1.0));
     }
@@ -171,8 +171,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = ThreeInside::new();
-        assert_eq!(t.update(c(12.0, 12.5, 9.5, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.5, 11.5, 10.4, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(12.0, 12.5, 9.5, 10.0, 0)), None);
+        assert_eq!(t.update(c(10.5, 11.5, 10.4, 11.0, 1)), None);
     }
 
     #[test]
@@ -200,6 +200,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(12.0, 12.5, 9.5, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(12.0, 12.5, 9.5, 10.0, 0)), None);
     }
 }

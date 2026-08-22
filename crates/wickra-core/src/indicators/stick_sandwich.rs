@@ -64,14 +64,14 @@ impl Indicator for StickSandwich {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         self.c1 = self.c2;
         self.c2 = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         // bar1 black, bar2 white, bar3 black.
         if bar1.close >= bar1.open || bar2.close <= bar2.open || candle.close >= candle.open {
             return Some(0.0);
@@ -130,16 +130,16 @@ mod tests {
     #[test]
     fn stick_sandwich_is_plus_one() {
         let mut t = StickSandwich::new();
-        assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.5, 11.6, 10.4, 11.5, 1)), Some(0.0));
+        assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), None);
+        assert_eq!(t.update(c(10.5, 11.6, 10.4, 11.5, 1)), None);
         assert_eq!(t.update(c(11.5, 11.6, 9.9, 10.0, 2)), Some(1.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = StickSandwich::new();
-        assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.5, 11.6, 10.4, 11.5, 1)), Some(0.0));
+        assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), None);
+        assert_eq!(t.update(c(10.5, 11.6, 10.4, 11.5, 1)), None);
     }
 
     #[test]
@@ -212,6 +212,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), None);
     }
 }

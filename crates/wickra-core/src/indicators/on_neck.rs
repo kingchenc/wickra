@@ -61,12 +61,10 @@ impl Indicator for OnNeck {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(bar1) = prev else {
-            return Some(0.0);
-        };
+        let bar1 = prev?;
+        self.has_emitted = true;
         let range1 = bar1.high - bar1.low;
         if range1 <= 0.0 {
             return Some(0.0);
@@ -123,7 +121,7 @@ mod tests {
     #[test]
     fn on_neck_is_minus_one() {
         let mut t = OnNeck::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), None);
         assert_eq!(t.update(c(7.0, 9.1, 6.9, 9.0, 1)), Some(-1.0));
     }
 
@@ -153,7 +151,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut t = OnNeck::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), None);
     }
 
     #[test]
@@ -180,7 +178,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), None);
     }
 
     #[test]

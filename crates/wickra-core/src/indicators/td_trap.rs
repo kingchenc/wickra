@@ -64,8 +64,8 @@ impl Indicator for TdTrap {
             // Not enough history yet: emit a neutral 0.0 while seeding.
             self.prev2 = self.prev1;
             self.prev1 = Some(candle);
-            self.last_value = Some(0.0);
-            return Some(0.0);
+            self.last_value = None;
+            return None;
         };
         let is_inside = trap.high < before.high && trap.low > before.low;
         let v = if is_inside && candle.close > trap.high {
@@ -124,8 +124,8 @@ mod tests {
     #[test]
     fn first_two_bars_seed_without_signal() {
         let mut td = TdTrap::new();
-        assert_eq!(td.update(c(110.0, 90.0, 100.0)), Some(0.0));
-        assert_eq!(td.update(c(108.0, 95.0, 102.0)), Some(0.0));
+        assert_eq!(td.update(c(110.0, 90.0, 100.0)), None);
+        assert_eq!(td.update(c(108.0, 95.0, 102.0)), None);
         assert!(td.update(c(112.0, 100.0, 110.0)).is_some());
     }
 
@@ -171,7 +171,7 @@ mod tests {
         assert!(td.is_ready());
         td.reset();
         assert!(!td.is_ready());
-        assert_eq!(td.update(c(110.0, 90.0, 100.0)), Some(0.0));
+        assert_eq!(td.update(c(110.0, 90.0, 100.0)), None);
     }
 
     #[test]

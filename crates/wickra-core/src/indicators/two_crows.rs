@@ -60,14 +60,14 @@ impl Indicator for TwoCrows {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         if bar1.close > bar1.open
             && bar2.close < bar2.open
             && bar2.close > bar1.close
@@ -126,8 +126,8 @@ mod tests {
         let mut t = TwoCrows::new();
         // bar1 green 10->12; bar2 red 14->13 (body above bar1); bar3 red
         // opens 13.5 (inside [13,14]) and closes 11 (inside [10,12]).
-        assert_eq!(t.update(c(10.0, 12.2, 9.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 14.2, 12.9, 13.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.2, 9.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(14.0, 14.2, 12.9, 13.0, 1)), None);
         assert_eq!(t.update(c(13.5, 13.6, 10.9, 11.0, 2)), Some(-1.0));
     }
 
@@ -152,8 +152,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = TwoCrows::new();
-        assert_eq!(t.update(c(10.0, 12.2, 9.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(14.0, 14.2, 12.9, 13.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.2, 9.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(14.0, 14.2, 12.9, 13.0, 1)), None);
     }
 
     #[test]
@@ -185,6 +185,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 12.2, 9.9, 12.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.2, 9.9, 12.0, 0)), None);
     }
 }

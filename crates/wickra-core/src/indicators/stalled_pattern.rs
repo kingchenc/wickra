@@ -65,14 +65,14 @@ impl Indicator for StalledPattern {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         self.c1 = self.c2;
         self.c2 = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let range1 = bar1.high - bar1.low;
         let range2 = bar2.high - bar2.low;
         let range3 = candle.high - candle.low;
@@ -144,16 +144,16 @@ mod tests {
     #[test]
     fn stalled_pattern_is_minus_one() {
         let mut t = StalledPattern::new();
-        assert_eq!(t.update(c(10.0, 12.05, 9.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 14.05, 10.9, 14.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.05, 9.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(11.0, 14.05, 10.9, 14.0, 1)), None);
         assert_eq!(t.update(c(14.0, 14.6, 13.95, 14.15, 2)), Some(-1.0));
     }
 
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = StalledPattern::new();
-        assert_eq!(t.update(c(10.0, 12.05, 9.9, 12.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 14.05, 10.9, 14.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.05, 9.9, 12.0, 0)), None);
+        assert_eq!(t.update(c(11.0, 14.05, 10.9, 14.0, 1)), None);
     }
 
     #[test]
@@ -236,6 +236,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 12.05, 9.9, 12.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 12.05, 9.9, 12.0, 0)), None);
     }
 }

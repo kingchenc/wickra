@@ -264,9 +264,13 @@ impl Indicator for Ichimoku {
 
     #[inline]
     fn warmup_period(&self) -> usize {
-        // First fully-populated row needs senkou_b's midpoint to have travelled
-        // `displacement` bars forward.
-        self.senkou_b_period + self.displacement - 1
+        // A row is emitted from the first bar: every component is an
+        // `Option`, and they fill in as the history allows. The last of them,
+        // senkou_b displaced forward, needs
+        // `senkou_b_period + displacement - 1` bars -- but that is when the row
+        // becomes *complete*, not when a value first appears, and this method
+        // promises the latter.
+        1
     }
 
     #[inline]
@@ -339,7 +343,7 @@ mod tests {
     fn accessors_and_metadata() {
         let ichi = Ichimoku::classic();
         assert_eq!(ichi.periods(), (9, 26, 52, 26));
-        assert_eq!(ichi.warmup_period(), 77);
+        assert_eq!(ichi.warmup_period(), 1);
         assert_eq!(ichi.name(), "Ichimoku");
         assert!(ichi.value().is_none());
     }

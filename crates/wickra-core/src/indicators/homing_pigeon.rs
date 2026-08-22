@@ -59,12 +59,10 @@ impl Indicator for HomingPigeon {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(bar1) = prev else {
-            return Some(0.0);
-        };
+        let bar1 = prev?;
+        self.has_emitted = true;
         // Both bars black, bar2's body inside bar1's body and smaller.
         if bar1.close < bar1.open
             && candle.close < candle.open
@@ -118,7 +116,7 @@ mod tests {
     #[test]
     fn homing_pigeon_is_plus_one() {
         let mut t = HomingPigeon::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
         assert_eq!(t.update(c(14.0, 14.1, 10.9, 11.0, 1)), Some(1.0));
     }
 
@@ -141,7 +139,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut t = HomingPigeon::new();
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
     }
 
     #[test]
@@ -168,6 +166,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), None);
     }
 }

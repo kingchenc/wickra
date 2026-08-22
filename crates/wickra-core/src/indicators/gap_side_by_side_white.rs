@@ -67,14 +67,14 @@ impl Indicator for GapSideBySideWhite {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.prev_prev;
         let bar2 = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (bar1, bar2) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         let range2 = bar2.high - bar2.low;
         if range2 <= 0.0 {
             return Some(0.0);
@@ -147,16 +147,16 @@ mod tests {
     #[test]
     fn gap_up_is_plus_one() {
         let mut t = GapSideBySideWhite::new();
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(13.0, 14.1, 12.9, 14.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), None);
+        assert_eq!(t.update(c(13.0, 14.1, 12.9, 14.0, 1)), None);
         assert_eq!(t.update(c(13.0, 14.1, 12.9, 14.0, 2)), Some(1.0));
     }
 
     #[test]
     fn gap_down_is_minus_one() {
         let mut t = GapSideBySideWhite::new();
-        assert_eq!(t.update(c(14.0, 14.1, 12.9, 13.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(14.0, 14.1, 12.9, 13.0, 0)), None);
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 1)), None);
         assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 2)), Some(-1.0));
     }
 
@@ -190,8 +190,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut t = GapSideBySideWhite::new();
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(13.0, 14.1, 12.9, 14.0, 1)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), None);
+        assert_eq!(t.update(c(13.0, 14.1, 12.9, 14.0, 1)), None);
     }
 
     #[test]
@@ -219,7 +219,7 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), None);
     }
 
     #[test]

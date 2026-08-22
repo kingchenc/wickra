@@ -64,14 +64,14 @@ impl Indicator for UpsideGapTwoCrows {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let pp = self.prev_prev;
         let p = self.prev;
         self.prev_prev = self.prev;
         self.prev = Some(candle);
         let (Some(bar1), Some(bar2)) = (pp, p) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         if bar1.close > bar1.open
             && bar2.close < bar2.open
             && bar2.close > bar1.close
@@ -129,8 +129,8 @@ mod tests {
         let mut u = UpsideGapTwoCrows::new();
         // bar1 green 10->12; bar2 red 14->13 gapping up; bar3 red opens 15
         // (above bar2 open) and closes 12.5 (below bar2 close, above bar1 close).
-        assert_eq!(u.update(c(10.0, 12.2, 9.9, 12.0, 0)), Some(0.0));
-        assert_eq!(u.update(c(14.0, 14.2, 12.9, 13.0, 1)), Some(0.0));
+        assert_eq!(u.update(c(10.0, 12.2, 9.9, 12.0, 0)), None);
+        assert_eq!(u.update(c(14.0, 14.2, 12.9, 13.0, 1)), None);
         assert_eq!(u.update(c(15.0, 15.2, 12.4, 12.5, 2)), Some(-1.0));
     }
 
@@ -155,8 +155,8 @@ mod tests {
     #[test]
     fn first_two_bars_return_zero() {
         let mut u = UpsideGapTwoCrows::new();
-        assert_eq!(u.update(c(10.0, 12.2, 9.9, 12.0, 0)), Some(0.0));
-        assert_eq!(u.update(c(14.0, 14.2, 12.9, 13.0, 1)), Some(0.0));
+        assert_eq!(u.update(c(10.0, 12.2, 9.9, 12.0, 0)), None);
+        assert_eq!(u.update(c(14.0, 14.2, 12.9, 13.0, 1)), None);
     }
 
     #[test]
@@ -188,6 +188,6 @@ mod tests {
         assert!(u.is_ready());
         u.reset();
         assert!(!u.is_ready());
-        assert_eq!(u.update(c(10.0, 12.2, 9.9, 12.0, 0)), Some(0.0));
+        assert_eq!(u.update(c(10.0, 12.2, 9.9, 12.0, 0)), None);
     }
 }

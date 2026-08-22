@@ -68,8 +68,8 @@ impl Indicator for HaramiCross {
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let Some(prev) = self.prev else {
             self.prev = Some(candle);
-            self.last_value = Some(0.0);
-            return Some(0.0);
+            self.last_value = None;
+            return None;
         };
         let prev_body_low = prev.open.min(prev.close);
         let prev_body_high = prev.open.max(prev.close);
@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn first_bar_seeds_without_signal() {
         let mut h = HaramiCross::new();
-        assert_eq!(h.update(solid(110.0, 100.0)), Some(0.0));
+        assert_eq!(h.update(solid(110.0, 100.0)), None);
         assert!(h.update(doji(105.0)).is_some());
     }
 
@@ -190,7 +190,7 @@ mod tests {
         assert!(h.is_ready());
         h.reset();
         assert!(!h.is_ready());
-        assert_eq!(h.update(solid(110.0, 100.0)), Some(0.0));
+        assert_eq!(h.update(solid(110.0, 100.0)), None);
     }
 
     #[test]

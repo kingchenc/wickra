@@ -97,12 +97,10 @@ impl Indicator for Counterattack {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(bar1) = prev else {
-            return Some(0.0);
-        };
+        let bar1 = prev?;
+        self.has_emitted = true;
         let range1 = bar1.high - bar1.low;
         let range2 = candle.high - candle.low;
         let body1 = bar1.close - bar1.open;
@@ -179,14 +177,14 @@ mod tests {
     #[test]
     fn bullish_counterattack_is_plus_one() {
         let mut t = Counterattack::new();
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
         assert_eq!(t.update(c(10.0, 15.1, 9.9, 15.0, 1)), Some(1.0));
     }
 
     #[test]
     fn bearish_counterattack_is_minus_one() {
         let mut t = Counterattack::new();
-        assert_eq!(t.update(c(15.0, 20.1, 14.9, 20.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(15.0, 20.1, 14.9, 20.0, 0)), None);
         assert_eq!(t.update(c(25.0, 25.1, 19.9, 20.0, 1)), Some(-1.0));
     }
 
@@ -217,7 +215,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut t = Counterattack::new();
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
     }
 
     #[test]
@@ -244,6 +242,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
     }
 }

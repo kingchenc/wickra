@@ -135,7 +135,9 @@ impl Indicator for EhlersStochastic {
 
     #[inline]
     fn warmup_period(&self) -> usize {
-        self.period + self.roofing.warmup_period()
+        // The roofing filter feeds the stochastic, so its last warmup bar is
+        // the stochastic's first input; the two overlap by one.
+        self.period + self.roofing.warmup_period() - 1
     }
 
     #[inline]
@@ -163,7 +165,7 @@ mod tests {
     fn accessors_and_metadata() {
         let mut es = EhlersStochastic::new(20).unwrap();
         assert_eq!(es.period(), 20);
-        assert_eq!(es.warmup_period(), 22);
+        assert_eq!(es.warmup_period(), 20);
         assert_eq!(es.name(), "EhlersStochastic");
         assert!(!es.is_ready());
         let prices: Vec<f64> = (0..150)

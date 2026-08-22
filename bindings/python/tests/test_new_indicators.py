@@ -2465,22 +2465,22 @@ def test_belt_hold_reference():
 
 def test_breakaway_reference():
     t = ta.Breakaway()
-    assert t.update((20.0, 20.2, 14.8, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((14.0, 14.1, 11.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((12.5, 13.0, 10.5, 11.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((11.0, 11.5, 9.0, 9.5, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.2, 14.8, 15.0, 1.0, 0)) is None
+    assert t.update((14.0, 14.1, 11.9, 12.0, 1.0, 1)) is None
+    assert t.update((12.5, 13.0, 10.5, 11.0, 1.0, 2)) is None
+    assert t.update((11.0, 11.5, 9.0, 9.5, 1.0, 3)) is None
     assert t.update((9.5, 14.7, 9.4, 14.5, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_counterattack_reference():
     t = ta.Counterattack()
-    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) is None
     assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_doji_star_reference():
     t = ta.DojiStar()
-    assert t.update((20.0, 20.2, 14.8, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.2, 14.8, 15.0, 1.0, 0)) is None
     assert t.update((13.0, 13.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(1.0)
 
 
@@ -2506,22 +2506,22 @@ def test_rickshaw_man_reference():
 
 def test_evening_doji_star_reference():
     t = ta.EveningDojiStar()
-    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((17.0, 17.1, 16.9, 17.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) is None
+    assert t.update((17.0, 17.1, 16.9, 17.0, 1.0, 1)) is None
     assert t.update((16.0, 16.1, 11.9, 12.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_morning_doji_star_reference():
     t = ta.MorningDojiStar()
-    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((8.0, 8.1, 7.9, 8.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) is None
+    assert t.update((8.0, 8.1, 7.9, 8.0, 1.0, 1)) is None
     assert t.update((9.0, 13.1, 8.9, 13.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_gap_side_by_side_white_reference():
     t = ta.GapSideBySideWhite()
-    assert t.update((10.0, 11.1, 9.9, 11.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((13.0, 14.1, 12.9, 14.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.1, 9.9, 11.0, 1.0, 0)) is None
+    assert t.update((13.0, 14.1, 12.9, 14.0, 1.0, 1)) is None
     assert t.update((13.0, 14.1, 12.9, 14.0, 1.0, 2)) == pytest.approx(1.0)
 
 
@@ -2532,81 +2532,81 @@ def test_high_wave_reference():
 
 def test_hikkake_reference():
     t = ta.Hikkake()
-    assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) is None
+    assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) is None
     assert t.update((9.0, 12.0, 6.0, 7.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_hikkake_modified_reference():
     t = ta.HikkakeModified()
-    assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) is None
+    assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) is None
     assert t.update((9.0, 12.0, 6.0, 9.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_homing_pigeon_reference():
     t = ta.HomingPigeon()
-    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) is None
     assert t.update((14.0, 14.1, 10.9, 11.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_on_neck_reference():
     t = ta.OnNeck()
-    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) is None
     assert t.update((7.0, 9.1, 6.9, 9.0, 1.0, 1)) == pytest.approx(-1.0)
 
 
 def test_in_neck_reference():
     t = ta.InNeck()
-    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) is None
     assert t.update((7.0, 10.3, 6.9, 10.2, 1.0, 1)) == pytest.approx(-1.0)
 
 
 def test_thrusting_reference():
     t = ta.Thrusting()
-    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) is None
     assert t.update((7.0, 11.6, 6.9, 11.5, 1.0, 1)) == pytest.approx(-1.0)
 
 
 def test_separating_lines_reference():
     t = ta.SeparatingLines()
-    assert t.update((12.0, 12.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 12.1, 9.9, 10.0, 1.0, 0)) is None
     assert t.update((12.0, 14.1, 12.0, 14.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_kicking_reference():
     t = ta.Kicking()
-    assert t.update((12.0, 12.0, 10.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 12.0, 10.0, 10.0, 1.0, 0)) is None
     assert t.update((14.0, 16.0, 14.0, 16.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_kicking_by_length_reference():
     t = ta.KickingByLength()
-    assert t.update((12.0, 12.0, 10.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 12.0, 10.0, 10.0, 1.0, 0)) is None
     assert t.update((14.0, 20.0, 14.0, 20.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_ladder_bottom_reference():
     t = ta.LadderBottom()
-    assert t.update((20.0, 20.1, 17.9, 18.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((18.0, 18.1, 15.9, 16.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((16.0, 16.1, 13.9, 14.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((14.0, 15.0, 12.4, 12.5, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.1, 17.9, 18.0, 1.0, 0)) is None
+    assert t.update((18.0, 18.1, 15.9, 16.0, 1.0, 1)) is None
+    assert t.update((16.0, 16.1, 13.9, 14.0, 1.0, 2)) is None
+    assert t.update((14.0, 15.0, 12.4, 12.5, 1.0, 3)) is None
     assert t.update((15.0, 17.1, 14.9, 17.0, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_mat_hold_reference():
     t = ta.MatHold()
-    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((16.0, 16.1, 15.4, 15.5, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((15.5, 15.6, 14.9, 15.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((15.0, 15.1, 14.4, 14.5, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) is None
+    assert t.update((16.0, 16.1, 15.4, 15.5, 1.0, 1)) is None
+    assert t.update((15.5, 15.6, 14.9, 15.0, 1.0, 2)) is None
+    assert t.update((15.0, 15.1, 14.4, 14.5, 1.0, 3)) is None
     assert t.update((14.5, 17.1, 14.4, 17.0, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_matching_low_reference():
     t = ta.MatchingLow()
-    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) is None
     assert t.update((13.0, 13.1, 9.9, 10.0, 1.0, 1)) == pytest.approx(1.0)
 
 
@@ -2614,7 +2614,7 @@ def test_long_line_reference():
     t = ta.LongLine()
     # Five quiet bars fill the rolling range average, then a wide solid white bar.
     for ts in range(5):
-        assert t.update((10.0, 10.5, 9.5, 10.2, 1.0, ts)) == pytest.approx(0.0)
+        assert t.update((10.0, 10.5, 9.5, 10.2, 1.0, ts)) is None
     assert t.update((10.0, 13.0, 9.9, 12.9, 1.0, 5)) == pytest.approx(1.0)
 
 
@@ -2622,53 +2622,53 @@ def test_short_line_reference():
     t = ta.ShortLine()
     # Five wide bars fill the rolling range average, then a compact solid white bar.
     for ts in range(5):
-        assert t.update((10.0, 13.0, 9.5, 12.9, 1.0, ts)) == pytest.approx(0.0)
+        assert t.update((10.0, 13.0, 9.5, 12.9, 1.0, ts)) is None
     assert t.update((10.0, 11.0, 9.9, 10.9, 1.0, 5)) == pytest.approx(1.0)
 
 
 def test_rising_three_methods_reference():
     t = ta.RisingThreeMethods()
-    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((14.0, 14.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((13.5, 13.6, 12.4, 12.5, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) is None
+    assert t.update((14.0, 14.1, 12.9, 13.0, 1.0, 1)) is None
+    assert t.update((13.5, 13.6, 12.4, 12.5, 1.0, 2)) is None
+    assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 3)) is None
     assert t.update((12.5, 16.1, 12.4, 16.0, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_falling_three_methods_reference():
     t = ta.FallingThreeMethods()
-    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((11.0, 12.1, 10.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((11.5, 12.6, 11.4, 12.5, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((12.0, 13.1, 11.9, 13.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) is None
+    assert t.update((11.0, 12.1, 10.9, 12.0, 1.0, 1)) is None
+    assert t.update((11.5, 12.6, 11.4, 12.5, 1.0, 2)) is None
+    assert t.update((12.0, 13.1, 11.9, 13.0, 1.0, 3)) is None
     assert t.update((12.5, 12.6, 8.9, 9.0, 1.0, 4)) == pytest.approx(-1.0)
 
 
 def test_upside_gap_three_methods_reference():
     t = ta.UpsideGapThreeMethods()
-    assert t.update((10.0, 11.2, 9.8, 11.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((12.0, 13.2, 11.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.2, 9.8, 11.0, 1.0, 0)) is None
+    assert t.update((12.0, 13.2, 11.9, 13.0, 1.0, 1)) is None
     assert t.update((12.5, 12.6, 10.4, 10.5, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_downside_gap_three_methods_reference():
     t = ta.DownsideGapThreeMethods()
-    assert t.update((13.0, 13.2, 11.8, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((11.0, 11.1, 9.8, 10.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.2, 11.8, 12.0, 1.0, 0)) is None
+    assert t.update((11.0, 11.1, 9.8, 10.0, 1.0, 1)) is None
     assert t.update((10.5, 12.6, 10.4, 12.5, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_stalled_pattern_reference():
     t = ta.StalledPattern()
-    assert t.update((10.0, 12.05, 9.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((11.0, 14.05, 10.9, 14.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 12.05, 9.9, 12.0, 1.0, 0)) is None
+    assert t.update((11.0, 14.05, 10.9, 14.0, 1.0, 1)) is None
     assert t.update((14.0, 14.6, 13.95, 14.15, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_stick_sandwich_reference():
     t = ta.StickSandwich()
-    assert t.update((12.0, 12.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((10.5, 11.6, 10.4, 11.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((12.0, 12.1, 9.9, 10.0, 1.0, 0)) is None
+    assert t.update((10.5, 11.6, 10.4, 11.5, 1.0, 1)) is None
     assert t.update((11.5, 11.6, 9.9, 10.0, 1.0, 2)) == pytest.approx(1.0)
 
 
@@ -2689,23 +2689,23 @@ def test_opening_marubozu_reference():
 
 def test_tasuki_gap_reference():
     t = ta.TasukiGap()
-    assert t.update((10.0, 11.2, 9.8, 11.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((12.0, 14.0, 11.9, 13.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.2, 9.8, 11.0, 1.0, 0)) is None
+    assert t.update((12.0, 14.0, 11.9, 13.5, 1.0, 1)) is None
     assert t.update((13.0, 13.1, 11.4, 11.5, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_unique_three_river_reference():
     t = ta.UniqueThreeRiver()
-    assert t.update((15.0, 15.1, 10.0, 10.5, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((14.0, 14.1, 9.0, 11.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 10.0, 10.5, 1.0, 0)) is None
+    assert t.update((14.0, 14.1, 9.0, 11.0, 1.0, 1)) is None
     assert t.update((10.2, 10.9, 9.5, 10.4, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_concealing_baby_swallow_reference():
     t = ta.ConcealingBabySwallow()
-    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((16.0, 16.1, 11.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((11.0, 13.0, 9.9, 10.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) is None
+    assert t.update((16.0, 16.1, 11.9, 12.0, 1.0, 1)) is None
+    assert t.update((11.0, 13.0, 9.9, 10.0, 1.0, 2)) is None
     assert t.update((14.0, 14.1, 8.9, 9.0, 1.0, 3)) == pytest.approx(1.0)
 
 
@@ -2759,161 +2759,161 @@ def test_granger_causality_reference():
 
 def test_double_top_bottom_reference():
     t = ta.DoubleTopBottom()
-    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 120.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) is None
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 120.0, 101.0, 101.0, 1.0, 2)) is None
     assert t.update((108.0, 118.8, 108.0, 108.0, 1.0, 3)) == pytest.approx(-1.0)
 
 
 def test_triple_top_bottom_reference():
     t = ta.TripleTopBottom()
-    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 121.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((99.0, 119.79, 99.0, 99.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((99.99, 119.0, 99.99, 99.99, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) is None
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 121.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((99.0, 119.79, 99.0, 99.0, 1.0, 3)) is None
+    assert t.update((99.99, 119.0, 99.99, 99.99, 1.0, 4)) is None
     assert t.update((107.1, 117.81, 107.1, 107.1, 1.0, 5)) == pytest.approx(-1.0)
 
 
 def test_head_and_shoulders_reference():
     t = ta.HeadAndShoulders()
-    assert t.update((99.9, 100.0, 99.9, 99.9, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((90.0, 99.0, 90.0, 90.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((90.9, 120.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((92.0, 118.8, 92.0, 92.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((92.92, 101.0, 92.92, 92.92, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((99.9, 100.0, 99.9, 99.9, 1.0, 0)) is None
+    assert t.update((90.0, 99.0, 90.0, 90.0, 1.0, 1)) is None
+    assert t.update((90.9, 120.0, 90.9, 90.9, 1.0, 2)) is None
+    assert t.update((92.0, 118.8, 92.0, 92.0, 1.0, 3)) is None
+    assert t.update((92.92, 101.0, 92.92, 92.92, 1.0, 4)) is None
     assert t.update((90.9, 99.99, 90.9, 90.9, 1.0, 5)) == pytest.approx(-1.0)
 
 
 def test_triangle_reference():
     t = ta.Triangle()
-    assert t.update((129.87, 130.0, 129.87, 129.87, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 128.7, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 120.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((110.0, 118.8, 110.0, 110.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((129.87, 130.0, 129.87, 129.87, 1.0, 0)) is None
+    assert t.update((100.0, 128.7, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 120.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((110.0, 118.8, 110.0, 110.0, 1.0, 3)) is None
     assert t.update((111.1, 120.0, 111.1, 111.1, 1.0, 4)) == pytest.approx(1.0)
     assert t.update((108.0, 118.8, 108.0, 108.0, 1.0, 5)) == pytest.approx(1.0)
 
 
 def test_wedge_reference():
     t = ta.Wedge()
-    assert t.update((109.89, 110.0, 109.89, 109.89, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((90.0, 108.9, 90.0, 90.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((90.9, 100.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((94.0, 99.0, 94.0, 94.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((109.89, 110.0, 109.89, 109.89, 1.0, 0)) is None
+    assert t.update((90.0, 108.9, 90.0, 90.0, 1.0, 1)) is None
+    assert t.update((90.9, 100.0, 90.9, 90.9, 1.0, 2)) is None
+    assert t.update((94.0, 99.0, 94.0, 94.0, 1.0, 3)) is None
     assert t.update((94.94, 103.0, 94.94, 94.94, 1.0, 4)) == pytest.approx(0.0)
     assert t.update((92.7, 101.97, 92.7, 92.7, 1.0, 5)) == pytest.approx(-1.0)
 
 
 def test_flag_pennant_reference():
     t = ta.FlagPennant()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
     assert t.update((130.0, 138.6, 130.0, 130.0, 1.0, 3)) == pytest.approx(0.0)
     assert t.update((131.3, 143.0, 131.3, 131.3, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_rectangle_range_reference():
     t = ta.RectangleRange()
-    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 121.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((99.0, 119.79, 99.0, 99.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) is None
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 121.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((99.0, 119.79, 99.0, 99.0, 1.0, 3)) is None
     assert t.update((99.99, 108.9, 99.99, 99.99, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_cup_and_handle_reference():
     t = ta.CupAndHandle()
-    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((90.0, 118.8, 90.0, 90.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((90.9, 121.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((110.0, 119.79, 110.0, 110.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) is None
+    assert t.update((90.0, 118.8, 90.0, 90.0, 1.0, 1)) is None
+    assert t.update((90.9, 121.0, 90.9, 90.9, 1.0, 2)) is None
+    assert t.update((110.0, 119.79, 110.0, 110.0, 1.0, 3)) is None
     assert t.update((111.1, 121.0, 111.1, 111.1, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_abcd_reference():
     t = ta.Abcd()
-    assert t.update((139.86, 140.0, 139.86, 139.86, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 138.6, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 124.7, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((84.7, 123.453, 84.7, 84.7, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((139.86, 140.0, 139.86, 139.86, 1.0, 0)) is None
+    assert t.update((100.0, 138.6, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 124.7, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((84.7, 123.453, 84.7, 84.7, 1.0, 3)) is None
     assert t.update((85.547, 93.17, 85.547, 85.547, 1.0, 4)) == pytest.approx(1.0)
 
 
 def test_gartley_reference():
     t = ta.Gartley()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((115.3, 138.6, 115.3, 115.3, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((116.453, 127.65, 116.453, 116.453, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((115.3, 138.6, 115.3, 115.3, 1.0, 3)) is None
+    assert t.update((116.453, 127.65, 116.453, 116.453, 1.0, 4)) is None
     assert t.update((108.56, 126.3735, 108.56, 108.56, 1.0, 5)) == pytest.approx(0.0)
     assert t.update((109.6456, 119.416, 109.6456, 109.6456, 1.0, 6)) == pytest.approx(1.0)
 
 
 def test_butterfly_reference():
     t = ta.Butterfly()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((108.6, 138.6, 108.6, 108.6, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((109.686, 128.0, 109.686, 109.686, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((108.6, 138.6, 108.6, 108.6, 1.0, 3)) is None
+    assert t.update((109.686, 128.0, 109.686, 109.686, 1.0, 4)) is None
     assert t.update((79.8, 126.72, 79.8, 79.8, 1.0, 5)) == pytest.approx(0.0)
     assert t.update((80.598, 87.78, 80.598, 80.598, 1.0, 6)) == pytest.approx(1.0)
 
 
 def test_bat_reference():
     t = ta.Bat()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((122.0, 138.6, 122.0, 122.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((123.22, 137.0, 123.22, 123.22, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((122.0, 138.6, 122.0, 122.0, 1.0, 3)) is None
+    assert t.update((123.22, 137.0, 123.22, 123.22, 1.0, 4)) is None
     assert t.update((104.56, 135.63, 104.56, 104.56, 1.0, 5)) == pytest.approx(0.0)
     assert t.update((105.6056, 115.016, 105.6056, 105.6056, 1.0, 6)) == pytest.approx(1.0)
 
 
 def test_crab_reference():
     t = ta.Crab()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((121.2, 137.5, 121.2, 121.2, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) is None
+    assert t.update((121.2, 137.5, 121.2, 121.2, 1.0, 4)) is None
     assert t.update((75.3, 136.125, 75.3, 75.3, 1.0, 5)) == pytest.approx(0.0)
     assert t.update((76.053, 82.83, 76.053, 76.053, 1.0, 6)) == pytest.approx(1.0)
 
 
 def test_shark_reference():
     t = ta.Shark()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((88.0, 138.6, 88.0, 88.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((88.88, 186.8, 88.88, 88.88, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((88.0, 138.6, 88.0, 88.0, 1.0, 3)) is None
+    assert t.update((88.88, 186.8, 88.88, 88.88, 1.0, 4)) is None
     assert t.update((100.0, 184.932, 100.0, 100.0, 1.0, 5)) == pytest.approx(0.0)
     assert t.update((101.0, 110.0, 101.0, 101.0, 1.0, 6)) == pytest.approx(1.0)
 
 
 def test_cypher_reference():
     t = ta.Cypher()
-    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((121.2, 168.0, 121.2, 121.2, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) is None
+    assert t.update((121.2, 168.0, 121.2, 121.2, 1.0, 4)) is None
     assert t.update((114.55, 166.32, 114.55, 114.55, 1.0, 5)) == pytest.approx(0.0)
     assert t.update((115.6955, 126.005, 115.6955, 115.6955, 1.0, 6)) == pytest.approx(1.0)
 
 
 def test_three_drives_reference():
     t = ta.ThreeDrives()
-    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((101.0, 128.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
-    assert t.update((108.0, 126.72, 108.0, 108.0, 1.0, 3)) == pytest.approx(0.0)
-    assert t.update((109.08, 136.0, 109.08, 109.08, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) is None
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 128.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((108.0, 126.72, 108.0, 108.0, 1.0, 3)) is None
+    assert t.update((109.08, 136.0, 109.08, 109.08, 1.0, 4)) is None
     assert t.update((122.4, 134.64, 122.4, 122.4, 1.0, 5)) == pytest.approx(-1.0)
 
 
@@ -3298,32 +3298,32 @@ def test_pivot_reversal_reference():
 
 def test_td_camouflage_reference():
     t = ta.TDCamouflage()
-    assert t.update((10.0, 11.0, 8.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.0, 8.0, 10.0, 1.0, 0)) is None
     assert t.update((9.0, 10.0, 7.0, 9.5, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_td_clop_reference():
     t = ta.TDClop()
-    assert t.update((10.0, 12.0, 9.0, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.0, 12.0, 9.0, 11.0, 1.0, 0)) is None
     assert t.update((9.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_td_clopwin_reference():
     t = ta.TDClopwin()
-    assert t.update((10.0, 15.0, 9.0, 14.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.0, 9.0, 14.0, 1.0, 0)) is None
     assert t.update((11.0, 14.0, 10.0, 13.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_td_propulsion_reference():
     t = ta.TDPropulsion()
-    assert t.update((9.5, 11.0, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((9.5, 11.0, 9.0, 10.0, 1.0, 0)) is None
     assert t.update((10.5, 12.0, 10.0, 11.5, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_td_trap_reference():
     t = ta.TDTrap()
-    assert t.update((100.0, 110.0, 90.0, 100.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((101.5, 108.0, 95.0, 102.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((100.0, 110.0, 90.0, 100.0, 1.0, 0)) is None
+    assert t.update((101.5, 108.0, 95.0, 102.0, 1.0, 1)) is None
     assert t.update((106.0, 112.0, 100.0, 109.0, 1.0, 2)) == pytest.approx(1.0)
 
 
@@ -3350,21 +3350,21 @@ def test_candle_volume_reference():
 
 def test_tristar_reference():
     t = ta.Tristar()
-    assert t.update((100.0, 101.0, 99.0, 100.02, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((105.0, 106.0, 104.0, 105.02, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((100.0, 101.0, 99.0, 100.02, 1.0, 0)) is None
+    assert t.update((105.0, 106.0, 104.0, 105.02, 1.0, 1)) is None
     assert t.update((100.0, 101.0, 99.0, 100.02, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_harami_cross_reference():
     t = ta.HaramiCross()
-    assert t.update((110.0, 110.2, 99.8, 100.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((110.0, 110.2, 99.8, 100.0, 1.0, 0)) is None
     assert t.update((105.0, 106.0, 104.0, 105.02, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_tower_top_bottom_reference():
     t = ta.TowerTopBottom()
-    assert t.update((100.0, 110.1, 99.9, 110.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((105.0, 107.0, 103.0, 105.1, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((100.0, 110.1, 99.9, 110.0, 1.0, 0)) is None
+    assert t.update((105.0, 107.0, 103.0, 105.1, 1.0, 1)) is None
     assert t.update((110.0, 110.1, 99.9, 100.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
@@ -3431,8 +3431,11 @@ def test_ichimoku_batch_shape_and_warmup(ohlcv):
     ichi = ta.Ichimoku()
     out = _to_np(ichi.batch(high, low, close))
     assert out.shape == (close.size, 5)
-    # Warmup is 77 for the classic (9, 26, 52, 26) configuration.
-    assert ichi.warmup_period() == 77
+    # A row is emitted from the first bar -- every component is optional and
+    # they fill in as history allows -- so the declared warmup is 1. The 77 bars
+    # the classic (9, 26, 52, 26) configuration needs are when the last
+    # component arrives, which the per-column checks below cover.
+    assert ichi.warmup_period() == 1
     # Tenkan emits from bar 9; before that, the entire column is NaN.
     assert np.all(np.isnan(out[:8, 0]))
     assert not math.isnan(out[8, 0])
@@ -3555,33 +3558,33 @@ def test_shooting_star_reference():
 
 def test_engulfing_reference():
     e = ta.Engulfing()
-    assert e.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert e.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) is None
     assert e.update((9.5, 12.0, 9.5, 11.5, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_harami_reference():
     h = ta.Harami()
-    assert h.update((12.0, 12.5, 9.5, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert h.update((12.0, 12.5, 9.5, 10.0, 1.0, 0)) is None
     assert h.update((10.5, 11.5, 10.4, 11.0, 1.0, 1)) == pytest.approx(1.0)
 
 
 def test_morning_evening_star_reference():
     m = ta.MorningEveningStar()
-    assert m.update((12.0, 12.2, 9.5, 10.0, 1.0, 0)) == pytest.approx(0.0)
-    assert m.update((9.9, 10.1, 9.7, 9.95, 1.0, 1)) == pytest.approx(0.0)
+    assert m.update((12.0, 12.2, 9.5, 10.0, 1.0, 0)) is None
+    assert m.update((9.9, 10.1, 9.7, 9.95, 1.0, 1)) is None
     assert m.update((10.1, 12.0, 10.0, 11.8, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_three_soldiers_reference():
     t = ta.ThreeSoldiersOrCrows()
-    assert t.update((10.0, 11.5, 9.9, 11.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((10.5, 12.5, 10.4, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.5, 9.9, 11.0, 1.0, 0)) is None
+    assert t.update((10.5, 12.5, 10.4, 12.0, 1.0, 1)) is None
     assert t.update((11.5, 13.5, 11.4, 13.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_piercing_dark_cloud_reference():
     p = ta.PiercingDarkCloud()
-    assert p.update((12.0, 12.5, 10.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert p.update((12.0, 12.5, 10.0, 10.0, 1.0, 0)) is None
     assert p.update((9.8, 11.8, 9.5, 11.5, 1.0, 1)) == pytest.approx(1.0)
 
 
@@ -3597,7 +3600,7 @@ def test_marubozu_reference():
 
 def test_tweezer_reference():
     t = ta.Tweezer()
-    assert t.update((11.0, 12.0, 9.5, 9.6, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 12.0, 9.5, 9.6, 1.0, 0)) is None
     assert t.update((9.7, 10.5, 9.5, 10.2, 1.0, 1)) == pytest.approx(1.0)
 
 
@@ -3610,65 +3613,65 @@ def test_spinning_top_reference():
 
 def test_three_inside_reference():
     t = ta.ThreeInside()
-    assert t.update((12.0, 12.5, 9.5, 10.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((10.5, 11.5, 10.4, 11.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((12.0, 12.5, 9.5, 10.0, 1.0, 0)) is None
+    assert t.update((10.5, 11.5, 10.4, 11.0, 1.0, 1)) is None
     assert t.update((11.0, 13.0, 10.9, 12.5, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_three_outside_reference():
     t = ta.ThreeOutside()
-    assert t.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((9.5, 12.0, 9.5, 11.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) is None
+    assert t.update((9.5, 12.0, 9.5, 11.5, 1.0, 1)) is None
     assert t.update((11.5, 13.0, 11.4, 12.5, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_two_crows_reference():
     t = ta.TwoCrows()
-    assert t.update((10.0, 12.2, 9.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((14.0, 14.2, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 12.2, 9.9, 12.0, 1.0, 0)) is None
+    assert t.update((14.0, 14.2, 12.9, 13.0, 1.0, 1)) is None
     assert t.update((13.5, 13.6, 10.9, 11.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_upside_gap_two_crows_reference():
     t = ta.UpsideGapTwoCrows()
-    assert t.update((10.0, 12.2, 9.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((14.0, 14.2, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 12.2, 9.9, 12.0, 1.0, 0)) is None
+    assert t.update((14.0, 14.2, 12.9, 13.0, 1.0, 1)) is None
     assert t.update((15.0, 15.2, 12.4, 12.5, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_identical_three_crows_reference():
     t = ta.IdenticalThreeCrows()
-    assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((12.0, 12.1, 10.9, 11.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 0)) is None
+    assert t.update((12.0, 12.1, 10.9, 11.0, 1.0, 1)) is None
     assert t.update((11.0, 11.1, 9.9, 10.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
 def test_three_line_strike_reference():
     t = ta.ThreeLineStrike()
-    assert t.update((10.0, 11.1, 9.9, 11.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((10.5, 12.1, 10.4, 12.0, 1.0, 1)) == pytest.approx(0.0)
-    assert t.update((11.5, 13.1, 11.4, 13.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.1, 9.9, 11.0, 1.0, 0)) is None
+    assert t.update((10.5, 12.1, 10.4, 12.0, 1.0, 1)) is None
+    assert t.update((11.5, 13.1, 11.4, 13.0, 1.0, 2)) is None
     assert t.update((13.5, 13.6, 9.4, 9.5, 1.0, 3)) == pytest.approx(1.0)
 
 
 def test_three_stars_in_south_reference():
     t = ta.ThreeStarsInSouth()
-    assert t.update((20.0, 20.1, 8.0, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((18.0, 18.1, 12.0, 16.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.1, 8.0, 15.0, 1.0, 0)) is None
+    assert t.update((18.0, 18.1, 12.0, 16.0, 1.0, 1)) is None
     assert t.update((15.0, 15.0, 14.0, 14.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_abandoned_baby_reference():
     t = ta.AbandonedBaby()
-    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((13.0, 13.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) is None
+    assert t.update((13.0, 13.1, 12.9, 13.0, 1.0, 1)) is None
     assert t.update((16.0, 18.1, 15.9, 18.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 def test_advance_block_reference():
     t = ta.AdvanceBlock()
-    assert t.update((10.0, 13.1, 9.9, 13.0, 1.0, 0)) == pytest.approx(0.0)
-    assert t.update((12.0, 14.3, 11.9, 14.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.0, 13.1, 9.9, 13.0, 1.0, 0)) is None
+    assert t.update((12.0, 14.3, 11.9, 14.0, 1.0, 1)) is None
     assert t.update((13.5, 15.0, 13.4, 14.5, 1.0, 2)) == pytest.approx(-1.0)
 
 

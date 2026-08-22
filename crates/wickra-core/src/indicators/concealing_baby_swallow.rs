@@ -80,7 +80,6 @@ impl Indicator for ConcealingBabySwallow {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let bar1 = self.c1;
         let bar2 = self.c2;
         let bar3 = self.c3;
@@ -88,8 +87,9 @@ impl Indicator for ConcealingBabySwallow {
         self.c2 = self.c3;
         self.c3 = Some(candle);
         let (Some(bar1), Some(bar2), Some(bar3)) = (bar1, bar2, bar3) else {
-            return Some(0.0);
+            return None;
         };
+        self.has_emitted = true;
         // bar1 and bar2 are black marubozu.
         if !black_marubozu(bar1) || !black_marubozu(bar2) {
             return Some(0.0);
@@ -157,18 +157,18 @@ mod tests {
     #[test]
     fn concealing_baby_swallow_is_plus_one() {
         let mut t = ConcealingBabySwallow::new();
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(16.0, 16.1, 11.9, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 13.0, 9.9, 10.0, 2)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
+        assert_eq!(t.update(c(16.0, 16.1, 11.9, 12.0, 1)), None);
+        assert_eq!(t.update(c(11.0, 13.0, 9.9, 10.0, 2)), None);
         assert_eq!(t.update(c(14.0, 14.1, 8.9, 9.0, 3)), Some(1.0));
     }
 
     #[test]
     fn warmup_returns_zero() {
         let mut t = ConcealingBabySwallow::new();
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
-        assert_eq!(t.update(c(16.0, 16.1, 11.9, 12.0, 1)), Some(0.0));
-        assert_eq!(t.update(c(11.0, 13.0, 9.9, 10.0, 2)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
+        assert_eq!(t.update(c(16.0, 16.1, 11.9, 12.0, 1)), None);
+        assert_eq!(t.update(c(11.0, 13.0, 9.9, 10.0, 2)), None);
     }
 
     #[test]
@@ -277,6 +277,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(20.0, 20.1, 14.9, 15.0, 0)), None);
     }
 }

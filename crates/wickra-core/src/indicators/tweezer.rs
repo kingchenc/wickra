@@ -91,12 +91,10 @@ impl Indicator for Tweezer {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        self.has_emitted = true;
         let prev = self.prev;
         self.prev = Some(candle);
-        let Some(p) = prev else {
-            return Some(0.0);
-        };
+        let p = prev?;
+        self.has_emitted = true;
         let tol_high = self.tolerance * p.high.abs().max(candle.high.abs());
         let tol_low = self.tolerance * p.low.abs().max(candle.low.abs());
         let match_low = (candle.low - p.low).abs() <= tol_low;
@@ -164,7 +162,7 @@ mod tests {
     #[test]
     fn tweezer_bottom_is_plus_one() {
         let mut t = Tweezer::new();
-        assert_eq!(t.update(c(11.0, 12.0, 9.5, 9.6, 0)), Some(0.0));
+        assert_eq!(t.update(c(11.0, 12.0, 9.5, 9.6, 0)), None);
         // Matching low 9.5.
         assert_eq!(t.update(c(9.7, 10.5, 9.5, 10.2, 1)), Some(1.0));
     }
@@ -172,7 +170,7 @@ mod tests {
     #[test]
     fn tweezer_top_is_minus_one() {
         let mut t = Tweezer::new();
-        assert_eq!(t.update(c(9.0, 12.0, 8.5, 11.0, 0)), Some(0.0));
+        assert_eq!(t.update(c(9.0, 12.0, 8.5, 11.0, 0)), None);
         // Matching high 12.0.
         assert_eq!(t.update(c(11.5, 12.0, 11.0, 11.4, 1)), Some(-1.0));
     }
@@ -187,7 +185,7 @@ mod tests {
     #[test]
     fn first_bar_returns_zero() {
         let mut t = Tweezer::new();
-        assert_eq!(t.update(c(10.0, 11.0, 9.0, 10.5, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.0, 9.0, 10.5, 0)), None);
     }
 
     #[test]
@@ -222,6 +220,6 @@ mod tests {
         assert!(t.is_ready());
         t.reset();
         assert!(!t.is_ready());
-        assert_eq!(t.update(c(10.0, 11.0, 9.0, 10.5, 0)), Some(0.0));
+        assert_eq!(t.update(c(10.0, 11.0, 9.0, 10.5, 0)), None);
     }
 }
