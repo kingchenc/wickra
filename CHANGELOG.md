@@ -241,6 +241,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   expanded form `gofmt` produces. Anyone regenerating it would have committed a
   file that fails a format check. The generator now emits the expanded form and
   regeneration is idempotent.
+- **The golden tolerance is now per-indicator, and six orders tighter for the
+  461 that do not need slack.** Every runner compared at `1e-6 * max(1, |want|)`,
+  ten orders looser than the 1-ulp libm difference it exists for and loose enough
+  to hide a real defect -- the `StandardError` cancellation fixed two commits ago
+  measured `6.2e-08` at a price of 100 and would have passed untouched.
+
+  `scripts/gen_libm_set.py` derives which indicators can reach a transcendental
+  (directly, or through one they compose) and writes
+  `testdata/golden/libm_dependent.txt`: 54 of 514. All seven runners read that
+  one file rather than each carrying a copy, so it cannot drift from the
+  catalogue. Those 54 keep `1e-6`; the other 460 are held to `1e-12`.
+
+  `1e-12` rather than exact equality is deliberate. Exact *does* pass here — the
+  C# suite was run with the bound set to `0.0` and all 556 tests passed, which
+  confirms the IEEE argument on one platform — but the suites also run on Linux
+  and macOS across two architectures, and `1e-12` still leaves twelve orders of
+  headroom over the double floor while removing any chance of a red build over a
+  last bit somewhere unforeseen.
+
+  The tighter bound immediately earned itself: it failed eight Node tests, all
+  of them indicators whose fixtures moved on this branch, against a prebuilt
+  `.node` artifact from two months earlier. A stale binding build is exactly the
+  kind of thing a `1e-6` comparison cannot see.
+
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and

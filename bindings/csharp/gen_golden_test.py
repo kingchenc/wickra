@@ -168,7 +168,22 @@ namespace Wickra.Tests;
 
 public class GoldenAllTests
 {
-    private const double Tol = 1e-6;
+    // Two bounds, not one: the loose tolerance exists for indicators that reach a transcendental in the platform math library, whose last bit is not portable. Everything else is built from IEEE-754 arithmetic and is bit-identical everywhere, so it is held to a much tighter bound -- 1e-6 is ten orders looser than the 1-ulp difference it exists for, loose enough to hide a real defect.
+    private const double LibmTol = 1e-6;
+    private const double ExactTol = 1e-12;
+
+    private static readonly HashSet<string> LibmDependent = LoadLibmDependent();
+
+    private static HashSet<string> LoadLibmDependent()
+    {
+        var path = Path.Combine(GoldenDir(), "libm_dependent.txt");
+        return new HashSet<string>(File.ReadAllLines(path)
+            .Select(l => l.Trim())
+            .Where(l => l.Length > 0));
+    }
+
+    private static double TolFor(string name) =>
+        LibmDependent.Contains(name) ? LibmTol : ExactTol;
 
     private static readonly double[][] Rows = LoadInput();
 
@@ -297,7 +312,7 @@ public class GoldenAllTests
                 var w = want[k];
                 if (double.IsNaN(w)) { Assert.True(double.IsNaN(g[k]), $"{name} row {i} col {k}: want NaN got {g[k]}"); continue; }
                 if (double.IsInfinity(w)) { Assert.True(double.IsInfinity(g[k]) && Math.Sign(g[k]) == Math.Sign(w), $"{name} row {i} col {k}: want {w} got {g[k]}"); continue; }
-                var tol = Tol * Math.Max(1.0, Math.Abs(w));
+                var tol = TolFor(name) * Math.Max(1.0, Math.Abs(w));
                 Assert.True(Math.Abs(g[k] - w) <= tol, $"{name} row {i} col {k}: got {g[k]} want {w}");
             }
         }

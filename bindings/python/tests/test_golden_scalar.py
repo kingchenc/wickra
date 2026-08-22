@@ -26,6 +26,20 @@ HERE = os.path.dirname(__file__)
 GOLDEN = os.path.normpath(os.path.join(HERE, "..", "..", "..", "testdata", "golden"))
 
 
+# Two bounds, not one. The loose bound exists for indicators that reach a transcendental in the platform math library, whose last bit is not portable; everything else is IEEE-754 arithmetic and is bit-identical everywhere. A blanket 1e-6 is ten orders looser than the 1-ulp difference it exists for, loose enough to hide a real defect.
+def _load_libm_dependent():
+    with open(os.path.join(GOLDEN, "libm_dependent.txt")) as f:
+        return frozenset(line.strip() for line in f if line.strip())
+
+
+_LIBM_DEPENDENT = _load_libm_dependent()
+
+
+def golden_tol(canonical):
+    """Relative tolerance for one indicator against its golden fixture."""
+    return 1e-6 if canonical in _LIBM_DEPENDENT else 1e-12
+
+
 def _cell(s):
     return math.nan if s == "nan" else float(s)
 
@@ -71,5 +85,5 @@ def test_scalar_matches_golden(spec):
                 f"{spec['canonical']} row {i}: got {got} want {want}"
             )
         else:
-            tol = 1e-6 * max(1.0, abs(want))
+            tol = golden_tol(spec["canonical"]) * max(1.0, abs(want))
             assert abs(got - want) <= tol, f"{spec['canonical']} row {i}: got {got} want {want}"

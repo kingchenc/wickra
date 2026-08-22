@@ -127,7 +127,18 @@ function resolveArg(arg, o, h, l, c, v, i) {
   }
 }
 
-function closeEq(got, want, label) {
+// Two bounds, not one. The loose one exists for the indicators that reach a
+// transcendental in the platform math library, whose last bit is not portable;
+// everything else is IEEE-754 arithmetic and is bit-identical everywhere. A
+// blanket 1e-6 is ten orders looser than the 1-ulp difference it exists for,
+// loose enough to hide a real defect.
+const LIBM_DEPENDENT = new Set(
+  fs.readFileSync(path.join(GOLDEN, 'libm_dependent.txt'), 'utf8')
+    .split('\n').map((s) => s.trim()).filter(Boolean),
+);
+const tolFor = (canonical) => (LIBM_DEPENDENT.has(canonical) ? 1e-6 : 1e-12);
+
+function closeEq(got, want, label, tol) {
   if (Number.isNaN(want)) {
     assert.ok(Number.isNaN(got), `${label}: want NaN got ${got}`);
     return;
@@ -136,8 +147,8 @@ function closeEq(got, want, label) {
     assert.ok(got === want, `${label}: want ${want} got ${got}`);
     return;
   }
-  const tol = 1e-6 * Math.max(1.0, Math.abs(want));
-  assert.ok(Math.abs(got - want) <= tol, `${label}: got ${got} want ${want}`);
+  const bound = tol * Math.max(1.0, Math.abs(want));
+  assert.ok(Math.abs(got - want) <= bound, `${label}: got ${got} want ${want}`);
 }
 
 for (const spec of MANIFEST) {
@@ -145,6 +156,7 @@ for (const spec of MANIFEST) {
     const Cls = wickra[spec.native];
     assert.ok(Cls, `missing Node class ${spec.native}`);
     const ind = new Cls(...spec.ctor);
+    const tol = tolFor(spec.canonical);
     // name() must report the canonical core Indicator::name(), the same string
     // every other binding returns for this indicator.
     assert.equal(ind.name(), NAMES[spec.canonical], `${spec.canonical}: name()`);
@@ -159,7 +171,7 @@ for (const spec of MANIFEST) {
       const label = `${spec.canonical} row ${i}`;
 
       if (spec.out === 'scalar') {
-        closeEq(got === null || got === undefined ? NaN : got, want[0], label);
+        closeEq(got === null || got === undefined ? NaN : got, want[0], label, tol);
       } else if (spec.out === 'multi') {
         if (got === null || got === undefined) {
           assert.ok(want.every(Number.isNaN), `${label}: want ${want} got null`);
@@ -171,7 +183,7 @@ for (const spec of MANIFEST) {
         const vals = Object.values(got);
         assert.equal(vals.length, want.length, `${label}: arity ${vals.length} vs ${want.length}`);
         vals.forEach((gv, k) => {
-          closeEq(gv === null || gv === undefined ? NaN : gv, want[k], `${label} col ${k}`);
+          closeEq(gv === null || gv === undefined ? NaN : gv, want[k], `${label} col ${k}`, tol);
         });
       } else if (spec.out === 'profile_bins') {
         if (got === null || got === undefined) {
@@ -179,7 +191,7 @@ for (const spec of MANIFEST) {
           continue;
         }
         assert.equal(got.length, want.length, `${label}: width ${got.length} vs ${want.length}`);
-        got.forEach((gv, k) => closeEq(gv, want[k], `${label} bin ${k}`));
+        got.forEach((gv, k) => closeEq(gv, want[k], `${label} bin ${k}`, tol));
       } else if (spec.out === 'profile_pricebins') {
         if (got === null || got === undefined) {
           assert.ok(want.every(Number.isNaN), `${label}: want all-NaN got null`);
@@ -187,7 +199,7 @@ for (const spec of MANIFEST) {
         }
         const flat = [got.priceLow, got.priceHigh, ...got[spec.arrayField]];
         assert.equal(flat.length, want.length, `${label}: width ${flat.length} vs ${want.length}`);
-        flat.forEach((gv, k) => closeEq(gv, want[k], `${label} col ${k}`));
+        flat.forEach((gv, k) => closeEq(gv, want[k], `${label} col ${k}`, tol));
       } else {
         // bars / footprint: flatten array-of-objects in declared field order.
         const flat = [];
@@ -195,7 +207,7 @@ for (const spec of MANIFEST) {
           for (const f of spec.fields) flat.push(Number(bar[f]));
         }
         assert.equal(flat.length, want.length, `${label}: arity ${flat.length} vs ${want.length}`);
-        flat.forEach((gv, k) => closeEq(gv, want[k], `${label} col ${k}`));
+        flat.forEach((gv, k) => closeEq(gv, want[k], `${label} col ${k}`, tol));
       }
     }
   });

@@ -25,7 +25,23 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * flattens scalar, multi-output records, profiles and bar arrays by reflection.
  */
 class GoldenAllTest {
-    private static final double TOL = 1e-6;
+    // Two bounds, not one: the loose tolerance exists for indicators that reach a transcendental in the platform math library, whose last bit is not portable. Everything else is built from IEEE-754 arithmetic and is bit-identical everywhere, so it is held to a much tighter bound -- 1e-6 is ten orders looser than the 1-ulp difference it exists for, loose enough to hide a real defect.
+    private static final double LIBM_TOL = 1e-6;
+    private static final double EXACT_TOL = 1e-12;
+    private static final java.util.Set<String> LIBM_DEPENDENT = loadLibmDependent();
+
+    private static java.util.Set<String> loadLibmDependent() {
+        try {
+            return new java.util.HashSet<>(java.nio.file.Files.readAllLines(
+                    goldenDir().resolve("libm_dependent.txt")));
+        } catch (java.io.IOException e) {
+            throw new IllegalStateException("cannot read libm_dependent.txt", e);
+        }
+    }
+
+    private static double tolFor(String name) {
+        return LIBM_DEPENDENT.contains(name) ? LIBM_TOL : EXACT_TOL;
+    }
 
     private record Spec(String canonical, String arch, double[] params, int width) {}
 
@@ -1267,7 +1283,7 @@ class GoldenAllTest {
                             assertTrue(Double.isInfinite(g) && Math.signum(g) == Math.signum(w),
                                 s.canonical() + " row " + i + " col " + k + ": want " + w + " got " + g);
                         } else {
-                            double tol = TOL * Math.max(1.0, Math.abs(w));
+                            double tol = tolFor(name) * Math.max(1.0, Math.abs(w));
                             assertTrue(Math.abs(g - w) <= tol,
                                 s.canonical() + " row " + i + " col " + k + ": got " + g + " want " + w);
                         }

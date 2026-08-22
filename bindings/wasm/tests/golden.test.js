@@ -123,11 +123,22 @@ function widthOf(spec) {
   return 1; // scalar archetypes
 }
 
-function closeEq(got, want, label) {
+// Two bounds, not one. The loose one exists for the indicators that reach a
+// transcendental in the platform math library, whose last bit is not portable;
+// everything else is IEEE-754 arithmetic and is bit-identical everywhere. A
+// blanket 1e-6 is ten orders looser than the 1-ulp difference it exists for,
+// loose enough to hide a real defect.
+const LIBM_DEPENDENT = new Set(
+  fs.readFileSync(path.join(GOLDEN, 'libm_dependent.txt'), 'utf8')
+    .split('\n').map((s) => s.trim()).filter(Boolean),
+);
+const tolFor = (canonical) => (LIBM_DEPENDENT.has(canonical) ? 1e-6 : 1e-12);
+
+function closeEq(got, want, label, tol) {
   if (Number.isNaN(want)) { assert.ok(Number.isNaN(got), `${label}: want NaN got ${got}`); return; }
   if (!Number.isFinite(want)) { assert.ok(got === want, `${label}: want ${want} got ${got}`); return; }
-  const tol = 1e-6 * Math.max(1.0, Math.abs(want));
-  assert.ok(Math.abs(got - want) <= tol, `${label}: got ${got} want ${want}`);
+  const bound = tol * Math.max(1.0, Math.abs(want));
+  assert.ok(Math.abs(got - want) <= bound, `${label}: got ${got} want ${want}`);
 }
 
 for (const spec of MANIFEST) {
@@ -135,6 +146,7 @@ for (const spec of MANIFEST) {
     const Cls = W[spec.js];
     assert.ok(Cls, `missing WASM class ${spec.js}`);
     const ind = new Cls(...spec.ctor);
+    const tol = tolFor(spec.canonical);
     assert.equal(ind.name(), NAMES[spec.canonical], `${spec.canonical}: name()`);
     const isBars = spec.out === 'bars' || spec.out === 'footprint';
     const expected = isBars ? readBarRows('g_' + spec.canonical) : readCsv('g_' + spec.canonical);
@@ -153,7 +165,7 @@ for (const spec of MANIFEST) {
         got = nanRow(widthOf(spec));
       }
       assert.equal(got.length, want.length, `${label}: arity ${got.length} vs ${want.length}`);
-      for (let k = 0; k < want.length; k++) closeEq(got[k], want[k], `${label} col ${k}`);
+      for (let k = 0; k < want.length; k++) closeEq(got[k], want[k], `${label} col ${k}`, tol);
     }
   });
 }

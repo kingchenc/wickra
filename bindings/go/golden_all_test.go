@@ -19,6 +19,39 @@ import (
 
 // readGoldenRaw keeps blank lines (a candle on which no bar closed) so bar rows
 // stay aligned to the input; non-bar fixtures contain no blank lines.
+// Two bounds, not one. The loose one exists for indicators that reach a
+// transcendental in the platform math library, whose last bit is not portable.
+// Everything else is built from IEEE-754 arithmetic and is bit-identical
+// everywhere, so it is held to a much tighter bound: 1e-6 is ten orders looser
+// than the 1-ulp difference it exists for, loose enough to hide a real defect.
+const (
+	libmTol  = 1e-6
+	exactTol = 1e-12
+)
+
+var libmDependent = loadLibmDependent()
+
+func loadLibmDependent() map[string]bool {
+	set := map[string]bool{}
+	data, err := os.ReadFile("../../testdata/golden/libm_dependent.txt")
+	if err != nil {
+		panic("cannot read libm_dependent.txt: " + err.Error())
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		if name := strings.TrimSpace(line); name != "" {
+			set[name] = true
+		}
+	}
+	return set
+}
+
+func goldenTolFor(name string) float64 {
+	if libmDependent[name] {
+		return libmTol
+	}
+	return exactTol
+}
+
 func readGoldenRaw(t *testing.T, name string) [][]string {
 	t.Helper()
 	f, err := os.Open("../../testdata/golden/" + name + ".csv")
@@ -175,7 +208,7 @@ func compareGolden(t *testing.T, name string, got [][]float64) {
 				}
 				continue
 			}
-			tol := goldenTol * math.Max(1.0, math.Abs(want))
+			tol := goldenTolFor(name) * math.Max(1.0, math.Abs(want))
 			if math.Abs(g-want) > tol {
 				t.Fatalf("%s row %d col %d: got %v want %v", name, i, k, g, want)
 			}

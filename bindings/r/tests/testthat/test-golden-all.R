@@ -21,6 +21,18 @@ find_golden_dir_all <- function() {
 
 golden_dir_all <- find_golden_dir_all()
 
+# Two bounds, not one. The loose bound exists for indicators that reach a transcendental in the platform math library, whose last bit is not portable; everything else is IEEE-754 arithmetic and is bit-identical everywhere. A blanket 1e-6 is ten orders looser than the 1-ulp difference it exists for, loose enough to hide a real defect.
+GOLDEN_LIBM_DEPENDENT <- local({
+  if (is.null(golden_dir_all)) return(character(0))
+  p <- file.path(golden_dir_all, "libm_dependent.txt")
+  if (!file.exists(p)) return(character(0))
+  trimws(readLines(p, warn = FALSE))
+})
+
+golden_tol <- function(canonical) {
+  if (canonical %in% GOLDEN_LIBM_DEPENDENT) 1e-6 else 1e-12
+}
+
 test_that("all 514 indicators match the Rust golden fixtures", {
   skip_if(is.null(golden_dir_all), "golden fixtures not bundled with the package")
   source(test_path("golden_specs.R"), local = TRUE)
@@ -114,7 +126,7 @@ test_that("all 514 indicators match the Rust golden fixtures", {
           expect_true(is.infinite(g) && sign(g) == sign(w),
             info = sprintf("%s row %d col %d: want %g", spec$canon, i, k, w))
         } else {
-          expect_lte(abs(g - w), 1e-6 * max(1, abs(w)),
+          expect_lte(abs(g - w), golden_tol(spec$canon) * max(1, abs(w)),
             label = sprintf("%s row %d col %d (got %s want %g)", spec$canon, i, k, as.character(g), w))
         }
       }
