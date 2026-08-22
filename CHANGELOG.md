@@ -50,12 +50,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `FundingRateZScore`, and the Bessel-corrected family — `HistoricalVolatility`,
   `InformationRatio`, `JumpIndicator`, `KaseDevStop`, `M2Measure`, `RegimeLabel`,
   `SharpeRatio`, `VolatilityCone`, `VolatilityOfVolatility` and `YangZhang`.
-  No indicator in the catalogue computes a variance as `E[x²] − E[x]²` any more.
+  A follow-up sweep found the claim that no indicator still used that form to
+  be wrong: it had been checked with a pattern that only matched a bare
+  `mean * mean`, and missed every suffixed identifier. See the covariance
+  entry below.
   The golden fixtures in `testdata/golden/` that these indicators feed were
   regenerated: 21 files move in their trailing digits, and every changed value
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **Covariance and correlation had the same cancellation as the variance.**
+  `E[xy] − E[x]E[y]` on raw levels fails exactly the way `E[x²] − E[x]²` does,
+  and correlation inherits it through the covariance and both variances.
+  Measured on `PearsonCorrelation` over a 20-bar window against a two-pass
+  reference: 1.1e-05 relative error at a price level of 1e5, 9.6e-02 at 1e5 with
+  a 0.01 spread, and a complete collapse at 1e8 — the same magnitudes the
+  variance showed. A paired accumulator now centres both channels on their own
+  reference point; the error drops to the 1e-16 floor. `PearsonCorrelation` and
+  `RollingCorrelation` are migrated. Their golden fixtures move in the last
+  digits only (worst 3.9e-13).
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and

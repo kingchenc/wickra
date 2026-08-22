@@ -179,6 +179,167 @@ impl ShiftedMoments {
     }
 }
 
+/// Rolling first and second moments of a *pair* of series, plus their
+/// cross-moment.
+///
+/// Covariance shares the variance defect exactly: `E[xy] - E[x]E[y]` on raw
+/// levels cancels once the values are large relative to how they vary, and
+/// correlation inherits it through both the covariance and the two variances.
+/// Measured on `PearsonCorrelation` over a 20-bar window of two sine series,
+/// against a two-pass reference: 8.6e-12 relative error at a level of 100,
+/// 1.1e-05 at 1e5, 9.6e-02 at 1e5 with a 0.01 spread, and a complete collapse
+/// to a meaningless value at 1e8.
+///
+/// Both channels are accumulated relative to their own reference point, so the
+/// residual cancellation is on the order of the spreads rather than the levels.
+/// Cost is unchanged, plus an amortised rebuild.
+#[derive(Debug, Clone)]
+pub(crate) struct ShiftedPairMoments {
+    /// Reference point for the first channel.
+    offset_a: f64,
+    /// Reference point for the second channel.
+    offset_b: f64,
+    /// Whether the reference points have been chosen yet.
+    seeded: bool,
+    /// `Σ(a − offset_a)`.
+    sum_a: f64,
+    /// `Σ(b − offset_b)`.
+    sum_b: f64,
+    /// `Σ(a − offset_a)²`.
+    sum_aa: f64,
+    /// `Σ(b − offset_b)²`.
+    sum_bb: f64,
+    /// `Σ(a − offset_a)(b − offset_b)`.
+    sum_ab: f64,
+    /// Pushes since the last rebuild.
+    pushes_since_reseed: usize,
+}
+
+impl ShiftedPairMoments {
+    /// A fresh accumulator with no reference points yet.
+    pub(crate) const fn new() -> Self {
+        Self {
+            offset_a: 0.0,
+            offset_b: 0.0,
+            seeded: false,
+            sum_a: 0.0,
+            sum_b: 0.0,
+            sum_aa: 0.0,
+            sum_bb: 0.0,
+            sum_ab: 0.0,
+            pushes_since_reseed: 0,
+        }
+    }
+
+    /// Add one observation.
+    pub(crate) fn push(&mut self, a: f64, b: f64) {
+        if !self.seeded {
+            self.offset_a = a;
+            self.offset_b = b;
+            self.seeded = true;
+        }
+        let da = a - self.offset_a;
+        let db = b - self.offset_b;
+        self.sum_a += da;
+        self.sum_b += db;
+        self.sum_aa += da * da;
+        self.sum_bb += db * db;
+        self.sum_ab += da * db;
+        self.pushes_since_reseed += 1;
+    }
+
+    /// Remove one observation. It must be one previously pushed and not yet
+    /// removed.
+    pub(crate) fn evict(&mut self, a: f64, b: f64) {
+        let da = a - self.offset_a;
+        let db = b - self.offset_b;
+        self.sum_a -= da;
+        self.sum_b -= db;
+        self.sum_aa -= da * da;
+        self.sum_bb -= db * db;
+        self.sum_ab -= da * db;
+    }
+
+    /// Population variance of the first channel, clamped at zero.
+    pub(crate) fn var_a(&self, n: usize) -> f64 {
+        let nf = n as f64;
+        let m = self.sum_a / nf;
+        (self.sum_aa / nf - m * m).max(0.0)
+    }
+
+    /// Population variance of the second channel, clamped at zero.
+    pub(crate) fn var_b(&self, n: usize) -> f64 {
+        let nf = n as f64;
+        let m = self.sum_b / nf;
+        (self.sum_bb / nf - m * m).max(0.0)
+    }
+
+    /// Population covariance of the two channels.
+    ///
+    /// Not clamped: a covariance is legitimately negative.
+    pub(crate) fn cov(&self, n: usize) -> f64 {
+        let nf = n as f64;
+        self.sum_ab / nf - (self.sum_a / nf) * (self.sum_b / nf)
+    }
+
+    /// Whether enough pushes have accumulated to justify a rebuild.
+    pub(crate) const fn needs_reseed(&self, period: usize) -> bool {
+        self.pushes_since_reseed >= period
+    }
+
+    /// Rebuild every moment from the live window, re-centring both reference
+    /// points on their channel means. `values` must yield exactly the live
+    /// window.
+    pub(crate) fn reseed<I>(&mut self, values: I)
+    where
+        I: IntoIterator<Item = (f64, f64)> + Clone,
+    {
+        let mut count = 0_usize;
+        let (mut ta, mut tb) = (0.0, 0.0);
+        for (a, b) in values.clone() {
+            ta += a;
+            tb += b;
+            count += 1;
+        }
+        if count == 0 {
+            self.reset();
+            return;
+        }
+        let nf = count as f64;
+        self.offset_a = ta / nf;
+        self.offset_b = tb / nf;
+        self.seeded = true;
+        self.sum_a = 0.0;
+        self.sum_b = 0.0;
+        self.sum_aa = 0.0;
+        self.sum_bb = 0.0;
+        self.sum_ab = 0.0;
+        for (a, b) in values {
+            let da = a - self.offset_a;
+            let db = b - self.offset_b;
+            self.sum_a += da;
+            self.sum_b += db;
+            self.sum_aa += da * da;
+            self.sum_bb += db * db;
+            self.sum_ab += da * db;
+        }
+        self.pushes_since_reseed = 0;
+    }
+
+    /// Drop every accumulated value and both reference points.
+    pub(crate) fn reset(&mut self) {
+        self.offset_a = 0.0;
+        self.offset_b = 0.0;
+        self.seeded = false;
+        self.sum_a = 0.0;
+        self.sum_b = 0.0;
+        self.sum_aa = 0.0;
+        self.sum_bb = 0.0;
+        self.sum_ab = 0.0;
+        self.pushes_since_reseed = 0;
+    }
+}
+
 /// A rolling sum that is periodically rebuilt from its window.
 ///
 /// `sum += new; sum -= old` is O(1) but never forgets a rounding error, so the

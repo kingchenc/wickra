@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::ShiftedPairMoments;
 use crate::traits::Indicator;
 
 /// Rolling correlation of the **returns** of two synchronised series.
@@ -47,11 +48,7 @@ pub struct RollingCorrelation {
     period: usize,
     prev: Option<(f64, f64)>,
     window: VecDeque<(f64, f64)>,
-    sum_x: f64,
-    sum_y: f64,
-    sum_xx: f64,
-    sum_yy: f64,
-    sum_xy: f64,
+    moments: ShiftedPairMoments,
 }
 
 impl RollingCorrelation {
@@ -75,11 +72,7 @@ impl RollingCorrelation {
             period,
             prev: None,
             window: VecDeque::with_capacity(period),
-            sum_x: 0.0,
-            sum_y: 0.0,
-            sum_xx: 0.0,
-            sum_yy: 0.0,
-            sum_xy: 0.0,
+            moments: ShiftedPairMoments::new(),
         })
     }
 
@@ -107,27 +100,19 @@ impl Indicator for RollingCorrelation {
         let (rx, ry) = (x - px, y - py);
         if self.window.len() == self.period {
             let (ox, oy) = self.window.pop_front().expect("non-empty");
-            self.sum_x -= ox;
-            self.sum_y -= oy;
-            self.sum_xx -= ox * ox;
-            self.sum_yy -= oy * oy;
-            self.sum_xy -= ox * oy;
+            self.moments.evict(ox, oy);
         }
         self.window.push_back((rx, ry));
-        self.sum_x += rx;
-        self.sum_y += ry;
-        self.sum_xx += rx * rx;
-        self.sum_yy += ry * ry;
-        self.sum_xy += rx * ry;
+        self.moments.push(rx, ry);
+        if self.moments.needs_reseed(self.period) {
+            self.moments.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let n = self.period as f64;
-        let mean_x = self.sum_x / n;
-        let mean_y = self.sum_y / n;
-        let var_x = (self.sum_xx / n - mean_x * mean_x).max(0.0);
-        let var_y = (self.sum_yy / n - mean_y * mean_y).max(0.0);
-        let cov = self.sum_xy / n - mean_x * mean_y;
+        let var_x = self.moments.var_a(self.period);
+        let var_y = self.moments.var_b(self.period);
+        let cov = self.moments.cov(self.period);
         let denom = (var_x * var_y).sqrt();
         if denom == 0.0 {
             // At least one return channel is flat: correlation is undefined.
@@ -139,11 +124,7 @@ impl Indicator for RollingCorrelation {
     fn reset(&mut self) {
         self.prev = None;
         self.window.clear();
-        self.sum_x = 0.0;
-        self.sum_y = 0.0;
-        self.sum_xx = 0.0;
-        self.sum_yy = 0.0;
-        self.sum_xy = 0.0;
+        self.moments.reset();
     }
 
     #[inline]
