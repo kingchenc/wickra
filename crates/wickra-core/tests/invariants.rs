@@ -126,6 +126,33 @@ where
     Ok(())
 }
 
+/// `is_ready` must mean exactly what the trait says it means: at least one value
+/// emitted since the last reset. Nothing checked this, and four indicators keyed
+/// it off something else — a full window, a seeded bootstrap state, or every
+/// output component being present — each of which changes at a different moment
+/// than the first emission.
+fn check_ready<I>(make: impl Fn() -> I, xs: &[I::Input]) -> std::result::Result<(), TestCaseError>
+where
+    I: Indicator,
+    I::Input: Clone,
+{
+    let mut ind = make();
+    prop_assert!(!ind.is_ready(), "ready before any input");
+    let mut emitted = false;
+    for (i, x) in xs.iter().enumerate() {
+        emitted |= ind.update(x.clone()).is_some();
+        prop_assert_eq!(
+            ind.is_ready(),
+            emitted,
+            "is_ready disagrees with having emitted, at input {}",
+            i
+        );
+    }
+    ind.reset();
+    prop_assert!(!ind.is_ready(), "ready after reset");
+    Ok(())
+}
+
 // --- per-family roll-out macros ----------------------------------------------
 
 macro_rules! scalar_inv {
@@ -136,6 +163,7 @@ macro_rules! scalar_inv {
             fn $name(xs in prop::collection::vec(-1.0e6f64..1.0e6, 0..160)) {
                 check_seq(|| { $($ctor)+ }, &xs)?;
                 check_scalar_nonfinite(|| { $($ctor)+ }, &xs)?;
+                check_ready(|| { $($ctor)+ }, &xs)?;
             }
         }
     };
@@ -161,6 +189,7 @@ macro_rules! candle_inv {
                     })
                     .collect();
                 check_seq(|| { $($ctor)+ }, &candles)?;
+                check_ready(|| { $($ctor)+ }, &candles)?;
             }
         }
     };
@@ -175,6 +204,7 @@ macro_rules! pair_inv {
                 xs in prop::collection::vec((-1.0e6f64..1.0e6, -1.0e6f64..1.0e6), 0..160)
             ) {
                 check_seq(|| { $($ctor)+ }, &xs)?;
+                check_ready(|| { $($ctor)+ }, &xs)?;
                 check_pairwise_nonfinite(|| { $($ctor)+ }, &xs)?;
             }
         }
@@ -206,6 +236,7 @@ macro_rules! cross_section_inv {
                     })
                     .collect();
                 check_seq(|| { $($ctor)+ }, &ticks)?;
+                check_ready(|| { $($ctor)+ }, &ticks)?;
             }
         }
     };
@@ -222,6 +253,7 @@ macro_rules! trade_inv {
                     .map(|&(p, s, b)| Trade::new(p, s, if b { Side::Buy } else { Side::Sell }, 0).expect("valid trade"))
                     .collect();
                 check_seq(|| { $($ctor)+ }, &ticks)?;
+                check_ready(|| { $($ctor)+ }, &ticks)?;
             }
         }
     };
@@ -249,6 +281,7 @@ macro_rules! deriv_inv {
                     })
                     .collect();
                 check_seq(|| { $($ctor)+ }, &ticks)?;
+                check_ready(|| { $($ctor)+ }, &ticks)?;
             }
         }
     };
@@ -270,6 +303,7 @@ macro_rules! orderbook_inv {
                     })
                     .collect();
                 check_seq(|| { $($ctor)+ }, &books)?;
+                check_ready(|| { $($ctor)+ }, &books)?;
             }
         }
     };
@@ -289,6 +323,7 @@ macro_rules! tradequote_inv {
                     })
                     .collect();
                 check_seq(|| { $($ctor)+ }, &tqs)?;
+                check_ready(|| { $($ctor)+ }, &tqs)?;
             }
         }
     };

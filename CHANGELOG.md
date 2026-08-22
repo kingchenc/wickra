@@ -56,6 +56,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **`is_ready()` is now checked against its own definition, catalogue-wide.**
+  The trait defines it as whether a value has been emitted since the last reset,
+  and nothing verified that. Four indicators keyed it off something else and
+  reported ready at the wrong moment: `Ichimoku` required every output component
+  to be present, long after it began emitting; `ZigZag` keyed off a trend state
+  seeded on the first bar, which emits nothing; `LongLine` and `ShortLine`
+  required a full window while emitting from bar one. All four now track
+  emission. The property suite asserts the contract for all 513 indicators, in
+  every input family — including that a fresh instance is not ready, and that
+  `reset()` returns it to not ready. Verified to bite by reintroducing the
+  `Trix` defect fixed earlier in this release: the check fails on it immediately.
 - **Fuzz coverage closed the last two gaps, and gained a chain target.**
   `BollingerBandwidth` and `PercentB` were the only two of the 514 catalogue
   entries no fuzz target reached. A new `indicator_chain` target covers

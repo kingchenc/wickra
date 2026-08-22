@@ -91,6 +91,10 @@ pub struct Ichimoku {
     // Past closes for the lagging Chikou span.
     close_history: VecDeque<f64>,
     last: Option<IchimokuOutput>,
+    /// Whether a value has been emitted since the last reset. The trait
+    /// defines `is_ready` as exactly that, and the state this used to key
+    /// off changed at a different moment.
+    has_emitted: bool,
 }
 
 impl Ichimoku {
@@ -132,6 +136,7 @@ impl Ichimoku {
             senkou_b_history: VecDeque::with_capacity(displacement),
             close_history: VecDeque::with_capacity(displacement),
             last: None,
+            has_emitted: false,
         })
     }
 
@@ -243,10 +248,12 @@ impl Indicator for Ichimoku {
             chikou,
         };
         self.last = Some(out);
+        self.has_emitted = true;
         Some(out)
     }
 
     fn reset(&mut self) {
+        self.has_emitted = false;
         self.highs.clear();
         self.lows.clear();
         self.senkou_a_history.clear();
@@ -264,13 +271,7 @@ impl Indicator for Ichimoku {
 
     #[inline]
     fn is_ready(&self) -> bool {
-        self.last.is_some_and(|o| {
-            o.tenkan.is_some()
-                && o.kijun.is_some()
-                && o.senkou_a.is_some()
-                && o.senkou_b.is_some()
-                && o.chikou.is_some()
-        })
+        self.has_emitted
     }
 
     #[inline]

@@ -55,6 +55,10 @@ pub struct ZigZagOutput {
 pub struct ZigZag {
     threshold: f64,
     state: Option<State>,
+    /// Whether a swing has been confirmed since the last reset. `state` is
+    /// seeded on the very first bar but nothing is emitted then, so keying
+    /// readiness off it reported ready one bar early.
+    has_emitted: bool,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -82,6 +86,7 @@ impl ZigZag {
         Ok(Self {
             threshold,
             state: None,
+            has_emitted: false,
         })
     }
 
@@ -125,6 +130,7 @@ impl Indicator for ZigZag {
                     direction: -1.0,
                     extreme: candle.low,
                 });
+                self.has_emitted = true;
                 return Some(confirmed);
             }
             None
@@ -147,6 +153,7 @@ impl Indicator for ZigZag {
                     direction: 1.0,
                     extreme: candle.high,
                 });
+                self.has_emitted = true;
                 return Some(confirmed);
             }
             None
@@ -154,6 +161,7 @@ impl Indicator for ZigZag {
     }
 
     fn reset(&mut self) {
+        self.has_emitted = false;
         self.state = None;
     }
 
@@ -167,7 +175,7 @@ impl Indicator for ZigZag {
 
     #[inline]
     fn is_ready(&self) -> bool {
-        self.state.is_some()
+        self.has_emitted
     }
 
     #[inline]
@@ -200,9 +208,11 @@ mod tests {
 
     #[test]
     fn first_bar_only_bootstraps() {
+        // The first bar seeds the trend state but emits nothing, so the
+        // indicator is not ready — `is_ready` means a value has been emitted.
         let mut zz = ZigZag::new(0.05).unwrap();
         assert_eq!(zz.update(c(100.0, 0)), None);
-        assert!(zz.is_ready());
+        assert!(!zz.is_ready());
     }
 
     #[test]
@@ -249,11 +259,19 @@ mod tests {
 
     #[test]
     fn warmup_and_ready_lifecycle() {
-        let mut zz = ZigZag::new(0.05).unwrap();
+        let mut zz = ZigZag::new(0.10).unwrap();
         assert!(!zz.is_ready());
         assert_eq!(zz.warmup_period(), 2);
-        zz.update(c(100.0, 0));
+        // Seeding the state is not emitting: readiness only begins with the
+        // first confirmed swing, which needs a threshold-sized reversal.
+        assert_eq!(zz.update(c_hl(100.0, 99.5, 0)), None);
+        assert!(!zz.is_ready());
+        assert_eq!(zz.update(c_hl(120.0, 119.5, 1)), None);
+        assert!(!zz.is_ready());
+        assert!(zz.update(c_hl(101.0, 100.0, 2)).is_some());
         assert!(zz.is_ready());
+        zz.reset();
+        assert!(!zz.is_ready());
     }
 
     #[test]

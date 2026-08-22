@@ -49,6 +49,10 @@ use std::collections::VecDeque;
 pub struct LongLine {
     period: usize,
     ranges: VecDeque<f64>,
+    /// Whether a value has been emitted since the last reset. The trait
+    /// defines `is_ready` as exactly that, and the state this used to key
+    /// off changed at a different moment.
+    has_emitted: bool,
 }
 
 impl Default for LongLine {
@@ -63,6 +67,7 @@ impl LongLine {
         Self {
             period: 5,
             ranges: VecDeque::new(),
+            has_emitted: false,
         }
     }
 
@@ -81,6 +86,7 @@ impl LongLine {
         Ok(Self {
             period,
             ranges: VecDeque::new(),
+            has_emitted: false,
         })
     }
 
@@ -96,6 +102,8 @@ impl Indicator for LongLine {
 
     #[inline]
     fn update(&mut self, candle: Candle) -> Option<f64> {
+        // Every path below emits, so readiness begins with the first bar.
+        self.has_emitted = true;
         let range = candle.high - candle.low;
         let body = candle.close - candle.open;
         if self.ranges.len() < self.period {
@@ -112,6 +120,7 @@ impl Indicator for LongLine {
     }
 
     fn reset(&mut self) {
+        self.has_emitted = false;
         self.ranges.clear();
     }
 
@@ -122,7 +131,7 @@ impl Indicator for LongLine {
 
     #[inline]
     fn is_ready(&self) -> bool {
-        self.ranges.len() >= self.period
+        self.has_emitted
     }
 
     #[inline]
