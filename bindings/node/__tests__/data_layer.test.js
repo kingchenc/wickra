@@ -1,6 +1,6 @@
 // Cross-language data-layer parity for the Node binding: replay the shared
-// golden tick stream through the TickAggregator and check the candles bit-for-bit
-// (within fp tolerance) against the Rust-generated fixtures, with and without
+// golden tick stream through the TickAggregator and check the candles within
+// a relative tolerance against the Rust-generated fixtures, with and without
 // gap filling. Fixtures are produced by `cargo run -p wickra-examples --bin
 // gen_golden`.
 

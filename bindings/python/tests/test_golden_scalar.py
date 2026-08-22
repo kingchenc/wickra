@@ -1,6 +1,14 @@
 """Generic golden replay: every scalar indicator in scalar_manifest.json is
 constructed by its native name with the recorded params, fed the shared golden
-input, and checked bit-for-bit against the Rust-generated g_<Canonical>.csv.
+input, and checked against the Rust-generated g_<Canonical>.csv.
+The comparison is a relative tolerance, not bit equality. Every binding calls
+into the same Rust core, so 461 of the 514 indicators are bit-identical by
+construction; the other 53 reach a transcendental in the platform math library
+(`ln`, `sin`, `cos`, `atan`, `exp`), which no mainstream libm rounds correctly
+and which differs in the last bit between implementations. Tightening this to an
+exact comparison would make the suite fail on a machine whose libm rounds
+differently, which is not a defect in Wickra.
+
 
 This ties the Python binding to the Rust reference for the whole scalar-output
 tranche (not just the seven archetype representatives). Fixtures + manifest are

@@ -4,7 +4,7 @@
 // Every one of the 514 indicators is reconstructed from wasm_manifest.json (JS
 // class, constructor params, ordered update args parsed from the generated
 // .d.ts), fed the synthetic stream derived from the shared golden input — the
-// same construction gen_golden uses — and checked bit-for-bit against the Rust
+// same construction gen_golden uses — and checked against the Rust
 // reference fixtures g_<Canonical>.csv.
 //
 //   wasm-pack build --target nodejs --out-dir pkg

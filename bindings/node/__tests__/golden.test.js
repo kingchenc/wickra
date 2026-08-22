@@ -3,7 +3,7 @@
 // Every one of the 514 indicators is reconstructed from `node_manifest.json`
 // (native class, constructor params, ordered update args), fed the synthetic
 // stream derived from the shared `testdata/golden/input.csv` — the exact same
-// construction the Rust `gen_golden` binary uses — and checked bit-for-bit
+// construction the Rust `gen_golden` binary uses — and checked
 // against the Rust-generated `g_<Canonical>.csv`. This pins the Node FFI to the
 // Rust reference for the whole indicator catalogue, not just a few archetypes.
 //

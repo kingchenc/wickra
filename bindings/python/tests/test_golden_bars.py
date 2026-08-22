@@ -4,7 +4,7 @@ Each builder turns one candle into 0..n completed bars, so the fixture stores
 one CSV line per input candle holding every bar flattened (an empty line means
 no bar closed on that candle). Close-driven builders (Renko, Kagi, P&F, Range,
 Three-Line-Break) receive a flat candle, mirroring the binding's `update(close)`.
-Values are checked bit-for-bit against the Rust-generated `g_<Canonical>.csv`.
+Values are checked against the Rust-generated `g_<Canonical>.csv`.
 """
 import json
 import math

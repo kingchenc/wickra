@@ -214,6 +214,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   falls from an O(1) 126 Mupd/s to 27 Mupd/s, and at period 200 to 2.7 Mupd/s;
   both now sit alongside `StandardErrorBands` (25 and 2.9), which was always
   O(period). Correctness in the indicator's own best case is worth that.
+- **The "bit-for-bit parity" claim was not true, and is corrected rather than
+  quietly dropped.** All seven golden runners (C#, Go, Java, Node, WASM, Python,
+  R) compare with a relative tolerance of `1e-6`; none has ever compared by bit
+  equality, while `README.md` asserted bit-for-bit parity in four places and the
+  npm README in four more.
+
+  The diagnosis came from a fixture that stopped reproducing: regenerating
+  `g_LinRegAngle.csv` on an untouched checkout rewrote one value by exactly one
+  ulp. The cause is `f64::atan`, which no mainstream libm rounds correctly --
+  scored against 200-bit arithmetic over the golden input, Rust's
+  `atan(x).to_degrees()` differs from the correctly rounded result on **24 of 67
+  bars**. That last bit belongs to the machine's math library, not to Wickra, so
+  bit equality is not achievable for the indicators that reach one.
+
+  Classifying the catalogue by whether it can reach a transcendental (`ln`,
+  `sin`, `cos`, `atan`, `exp` and the rest), directly or through an indicator it
+  composes: **461 of the 514 use only IEEE-754 arithmetic** and are bit-identical
+  on any conforming platform; **53 are libm-dependent**. Both READMEs now say
+  this instead of overclaiming, and each runner explains in place why its
+  comparison is a tolerance -- so the next reader does not "fix" it by
+  tightening.
+- **The Go golden generator did not reproduce its own output.** Regenerating
+  `golden_all_test.go` rewrote four blocks, because the generator emitted a
+  one-line `if ok { ... } else { ... }` while the committed file carried the
+  expanded form `gofmt` produces. Anyone regenerating it would have committed a
+  file that fails a format check. The generator now emits the expanded form and
+  regeneration is idempotent.
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,
   and nothing verified that. Four indicators keyed it off something else and

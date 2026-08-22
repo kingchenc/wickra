@@ -3,7 +3,7 @@ histograms (`bins`) and price-binned market profiles (`price_low, price_high,
 bins`). Each profile emits a fixed-width row once warm and `NaN`s during warmup.
 
 The shared `testdata/golden/input.csv` candle series is replayed through the
-Python FFI and the flattened histogram is checked bit-for-bit against the
+Python FFI and the flattened histogram is checked against the
 Rust-generated `g_<Canonical>.csv`.
 """
 import json

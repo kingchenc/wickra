@@ -3,7 +3,7 @@ CrossSection, Trade, TradeQuote and OrderBook indicators.
 
 Each family feeds a synthetic stream deterministically derived from the shared
 `testdata/golden/input.csv` OHLCV rows — the exact same construction the Rust
-`gen_golden` binary uses — and every value is checked bit-for-bit against the
+`gen_golden` binary uses — and every value is checked against the
 Rust-generated `g_<Canonical>.csv`. This pins the Python FFI for indicators
 whose inputs cannot be expressed as a plain close/candle/pair stream.
 """

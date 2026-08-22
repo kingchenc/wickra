@@ -1,7 +1,7 @@
 # Generic golden-fixture parity for the whole 514-indicator catalogue: every
 # indicator is reconstructed by its constructor, fed the synthetic stream derived
 # from the shared testdata/golden input (identical to gen_golden's Rust
-# construction) and checked bit-for-bit against g_<Canonical>.csv. One reflective
+# construction) and checked against g_<Canonical>.csv. One reflective
 # runner flattens scalar, multi-output, profile and bar shapes.
 #
 # Like test-golden.R, the fixtures live at the repo root and are not bundled into
