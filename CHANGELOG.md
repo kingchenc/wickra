@@ -64,10 +64,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `catch_unwind`, machinery that can never run under `abort`, so any panic
   reaching an FFI boundary aborted the interpreter instead of raising. The
   profile now unwinds. The cost, measured over 500000 bars: streaming throughput
-  is unchanged, the C ABI cdylib grows 34.5%, and the `SMA` and `BollingerBands`
-  batch fast paths lose roughly 40% because bounds checks in their ring-buffer
-  loops become unwind edges. Those two loops will be reworked to iterate rather
-  than index.
+  is unchanged and the C ABI cdylib grows 34.5%. `Sma::batch_nan` initially lost
+  roughly 40%, traced to the `Vec::push` in its hot loop — under unwinding that
+  carries drop glue for the output vector. Writing into a pre-sized output
+  instead brings it to 513-540 Mupd/s, above the 500 the `abort` build managed.
+  `BollingerBands::batch_bands` already wrote into a pre-sized buffer and was
+  never affected.
 - **An absurd period aborted the process instead of returning an error.**
   Constructors size their buffers from the period, and only `period == 0` was
   rejected: `Ema::new(usize::MAX)` hit a capacity overflow inside `Vec` and
