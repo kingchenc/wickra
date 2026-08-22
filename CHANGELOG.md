@@ -56,6 +56,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **A panic inside a binding killed the host process.** The workspace release
+  profile set `panic = "abort"`, and the Python, Node, WASM and C ABI cdylibs are
+  workspace members, so they inherited it — Cargo refuses `panic` in a
+  per-package profile override, so there was no way to set it for them alone.
+  Both pyo3 and napi turn a panic into a language-level exception through
+  `catch_unwind`, machinery that can never run under `abort`, so any panic
+  reaching an FFI boundary aborted the interpreter instead of raising. The
+  profile now unwinds. The cost, measured over 500000 bars: streaming throughput
+  is unchanged, the C ABI cdylib grows 34.5%, and the `SMA` and `BollingerBands`
+  batch fast paths lose roughly 40% because bounds checks in their ring-buffer
+  loops become unwind edges. Those two loops will be reworked to iterate rather
+  than index.
 - **An absurd period aborted the process instead of returning an error.**
   Constructors size their buffers from the period, and only `period == 0` was
   rejected: `Ema::new(usize::MAX)` hit a capacity overflow inside `Vec` and

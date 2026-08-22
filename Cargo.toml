@@ -65,7 +65,15 @@ float_cmp = "allow"
 opt-level = 3
 lto = "fat"
 codegen-units = 1
-panic = "abort"
+# Unwind, not abort. The bindings are workspace members, and Cargo refuses
+# `panic` in a per-package profile override ("`panic` may not be specified in a
+# `package` profile"), so whatever is set here is what the Python, Node, WASM and
+# C ABI cdylibs are built with. pyo3 and napi both convert a panic into a
+# language-level exception via `catch_unwind`; with `abort` that machinery can
+# never run, so any panic reaching an FFI boundary killed the host process
+# instead of raising. Unwinding out of `extern "C"` is itself undefined, which is
+# precisely why those crates catch it first.
+panic = "unwind"
 strip = true
 
 [profile.bench]
