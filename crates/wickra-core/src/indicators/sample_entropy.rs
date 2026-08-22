@@ -67,6 +67,8 @@ pub struct SampleEntropy {
     emb_dim: usize,
     r_factor: f64,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
     last: Option<f64>,
 }
 
@@ -99,6 +101,7 @@ impl SampleEntropy {
             emb_dim: m,
             r_factor,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
             last: None,
         })
     }
@@ -113,9 +116,11 @@ impl SampleEntropy {
         self.last
     }
 
-    fn compute(&self) -> f64 {
-        let window: Vec<f64> = self.window.iter().copied().collect();
-        let std = population_stddev(&window);
+    fn compute(&mut self) -> f64 {
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        let window = &self.scratch;
+        let std = population_stddev(window);
         if std == 0.0 {
             return 0.0;
         }
@@ -128,9 +133,9 @@ impl SampleEntropy {
         let mut matches_m1 = 0u64;
         for i in 0..count {
             for j in (i + 1)..count {
-                if templates_match(&window, i, j, m, tol) {
+                if templates_match(window, i, j, m, tol) {
                     matches_m += 1;
-                    if templates_match(&window, i, j, m + 1, tol) {
+                    if templates_match(window, i, j, m + 1, tol) {
                         matches_m1 += 1;
                     }
                 }
@@ -170,6 +175,7 @@ impl Indicator for SampleEntropy {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
         self.last = None;
     }
 

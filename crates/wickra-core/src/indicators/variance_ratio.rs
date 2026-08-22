@@ -52,6 +52,10 @@ pub struct VarianceRatio {
     period: usize,
     q: usize,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
+    /// Reusable buffer for the one-step changes.
+    returns: Vec<f64>,
 }
 
 impl VarianceRatio {
@@ -83,6 +87,8 @@ impl VarianceRatio {
             period,
             q,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
+            returns: Vec::with_capacity(period),
         })
     }
 
@@ -114,9 +120,12 @@ impl Indicator for VarianceRatio {
         if self.window.len() < self.period {
             return None;
         }
-        let spreads: Vec<f64> = self.window.iter().copied().collect();
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
         // One-step changes.
-        let returns: Vec<f64> = spreads.windows(2).map(|w| w[1] - w[0]).collect();
+        let returns = &mut self.returns;
+        returns.clear();
+        returns.extend(self.scratch.windows(2).map(|w| w[1] - w[0]));
         let m = returns.len() as f64;
         let mean = returns.iter().sum::<f64>() / m;
         let var_one = returns.iter().map(|r| (r - mean) * (r - mean)).sum::<f64>() / m;
@@ -126,18 +135,23 @@ impl Indicator for VarianceRatio {
         }
         // Overlapping q-step changes; their mean is q·mean by construction.
         let q_mean = self.q as f64 * mean;
-        let long: Vec<f64> = returns.windows(self.q).map(|w| w.iter().sum()).collect();
-        let count = long.len() as f64;
-        let var_q = long
-            .iter()
-            .map(|y| (y - q_mean) * (y - q_mean))
-            .sum::<f64>()
-            / count;
+        // Summed in one pass rather than materialised: the q-step changes are
+        // only ever reduced, never revisited.
+        let mut sum_sq = 0.0;
+        let mut count = 0.0;
+        for window in returns.windows(self.q) {
+            let deviation = window.iter().sum::<f64>() - q_mean;
+            sum_sq += deviation * deviation;
+            count += 1.0;
+        }
+        let var_q = sum_sq / count;
         Some(var_q / (self.q as f64 * var_one))
     }
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
+        self.returns.clear();
     }
 
     #[inline]

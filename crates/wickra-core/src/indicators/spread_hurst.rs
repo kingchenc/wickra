@@ -51,6 +51,11 @@ pub struct SpreadHurst {
     period: usize,
     max_lag: usize,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
+    /// Reusable `(log lag, log variance)` buffers for the regression.
+    log_lag: Vec<f64>,
+    log_var: Vec<f64>,
 }
 
 impl SpreadHurst {
@@ -74,6 +79,9 @@ impl SpreadHurst {
             period,
             max_lag: (period / 4).max(2),
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
+            log_lag: Vec::with_capacity((period / 4).max(2)),
+            log_var: Vec::with_capacity((period / 4).max(2)),
         })
     }
 
@@ -99,10 +107,14 @@ impl Indicator for SpreadHurst {
         if self.window.len() < self.period {
             return None;
         }
-        let spreads: Vec<f64> = self.window.iter().copied().collect();
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        let spreads = &self.scratch;
         // Collect (log τ, log V(τ)) for every lag whose variance is positive.
-        let mut log_lag = Vec::with_capacity(self.max_lag);
-        let mut log_var = Vec::with_capacity(self.max_lag);
+        let log_lag = &mut self.log_lag;
+        let log_var = &mut self.log_var;
+        log_lag.clear();
+        log_var.clear();
         for lag in 1..=self.max_lag {
             let mut sum_sq = 0.0;
             let mut count = 0.0;
@@ -126,7 +138,7 @@ impl Indicator for SpreadHurst {
         let mean_var = log_var.iter().sum::<f64>() / n;
         let mut cov = 0.0;
         let mut var_lag = 0.0;
-        for (lx, lv) in log_lag.iter().zip(&log_var) {
+        for (lx, lv) in log_lag.iter().zip(log_var.iter()) {
             cov += (lx - mean_lag) * (lv - mean_var);
             var_lag += (lx - mean_lag) * (lx - mean_lag);
         }
@@ -138,6 +150,9 @@ impl Indicator for SpreadHurst {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
+        self.log_lag.clear();
+        self.log_var.clear();
     }
 
     #[inline]

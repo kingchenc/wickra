@@ -45,6 +45,8 @@ pub struct RollMeasure {
     period: usize,
     prev_price: Option<f64>,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
 }
 
 impl RollMeasure {
@@ -68,6 +70,7 @@ impl RollMeasure {
             period,
             prev_price: None,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
         })
     }
 
@@ -97,7 +100,9 @@ impl Indicator for RollMeasure {
             return None;
         }
         // Sample lag-1 autocovariance of the price changes over the window.
-        let changes: Vec<f64> = self.window.iter().copied().collect();
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        let changes = &self.scratch;
         let count = changes.len() as f64;
         let mean = changes.iter().sum::<f64>() / count;
         let pairs = (changes.len() - 1) as f64;
@@ -113,6 +118,7 @@ impl Indicator for RollMeasure {
     fn reset(&mut self) {
         self.prev_price = None;
         self.window.clear();
+        self.scratch.clear();
     }
 
     #[inline]

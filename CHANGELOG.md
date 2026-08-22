@@ -264,6 +264,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of them indicators whose fixtures moved on this branch, against a prebuilt
   `.node` artifact from two months earlier. A stale binding build is exactly the
   kind of thing a `1e-6` comparison cannot see.
+- **Seven more indicators stopped allocating on every update.** A10 covered the
+  sort-based family; these collect their window into a fresh `Vec` purely to get
+  a contiguous slice, which costs a malloc and a free per tick. They now reuse a
+  scratch buffer on the struct, the same shape A10 established. Measured over
+  300k updates:
+
+  | | before | after |
+  |---|---|---|
+  | `RollMeasure` | 23.8 | 46.8 Mupd/s |
+  | `VarianceRatio` | 4.8 | 7.6 Mupd/s |
+  | `Rwi` | 8.7 | 13.6 Mupd/s |
+  | `HurstExponent` | 3.2 | 3.7 Mupd/s |
+  | `SpreadHurst` | 2.1 | 2.4 Mupd/s |
+  | `KendallTau` | 3.8 | 4.1 Mupd/s |
+  | `SampleEntropy` | 0.96 | 0.99 Mupd/s |
+
+  The spread is the point: where the per-update work is small the allocation was
+  half the cost, and where it is a quadratic template scan (`SampleEntropy`) it
+  was noise. Three of them allocated more than once — `SpreadHurst` three times,
+  `VarianceRatio` three — and `VarianceRatio`'s third buffer is gone rather than
+  pooled, since its overlapping q-step changes are only ever summed. `Rwi` needed
+  no buffer for its candles at all: it indexes them at single positions, which a
+  `VecDeque` does directly.
+
+  Every golden fixture is byte-identical afterwards, which is the point of a
+  change that is meant to be free.
+
 
 - **`is_ready()` is now checked against its own definition, catalogue-wide.**
   The trait defines it as whether a value has been emitted since the last reset,

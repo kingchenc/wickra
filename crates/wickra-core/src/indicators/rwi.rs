@@ -64,6 +64,9 @@ pub struct Rwi {
     /// Rolling window of `period` true-range values aligned with `candles`
     /// after the first bar (so `tr[0]` corresponds to `candles[1]`).
     trs: VecDeque<f64>,
+    /// Reusable contiguous copy of `trs`, so the per-lookback ATR can be
+    /// summed over a slice without allocating per `update`.
+    scratch: Vec<f64>,
     last: Option<RwiOutput>,
 }
 
@@ -93,6 +96,7 @@ impl Rwi {
             period,
             candles: VecDeque::with_capacity(period),
             trs: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
             last: None,
         })
     }
@@ -141,9 +145,12 @@ impl Indicator for Rwi {
             return None;
         }
 
-        // Slice access for indexed maths.
-        let candles: Vec<&Candle> = self.candles.iter().collect();
-        let trs: Vec<f64> = self.trs.iter().copied().collect();
+        // `candles` is indexed at single positions, which a `VecDeque` does
+        // directly; only `trs` needs a contiguous slice, for the range sums.
+        let candles = &self.candles;
+        self.scratch.clear();
+        self.scratch.extend(self.trs.iter().copied());
+        let trs = &self.scratch;
         let n = candles.len(); // == self.period
         let last_high = candles[n - 1].high;
         let last_low = candles[n - 1].low;
@@ -192,6 +199,7 @@ impl Indicator for Rwi {
     fn reset(&mut self) {
         self.candles.clear();
         self.trs.clear();
+        self.scratch.clear();
         self.last = None;
     }
 

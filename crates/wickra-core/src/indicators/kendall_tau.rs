@@ -58,6 +58,8 @@ fn sign(a: f64, b: f64) -> i32 {
 pub struct KendallTau {
     period: usize,
     window: VecDeque<(f64, f64)>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<(f64, f64)>,
     last: Option<f64>,
 }
 
@@ -82,6 +84,7 @@ impl KendallTau {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
             last: None,
         })
     }
@@ -96,8 +99,10 @@ impl KendallTau {
         self.last
     }
 
-    fn compute(&self) -> f64 {
-        let pairs: Vec<(f64, f64)> = self.window.iter().copied().collect();
+    fn compute(&mut self) -> f64 {
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        let pairs = &self.scratch;
         let len = pairs.len();
         let mut concordant: i64 = 0;
         let mut discordant: i64 = 0;
@@ -153,6 +158,7 @@ impl Indicator for KendallTau {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
         self.last = None;
     }
 

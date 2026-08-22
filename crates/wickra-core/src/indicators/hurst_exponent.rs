@@ -63,6 +63,8 @@ pub struct HurstExponent {
     period: usize,
     chunks: usize,
     window: VecDeque<f64>,
+    /// Reusable scratch buffer to avoid allocating per `update`.
+    scratch: Vec<f64>,
 }
 
 impl HurstExponent {
@@ -96,6 +98,7 @@ impl HurstExponent {
             period,
             chunks,
             window: VecDeque::with_capacity(period),
+            scratch: Vec::with_capacity(period),
         })
     }
 
@@ -155,7 +158,9 @@ impl Indicator for HurstExponent {
         }
 
         // Materialise the window contiguously so chunk slicing is trivial.
-        let buf: Vec<f64> = self.window.iter().copied().collect();
+        self.scratch.clear();
+        self.scratch.extend(self.window.iter().copied());
+        let buf = &self.scratch;
         // Build (log m, log(R/S)) points. The chunk size sweeps from period
         // (one big chunk) down to period / chunks (chunks small chunks).
         let mut sum_x = 0.0;
@@ -207,6 +212,7 @@ impl Indicator for HurstExponent {
 
     fn reset(&mut self) {
         self.window.clear();
+        self.scratch.clear();
     }
 
     #[inline]
