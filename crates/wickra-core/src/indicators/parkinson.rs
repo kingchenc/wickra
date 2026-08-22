@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -49,7 +50,7 @@ pub struct ParkinsonVolatility {
     period: usize,
     trading_periods: usize,
     window: VecDeque<f64>,
-    sum_sq: f64,
+    sum_sq: RollingSum,
     last: Option<f64>,
 }
 
@@ -75,7 +76,7 @@ impl ParkinsonVolatility {
             period,
             trading_periods,
             window: VecDeque::with_capacity(period),
-            sum_sq: 0.0,
+            sum_sq: RollingSum::new(),
             last: None,
         })
     }
@@ -104,17 +105,20 @@ impl Indicator for ParkinsonVolatility {
 
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum_sq -= old;
+            self.sum_sq.evict(old);
         }
         self.window.push_back(sample);
-        self.sum_sq += sample;
+        self.sum_sq.push(sample);
+        if self.sum_sq.needs_reseed(self.period) {
+            self.sum_sq.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
         }
 
         let n = self.period as f64;
-        let variance = (PARKINSON_FACTOR * self.sum_sq / n).max(0.0);
+        let variance = (PARKINSON_FACTOR * self.sum_sq.value() / n).max(0.0);
         let sigma = variance.sqrt();
         let out = sigma * (self.trading_periods as f64).sqrt() * 100.0;
         self.last = Some(out);
@@ -123,7 +127,7 @@ impl Indicator for ParkinsonVolatility {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum_sq = 0.0;
+        self.sum_sq.reset();
         self.last = None;
     }
 

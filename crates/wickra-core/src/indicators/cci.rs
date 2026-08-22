@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -31,7 +32,7 @@ pub struct Cci {
     period: usize,
     factor: f64,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
 }
 
 impl Cci {
@@ -65,7 +66,7 @@ impl Cci {
             period,
             factor,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
         })
     }
 
@@ -83,15 +84,18 @@ impl Indicator for Cci {
         let tp = candle.typical_price();
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         self.window.push_back(tp);
-        self.sum += tp;
+        self.sum.push(tp);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let mean = self.sum / n;
+        let mean = self.sum.value() / n;
         let mad: f64 = self.window.iter().map(|v| (v - mean).abs()).sum::<f64>() / n;
         if mad == 0.0 {
             return Some(0.0);
@@ -101,7 +105,7 @@ impl Indicator for Cci {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
     }
 
     fn warmup_period(&self) -> usize {

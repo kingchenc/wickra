@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Rolling Calmar Ratio.
@@ -41,7 +42,7 @@ use crate::traits::Indicator;
 pub struct CalmarRatio {
     period: usize,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
 }
 
 impl CalmarRatio {
@@ -63,7 +64,7 @@ impl CalmarRatio {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
         })
     }
 
@@ -83,15 +84,18 @@ impl Indicator for CalmarRatio {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         self.window.push_back(input);
-        self.sum += input;
+        self.sum.push(input);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let mean = self.sum / n;
+        let mean = self.sum.value() / n;
         // Build equity curve and track the worst peak-to-trough drawdown.
         let mut equity = 1.0_f64;
         let mut peak = 1.0_f64;
@@ -115,7 +119,7 @@ impl Indicator for CalmarRatio {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
     }
 
     fn warmup_period(&self) -> usize {

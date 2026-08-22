@@ -56,6 +56,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   is closer to a two-pass reference than the one it replaces. The shape statistics were affected worse still:
   they reconstruct the third and fourth central moments from raw power sums,
   whose terms are of order `level⁴` while the result is of order `spread⁴`.
+- **Rolling sums drifted without bound on long streams.** `sum += new;
+  sum -= old` is O(1) but never forgets a rounding error, so an accumulator's
+  deviation from a from-scratch sum grows with the length of the stream — the
+  case this library is built for. Measured over three million updates against a
+  fresh instance fed only the final window: `Cci` was off by 5e-09 relative and
+  `Dpo` by 2e-07, while `Sma`, which already rebuilt its sum periodically, was
+  exact. A shared `RollingSum` now rebuilds once per window, amortised O(1), and
+  twelve indicators use it: `AmihudIlliquidity`, `CalmarRatio`, `Cci`, `Dpo`,
+  `FundingRateMean`, `GarmanKlassVolatility`, `GeometricMa`,
+  `OrderFlowImbalance`, `ParkinsonVolatility`, `RogersSatchellVolatility`,
+  `SortinoRatio` and `Vpin`. `Cci` and `Dpo` now measure exactly zero deviation.
+  Affected golden fixtures move in their last digits only (worst 4e-13).
 - **`TdLines` and `TdRiskLevel` reported a value when they had none.** Both
   emitted `Some` with two `NAN` fields from the end of warmup onwards, before
   either of their two levels existed — on a series that never completes a TD

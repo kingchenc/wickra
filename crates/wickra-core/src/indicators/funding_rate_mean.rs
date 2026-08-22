@@ -4,6 +4,7 @@ use std::collections::VecDeque;
 
 use crate::derivatives::DerivativesTick;
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Funding Rate Rolling Mean — the arithmetic mean of the funding rate over the
@@ -42,7 +43,7 @@ use crate::traits::Indicator;
 pub struct FundingRateMean {
     window: usize,
     history: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
 }
 
 impl FundingRateMean {
@@ -63,7 +64,7 @@ impl FundingRateMean {
         Ok(Self {
             window,
             history: VecDeque::with_capacity(window),
-            sum: 0.0,
+            sum: RollingSum::new(),
         })
     }
 
@@ -80,20 +81,23 @@ impl Indicator for FundingRateMean {
 
     fn update(&mut self, tick: DerivativesTick) -> Option<f64> {
         self.history.push_back(tick.funding_rate);
-        self.sum += tick.funding_rate;
+        self.sum.push(tick.funding_rate);
+        if self.sum.needs_reseed(self.window) {
+            self.sum.reseed(self.history.iter().copied());
+        }
         if self.history.len() > self.window {
             let old = self.history.pop_front().expect("window >= 1, len > window");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         if self.history.len() < self.window {
             return None;
         }
-        Some(self.sum / self.window as f64)
+        Some(self.sum.value() / self.window as f64)
     }
 
     fn reset(&mut self) {
         self.history.clear();
-        self.sum = 0.0;
+        self.sum.reset();
     }
 
     fn warmup_period(&self) -> usize {

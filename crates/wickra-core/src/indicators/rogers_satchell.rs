@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
@@ -51,7 +52,7 @@ pub struct RogersSatchellVolatility {
     period: usize,
     trading_periods: usize,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
     last: Option<f64>,
 }
 
@@ -73,7 +74,7 @@ impl RogersSatchellVolatility {
             period,
             trading_periods,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
             last: None,
         })
     }
@@ -108,10 +109,13 @@ impl Indicator for RogersSatchellVolatility {
 
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         self.window.push_back(sample);
-        self.sum += sample;
+        self.sum.push(sample);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
 
         if self.window.len() < self.period {
             return None;
@@ -120,7 +124,7 @@ impl Indicator for RogersSatchellVolatility {
         let n = self.period as f64;
         // The clamp absorbs FP cancellation; the mathematical value is
         // already `>= 0` by the sign argument above.
-        let variance = (self.sum / n).max(0.0);
+        let variance = (self.sum.value() / n).max(0.0);
         let sigma = variance.sqrt();
         let out = sigma * (self.trading_periods as f64).sqrt() * 100.0;
         self.last = Some(out);
@@ -129,7 +133,7 @@ impl Indicator for RogersSatchellVolatility {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
         self.last = None;
     }
 

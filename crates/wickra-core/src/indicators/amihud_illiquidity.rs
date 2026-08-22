@@ -2,6 +2,7 @@
 
 use std::collections::VecDeque;
 
+use crate::indicators::rolling_moments::RollingSum;
 use crate::microstructure::Trade;
 use crate::traits::Indicator;
 use crate::{Error, Result};
@@ -38,7 +39,7 @@ pub struct AmihudIlliquidity {
     period: usize,
     prev_price: Option<f64>,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
     last: Option<f64>,
 }
 
@@ -60,7 +61,7 @@ impl AmihudIlliquidity {
             period,
             prev_price: None,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
             last: None,
         })
     }
@@ -93,14 +94,17 @@ impl Indicator for AmihudIlliquidity {
         let illiq = ret / (trade.price * trade.size);
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         self.window.push_back(illiq);
-        self.sum += illiq;
+        self.sum.push(illiq);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        let value = self.sum / self.period as f64;
+        let value = self.sum.value() / self.period as f64;
         self.last = Some(value);
         Some(value)
     }
@@ -108,7 +112,7 @@ impl Indicator for AmihudIlliquidity {
     fn reset(&mut self) {
         self.prev_price = None;
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
         self.last = None;
     }
 

@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Geometric Moving Average — the rolling geometric mean of the last `period`
@@ -44,7 +45,7 @@ pub struct GeometricMa {
     period: usize,
     /// Natural logs of the values currently in the window (oldest at front).
     logs: VecDeque<f64>,
-    sum_logs: f64,
+    sum_logs: RollingSum,
 }
 
 impl GeometricMa {
@@ -65,7 +66,7 @@ impl GeometricMa {
         Ok(Self {
             period,
             logs: VecDeque::with_capacity(period),
-            sum_logs: 0.0,
+            sum_logs: RollingSum::new(),
         })
     }
 
@@ -77,7 +78,7 @@ impl GeometricMa {
     /// Current value if the window is full.
     pub fn value(&self) -> Option<f64> {
         if self.logs.len() == self.period {
-            Some((self.sum_logs / self.period as f64).exp())
+            Some((self.sum_logs.value() / self.period as f64).exp())
         } else {
             None
         }
@@ -94,17 +95,20 @@ impl Indicator for GeometricMa {
         }
         if self.logs.len() == self.period {
             let oldest = self.logs.pop_front().expect("window non-empty");
-            self.sum_logs -= oldest;
+            self.sum_logs.evict(oldest);
         }
         let ln = input.ln();
         self.logs.push_back(ln);
-        self.sum_logs += ln;
+        self.sum_logs.push(ln);
+        if self.sum_logs.needs_reseed(self.period) {
+            self.sum_logs.reseed(self.logs.iter().copied());
+        }
         self.value()
     }
 
     fn reset(&mut self) {
         self.logs.clear();
-        self.sum_logs = 0.0;
+        self.sum_logs.reset();
     }
 
     fn warmup_period(&self) -> usize {

@@ -2,6 +2,7 @@
 
 use std::collections::VecDeque;
 
+use crate::indicators::rolling_moments::RollingSum;
 use crate::microstructure::OrderBook;
 use crate::traits::Indicator;
 use crate::{Error, Result};
@@ -45,7 +46,7 @@ pub struct OrderFlowImbalance {
     period: usize,
     prev: Option<(f64, f64, f64, f64)>, // (bid_px, bid_sz, ask_px, ask_sz)
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
 }
 
 impl OrderFlowImbalance {
@@ -66,7 +67,7 @@ impl OrderFlowImbalance {
             period,
             prev: None,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
         })
     }
 
@@ -103,20 +104,23 @@ impl Indicator for OrderFlowImbalance {
         let event = delta_b - delta_a;
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         self.window.push_back(event);
-        self.sum += event;
+        self.sum.push(event);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
-        Some(self.sum)
+        Some(self.sum.value())
     }
 
     fn reset(&mut self) {
         self.prev = None;
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
     }
 
     fn warmup_period(&self) -> usize {

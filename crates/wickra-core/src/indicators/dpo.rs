@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Detrended Price Oscillator — strips the trend out of price to expose its
@@ -41,7 +42,7 @@ pub struct Dpo {
     /// Window of the most recent `capacity` prices, oldest at the front.
     capacity: usize,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
     last: Option<f64>,
 }
 
@@ -69,7 +70,7 @@ impl Dpo {
             shift,
             capacity,
             window: VecDeque::with_capacity(capacity),
-            sum: 0.0,
+            sum: RollingSum::new(),
             last: None,
         })
     }
@@ -100,19 +101,26 @@ impl Indicator for Dpo {
             return self.last;
         }
         self.window.push_back(input);
-        self.sum += input;
+        self.sum.push(input);
         let len = self.window.len();
         if len > self.period {
             // The price that just left the SMA window.
-            self.sum -= self.window[len - 1 - self.period];
+            self.sum.evict(self.window[len - 1 - self.period]);
         }
         if self.window.len() > self.capacity {
             self.window.pop_front();
         }
+        if self.sum.needs_reseed(self.period) {
+            // The running total covers the newest `period` prices — a suffix of
+            // the window, not the whole of it, because the window is kept longer
+            // than the SMA to serve the displacement.
+            let live = self.window.len().saturating_sub(self.period);
+            self.sum.reseed(self.window.iter().skip(live).copied());
+        }
         if self.window.len() < self.capacity {
             return None;
         }
-        let sma = self.sum / self.period as f64;
+        let sma = self.sum.value() / self.period as f64;
         // `price_{t - shift}` — index counts back from the newest bar.
         let shifted = self.window[self.window.len() - 1 - self.shift];
         let dpo = shifted - sma;
@@ -122,7 +130,7 @@ impl Indicator for Dpo {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
         self.last = None;
     }
 

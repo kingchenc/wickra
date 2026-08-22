@@ -3,6 +3,7 @@
 use std::collections::VecDeque;
 
 use crate::error::{Error, Result};
+use crate::indicators::rolling_moments::RollingSum;
 use crate::traits::Indicator;
 
 /// Rolling Sortino Ratio.
@@ -40,7 +41,7 @@ pub struct SortinoRatio {
     period: usize,
     mar: f64,
     window: VecDeque<f64>,
-    sum: f64,
+    sum: RollingSum,
 }
 
 impl SortinoRatio {
@@ -63,7 +64,7 @@ impl SortinoRatio {
             period,
             mar,
             window: VecDeque::with_capacity(period),
-            sum: 0.0,
+            sum: RollingSum::new(),
         })
     }
 
@@ -88,15 +89,18 @@ impl Indicator for SortinoRatio {
         }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");
-            self.sum -= old;
+            self.sum.evict(old);
         }
         self.window.push_back(input);
-        self.sum += input;
+        self.sum.push(input);
+        if self.sum.needs_reseed(self.period) {
+            self.sum.reseed(self.window.iter().copied());
+        }
         if self.window.len() < self.period {
             return None;
         }
         let n = self.period as f64;
-        let mean = self.sum / n;
+        let mean = self.sum.value() / n;
         let mut downside_sq = 0.0;
         for &r in &self.window {
             let d = r - self.mar;
@@ -113,7 +117,7 @@ impl Indicator for SortinoRatio {
 
     fn reset(&mut self) {
         self.window.clear();
-        self.sum = 0.0;
+        self.sum.reset();
     }
 
     fn warmup_period(&self) -> usize {

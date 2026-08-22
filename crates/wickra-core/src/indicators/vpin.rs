@@ -2,6 +2,7 @@
 
 use std::collections::VecDeque;
 
+use crate::indicators::rolling_moments::RollingSum;
 use crate::microstructure::{Side, Trade};
 use crate::traits::Indicator;
 use crate::{Error, Result};
@@ -50,7 +51,7 @@ pub struct Vpin {
     cur_sell: f64,
     cur_total: f64,
     window: VecDeque<f64>,
-    sum_imbalance: f64,
+    sum_imbalance: RollingSum,
 }
 
 impl Vpin {
@@ -81,7 +82,7 @@ impl Vpin {
             cur_sell: 0.0,
             cur_total: 0.0,
             window: VecDeque::with_capacity(num_buckets),
-            sum_imbalance: 0.0,
+            sum_imbalance: RollingSum::new(),
         })
     }
 
@@ -94,10 +95,13 @@ impl Vpin {
         let imbalance = (self.cur_buy - self.cur_sell).abs();
         if self.window.len() == self.num_buckets {
             let old = self.window.pop_front().expect("window is non-empty");
-            self.sum_imbalance -= old;
+            self.sum_imbalance.evict(old);
         }
         self.window.push_back(imbalance);
-        self.sum_imbalance += imbalance;
+        self.sum_imbalance.push(imbalance);
+        if self.sum_imbalance.needs_reseed(self.num_buckets) {
+            self.sum_imbalance.reseed(self.window.iter().copied());
+        }
         self.cur_buy = 0.0;
         self.cur_sell = 0.0;
         self.cur_total = 0.0;
@@ -129,7 +133,7 @@ impl Indicator for Vpin {
         if self.window.len() < self.num_buckets {
             return None;
         }
-        Some(self.sum_imbalance / (self.num_buckets as f64 * self.bucket_volume))
+        Some(self.sum_imbalance.value() / (self.num_buckets as f64 * self.bucket_volume))
     }
 
     fn reset(&mut self) {
@@ -137,7 +141,7 @@ impl Indicator for Vpin {
         self.cur_sell = 0.0;
         self.cur_total = 0.0;
         self.window.clear();
-        self.sum_imbalance = 0.0;
+        self.sum_imbalance.reset();
     }
 
     fn warmup_period(&self) -> usize {
