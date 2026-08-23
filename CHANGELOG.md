@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   catch-all; the raised exception and message are unchanged.
 
 ### Fixed
+- **`batch` is exercised across the catalogue in C#, Java and R.** Each had a
+  `BatchShapes`-style test covering one indicator per awkward input shape, which
+  is what it was for, and nothing that drove the whole catalogue through the
+  batch path — so a batch that disagreed with streaming only had to avoid those
+  few to pass. C# and Java now replay all 514 through `Batch` against the same
+  fixtures the streaming pass uses; R covers the 475 that have a shim and pins
+  the count of those that do not. Verified by feeding a scalar batch the open
+  instead of the close and watching each suite fail.
+- **R has no `batch` for 39 of the 514.** The cross-section, order-book,
+  profile, bar-builder and footprint families take a per-bar snapshot or emit a
+  variable number of rows, which R's generic column forwarding cannot express,
+  and no shim was ever generated for them. The other seven bindings have one.
+  The new test reports the 475/39 split rather than passing over it, so the gap
+  cannot widen unnoticed.
 - **The catalogue-wide binding suites now check the contract, not just the
   values.** Go, WASM, C#, Java and R replay all 514 indicators through `update`
   and compare against the Rust fixtures, and stop there — a `reset` that forgot
@@ -25,10 +39,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   moment, replayed perfectly clean. Each of the five now also asserts that a
   fresh indicator is not ready with a warmup of at least one, that a fully
   driven one is ready whenever its fixture holds a value, and that a second pass
-  after `reset` reproduces the first exactly. In Go and C# the archetype
+  after `reset` reproduces the first exactly. Node was not in the audit's list
+  and had the same gap, so it gets the same pass. In Go and C# the archetype
   dispatch was lifted into a shared per-indicator driver so the two passes
-  cannot drift; the WASM suites had carried two copies of their harness and now
-  share one.
+  cannot drift; the WASM and Node suites had each carried a duplicated harness
+  and now drive from a single one.
 - **Every shipped example that resamples was broken, in eight languages.** When
   `Resampler::update` became `push` returning the candles a bar closed, and grew
   a `gap_fill` argument, no example followed. The C, C# and Go examples plus

@@ -150,6 +150,108 @@ public class GoldenAllTests
         return (bp, bs, ap, asz);
     }
 
+    // The whole-series columns, built once from the same per-bar values the
+    // streaming pass feeds `Update`.
+    private static readonly double[] Open = Column(3, 0);
+    private static readonly double[] High = Column(3, 1);
+    private static readonly double[] Low = Column(3, 2);
+    private static readonly double[] Close = Column(3, 3);
+    private static readonly double[] Volume = Column(3, 4);
+    private static readonly long[] Stamps = Enumerable.Range(0, Rows.Length).Select(i => (long)i).ToArray();
+    private static readonly long[] Zeros = new long[Rows.Length];
+    private static readonly double[] Ones = Enumerable.Repeat(1.0, Rows.Length).ToArray();
+    private static readonly bool[] IsBuys = Rows.Select(r => r[3] >= r[0]).ToArray();
+    private static readonly double[] Mids = Rows.Select(r => (r[1] + r[2]) / 2).ToArray();
+
+    private static double[] Column(int _unused, int field) =>
+        Rows.Select(r => r[field]).ToArray();
+
+    private static double[] DerivColumn(int field) =>
+        Rows.Select(r => DerivFields(r)[field]).ToArray();
+
+    // The cross-section and order-book batches take one flat array covering the
+    // whole series -- bar i occupies [i*width, (i+1)*width) -- plus the width as
+    // a separate argument. Both families use a width of 5 here, the same
+    // snapshot the streaming pass builds per bar.
+    private const int SnapshotWidth = 5;
+
+    private static double[] FlatOb(int which)
+    {
+        var out_ = new double[Rows.Length * SnapshotWidth];
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var (bp, bs, ap, asz) = ObLists(Rows[i]);
+            var snap = which switch { 0 => bp, 1 => bs, 2 => ap, _ => asz };
+            Array.Copy(snap, 0, out_, i * SnapshotWidth, SnapshotWidth);
+        }
+        return out_;
+    }
+
+    private static double[] FlatCross(int which)
+    {
+        var out_ = new double[Rows.Length * SnapshotWidth];
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var (ch, vo, _, _, _, _) = CrossLists(Rows[i]);
+            Array.Copy(which == 0 ? ch : vo, 0, out_, i * SnapshotWidth, SnapshotWidth);
+        }
+        return out_;
+    }
+
+    private static bool[] FlatFlags(int which)
+    {
+        var out_ = new bool[Rows.Length * SnapshotWidth];
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var (_, _, nh, nl, am, ob) = CrossLists(Rows[i]);
+            var snap = which switch { 2 => nh, 3 => nl, 4 => am, _ => ob };
+            Array.Copy(snap, 0, out_, i * SnapshotWidth, SnapshotWidth);
+        }
+        return out_;
+    }
+
+    private static List<double[]> ScalarRows(double[] flat) =>
+        flat.Select(v => new[] { v }).ToList();
+
+    // A multi-output batch returns one struct per bar with NaN fields during
+    // warmup, not a nullable, so there is nothing to widen here.
+    private static List<double[]> RecordRows<T>(T[] values) =>
+        values.Select(v => FlattenStruct(v!)).ToList();
+
+    private static void CompareBatchRows(string name, List<double[]> got) => Compare(name, got);
+
+    // A bar builder's batch is one flat run, so the fixture's rows are
+    // concatenated to match.
+    private static void CompareBatchFlat(string name, double[] got)
+    {
+        var want = ReadFixture(name).SelectMany(r => r!).ToArray();
+        Assert.True(want.Length == got.Length, $"{name}: batch produced {got.Length} values, fixture has {want.Length}");
+        CompareValues(name, got, want);
+    }
+
+    // Footprint's batch is the final snapshot, so only the fixture's last
+    // non-empty row applies.
+    private static void CompareBatchLastRow(string name, double[] got)
+    {
+        var rows = ReadFixture(name);
+        var want = Array.Empty<double>();
+        foreach (var r in rows) { if (r!.Length > 0) { want = r; } }
+        Assert.True(want.Length == got.Length, $"{name}: batch snapshot {got.Length} values, fixture {want.Length}");
+        CompareValues(name, got, want);
+    }
+
+    private static void CompareValues(string name, double[] got, double[] want)
+    {
+        for (var k = 0; k < want.Length; k++)
+        {
+            var w = want[k];
+            if (double.IsNaN(w)) { Assert.True(double.IsNaN(got[k]), $"{name} value {k}: want NaN got {got[k]}"); continue; }
+            if (double.IsInfinity(w)) { Assert.True(double.IsInfinity(got[k]) && Math.Sign(got[k]) == Math.Sign(w), $"{name} value {k}: want {w} got {got[k]}"); continue; }
+            var tol = TolFor(name) * Math.Max(1.0, Math.Abs(w));
+            Assert.True(Math.Abs(got[k] - w) <= tol, $"{name} value {k}: got {got[k]} want {w}");
+        }
+    }
+
     // Equality, not tolerance: the same code over the same input in the same
     // process has no reason to differ in a single bit, and a tolerance here
     // would hide exactly the leftover state this is looking for.
@@ -207,6 +309,12 @@ public class GoldenAllTests
         Compare("AbandonedBaby", Drive_AbandonedBaby(ind));
     }
     [Fact]
+    public void Batch_AbandonedBaby()
+    {
+        using var ind = new Wickra.AbandonedBaby();
+        CompareBatchRows("AbandonedBaby", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AbandonedBaby()
     {
         using var ind = new Wickra.AbandonedBaby();
@@ -234,6 +342,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Abcd();
         Assert.Equal("Abcd", ind.Name());
         Compare("Abcd", Drive_Abcd(ind));
+    }
+    [Fact]
+    public void Batch_Abcd()
+    {
+        using var ind = new Wickra.Abcd();
+        CompareBatchRows("Abcd", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Abcd()
@@ -266,6 +380,12 @@ public class GoldenAllTests
         Compare("AbsoluteBreadthIndex", Drive_AbsoluteBreadthIndex(ind));
     }
     [Fact]
+    public void Batch_AbsoluteBreadthIndex()
+    {
+        using var ind = new Wickra.AbsoluteBreadthIndex();
+        CompareBatchRows("AbsoluteBreadthIndex", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AbsoluteBreadthIndex()
     {
         using var ind = new Wickra.AbsoluteBreadthIndex();
@@ -293,6 +413,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AccelerationBands(14, 2.0);
         Assert.Equal("AccelerationBands", ind.Name());
         Compare("AccelerationBands", Drive_AccelerationBands(ind));
+    }
+    [Fact]
+    public void Batch_AccelerationBands()
+    {
+        using var ind = new Wickra.AccelerationBands(14, 2.0);
+        CompareBatchRows("AccelerationBands", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AccelerationBands()
@@ -324,6 +450,12 @@ public class GoldenAllTests
         Compare("AcceleratorOscillator", Drive_AcceleratorOscillator(ind));
     }
     [Fact]
+    public void Batch_AcceleratorOscillator()
+    {
+        using var ind = new Wickra.AcceleratorOscillator(3, 7, 14);
+        CompareBatchRows("AcceleratorOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AcceleratorOscillator()
     {
         using var ind = new Wickra.AcceleratorOscillator(3, 7, 14);
@@ -351,6 +483,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AdOscillator();
         Assert.Equal("ADOSC", ind.Name());
         Compare("AdOscillator", Drive_AdOscillator(ind));
+    }
+    [Fact]
+    public void Batch_AdOscillator()
+    {
+        using var ind = new Wickra.AdOscillator();
+        CompareBatchRows("AdOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AdOscillator()
@@ -383,6 +521,12 @@ public class GoldenAllTests
         Compare("AdVolumeLine", Drive_AdVolumeLine(ind));
     }
     [Fact]
+    public void Batch_AdVolumeLine()
+    {
+        using var ind = new Wickra.AdVolumeLine();
+        CompareBatchRows("AdVolumeLine", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AdVolumeLine()
     {
         using var ind = new Wickra.AdVolumeLine();
@@ -410,6 +554,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AdaptiveCci(14);
         Assert.Equal("AdaptiveCci", ind.Name());
         Compare("AdaptiveCci", Drive_AdaptiveCci(ind));
+    }
+    [Fact]
+    public void Batch_AdaptiveCci()
+    {
+        using var ind = new Wickra.AdaptiveCci(14);
+        CompareBatchRows("AdaptiveCci", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AdaptiveCci()
@@ -441,6 +591,12 @@ public class GoldenAllTests
         Compare("AdaptiveCycle", Drive_AdaptiveCycle(ind));
     }
     [Fact]
+    public void Batch_AdaptiveCycle()
+    {
+        using var ind = new Wickra.AdaptiveCycle();
+        CompareBatchRows("AdaptiveCycle", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_AdaptiveCycle()
     {
         using var ind = new Wickra.AdaptiveCycle();
@@ -468,6 +624,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AdaptiveLaguerreFilter(20);
         Assert.Equal("AdaptiveLaguerre", ind.Name());
         Compare("AdaptiveLaguerreFilter", Drive_AdaptiveLaguerreFilter(ind));
+    }
+    [Fact]
+    public void Batch_AdaptiveLaguerreFilter()
+    {
+        using var ind = new Wickra.AdaptiveLaguerreFilter(20);
+        CompareBatchRows("AdaptiveLaguerreFilter", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_AdaptiveLaguerreFilter()
@@ -499,6 +661,12 @@ public class GoldenAllTests
         Compare("AdaptiveRsi", Drive_AdaptiveRsi(ind));
     }
     [Fact]
+    public void Batch_AdaptiveRsi()
+    {
+        using var ind = new Wickra.AdaptiveRsi(14);
+        CompareBatchRows("AdaptiveRsi", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_AdaptiveRsi()
     {
         using var ind = new Wickra.AdaptiveRsi(14);
@@ -528,6 +696,12 @@ public class GoldenAllTests
         Compare("Adl", Drive_Adl(ind));
     }
     [Fact]
+    public void Batch_Adl()
+    {
+        using var ind = new Wickra.Adl();
+        CompareBatchRows("Adl", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Adl()
     {
         using var ind = new Wickra.Adl();
@@ -555,6 +729,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AdvanceBlock();
         Assert.Equal("AdvanceBlock", ind.Name());
         Compare("AdvanceBlock", Drive_AdvanceBlock(ind));
+    }
+    [Fact]
+    public void Batch_AdvanceBlock()
+    {
+        using var ind = new Wickra.AdvanceBlock();
+        CompareBatchRows("AdvanceBlock", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AdvanceBlock()
@@ -587,6 +767,12 @@ public class GoldenAllTests
         Compare("AdvanceDecline", Drive_AdvanceDecline(ind));
     }
     [Fact]
+    public void Batch_AdvanceDecline()
+    {
+        using var ind = new Wickra.AdvanceDecline();
+        CompareBatchRows("AdvanceDecline", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AdvanceDecline()
     {
         using var ind = new Wickra.AdvanceDecline();
@@ -615,6 +801,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AdvanceDeclineRatio();
         Assert.Equal("AdvanceDeclineRatio", ind.Name());
         Compare("AdvanceDeclineRatio", Drive_AdvanceDeclineRatio(ind));
+    }
+    [Fact]
+    public void Batch_AdvanceDeclineRatio()
+    {
+        using var ind = new Wickra.AdvanceDeclineRatio();
+        CompareBatchRows("AdvanceDeclineRatio", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
     }
     [Fact]
     public void Lifecycle_AdvanceDeclineRatio()
@@ -646,6 +838,12 @@ public class GoldenAllTests
         Compare("Adx", Drive_Adx(ind));
     }
     [Fact]
+    public void Batch_Adx()
+    {
+        using var ind = new Wickra.Adx(14);
+        CompareBatchRows("Adx", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Adx()
     {
         using var ind = new Wickra.Adx(14);
@@ -673,6 +871,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Adxr(14);
         Assert.Equal("ADXR", ind.Name());
         Compare("Adxr", Drive_Adxr(ind));
+    }
+    [Fact]
+    public void Batch_Adxr()
+    {
+        using var ind = new Wickra.Adxr(14);
+        CompareBatchRows("Adxr", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Adxr()
@@ -704,6 +908,12 @@ public class GoldenAllTests
         Compare("Alligator", Drive_Alligator(ind));
     }
     [Fact]
+    public void Batch_Alligator()
+    {
+        using var ind = new Wickra.Alligator(3, 7, 14);
+        CompareBatchRows("Alligator", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Alligator()
     {
         using var ind = new Wickra.Alligator(3, 7, 14);
@@ -731,6 +941,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Alma(9, 0.85, 6.0);
         Assert.Equal("ALMA", ind.Name());
         Compare("Alma", Drive_Alma(ind));
+    }
+    [Fact]
+    public void Batch_Alma()
+    {
+        using var ind = new Wickra.Alma(9, 0.85, 6.0);
+        CompareBatchRows("Alma", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Alma()
@@ -762,6 +978,12 @@ public class GoldenAllTests
         Compare("Alpha", Drive_Alpha(ind));
     }
     [Fact]
+    public void Batch_Alpha()
+    {
+        using var ind = new Wickra.Alpha(14, 2.0);
+        CompareBatchRows("Alpha", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_Alpha()
     {
         using var ind = new Wickra.Alpha(14, 2.0);
@@ -789,6 +1011,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AmihudIlliquidity(20);
         Assert.Equal("AmihudIlliquidity", ind.Name());
         Compare("AmihudIlliquidity", Drive_AmihudIlliquidity(ind));
+    }
+    [Fact]
+    public void Batch_AmihudIlliquidity()
+    {
+        using var ind = new Wickra.AmihudIlliquidity(20);
+        CompareBatchRows("AmihudIlliquidity", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
     }
     [Fact]
     public void Lifecycle_AmihudIlliquidity()
@@ -820,6 +1048,12 @@ public class GoldenAllTests
         Compare("AnchoredRsi", Drive_AnchoredRsi(ind));
     }
     [Fact]
+    public void Batch_AnchoredRsi()
+    {
+        using var ind = new Wickra.AnchoredRsi();
+        CompareBatchRows("AnchoredRsi", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_AnchoredRsi()
     {
         using var ind = new Wickra.AnchoredRsi();
@@ -847,6 +1081,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AnchoredVwap();
         Assert.Equal("AnchoredVWAP", ind.Name());
         Compare("AnchoredVwap", Drive_AnchoredVwap(ind));
+    }
+    [Fact]
+    public void Batch_AnchoredVwap()
+    {
+        using var ind = new Wickra.AnchoredVwap();
+        CompareBatchRows("AnchoredVwap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AnchoredVwap()
@@ -878,6 +1118,12 @@ public class GoldenAllTests
         Compare("AndrewsPitchfork", Drive_AndrewsPitchfork(ind));
     }
     [Fact]
+    public void Batch_AndrewsPitchfork()
+    {
+        using var ind = new Wickra.AndrewsPitchfork(14);
+        CompareBatchRows("AndrewsPitchfork", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AndrewsPitchfork()
     {
         using var ind = new Wickra.AndrewsPitchfork(14);
@@ -905,6 +1151,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Apo(3, 7);
         Assert.Equal("APO", ind.Name());
         Compare("Apo", Drive_Apo(ind));
+    }
+    [Fact]
+    public void Batch_Apo()
+    {
+        using var ind = new Wickra.Apo(3, 7);
+        CompareBatchRows("Apo", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Apo()
@@ -936,6 +1188,12 @@ public class GoldenAllTests
         Compare("Aroon", Drive_Aroon(ind));
     }
     [Fact]
+    public void Batch_Aroon()
+    {
+        using var ind = new Wickra.Aroon(14);
+        CompareBatchRows("Aroon", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Aroon()
     {
         using var ind = new Wickra.Aroon(14);
@@ -963,6 +1221,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AroonOscillator(14);
         Assert.Equal("AroonOscillator", ind.Name());
         Compare("AroonOscillator", Drive_AroonOscillator(ind));
+    }
+    [Fact]
+    public void Batch_AroonOscillator()
+    {
+        using var ind = new Wickra.AroonOscillator(14);
+        CompareBatchRows("AroonOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AroonOscillator()
@@ -994,6 +1258,12 @@ public class GoldenAllTests
         Compare("Atr", Drive_Atr(ind));
     }
     [Fact]
+    public void Batch_Atr()
+    {
+        using var ind = new Wickra.Atr(14);
+        CompareBatchRows("Atr", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Atr()
     {
         using var ind = new Wickra.Atr(14);
@@ -1021,6 +1291,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AtrBands(14, 2.0);
         Assert.Equal("AtrBands", ind.Name());
         Compare("AtrBands", Drive_AtrBands(ind));
+    }
+    [Fact]
+    public void Batch_AtrBands()
+    {
+        using var ind = new Wickra.AtrBands(14, 2.0);
+        CompareBatchRows("AtrBands", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AtrBands()
@@ -1052,6 +1328,12 @@ public class GoldenAllTests
         Compare("AtrRatchet", Drive_AtrRatchet(ind));
     }
     [Fact]
+    public void Batch_AtrRatchet()
+    {
+        using var ind = new Wickra.AtrRatchet(14, 2.0, 0.5);
+        CompareBatchRows("AtrRatchet", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AtrRatchet()
     {
         using var ind = new Wickra.AtrRatchet(14, 2.0, 0.5);
@@ -1079,6 +1361,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AtrTrailingStop(14, 2.0);
         Assert.Equal("AtrTrailingStop", ind.Name());
         Compare("AtrTrailingStop", Drive_AtrTrailingStop(ind));
+    }
+    [Fact]
+    public void Batch_AtrTrailingStop()
+    {
+        using var ind = new Wickra.AtrTrailingStop(14, 2.0);
+        CompareBatchRows("AtrTrailingStop", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AtrTrailingStop()
@@ -1110,6 +1398,12 @@ public class GoldenAllTests
         Compare("AutoFib", Drive_AutoFib(ind));
     }
     [Fact]
+    public void Batch_AutoFib()
+    {
+        using var ind = new Wickra.AutoFib();
+        CompareBatchRows("AutoFib", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AutoFib()
     {
         using var ind = new Wickra.AutoFib();
@@ -1137,6 +1431,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Autocorrelation(10, 1);
         Assert.Equal("Autocorrelation", ind.Name());
         Compare("Autocorrelation", Drive_Autocorrelation(ind));
+    }
+    [Fact]
+    public void Batch_Autocorrelation()
+    {
+        using var ind = new Wickra.Autocorrelation(10, 1);
+        CompareBatchRows("Autocorrelation", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Autocorrelation()
@@ -1168,6 +1468,12 @@ public class GoldenAllTests
         Compare("AutocorrelationPeriodogram", Drive_AutocorrelationPeriodogram(ind));
     }
     [Fact]
+    public void Batch_AutocorrelationPeriodogram()
+    {
+        using var ind = new Wickra.AutocorrelationPeriodogram(10, 48);
+        CompareBatchRows("AutocorrelationPeriodogram", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_AutocorrelationPeriodogram()
     {
         using var ind = new Wickra.AutocorrelationPeriodogram(10, 48);
@@ -1197,6 +1503,12 @@ public class GoldenAllTests
         Compare("AverageDailyRange", Drive_AverageDailyRange(ind));
     }
     [Fact]
+    public void Batch_AverageDailyRange()
+    {
+        using var ind = new Wickra.AverageDailyRange(14, 0);
+        CompareBatchRows("AverageDailyRange", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AverageDailyRange()
     {
         using var ind = new Wickra.AverageDailyRange(14, 0);
@@ -1223,6 +1535,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AverageDrawdown(14);
         Assert.Equal("AverageDrawdown", ind.Name());
         Compare("AverageDrawdown", Drive_AverageDrawdown(ind));
+    }
+    [Fact]
+    public void Batch_AverageDrawdown()
+    {
+        using var ind = new Wickra.AverageDrawdown(14);
+        CompareBatchRows("AverageDrawdown", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_AverageDrawdown()
@@ -1254,6 +1572,12 @@ public class GoldenAllTests
         Compare("AvgPrice", Drive_AvgPrice(ind));
     }
     [Fact]
+    public void Batch_AvgPrice()
+    {
+        using var ind = new Wickra.AvgPrice();
+        CompareBatchRows("AvgPrice", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AvgPrice()
     {
         using var ind = new Wickra.AvgPrice();
@@ -1281,6 +1605,12 @@ public class GoldenAllTests
         using var ind = new Wickra.AwesomeOscillator(3, 7);
         Assert.Equal("AwesomeOscillator", ind.Name());
         Compare("AwesomeOscillator", Drive_AwesomeOscillator(ind));
+    }
+    [Fact]
+    public void Batch_AwesomeOscillator()
+    {
+        using var ind = new Wickra.AwesomeOscillator(3, 7);
+        CompareBatchRows("AwesomeOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_AwesomeOscillator()
@@ -1312,6 +1642,12 @@ public class GoldenAllTests
         Compare("AwesomeOscillatorHistogram", Drive_AwesomeOscillatorHistogram(ind));
     }
     [Fact]
+    public void Batch_AwesomeOscillatorHistogram()
+    {
+        using var ind = new Wickra.AwesomeOscillatorHistogram(3, 7, 14);
+        CompareBatchRows("AwesomeOscillatorHistogram", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_AwesomeOscillatorHistogram()
     {
         using var ind = new Wickra.AwesomeOscillatorHistogram(3, 7, 14);
@@ -1339,6 +1675,12 @@ public class GoldenAllTests
         using var ind = new Wickra.BalanceOfPower();
         Assert.Equal("BalanceOfPower", ind.Name());
         Compare("BalanceOfPower", Drive_BalanceOfPower(ind));
+    }
+    [Fact]
+    public void Batch_BalanceOfPower()
+    {
+        using var ind = new Wickra.BalanceOfPower();
+        CompareBatchRows("BalanceOfPower", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_BalanceOfPower()
@@ -1370,6 +1712,12 @@ public class GoldenAllTests
         Compare("BandpassFilter", Drive_BandpassFilter(ind));
     }
     [Fact]
+    public void Batch_BandpassFilter()
+    {
+        using var ind = new Wickra.BandpassFilter(20, 0.3);
+        CompareBatchRows("BandpassFilter", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_BandpassFilter()
     {
         using var ind = new Wickra.BandpassFilter(20, 0.3);
@@ -1397,6 +1745,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Bat();
         Assert.Equal("Bat", ind.Name());
         Compare("Bat", Drive_Bat(ind));
+    }
+    [Fact]
+    public void Batch_Bat()
+    {
+        using var ind = new Wickra.Bat();
+        CompareBatchRows("Bat", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Bat()
@@ -1428,6 +1782,12 @@ public class GoldenAllTests
         Compare("BeltHold", Drive_BeltHold(ind));
     }
     [Fact]
+    public void Batch_BeltHold()
+    {
+        using var ind = new Wickra.BeltHold();
+        CompareBatchRows("BeltHold", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_BeltHold()
     {
         using var ind = new Wickra.BeltHold();
@@ -1455,6 +1815,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Beta(14);
         Assert.Equal("Beta", ind.Name());
         Compare("Beta", Drive_Beta(ind));
+    }
+    [Fact]
+    public void Batch_Beta()
+    {
+        using var ind = new Wickra.Beta(14);
+        CompareBatchRows("Beta", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_Beta()
@@ -1486,6 +1852,12 @@ public class GoldenAllTests
         Compare("BetaNeutralSpread", Drive_BetaNeutralSpread(ind));
     }
     [Fact]
+    public void Batch_BetaNeutralSpread()
+    {
+        using var ind = new Wickra.BetaNeutralSpread(14);
+        CompareBatchRows("BetaNeutralSpread", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_BetaNeutralSpread()
     {
         using var ind = new Wickra.BetaNeutralSpread(14);
@@ -1513,6 +1885,12 @@ public class GoldenAllTests
         using var ind = new Wickra.BetterVolume(14);
         Assert.Equal("BetterVolume", ind.Name());
         Compare("BetterVolume", Drive_BetterVolume(ind));
+    }
+    [Fact]
+    public void Batch_BetterVolume()
+    {
+        using var ind = new Wickra.BetterVolume(14);
+        CompareBatchRows("BetterVolume", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_BetterVolume()
@@ -1544,6 +1922,12 @@ public class GoldenAllTests
         Compare("BipowerVariation", Drive_BipowerVariation(ind));
     }
     [Fact]
+    public void Batch_BipowerVariation()
+    {
+        using var ind = new Wickra.BipowerVariation(14);
+        CompareBatchRows("BipowerVariation", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_BipowerVariation()
     {
         using var ind = new Wickra.BipowerVariation(14);
@@ -1571,6 +1955,12 @@ public class GoldenAllTests
         using var ind = new Wickra.BodySizePct();
         Assert.Equal("BodySizePct", ind.Name());
         Compare("BodySizePct", Drive_BodySizePct(ind));
+    }
+    [Fact]
+    public void Batch_BodySizePct()
+    {
+        using var ind = new Wickra.BodySizePct();
+        CompareBatchRows("BodySizePct", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_BodySizePct()
@@ -1602,6 +1992,12 @@ public class GoldenAllTests
         Compare("BollingerBands", Drive_BollingerBands(ind));
     }
     [Fact]
+    public void Batch_BollingerBands()
+    {
+        using var ind = new Wickra.BollingerBands(20, 2.0);
+        CompareBatchRows("BollingerBands", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_BollingerBands()
     {
         using var ind = new Wickra.BollingerBands(20, 2.0);
@@ -1631,6 +2027,12 @@ public class GoldenAllTests
         Compare("BollingerBandwidth", Drive_BollingerBandwidth(ind));
     }
     [Fact]
+    public void Batch_BollingerBandwidth()
+    {
+        using var ind = new Wickra.BollingerBandwidth(14, 2.0);
+        CompareBatchRows("BollingerBandwidth", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_BollingerBandwidth()
     {
         using var ind = new Wickra.BollingerBandwidth(14, 2.0);
@@ -1658,6 +2060,12 @@ public class GoldenAllTests
         using var ind = new Wickra.BomarBands(4, 0.85);
         Assert.Equal("BomarBands", ind.Name());
         Compare("BomarBands", Drive_BomarBands(ind));
+    }
+    [Fact]
+    public void Batch_BomarBands()
+    {
+        using var ind = new Wickra.BomarBands(4, 0.85);
+        CompareBatchRows("BomarBands", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_BomarBands()
@@ -1690,6 +2098,12 @@ public class GoldenAllTests
         Compare("BreadthThrust", Drive_BreadthThrust(ind));
     }
     [Fact]
+    public void Batch_BreadthThrust()
+    {
+        using var ind = new Wickra.BreadthThrust(10);
+        CompareBatchRows("BreadthThrust", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_BreadthThrust()
     {
         using var ind = new Wickra.BreadthThrust(10);
@@ -1717,6 +2131,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Breakaway();
         Assert.Equal("Breakaway", ind.Name());
         Compare("Breakaway", Drive_Breakaway(ind));
+    }
+    [Fact]
+    public void Batch_Breakaway()
+    {
+        using var ind = new Wickra.Breakaway();
+        CompareBatchRows("Breakaway", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Breakaway()
@@ -1749,6 +2169,12 @@ public class GoldenAllTests
         Compare("BullishPercentIndex", Drive_BullishPercentIndex(ind));
     }
     [Fact]
+    public void Batch_BullishPercentIndex()
+    {
+        using var ind = new Wickra.BullishPercentIndex();
+        CompareBatchRows("BullishPercentIndex", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_BullishPercentIndex()
     {
         using var ind = new Wickra.BullishPercentIndex();
@@ -1778,6 +2204,12 @@ public class GoldenAllTests
         Compare("BurkeRatio", Drive_BurkeRatio(ind));
     }
     [Fact]
+    public void Batch_BurkeRatio()
+    {
+        using var ind = new Wickra.BurkeRatio(14);
+        CompareBatchRows("BurkeRatio", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_BurkeRatio()
     {
         using var ind = new Wickra.BurkeRatio(14);
@@ -1805,6 +2237,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Butterfly();
         Assert.Equal("Butterfly", ind.Name());
         Compare("Butterfly", Drive_Butterfly(ind));
+    }
+    [Fact]
+    public void Batch_Butterfly()
+    {
+        using var ind = new Wickra.Butterfly();
+        CompareBatchRows("Butterfly", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Butterfly()
@@ -1837,6 +2275,12 @@ public class GoldenAllTests
         Compare("CalendarSpread", Drive_CalendarSpread(ind));
     }
     [Fact]
+    public void Batch_CalendarSpread()
+    {
+        using var ind = new Wickra.CalendarSpread();
+        CompareBatchRows("CalendarSpread", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_CalendarSpread()
     {
         using var ind = new Wickra.CalendarSpread();
@@ -1864,6 +2308,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CalmarRatio(14);
         Assert.Equal("CalmarRatio", ind.Name());
         Compare("CalmarRatio", Drive_CalmarRatio(ind));
+    }
+    [Fact]
+    public void Batch_CalmarRatio()
+    {
+        using var ind = new Wickra.CalmarRatio(14);
+        CompareBatchRows("CalmarRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_CalmarRatio()
@@ -1895,6 +2345,12 @@ public class GoldenAllTests
         Compare("Camarilla", Drive_Camarilla(ind));
     }
     [Fact]
+    public void Batch_Camarilla()
+    {
+        using var ind = new Wickra.Camarilla();
+        CompareBatchRows("Camarilla", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Camarilla()
     {
         using var ind = new Wickra.Camarilla();
@@ -1922,6 +2378,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CandleVolume(14);
         Assert.Equal("CandleVolume", ind.Name());
         Compare("CandleVolume", Drive_CandleVolume(ind));
+    }
+    [Fact]
+    public void Batch_CandleVolume()
+    {
+        using var ind = new Wickra.CandleVolume(14);
+        CompareBatchRows("CandleVolume", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_CandleVolume()
@@ -1953,6 +2415,12 @@ public class GoldenAllTests
         Compare("Cci", Drive_Cci(ind));
     }
     [Fact]
+    public void Batch_Cci()
+    {
+        using var ind = new Wickra.Cci(14);
+        CompareBatchRows("Cci", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Cci()
     {
         using var ind = new Wickra.Cci(14);
@@ -1980,6 +2448,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CenterOfGravity(14);
         Assert.Equal("CenterOfGravity", ind.Name());
         Compare("CenterOfGravity", Drive_CenterOfGravity(ind));
+    }
+    [Fact]
+    public void Batch_CenterOfGravity()
+    {
+        using var ind = new Wickra.CenterOfGravity(14);
+        CompareBatchRows("CenterOfGravity", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_CenterOfGravity()
@@ -2011,6 +2485,12 @@ public class GoldenAllTests
         Compare("CentralPivotRange", Drive_CentralPivotRange(ind));
     }
     [Fact]
+    public void Batch_CentralPivotRange()
+    {
+        using var ind = new Wickra.CentralPivotRange();
+        CompareBatchRows("CentralPivotRange", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_CentralPivotRange()
     {
         using var ind = new Wickra.CentralPivotRange();
@@ -2038,6 +2518,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Cfo(14);
         Assert.Equal("CFO", ind.Name());
         Compare("Cfo", Drive_Cfo(ind));
+    }
+    [Fact]
+    public void Batch_Cfo()
+    {
+        using var ind = new Wickra.Cfo(14);
+        CompareBatchRows("Cfo", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Cfo()
@@ -2069,6 +2555,12 @@ public class GoldenAllTests
         Compare("ChaikinMoneyFlow", Drive_ChaikinMoneyFlow(ind));
     }
     [Fact]
+    public void Batch_ChaikinMoneyFlow()
+    {
+        using var ind = new Wickra.ChaikinMoneyFlow(20);
+        CompareBatchRows("ChaikinMoneyFlow", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ChaikinMoneyFlow()
     {
         using var ind = new Wickra.ChaikinMoneyFlow(20);
@@ -2096,6 +2588,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ChaikinOscillator(3, 7);
         Assert.Equal("ChaikinOscillator", ind.Name());
         Compare("ChaikinOscillator", Drive_ChaikinOscillator(ind));
+    }
+    [Fact]
+    public void Batch_ChaikinOscillator()
+    {
+        using var ind = new Wickra.ChaikinOscillator(3, 7);
+        CompareBatchRows("ChaikinOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ChaikinOscillator()
@@ -2127,6 +2625,12 @@ public class GoldenAllTests
         Compare("ChaikinVolatility", Drive_ChaikinVolatility(ind));
     }
     [Fact]
+    public void Batch_ChaikinVolatility()
+    {
+        using var ind = new Wickra.ChaikinVolatility(3, 7);
+        CompareBatchRows("ChaikinVolatility", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ChaikinVolatility()
     {
         using var ind = new Wickra.ChaikinVolatility(3, 7);
@@ -2154,6 +2658,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ChandeKrollStop(3, 2.0, 7);
         Assert.Equal("ChandeKrollStop", ind.Name());
         Compare("ChandeKrollStop", Drive_ChandeKrollStop(ind));
+    }
+    [Fact]
+    public void Batch_ChandeKrollStop()
+    {
+        using var ind = new Wickra.ChandeKrollStop(3, 2.0, 7);
+        CompareBatchRows("ChandeKrollStop", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ChandeKrollStop()
@@ -2185,6 +2695,12 @@ public class GoldenAllTests
         Compare("ChandelierExit", Drive_ChandelierExit(ind));
     }
     [Fact]
+    public void Batch_ChandelierExit()
+    {
+        using var ind = new Wickra.ChandelierExit(14, 2.0);
+        CompareBatchRows("ChandelierExit", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ChandelierExit()
     {
         using var ind = new Wickra.ChandelierExit(14, 2.0);
@@ -2212,6 +2728,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ChoppinessIndex(14);
         Assert.Equal("ChoppinessIndex", ind.Name());
         Compare("ChoppinessIndex", Drive_ChoppinessIndex(ind));
+    }
+    [Fact]
+    public void Batch_ChoppinessIndex()
+    {
+        using var ind = new Wickra.ChoppinessIndex(14);
+        CompareBatchRows("ChoppinessIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ChoppinessIndex()
@@ -2243,6 +2765,12 @@ public class GoldenAllTests
         Compare("ClassicPivots", Drive_ClassicPivots(ind));
     }
     [Fact]
+    public void Batch_ClassicPivots()
+    {
+        using var ind = new Wickra.ClassicPivots();
+        CompareBatchRows("ClassicPivots", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ClassicPivots()
     {
         using var ind = new Wickra.ClassicPivots();
@@ -2270,6 +2798,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CloseVsOpen();
         Assert.Equal("CloseVsOpen", ind.Name());
         Compare("CloseVsOpen", Drive_CloseVsOpen(ind));
+    }
+    [Fact]
+    public void Batch_CloseVsOpen()
+    {
+        using var ind = new Wickra.CloseVsOpen();
+        CompareBatchRows("CloseVsOpen", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_CloseVsOpen()
@@ -2301,6 +2835,12 @@ public class GoldenAllTests
         Compare("ClosingMarubozu", Drive_ClosingMarubozu(ind));
     }
     [Fact]
+    public void Batch_ClosingMarubozu()
+    {
+        using var ind = new Wickra.ClosingMarubozu();
+        CompareBatchRows("ClosingMarubozu", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ClosingMarubozu()
     {
         using var ind = new Wickra.ClosingMarubozu();
@@ -2328,6 +2868,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Cmo(14);
         Assert.Equal("CMO", ind.Name());
         Compare("Cmo", Drive_Cmo(ind));
+    }
+    [Fact]
+    public void Batch_Cmo()
+    {
+        using var ind = new Wickra.Cmo(14);
+        CompareBatchRows("Cmo", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Cmo()
@@ -2359,6 +2905,12 @@ public class GoldenAllTests
         Compare("CoefficientOfVariation", Drive_CoefficientOfVariation(ind));
     }
     [Fact]
+    public void Batch_CoefficientOfVariation()
+    {
+        using var ind = new Wickra.CoefficientOfVariation(14);
+        CompareBatchRows("CoefficientOfVariation", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_CoefficientOfVariation()
     {
         using var ind = new Wickra.CoefficientOfVariation(14);
@@ -2386,6 +2938,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Cointegration(40, 1);
         Assert.Equal("Cointegration", ind.Name());
         Compare("Cointegration", Drive_Cointegration(ind));
+    }
+    [Fact]
+    public void Batch_Cointegration()
+    {
+        using var ind = new Wickra.Cointegration(40, 1);
+        CompareBatchRows("Cointegration", RecordRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_Cointegration()
@@ -2417,6 +2975,12 @@ public class GoldenAllTests
         Compare("CommonSenseRatio", Drive_CommonSenseRatio(ind));
     }
     [Fact]
+    public void Batch_CommonSenseRatio()
+    {
+        using var ind = new Wickra.CommonSenseRatio(14);
+        CompareBatchRows("CommonSenseRatio", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_CommonSenseRatio()
     {
         using var ind = new Wickra.CommonSenseRatio(14);
@@ -2444,6 +3008,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CompositeProfile(20, 24, 0.7);
         Assert.Equal("CompositeProfile", ind.Name());
         Compare("CompositeProfile", Drive_CompositeProfile(ind));
+    }
+    [Fact]
+    public void Batch_CompositeProfile()
+    {
+        using var ind = new Wickra.CompositeProfile(20, 24, 0.7);
+        CompareBatchRows("CompositeProfile", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_CompositeProfile()
@@ -2475,6 +3045,12 @@ public class GoldenAllTests
         Compare("ConcealingBabySwallow", Drive_ConcealingBabySwallow(ind));
     }
     [Fact]
+    public void Batch_ConcealingBabySwallow()
+    {
+        using var ind = new Wickra.ConcealingBabySwallow();
+        CompareBatchRows("ConcealingBabySwallow", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ConcealingBabySwallow()
     {
         using var ind = new Wickra.ConcealingBabySwallow();
@@ -2502,6 +3078,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ConditionalValueAtRisk(20, 0.95);
         Assert.Equal("ConditionalValueAtRisk", ind.Name());
         Compare("ConditionalValueAtRisk", Drive_ConditionalValueAtRisk(ind));
+    }
+    [Fact]
+    public void Batch_ConditionalValueAtRisk()
+    {
+        using var ind = new Wickra.ConditionalValueAtRisk(20, 0.95);
+        CompareBatchRows("ConditionalValueAtRisk", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_ConditionalValueAtRisk()
@@ -2533,6 +3115,12 @@ public class GoldenAllTests
         Compare("ConnorsRsi", Drive_ConnorsRsi(ind));
     }
     [Fact]
+    public void Batch_ConnorsRsi()
+    {
+        using var ind = new Wickra.ConnorsRsi(3, 7, 14);
+        CompareBatchRows("ConnorsRsi", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_ConnorsRsi()
     {
         using var ind = new Wickra.ConnorsRsi(3, 7, 14);
@@ -2560,6 +3148,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Coppock(3, 7, 14);
         Assert.Equal("Coppock", ind.Name());
         Compare("Coppock", Drive_Coppock(ind));
+    }
+    [Fact]
+    public void Batch_Coppock()
+    {
+        using var ind = new Wickra.Coppock(3, 7, 14);
+        CompareBatchRows("Coppock", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Coppock()
@@ -2591,6 +3185,12 @@ public class GoldenAllTests
         Compare("CorrelationTrendIndicator", Drive_CorrelationTrendIndicator(ind));
     }
     [Fact]
+    public void Batch_CorrelationTrendIndicator()
+    {
+        using var ind = new Wickra.CorrelationTrendIndicator(14);
+        CompareBatchRows("CorrelationTrendIndicator", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_CorrelationTrendIndicator()
     {
         using var ind = new Wickra.CorrelationTrendIndicator(14);
@@ -2618,6 +3218,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Counterattack();
         Assert.Equal("Counterattack", ind.Name());
         Compare("Counterattack", Drive_Counterattack(ind));
+    }
+    [Fact]
+    public void Batch_Counterattack()
+    {
+        using var ind = new Wickra.Counterattack();
+        CompareBatchRows("Counterattack", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Counterattack()
@@ -2649,6 +3255,12 @@ public class GoldenAllTests
         Compare("Crab", Drive_Crab(ind));
     }
     [Fact]
+    public void Batch_Crab()
+    {
+        using var ind = new Wickra.Crab();
+        CompareBatchRows("Crab", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Crab()
     {
         using var ind = new Wickra.Crab();
@@ -2676,6 +3288,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CumulativeVolumeDelta();
         Assert.Equal("CumulativeVolumeDelta", ind.Name());
         Compare("CumulativeVolumeDelta", Drive_CumulativeVolumeDelta(ind));
+    }
+    [Fact]
+    public void Batch_CumulativeVolumeDelta()
+    {
+        using var ind = new Wickra.CumulativeVolumeDelta();
+        CompareBatchRows("CumulativeVolumeDelta", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
     }
     [Fact]
     public void Lifecycle_CumulativeVolumeDelta()
@@ -2708,6 +3326,12 @@ public class GoldenAllTests
         Compare("CumulativeVolumeIndex", Drive_CumulativeVolumeIndex(ind));
     }
     [Fact]
+    public void Batch_CumulativeVolumeIndex()
+    {
+        using var ind = new Wickra.CumulativeVolumeIndex();
+        CompareBatchRows("CumulativeVolumeIndex", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_CumulativeVolumeIndex()
     {
         using var ind = new Wickra.CumulativeVolumeIndex();
@@ -2735,6 +3359,12 @@ public class GoldenAllTests
         using var ind = new Wickra.CupAndHandle();
         Assert.Equal("CupAndHandle", ind.Name());
         Compare("CupAndHandle", Drive_CupAndHandle(ind));
+    }
+    [Fact]
+    public void Batch_CupAndHandle()
+    {
+        using var ind = new Wickra.CupAndHandle();
+        CompareBatchRows("CupAndHandle", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_CupAndHandle()
@@ -2766,6 +3396,12 @@ public class GoldenAllTests
         Compare("CyberneticCycle", Drive_CyberneticCycle(ind));
     }
     [Fact]
+    public void Batch_CyberneticCycle()
+    {
+        using var ind = new Wickra.CyberneticCycle(14);
+        CompareBatchRows("CyberneticCycle", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_CyberneticCycle()
     {
         using var ind = new Wickra.CyberneticCycle(14);
@@ -2793,6 +3429,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Cypher();
         Assert.Equal("Cypher", ind.Name());
         Compare("Cypher", Drive_Cypher(ind));
+    }
+    [Fact]
+    public void Batch_Cypher()
+    {
+        using var ind = new Wickra.Cypher();
+        CompareBatchRows("Cypher", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Cypher()
@@ -2825,6 +3467,12 @@ public class GoldenAllTests
         Compare("DayOfWeekProfile", Drive_DayOfWeekProfile(ind));
     }
     [Fact]
+    public void Batch_DayOfWeekProfile()
+    {
+        using var ind = new Wickra.DayOfWeekProfile(0);
+        CompareBatchRows("DayOfWeekProfile", new List<double[]>(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_DayOfWeekProfile()
     {
         using var ind = new Wickra.DayOfWeekProfile(0);
@@ -2852,6 +3500,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Decycler(14);
         Assert.Equal("Decycler", ind.Name());
         Compare("Decycler", Drive_Decycler(ind));
+    }
+    [Fact]
+    public void Batch_Decycler()
+    {
+        using var ind = new Wickra.Decycler(14);
+        CompareBatchRows("Decycler", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Decycler()
@@ -2883,6 +3537,12 @@ public class GoldenAllTests
         Compare("DecyclerOscillator", Drive_DecyclerOscillator(ind));
     }
     [Fact]
+    public void Batch_DecyclerOscillator()
+    {
+        using var ind = new Wickra.DecyclerOscillator(3, 7);
+        CompareBatchRows("DecyclerOscillator", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_DecyclerOscillator()
     {
         using var ind = new Wickra.DecyclerOscillator(3, 7);
@@ -2910,6 +3570,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Dema(14);
         Assert.Equal("DEMA", ind.Name());
         Compare("Dema", Drive_Dema(ind));
+    }
+    [Fact]
+    public void Batch_Dema()
+    {
+        using var ind = new Wickra.Dema(14);
+        CompareBatchRows("Dema", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Dema()
@@ -2941,6 +3607,12 @@ public class GoldenAllTests
         Compare("DemandIndex", Drive_DemandIndex(ind));
     }
     [Fact]
+    public void Batch_DemandIndex()
+    {
+        using var ind = new Wickra.DemandIndex(14);
+        CompareBatchRows("DemandIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_DemandIndex()
     {
         using var ind = new Wickra.DemandIndex(14);
@@ -2968,6 +3640,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DemarkPivots();
         Assert.Equal("DemarkPivots", ind.Name());
         Compare("DemarkPivots", Drive_DemarkPivots(ind));
+    }
+    [Fact]
+    public void Batch_DemarkPivots()
+    {
+        using var ind = new Wickra.DemarkPivots();
+        CompareBatchRows("DemarkPivots", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_DemarkPivots()
@@ -3000,6 +3678,12 @@ public class GoldenAllTests
         Compare("DepthSlope", Drive_DepthSlope(ind));
     }
     [Fact]
+    public void Batch_DepthSlope()
+    {
+        using var ind = new Wickra.DepthSlope();
+        CompareBatchRows("DepthSlope", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
+    }
+    [Fact]
     public void Lifecycle_DepthSlope()
     {
         using var ind = new Wickra.DepthSlope();
@@ -3027,6 +3711,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DerivativeOscillator(3, 7, 14, 28);
         Assert.Equal("DerivativeOscillator", ind.Name());
         Compare("DerivativeOscillator", Drive_DerivativeOscillator(ind));
+    }
+    [Fact]
+    public void Batch_DerivativeOscillator()
+    {
+        using var ind = new Wickra.DerivativeOscillator(3, 7, 14, 28);
+        CompareBatchRows("DerivativeOscillator", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_DerivativeOscillator()
@@ -3058,6 +3748,12 @@ public class GoldenAllTests
         Compare("DetrendedStdDev", Drive_DetrendedStdDev(ind));
     }
     [Fact]
+    public void Batch_DetrendedStdDev()
+    {
+        using var ind = new Wickra.DetrendedStdDev(14);
+        CompareBatchRows("DetrendedStdDev", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_DetrendedStdDev()
     {
         using var ind = new Wickra.DetrendedStdDev(14);
@@ -3085,6 +3781,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DisparityIndex(14);
         Assert.Equal("DisparityIndex", ind.Name());
         Compare("DisparityIndex", Drive_DisparityIndex(ind));
+    }
+    [Fact]
+    public void Batch_DisparityIndex()
+    {
+        using var ind = new Wickra.DisparityIndex(14);
+        CompareBatchRows("DisparityIndex", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_DisparityIndex()
@@ -3116,6 +3818,12 @@ public class GoldenAllTests
         Compare("DistanceSsd", Drive_DistanceSsd(ind));
     }
     [Fact]
+    public void Batch_DistanceSsd()
+    {
+        using var ind = new Wickra.DistanceSsd(14);
+        CompareBatchRows("DistanceSsd", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_DistanceSsd()
     {
         using var ind = new Wickra.DistanceSsd(14);
@@ -3143,6 +3851,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Doji();
         Assert.Equal("Doji", ind.Name());
         Compare("Doji", Drive_Doji(ind));
+    }
+    [Fact]
+    public void Batch_Doji()
+    {
+        using var ind = new Wickra.Doji();
+        CompareBatchRows("Doji", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Doji()
@@ -3174,6 +3888,12 @@ public class GoldenAllTests
         Compare("DojiStar", Drive_DojiStar(ind));
     }
     [Fact]
+    public void Batch_DojiStar()
+    {
+        using var ind = new Wickra.DojiStar();
+        CompareBatchRows("DojiStar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_DojiStar()
     {
         using var ind = new Wickra.DojiStar();
@@ -3203,6 +3923,12 @@ public class GoldenAllTests
         Compare("DollarBars", Drive_DollarBars(ind));
     }
     [Fact]
+    public void Batch_DollarBars()
+    {
+        using var ind = new Wickra.DollarBars(50000.0);
+        CompareBatchFlat("DollarBars", FlattenBars(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_DollarBars()
     {
         using var ind = new Wickra.DollarBars(50000.0);
@@ -3226,6 +3952,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Donchian(14);
         Assert.Equal("DonchianChannels", ind.Name());
         Compare("Donchian", Drive_Donchian(ind));
+    }
+    [Fact]
+    public void Batch_Donchian()
+    {
+        using var ind = new Wickra.Donchian(14);
+        CompareBatchRows("Donchian", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Donchian()
@@ -3257,6 +3989,12 @@ public class GoldenAllTests
         Compare("DonchianStop", Drive_DonchianStop(ind));
     }
     [Fact]
+    public void Batch_DonchianStop()
+    {
+        using var ind = new Wickra.DonchianStop(14);
+        CompareBatchRows("DonchianStop", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_DonchianStop()
     {
         using var ind = new Wickra.DonchianStop(14);
@@ -3284,6 +4022,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DoubleBollinger(20, 1.0, 2.0);
         Assert.Equal("DoubleBollinger", ind.Name());
         Compare("DoubleBollinger", Drive_DoubleBollinger(ind));
+    }
+    [Fact]
+    public void Batch_DoubleBollinger()
+    {
+        using var ind = new Wickra.DoubleBollinger(20, 1.0, 2.0);
+        CompareBatchRows("DoubleBollinger", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_DoubleBollinger()
@@ -3315,6 +4059,12 @@ public class GoldenAllTests
         Compare("DoubleTopBottom", Drive_DoubleTopBottom(ind));
     }
     [Fact]
+    public void Batch_DoubleTopBottom()
+    {
+        using var ind = new Wickra.DoubleTopBottom();
+        CompareBatchRows("DoubleTopBottom", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_DoubleTopBottom()
     {
         using var ind = new Wickra.DoubleTopBottom();
@@ -3342,6 +4092,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DownsideGapThreeMethods();
         Assert.Equal("DownsideGapThreeMethods", ind.Name());
         Compare("DownsideGapThreeMethods", Drive_DownsideGapThreeMethods(ind));
+    }
+    [Fact]
+    public void Batch_DownsideGapThreeMethods()
+    {
+        using var ind = new Wickra.DownsideGapThreeMethods();
+        CompareBatchRows("DownsideGapThreeMethods", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_DownsideGapThreeMethods()
@@ -3373,6 +4129,12 @@ public class GoldenAllTests
         Compare("Dpo", Drive_Dpo(ind));
     }
     [Fact]
+    public void Batch_Dpo()
+    {
+        using var ind = new Wickra.Dpo(14);
+        CompareBatchRows("Dpo", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Dpo()
     {
         using var ind = new Wickra.Dpo(14);
@@ -3400,6 +4162,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DragonflyDoji();
         Assert.Equal("DragonflyDoji", ind.Name());
         Compare("DragonflyDoji", Drive_DragonflyDoji(ind));
+    }
+    [Fact]
+    public void Batch_DragonflyDoji()
+    {
+        using var ind = new Wickra.DragonflyDoji();
+        CompareBatchRows("DragonflyDoji", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_DragonflyDoji()
@@ -3431,6 +4199,12 @@ public class GoldenAllTests
         Compare("DrawdownDuration", Drive_DrawdownDuration(ind));
     }
     [Fact]
+    public void Batch_DrawdownDuration()
+    {
+        using var ind = new Wickra.DrawdownDuration();
+        CompareBatchRows("DrawdownDuration", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_DrawdownDuration()
     {
         using var ind = new Wickra.DrawdownDuration();
@@ -3458,6 +4232,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DumplingTop(14);
         Assert.Equal("DumplingTop", ind.Name());
         Compare("DumplingTop", Drive_DumplingTop(ind));
+    }
+    [Fact]
+    public void Batch_DumplingTop()
+    {
+        using var ind = new Wickra.DumplingTop(14);
+        CompareBatchRows("DumplingTop", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_DumplingTop()
@@ -3489,6 +4269,12 @@ public class GoldenAllTests
         Compare("Dx", Drive_Dx(ind));
     }
     [Fact]
+    public void Batch_Dx()
+    {
+        using var ind = new Wickra.Dx(14);
+        CompareBatchRows("Dx", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Dx()
     {
         using var ind = new Wickra.Dx(14);
@@ -3516,6 +4302,12 @@ public class GoldenAllTests
         using var ind = new Wickra.DynamicMomentumIndex(14);
         Assert.Equal("DynamicMomentumIndex", ind.Name());
         Compare("DynamicMomentumIndex", Drive_DynamicMomentumIndex(ind));
+    }
+    [Fact]
+    public void Batch_DynamicMomentumIndex()
+    {
+        using var ind = new Wickra.DynamicMomentumIndex(14);
+        CompareBatchRows("DynamicMomentumIndex", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_DynamicMomentumIndex()
@@ -3547,6 +4339,12 @@ public class GoldenAllTests
         Compare("EaseOfMovement", Drive_EaseOfMovement(ind));
     }
     [Fact]
+    public void Batch_EaseOfMovement()
+    {
+        using var ind = new Wickra.EaseOfMovement(14);
+        CompareBatchRows("EaseOfMovement", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_EaseOfMovement()
     {
         using var ind = new Wickra.EaseOfMovement(14);
@@ -3574,6 +4372,12 @@ public class GoldenAllTests
         using var ind = new Wickra.EffectiveSpread();
         Assert.Equal("EffectiveSpread", ind.Name());
         Compare("EffectiveSpread", Drive_EffectiveSpread(ind));
+    }
+    [Fact]
+    public void Batch_EffectiveSpread()
+    {
+        using var ind = new Wickra.EffectiveSpread();
+        CompareBatchRows("EffectiveSpread", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps, Mids)));
     }
     [Fact]
     public void Lifecycle_EffectiveSpread()
@@ -3605,6 +4409,12 @@ public class GoldenAllTests
         Compare("EhlersStochastic", Drive_EhlersStochastic(ind));
     }
     [Fact]
+    public void Batch_EhlersStochastic()
+    {
+        using var ind = new Wickra.EhlersStochastic(14);
+        CompareBatchRows("EhlersStochastic", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_EhlersStochastic()
     {
         using var ind = new Wickra.EhlersStochastic(14);
@@ -3632,6 +4442,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Ehma(14);
         Assert.Equal("EHMA", ind.Name());
         Compare("Ehma", Drive_Ehma(ind));
+    }
+    [Fact]
+    public void Batch_Ehma()
+    {
+        using var ind = new Wickra.Ehma(14);
+        CompareBatchRows("Ehma", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Ehma()
@@ -3663,6 +4479,12 @@ public class GoldenAllTests
         Compare("ElderImpulse", Drive_ElderImpulse(ind));
     }
     [Fact]
+    public void Batch_ElderImpulse()
+    {
+        using var ind = new Wickra.ElderImpulse(3, 7, 14, 28);
+        CompareBatchRows("ElderImpulse", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_ElderImpulse()
     {
         using var ind = new Wickra.ElderImpulse(3, 7, 14, 28);
@@ -3690,6 +4512,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ElderRay(14);
         Assert.Equal("ElderRay", ind.Name());
         Compare("ElderRay", Drive_ElderRay(ind));
+    }
+    [Fact]
+    public void Batch_ElderRay()
+    {
+        using var ind = new Wickra.ElderRay(14);
+        CompareBatchRows("ElderRay", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ElderRay()
@@ -3721,6 +4549,12 @@ public class GoldenAllTests
         Compare("ElderSafeZone", Drive_ElderSafeZone(ind));
     }
     [Fact]
+    public void Batch_ElderSafeZone()
+    {
+        using var ind = new Wickra.ElderSafeZone(10, 2.0);
+        CompareBatchRows("ElderSafeZone", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ElderSafeZone()
     {
         using var ind = new Wickra.ElderSafeZone(10, 2.0);
@@ -3748,6 +4582,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Ema(14);
         Assert.Equal("EMA", ind.Name());
         Compare("Ema", Drive_Ema(ind));
+    }
+    [Fact]
+    public void Batch_Ema()
+    {
+        using var ind = new Wickra.Ema(14);
+        CompareBatchRows("Ema", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Ema()
@@ -3779,6 +4619,12 @@ public class GoldenAllTests
         Compare("EmpiricalModeDecomposition", Drive_EmpiricalModeDecomposition(ind));
     }
     [Fact]
+    public void Batch_EmpiricalModeDecomposition()
+    {
+        using var ind = new Wickra.EmpiricalModeDecomposition(20, 0.1);
+        CompareBatchRows("EmpiricalModeDecomposition", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_EmpiricalModeDecomposition()
     {
         using var ind = new Wickra.EmpiricalModeDecomposition(20, 0.1);
@@ -3808,6 +4654,12 @@ public class GoldenAllTests
         Compare("Engulfing", Drive_Engulfing(ind));
     }
     [Fact]
+    public void Batch_Engulfing()
+    {
+        using var ind = new Wickra.Engulfing();
+        CompareBatchRows("Engulfing", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Engulfing()
     {
         using var ind = new Wickra.Engulfing();
@@ -3835,6 +4687,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Equivolume(14);
         Assert.Equal("Equivolume", ind.Name());
         Compare("Equivolume", Drive_Equivolume(ind));
+    }
+    [Fact]
+    public void Batch_Equivolume()
+    {
+        using var ind = new Wickra.Equivolume(14);
+        CompareBatchRows("Equivolume", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Equivolume()
@@ -3867,6 +4725,12 @@ public class GoldenAllTests
         Compare("EstimatedLeverageRatio", Drive_EstimatedLeverageRatio(ind));
     }
     [Fact]
+    public void Batch_EstimatedLeverageRatio()
+    {
+        using var ind = new Wickra.EstimatedLeverageRatio();
+        CompareBatchRows("EstimatedLeverageRatio", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_EstimatedLeverageRatio()
     {
         using var ind = new Wickra.EstimatedLeverageRatio();
@@ -3894,6 +4758,12 @@ public class GoldenAllTests
         using var ind = new Wickra.EvenBetterSinewave(40, 10);
         Assert.Equal("EvenBetterSinewave", ind.Name());
         Compare("EvenBetterSinewave", Drive_EvenBetterSinewave(ind));
+    }
+    [Fact]
+    public void Batch_EvenBetterSinewave()
+    {
+        using var ind = new Wickra.EvenBetterSinewave(40, 10);
+        CompareBatchRows("EvenBetterSinewave", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_EvenBetterSinewave()
@@ -3925,6 +4795,12 @@ public class GoldenAllTests
         Compare("EveningDojiStar", Drive_EveningDojiStar(ind));
     }
     [Fact]
+    public void Batch_EveningDojiStar()
+    {
+        using var ind = new Wickra.EveningDojiStar();
+        CompareBatchRows("EveningDojiStar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_EveningDojiStar()
     {
         using var ind = new Wickra.EveningDojiStar();
@@ -3952,6 +4828,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Evwma(14);
         Assert.Equal("EVWMA", ind.Name());
         Compare("Evwma", Drive_Evwma(ind));
+    }
+    [Fact]
+    public void Batch_Evwma()
+    {
+        using var ind = new Wickra.Evwma(14);
+        CompareBatchRows("Evwma", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Evwma()
@@ -3983,6 +4865,12 @@ public class GoldenAllTests
         Compare("EwmaVolatility", Drive_EwmaVolatility(ind));
     }
     [Fact]
+    public void Batch_EwmaVolatility()
+    {
+        using var ind = new Wickra.EwmaVolatility(0.94);
+        CompareBatchRows("EwmaVolatility", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_EwmaVolatility()
     {
         using var ind = new Wickra.EwmaVolatility(0.94);
@@ -4010,6 +4898,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Expectancy(14);
         Assert.Equal("Expectancy", ind.Name());
         Compare("Expectancy", Drive_Expectancy(ind));
+    }
+    [Fact]
+    public void Batch_Expectancy()
+    {
+        using var ind = new Wickra.Expectancy(14);
+        CompareBatchRows("Expectancy", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Expectancy()
@@ -4041,6 +4935,12 @@ public class GoldenAllTests
         Compare("FallingThreeMethods", Drive_FallingThreeMethods(ind));
     }
     [Fact]
+    public void Batch_FallingThreeMethods()
+    {
+        using var ind = new Wickra.FallingThreeMethods();
+        CompareBatchRows("FallingThreeMethods", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FallingThreeMethods()
     {
         using var ind = new Wickra.FallingThreeMethods();
@@ -4068,6 +4968,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Fama(0.5, 0.05);
         Assert.Equal("FAMA", ind.Name());
         Compare("Fama", Drive_Fama(ind));
+    }
+    [Fact]
+    public void Batch_Fama()
+    {
+        using var ind = new Wickra.Fama(0.5, 0.05);
+        CompareBatchRows("Fama", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Fama()
@@ -4099,6 +5005,12 @@ public class GoldenAllTests
         Compare("FibArcs", Drive_FibArcs(ind));
     }
     [Fact]
+    public void Batch_FibArcs()
+    {
+        using var ind = new Wickra.FibArcs();
+        CompareBatchRows("FibArcs", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FibArcs()
     {
         using var ind = new Wickra.FibArcs();
@@ -4126,6 +5038,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FibChannel();
         Assert.Equal("FibChannel", ind.Name());
         Compare("FibChannel", Drive_FibChannel(ind));
+    }
+    [Fact]
+    public void Batch_FibChannel()
+    {
+        using var ind = new Wickra.FibChannel();
+        CompareBatchRows("FibChannel", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_FibChannel()
@@ -4157,6 +5075,12 @@ public class GoldenAllTests
         Compare("FibConfluence", Drive_FibConfluence(ind));
     }
     [Fact]
+    public void Batch_FibConfluence()
+    {
+        using var ind = new Wickra.FibConfluence();
+        CompareBatchRows("FibConfluence", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FibConfluence()
     {
         using var ind = new Wickra.FibConfluence();
@@ -4184,6 +5108,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FibExtension();
         Assert.Equal("FibExtension", ind.Name());
         Compare("FibExtension", Drive_FibExtension(ind));
+    }
+    [Fact]
+    public void Batch_FibExtension()
+    {
+        using var ind = new Wickra.FibExtension();
+        CompareBatchRows("FibExtension", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_FibExtension()
@@ -4215,6 +5145,12 @@ public class GoldenAllTests
         Compare("FibFan", Drive_FibFan(ind));
     }
     [Fact]
+    public void Batch_FibFan()
+    {
+        using var ind = new Wickra.FibFan();
+        CompareBatchRows("FibFan", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FibFan()
     {
         using var ind = new Wickra.FibFan();
@@ -4242,6 +5178,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FibProjection();
         Assert.Equal("FibProjection", ind.Name());
         Compare("FibProjection", Drive_FibProjection(ind));
+    }
+    [Fact]
+    public void Batch_FibProjection()
+    {
+        using var ind = new Wickra.FibProjection();
+        CompareBatchRows("FibProjection", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_FibProjection()
@@ -4273,6 +5215,12 @@ public class GoldenAllTests
         Compare("FibRetracement", Drive_FibRetracement(ind));
     }
     [Fact]
+    public void Batch_FibRetracement()
+    {
+        using var ind = new Wickra.FibRetracement();
+        CompareBatchRows("FibRetracement", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FibRetracement()
     {
         using var ind = new Wickra.FibRetracement();
@@ -4300,6 +5248,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FibTimeZones();
         Assert.Equal("FibTimeZones", ind.Name());
         Compare("FibTimeZones", Drive_FibTimeZones(ind));
+    }
+    [Fact]
+    public void Batch_FibTimeZones()
+    {
+        using var ind = new Wickra.FibTimeZones();
+        CompareBatchRows("FibTimeZones", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_FibTimeZones()
@@ -4331,6 +5285,12 @@ public class GoldenAllTests
         Compare("FibonacciPivots", Drive_FibonacciPivots(ind));
     }
     [Fact]
+    public void Batch_FibonacciPivots()
+    {
+        using var ind = new Wickra.FibonacciPivots();
+        CompareBatchRows("FibonacciPivots", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FibonacciPivots()
     {
         using var ind = new Wickra.FibonacciPivots();
@@ -4358,6 +5318,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FisherRsi(14);
         Assert.Equal("FisherRSI", ind.Name());
         Compare("FisherRsi", Drive_FisherRsi(ind));
+    }
+    [Fact]
+    public void Batch_FisherRsi()
+    {
+        using var ind = new Wickra.FisherRsi(14);
+        CompareBatchRows("FisherRsi", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_FisherRsi()
@@ -4389,6 +5355,12 @@ public class GoldenAllTests
         Compare("FisherTransform", Drive_FisherTransform(ind));
     }
     [Fact]
+    public void Batch_FisherTransform()
+    {
+        using var ind = new Wickra.FisherTransform(14);
+        CompareBatchRows("FisherTransform", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_FisherTransform()
     {
         using var ind = new Wickra.FisherTransform(14);
@@ -4416,6 +5388,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FlagPennant();
         Assert.Equal("FlagPennant", ind.Name());
         Compare("FlagPennant", Drive_FlagPennant(ind));
+    }
+    [Fact]
+    public void Batch_FlagPennant()
+    {
+        using var ind = new Wickra.FlagPennant();
+        CompareBatchRows("FlagPennant", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_FlagPennant()
@@ -4447,6 +5425,12 @@ public class GoldenAllTests
         Compare("Footprint", Drive_Footprint(ind));
     }
     [Fact]
+    public void Batch_Footprint()
+    {
+        using var ind = new Wickra.Footprint(1.0);
+        CompareBatchLastRow("Footprint", FlattenBars(ind.Batch(Close, Volume, IsBuys, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Footprint()
     {
         using var ind = new Wickra.Footprint(1.0);
@@ -4474,6 +5458,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ForceIndex(14);
         Assert.Equal("ForceIndex", ind.Name());
         Compare("ForceIndex", Drive_ForceIndex(ind));
+    }
+    [Fact]
+    public void Batch_ForceIndex()
+    {
+        using var ind = new Wickra.ForceIndex(14);
+        CompareBatchRows("ForceIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ForceIndex()
@@ -4505,6 +5495,12 @@ public class GoldenAllTests
         Compare("FractalChaosBands", Drive_FractalChaosBands(ind));
     }
     [Fact]
+    public void Batch_FractalChaosBands()
+    {
+        using var ind = new Wickra.FractalChaosBands(14);
+        CompareBatchRows("FractalChaosBands", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FractalChaosBands()
     {
         using var ind = new Wickra.FractalChaosBands(14);
@@ -4534,6 +5530,12 @@ public class GoldenAllTests
         Compare("Frama", Drive_Frama(ind));
     }
     [Fact]
+    public void Batch_Frama()
+    {
+        using var ind = new Wickra.Frama(14);
+        CompareBatchRows("Frama", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Frama()
     {
         using var ind = new Wickra.Frama(14);
@@ -4561,6 +5563,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FryPanBottom(14);
         Assert.Equal("FryPanBottom", ind.Name());
         Compare("FryPanBottom", Drive_FryPanBottom(ind));
+    }
+    [Fact]
+    public void Batch_FryPanBottom()
+    {
+        using var ind = new Wickra.FryPanBottom(14);
+        CompareBatchRows("FryPanBottom", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_FryPanBottom()
@@ -4593,6 +5601,12 @@ public class GoldenAllTests
         Compare("FundingBasis", Drive_FundingBasis(ind));
     }
     [Fact]
+    public void Batch_FundingBasis()
+    {
+        using var ind = new Wickra.FundingBasis();
+        CompareBatchRows("FundingBasis", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FundingBasis()
     {
         using var ind = new Wickra.FundingBasis();
@@ -4621,6 +5635,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FundingImpliedApr(1095.0);
         Assert.Equal("FundingImpliedApr", ind.Name());
         Compare("FundingImpliedApr", Drive_FundingImpliedApr(ind));
+    }
+    [Fact]
+    public void Batch_FundingImpliedApr()
+    {
+        using var ind = new Wickra.FundingImpliedApr(1095.0);
+        CompareBatchRows("FundingImpliedApr", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
     }
     [Fact]
     public void Lifecycle_FundingImpliedApr()
@@ -4653,6 +5673,12 @@ public class GoldenAllTests
         Compare("FundingRate", Drive_FundingRate(ind));
     }
     [Fact]
+    public void Batch_FundingRate()
+    {
+        using var ind = new Wickra.FundingRate();
+        CompareBatchRows("FundingRate", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FundingRate()
     {
         using var ind = new Wickra.FundingRate();
@@ -4681,6 +5707,12 @@ public class GoldenAllTests
         using var ind = new Wickra.FundingRateMean(20);
         Assert.Equal("FundingRateMean", ind.Name());
         Compare("FundingRateMean", Drive_FundingRateMean(ind));
+    }
+    [Fact]
+    public void Batch_FundingRateMean()
+    {
+        using var ind = new Wickra.FundingRateMean(20);
+        CompareBatchRows("FundingRateMean", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
     }
     [Fact]
     public void Lifecycle_FundingRateMean()
@@ -4713,6 +5745,12 @@ public class GoldenAllTests
         Compare("FundingRateZScore", Drive_FundingRateZScore(ind));
     }
     [Fact]
+    public void Batch_FundingRateZScore()
+    {
+        using var ind = new Wickra.FundingRateZScore(20);
+        CompareBatchRows("FundingRateZScore", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_FundingRateZScore()
     {
         using var ind = new Wickra.FundingRateZScore(20);
@@ -4742,6 +5780,12 @@ public class GoldenAllTests
         Compare("GainLossRatio", Drive_GainLossRatio(ind));
     }
     [Fact]
+    public void Batch_GainLossRatio()
+    {
+        using var ind = new Wickra.GainLossRatio(14);
+        CompareBatchRows("GainLossRatio", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_GainLossRatio()
     {
         using var ind = new Wickra.GainLossRatio(14);
@@ -4768,6 +5812,12 @@ public class GoldenAllTests
         using var ind = new Wickra.GainToPainRatio(14);
         Assert.Equal("GainToPainRatio", ind.Name());
         Compare("GainToPainRatio", Drive_GainToPainRatio(ind));
+    }
+    [Fact]
+    public void Batch_GainToPainRatio()
+    {
+        using var ind = new Wickra.GainToPainRatio(14);
+        CompareBatchRows("GainToPainRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_GainToPainRatio()
@@ -4799,6 +5849,12 @@ public class GoldenAllTests
         Compare("GapSideBySideWhite", Drive_GapSideBySideWhite(ind));
     }
     [Fact]
+    public void Batch_GapSideBySideWhite()
+    {
+        using var ind = new Wickra.GapSideBySideWhite();
+        CompareBatchRows("GapSideBySideWhite", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_GapSideBySideWhite()
     {
         using var ind = new Wickra.GapSideBySideWhite();
@@ -4826,6 +5882,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Garch11(2e-06, 0.1, 0.88);
         Assert.Equal("Garch11", ind.Name());
         Compare("Garch11", Drive_Garch11(ind));
+    }
+    [Fact]
+    public void Batch_Garch11()
+    {
+        using var ind = new Wickra.Garch11(2e-06, 0.1, 0.88);
+        CompareBatchRows("Garch11", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Garch11()
@@ -4857,6 +5919,12 @@ public class GoldenAllTests
         Compare("GarmanKlassVolatility", Drive_GarmanKlassVolatility(ind));
     }
     [Fact]
+    public void Batch_GarmanKlassVolatility()
+    {
+        using var ind = new Wickra.GarmanKlassVolatility(20, 252);
+        CompareBatchRows("GarmanKlassVolatility", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_GarmanKlassVolatility()
     {
         using var ind = new Wickra.GarmanKlassVolatility(20, 252);
@@ -4884,6 +5952,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Gartley();
         Assert.Equal("Gartley", ind.Name());
         Compare("Gartley", Drive_Gartley(ind));
+    }
+    [Fact]
+    public void Batch_Gartley()
+    {
+        using var ind = new Wickra.Gartley();
+        CompareBatchRows("Gartley", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Gartley()
@@ -4915,6 +5989,12 @@ public class GoldenAllTests
         Compare("GatorOscillator", Drive_GatorOscillator(ind));
     }
     [Fact]
+    public void Batch_GatorOscillator()
+    {
+        using var ind = new Wickra.GatorOscillator(3, 7, 14);
+        CompareBatchRows("GatorOscillator", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_GatorOscillator()
     {
         using var ind = new Wickra.GatorOscillator(3, 7, 14);
@@ -4942,6 +6022,12 @@ public class GoldenAllTests
         using var ind = new Wickra.GeneralizedDema(5, 0.7);
         Assert.Equal("GD", ind.Name());
         Compare("GeneralizedDema", Drive_GeneralizedDema(ind));
+    }
+    [Fact]
+    public void Batch_GeneralizedDema()
+    {
+        using var ind = new Wickra.GeneralizedDema(5, 0.7);
+        CompareBatchRows("GeneralizedDema", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_GeneralizedDema()
@@ -4973,6 +6059,12 @@ public class GoldenAllTests
         Compare("GeometricMa", Drive_GeometricMa(ind));
     }
     [Fact]
+    public void Batch_GeometricMa()
+    {
+        using var ind = new Wickra.GeometricMa(14);
+        CompareBatchRows("GeometricMa", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_GeometricMa()
     {
         using var ind = new Wickra.GeometricMa(14);
@@ -5000,6 +6092,12 @@ public class GoldenAllTests
         using var ind = new Wickra.GoldenPocket();
         Assert.Equal("GoldenPocket", ind.Name());
         Compare("GoldenPocket", Drive_GoldenPocket(ind));
+    }
+    [Fact]
+    public void Batch_GoldenPocket()
+    {
+        using var ind = new Wickra.GoldenPocket();
+        CompareBatchRows("GoldenPocket", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_GoldenPocket()
@@ -5031,6 +6129,12 @@ public class GoldenAllTests
         Compare("GrangerCausality", Drive_GrangerCausality(ind));
     }
     [Fact]
+    public void Batch_GrangerCausality()
+    {
+        using var ind = new Wickra.GrangerCausality(60, 1);
+        CompareBatchRows("GrangerCausality", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_GrangerCausality()
     {
         using var ind = new Wickra.GrangerCausality(60, 1);
@@ -5058,6 +6162,12 @@ public class GoldenAllTests
         using var ind = new Wickra.GravestoneDoji();
         Assert.Equal("GravestoneDoji", ind.Name());
         Compare("GravestoneDoji", Drive_GravestoneDoji(ind));
+    }
+    [Fact]
+    public void Batch_GravestoneDoji()
+    {
+        using var ind = new Wickra.GravestoneDoji();
+        CompareBatchRows("GravestoneDoji", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_GravestoneDoji()
@@ -5089,6 +6199,12 @@ public class GoldenAllTests
         Compare("Hammer", Drive_Hammer(ind));
     }
     [Fact]
+    public void Batch_Hammer()
+    {
+        using var ind = new Wickra.Hammer();
+        CompareBatchRows("Hammer", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Hammer()
     {
         using var ind = new Wickra.Hammer();
@@ -5116,6 +6232,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HangingMan();
         Assert.Equal("HangingMan", ind.Name());
         Compare("HangingMan", Drive_HangingMan(ind));
+    }
+    [Fact]
+    public void Batch_HangingMan()
+    {
+        using var ind = new Wickra.HangingMan();
+        CompareBatchRows("HangingMan", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HangingMan()
@@ -5147,6 +6269,12 @@ public class GoldenAllTests
         Compare("Harami", Drive_Harami(ind));
     }
     [Fact]
+    public void Batch_Harami()
+    {
+        using var ind = new Wickra.Harami();
+        CompareBatchRows("Harami", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Harami()
     {
         using var ind = new Wickra.Harami();
@@ -5174,6 +6302,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HaramiCross();
         Assert.Equal("HaramiCross", ind.Name());
         Compare("HaramiCross", Drive_HaramiCross(ind));
+    }
+    [Fact]
+    public void Batch_HaramiCross()
+    {
+        using var ind = new Wickra.HaramiCross();
+        CompareBatchRows("HaramiCross", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HaramiCross()
@@ -5205,6 +6339,12 @@ public class GoldenAllTests
         Compare("HasbrouckInformationShare", Drive_HasbrouckInformationShare(ind));
     }
     [Fact]
+    public void Batch_HasbrouckInformationShare()
+    {
+        using var ind = new Wickra.HasbrouckInformationShare(14);
+        CompareBatchRows("HasbrouckInformationShare", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_HasbrouckInformationShare()
     {
         using var ind = new Wickra.HasbrouckInformationShare(14);
@@ -5232,6 +6372,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HeadAndShoulders();
         Assert.Equal("HeadAndShoulders", ind.Name());
         Compare("HeadAndShoulders", Drive_HeadAndShoulders(ind));
+    }
+    [Fact]
+    public void Batch_HeadAndShoulders()
+    {
+        using var ind = new Wickra.HeadAndShoulders();
+        CompareBatchRows("HeadAndShoulders", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HeadAndShoulders()
@@ -5263,6 +6409,12 @@ public class GoldenAllTests
         Compare("HeikinAshi", Drive_HeikinAshi(ind));
     }
     [Fact]
+    public void Batch_HeikinAshi()
+    {
+        using var ind = new Wickra.HeikinAshi();
+        CompareBatchRows("HeikinAshi", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_HeikinAshi()
     {
         using var ind = new Wickra.HeikinAshi();
@@ -5292,6 +6444,12 @@ public class GoldenAllTests
         Compare("HeikinAshiOscillator", Drive_HeikinAshiOscillator(ind));
     }
     [Fact]
+    public void Batch_HeikinAshiOscillator()
+    {
+        using var ind = new Wickra.HeikinAshiOscillator(14);
+        CompareBatchRows("HeikinAshiOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_HeikinAshiOscillator()
     {
         using var ind = new Wickra.HeikinAshiOscillator(14);
@@ -5319,6 +6477,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HiLoActivator(14);
         Assert.Equal("HiLoActivator", ind.Name());
         Compare("HiLoActivator", Drive_HiLoActivator(ind));
+    }
+    [Fact]
+    public void Batch_HiLoActivator()
+    {
+        using var ind = new Wickra.HiLoActivator(14);
+        CompareBatchRows("HiLoActivator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HiLoActivator()
@@ -5351,6 +6515,12 @@ public class GoldenAllTests
         Compare("HighLowIndex", Drive_HighLowIndex(ind));
     }
     [Fact]
+    public void Batch_HighLowIndex()
+    {
+        using var ind = new Wickra.HighLowIndex(10);
+        CompareBatchRows("HighLowIndex", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_HighLowIndex()
     {
         using var ind = new Wickra.HighLowIndex(10);
@@ -5378,6 +6548,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HighLowRange();
         Assert.Equal("HighLowRange", ind.Name());
         Compare("HighLowRange", Drive_HighLowRange(ind));
+    }
+    [Fact]
+    public void Batch_HighLowRange()
+    {
+        using var ind = new Wickra.HighLowRange();
+        CompareBatchRows("HighLowRange", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HighLowRange()
@@ -5409,6 +6585,12 @@ public class GoldenAllTests
         Compare("HighLowVolumeNodes", Drive_HighLowVolumeNodes(ind));
     }
     [Fact]
+    public void Batch_HighLowVolumeNodes()
+    {
+        using var ind = new Wickra.HighLowVolumeNodes(3, 7);
+        CompareBatchRows("HighLowVolumeNodes", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_HighLowVolumeNodes()
     {
         using var ind = new Wickra.HighLowVolumeNodes(3, 7);
@@ -5436,6 +6618,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HighWave();
         Assert.Equal("HighWave", ind.Name());
         Compare("HighWave", Drive_HighWave(ind));
+    }
+    [Fact]
+    public void Batch_HighWave()
+    {
+        using var ind = new Wickra.HighWave();
+        CompareBatchRows("HighWave", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HighWave()
@@ -5467,6 +6655,12 @@ public class GoldenAllTests
         Compare("HighpassFilter", Drive_HighpassFilter(ind));
     }
     [Fact]
+    public void Batch_HighpassFilter()
+    {
+        using var ind = new Wickra.HighpassFilter(14);
+        CompareBatchRows("HighpassFilter", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_HighpassFilter()
     {
         using var ind = new Wickra.HighpassFilter(14);
@@ -5494,6 +6688,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Hikkake();
         Assert.Equal("Hikkake", ind.Name());
         Compare("Hikkake", Drive_Hikkake(ind));
+    }
+    [Fact]
+    public void Batch_Hikkake()
+    {
+        using var ind = new Wickra.Hikkake();
+        CompareBatchRows("Hikkake", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Hikkake()
@@ -5525,6 +6725,12 @@ public class GoldenAllTests
         Compare("HikkakeModified", Drive_HikkakeModified(ind));
     }
     [Fact]
+    public void Batch_HikkakeModified()
+    {
+        using var ind = new Wickra.HikkakeModified();
+        CompareBatchRows("HikkakeModified", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_HikkakeModified()
     {
         using var ind = new Wickra.HikkakeModified();
@@ -5552,6 +6758,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HilbertDominantCycle();
         Assert.Equal("HilbertDominantCycle", ind.Name());
         Compare("HilbertDominantCycle", Drive_HilbertDominantCycle(ind));
+    }
+    [Fact]
+    public void Batch_HilbertDominantCycle()
+    {
+        using var ind = new Wickra.HilbertDominantCycle();
+        CompareBatchRows("HilbertDominantCycle", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_HilbertDominantCycle()
@@ -5583,6 +6795,12 @@ public class GoldenAllTests
         Compare("HistoricalVolatility", Drive_HistoricalVolatility(ind));
     }
     [Fact]
+    public void Batch_HistoricalVolatility()
+    {
+        using var ind = new Wickra.HistoricalVolatility(3, 7);
+        CompareBatchRows("HistoricalVolatility", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_HistoricalVolatility()
     {
         using var ind = new Wickra.HistoricalVolatility(3, 7);
@@ -5610,6 +6828,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Hma(14);
         Assert.Equal("HMA", ind.Name());
         Compare("Hma", Drive_Hma(ind));
+    }
+    [Fact]
+    public void Batch_Hma()
+    {
+        using var ind = new Wickra.Hma(14);
+        CompareBatchRows("Hma", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Hma()
@@ -5641,6 +6865,12 @@ public class GoldenAllTests
         Compare("HoltWinters", Drive_HoltWinters(ind));
     }
     [Fact]
+    public void Batch_HoltWinters()
+    {
+        using var ind = new Wickra.HoltWinters(0.5, 0.1);
+        CompareBatchRows("HoltWinters", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_HoltWinters()
     {
         using var ind = new Wickra.HoltWinters(0.5, 0.1);
@@ -5668,6 +6898,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HomingPigeon();
         Assert.Equal("HomingPigeon", ind.Name());
         Compare("HomingPigeon", Drive_HomingPigeon(ind));
+    }
+    [Fact]
+    public void Batch_HomingPigeon()
+    {
+        using var ind = new Wickra.HomingPigeon();
+        CompareBatchRows("HomingPigeon", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HomingPigeon()
@@ -5699,6 +6935,12 @@ public class GoldenAllTests
         Compare("HtDcPhase", Drive_HtDcPhase(ind));
     }
     [Fact]
+    public void Batch_HtDcPhase()
+    {
+        using var ind = new Wickra.HtDcPhase();
+        CompareBatchRows("HtDcPhase", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_HtDcPhase()
     {
         using var ind = new Wickra.HtDcPhase();
@@ -5726,6 +6968,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HtPhasor();
         Assert.Equal("HT_PHASOR", ind.Name());
         Compare("HtPhasor", Drive_HtPhasor(ind));
+    }
+    [Fact]
+    public void Batch_HtPhasor()
+    {
+        using var ind = new Wickra.HtPhasor();
+        CompareBatchRows("HtPhasor", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_HtPhasor()
@@ -5757,6 +7005,12 @@ public class GoldenAllTests
         Compare("HtTrendMode", Drive_HtTrendMode(ind));
     }
     [Fact]
+    public void Batch_HtTrendMode()
+    {
+        using var ind = new Wickra.HtTrendMode();
+        CompareBatchRows("HtTrendMode", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_HtTrendMode()
     {
         using var ind = new Wickra.HtTrendMode();
@@ -5784,6 +7038,12 @@ public class GoldenAllTests
         using var ind = new Wickra.HurstChannel(14, 2.0);
         Assert.Equal("HurstChannel", ind.Name());
         Compare("HurstChannel", Drive_HurstChannel(ind));
+    }
+    [Fact]
+    public void Batch_HurstChannel()
+    {
+        using var ind = new Wickra.HurstChannel(14, 2.0);
+        CompareBatchRows("HurstChannel", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_HurstChannel()
@@ -5815,6 +7075,12 @@ public class GoldenAllTests
         Compare("HurstExponent", Drive_HurstExponent(ind));
     }
     [Fact]
+    public void Batch_HurstExponent()
+    {
+        using var ind = new Wickra.HurstExponent(100, 4);
+        CompareBatchRows("HurstExponent", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_HurstExponent()
     {
         using var ind = new Wickra.HurstExponent(100, 4);
@@ -5841,6 +7107,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Ichimoku(9, 26, 52, 26);
         Assert.Equal("Ichimoku", ind.Name());
         Compare("Ichimoku", Drive_Ichimoku(ind));
+    }
+    [Fact]
+    public void Batch_Ichimoku()
+    {
+        using var ind = new Wickra.Ichimoku(9, 26, 52, 26);
+        CompareBatchRows("Ichimoku", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Ichimoku()
@@ -5872,6 +7144,12 @@ public class GoldenAllTests
         Compare("IdenticalThreeCrows", Drive_IdenticalThreeCrows(ind));
     }
     [Fact]
+    public void Batch_IdenticalThreeCrows()
+    {
+        using var ind = new Wickra.IdenticalThreeCrows();
+        CompareBatchRows("IdenticalThreeCrows", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_IdenticalThreeCrows()
     {
         using var ind = new Wickra.IdenticalThreeCrows();
@@ -5901,6 +7179,12 @@ public class GoldenAllTests
         Compare("ImbalanceBars", Drive_ImbalanceBars(ind));
     }
     [Fact]
+    public void Batch_ImbalanceBars()
+    {
+        using var ind = new Wickra.ImbalanceBars(5.0);
+        CompareBatchFlat("ImbalanceBars", FlattenBars(ind.Batch(Open, High, Low, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_ImbalanceBars()
     {
         using var ind = new Wickra.ImbalanceBars(5.0);
@@ -5924,6 +7208,12 @@ public class GoldenAllTests
         using var ind = new Wickra.InNeck();
         Assert.Equal("InNeck", ind.Name());
         Compare("InNeck", Drive_InNeck(ind));
+    }
+    [Fact]
+    public void Batch_InNeck()
+    {
+        using var ind = new Wickra.InNeck();
+        CompareBatchRows("InNeck", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_InNeck()
@@ -5955,6 +7245,12 @@ public class GoldenAllTests
         Compare("Inertia", Drive_Inertia(ind));
     }
     [Fact]
+    public void Batch_Inertia()
+    {
+        using var ind = new Wickra.Inertia(3, 7);
+        CompareBatchRows("Inertia", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Inertia()
     {
         using var ind = new Wickra.Inertia(3, 7);
@@ -5982,6 +7278,12 @@ public class GoldenAllTests
         using var ind = new Wickra.InformationRatio(14);
         Assert.Equal("InformationRatio", ind.Name());
         Compare("InformationRatio", Drive_InformationRatio(ind));
+    }
+    [Fact]
+    public void Batch_InformationRatio()
+    {
+        using var ind = new Wickra.InformationRatio(14);
+        CompareBatchRows("InformationRatio", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_InformationRatio()
@@ -6013,6 +7315,12 @@ public class GoldenAllTests
         Compare("InitialBalance", Drive_InitialBalance(ind));
     }
     [Fact]
+    public void Batch_InitialBalance()
+    {
+        using var ind = new Wickra.InitialBalance(14);
+        CompareBatchRows("InitialBalance", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_InitialBalance()
     {
         using var ind = new Wickra.InitialBalance(14);
@@ -6040,6 +7348,12 @@ public class GoldenAllTests
         using var ind = new Wickra.InstantaneousTrendline(14);
         Assert.Equal("InstantaneousTrendline", ind.Name());
         Compare("InstantaneousTrendline", Drive_InstantaneousTrendline(ind));
+    }
+    [Fact]
+    public void Batch_InstantaneousTrendline()
+    {
+        using var ind = new Wickra.InstantaneousTrendline(14);
+        CompareBatchRows("InstantaneousTrendline", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_InstantaneousTrendline()
@@ -6071,6 +7385,12 @@ public class GoldenAllTests
         Compare("IntradayIntensity", Drive_IntradayIntensity(ind));
     }
     [Fact]
+    public void Batch_IntradayIntensity()
+    {
+        using var ind = new Wickra.IntradayIntensity();
+        CompareBatchRows("IntradayIntensity", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_IntradayIntensity()
     {
         using var ind = new Wickra.IntradayIntensity();
@@ -6098,6 +7418,12 @@ public class GoldenAllTests
         using var ind = new Wickra.IntradayMomentumIndex(14);
         Assert.Equal("IMI", ind.Name());
         Compare("IntradayMomentumIndex", Drive_IntradayMomentumIndex(ind));
+    }
+    [Fact]
+    public void Batch_IntradayMomentumIndex()
+    {
+        using var ind = new Wickra.IntradayMomentumIndex(14);
+        CompareBatchRows("IntradayMomentumIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_IntradayMomentumIndex()
@@ -6130,6 +7456,12 @@ public class GoldenAllTests
         Compare("IntradayVolatilityProfile", Drive_IntradayVolatilityProfile(ind));
     }
     [Fact]
+    public void Batch_IntradayVolatilityProfile()
+    {
+        using var ind = new Wickra.IntradayVolatilityProfile(24, 0);
+        CompareBatchRows("IntradayVolatilityProfile", new List<double[]>(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_IntradayVolatilityProfile()
     {
         using var ind = new Wickra.IntradayVolatilityProfile(24, 0);
@@ -6157,6 +7489,12 @@ public class GoldenAllTests
         using var ind = new Wickra.InverseFisherTransform(2.0);
         Assert.Equal("InverseFisherTransform", ind.Name());
         Compare("InverseFisherTransform", Drive_InverseFisherTransform(ind));
+    }
+    [Fact]
+    public void Batch_InverseFisherTransform()
+    {
+        using var ind = new Wickra.InverseFisherTransform(2.0);
+        CompareBatchRows("InverseFisherTransform", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_InverseFisherTransform()
@@ -6188,6 +7526,12 @@ public class GoldenAllTests
         Compare("InvertedHammer", Drive_InvertedHammer(ind));
     }
     [Fact]
+    public void Batch_InvertedHammer()
+    {
+        using var ind = new Wickra.InvertedHammer();
+        CompareBatchRows("InvertedHammer", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_InvertedHammer()
     {
         using var ind = new Wickra.InvertedHammer();
@@ -6215,6 +7559,12 @@ public class GoldenAllTests
         using var ind = new Wickra.JarqueBera(14);
         Assert.Equal("JarqueBera", ind.Name());
         Compare("JarqueBera", Drive_JarqueBera(ind));
+    }
+    [Fact]
+    public void Batch_JarqueBera()
+    {
+        using var ind = new Wickra.JarqueBera(14);
+        CompareBatchRows("JarqueBera", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_JarqueBera()
@@ -6246,6 +7596,12 @@ public class GoldenAllTests
         Compare("Jma", Drive_Jma(ind));
     }
     [Fact]
+    public void Batch_Jma()
+    {
+        using var ind = new Wickra.Jma(7, 0.0, 2u);
+        CompareBatchRows("Jma", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Jma()
     {
         using var ind = new Wickra.Jma(7, 0.0, 2u);
@@ -6273,6 +7629,12 @@ public class GoldenAllTests
         using var ind = new Wickra.JumpIndicator(14, 2.0);
         Assert.Equal("JumpIndicator", ind.Name());
         Compare("JumpIndicator", Drive_JumpIndicator(ind));
+    }
+    [Fact]
+    public void Batch_JumpIndicator()
+    {
+        using var ind = new Wickra.JumpIndicator(14, 2.0);
+        CompareBatchRows("JumpIndicator", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_JumpIndicator()
@@ -6304,6 +7666,12 @@ public class GoldenAllTests
         Compare("KRatio", Drive_KRatio(ind));
     }
     [Fact]
+    public void Batch_KRatio()
+    {
+        using var ind = new Wickra.KRatio(14);
+        CompareBatchRows("KRatio", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_KRatio()
     {
         using var ind = new Wickra.KRatio(14);
@@ -6333,6 +7701,12 @@ public class GoldenAllTests
         Compare("KagiBars", Drive_KagiBars(ind));
     }
     [Fact]
+    public void Batch_KagiBars()
+    {
+        using var ind = new Wickra.KagiBars(2.0);
+        CompareBatchFlat("KagiBars", FlattenBars(ind.Batch(Close, Close, Close, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_KagiBars()
     {
         using var ind = new Wickra.KagiBars(2.0);
@@ -6356,6 +7730,12 @@ public class GoldenAllTests
         using var ind = new Wickra.KalmanHedgeRatio(0.01, 0.001);
         Assert.Equal("KalmanHedgeRatio", ind.Name());
         Compare("KalmanHedgeRatio", Drive_KalmanHedgeRatio(ind));
+    }
+    [Fact]
+    public void Batch_KalmanHedgeRatio()
+    {
+        using var ind = new Wickra.KalmanHedgeRatio(0.01, 0.001);
+        CompareBatchRows("KalmanHedgeRatio", RecordRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_KalmanHedgeRatio()
@@ -6387,6 +7767,12 @@ public class GoldenAllTests
         Compare("Kama", Drive_Kama(ind));
     }
     [Fact]
+    public void Batch_Kama()
+    {
+        using var ind = new Wickra.Kama(3, 7, 14);
+        CompareBatchRows("Kama", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Kama()
     {
         using var ind = new Wickra.Kama(3, 7, 14);
@@ -6414,6 +7800,12 @@ public class GoldenAllTests
         using var ind = new Wickra.KaseDevStop(14, 2.0);
         Assert.Equal("KaseDevStop", ind.Name());
         Compare("KaseDevStop", Drive_KaseDevStop(ind));
+    }
+    [Fact]
+    public void Batch_KaseDevStop()
+    {
+        using var ind = new Wickra.KaseDevStop(14, 2.0);
+        CompareBatchRows("KaseDevStop", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_KaseDevStop()
@@ -6445,6 +7837,12 @@ public class GoldenAllTests
         Compare("KasePermissionStochastic", Drive_KasePermissionStochastic(ind));
     }
     [Fact]
+    public void Batch_KasePermissionStochastic()
+    {
+        using var ind = new Wickra.KasePermissionStochastic(3, 7);
+        CompareBatchRows("KasePermissionStochastic", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_KasePermissionStochastic()
     {
         using var ind = new Wickra.KasePermissionStochastic(3, 7);
@@ -6472,6 +7870,12 @@ public class GoldenAllTests
         using var ind = new Wickra.KellyCriterion(14);
         Assert.Equal("KellyCriterion", ind.Name());
         Compare("KellyCriterion", Drive_KellyCriterion(ind));
+    }
+    [Fact]
+    public void Batch_KellyCriterion()
+    {
+        using var ind = new Wickra.KellyCriterion(14);
+        CompareBatchRows("KellyCriterion", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_KellyCriterion()
@@ -6503,6 +7907,12 @@ public class GoldenAllTests
         Compare("Keltner", Drive_Keltner(ind));
     }
     [Fact]
+    public void Batch_Keltner()
+    {
+        using var ind = new Wickra.Keltner(3, 7, 2.0);
+        CompareBatchRows("Keltner", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Keltner()
     {
         using var ind = new Wickra.Keltner(3, 7, 2.0);
@@ -6530,6 +7940,12 @@ public class GoldenAllTests
         using var ind = new Wickra.KendallTau(14);
         Assert.Equal("KendallTau", ind.Name());
         Compare("KendallTau", Drive_KendallTau(ind));
+    }
+    [Fact]
+    public void Batch_KendallTau()
+    {
+        using var ind = new Wickra.KendallTau(14);
+        CompareBatchRows("KendallTau", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_KendallTau()
@@ -6561,6 +7977,12 @@ public class GoldenAllTests
         Compare("Kicking", Drive_Kicking(ind));
     }
     [Fact]
+    public void Batch_Kicking()
+    {
+        using var ind = new Wickra.Kicking();
+        CompareBatchRows("Kicking", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Kicking()
     {
         using var ind = new Wickra.Kicking();
@@ -6588,6 +8010,12 @@ public class GoldenAllTests
         using var ind = new Wickra.KickingByLength();
         Assert.Equal("KickingByLength", ind.Name());
         Compare("KickingByLength", Drive_KickingByLength(ind));
+    }
+    [Fact]
+    public void Batch_KickingByLength()
+    {
+        using var ind = new Wickra.KickingByLength();
+        CompareBatchRows("KickingByLength", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_KickingByLength()
@@ -6619,6 +8047,12 @@ public class GoldenAllTests
         Compare("Kst", Drive_Kst(ind));
     }
     [Fact]
+    public void Batch_Kst()
+    {
+        using var ind = new Wickra.Kst(3, 7, 14, 28, 35, 42, 56, 63, 70);
+        CompareBatchRows("Kst", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Kst()
     {
         using var ind = new Wickra.Kst(3, 7, 14, 28, 35, 42, 56, 63, 70);
@@ -6645,6 +8079,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Kurtosis(14);
         Assert.Equal("Kurtosis", ind.Name());
         Compare("Kurtosis", Drive_Kurtosis(ind));
+    }
+    [Fact]
+    public void Batch_Kurtosis()
+    {
+        using var ind = new Wickra.Kurtosis(14);
+        CompareBatchRows("Kurtosis", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Kurtosis()
@@ -6676,6 +8116,12 @@ public class GoldenAllTests
         Compare("Kvo", Drive_Kvo(ind));
     }
     [Fact]
+    public void Batch_Kvo()
+    {
+        using var ind = new Wickra.Kvo(3, 7);
+        CompareBatchRows("Kvo", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Kvo()
     {
         using var ind = new Wickra.Kvo(3, 7);
@@ -6703,6 +8149,12 @@ public class GoldenAllTests
         using var ind = new Wickra.KylesLambda(20);
         Assert.Equal("KylesLambda", ind.Name());
         Compare("KylesLambda", Drive_KylesLambda(ind));
+    }
+    [Fact]
+    public void Batch_KylesLambda()
+    {
+        using var ind = new Wickra.KylesLambda(20);
+        CompareBatchRows("KylesLambda", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps, Mids)));
     }
     [Fact]
     public void Lifecycle_KylesLambda()
@@ -6734,6 +8186,12 @@ public class GoldenAllTests
         Compare("LadderBottom", Drive_LadderBottom(ind));
     }
     [Fact]
+    public void Batch_LadderBottom()
+    {
+        using var ind = new Wickra.LadderBottom();
+        CompareBatchRows("LadderBottom", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_LadderBottom()
     {
         using var ind = new Wickra.LadderBottom();
@@ -6761,6 +8219,12 @@ public class GoldenAllTests
         using var ind = new Wickra.LaguerreRsi(0.5);
         Assert.Equal("LaguerreRSI", ind.Name());
         Compare("LaguerreRsi", Drive_LaguerreRsi(ind));
+    }
+    [Fact]
+    public void Batch_LaguerreRsi()
+    {
+        using var ind = new Wickra.LaguerreRsi(0.5);
+        CompareBatchRows("LaguerreRsi", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_LaguerreRsi()
@@ -6792,6 +8256,12 @@ public class GoldenAllTests
         Compare("LeadLagCrossCorrelation", Drive_LeadLagCrossCorrelation(ind));
     }
     [Fact]
+    public void Batch_LeadLagCrossCorrelation()
+    {
+        using var ind = new Wickra.LeadLagCrossCorrelation(20, 10);
+        CompareBatchRows("LeadLagCrossCorrelation", RecordRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_LeadLagCrossCorrelation()
     {
         using var ind = new Wickra.LeadLagCrossCorrelation(20, 10);
@@ -6819,6 +8289,12 @@ public class GoldenAllTests
         using var ind = new Wickra.LinRegAngle(14);
         Assert.Equal("LinRegAngle", ind.Name());
         Compare("LinRegAngle", Drive_LinRegAngle(ind));
+    }
+    [Fact]
+    public void Batch_LinRegAngle()
+    {
+        using var ind = new Wickra.LinRegAngle(14);
+        CompareBatchRows("LinRegAngle", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_LinRegAngle()
@@ -6850,6 +8326,12 @@ public class GoldenAllTests
         Compare("LinRegChannel", Drive_LinRegChannel(ind));
     }
     [Fact]
+    public void Batch_LinRegChannel()
+    {
+        using var ind = new Wickra.LinRegChannel(14, 2.0);
+        CompareBatchRows("LinRegChannel", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_LinRegChannel()
     {
         using var ind = new Wickra.LinRegChannel(14, 2.0);
@@ -6877,6 +8359,12 @@ public class GoldenAllTests
         using var ind = new Wickra.LinRegIntercept(14);
         Assert.Equal("LINEARREG_INTERCEPT", ind.Name());
         Compare("LinRegIntercept", Drive_LinRegIntercept(ind));
+    }
+    [Fact]
+    public void Batch_LinRegIntercept()
+    {
+        using var ind = new Wickra.LinRegIntercept(14);
+        CompareBatchRows("LinRegIntercept", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_LinRegIntercept()
@@ -6908,6 +8396,12 @@ public class GoldenAllTests
         Compare("LinRegSlope", Drive_LinRegSlope(ind));
     }
     [Fact]
+    public void Batch_LinRegSlope()
+    {
+        using var ind = new Wickra.LinRegSlope(14);
+        CompareBatchRows("LinRegSlope", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_LinRegSlope()
     {
         using var ind = new Wickra.LinRegSlope(14);
@@ -6935,6 +8429,12 @@ public class GoldenAllTests
         using var ind = new Wickra.LinearRegression(14);
         Assert.Equal("LinearRegression", ind.Name());
         Compare("LinearRegression", Drive_LinearRegression(ind));
+    }
+    [Fact]
+    public void Batch_LinearRegression()
+    {
+        using var ind = new Wickra.LinearRegression(14);
+        CompareBatchRows("LinearRegression", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_LinearRegression()
@@ -6967,6 +8467,12 @@ public class GoldenAllTests
         Compare("LiquidationFeatures", Drive_LiquidationFeatures(ind));
     }
     [Fact]
+    public void Batch_LiquidationFeatures()
+    {
+        using var ind = new Wickra.LiquidationFeatures();
+        CompareBatchRows("LiquidationFeatures", RecordRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_LiquidationFeatures()
     {
         using var ind = new Wickra.LiquidationFeatures();
@@ -6994,6 +8500,12 @@ public class GoldenAllTests
         using var ind = new Wickra.LogReturn(14);
         Assert.Equal("LogReturn", ind.Name());
         Compare("LogReturn", Drive_LogReturn(ind));
+    }
+    [Fact]
+    public void Batch_LogReturn()
+    {
+        using var ind = new Wickra.LogReturn(14);
+        CompareBatchRows("LogReturn", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_LogReturn()
@@ -7025,6 +8537,12 @@ public class GoldenAllTests
         Compare("LongLeggedDoji", Drive_LongLeggedDoji(ind));
     }
     [Fact]
+    public void Batch_LongLeggedDoji()
+    {
+        using var ind = new Wickra.LongLeggedDoji();
+        CompareBatchRows("LongLeggedDoji", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_LongLeggedDoji()
     {
         using var ind = new Wickra.LongLeggedDoji();
@@ -7052,6 +8570,12 @@ public class GoldenAllTests
         using var ind = new Wickra.LongLine();
         Assert.Equal("LongLine", ind.Name());
         Compare("LongLine", Drive_LongLine(ind));
+    }
+    [Fact]
+    public void Batch_LongLine()
+    {
+        using var ind = new Wickra.LongLine();
+        CompareBatchRows("LongLine", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_LongLine()
@@ -7084,6 +8608,12 @@ public class GoldenAllTests
         Compare("LongShortRatio", Drive_LongShortRatio(ind));
     }
     [Fact]
+    public void Batch_LongShortRatio()
+    {
+        using var ind = new Wickra.LongShortRatio();
+        CompareBatchRows("LongShortRatio", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_LongShortRatio()
     {
         using var ind = new Wickra.LongShortRatio();
@@ -7111,6 +8641,12 @@ public class GoldenAllTests
         using var ind = new Wickra.M2Measure(14, 2.0, 0.5);
         Assert.Equal("M2Measure", ind.Name());
         Compare("M2Measure", Drive_M2Measure(ind));
+    }
+    [Fact]
+    public void Batch_M2Measure()
+    {
+        using var ind = new Wickra.M2Measure(14, 2.0, 0.5);
+        CompareBatchRows("M2Measure", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_M2Measure()
@@ -7142,6 +8678,12 @@ public class GoldenAllTests
         Compare("MaEnvelope", Drive_MaEnvelope(ind));
     }
     [Fact]
+    public void Batch_MaEnvelope()
+    {
+        using var ind = new Wickra.MaEnvelope(14, 2.0);
+        CompareBatchRows("MaEnvelope", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_MaEnvelope()
     {
         using var ind = new Wickra.MaEnvelope(14, 2.0);
@@ -7169,6 +8711,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MacdExt(12, (byte)0, 26, (byte)0, 9, (byte)0);
         Assert.Equal("MACDEXT", ind.Name());
         Compare("MacdExt", Drive_MacdExt(ind));
+    }
+    [Fact]
+    public void Batch_MacdExt()
+    {
+        using var ind = new Wickra.MacdExt(12, (byte)0, 26, (byte)0, 9, (byte)0);
+        CompareBatchRows("MacdExt", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MacdExt()
@@ -7200,6 +8748,12 @@ public class GoldenAllTests
         Compare("MacdFix", Drive_MacdFix(ind));
     }
     [Fact]
+    public void Batch_MacdFix()
+    {
+        using var ind = new Wickra.MacdFix(9);
+        CompareBatchRows("MacdFix", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_MacdFix()
     {
         using var ind = new Wickra.MacdFix(9);
@@ -7227,6 +8781,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MacdHistogram(3, 7, 14);
         Assert.Equal("MacdHistogram", ind.Name());
         Compare("MacdHistogram", Drive_MacdHistogram(ind));
+    }
+    [Fact]
+    public void Batch_MacdHistogram()
+    {
+        using var ind = new Wickra.MacdHistogram(3, 7, 14);
+        CompareBatchRows("MacdHistogram", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MacdHistogram()
@@ -7258,6 +8818,12 @@ public class GoldenAllTests
         Compare("MacdIndicator", Drive_MacdIndicator(ind));
     }
     [Fact]
+    public void Batch_MacdIndicator()
+    {
+        using var ind = new Wickra.MacdIndicator(12, 26, 9);
+        CompareBatchRows("MacdIndicator", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_MacdIndicator()
     {
         using var ind = new Wickra.MacdIndicator(12, 26, 9);
@@ -7285,6 +8851,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Mama(0.5, 0.05);
         Assert.Equal("MAMA", ind.Name());
         Compare("Mama", Drive_Mama(ind));
+    }
+    [Fact]
+    public void Batch_Mama()
+    {
+        using var ind = new Wickra.Mama(0.5, 0.05);
+        CompareBatchRows("Mama", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Mama()
@@ -7316,6 +8888,12 @@ public class GoldenAllTests
         Compare("MarketFacilitationIndex", Drive_MarketFacilitationIndex(ind));
     }
     [Fact]
+    public void Batch_MarketFacilitationIndex()
+    {
+        using var ind = new Wickra.MarketFacilitationIndex();
+        CompareBatchRows("MarketFacilitationIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MarketFacilitationIndex()
     {
         using var ind = new Wickra.MarketFacilitationIndex();
@@ -7343,6 +8921,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MartinRatio(14);
         Assert.Equal("MartinRatio", ind.Name());
         Compare("MartinRatio", Drive_MartinRatio(ind));
+    }
+    [Fact]
+    public void Batch_MartinRatio()
+    {
+        using var ind = new Wickra.MartinRatio(14);
+        CompareBatchRows("MartinRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MartinRatio()
@@ -7374,6 +8958,12 @@ public class GoldenAllTests
         Compare("Marubozu", Drive_Marubozu(ind));
     }
     [Fact]
+    public void Batch_Marubozu()
+    {
+        using var ind = new Wickra.Marubozu();
+        CompareBatchRows("Marubozu", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Marubozu()
     {
         using var ind = new Wickra.Marubozu();
@@ -7401,6 +8991,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MassIndex(3, 7);
         Assert.Equal("MassIndex", ind.Name());
         Compare("MassIndex", Drive_MassIndex(ind));
+    }
+    [Fact]
+    public void Batch_MassIndex()
+    {
+        using var ind = new Wickra.MassIndex(3, 7);
+        CompareBatchRows("MassIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_MassIndex()
@@ -7432,6 +9028,12 @@ public class GoldenAllTests
         Compare("MatHold", Drive_MatHold(ind));
     }
     [Fact]
+    public void Batch_MatHold()
+    {
+        using var ind = new Wickra.MatHold();
+        CompareBatchRows("MatHold", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MatHold()
     {
         using var ind = new Wickra.MatHold();
@@ -7461,6 +9063,12 @@ public class GoldenAllTests
         Compare("MatchingLow", Drive_MatchingLow(ind));
     }
     [Fact]
+    public void Batch_MatchingLow()
+    {
+        using var ind = new Wickra.MatchingLow();
+        CompareBatchRows("MatchingLow", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MatchingLow()
     {
         using var ind = new Wickra.MatchingLow();
@@ -7488,6 +9096,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MaxDrawdown(14);
         Assert.Equal("MaxDrawdown", ind.Name());
         Compare("MaxDrawdown", Drive_MaxDrawdown(ind));
+    }
+    [Fact]
+    public void Batch_MaxDrawdown()
+    {
+        using var ind = new Wickra.MaxDrawdown(14);
+        CompareBatchRows("MaxDrawdown", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MaxDrawdown()
@@ -7520,6 +9134,12 @@ public class GoldenAllTests
         Compare("McClellanOscillator", Drive_McClellanOscillator(ind));
     }
     [Fact]
+    public void Batch_McClellanOscillator()
+    {
+        using var ind = new Wickra.McClellanOscillator();
+        CompareBatchRows("McClellanOscillator", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_McClellanOscillator()
     {
         using var ind = new Wickra.McClellanOscillator();
@@ -7548,6 +9168,12 @@ public class GoldenAllTests
         using var ind = new Wickra.McClellanSummationIndex();
         Assert.Equal("McClellanSummationIndex", ind.Name());
         Compare("McClellanSummationIndex", Drive_McClellanSummationIndex(ind));
+    }
+    [Fact]
+    public void Batch_McClellanSummationIndex()
+    {
+        using var ind = new Wickra.McClellanSummationIndex();
+        CompareBatchRows("McClellanSummationIndex", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
     }
     [Fact]
     public void Lifecycle_McClellanSummationIndex()
@@ -7579,6 +9205,12 @@ public class GoldenAllTests
         Compare("McGinleyDynamic", Drive_McGinleyDynamic(ind));
     }
     [Fact]
+    public void Batch_McGinleyDynamic()
+    {
+        using var ind = new Wickra.McGinleyDynamic(14);
+        CompareBatchRows("McGinleyDynamic", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_McGinleyDynamic()
     {
         using var ind = new Wickra.McGinleyDynamic(14);
@@ -7606,6 +9238,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MedianAbsoluteDeviation(14);
         Assert.Equal("MedianAbsoluteDeviation", ind.Name());
         Compare("MedianAbsoluteDeviation", Drive_MedianAbsoluteDeviation(ind));
+    }
+    [Fact]
+    public void Batch_MedianAbsoluteDeviation()
+    {
+        using var ind = new Wickra.MedianAbsoluteDeviation(14);
+        CompareBatchRows("MedianAbsoluteDeviation", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MedianAbsoluteDeviation()
@@ -7637,6 +9275,12 @@ public class GoldenAllTests
         Compare("MedianChannel", Drive_MedianChannel(ind));
     }
     [Fact]
+    public void Batch_MedianChannel()
+    {
+        using var ind = new Wickra.MedianChannel(14, 2.0);
+        CompareBatchRows("MedianChannel", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_MedianChannel()
     {
         using var ind = new Wickra.MedianChannel(14, 2.0);
@@ -7664,6 +9308,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MedianMa(14);
         Assert.Equal("MedianMA", ind.Name());
         Compare("MedianMa", Drive_MedianMa(ind));
+    }
+    [Fact]
+    public void Batch_MedianMa()
+    {
+        using var ind = new Wickra.MedianMa(14);
+        CompareBatchRows("MedianMa", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MedianMa()
@@ -7695,6 +9345,12 @@ public class GoldenAllTests
         Compare("MedianPrice", Drive_MedianPrice(ind));
     }
     [Fact]
+    public void Batch_MedianPrice()
+    {
+        using var ind = new Wickra.MedianPrice();
+        CompareBatchRows("MedianPrice", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MedianPrice()
     {
         using var ind = new Wickra.MedianPrice();
@@ -7722,6 +9378,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Mfi(14);
         Assert.Equal("MFI", ind.Name());
         Compare("Mfi", Drive_Mfi(ind));
+    }
+    [Fact]
+    public void Batch_Mfi()
+    {
+        using var ind = new Wickra.Mfi(14);
+        CompareBatchRows("Mfi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Mfi()
@@ -7754,6 +9416,12 @@ public class GoldenAllTests
         Compare("Microprice", Drive_Microprice(ind));
     }
     [Fact]
+    public void Batch_Microprice()
+    {
+        using var ind = new Wickra.Microprice();
+        CompareBatchRows("Microprice", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
+    }
+    [Fact]
     public void Lifecycle_Microprice()
     {
         using var ind = new Wickra.Microprice();
@@ -7781,6 +9449,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MidPoint(14);
         Assert.Equal("MIDPOINT", ind.Name());
         Compare("MidPoint", Drive_MidPoint(ind));
+    }
+    [Fact]
+    public void Batch_MidPoint()
+    {
+        using var ind = new Wickra.MidPoint(14);
+        CompareBatchRows("MidPoint", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_MidPoint()
@@ -7812,6 +9486,12 @@ public class GoldenAllTests
         Compare("MidPrice", Drive_MidPrice(ind));
     }
     [Fact]
+    public void Batch_MidPrice()
+    {
+        using var ind = new Wickra.MidPrice(14);
+        CompareBatchRows("MidPrice", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MidPrice()
     {
         using var ind = new Wickra.MidPrice(14);
@@ -7839,6 +9519,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MinusDi(14);
         Assert.Equal("MINUS_DI", ind.Name());
         Compare("MinusDi", Drive_MinusDi(ind));
+    }
+    [Fact]
+    public void Batch_MinusDi()
+    {
+        using var ind = new Wickra.MinusDi(14);
+        CompareBatchRows("MinusDi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_MinusDi()
@@ -7870,6 +9556,12 @@ public class GoldenAllTests
         Compare("MinusDm", Drive_MinusDm(ind));
     }
     [Fact]
+    public void Batch_MinusDm()
+    {
+        using var ind = new Wickra.MinusDm(14);
+        CompareBatchRows("MinusDm", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MinusDm()
     {
         using var ind = new Wickra.MinusDm(14);
@@ -7897,6 +9589,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ModifiedMaStop(14);
         Assert.Equal("ModifiedMaStop", ind.Name());
         Compare("ModifiedMaStop", Drive_ModifiedMaStop(ind));
+    }
+    [Fact]
+    public void Batch_ModifiedMaStop()
+    {
+        using var ind = new Wickra.ModifiedMaStop(14);
+        CompareBatchRows("ModifiedMaStop", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ModifiedMaStop()
@@ -7928,6 +9626,12 @@ public class GoldenAllTests
         Compare("Mom", Drive_Mom(ind));
     }
     [Fact]
+    public void Batch_Mom()
+    {
+        using var ind = new Wickra.Mom(14);
+        CompareBatchRows("Mom", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Mom()
     {
         using var ind = new Wickra.Mom(14);
@@ -7955,6 +9659,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MorningDojiStar();
         Assert.Equal("MorningDojiStar", ind.Name());
         Compare("MorningDojiStar", Drive_MorningDojiStar(ind));
+    }
+    [Fact]
+    public void Batch_MorningDojiStar()
+    {
+        using var ind = new Wickra.MorningDojiStar();
+        CompareBatchRows("MorningDojiStar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_MorningDojiStar()
@@ -7986,6 +9696,12 @@ public class GoldenAllTests
         Compare("MorningEveningStar", Drive_MorningEveningStar(ind));
     }
     [Fact]
+    public void Batch_MorningEveningStar()
+    {
+        using var ind = new Wickra.MorningEveningStar();
+        CompareBatchRows("MorningEveningStar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_MorningEveningStar()
     {
         using var ind = new Wickra.MorningEveningStar();
@@ -8013,6 +9729,12 @@ public class GoldenAllTests
         using var ind = new Wickra.MurreyMathLines(14);
         Assert.Equal("MurreyMathLines", ind.Name());
         Compare("MurreyMathLines", Drive_MurreyMathLines(ind));
+    }
+    [Fact]
+    public void Batch_MurreyMathLines()
+    {
+        using var ind = new Wickra.MurreyMathLines(14);
+        CompareBatchRows("MurreyMathLines", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_MurreyMathLines()
@@ -8044,6 +9766,12 @@ public class GoldenAllTests
         Compare("NakedPoc", Drive_NakedPoc(ind));
     }
     [Fact]
+    public void Batch_NakedPoc()
+    {
+        using var ind = new Wickra.NakedPoc(3, 7);
+        CompareBatchRows("NakedPoc", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_NakedPoc()
     {
         using var ind = new Wickra.NakedPoc(3, 7);
@@ -8071,6 +9799,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Natr(14);
         Assert.Equal("NATR", ind.Name());
         Compare("Natr", Drive_Natr(ind));
+    }
+    [Fact]
+    public void Batch_Natr()
+    {
+        using var ind = new Wickra.Natr(14);
+        CompareBatchRows("Natr", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Natr()
@@ -8103,6 +9837,12 @@ public class GoldenAllTests
         Compare("NewHighsNewLows", Drive_NewHighsNewLows(ind));
     }
     [Fact]
+    public void Batch_NewHighsNewLows()
+    {
+        using var ind = new Wickra.NewHighsNewLows();
+        CompareBatchRows("NewHighsNewLows", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_NewHighsNewLows()
     {
         using var ind = new Wickra.NewHighsNewLows();
@@ -8130,6 +9870,12 @@ public class GoldenAllTests
         using var ind = new Wickra.NewPriceLines(14);
         Assert.Equal("NewPriceLines", ind.Name());
         Compare("NewPriceLines", Drive_NewPriceLines(ind));
+    }
+    [Fact]
+    public void Batch_NewPriceLines()
+    {
+        using var ind = new Wickra.NewPriceLines(14);
+        CompareBatchRows("NewPriceLines", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_NewPriceLines()
@@ -8161,6 +9907,12 @@ public class GoldenAllTests
         Compare("Nrtr", Drive_Nrtr(ind));
     }
     [Fact]
+    public void Batch_Nrtr()
+    {
+        using var ind = new Wickra.Nrtr(2.0);
+        CompareBatchRows("Nrtr", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Nrtr()
     {
         using var ind = new Wickra.Nrtr(2.0);
@@ -8188,6 +9940,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Nvi();
         Assert.Equal("NVI", ind.Name());
         Compare("Nvi", Drive_Nvi(ind));
+    }
+    [Fact]
+    public void Batch_Nvi()
+    {
+        using var ind = new Wickra.Nvi();
+        CompareBatchRows("Nvi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Nvi()
@@ -8220,6 +9978,12 @@ public class GoldenAllTests
         Compare("OIPriceDivergence", Drive_OIPriceDivergence(ind));
     }
     [Fact]
+    public void Batch_OIPriceDivergence()
+    {
+        using var ind = new Wickra.OIPriceDivergence(20);
+        CompareBatchRows("OIPriceDivergence", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_OIPriceDivergence()
     {
         using var ind = new Wickra.OIPriceDivergence(20);
@@ -8250,6 +10014,12 @@ public class GoldenAllTests
         Compare("OIWeighted", Drive_OIWeighted(ind));
     }
     [Fact]
+    public void Batch_OIWeighted()
+    {
+        using var ind = new Wickra.OIWeighted();
+        CompareBatchRows("OIWeighted", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_OIWeighted()
     {
         using var ind = new Wickra.OIWeighted();
@@ -8277,6 +10047,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Obv();
         Assert.Equal("OBV", ind.Name());
         Compare("Obv", Drive_Obv(ind));
+    }
+    [Fact]
+    public void Batch_Obv()
+    {
+        using var ind = new Wickra.Obv();
+        CompareBatchRows("Obv", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Obv()
@@ -8309,6 +10085,12 @@ public class GoldenAllTests
         Compare("OiToVolumeRatio", Drive_OiToVolumeRatio(ind));
     }
     [Fact]
+    public void Batch_OiToVolumeRatio()
+    {
+        using var ind = new Wickra.OiToVolumeRatio();
+        CompareBatchRows("OiToVolumeRatio", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_OiToVolumeRatio()
     {
         using var ind = new Wickra.OiToVolumeRatio();
@@ -8338,6 +10120,12 @@ public class GoldenAllTests
         Compare("OmegaRatio", Drive_OmegaRatio(ind));
     }
     [Fact]
+    public void Batch_OmegaRatio()
+    {
+        using var ind = new Wickra.OmegaRatio(14, 2.0);
+        CompareBatchRows("OmegaRatio", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_OmegaRatio()
     {
         using var ind = new Wickra.OmegaRatio(14, 2.0);
@@ -8364,6 +10152,12 @@ public class GoldenAllTests
         using var ind = new Wickra.OnNeck();
         Assert.Equal("OnNeck", ind.Name());
         Compare("OnNeck", Drive_OnNeck(ind));
+    }
+    [Fact]
+    public void Batch_OnNeck()
+    {
+        using var ind = new Wickra.OnNeck();
+        CompareBatchRows("OnNeck", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_OnNeck()
@@ -8396,6 +10190,12 @@ public class GoldenAllTests
         Compare("OpenInterestDelta", Drive_OpenInterestDelta(ind));
     }
     [Fact]
+    public void Batch_OpenInterestDelta()
+    {
+        using var ind = new Wickra.OpenInterestDelta();
+        CompareBatchRows("OpenInterestDelta", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_OpenInterestDelta()
     {
         using var ind = new Wickra.OpenInterestDelta();
@@ -8424,6 +10224,12 @@ public class GoldenAllTests
         using var ind = new Wickra.OpenInterestMomentum(10);
         Assert.Equal("OpenInterestMomentum", ind.Name());
         Compare("OpenInterestMomentum", Drive_OpenInterestMomentum(ind));
+    }
+    [Fact]
+    public void Batch_OpenInterestMomentum()
+    {
+        using var ind = new Wickra.OpenInterestMomentum(10);
+        CompareBatchRows("OpenInterestMomentum", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
     }
     [Fact]
     public void Lifecycle_OpenInterestMomentum()
@@ -8455,6 +10261,12 @@ public class GoldenAllTests
         Compare("OpeningMarubozu", Drive_OpeningMarubozu(ind));
     }
     [Fact]
+    public void Batch_OpeningMarubozu()
+    {
+        using var ind = new Wickra.OpeningMarubozu();
+        CompareBatchRows("OpeningMarubozu", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_OpeningMarubozu()
     {
         using var ind = new Wickra.OpeningMarubozu();
@@ -8482,6 +10294,12 @@ public class GoldenAllTests
         using var ind = new Wickra.OpeningRange(14);
         Assert.Equal("OpeningRange", ind.Name());
         Compare("OpeningRange", Drive_OpeningRange(ind));
+    }
+    [Fact]
+    public void Batch_OpeningRange()
+    {
+        using var ind = new Wickra.OpeningRange(14);
+        CompareBatchRows("OpeningRange", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_OpeningRange()
@@ -8514,6 +10332,12 @@ public class GoldenAllTests
         Compare("OrderBookImbalanceFull", Drive_OrderBookImbalanceFull(ind));
     }
     [Fact]
+    public void Batch_OrderBookImbalanceFull()
+    {
+        using var ind = new Wickra.OrderBookImbalanceFull();
+        CompareBatchRows("OrderBookImbalanceFull", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
+    }
+    [Fact]
     public void Lifecycle_OrderBookImbalanceFull()
     {
         using var ind = new Wickra.OrderBookImbalanceFull();
@@ -8542,6 +10366,12 @@ public class GoldenAllTests
         using var ind = new Wickra.OrderBookImbalanceTop1();
         Assert.Equal("OrderBookImbalanceTop1", ind.Name());
         Compare("OrderBookImbalanceTop1", Drive_OrderBookImbalanceTop1(ind));
+    }
+    [Fact]
+    public void Batch_OrderBookImbalanceTop1()
+    {
+        using var ind = new Wickra.OrderBookImbalanceTop1();
+        CompareBatchRows("OrderBookImbalanceTop1", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
     }
     [Fact]
     public void Lifecycle_OrderBookImbalanceTop1()
@@ -8574,6 +10404,12 @@ public class GoldenAllTests
         Compare("OrderBookImbalanceTopN", Drive_OrderBookImbalanceTopN(ind));
     }
     [Fact]
+    public void Batch_OrderBookImbalanceTopN()
+    {
+        using var ind = new Wickra.OrderBookImbalanceTopN(5);
+        CompareBatchRows("OrderBookImbalanceTopN", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
+    }
+    [Fact]
     public void Lifecycle_OrderBookImbalanceTopN()
     {
         using var ind = new Wickra.OrderBookImbalanceTopN(5);
@@ -8602,6 +10438,12 @@ public class GoldenAllTests
         using var ind = new Wickra.OrderFlowImbalance(20);
         Assert.Equal("OrderFlowImbalance", ind.Name());
         Compare("OrderFlowImbalance", Drive_OrderFlowImbalance(ind));
+    }
+    [Fact]
+    public void Batch_OrderFlowImbalance()
+    {
+        using var ind = new Wickra.OrderFlowImbalance(20);
+        CompareBatchRows("OrderFlowImbalance", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
     }
     [Fact]
     public void Lifecycle_OrderFlowImbalance()
@@ -8633,6 +10475,12 @@ public class GoldenAllTests
         Compare("OuHalfLife", Drive_OuHalfLife(ind));
     }
     [Fact]
+    public void Batch_OuHalfLife()
+    {
+        using var ind = new Wickra.OuHalfLife(14);
+        CompareBatchRows("OuHalfLife", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_OuHalfLife()
     {
         using var ind = new Wickra.OuHalfLife(14);
@@ -8660,6 +10508,12 @@ public class GoldenAllTests
         using var ind = new Wickra.OvernightGap(0);
         Assert.Equal("OvernightGap", ind.Name());
         Compare("OvernightGap", Drive_OvernightGap(ind));
+    }
+    [Fact]
+    public void Batch_OvernightGap()
+    {
+        using var ind = new Wickra.OvernightGap(0);
+        CompareBatchRows("OvernightGap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_OvernightGap()
@@ -8690,6 +10544,12 @@ public class GoldenAllTests
         Compare("OvernightIntradayReturn", Drive_OvernightIntradayReturn(ind));
     }
     [Fact]
+    public void Batch_OvernightIntradayReturn()
+    {
+        using var ind = new Wickra.OvernightIntradayReturn(14);
+        CompareBatchRows("OvernightIntradayReturn", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_OvernightIntradayReturn()
     {
         using var ind = new Wickra.OvernightIntradayReturn(14);
@@ -8716,6 +10576,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PainIndex(14);
         Assert.Equal("PainIndex", ind.Name());
         Compare("PainIndex", Drive_PainIndex(ind));
+    }
+    [Fact]
+    public void Batch_PainIndex()
+    {
+        using var ind = new Wickra.PainIndex(14);
+        CompareBatchRows("PainIndex", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_PainIndex()
@@ -8747,6 +10613,12 @@ public class GoldenAllTests
         Compare("PairSpreadZScore", Drive_PairSpreadZScore(ind));
     }
     [Fact]
+    public void Batch_PairSpreadZScore()
+    {
+        using var ind = new Wickra.PairSpreadZScore(20, 20);
+        CompareBatchRows("PairSpreadZScore", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_PairSpreadZScore()
     {
         using var ind = new Wickra.PairSpreadZScore(20, 20);
@@ -8774,6 +10646,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PairwiseBeta(14);
         Assert.Equal("PairwiseBeta", ind.Name());
         Compare("PairwiseBeta", Drive_PairwiseBeta(ind));
+    }
+    [Fact]
+    public void Batch_PairwiseBeta()
+    {
+        using var ind = new Wickra.PairwiseBeta(14);
+        CompareBatchRows("PairwiseBeta", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_PairwiseBeta()
@@ -8805,6 +10683,12 @@ public class GoldenAllTests
         Compare("ParkinsonVolatility", Drive_ParkinsonVolatility(ind));
     }
     [Fact]
+    public void Batch_ParkinsonVolatility()
+    {
+        using var ind = new Wickra.ParkinsonVolatility(20, 252);
+        CompareBatchRows("ParkinsonVolatility", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ParkinsonVolatility()
     {
         using var ind = new Wickra.ParkinsonVolatility(20, 252);
@@ -8832,6 +10716,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PearsonCorrelation(14);
         Assert.Equal("PearsonCorrelation", ind.Name());
         Compare("PearsonCorrelation", Drive_PearsonCorrelation(ind));
+    }
+    [Fact]
+    public void Batch_PearsonCorrelation()
+    {
+        using var ind = new Wickra.PearsonCorrelation(14);
+        CompareBatchRows("PearsonCorrelation", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_PearsonCorrelation()
@@ -8864,6 +10754,12 @@ public class GoldenAllTests
         Compare("PercentAboveMa", Drive_PercentAboveMa(ind));
     }
     [Fact]
+    public void Batch_PercentAboveMa()
+    {
+        using var ind = new Wickra.PercentAboveMa();
+        CompareBatchRows("PercentAboveMa", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_PercentAboveMa()
     {
         using var ind = new Wickra.PercentAboveMa();
@@ -8893,6 +10789,12 @@ public class GoldenAllTests
         Compare("PercentB", Drive_PercentB(ind));
     }
     [Fact]
+    public void Batch_PercentB()
+    {
+        using var ind = new Wickra.PercentB(14, 2.0);
+        CompareBatchRows("PercentB", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_PercentB()
     {
         using var ind = new Wickra.PercentB(14, 2.0);
@@ -8920,6 +10822,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PercentageTrailingStop(2.0);
         Assert.Equal("PercentageTrailingStop", ind.Name());
         Compare("PercentageTrailingStop", Drive_PercentageTrailingStop(ind));
+    }
+    [Fact]
+    public void Batch_PercentageTrailingStop()
+    {
+        using var ind = new Wickra.PercentageTrailingStop(2.0);
+        CompareBatchRows("PercentageTrailingStop", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_PercentageTrailingStop()
@@ -8952,6 +10860,12 @@ public class GoldenAllTests
         Compare("PerpetualPremiumIndex", Drive_PerpetualPremiumIndex(ind));
     }
     [Fact]
+    public void Batch_PerpetualPremiumIndex()
+    {
+        using var ind = new Wickra.PerpetualPremiumIndex();
+        CompareBatchRows("PerpetualPremiumIndex", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_PerpetualPremiumIndex()
     {
         using var ind = new Wickra.PerpetualPremiumIndex();
@@ -8979,6 +10893,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Pgo(14);
         Assert.Equal("PGO", ind.Name());
         Compare("Pgo", Drive_Pgo(ind));
+    }
+    [Fact]
+    public void Batch_Pgo()
+    {
+        using var ind = new Wickra.Pgo(14);
+        CompareBatchRows("Pgo", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Pgo()
@@ -9010,6 +10930,12 @@ public class GoldenAllTests
         Compare("PiercingDarkCloud", Drive_PiercingDarkCloud(ind));
     }
     [Fact]
+    public void Batch_PiercingDarkCloud()
+    {
+        using var ind = new Wickra.PiercingDarkCloud();
+        CompareBatchRows("PiercingDarkCloud", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_PiercingDarkCloud()
     {
         using var ind = new Wickra.PiercingDarkCloud();
@@ -9037,6 +10963,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Pin(20);
         Assert.Equal("PIN", ind.Name());
         Compare("Pin", Drive_Pin(ind));
+    }
+    [Fact]
+    public void Batch_Pin()
+    {
+        using var ind = new Wickra.Pin(20);
+        CompareBatchRows("Pin", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
     }
     [Fact]
     public void Lifecycle_Pin()
@@ -9068,6 +11000,12 @@ public class GoldenAllTests
         Compare("PivotReversal", Drive_PivotReversal(ind));
     }
     [Fact]
+    public void Batch_PivotReversal()
+    {
+        using var ind = new Wickra.PivotReversal(3, 7);
+        CompareBatchRows("PivotReversal", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_PivotReversal()
     {
         using var ind = new Wickra.PivotReversal(3, 7);
@@ -9095,6 +11033,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PlusDi(14);
         Assert.Equal("PLUS_DI", ind.Name());
         Compare("PlusDi", Drive_PlusDi(ind));
+    }
+    [Fact]
+    public void Batch_PlusDi()
+    {
+        using var ind = new Wickra.PlusDi(14);
+        CompareBatchRows("PlusDi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_PlusDi()
@@ -9126,6 +11070,12 @@ public class GoldenAllTests
         Compare("PlusDm", Drive_PlusDm(ind));
     }
     [Fact]
+    public void Batch_PlusDm()
+    {
+        using var ind = new Wickra.PlusDm(14);
+        CompareBatchRows("PlusDm", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_PlusDm()
     {
         using var ind = new Wickra.PlusDm(14);
@@ -9153,6 +11103,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Pmo(3, 7);
         Assert.Equal("PMO", ind.Name());
         Compare("Pmo", Drive_Pmo(ind));
+    }
+    [Fact]
+    public void Batch_Pmo()
+    {
+        using var ind = new Wickra.Pmo(3, 7);
+        CompareBatchRows("Pmo", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Pmo()
@@ -9184,6 +11140,12 @@ public class GoldenAllTests
         Compare("PointAndFigureBars", Drive_PointAndFigureBars(ind));
     }
     [Fact]
+    public void Batch_PointAndFigureBars()
+    {
+        using var ind = new Wickra.PointAndFigureBars(2.0, 3);
+        CompareBatchFlat("PointAndFigureBars", FlattenBars(ind.Batch(Close, Close, Close, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_PointAndFigureBars()
     {
         using var ind = new Wickra.PointAndFigureBars(2.0, 3);
@@ -9207,6 +11169,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PolarizedFractalEfficiency(10, 5);
         Assert.Equal("PolarizedFractalEfficiency", ind.Name());
         Compare("PolarizedFractalEfficiency", Drive_PolarizedFractalEfficiency(ind));
+    }
+    [Fact]
+    public void Batch_PolarizedFractalEfficiency()
+    {
+        using var ind = new Wickra.PolarizedFractalEfficiency(10, 5);
+        CompareBatchRows("PolarizedFractalEfficiency", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_PolarizedFractalEfficiency()
@@ -9238,6 +11206,12 @@ public class GoldenAllTests
         Compare("Ppo", Drive_Ppo(ind));
     }
     [Fact]
+    public void Batch_Ppo()
+    {
+        using var ind = new Wickra.Ppo(3, 7);
+        CompareBatchRows("Ppo", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Ppo()
     {
         using var ind = new Wickra.Ppo(3, 7);
@@ -9265,6 +11239,12 @@ public class GoldenAllTests
         using var ind = new Wickra.PpoHistogram(3, 7, 14);
         Assert.Equal("PpoHistogram", ind.Name());
         Compare("PpoHistogram", Drive_PpoHistogram(ind));
+    }
+    [Fact]
+    public void Batch_PpoHistogram()
+    {
+        using var ind = new Wickra.PpoHistogram(3, 7, 14);
+        CompareBatchRows("PpoHistogram", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_PpoHistogram()
@@ -9296,6 +11276,12 @@ public class GoldenAllTests
         Compare("ProfileShape", Drive_ProfileShape(ind));
     }
     [Fact]
+    public void Batch_ProfileShape()
+    {
+        using var ind = new Wickra.ProfileShape(3, 7);
+        CompareBatchRows("ProfileShape", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ProfileShape()
     {
         using var ind = new Wickra.ProfileShape(3, 7);
@@ -9325,6 +11311,12 @@ public class GoldenAllTests
         Compare("ProfitFactor", Drive_ProfitFactor(ind));
     }
     [Fact]
+    public void Batch_ProfitFactor()
+    {
+        using var ind = new Wickra.ProfitFactor(14);
+        CompareBatchRows("ProfitFactor", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_ProfitFactor()
     {
         using var ind = new Wickra.ProfitFactor(14);
@@ -9351,6 +11343,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ProjectionBands(14);
         Assert.Equal("ProjectionBands", ind.Name());
         Compare("ProjectionBands", Drive_ProjectionBands(ind));
+    }
+    [Fact]
+    public void Batch_ProjectionBands()
+    {
+        using var ind = new Wickra.ProjectionBands(14);
+        CompareBatchRows("ProjectionBands", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ProjectionBands()
@@ -9382,6 +11380,12 @@ public class GoldenAllTests
         Compare("ProjectionOscillator", Drive_ProjectionOscillator(ind));
     }
     [Fact]
+    public void Batch_ProjectionOscillator()
+    {
+        using var ind = new Wickra.ProjectionOscillator(14);
+        CompareBatchRows("ProjectionOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ProjectionOscillator()
     {
         using var ind = new Wickra.ProjectionOscillator(14);
@@ -9409,6 +11413,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Psar(0.02, 0.02, 0.2);
         Assert.Equal("PSAR", ind.Name());
         Compare("Psar", Drive_Psar(ind));
+    }
+    [Fact]
+    public void Batch_Psar()
+    {
+        using var ind = new Wickra.Psar(0.02, 0.02, 0.2);
+        CompareBatchRows("Psar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Psar()
@@ -9440,6 +11450,12 @@ public class GoldenAllTests
         Compare("Pvi", Drive_Pvi(ind));
     }
     [Fact]
+    public void Batch_Pvi()
+    {
+        using var ind = new Wickra.Pvi();
+        CompareBatchRows("Pvi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Pvi()
     {
         using var ind = new Wickra.Pvi();
@@ -9467,6 +11483,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Qqe(3, 7, 2.0);
         Assert.Equal("QQE", ind.Name());
         Compare("Qqe", Drive_Qqe(ind));
+    }
+    [Fact]
+    public void Batch_Qqe()
+    {
+        using var ind = new Wickra.Qqe(3, 7, 2.0);
+        CompareBatchRows("Qqe", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Qqe()
@@ -9498,6 +11520,12 @@ public class GoldenAllTests
         Compare("Qstick", Drive_Qstick(ind));
     }
     [Fact]
+    public void Batch_Qstick()
+    {
+        using var ind = new Wickra.Qstick(14);
+        CompareBatchRows("Qstick", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Qstick()
     {
         using var ind = new Wickra.Qstick(14);
@@ -9525,6 +11553,12 @@ public class GoldenAllTests
         using var ind = new Wickra.QuartileBands(14);
         Assert.Equal("QuartileBands", ind.Name());
         Compare("QuartileBands", Drive_QuartileBands(ind));
+    }
+    [Fact]
+    public void Batch_QuartileBands()
+    {
+        using var ind = new Wickra.QuartileBands(14);
+        CompareBatchRows("QuartileBands", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_QuartileBands()
@@ -9557,6 +11591,12 @@ public class GoldenAllTests
         Compare("QuotedSpread", Drive_QuotedSpread(ind));
     }
     [Fact]
+    public void Batch_QuotedSpread()
+    {
+        using var ind = new Wickra.QuotedSpread();
+        CompareBatchRows("QuotedSpread", ScalarRows(ind.Batch(FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth)));
+    }
+    [Fact]
     public void Lifecycle_QuotedSpread()
     {
         using var ind = new Wickra.QuotedSpread();
@@ -9584,6 +11624,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RSquared(14);
         Assert.Equal("RSquared", ind.Name());
         Compare("RSquared", Drive_RSquared(ind));
+    }
+    [Fact]
+    public void Batch_RSquared()
+    {
+        using var ind = new Wickra.RSquared(14);
+        CompareBatchRows("RSquared", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_RSquared()
@@ -9615,6 +11661,12 @@ public class GoldenAllTests
         Compare("RangeBars", Drive_RangeBars(ind));
     }
     [Fact]
+    public void Batch_RangeBars()
+    {
+        using var ind = new Wickra.RangeBars(2.0);
+        CompareBatchFlat("RangeBars", FlattenBars(ind.Batch(Close, Close, Close, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_RangeBars()
     {
         using var ind = new Wickra.RangeBars(2.0);
@@ -9638,6 +11690,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RealizedSpread(20);
         Assert.Equal("RealizedSpread", ind.Name());
         Compare("RealizedSpread", Drive_RealizedSpread(ind));
+    }
+    [Fact]
+    public void Batch_RealizedSpread()
+    {
+        using var ind = new Wickra.RealizedSpread(20);
+        CompareBatchRows("RealizedSpread", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps, Mids)));
     }
     [Fact]
     public void Lifecycle_RealizedSpread()
@@ -9669,6 +11727,12 @@ public class GoldenAllTests
         Compare("RealizedVolatility", Drive_RealizedVolatility(ind));
     }
     [Fact]
+    public void Batch_RealizedVolatility()
+    {
+        using var ind = new Wickra.RealizedVolatility(14);
+        CompareBatchRows("RealizedVolatility", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_RealizedVolatility()
     {
         using var ind = new Wickra.RealizedVolatility(14);
@@ -9696,6 +11760,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RecoveryFactor();
         Assert.Equal("RecoveryFactor", ind.Name());
         Compare("RecoveryFactor", Drive_RecoveryFactor(ind));
+    }
+    [Fact]
+    public void Batch_RecoveryFactor()
+    {
+        using var ind = new Wickra.RecoveryFactor();
+        CompareBatchRows("RecoveryFactor", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_RecoveryFactor()
@@ -9727,6 +11797,12 @@ public class GoldenAllTests
         Compare("RectangleRange", Drive_RectangleRange(ind));
     }
     [Fact]
+    public void Batch_RectangleRange()
+    {
+        using var ind = new Wickra.RectangleRange();
+        CompareBatchRows("RectangleRange", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_RectangleRange()
     {
         using var ind = new Wickra.RectangleRange();
@@ -9754,6 +11830,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Reflex(14);
         Assert.Equal("Reflex", ind.Name());
         Compare("Reflex", Drive_Reflex(ind));
+    }
+    [Fact]
+    public void Batch_Reflex()
+    {
+        using var ind = new Wickra.Reflex(14);
+        CompareBatchRows("Reflex", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Reflex()
@@ -9785,6 +11867,12 @@ public class GoldenAllTests
         Compare("RegimeLabel", Drive_RegimeLabel(ind));
     }
     [Fact]
+    public void Batch_RegimeLabel()
+    {
+        using var ind = new Wickra.RegimeLabel(3, 7);
+        CompareBatchRows("RegimeLabel", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_RegimeLabel()
     {
         using var ind = new Wickra.RegimeLabel(3, 7);
@@ -9812,6 +11900,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RelativeStrengthAB(14, 14);
         Assert.Equal("RelativeStrengthAB", ind.Name());
         Compare("RelativeStrengthAB", Drive_RelativeStrengthAB(ind));
+    }
+    [Fact]
+    public void Batch_RelativeStrengthAB()
+    {
+        using var ind = new Wickra.RelativeStrengthAB(14, 14);
+        CompareBatchRows("RelativeStrengthAB", RecordRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_RelativeStrengthAB()
@@ -9843,6 +11937,12 @@ public class GoldenAllTests
         Compare("RenkoBars", Drive_RenkoBars(ind));
     }
     [Fact]
+    public void Batch_RenkoBars()
+    {
+        using var ind = new Wickra.RenkoBars(2.0);
+        CompareBatchFlat("RenkoBars", FlattenBars(ind.Batch(Close, Close, Close, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_RenkoBars()
     {
         using var ind = new Wickra.RenkoBars(2.0);
@@ -9866,6 +11966,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RenkoTrailingStop(2.0);
         Assert.Equal("RenkoTrailingStop", ind.Name());
         Compare("RenkoTrailingStop", Drive_RenkoTrailingStop(ind));
+    }
+    [Fact]
+    public void Batch_RenkoTrailingStop()
+    {
+        using var ind = new Wickra.RenkoTrailingStop(2.0);
+        CompareBatchRows("RenkoTrailingStop", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_RenkoTrailingStop()
@@ -9897,6 +12003,12 @@ public class GoldenAllTests
         Compare("RickshawMan", Drive_RickshawMan(ind));
     }
     [Fact]
+    public void Batch_RickshawMan()
+    {
+        using var ind = new Wickra.RickshawMan();
+        CompareBatchRows("RickshawMan", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_RickshawMan()
     {
         using var ind = new Wickra.RickshawMan();
@@ -9924,6 +12036,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RisingThreeMethods();
         Assert.Equal("RisingThreeMethods", ind.Name());
         Compare("RisingThreeMethods", Drive_RisingThreeMethods(ind));
+    }
+    [Fact]
+    public void Batch_RisingThreeMethods()
+    {
+        using var ind = new Wickra.RisingThreeMethods();
+        CompareBatchRows("RisingThreeMethods", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_RisingThreeMethods()
@@ -9955,6 +12073,12 @@ public class GoldenAllTests
         Compare("Rmi", Drive_Rmi(ind));
     }
     [Fact]
+    public void Batch_Rmi()
+    {
+        using var ind = new Wickra.Rmi(3, 7);
+        CompareBatchRows("Rmi", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Rmi()
     {
         using var ind = new Wickra.Rmi(3, 7);
@@ -9982,6 +12106,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Roc(14);
         Assert.Equal("ROC", ind.Name());
         Compare("Roc", Drive_Roc(ind));
+    }
+    [Fact]
+    public void Batch_Roc()
+    {
+        using var ind = new Wickra.Roc(14);
+        CompareBatchRows("Roc", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Roc()
@@ -10013,6 +12143,12 @@ public class GoldenAllTests
         Compare("Rocp", Drive_Rocp(ind));
     }
     [Fact]
+    public void Batch_Rocp()
+    {
+        using var ind = new Wickra.Rocp(14);
+        CompareBatchRows("Rocp", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Rocp()
     {
         using var ind = new Wickra.Rocp(14);
@@ -10040,6 +12176,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Rocr(14);
         Assert.Equal("ROCR", ind.Name());
         Compare("Rocr", Drive_Rocr(ind));
+    }
+    [Fact]
+    public void Batch_Rocr()
+    {
+        using var ind = new Wickra.Rocr(14);
+        CompareBatchRows("Rocr", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Rocr()
@@ -10071,6 +12213,12 @@ public class GoldenAllTests
         Compare("Rocr100", Drive_Rocr100(ind));
     }
     [Fact]
+    public void Batch_Rocr100()
+    {
+        using var ind = new Wickra.Rocr100(14);
+        CompareBatchRows("Rocr100", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Rocr100()
     {
         using var ind = new Wickra.Rocr100(14);
@@ -10098,6 +12246,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RogersSatchellVolatility(20, 252);
         Assert.Equal("RogersSatchellVolatility", ind.Name());
         Compare("RogersSatchellVolatility", Drive_RogersSatchellVolatility(ind));
+    }
+    [Fact]
+    public void Batch_RogersSatchellVolatility()
+    {
+        using var ind = new Wickra.RogersSatchellVolatility(20, 252);
+        CompareBatchRows("RogersSatchellVolatility", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_RogersSatchellVolatility()
@@ -10129,6 +12283,12 @@ public class GoldenAllTests
         Compare("RollMeasure", Drive_RollMeasure(ind));
     }
     [Fact]
+    public void Batch_RollMeasure()
+    {
+        using var ind = new Wickra.RollMeasure(20);
+        CompareBatchRows("RollMeasure", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_RollMeasure()
     {
         using var ind = new Wickra.RollMeasure(20);
@@ -10156,6 +12316,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RollingCorrelation(14);
         Assert.Equal("RollingCorrelation", ind.Name());
         Compare("RollingCorrelation", Drive_RollingCorrelation(ind));
+    }
+    [Fact]
+    public void Batch_RollingCorrelation()
+    {
+        using var ind = new Wickra.RollingCorrelation(14);
+        CompareBatchRows("RollingCorrelation", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_RollingCorrelation()
@@ -10187,6 +12353,12 @@ public class GoldenAllTests
         Compare("RollingCovariance", Drive_RollingCovariance(ind));
     }
     [Fact]
+    public void Batch_RollingCovariance()
+    {
+        using var ind = new Wickra.RollingCovariance(14);
+        CompareBatchRows("RollingCovariance", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_RollingCovariance()
     {
         using var ind = new Wickra.RollingCovariance(14);
@@ -10214,6 +12386,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RollingIqr(14);
         Assert.Equal("RollingIqr", ind.Name());
         Compare("RollingIqr", Drive_RollingIqr(ind));
+    }
+    [Fact]
+    public void Batch_RollingIqr()
+    {
+        using var ind = new Wickra.RollingIqr(14);
+        CompareBatchRows("RollingIqr", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_RollingIqr()
@@ -10245,6 +12423,12 @@ public class GoldenAllTests
         Compare("RollingMinMaxScaler", Drive_RollingMinMaxScaler(ind));
     }
     [Fact]
+    public void Batch_RollingMinMaxScaler()
+    {
+        using var ind = new Wickra.RollingMinMaxScaler(14);
+        CompareBatchRows("RollingMinMaxScaler", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_RollingMinMaxScaler()
     {
         using var ind = new Wickra.RollingMinMaxScaler(14);
@@ -10272,6 +12456,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RollingPercentileRank(14);
         Assert.Equal("RollingPercentileRank", ind.Name());
         Compare("RollingPercentileRank", Drive_RollingPercentileRank(ind));
+    }
+    [Fact]
+    public void Batch_RollingPercentileRank()
+    {
+        using var ind = new Wickra.RollingPercentileRank(14);
+        CompareBatchRows("RollingPercentileRank", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_RollingPercentileRank()
@@ -10303,6 +12493,12 @@ public class GoldenAllTests
         Compare("RollingQuantile", Drive_RollingQuantile(ind));
     }
     [Fact]
+    public void Batch_RollingQuantile()
+    {
+        using var ind = new Wickra.RollingQuantile(20, 0.5);
+        CompareBatchRows("RollingQuantile", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_RollingQuantile()
     {
         using var ind = new Wickra.RollingQuantile(20, 0.5);
@@ -10330,6 +12526,12 @@ public class GoldenAllTests
         using var ind = new Wickra.RollingVwap(14);
         Assert.Equal("RollingVWAP", ind.Name());
         Compare("RollingVwap", Drive_RollingVwap(ind));
+    }
+    [Fact]
+    public void Batch_RollingVwap()
+    {
+        using var ind = new Wickra.RollingVwap(14);
+        CompareBatchRows("RollingVwap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_RollingVwap()
@@ -10361,6 +12563,12 @@ public class GoldenAllTests
         Compare("RoofingFilter", Drive_RoofingFilter(ind));
     }
     [Fact]
+    public void Batch_RoofingFilter()
+    {
+        using var ind = new Wickra.RoofingFilter(3, 7);
+        CompareBatchRows("RoofingFilter", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_RoofingFilter()
     {
         using var ind = new Wickra.RoofingFilter(3, 7);
@@ -10388,6 +12596,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Rsi(14);
         Assert.Equal("RSI", ind.Name());
         Compare("Rsi", Drive_Rsi(ind));
+    }
+    [Fact]
+    public void Batch_Rsi()
+    {
+        using var ind = new Wickra.Rsi(14);
+        CompareBatchRows("Rsi", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Rsi()
@@ -10419,6 +12633,12 @@ public class GoldenAllTests
         Compare("Rsx", Drive_Rsx(ind));
     }
     [Fact]
+    public void Batch_Rsx()
+    {
+        using var ind = new Wickra.Rsx(14);
+        CompareBatchRows("Rsx", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Rsx()
     {
         using var ind = new Wickra.Rsx(14);
@@ -10448,6 +12668,12 @@ public class GoldenAllTests
         Compare("RunBars", Drive_RunBars(ind));
     }
     [Fact]
+    public void Batch_RunBars()
+    {
+        using var ind = new Wickra.RunBars(3);
+        CompareBatchFlat("RunBars", FlattenBars(ind.Batch(Open, High, Low, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_RunBars()
     {
         using var ind = new Wickra.RunBars(3);
@@ -10471,6 +12697,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Rvi(14);
         Assert.Equal("RVI", ind.Name());
         Compare("Rvi", Drive_Rvi(ind));
+    }
+    [Fact]
+    public void Batch_Rvi()
+    {
+        using var ind = new Wickra.Rvi(14);
+        CompareBatchRows("Rvi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Rvi()
@@ -10502,6 +12734,12 @@ public class GoldenAllTests
         Compare("RviVolatility", Drive_RviVolatility(ind));
     }
     [Fact]
+    public void Batch_RviVolatility()
+    {
+        using var ind = new Wickra.RviVolatility(14);
+        CompareBatchRows("RviVolatility", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_RviVolatility()
     {
         using var ind = new Wickra.RviVolatility(14);
@@ -10529,6 +12767,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Rwi(14);
         Assert.Equal("RWI", ind.Name());
         Compare("Rwi", Drive_Rwi(ind));
+    }
+    [Fact]
+    public void Batch_Rwi()
+    {
+        using var ind = new Wickra.Rwi(14);
+        CompareBatchRows("Rwi", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Rwi()
@@ -10560,6 +12804,12 @@ public class GoldenAllTests
         Compare("SampleEntropy", Drive_SampleEntropy(ind));
     }
     [Fact]
+    public void Batch_SampleEntropy()
+    {
+        using var ind = new Wickra.SampleEntropy(20, 2, 0.2);
+        CompareBatchRows("SampleEntropy", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_SampleEntropy()
     {
         using var ind = new Wickra.SampleEntropy(20, 2, 0.2);
@@ -10587,6 +12837,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5);
         Assert.Equal("SAREXT", ind.Name());
         Compare("SarExt", Drive_SarExt(ind));
+    }
+    [Fact]
+    public void Batch_SarExt()
+    {
+        using var ind = new Wickra.SarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5);
+        CompareBatchRows("SarExt", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_SarExt()
@@ -10618,6 +12874,12 @@ public class GoldenAllTests
         Compare("SeasonalZScore", Drive_SeasonalZScore(ind));
     }
     [Fact]
+    public void Batch_SeasonalZScore()
+    {
+        using var ind = new Wickra.SeasonalZScore(14);
+        CompareBatchRows("SeasonalZScore", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_SeasonalZScore()
     {
         using var ind = new Wickra.SeasonalZScore(14);
@@ -10645,6 +12907,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SeparatingLines();
         Assert.Equal("SeparatingLines", ind.Name());
         Compare("SeparatingLines", Drive_SeparatingLines(ind));
+    }
+    [Fact]
+    public void Batch_SeparatingLines()
+    {
+        using var ind = new Wickra.SeparatingLines();
+        CompareBatchRows("SeparatingLines", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_SeparatingLines()
@@ -10676,6 +12944,12 @@ public class GoldenAllTests
         Compare("SessionHighLow", Drive_SessionHighLow(ind));
     }
     [Fact]
+    public void Batch_SessionHighLow()
+    {
+        using var ind = new Wickra.SessionHighLow(14);
+        CompareBatchRows("SessionHighLow", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_SessionHighLow()
     {
         using var ind = new Wickra.SessionHighLow(14);
@@ -10703,6 +12977,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SessionRange(14);
         Assert.Equal("SessionRange", ind.Name());
         Compare("SessionRange", Drive_SessionRange(ind));
+    }
+    [Fact]
+    public void Batch_SessionRange()
+    {
+        using var ind = new Wickra.SessionRange(14);
+        CompareBatchRows("SessionRange", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_SessionRange()
@@ -10734,6 +13014,12 @@ public class GoldenAllTests
         Compare("SessionVwap", Drive_SessionVwap(ind));
     }
     [Fact]
+    public void Batch_SessionVwap()
+    {
+        using var ind = new Wickra.SessionVwap(14);
+        CompareBatchRows("SessionVwap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_SessionVwap()
     {
         using var ind = new Wickra.SessionVwap(14);
@@ -10761,6 +13047,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ShannonEntropy(3, 7);
         Assert.Equal("ShannonEntropy", ind.Name());
         Compare("ShannonEntropy", Drive_ShannonEntropy(ind));
+    }
+    [Fact]
+    public void Batch_ShannonEntropy()
+    {
+        using var ind = new Wickra.ShannonEntropy(3, 7);
+        CompareBatchRows("ShannonEntropy", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_ShannonEntropy()
@@ -10792,6 +13084,12 @@ public class GoldenAllTests
         Compare("Shark", Drive_Shark(ind));
     }
     [Fact]
+    public void Batch_Shark()
+    {
+        using var ind = new Wickra.Shark();
+        CompareBatchRows("Shark", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Shark()
     {
         using var ind = new Wickra.Shark();
@@ -10819,6 +13117,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SharpeRatio(14, 2.0);
         Assert.Equal("SharpeRatio", ind.Name());
         Compare("SharpeRatio", Drive_SharpeRatio(ind));
+    }
+    [Fact]
+    public void Batch_SharpeRatio()
+    {
+        using var ind = new Wickra.SharpeRatio(14, 2.0);
+        CompareBatchRows("SharpeRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_SharpeRatio()
@@ -10850,6 +13154,12 @@ public class GoldenAllTests
         Compare("ShootingStar", Drive_ShootingStar(ind));
     }
     [Fact]
+    public void Batch_ShootingStar()
+    {
+        using var ind = new Wickra.ShootingStar();
+        CompareBatchRows("ShootingStar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ShootingStar()
     {
         using var ind = new Wickra.ShootingStar();
@@ -10877,6 +13187,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ShortLine();
         Assert.Equal("ShortLine", ind.Name());
         Compare("ShortLine", Drive_ShortLine(ind));
+    }
+    [Fact]
+    public void Batch_ShortLine()
+    {
+        using var ind = new Wickra.ShortLine();
+        CompareBatchRows("ShortLine", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ShortLine()
@@ -10908,6 +13224,12 @@ public class GoldenAllTests
         Compare("SignedVolume", Drive_SignedVolume(ind));
     }
     [Fact]
+    public void Batch_SignedVolume()
+    {
+        using var ind = new Wickra.SignedVolume();
+        CompareBatchRows("SignedVolume", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_SignedVolume()
     {
         using var ind = new Wickra.SignedVolume();
@@ -10935,6 +13257,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SineWave();
         Assert.Equal("SineWave", ind.Name());
         Compare("SineWave", Drive_SineWave(ind));
+    }
+    [Fact]
+    public void Batch_SineWave()
+    {
+        using var ind = new Wickra.SineWave();
+        CompareBatchRows("SineWave", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_SineWave()
@@ -10966,6 +13294,12 @@ public class GoldenAllTests
         Compare("SineWeightedMa", Drive_SineWeightedMa(ind));
     }
     [Fact]
+    public void Batch_SineWeightedMa()
+    {
+        using var ind = new Wickra.SineWeightedMa(14);
+        CompareBatchRows("SineWeightedMa", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_SineWeightedMa()
     {
         using var ind = new Wickra.SineWeightedMa(14);
@@ -10993,6 +13327,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SinglePrints(3, 7);
         Assert.Equal("SinglePrints", ind.Name());
         Compare("SinglePrints", Drive_SinglePrints(ind));
+    }
+    [Fact]
+    public void Batch_SinglePrints()
+    {
+        using var ind = new Wickra.SinglePrints(3, 7);
+        CompareBatchRows("SinglePrints", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_SinglePrints()
@@ -11024,6 +13364,12 @@ public class GoldenAllTests
         Compare("Skewness", Drive_Skewness(ind));
     }
     [Fact]
+    public void Batch_Skewness()
+    {
+        using var ind = new Wickra.Skewness(14);
+        CompareBatchRows("Skewness", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Skewness()
     {
         using var ind = new Wickra.Skewness(14);
@@ -11051,6 +13397,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Sma(14);
         Assert.Equal("SMA", ind.Name());
         Compare("Sma", Drive_Sma(ind));
+    }
+    [Fact]
+    public void Batch_Sma()
+    {
+        using var ind = new Wickra.Sma(14);
+        CompareBatchRows("Sma", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Sma()
@@ -11082,6 +13434,12 @@ public class GoldenAllTests
         Compare("Smi", Drive_Smi(ind));
     }
     [Fact]
+    public void Batch_Smi()
+    {
+        using var ind = new Wickra.Smi(3, 7, 14);
+        CompareBatchRows("Smi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Smi()
     {
         using var ind = new Wickra.Smi(3, 7, 14);
@@ -11109,6 +13467,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Smma(14);
         Assert.Equal("SMMA", ind.Name());
         Compare("Smma", Drive_Smma(ind));
+    }
+    [Fact]
+    public void Batch_Smma()
+    {
+        using var ind = new Wickra.Smma(14);
+        CompareBatchRows("Smma", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Smma()
@@ -11140,6 +13504,12 @@ public class GoldenAllTests
         Compare("SmoothedHeikinAshi", Drive_SmoothedHeikinAshi(ind));
     }
     [Fact]
+    public void Batch_SmoothedHeikinAshi()
+    {
+        using var ind = new Wickra.SmoothedHeikinAshi(14);
+        CompareBatchRows("SmoothedHeikinAshi", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_SmoothedHeikinAshi()
     {
         using var ind = new Wickra.SmoothedHeikinAshi(14);
@@ -11167,6 +13537,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SortinoRatio(14, 2.0);
         Assert.Equal("SortinoRatio", ind.Name());
         Compare("SortinoRatio", Drive_SortinoRatio(ind));
+    }
+    [Fact]
+    public void Batch_SortinoRatio()
+    {
+        using var ind = new Wickra.SortinoRatio(14, 2.0);
+        CompareBatchRows("SortinoRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_SortinoRatio()
@@ -11198,6 +13574,12 @@ public class GoldenAllTests
         Compare("SpearmanCorrelation", Drive_SpearmanCorrelation(ind));
     }
     [Fact]
+    public void Batch_SpearmanCorrelation()
+    {
+        using var ind = new Wickra.SpearmanCorrelation(14);
+        CompareBatchRows("SpearmanCorrelation", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_SpearmanCorrelation()
     {
         using var ind = new Wickra.SpearmanCorrelation(14);
@@ -11225,6 +13607,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SpinningTop();
         Assert.Equal("SpinningTop", ind.Name());
         Compare("SpinningTop", Drive_SpinningTop(ind));
+    }
+    [Fact]
+    public void Batch_SpinningTop()
+    {
+        using var ind = new Wickra.SpinningTop();
+        CompareBatchRows("SpinningTop", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_SpinningTop()
@@ -11256,6 +13644,12 @@ public class GoldenAllTests
         Compare("SpreadAr1Coefficient", Drive_SpreadAr1Coefficient(ind));
     }
     [Fact]
+    public void Batch_SpreadAr1Coefficient()
+    {
+        using var ind = new Wickra.SpreadAr1Coefficient(14);
+        CompareBatchRows("SpreadAr1Coefficient", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_SpreadAr1Coefficient()
     {
         using var ind = new Wickra.SpreadAr1Coefficient(14);
@@ -11283,6 +13677,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SpreadBollingerBands(14, 2.0);
         Assert.Equal("SpreadBollingerBands", ind.Name());
         Compare("SpreadBollingerBands", Drive_SpreadBollingerBands(ind));
+    }
+    [Fact]
+    public void Batch_SpreadBollingerBands()
+    {
+        using var ind = new Wickra.SpreadBollingerBands(14, 2.0);
+        CompareBatchRows("SpreadBollingerBands", RecordRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_SpreadBollingerBands()
@@ -11314,6 +13714,12 @@ public class GoldenAllTests
         Compare("SpreadHurst", Drive_SpreadHurst(ind));
     }
     [Fact]
+    public void Batch_SpreadHurst()
+    {
+        using var ind = new Wickra.SpreadHurst(14);
+        CompareBatchRows("SpreadHurst", ScalarRows(ind.Batch(Close, Open)));
+    }
+    [Fact]
     public void Lifecycle_SpreadHurst()
     {
         using var ind = new Wickra.SpreadHurst(14);
@@ -11341,6 +13747,12 @@ public class GoldenAllTests
         using var ind = new Wickra.StalledPattern();
         Assert.Equal("StalledPattern", ind.Name());
         Compare("StalledPattern", Drive_StalledPattern(ind));
+    }
+    [Fact]
+    public void Batch_StalledPattern()
+    {
+        using var ind = new Wickra.StalledPattern();
+        CompareBatchRows("StalledPattern", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_StalledPattern()
@@ -11372,6 +13784,12 @@ public class GoldenAllTests
         Compare("StandardError", Drive_StandardError(ind));
     }
     [Fact]
+    public void Batch_StandardError()
+    {
+        using var ind = new Wickra.StandardError(14);
+        CompareBatchRows("StandardError", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_StandardError()
     {
         using var ind = new Wickra.StandardError(14);
@@ -11399,6 +13817,12 @@ public class GoldenAllTests
         using var ind = new Wickra.StandardErrorBands(14, 2.0);
         Assert.Equal("StandardErrorBands", ind.Name());
         Compare("StandardErrorBands", Drive_StandardErrorBands(ind));
+    }
+    [Fact]
+    public void Batch_StandardErrorBands()
+    {
+        using var ind = new Wickra.StandardErrorBands(14, 2.0);
+        CompareBatchRows("StandardErrorBands", RecordRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_StandardErrorBands()
@@ -11430,6 +13854,12 @@ public class GoldenAllTests
         Compare("StarcBands", Drive_StarcBands(ind));
     }
     [Fact]
+    public void Batch_StarcBands()
+    {
+        using var ind = new Wickra.StarcBands(3, 7, 2.0);
+        CompareBatchRows("StarcBands", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_StarcBands()
     {
         using var ind = new Wickra.StarcBands(3, 7, 2.0);
@@ -11457,6 +13887,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Stc(10, 23, 10, 0.5);
         Assert.Equal("STC", ind.Name());
         Compare("Stc", Drive_Stc(ind));
+    }
+    [Fact]
+    public void Batch_Stc()
+    {
+        using var ind = new Wickra.Stc(10, 23, 10, 0.5);
+        CompareBatchRows("Stc", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Stc()
@@ -11488,6 +13924,12 @@ public class GoldenAllTests
         Compare("StdDev", Drive_StdDev(ind));
     }
     [Fact]
+    public void Batch_StdDev()
+    {
+        using var ind = new Wickra.StdDev(14);
+        CompareBatchRows("StdDev", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_StdDev()
     {
         using var ind = new Wickra.StdDev(14);
@@ -11515,6 +13957,12 @@ public class GoldenAllTests
         using var ind = new Wickra.StepTrailingStop(2.0);
         Assert.Equal("StepTrailingStop", ind.Name());
         Compare("StepTrailingStop", Drive_StepTrailingStop(ind));
+    }
+    [Fact]
+    public void Batch_StepTrailingStop()
+    {
+        using var ind = new Wickra.StepTrailingStop(2.0);
+        CompareBatchRows("StepTrailingStop", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_StepTrailingStop()
@@ -11546,6 +13994,12 @@ public class GoldenAllTests
         Compare("SterlingRatio", Drive_SterlingRatio(ind));
     }
     [Fact]
+    public void Batch_SterlingRatio()
+    {
+        using var ind = new Wickra.SterlingRatio(14);
+        CompareBatchRows("SterlingRatio", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_SterlingRatio()
     {
         using var ind = new Wickra.SterlingRatio(14);
@@ -11573,6 +14027,12 @@ public class GoldenAllTests
         using var ind = new Wickra.StickSandwich();
         Assert.Equal("StickSandwich", ind.Name());
         Compare("StickSandwich", Drive_StickSandwich(ind));
+    }
+    [Fact]
+    public void Batch_StickSandwich()
+    {
+        using var ind = new Wickra.StickSandwich();
+        CompareBatchRows("StickSandwich", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_StickSandwich()
@@ -11604,6 +14064,12 @@ public class GoldenAllTests
         Compare("StochRsi", Drive_StochRsi(ind));
     }
     [Fact]
+    public void Batch_StochRsi()
+    {
+        using var ind = new Wickra.StochRsi(3, 7);
+        CompareBatchRows("StochRsi", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_StochRsi()
     {
         using var ind = new Wickra.StochRsi(3, 7);
@@ -11631,6 +14097,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Stochastic(3, 7);
         Assert.Equal("Stochastic", ind.Name());
         Compare("Stochastic", Drive_Stochastic(ind));
+    }
+    [Fact]
+    public void Batch_Stochastic()
+    {
+        using var ind = new Wickra.Stochastic(3, 7);
+        CompareBatchRows("Stochastic", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Stochastic()
@@ -11662,6 +14134,12 @@ public class GoldenAllTests
         Compare("StochasticCci", Drive_StochasticCci(ind));
     }
     [Fact]
+    public void Batch_StochasticCci()
+    {
+        using var ind = new Wickra.StochasticCci(14);
+        CompareBatchRows("StochasticCci", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_StochasticCci()
     {
         using var ind = new Wickra.StochasticCci(14);
@@ -11689,6 +14167,12 @@ public class GoldenAllTests
         using var ind = new Wickra.SuperSmoother(14);
         Assert.Equal("SuperSmoother", ind.Name());
         Compare("SuperSmoother", Drive_SuperSmoother(ind));
+    }
+    [Fact]
+    public void Batch_SuperSmoother()
+    {
+        using var ind = new Wickra.SuperSmoother(14);
+        CompareBatchRows("SuperSmoother", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_SuperSmoother()
@@ -11720,6 +14204,12 @@ public class GoldenAllTests
         Compare("SuperTrend", Drive_SuperTrend(ind));
     }
     [Fact]
+    public void Batch_SuperTrend()
+    {
+        using var ind = new Wickra.SuperTrend(14, 2.0);
+        CompareBatchRows("SuperTrend", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_SuperTrend()
     {
         using var ind = new Wickra.SuperTrend(14, 2.0);
@@ -11749,6 +14239,12 @@ public class GoldenAllTests
         Compare("T3", Drive_T3(ind));
     }
     [Fact]
+    public void Batch_T3()
+    {
+        using var ind = new Wickra.T3(5, 0.7);
+        CompareBatchRows("T3", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_T3()
     {
         using var ind = new Wickra.T3(5, 0.7);
@@ -11776,6 +14272,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TailRatio(14);
         Assert.Equal("TailRatio", ind.Name());
         Compare("TailRatio", Drive_TailRatio(ind));
+    }
+    [Fact]
+    public void Batch_TailRatio()
+    {
+        using var ind = new Wickra.TailRatio(14);
+        CompareBatchRows("TailRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_TailRatio()
@@ -11808,6 +14310,12 @@ public class GoldenAllTests
         Compare("TakerBuySellRatio", Drive_TakerBuySellRatio(ind));
     }
     [Fact]
+    public void Batch_TakerBuySellRatio()
+    {
+        using var ind = new Wickra.TakerBuySellRatio();
+        CompareBatchRows("TakerBuySellRatio", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TakerBuySellRatio()
     {
         using var ind = new Wickra.TakerBuySellRatio();
@@ -11835,6 +14343,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Takuri();
         Assert.Equal("Takuri", ind.Name());
         Compare("Takuri", Drive_Takuri(ind));
+    }
+    [Fact]
+    public void Batch_Takuri()
+    {
+        using var ind = new Wickra.Takuri();
+        CompareBatchRows("Takuri", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Takuri()
@@ -11866,6 +14380,12 @@ public class GoldenAllTests
         Compare("TasukiGap", Drive_TasukiGap(ind));
     }
     [Fact]
+    public void Batch_TasukiGap()
+    {
+        using var ind = new Wickra.TasukiGap();
+        CompareBatchRows("TasukiGap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TasukiGap()
     {
         using var ind = new Wickra.TasukiGap();
@@ -11893,6 +14413,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdCamouflage();
         Assert.Equal("TDCamouflage", ind.Name());
         Compare("TdCamouflage", Drive_TdCamouflage(ind));
+    }
+    [Fact]
+    public void Batch_TdCamouflage()
+    {
+        using var ind = new Wickra.TdCamouflage();
+        CompareBatchRows("TdCamouflage", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdCamouflage()
@@ -11924,6 +14450,12 @@ public class GoldenAllTests
         Compare("TdClop", Drive_TdClop(ind));
     }
     [Fact]
+    public void Batch_TdClop()
+    {
+        using var ind = new Wickra.TdClop();
+        CompareBatchRows("TdClop", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdClop()
     {
         using var ind = new Wickra.TdClop();
@@ -11951,6 +14483,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdClopwin();
         Assert.Equal("TDClopwin", ind.Name());
         Compare("TdClopwin", Drive_TdClopwin(ind));
+    }
+    [Fact]
+    public void Batch_TdClopwin()
+    {
+        using var ind = new Wickra.TdClopwin();
+        CompareBatchRows("TdClopwin", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdClopwin()
@@ -11982,6 +14520,12 @@ public class GoldenAllTests
         Compare("TdCombo", Drive_TdCombo(ind));
     }
     [Fact]
+    public void Batch_TdCombo()
+    {
+        using var ind = new Wickra.TdCombo(3, 7, 14, 28);
+        CompareBatchRows("TdCombo", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdCombo()
     {
         using var ind = new Wickra.TdCombo(3, 7, 14, 28);
@@ -12009,6 +14553,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdCountdown(3, 7, 14, 28);
         Assert.Equal("TDCountdown", ind.Name());
         Compare("TdCountdown", Drive_TdCountdown(ind));
+    }
+    [Fact]
+    public void Batch_TdCountdown()
+    {
+        using var ind = new Wickra.TdCountdown(3, 7, 14, 28);
+        CompareBatchRows("TdCountdown", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdCountdown()
@@ -12040,6 +14590,12 @@ public class GoldenAllTests
         Compare("TdDWave", Drive_TdDWave(ind));
     }
     [Fact]
+    public void Batch_TdDWave()
+    {
+        using var ind = new Wickra.TdDWave(2);
+        CompareBatchRows("TdDWave", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdDWave()
     {
         using var ind = new Wickra.TdDWave(2);
@@ -12067,6 +14623,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdDeMarker(14);
         Assert.Equal("TDDeMarker", ind.Name());
         Compare("TdDeMarker", Drive_TdDeMarker(ind));
+    }
+    [Fact]
+    public void Batch_TdDeMarker()
+    {
+        using var ind = new Wickra.TdDeMarker(14);
+        CompareBatchRows("TdDeMarker", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdDeMarker()
@@ -12098,6 +14660,12 @@ public class GoldenAllTests
         Compare("TdDifferential", Drive_TdDifferential(ind));
     }
     [Fact]
+    public void Batch_TdDifferential()
+    {
+        using var ind = new Wickra.TdDifferential();
+        CompareBatchRows("TdDifferential", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdDifferential()
     {
         using var ind = new Wickra.TdDifferential();
@@ -12125,6 +14693,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdLines(3, 7);
         Assert.Equal("TDLines", ind.Name());
         Compare("TdLines", Drive_TdLines(ind));
+    }
+    [Fact]
+    public void Batch_TdLines()
+    {
+        using var ind = new Wickra.TdLines(3, 7);
+        CompareBatchRows("TdLines", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdLines()
@@ -12156,6 +14730,12 @@ public class GoldenAllTests
         Compare("TdMovingAverage", Drive_TdMovingAverage(ind));
     }
     [Fact]
+    public void Batch_TdMovingAverage()
+    {
+        using var ind = new Wickra.TdMovingAverage(3, 7);
+        CompareBatchRows("TdMovingAverage", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdMovingAverage()
     {
         using var ind = new Wickra.TdMovingAverage(3, 7);
@@ -12183,6 +14763,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdOpen();
         Assert.Equal("TDOpen", ind.Name());
         Compare("TdOpen", Drive_TdOpen(ind));
+    }
+    [Fact]
+    public void Batch_TdOpen()
+    {
+        using var ind = new Wickra.TdOpen();
+        CompareBatchRows("TdOpen", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdOpen()
@@ -12214,6 +14800,12 @@ public class GoldenAllTests
         Compare("TdPressure", Drive_TdPressure(ind));
     }
     [Fact]
+    public void Batch_TdPressure()
+    {
+        using var ind = new Wickra.TdPressure(14);
+        CompareBatchRows("TdPressure", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdPressure()
     {
         using var ind = new Wickra.TdPressure(14);
@@ -12241,6 +14833,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdPropulsion();
         Assert.Equal("TDPropulsion", ind.Name());
         Compare("TdPropulsion", Drive_TdPropulsion(ind));
+    }
+    [Fact]
+    public void Batch_TdPropulsion()
+    {
+        using var ind = new Wickra.TdPropulsion();
+        CompareBatchRows("TdPropulsion", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdPropulsion()
@@ -12272,6 +14870,12 @@ public class GoldenAllTests
         Compare("TdRangeProjection", Drive_TdRangeProjection(ind));
     }
     [Fact]
+    public void Batch_TdRangeProjection()
+    {
+        using var ind = new Wickra.TdRangeProjection();
+        CompareBatchRows("TdRangeProjection", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdRangeProjection()
     {
         using var ind = new Wickra.TdRangeProjection();
@@ -12299,6 +14903,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdRei(14);
         Assert.Equal("TDREI", ind.Name());
         Compare("TdRei", Drive_TdRei(ind));
+    }
+    [Fact]
+    public void Batch_TdRei()
+    {
+        using var ind = new Wickra.TdRei(14);
+        CompareBatchRows("TdRei", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdRei()
@@ -12330,6 +14940,12 @@ public class GoldenAllTests
         Compare("TdRiskLevel", Drive_TdRiskLevel(ind));
     }
     [Fact]
+    public void Batch_TdRiskLevel()
+    {
+        using var ind = new Wickra.TdRiskLevel(3, 7);
+        CompareBatchRows("TdRiskLevel", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdRiskLevel()
     {
         using var ind = new Wickra.TdRiskLevel(3, 7);
@@ -12357,6 +14973,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TdSequential(3, 7, 14, 28);
         Assert.Equal("TDSequential", ind.Name());
         Compare("TdSequential", Drive_TdSequential(ind));
+    }
+    [Fact]
+    public void Batch_TdSequential()
+    {
+        using var ind = new Wickra.TdSequential(3, 7, 14, 28);
+        CompareBatchRows("TdSequential", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TdSequential()
@@ -12388,6 +15010,12 @@ public class GoldenAllTests
         Compare("TdSetup", Drive_TdSetup(ind));
     }
     [Fact]
+    public void Batch_TdSetup()
+    {
+        using var ind = new Wickra.TdSetup(3, 7);
+        CompareBatchRows("TdSetup", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdSetup()
     {
         using var ind = new Wickra.TdSetup(3, 7);
@@ -12417,6 +15045,12 @@ public class GoldenAllTests
         Compare("TdTrap", Drive_TdTrap(ind));
     }
     [Fact]
+    public void Batch_TdTrap()
+    {
+        using var ind = new Wickra.TdTrap();
+        CompareBatchRows("TdTrap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TdTrap()
     {
         using var ind = new Wickra.TdTrap();
@@ -12444,6 +15078,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Tema(14);
         Assert.Equal("TEMA", ind.Name());
         Compare("Tema", Drive_Tema(ind));
+    }
+    [Fact]
+    public void Batch_Tema()
+    {
+        using var ind = new Wickra.Tema(14);
+        CompareBatchRows("Tema", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Tema()
@@ -12476,6 +15116,12 @@ public class GoldenAllTests
         Compare("TermStructureBasis", Drive_TermStructureBasis(ind));
     }
     [Fact]
+    public void Batch_TermStructureBasis()
+    {
+        using var ind = new Wickra.TermStructureBasis();
+        CompareBatchRows("TermStructureBasis", ScalarRows(ind.Batch(DerivColumn(0), DerivColumn(1), DerivColumn(2), DerivColumn(3), DerivColumn(4), DerivColumn(5), DerivColumn(6), DerivColumn(7), DerivColumn(8), DerivColumn(9), DerivColumn(10), Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TermStructureBasis()
     {
         using var ind = new Wickra.TermStructureBasis();
@@ -12503,6 +15149,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ThreeDrives();
         Assert.Equal("ThreeDrives", ind.Name());
         Compare("ThreeDrives", Drive_ThreeDrives(ind));
+    }
+    [Fact]
+    public void Batch_ThreeDrives()
+    {
+        using var ind = new Wickra.ThreeDrives();
+        CompareBatchRows("ThreeDrives", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ThreeDrives()
@@ -12534,6 +15186,12 @@ public class GoldenAllTests
         Compare("ThreeInside", Drive_ThreeInside(ind));
     }
     [Fact]
+    public void Batch_ThreeInside()
+    {
+        using var ind = new Wickra.ThreeInside();
+        CompareBatchRows("ThreeInside", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ThreeInside()
     {
         using var ind = new Wickra.ThreeInside();
@@ -12561,6 +15219,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ThreeLineBreak(14);
         Assert.Equal("ThreeLineBreak", ind.Name());
         Compare("ThreeLineBreak", Drive_ThreeLineBreak(ind));
+    }
+    [Fact]
+    public void Batch_ThreeLineBreak()
+    {
+        using var ind = new Wickra.ThreeLineBreak(14);
+        CompareBatchRows("ThreeLineBreak", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ThreeLineBreak()
@@ -12592,6 +15256,12 @@ public class GoldenAllTests
         Compare("ThreeLineBreakBars", Drive_ThreeLineBreakBars(ind));
     }
     [Fact]
+    public void Batch_ThreeLineBreakBars()
+    {
+        using var ind = new Wickra.ThreeLineBreakBars(3);
+        CompareBatchFlat("ThreeLineBreakBars", FlattenBars(ind.Batch(Close, Close, Close, Close, Ones, Zeros)));
+    }
+    [Fact]
     public void Lifecycle_ThreeLineBreakBars()
     {
         using var ind = new Wickra.ThreeLineBreakBars(3);
@@ -12615,6 +15285,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ThreeLineStrike();
         Assert.Equal("ThreeLineStrike", ind.Name());
         Compare("ThreeLineStrike", Drive_ThreeLineStrike(ind));
+    }
+    [Fact]
+    public void Batch_ThreeLineStrike()
+    {
+        using var ind = new Wickra.ThreeLineStrike();
+        CompareBatchRows("ThreeLineStrike", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ThreeLineStrike()
@@ -12646,6 +15322,12 @@ public class GoldenAllTests
         Compare("ThreeOutside", Drive_ThreeOutside(ind));
     }
     [Fact]
+    public void Batch_ThreeOutside()
+    {
+        using var ind = new Wickra.ThreeOutside();
+        CompareBatchRows("ThreeOutside", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ThreeOutside()
     {
         using var ind = new Wickra.ThreeOutside();
@@ -12673,6 +15355,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ThreeSoldiersOrCrows();
         Assert.Equal("ThreeSoldiersOrCrows", ind.Name());
         Compare("ThreeSoldiersOrCrows", Drive_ThreeSoldiersOrCrows(ind));
+    }
+    [Fact]
+    public void Batch_ThreeSoldiersOrCrows()
+    {
+        using var ind = new Wickra.ThreeSoldiersOrCrows();
+        CompareBatchRows("ThreeSoldiersOrCrows", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_ThreeSoldiersOrCrows()
@@ -12704,6 +15392,12 @@ public class GoldenAllTests
         Compare("ThreeStarsInSouth", Drive_ThreeStarsInSouth(ind));
     }
     [Fact]
+    public void Batch_ThreeStarsInSouth()
+    {
+        using var ind = new Wickra.ThreeStarsInSouth();
+        CompareBatchRows("ThreeStarsInSouth", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ThreeStarsInSouth()
     {
         using var ind = new Wickra.ThreeStarsInSouth();
@@ -12731,6 +15425,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Thrusting();
         Assert.Equal("Thrusting", ind.Name());
         Compare("Thrusting", Drive_Thrusting(ind));
+    }
+    [Fact]
+    public void Batch_Thrusting()
+    {
+        using var ind = new Wickra.Thrusting();
+        CompareBatchRows("Thrusting", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Thrusting()
@@ -12762,6 +15462,12 @@ public class GoldenAllTests
         Compare("TickBars", Drive_TickBars(ind));
     }
     [Fact]
+    public void Batch_TickBars()
+    {
+        using var ind = new Wickra.TickBars(2);
+        CompareBatchFlat("TickBars", FlattenBars(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TickBars()
     {
         using var ind = new Wickra.TickBars(2);
@@ -12786,6 +15492,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TickIndex();
         Assert.Equal("TickIndex", ind.Name());
         Compare("TickIndex", Drive_TickIndex(ind));
+    }
+    [Fact]
+    public void Batch_TickIndex()
+    {
+        using var ind = new Wickra.TickIndex();
+        CompareBatchRows("TickIndex", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
     }
     [Fact]
     public void Lifecycle_TickIndex()
@@ -12817,6 +15529,12 @@ public class GoldenAllTests
         Compare("Tii", Drive_Tii(ind));
     }
     [Fact]
+    public void Batch_Tii()
+    {
+        using var ind = new Wickra.Tii(3, 7);
+        CompareBatchRows("Tii", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Tii()
     {
         using var ind = new Wickra.Tii(3, 7);
@@ -12844,6 +15562,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TimeBasedStop(14);
         Assert.Equal("TimeBasedStop", ind.Name());
         Compare("TimeBasedStop", Drive_TimeBasedStop(ind));
+    }
+    [Fact]
+    public void Batch_TimeBasedStop()
+    {
+        using var ind = new Wickra.TimeBasedStop(14);
+        CompareBatchRows("TimeBasedStop", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TimeBasedStop()
@@ -12876,6 +15600,12 @@ public class GoldenAllTests
         Compare("TimeOfDayReturnProfile", Drive_TimeOfDayReturnProfile(ind));
     }
     [Fact]
+    public void Batch_TimeOfDayReturnProfile()
+    {
+        using var ind = new Wickra.TimeOfDayReturnProfile(24, 0);
+        CompareBatchRows("TimeOfDayReturnProfile", new List<double[]>(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TimeOfDayReturnProfile()
     {
         using var ind = new Wickra.TimeOfDayReturnProfile(24, 0);
@@ -12903,6 +15633,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TowerTopBottom();
         Assert.Equal("TowerTopBottom", ind.Name());
         Compare("TowerTopBottom", Drive_TowerTopBottom(ind));
+    }
+    [Fact]
+    public void Batch_TowerTopBottom()
+    {
+        using var ind = new Wickra.TowerTopBottom();
+        CompareBatchRows("TowerTopBottom", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TowerTopBottom()
@@ -12934,6 +15670,12 @@ public class GoldenAllTests
         Compare("TpoProfile", Drive_TpoProfile(ind));
     }
     [Fact]
+    public void Batch_TpoProfile()
+    {
+        using var ind = new Wickra.TpoProfile(30, 50);
+        CompareBatchRows("TpoProfile", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TpoProfile()
     {
         using var ind = new Wickra.TpoProfile(30, 50);
@@ -12961,6 +15703,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TradeImbalance(20);
         Assert.Equal("TradeImbalance", ind.Name());
         Compare("TradeImbalance", Drive_TradeImbalance(ind));
+    }
+    [Fact]
+    public void Batch_TradeImbalance()
+    {
+        using var ind = new Wickra.TradeImbalance(20);
+        CompareBatchRows("TradeImbalance", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
     }
     [Fact]
     public void Lifecycle_TradeImbalance()
@@ -12992,6 +15740,12 @@ public class GoldenAllTests
         Compare("TradeSignAutocorrelation", Drive_TradeSignAutocorrelation(ind));
     }
     [Fact]
+    public void Batch_TradeSignAutocorrelation()
+    {
+        using var ind = new Wickra.TradeSignAutocorrelation(20);
+        CompareBatchRows("TradeSignAutocorrelation", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TradeSignAutocorrelation()
     {
         using var ind = new Wickra.TradeSignAutocorrelation(20);
@@ -13019,6 +15773,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TradeVolumeIndex(2.0);
         Assert.Equal("TradeVolumeIndex", ind.Name());
         Compare("TradeVolumeIndex", Drive_TradeVolumeIndex(ind));
+    }
+    [Fact]
+    public void Batch_TradeVolumeIndex()
+    {
+        using var ind = new Wickra.TradeVolumeIndex(2.0);
+        CompareBatchRows("TradeVolumeIndex", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TradeVolumeIndex()
@@ -13050,6 +15810,12 @@ public class GoldenAllTests
         Compare("TrendLabel", Drive_TrendLabel(ind));
     }
     [Fact]
+    public void Batch_TrendLabel()
+    {
+        using var ind = new Wickra.TrendLabel(14);
+        CompareBatchRows("TrendLabel", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_TrendLabel()
     {
         using var ind = new Wickra.TrendLabel(14);
@@ -13077,6 +15843,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TrendStrengthIndex(14);
         Assert.Equal("TrendStrengthIndex", ind.Name());
         Compare("TrendStrengthIndex", Drive_TrendStrengthIndex(ind));
+    }
+    [Fact]
+    public void Batch_TrendStrengthIndex()
+    {
+        using var ind = new Wickra.TrendStrengthIndex(14);
+        CompareBatchRows("TrendStrengthIndex", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_TrendStrengthIndex()
@@ -13108,6 +15880,12 @@ public class GoldenAllTests
         Compare("Trendflex", Drive_Trendflex(ind));
     }
     [Fact]
+    public void Batch_Trendflex()
+    {
+        using var ind = new Wickra.Trendflex(14);
+        CompareBatchRows("Trendflex", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Trendflex()
     {
         using var ind = new Wickra.Trendflex(14);
@@ -13135,6 +15913,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TreynorRatio(14, 2.0);
         Assert.Equal("TreynorRatio", ind.Name());
         Compare("TreynorRatio", Drive_TreynorRatio(ind));
+    }
+    [Fact]
+    public void Batch_TreynorRatio()
+    {
+        using var ind = new Wickra.TreynorRatio(14, 2.0);
+        CompareBatchRows("TreynorRatio", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_TreynorRatio()
@@ -13166,6 +15950,12 @@ public class GoldenAllTests
         Compare("Triangle", Drive_Triangle(ind));
     }
     [Fact]
+    public void Batch_Triangle()
+    {
+        using var ind = new Wickra.Triangle();
+        CompareBatchRows("Triangle", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Triangle()
     {
         using var ind = new Wickra.Triangle();
@@ -13193,6 +15983,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Trima(14);
         Assert.Equal("TRIMA", ind.Name());
         Compare("Trima", Drive_Trima(ind));
+    }
+    [Fact]
+    public void Batch_Trima()
+    {
+        using var ind = new Wickra.Trima(14);
+        CompareBatchRows("Trima", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Trima()
@@ -13225,6 +16021,12 @@ public class GoldenAllTests
         Compare("Trin", Drive_Trin(ind));
     }
     [Fact]
+    public void Batch_Trin()
+    {
+        using var ind = new Wickra.Trin();
+        CompareBatchRows("Trin", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Trin()
     {
         using var ind = new Wickra.Trin();
@@ -13252,6 +16054,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TripleTopBottom();
         Assert.Equal("TripleTopBottom", ind.Name());
         Compare("TripleTopBottom", Drive_TripleTopBottom(ind));
+    }
+    [Fact]
+    public void Batch_TripleTopBottom()
+    {
+        using var ind = new Wickra.TripleTopBottom();
+        CompareBatchRows("TripleTopBottom", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TripleTopBottom()
@@ -13283,6 +16091,12 @@ public class GoldenAllTests
         Compare("Tristar", Drive_Tristar(ind));
     }
     [Fact]
+    public void Batch_Tristar()
+    {
+        using var ind = new Wickra.Tristar();
+        CompareBatchRows("Tristar", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Tristar()
     {
         using var ind = new Wickra.Tristar();
@@ -13310,6 +16124,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Trix(14);
         Assert.Equal("TRIX", ind.Name());
         Compare("Trix", Drive_Trix(ind));
+    }
+    [Fact]
+    public void Batch_Trix()
+    {
+        using var ind = new Wickra.Trix(14);
+        CompareBatchRows("Trix", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Trix()
@@ -13341,6 +16161,12 @@ public class GoldenAllTests
         Compare("TrueRange", Drive_TrueRange(ind));
     }
     [Fact]
+    public void Batch_TrueRange()
+    {
+        using var ind = new Wickra.TrueRange();
+        CompareBatchRows("TrueRange", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TrueRange()
     {
         using var ind = new Wickra.TrueRange();
@@ -13368,6 +16194,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Tsf(14);
         Assert.Equal("TSF", ind.Name());
         Compare("Tsf", Drive_Tsf(ind));
+    }
+    [Fact]
+    public void Batch_Tsf()
+    {
+        using var ind = new Wickra.Tsf(14);
+        CompareBatchRows("Tsf", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Tsf()
@@ -13399,6 +16231,12 @@ public class GoldenAllTests
         Compare("TsfOscillator", Drive_TsfOscillator(ind));
     }
     [Fact]
+    public void Batch_TsfOscillator()
+    {
+        using var ind = new Wickra.TsfOscillator(14);
+        CompareBatchRows("TsfOscillator", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_TsfOscillator()
     {
         using var ind = new Wickra.TsfOscillator(14);
@@ -13426,6 +16264,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Tsi(3, 7);
         Assert.Equal("TSI", ind.Name());
         Compare("Tsi", Drive_Tsi(ind));
+    }
+    [Fact]
+    public void Batch_Tsi()
+    {
+        using var ind = new Wickra.Tsi(3, 7);
+        CompareBatchRows("Tsi", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Tsi()
@@ -13457,6 +16301,12 @@ public class GoldenAllTests
         Compare("Tsv", Drive_Tsv(ind));
     }
     [Fact]
+    public void Batch_Tsv()
+    {
+        using var ind = new Wickra.Tsv(14);
+        CompareBatchRows("Tsv", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Tsv()
     {
         using var ind = new Wickra.Tsv(14);
@@ -13484,6 +16334,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TtmSqueeze(14, 2.0, 0.5);
         Assert.Equal("TtmSqueeze", ind.Name());
         Compare("TtmSqueeze", Drive_TtmSqueeze(ind));
+    }
+    [Fact]
+    public void Batch_TtmSqueeze()
+    {
+        using var ind = new Wickra.TtmSqueeze(14, 2.0, 0.5);
+        CompareBatchRows("TtmSqueeze", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TtmSqueeze()
@@ -13515,6 +16371,12 @@ public class GoldenAllTests
         Compare("TtmTrend", Drive_TtmTrend(ind));
     }
     [Fact]
+    public void Batch_TtmTrend()
+    {
+        using var ind = new Wickra.TtmTrend(14);
+        CompareBatchRows("TtmTrend", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TtmTrend()
     {
         using var ind = new Wickra.TtmTrend(14);
@@ -13544,6 +16406,12 @@ public class GoldenAllTests
         Compare("TurnOfMonth", Drive_TurnOfMonth(ind));
     }
     [Fact]
+    public void Batch_TurnOfMonth()
+    {
+        using var ind = new Wickra.TurnOfMonth(3u, 3u, 0);
+        CompareBatchRows("TurnOfMonth", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TurnOfMonth()
     {
         using var ind = new Wickra.TurnOfMonth(3u, 3u, 0);
@@ -13570,6 +16438,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Tweezer();
         Assert.Equal("Tweezer", ind.Name());
         Compare("Tweezer", Drive_Tweezer(ind));
+    }
+    [Fact]
+    public void Batch_Tweezer()
+    {
+        using var ind = new Wickra.Tweezer();
+        CompareBatchRows("Tweezer", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Tweezer()
@@ -13601,6 +16475,12 @@ public class GoldenAllTests
         Compare("TwiggsMoneyFlow", Drive_TwiggsMoneyFlow(ind));
     }
     [Fact]
+    public void Batch_TwiggsMoneyFlow()
+    {
+        using var ind = new Wickra.TwiggsMoneyFlow(14);
+        CompareBatchRows("TwiggsMoneyFlow", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TwiggsMoneyFlow()
     {
         using var ind = new Wickra.TwiggsMoneyFlow(14);
@@ -13628,6 +16508,12 @@ public class GoldenAllTests
         using var ind = new Wickra.TwoCrows();
         Assert.Equal("TwoCrows", ind.Name());
         Compare("TwoCrows", Drive_TwoCrows(ind));
+    }
+    [Fact]
+    public void Batch_TwoCrows()
+    {
+        using var ind = new Wickra.TwoCrows();
+        CompareBatchRows("TwoCrows", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_TwoCrows()
@@ -13659,6 +16545,12 @@ public class GoldenAllTests
         Compare("TypicalPrice", Drive_TypicalPrice(ind));
     }
     [Fact]
+    public void Batch_TypicalPrice()
+    {
+        using var ind = new Wickra.TypicalPrice();
+        CompareBatchRows("TypicalPrice", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_TypicalPrice()
     {
         using var ind = new Wickra.TypicalPrice();
@@ -13686,6 +16578,12 @@ public class GoldenAllTests
         using var ind = new Wickra.UlcerIndex(14);
         Assert.Equal("UlcerIndex", ind.Name());
         Compare("UlcerIndex", Drive_UlcerIndex(ind));
+    }
+    [Fact]
+    public void Batch_UlcerIndex()
+    {
+        using var ind = new Wickra.UlcerIndex(14);
+        CompareBatchRows("UlcerIndex", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_UlcerIndex()
@@ -13717,6 +16615,12 @@ public class GoldenAllTests
         Compare("UltimateOscillator", Drive_UltimateOscillator(ind));
     }
     [Fact]
+    public void Batch_UltimateOscillator()
+    {
+        using var ind = new Wickra.UltimateOscillator(3, 7, 14);
+        CompareBatchRows("UltimateOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_UltimateOscillator()
     {
         using var ind = new Wickra.UltimateOscillator(3, 7, 14);
@@ -13746,6 +16650,12 @@ public class GoldenAllTests
         Compare("UniqueThreeRiver", Drive_UniqueThreeRiver(ind));
     }
     [Fact]
+    public void Batch_UniqueThreeRiver()
+    {
+        using var ind = new Wickra.UniqueThreeRiver();
+        CompareBatchRows("UniqueThreeRiver", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_UniqueThreeRiver()
     {
         using var ind = new Wickra.UniqueThreeRiver();
@@ -13773,6 +16683,12 @@ public class GoldenAllTests
         using var ind = new Wickra.UniversalOscillator(14);
         Assert.Equal("UniversalOscillator", ind.Name());
         Compare("UniversalOscillator", Drive_UniversalOscillator(ind));
+    }
+    [Fact]
+    public void Batch_UniversalOscillator()
+    {
+        using var ind = new Wickra.UniversalOscillator(14);
+        CompareBatchRows("UniversalOscillator", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_UniversalOscillator()
@@ -13805,6 +16721,12 @@ public class GoldenAllTests
         Compare("UpDownVolumeRatio", Drive_UpDownVolumeRatio(ind));
     }
     [Fact]
+    public void Batch_UpDownVolumeRatio()
+    {
+        using var ind = new Wickra.UpDownVolumeRatio();
+        CompareBatchRows("UpDownVolumeRatio", ScalarRows(ind.Batch(FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), FlatFlags(5), SnapshotWidth, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_UpDownVolumeRatio()
     {
         using var ind = new Wickra.UpDownVolumeRatio();
@@ -13832,6 +16754,12 @@ public class GoldenAllTests
         using var ind = new Wickra.UpsideGapThreeMethods();
         Assert.Equal("UpsideGapThreeMethods", ind.Name());
         Compare("UpsideGapThreeMethods", Drive_UpsideGapThreeMethods(ind));
+    }
+    [Fact]
+    public void Batch_UpsideGapThreeMethods()
+    {
+        using var ind = new Wickra.UpsideGapThreeMethods();
+        CompareBatchRows("UpsideGapThreeMethods", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_UpsideGapThreeMethods()
@@ -13863,6 +16791,12 @@ public class GoldenAllTests
         Compare("UpsideGapTwoCrows", Drive_UpsideGapTwoCrows(ind));
     }
     [Fact]
+    public void Batch_UpsideGapTwoCrows()
+    {
+        using var ind = new Wickra.UpsideGapTwoCrows();
+        CompareBatchRows("UpsideGapTwoCrows", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_UpsideGapTwoCrows()
     {
         using var ind = new Wickra.UpsideGapTwoCrows();
@@ -13890,6 +16824,12 @@ public class GoldenAllTests
         using var ind = new Wickra.UpsidePotentialRatio(14, 2.0);
         Assert.Equal("UpsidePotentialRatio", ind.Name());
         Compare("UpsidePotentialRatio", Drive_UpsidePotentialRatio(ind));
+    }
+    [Fact]
+    public void Batch_UpsidePotentialRatio()
+    {
+        using var ind = new Wickra.UpsidePotentialRatio(14, 2.0);
+        CompareBatchRows("UpsidePotentialRatio", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_UpsidePotentialRatio()
@@ -13921,6 +16861,12 @@ public class GoldenAllTests
         Compare("ValueArea", Drive_ValueArea(ind));
     }
     [Fact]
+    public void Batch_ValueArea()
+    {
+        using var ind = new Wickra.ValueArea(20, 50, 0.7);
+        CompareBatchRows("ValueArea", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ValueArea()
     {
         using var ind = new Wickra.ValueArea(20, 50, 0.7);
@@ -13948,6 +16894,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ValueAtRisk(20, 0.95);
         Assert.Equal("ValueAtRisk", ind.Name());
         Compare("ValueAtRisk", Drive_ValueAtRisk(ind));
+    }
+    [Fact]
+    public void Batch_ValueAtRisk()
+    {
+        using var ind = new Wickra.ValueAtRisk(20, 0.95);
+        CompareBatchRows("ValueAtRisk", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_ValueAtRisk()
@@ -13979,6 +16931,12 @@ public class GoldenAllTests
         Compare("Variance", Drive_Variance(ind));
     }
     [Fact]
+    public void Batch_Variance()
+    {
+        using var ind = new Wickra.Variance(14);
+        CompareBatchRows("Variance", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_Variance()
     {
         using var ind = new Wickra.Variance(14);
@@ -14006,6 +16964,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VarianceRatio(60, 2);
         Assert.Equal("VarianceRatio", ind.Name());
         Compare("VarianceRatio", Drive_VarianceRatio(ind));
+    }
+    [Fact]
+    public void Batch_VarianceRatio()
+    {
+        using var ind = new Wickra.VarianceRatio(60, 2);
+        CompareBatchRows("VarianceRatio", ScalarRows(ind.Batch(Close, Open)));
     }
     [Fact]
     public void Lifecycle_VarianceRatio()
@@ -14037,6 +17001,12 @@ public class GoldenAllTests
         Compare("VerticalHorizontalFilter", Drive_VerticalHorizontalFilter(ind));
     }
     [Fact]
+    public void Batch_VerticalHorizontalFilter()
+    {
+        using var ind = new Wickra.VerticalHorizontalFilter(14);
+        CompareBatchRows("VerticalHorizontalFilter", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_VerticalHorizontalFilter()
     {
         using var ind = new Wickra.VerticalHorizontalFilter(14);
@@ -14064,6 +17034,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Vidya(3, 7);
         Assert.Equal("VIDYA", ind.Name());
         Compare("Vidya", Drive_Vidya(ind));
+    }
+    [Fact]
+    public void Batch_Vidya()
+    {
+        using var ind = new Wickra.Vidya(3, 7);
+        CompareBatchRows("Vidya", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Vidya()
@@ -14095,6 +17071,12 @@ public class GoldenAllTests
         Compare("VolatilityCone", Drive_VolatilityCone(ind));
     }
     [Fact]
+    public void Batch_VolatilityCone()
+    {
+        using var ind = new Wickra.VolatilityCone(3, 7);
+        CompareBatchRows("VolatilityCone", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_VolatilityCone()
     {
         using var ind = new Wickra.VolatilityCone(3, 7);
@@ -14122,6 +17104,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VolatilityOfVolatility(3, 7);
         Assert.Equal("VolatilityOfVolatility", ind.Name());
         Compare("VolatilityOfVolatility", Drive_VolatilityOfVolatility(ind));
+    }
+    [Fact]
+    public void Batch_VolatilityOfVolatility()
+    {
+        using var ind = new Wickra.VolatilityOfVolatility(3, 7);
+        CompareBatchRows("VolatilityOfVolatility", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_VolatilityOfVolatility()
@@ -14153,6 +17141,12 @@ public class GoldenAllTests
         Compare("VolatilityRatio", Drive_VolatilityRatio(ind));
     }
     [Fact]
+    public void Batch_VolatilityRatio()
+    {
+        using var ind = new Wickra.VolatilityRatio(14);
+        CompareBatchRows("VolatilityRatio", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_VolatilityRatio()
     {
         using var ind = new Wickra.VolatilityRatio(14);
@@ -14180,6 +17174,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VoltyStop(14, 2.0);
         Assert.Equal("VoltyStop", ind.Name());
         Compare("VoltyStop", Drive_VoltyStop(ind));
+    }
+    [Fact]
+    public void Batch_VoltyStop()
+    {
+        using var ind = new Wickra.VoltyStop(14, 2.0);
+        CompareBatchRows("VoltyStop", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_VoltyStop()
@@ -14211,6 +17211,12 @@ public class GoldenAllTests
         Compare("VolumeBars", Drive_VolumeBars(ind));
     }
     [Fact]
+    public void Batch_VolumeBars()
+    {
+        using var ind = new Wickra.VolumeBars(500.0);
+        CompareBatchFlat("VolumeBars", FlattenBars(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_VolumeBars()
     {
         using var ind = new Wickra.VolumeBars(500.0);
@@ -14235,6 +17241,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VolumeByTimeProfile(24, 0);
         Assert.Equal("VolumeByTimeProfile", ind.Name());
         Compare("VolumeByTimeProfile", Drive_VolumeByTimeProfile(ind));
+    }
+    [Fact]
+    public void Batch_VolumeByTimeProfile()
+    {
+        using var ind = new Wickra.VolumeByTimeProfile(24, 0);
+        CompareBatchRows("VolumeByTimeProfile", new List<double[]>(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_VolumeByTimeProfile()
@@ -14266,6 +17278,12 @@ public class GoldenAllTests
         Compare("VolumeOscillator", Drive_VolumeOscillator(ind));
     }
     [Fact]
+    public void Batch_VolumeOscillator()
+    {
+        using var ind = new Wickra.VolumeOscillator(3, 7);
+        CompareBatchRows("VolumeOscillator", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_VolumeOscillator()
     {
         using var ind = new Wickra.VolumeOscillator(3, 7);
@@ -14293,6 +17311,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VolumePriceTrend();
         Assert.Equal("VPT", ind.Name());
         Compare("VolumePriceTrend", Drive_VolumePriceTrend(ind));
+    }
+    [Fact]
+    public void Batch_VolumePriceTrend()
+    {
+        using var ind = new Wickra.VolumePriceTrend();
+        CompareBatchRows("VolumePriceTrend", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_VolumePriceTrend()
@@ -14324,6 +17348,12 @@ public class GoldenAllTests
         Compare("VolumeProfile", Drive_VolumeProfile(ind));
     }
     [Fact]
+    public void Batch_VolumeProfile()
+    {
+        using var ind = new Wickra.VolumeProfile(20, 50);
+        CompareBatchRows("VolumeProfile", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_VolumeProfile()
     {
         using var ind = new Wickra.VolumeProfile(20, 50);
@@ -14351,6 +17381,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VolumeRsi(14);
         Assert.Equal("VolumeRsi", ind.Name());
         Compare("VolumeRsi", Drive_VolumeRsi(ind));
+    }
+    [Fact]
+    public void Batch_VolumeRsi()
+    {
+        using var ind = new Wickra.VolumeRsi(14);
+        CompareBatchRows("VolumeRsi", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_VolumeRsi()
@@ -14382,6 +17418,12 @@ public class GoldenAllTests
         Compare("VolumeWeightedMacd", Drive_VolumeWeightedMacd(ind));
     }
     [Fact]
+    public void Batch_VolumeWeightedMacd()
+    {
+        using var ind = new Wickra.VolumeWeightedMacd(3, 7, 14);
+        CompareBatchRows("VolumeWeightedMacd", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_VolumeWeightedMacd()
     {
         using var ind = new Wickra.VolumeWeightedMacd(3, 7, 14);
@@ -14409,6 +17451,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VolumeWeightedSr(14);
         Assert.Equal("VolumeWeightedSr", ind.Name());
         Compare("VolumeWeightedSr", Drive_VolumeWeightedSr(ind));
+    }
+    [Fact]
+    public void Batch_VolumeWeightedSr()
+    {
+        using var ind = new Wickra.VolumeWeightedSr(14);
+        CompareBatchRows("VolumeWeightedSr", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_VolumeWeightedSr()
@@ -14440,6 +17488,12 @@ public class GoldenAllTests
         Compare("Vortex", Drive_Vortex(ind));
     }
     [Fact]
+    public void Batch_Vortex()
+    {
+        using var ind = new Wickra.Vortex(14);
+        CompareBatchRows("Vortex", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Vortex()
     {
         using var ind = new Wickra.Vortex(14);
@@ -14467,6 +17521,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Vpin(5000.0, 10);
         Assert.Equal("Vpin", ind.Name());
         Compare("Vpin", Drive_Vpin(ind));
+    }
+    [Fact]
+    public void Batch_Vpin()
+    {
+        using var ind = new Wickra.Vpin(5000.0, 10);
+        CompareBatchRows("Vpin", ScalarRows(ind.Batch(Close, Volume, IsBuys, Stamps)));
     }
     [Fact]
     public void Lifecycle_Vpin()
@@ -14498,6 +17558,12 @@ public class GoldenAllTests
         Compare("Vwap", Drive_Vwap(ind));
     }
     [Fact]
+    public void Batch_Vwap()
+    {
+        using var ind = new Wickra.Vwap();
+        CompareBatchRows("Vwap", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Vwap()
     {
         using var ind = new Wickra.Vwap();
@@ -14525,6 +17591,12 @@ public class GoldenAllTests
         using var ind = new Wickra.VwapStdDevBands(2.0);
         Assert.Equal("VwapStdDevBands", ind.Name());
         Compare("VwapStdDevBands", Drive_VwapStdDevBands(ind));
+    }
+    [Fact]
+    public void Batch_VwapStdDevBands()
+    {
+        using var ind = new Wickra.VwapStdDevBands(2.0);
+        CompareBatchRows("VwapStdDevBands", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_VwapStdDevBands()
@@ -14556,6 +17628,12 @@ public class GoldenAllTests
         Compare("Vwma", Drive_Vwma(ind));
     }
     [Fact]
+    public void Batch_Vwma()
+    {
+        using var ind = new Wickra.Vwma(14);
+        CompareBatchRows("Vwma", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Vwma()
     {
         using var ind = new Wickra.Vwma(14);
@@ -14583,6 +17661,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Vzo(14);
         Assert.Equal("VZO", ind.Name());
         Compare("Vzo", Drive_Vzo(ind));
+    }
+    [Fact]
+    public void Batch_Vzo()
+    {
+        using var ind = new Wickra.Vzo(14);
+        CompareBatchRows("Vzo", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Vzo()
@@ -14614,6 +17698,12 @@ public class GoldenAllTests
         Compare("Wad", Drive_Wad(ind));
     }
     [Fact]
+    public void Batch_Wad()
+    {
+        using var ind = new Wickra.Wad();
+        CompareBatchRows("Wad", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_Wad()
     {
         using var ind = new Wickra.Wad();
@@ -14641,6 +17731,12 @@ public class GoldenAllTests
         using var ind = new Wickra.WavePm(3, 7);
         Assert.Equal("WavePm", ind.Name());
         Compare("WavePm", Drive_WavePm(ind));
+    }
+    [Fact]
+    public void Batch_WavePm()
+    {
+        using var ind = new Wickra.WavePm(3, 7);
+        CompareBatchRows("WavePm", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_WavePm()
@@ -14672,6 +17768,12 @@ public class GoldenAllTests
         Compare("WaveTrend", Drive_WaveTrend(ind));
     }
     [Fact]
+    public void Batch_WaveTrend()
+    {
+        using var ind = new Wickra.WaveTrend(3, 7, 14);
+        CompareBatchRows("WaveTrend", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_WaveTrend()
     {
         using var ind = new Wickra.WaveTrend(3, 7, 14);
@@ -14699,6 +17801,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Wedge();
         Assert.Equal("Wedge", ind.Name());
         Compare("Wedge", Drive_Wedge(ind));
+    }
+    [Fact]
+    public void Batch_Wedge()
+    {
+        using var ind = new Wickra.Wedge();
+        CompareBatchRows("Wedge", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_Wedge()
@@ -14730,6 +17838,12 @@ public class GoldenAllTests
         Compare("WeightedClose", Drive_WeightedClose(ind));
     }
     [Fact]
+    public void Batch_WeightedClose()
+    {
+        using var ind = new Wickra.WeightedClose();
+        CompareBatchRows("WeightedClose", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_WeightedClose()
     {
         using var ind = new Wickra.WeightedClose();
@@ -14757,6 +17871,12 @@ public class GoldenAllTests
         using var ind = new Wickra.WickRatio();
         Assert.Equal("WickRatio", ind.Name());
         Compare("WickRatio", Drive_WickRatio(ind));
+    }
+    [Fact]
+    public void Batch_WickRatio()
+    {
+        using var ind = new Wickra.WickRatio();
+        CompareBatchRows("WickRatio", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_WickRatio()
@@ -14788,6 +17908,12 @@ public class GoldenAllTests
         Compare("WilliamsFractals", Drive_WilliamsFractals(ind));
     }
     [Fact]
+    public void Batch_WilliamsFractals()
+    {
+        using var ind = new Wickra.WilliamsFractals();
+        CompareBatchRows("WilliamsFractals", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_WilliamsFractals()
     {
         using var ind = new Wickra.WilliamsFractals();
@@ -14815,6 +17941,12 @@ public class GoldenAllTests
         using var ind = new Wickra.WilliamsR(14);
         Assert.Equal("WilliamsR", ind.Name());
         Compare("WilliamsR", Drive_WilliamsR(ind));
+    }
+    [Fact]
+    public void Batch_WilliamsR()
+    {
+        using var ind = new Wickra.WilliamsR(14);
+        CompareBatchRows("WilliamsR", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_WilliamsR()
@@ -14846,6 +17978,12 @@ public class GoldenAllTests
         Compare("WinRate", Drive_WinRate(ind));
     }
     [Fact]
+    public void Batch_WinRate()
+    {
+        using var ind = new Wickra.WinRate(14);
+        CompareBatchRows("WinRate", ScalarRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_WinRate()
     {
         using var ind = new Wickra.WinRate(14);
@@ -14873,6 +18011,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Wma(14);
         Assert.Equal("WMA", ind.Name());
         Compare("Wma", Drive_Wma(ind));
+    }
+    [Fact]
+    public void Batch_Wma()
+    {
+        using var ind = new Wickra.Wma(14);
+        CompareBatchRows("Wma", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Wma()
@@ -14904,6 +18048,12 @@ public class GoldenAllTests
         Compare("WoodiePivots", Drive_WoodiePivots(ind));
     }
     [Fact]
+    public void Batch_WoodiePivots()
+    {
+        using var ind = new Wickra.WoodiePivots();
+        CompareBatchRows("WoodiePivots", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_WoodiePivots()
     {
         using var ind = new Wickra.WoodiePivots();
@@ -14931,6 +18081,12 @@ public class GoldenAllTests
         using var ind = new Wickra.YangZhangVolatility(20, 252);
         Assert.Equal("YangZhangVolatility", ind.Name());
         Compare("YangZhangVolatility", Drive_YangZhangVolatility(ind));
+    }
+    [Fact]
+    public void Batch_YangZhangVolatility()
+    {
+        using var ind = new Wickra.YangZhangVolatility(20, 252);
+        CompareBatchRows("YangZhangVolatility", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
     }
     [Fact]
     public void Lifecycle_YangZhangVolatility()
@@ -14962,6 +18118,12 @@ public class GoldenAllTests
         Compare("YoyoExit", Drive_YoyoExit(ind));
     }
     [Fact]
+    public void Batch_YoyoExit()
+    {
+        using var ind = new Wickra.YoyoExit(14, 2.0);
+        CompareBatchRows("YoyoExit", ScalarRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_YoyoExit()
     {
         using var ind = new Wickra.YoyoExit(14, 2.0);
@@ -14989,6 +18151,12 @@ public class GoldenAllTests
         using var ind = new Wickra.ZScore(14);
         Assert.Equal("ZScore", ind.Name());
         Compare("ZScore", Drive_ZScore(ind));
+    }
+    [Fact]
+    public void Batch_ZScore()
+    {
+        using var ind = new Wickra.ZScore(14);
+        CompareBatchRows("ZScore", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_ZScore()
@@ -15020,6 +18188,12 @@ public class GoldenAllTests
         Compare("ZeroLagMacd", Drive_ZeroLagMacd(ind));
     }
     [Fact]
+    public void Batch_ZeroLagMacd()
+    {
+        using var ind = new Wickra.ZeroLagMacd(3, 7, 14);
+        CompareBatchRows("ZeroLagMacd", RecordRows(ind.Batch(Close)));
+    }
+    [Fact]
     public void Lifecycle_ZeroLagMacd()
     {
         using var ind = new Wickra.ZeroLagMacd(3, 7, 14);
@@ -15049,6 +18223,12 @@ public class GoldenAllTests
         Compare("ZigZag", Drive_ZigZag(ind));
     }
     [Fact]
+    public void Batch_ZigZag()
+    {
+        using var ind = new Wickra.ZigZag(0.02);
+        CompareBatchRows("ZigZag", RecordRows(ind.Batch(Open, High, Low, Close, Volume, Stamps)));
+    }
+    [Fact]
     public void Lifecycle_ZigZag()
     {
         using var ind = new Wickra.ZigZag(0.02);
@@ -15076,6 +18256,12 @@ public class GoldenAllTests
         using var ind = new Wickra.Zlema(14);
         Assert.Equal("ZLEMA", ind.Name());
         Compare("Zlema", Drive_Zlema(ind));
+    }
+    [Fact]
+    public void Batch_Zlema()
+    {
+        using var ind = new Wickra.Zlema(14);
+        CompareBatchRows("Zlema", ScalarRows(ind.Batch(Close)));
     }
     [Fact]
     public void Lifecycle_Zlema()

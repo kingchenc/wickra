@@ -166,6 +166,62 @@ def block(canon):
     return "\n".join(L)
 
 
+def batch_call(canon):
+    """The `Batch` call for one archetype, with the whole-series columns."""
+    s = spec[canon]
+    a = s["arch"]
+    if a in ("scalar_f64", "multi_f64"):
+        args = "Close"
+    elif a in ("pairwise", "multi_pairwise"):
+        args = "Close, Open"
+    elif a in ("scalar_candle", "multi_candle", "profile_bins", "profile_pricebins", "bars_candle5"):
+        args = "Open, High, Low, Close, Volume, Stamps"
+    elif a in ("trade", "footprint"):
+        args = "Close, Volume, IsBuys, Stamps"
+    elif a == "trademid":
+        args = "Close, Volume, IsBuys, Stamps, Mids"
+    elif a == "ob":
+        args = ("FlatOb(0), FlatOb(1), SnapshotWidth, FlatOb(2), FlatOb(3), SnapshotWidth")
+    elif a == "cross":
+        args = ("FlatCross(0), FlatCross(1), FlatFlags(2), FlatFlags(3), FlatFlags(4), "
+                "FlatFlags(5), SnapshotWidth, Stamps")
+    elif a in ("deriv", "deriv_multi"):
+        args = ", ".join(f"DerivColumn({f})" for f in range(11)) + ", Stamps"
+    elif a == "bars_close":
+        args = "Close, Close, Close, Close, Ones, Zeros"
+    elif a == "bars_candle4":
+        args = "Open, High, Low, Close, Ones, Zeros"
+    else:
+        raise SystemExit("batch arch " + a)
+    return f"ind.Batch({args})"
+
+
+def batch_block(canon):
+    """One fact driving `Batch` over the whole series and holding it to the same
+    fixture the streaming pass uses."""
+    s = spec[canon]
+    a = s["arch"]
+    L = ["    [Fact]", f"    public void Batch_{canon}()", "    {"]
+    L.append(f"        using var ind = {ctor_call(canon)};")
+    call = batch_call(canon)
+    if a.startswith("bars_"):
+        # A bar builder emits an unpredictable number of bars per candle, so its
+        # batch is the concatenation of what streaming emits row by row.
+        L.append(f'        CompareBatchFlat("{canon}", FlattenBars({call}));')
+    elif a == "footprint":
+        # Footprint reports the whole book after each trade, so the batch holds
+        # the final snapshot rather than every intermediate one.
+        L.append(f'        CompareBatchLastRow("{canon}", FlattenBars({call}));')
+    elif a == "profile_bins":
+        L.append(f'        CompareBatchRows("{canon}", new List<double[]>({call}));')
+    elif a in ("multi_f64", "multi_candle", "multi_pairwise", "deriv_multi", "profile_pricebins"):
+        L.append(f'        CompareBatchRows("{canon}", RecordRows({call}));')
+    else:
+        L.append(f'        CompareBatchRows("{canon}", ScalarRows({call}));')
+    L.append("    }")
+    return "\n".join(L)
+
+
 def emits(canon):
     """Whether the reference fixture holds a single finite value.
 
@@ -361,6 +417,108 @@ public class GoldenAllTests
         return (bp, bs, ap, asz);
     }
 
+    // The whole-series columns, built once from the same per-bar values the
+    // streaming pass feeds `Update`.
+    private static readonly double[] Open = Column(3, 0);
+    private static readonly double[] High = Column(3, 1);
+    private static readonly double[] Low = Column(3, 2);
+    private static readonly double[] Close = Column(3, 3);
+    private static readonly double[] Volume = Column(3, 4);
+    private static readonly long[] Stamps = Enumerable.Range(0, Rows.Length).Select(i => (long)i).ToArray();
+    private static readonly long[] Zeros = new long[Rows.Length];
+    private static readonly double[] Ones = Enumerable.Repeat(1.0, Rows.Length).ToArray();
+    private static readonly bool[] IsBuys = Rows.Select(r => r[3] >= r[0]).ToArray();
+    private static readonly double[] Mids = Rows.Select(r => (r[1] + r[2]) / 2).ToArray();
+
+    private static double[] Column(int _unused, int field) =>
+        Rows.Select(r => r[field]).ToArray();
+
+    private static double[] DerivColumn(int field) =>
+        Rows.Select(r => DerivFields(r)[field]).ToArray();
+
+    // The cross-section and order-book batches take one flat array covering the
+    // whole series -- bar i occupies [i*width, (i+1)*width) -- plus the width as
+    // a separate argument. Both families use a width of 5 here, the same
+    // snapshot the streaming pass builds per bar.
+    private const int SnapshotWidth = 5;
+
+    private static double[] FlatOb(int which)
+    {
+        var out_ = new double[Rows.Length * SnapshotWidth];
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var (bp, bs, ap, asz) = ObLists(Rows[i]);
+            var snap = which switch { 0 => bp, 1 => bs, 2 => ap, _ => asz };
+            Array.Copy(snap, 0, out_, i * SnapshotWidth, SnapshotWidth);
+        }
+        return out_;
+    }
+
+    private static double[] FlatCross(int which)
+    {
+        var out_ = new double[Rows.Length * SnapshotWidth];
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var (ch, vo, _, _, _, _) = CrossLists(Rows[i]);
+            Array.Copy(which == 0 ? ch : vo, 0, out_, i * SnapshotWidth, SnapshotWidth);
+        }
+        return out_;
+    }
+
+    private static bool[] FlatFlags(int which)
+    {
+        var out_ = new bool[Rows.Length * SnapshotWidth];
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var (_, _, nh, nl, am, ob) = CrossLists(Rows[i]);
+            var snap = which switch { 2 => nh, 3 => nl, 4 => am, _ => ob };
+            Array.Copy(snap, 0, out_, i * SnapshotWidth, SnapshotWidth);
+        }
+        return out_;
+    }
+
+    private static List<double[]> ScalarRows(double[] flat) =>
+        flat.Select(v => new[] { v }).ToList();
+
+    // A multi-output batch returns one struct per bar with NaN fields during
+    // warmup, not a nullable, so there is nothing to widen here.
+    private static List<double[]> RecordRows<T>(T[] values) =>
+        values.Select(v => FlattenStruct(v!)).ToList();
+
+    private static void CompareBatchRows(string name, List<double[]> got) => Compare(name, got);
+
+    // A bar builder's batch is one flat run, so the fixture's rows are
+    // concatenated to match.
+    private static void CompareBatchFlat(string name, double[] got)
+    {
+        var want = ReadFixture(name).SelectMany(r => r!).ToArray();
+        Assert.True(want.Length == got.Length, $"{name}: batch produced {got.Length} values, fixture has {want.Length}");
+        CompareValues(name, got, want);
+    }
+
+    // Footprint's batch is the final snapshot, so only the fixture's last
+    // non-empty row applies.
+    private static void CompareBatchLastRow(string name, double[] got)
+    {
+        var rows = ReadFixture(name);
+        var want = Array.Empty<double>();
+        foreach (var r in rows) { if (r!.Length > 0) { want = r; } }
+        Assert.True(want.Length == got.Length, $"{name}: batch snapshot {got.Length} values, fixture {want.Length}");
+        CompareValues(name, got, want);
+    }
+
+    private static void CompareValues(string name, double[] got, double[] want)
+    {
+        for (var k = 0; k < want.Length; k++)
+        {
+            var w = want[k];
+            if (double.IsNaN(w)) { Assert.True(double.IsNaN(got[k]), $"{name} value {k}: want NaN got {got[k]}"); continue; }
+            if (double.IsInfinity(w)) { Assert.True(double.IsInfinity(got[k]) && Math.Sign(got[k]) == Math.Sign(w), $"{name} value {k}: want {w} got {got[k]}"); continue; }
+            var tol = TolFor(name) * Math.Max(1.0, Math.Abs(w));
+            Assert.True(Math.Abs(got[k] - w) <= tol, $"{name} value {k}: got {got[k]} want {w}");
+        }
+    }
+
     // Equality, not tolerance: the same code over the same input in the same
     // process has no reason to differ in a single bit, and a tolerance here
     // would hide exactly the leftover state this is looking for.
@@ -405,6 +563,7 @@ out = [HEADER]
 for canon in canons:
     out.append(drive_helper(canon))
     out.append(block(canon))
+    out.append(batch_block(canon))
     out.append(lifecycle_block(canon))
 out.append("}")
 open(os.path.join(ROOT, "bindings", "csharp", "Wickra.Tests", "GoldenAllTests.g.cs"), "w", encoding="utf-8").write("\n".join(out) + "\n")

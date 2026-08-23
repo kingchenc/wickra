@@ -199,3 +199,84 @@ test_that("all 514 indicators honour reset, is_ready and warmup_period", {
     }
   }
 })
+
+# The archetypes whose per-bar inputs are ordinary equal-length columns. The
+# cross-section, order-book, profile and bar-builder families take a per-bar
+# snapshot or emit a variable number of rows, and have no batch shim in R at all
+# -- see the count this test reports.
+GOLDEN_BATCHABLE <- c(
+  "scalar_f64", "multi_f64", "pairwise", "multi_pairwise",
+  "scalar_candle", "multi_candle", "trade", "trademid", "deriv", "deriv_multi"
+)
+
+# The whole-series columns for one archetype, in the order its batch declares
+# them. Logicals cross the C boundary as 0/1 doubles.
+golden_batch_columns <- function(arch, input_rows) {
+  n <- length(input_rows)
+  col <- function(k) vapply(input_rows, function(r) r[k], numeric(1))
+  open <- col(1); high <- col(2); low <- col(3); close <- col(4); volume <- col(5)
+  ts <- as.numeric(seq_len(n) - 1)
+  switch(arch,
+    scalar_f64 = , multi_f64 = list(close),
+    pairwise = , multi_pairwise = list(close, open),
+    scalar_candle = , multi_candle = list(open, high, low, close, volume, ts),
+    trade = list(close, volume, as.numeric(close >= open), ts),
+    trademid = list(close, volume, as.numeric(close >= open), ts, (high + low) / 2),
+    deriv = , deriv_multi = c(
+      lapply(seq_len(11), function(f) vapply(input_rows, function(r) deriv_fields(r)[f], numeric(1))),
+      list(ts)
+    ),
+    stop("batch arch ", arch)
+  )
+}
+
+# A batch is a separate native path from `update`; until this existed only a
+# handful of indicators had ever been checked through it.
+test_that("every R indicator with a batch shim matches the Rust golden fixtures", {
+  skip_if(is.null(golden_dir_all), "golden fixtures not bundled with the package")
+  source(test_path("golden_specs.R"), local = TRUE)
+  input_rows <- golden_input_rows()
+  n <- length(input_rows)
+
+  checked <- 0L
+  skipped <- 0L
+  for (spec in GOLDEN_SPECS) {
+    if (!(spec$arch %in% GOLDEN_BATCHABLE)) {
+      skipped <- skipped + 1L
+      next
+    }
+    checked <- checked + 1L
+    ind <- do.call(get(spec$canon), as.list(spec$params))
+    got <- do.call(batch, c(list(ind), golden_batch_columns(spec$arch, input_rows)))
+    exp <- golden_read_rows(paste0("g_", spec$canon))
+    tol <- golden_tol(spec$canon)
+
+    if (is.matrix(got)) {
+      expect_equal(nrow(got), n, info = sprintf("%s: batch rows", spec$canon))
+    } else {
+      expect_equal(length(got), n, info = sprintf("%s: batch length", spec$canon))
+    }
+    for (i in seq_len(n)) {
+      want <- exp[[i]]
+      row <- if (is.matrix(got)) unname(got[i, ]) else got[i]
+      expect_equal(length(row), length(want),
+        info = sprintf("%s row %d arity", spec$canon, i))
+      for (k in seq_along(want)) {
+        w <- want[k]; g <- row[k]
+        if (is.na(w)) {
+          expect_true(is.na(g), info = sprintf("%s row %d col %d: want NA", spec$canon, i, k))
+        } else if (is.infinite(w)) {
+          expect_true(is.infinite(g) && sign(g) == sign(w),
+            info = sprintf("%s row %d col %d: want %g", spec$canon, i, k, w))
+        } else {
+          expect_lte(abs(g - w), tol * max(1, abs(w)),
+            label = sprintf("%s row %d col %d (got %s want %g)", spec$canon, i, k, as.character(g), w))
+        }
+      }
+    }
+  }
+  # Not a silent cap: the families without a batch shim are named above, and
+  # this pins how many of them there are so the number cannot drift unnoticed.
+  expect_equal(checked, 475L)
+  expect_equal(skipped, 39L)
+})

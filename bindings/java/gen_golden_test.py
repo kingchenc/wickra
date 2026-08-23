@@ -277,6 +277,194 @@ class GoldenAllTest {
         };
     }
 
+    private static Method batchMethod(Object ind) {
+        for (Method m : ind.getClass().getMethods()) {
+            if (m.getName().equals("batch")) return m;
+        }
+        throw new IllegalStateException("no batch on " + ind.getClass());
+    }
+
+    /** One column of the whole series, built with the same per-bar values `row` feeds `update`. */
+    private static double[] column(double[][] rows, java.util.function.ToDoubleFunction<double[]> pick) {
+        double[] out = new double[rows.length];
+        for (int i = 0; i < rows.length; i++) out[i] = pick.applyAsDouble(rows[i]);
+        return out;
+    }
+
+    private static long[] indexColumn(int n) {
+        long[] out = new long[n];
+        for (int i = 0; i < n; i++) out[i] = i;
+        return out;
+    }
+
+    private static boolean[] isBuyColumn(double[][] rows) {
+        boolean[] out = new boolean[rows.length];
+        for (int i = 0; i < rows.length; i++) out[i] = rows[i][3] >= rows[i][0];
+        return out;
+    }
+
+    /**
+     * The cross-section and order-book batches take one flat array covering the
+     * whole series -- bar i occupies [i*width, (i+1)*width) -- plus the width as
+     * a separate argument. Both families use a width of 5 here, the same
+     * snapshot the streaming pass builds per bar.
+     */
+    private static final int SNAPSHOT_WIDTH = 5;
+
+    private static double[] flatSnapshots(double[][] rows, int which, boolean orderBook) {
+        double[] out = new double[rows.length * SNAPSHOT_WIDTH];
+        for (int i = 0; i < rows.length; i++) {
+            double[] snap = orderBook ? obList(rows[i], which) : crossList(rows[i], which);
+            System.arraycopy(snap, 0, out, i * SNAPSHOT_WIDTH, SNAPSHOT_WIDTH);
+        }
+        return out;
+    }
+
+    private static boolean[] flatFlags(int n, int which) {
+        boolean[] out = new boolean[n * SNAPSHOT_WIDTH];
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(crossFlags(which), 0, out, i * SNAPSHOT_WIDTH, SNAPSHOT_WIDTH);
+        }
+        return out;
+    }
+
+    /** The `batch` arguments for one archetype, in the order the method declares them. */
+    private static Object[] batchArgs(Spec s, double[][] rows) {
+        int n = rows.length;
+        double[] open = column(rows, r -> r[0]);
+        double[] high = column(rows, r -> r[1]);
+        double[] low = column(rows, r -> r[2]);
+        double[] close = column(rows, r -> r[3]);
+        double[] volume = column(rows, r -> r[4]);
+        long[] stamps = indexColumn(n);
+        return switch (s.arch()) {
+            case "scalar_f64", "multi_f64" -> new Object[]{close};
+            case "pairwise", "multi_pairwise" -> new Object[]{close, open};
+            case "scalar_candle", "multi_candle", "profile_bins", "profile_pricebins",
+                 "bars_candle5" -> new Object[]{open, high, low, close, volume, stamps};
+            case "trade", "footprint" -> new Object[]{close, volume, isBuyColumn(rows), stamps};
+            case "trademid" -> new Object[]{close, volume, isBuyColumn(rows), stamps,
+                column(rows, r -> (r[1] + r[2]) / 2)};
+            case "ob" -> new Object[]{flatSnapshots(rows, 0, true), flatSnapshots(rows, 1, true),
+                SNAPSHOT_WIDTH, flatSnapshots(rows, 2, true), flatSnapshots(rows, 3, true), SNAPSHOT_WIDTH};
+            case "cross" -> new Object[]{flatSnapshots(rows, 0, false), flatSnapshots(rows, 1, false),
+                flatFlags(n, 2), flatFlags(n, 3), flatFlags(n, 4), flatFlags(n, 5), SNAPSHOT_WIDTH, stamps};
+            case "deriv", "deriv_multi" -> {
+                Object[] args = new Object[12];
+                for (int f = 0; f < 11; f++) {
+                    final int field = f;
+                    args[f] = column(rows, r -> derivFields(r)[field]);
+                }
+                args[11] = stamps;
+                yield args;
+            }
+            // A bar builder is fed close-only or four-price candles with a unit
+            // volume and a zero stamp, matching what the streaming pass sends.
+            case "bars_close" -> new Object[]{close, close, close, close,
+                onesColumn(n), new long[n]};
+            case "bars_candle4" -> new Object[]{open, high, low, close, onesColumn(n), new long[n]};
+            default -> throw new IllegalStateException("arch " + s.arch());
+        };
+    }
+
+    private static double[] onesColumn(int n) {
+        double[] out = new double[n];
+        java.util.Arrays.fill(out, 1.0);
+        return out;
+    }
+
+    /** The batch result as per-bar rows, shaped the way the fixture stores them. */
+    private static double[][] batchRows(Spec s, Object res, int n) throws Exception {
+        return switch (s.arch()) {
+            case "scalar_f64", "scalar_candle", "pairwise", "trade", "trademid", "ob", "cross", "deriv" -> {
+                double[] flat = (double[]) res;
+                double[][] out = new double[flat.length][];
+                for (int i = 0; i < flat.length; i++) out[i] = new double[]{flat[i]};
+                yield out;
+            }
+            case "multi_f64", "multi_candle", "multi_pairwise", "deriv_multi", "profile_pricebins" -> {
+                int len = Array.getLength(res);
+                double[][] out = new double[len][];
+                for (int i = 0; i < len; i++) {
+                    Object entry = Array.get(res, i);
+                    out[i] = entry == null ? nanRow(s.width()) : flattenRecord(entry);
+                }
+                yield out;
+            }
+            case "profile_bins" -> (double[][]) res;
+            default -> new double[][]{flattenArray(res)}; // bars_*, footprint: one flat run
+        };
+    }
+
+    /**
+     * Replay every indicator through `batch` and hold it to the same fixtures the
+     * streaming pass uses. A batch is a separate native path; until this existed
+     * only four indicators had ever been checked through it.
+     */
+    @TestFactory
+    List<DynamicTest> batch() throws Exception {
+        double[][] rows = input();
+        List<DynamicTest> tests = new ArrayList<>();
+        for (Spec s : SPECS) {
+            tests.add(dynamicTest(s.canonical(), () -> {
+                Object ind = construct(s);
+                Object res = batchMethod(ind).invoke(ind, batchArgs(s, rows));
+                double[][] got = batchRows(s, res, rows.length);
+                double[][] exp = fixture(s.canonical());
+                double indicatorTol = tolFor(s.canonical());
+
+                if (s.arch().startsWith("bars_")) {
+                    // A bar builder emits an unpredictable number of bars per
+                    // candle, so its batch is the concatenation of what
+                    // streaming emits row by row.
+                    List<Double> want = new ArrayList<>();
+                    for (double[] r : exp) for (double d : r) want.add(d);
+                    assertTrue(got[0].length == want.size(),
+                        s.canonical() + ": batch produced " + got[0].length + " values, fixture has " + want.size());
+                    for (int k = 0; k < want.size(); k++) {
+                        assertClose(got[0][k], want.get(k), indicatorTol, s.canonical() + " value " + k);
+                    }
+                    return;
+                }
+                if (s.arch().equals("footprint")) {
+                    // Footprint reports the whole book after each trade, so the
+                    // batch holds the final snapshot rather than every one.
+                    double[] want = new double[0];
+                    for (double[] r : exp) if (r.length > 0) want = r;
+                    assertTrue(got[0].length == want.length,
+                        s.canonical() + ": batch snapshot " + got[0].length + " values, fixture " + want.length);
+                    for (int k = 0; k < want.length; k++) {
+                        assertClose(got[0][k], want[k], indicatorTol, s.canonical() + " value " + k);
+                    }
+                    return;
+                }
+
+                assertTrue(got.length == exp.length,
+                    s.canonical() + ": batch rows " + got.length + " vs fixture " + exp.length);
+                for (int i = 0; i < exp.length; i++) {
+                    assertTrue(got[i].length == exp[i].length,
+                        s.canonical() + " row " + i + ": arity " + got[i].length + " vs " + exp[i].length);
+                    for (int k = 0; k < exp[i].length; k++) {
+                        assertClose(got[i][k], exp[i][k], indicatorTol, s.canonical() + " row " + i + " col " + k);
+                    }
+                }
+            }));
+        }
+        return tests;
+    }
+
+    private static void assertClose(double got, double want, double tol, String label) {
+        if (Double.isNaN(want)) {
+            assertTrue(Double.isNaN(got), label + ": want NaN got " + got);
+        } else if (Double.isInfinite(want)) {
+            assertTrue(Double.isInfinite(got) && Math.signum(got) == Math.signum(want),
+                label + ": want " + want + " got " + got);
+        } else {
+            assertTrue(Math.abs(got - want) <= tol * Math.max(1.0, Math.abs(want)),
+                label + ": got " + got + " want " + want);
+        }
+    }
+
     /** Drive one indicator over the whole golden input, rows flattened as the fixture stores them. */
     private static double[][] drive(Spec s, Object ind, Method upd, double[][] rows) throws Exception {
         double[][] out = new double[rows.length][];
