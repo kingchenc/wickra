@@ -96,6 +96,22 @@ jobs:
         # streaming.
         run: cargo build -p wickra-examples --bins
 
+  # Every binding is generated or written separately and tested separately, so a
+  # method that goes missing in one of them fails nowhere. This compares them to
+  # each other, against the shape the C ABI header declares. Pure Python over
+  # files already in the tree -- no toolchain, a few seconds.
+  binding-surface:
+    name: Binding surface parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Compare every binding's surface with the C ABI
+        run: python3 scripts/check_binding_surface.py
+
   # Syntax/parse smoke for the non-Rust examples. The Rust examples are built in
   # the `rust` job above (`cargo build -p wickra-examples --bins`). Running an
   # example needs the built native binding / wheel, which this job does not have,

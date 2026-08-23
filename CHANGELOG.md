@@ -18,6 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   catch-all; the raised exception and message are unchanged.
 
 ### Fixed
+- **Nothing compared the bindings to each other.** Each is generated or written
+  separately and tested separately, so a method that went missing in one of them
+  failed nowhere — which is how the WASM binding shipped 73 classes without
+  `isReady`/`warmupPeriod` and the Node loader shipped 518 exports resolving to
+  `undefined`. `scripts/check_binding_surface.py` now reads the method symbols
+  out of the C ABI header, the one artefact every binding consumes, derives what
+  each of the 514 indicators must expose, and holds C, Go, C#, Java, Node,
+  Python and R to it in each language's own spelling. The check is two-sided: a
+  bar builder that grew an `isReady` fails as loudly as an indicator that lost
+  one. WASM's surface is a build artefact rather than a file in the tree, so its
+  `completeness.test.js` asserts the same contract from the same manifest at
+  runtime, replacing a hand-maintained class count. It runs in CI as a new
+  `binding-surface` job.
 - **`batch` is exercised across the catalogue in C#, Java and R.** Each had a
   `BatchShapes`-style test covering one indicator per awkward input shape, which
   is what it was for, and nothing that drove the whole catalogue through the
