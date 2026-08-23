@@ -190,6 +190,37 @@ SEXP wk_acceleration_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_acceleration_bands_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAccelerationBandsOutput *rows = (struct WickraAccelerationBandsOutput *)R_alloc(n, sizeof(struct WickraAccelerationBandsOutput));
+  wickra_acceleration_bands_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_acceleration_bands_warmup_period(SEXP e) {
   struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_acceleration_bands_warmup_period(h));
@@ -737,6 +768,37 @@ SEXP wk_adx_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(2);
   return r;
 }
+SEXP wk_adx_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAdxOutput *rows = (struct WickraAdxOutput *)R_alloc(n, sizeof(struct WickraAdxOutput));
+  wickra_adx_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].plus_di;
+    REAL(out)[i + n * 1] = (double)rows[i].minus_di;
+    REAL(out)[i + n * 2] = (double)rows[i].adx;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("plus_di"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("minus_di"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("adx"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_adx_warmup_period(SEXP e) {
   struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_adx_warmup_period(h));
@@ -835,6 +897,37 @@ SEXP wk_alligator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_alligator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAlligatorOutput *rows = (struct WickraAlligatorOutput *)R_alloc(n, sizeof(struct WickraAlligatorOutput));
+  wickra_alligator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].jaw;
+    REAL(out)[i + n * 1] = (double)rows[i].teeth;
+    REAL(out)[i + n * 2] = (double)rows[i].lips;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("jaw"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("teeth"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lips"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_alligator_warmup_period(SEXP e) {
   struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
@@ -961,6 +1054,23 @@ SEXP wk_amihud_illiquidity_new(SEXP a0) {
 SEXP wk_amihud_illiquidity_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_amihud_illiquidity_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_amihud_illiquidity_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_amihud_illiquidity_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_amihud_illiquidity_warmup_period(SEXP e) {
   struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
@@ -1106,6 +1216,37 @@ SEXP wk_andrews_pitchfork_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_andrews_pitchfork_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAndrewsPitchforkOutput *rows = (struct WickraAndrewsPitchforkOutput *)R_alloc(n, sizeof(struct WickraAndrewsPitchforkOutput));
+  wickra_andrews_pitchfork_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].median;
+    REAL(out)[i + n * 1] = (double)rows[i].upper;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("median"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_andrews_pitchfork_warmup_period(SEXP e) {
   struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_andrews_pitchfork_warmup_period(h));
@@ -1195,6 +1336,35 @@ SEXP wk_aroon_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_aroon_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAroonOutput *rows = (struct WickraAroonOutput *)R_alloc(n, sizeof(struct WickraAroonOutput));
+  wickra_aroon_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].up;
+    REAL(out)[i + n * 1] = (double)rows[i].down;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("up"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("down"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_aroon_warmup_period(SEXP e) {
   struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
@@ -1347,6 +1517,37 @@ SEXP wk_atr_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_atr_bands_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAtrBandsOutput *rows = (struct WickraAtrBandsOutput *)R_alloc(n, sizeof(struct WickraAtrBandsOutput));
+  wickra_atr_bands_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_atr_bands_warmup_period(SEXP e) {
   struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_atr_bands_warmup_period(h));
@@ -1391,6 +1592,35 @@ SEXP wk_atr_ratchet_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_atr_ratchet_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAtrRatchetOutput *rows = (struct WickraAtrRatchetOutput *)R_alloc(n, sizeof(struct WickraAtrRatchetOutput));
+  wickra_atr_ratchet_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].value;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_atr_ratchet_warmup_period(SEXP e) {
   struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
@@ -1498,6 +1728,45 @@ SEXP wk_auto_fib_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_auto_fib_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraAutoFibOutput *rows = (struct WickraAutoFibOutput *)R_alloc(n, sizeof(struct WickraAutoFibOutput));
+  wickra_auto_fib_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 7));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].level_0;
+    REAL(out)[i + n * 1] = (double)rows[i].level_236;
+    REAL(out)[i + n * 2] = (double)rows[i].level_382;
+    REAL(out)[i + n * 3] = (double)rows[i].level_500;
+    REAL(out)[i + n * 4] = (double)rows[i].level_618;
+    REAL(out)[i + n * 5] = (double)rows[i].level_786;
+    REAL(out)[i + n * 6] = (double)rows[i].level_1000;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("level_0"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("level_236"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("level_382"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("level_500"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("level_618"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("level_786"));
+  SET_STRING_ELT(cn, 6, Rf_mkChar("level_1000"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_auto_fib_warmup_period(SEXP e) {
   struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
@@ -2333,6 +2602,32 @@ SEXP wk_bollinger_bands_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_bollinger_bands_batch(SEXP e, SEXP a0) {
+  struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraBollingerOutput *rows = (struct WickraBollingerOutput *)R_alloc(n, sizeof(struct WickraBollingerOutput));
+  wickra_bollinger_bands_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+    REAL(out)[i + n * 3] = (double)rows[i].stddev;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("stddev"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_bollinger_bands_warmup_period(SEXP e) {
   struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_bollinger_bands_warmup_period(h));
@@ -2424,6 +2719,30 @@ SEXP wk_bomar_bands_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_bomar_bands_batch(SEXP e, SEXP a0) {
+  struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraBomarBandsOutput *rows = (struct WickraBomarBandsOutput *)R_alloc(n, sizeof(struct WickraBomarBandsOutput));
+  wickra_bomar_bands_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_bomar_bands_warmup_period(SEXP e) {
   struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
@@ -2679,6 +2998,29 @@ SEXP wk_calendar_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_calendar_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_calendar_spread_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_calendar_spread_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_calendar_spread_warmup_period(SEXP e) {
   struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_calendar_spread_warmup_period(h));
@@ -2783,6 +3125,49 @@ SEXP wk_camarilla_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_camarilla_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraCamarillaPivotsOutput *rows = (struct WickraCamarillaPivotsOutput *)R_alloc(n, sizeof(struct WickraCamarillaPivotsOutput));
+  wickra_camarilla_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 9));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].pp;
+    REAL(out)[i + n * 1] = (double)rows[i].r1;
+    REAL(out)[i + n * 2] = (double)rows[i].r2;
+    REAL(out)[i + n * 3] = (double)rows[i].r3;
+    REAL(out)[i + n * 4] = (double)rows[i].r4;
+    REAL(out)[i + n * 5] = (double)rows[i].s1;
+    REAL(out)[i + n * 6] = (double)rows[i].s2;
+    REAL(out)[i + n * 7] = (double)rows[i].s3;
+    REAL(out)[i + n * 8] = (double)rows[i].s4;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 9));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("r3"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("r4"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("s1"));
+  SET_STRING_ELT(cn, 6, Rf_mkChar("s2"));
+  SET_STRING_ELT(cn, 7, Rf_mkChar("s3"));
+  SET_STRING_ELT(cn, 8, Rf_mkChar("s4"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_camarilla_warmup_period(SEXP e) {
   struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_camarilla_warmup_period(h));
@@ -2861,6 +3246,35 @@ SEXP wk_candle_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_candle_volume_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraCandleVolumeOutput *rows = (struct WickraCandleVolumeOutput *)R_alloc(n, sizeof(struct WickraCandleVolumeOutput));
+  wickra_candle_volume_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].body;
+    REAL(out)[i + n * 1] = (double)rows[i].width;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("body"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("width"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_candle_volume_warmup_period(SEXP e) {
   struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
@@ -3005,6 +3419,37 @@ SEXP wk_central_pivot_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_central_pivot_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraCentralPivotRangeOutput *rows = (struct WickraCentralPivotRangeOutput *)R_alloc(n, sizeof(struct WickraCentralPivotRangeOutput));
+  wickra_central_pivot_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].pivot;
+    REAL(out)[i + n * 1] = (double)rows[i].tc;
+    REAL(out)[i + n * 2] = (double)rows[i].bc;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("pivot"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("tc"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("bc"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_central_pivot_range_warmup_period(SEXP e) {
   struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
@@ -3252,6 +3697,35 @@ SEXP wk_chande_kroll_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_chande_kroll_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraChandeKrollStopOutput *rows = (struct WickraChandeKrollStopOutput *)R_alloc(n, sizeof(struct WickraChandeKrollStopOutput));
+  wickra_chande_kroll_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].stop_long;
+    REAL(out)[i + n * 1] = (double)rows[i].stop_short;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("stop_long"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("stop_short"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_chande_kroll_stop_warmup_period(SEXP e) {
   struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_chande_kroll_stop_warmup_period(h));
@@ -3296,6 +3770,35 @@ SEXP wk_chandelier_exit_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_chandelier_exit_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraChandelierExitOutput *rows = (struct WickraChandelierExitOutput *)R_alloc(n, sizeof(struct WickraChandelierExitOutput));
+  wickra_chandelier_exit_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].long_stop;
+    REAL(out)[i + n * 1] = (double)rows[i].short_stop;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("long_stop"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("short_stop"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_chandelier_exit_warmup_period(SEXP e) {
   struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
@@ -3403,6 +3906,45 @@ SEXP wk_classic_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_classic_pivots_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraClassicPivotsOutput *rows = (struct WickraClassicPivotsOutput *)R_alloc(n, sizeof(struct WickraClassicPivotsOutput));
+  wickra_classic_pivots_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 7));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].pp;
+    REAL(out)[i + n * 1] = (double)rows[i].r1;
+    REAL(out)[i + n * 2] = (double)rows[i].r2;
+    REAL(out)[i + n * 3] = (double)rows[i].r3;
+    REAL(out)[i + n * 4] = (double)rows[i].s1;
+    REAL(out)[i + n * 5] = (double)rows[i].s2;
+    REAL(out)[i + n * 6] = (double)rows[i].s3;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("r3"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("s1"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("s2"));
+  SET_STRING_ELT(cn, 6, Rf_mkChar("s3"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_classic_pivots_warmup_period(SEXP e) {
   struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
@@ -3645,6 +4187,31 @@ SEXP wk_cointegration_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_cointegration_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  struct WickraCointegrationOutput *rows = (struct WickraCointegrationOutput *)R_alloc(n, sizeof(struct WickraCointegrationOutput));
+  wickra_cointegration_batch(h, REAL(a0), REAL(a1), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].hedge_ratio;
+    REAL(out)[i + n * 1] = (double)rows[i].spread;
+    REAL(out)[i + n * 2] = (double)rows[i].adf_stat;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("hedge_ratio"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("spread"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("adf_stat"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_cointegration_warmup_period(SEXP e) {
   struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_cointegration_warmup_period(h));
@@ -3736,6 +4303,37 @@ SEXP wk_composite_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_composite_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraCompositeProfileOutput *rows = (struct WickraCompositeProfileOutput *)R_alloc(n, sizeof(struct WickraCompositeProfileOutput));
+  wickra_composite_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].poc;
+    REAL(out)[i + n * 1] = (double)rows[i].vah;
+    REAL(out)[i + n * 2] = (double)rows[i].val;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("poc"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("vah"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("val"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_composite_profile_warmup_period(SEXP e) {
   struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
@@ -4107,6 +4705,23 @@ SEXP wk_cumulative_volume_delta_new(void) {
 SEXP wk_cumulative_volume_delta_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_cumulative_volume_delta_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_cumulative_volume_delta_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_cumulative_volume_delta_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_cumulative_volume_delta_warmup_period(SEXP e) {
   struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
@@ -4568,6 +5183,37 @@ SEXP wk_demark_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_demark_pivots_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraDemarkPivotsOutput *rows = (struct WickraDemarkPivotsOutput *)R_alloc(n, sizeof(struct WickraDemarkPivotsOutput));
+  wickra_demark_pivots_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].pp;
+    REAL(out)[i + n * 1] = (double)rows[i].r1;
+    REAL(out)[i + n * 2] = (double)rows[i].s1;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("s1"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_demark_pivots_warmup_period(SEXP e) {
   struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_demark_pivots_warmup_period(h));
@@ -4924,13 +5570,26 @@ SEXP wk_dollar_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   struct WickraDollarBar buf[64];
   size_t n = wickra_dollar_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].high;
     REAL(r)[i + n * 2] = (double)buf[i].low;
     REAL(r)[i + n * 3] = (double)buf[i].close;
     REAL(r)[i + n * 4] = (double)buf[i].volume;
     REAL(r)[i + n * 5] = (double)buf[i].dollar;
+  }
+  if (n > 64) {
+    struct WickraDollarBar *rest = (struct WickraDollarBar *)R_alloc(n - 64, sizeof(struct WickraDollarBar));
+    size_t got = wickra_dollar_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].high;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].low;
+      REAL(r)[64 + i + n * 3] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 4] = (double)rest[i].volume;
+      REAL(r)[64 + i + n * 5] = (double)rest[i].dollar;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -4984,6 +5643,37 @@ SEXP wk_donchian_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_donchian_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraDonchianOutput *rows = (struct WickraDonchianOutput *)R_alloc(n, sizeof(struct WickraDonchianOutput));
+  wickra_donchian_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_donchian_warmup_period(SEXP e) {
   struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_donchian_warmup_period(h));
@@ -5028,6 +5718,35 @@ SEXP wk_donchian_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_donchian_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraDonchianStopOutput *rows = (struct WickraDonchianStopOutput *)R_alloc(n, sizeof(struct WickraDonchianStopOutput));
+  wickra_donchian_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].stop_long;
+    REAL(out)[i + n * 1] = (double)rows[i].stop_short;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("stop_long"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("stop_short"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_donchian_stop_warmup_period(SEXP e) {
   struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
@@ -5079,6 +5798,34 @@ SEXP wk_double_bollinger_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_double_bollinger_batch(SEXP e, SEXP a0) {
+  struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraDoubleBollingerOutput *rows = (struct WickraDoubleBollingerOutput *)R_alloc(n, sizeof(struct WickraDoubleBollingerOutput));
+  wickra_double_bollinger_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper_outer;
+    REAL(out)[i + n * 1] = (double)rows[i].upper_inner;
+    REAL(out)[i + n * 2] = (double)rows[i].middle;
+    REAL(out)[i + n * 3] = (double)rows[i].lower_inner;
+    REAL(out)[i + n * 4] = (double)rows[i].lower_outer;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper_outer"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("upper_inner"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("lower_inner"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("lower_outer"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_double_bollinger_warmup_period(SEXP e) {
   struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
@@ -5562,6 +6309,24 @@ SEXP wk_effective_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_effective_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
 }
+SEXP wk_effective_spread_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
+  struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_effective_spread_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(a4), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_effective_spread_warmup_period(SEXP e) {
   struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_effective_spread_warmup_period(h));
@@ -5742,6 +6507,35 @@ SEXP wk_elder_ray_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_elder_ray_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraElderRayOutput *rows = (struct WickraElderRayOutput *)R_alloc(n, sizeof(struct WickraElderRayOutput));
+  wickra_elder_ray_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].bull_power;
+    REAL(out)[i + n * 1] = (double)rows[i].bear_power;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("bull_power"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("bear_power"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_elder_ray_warmup_period(SEXP e) {
   struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_elder_ray_warmup_period(h));
@@ -5786,6 +6580,35 @@ SEXP wk_elder_safe_zone_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_elder_safe_zone_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraElderSafeZoneOutput *rows = (struct WickraElderSafeZoneOutput *)R_alloc(n, sizeof(struct WickraElderSafeZoneOutput));
+  wickra_elder_safe_zone_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].value;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_elder_safe_zone_warmup_period(SEXP e) {
   struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
@@ -5974,6 +6797,35 @@ SEXP wk_equivolume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_equivolume_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraEquivolumeOutput *rows = (struct WickraEquivolumeOutput *)R_alloc(n, sizeof(struct WickraEquivolumeOutput));
+  wickra_equivolume_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].height;
+    REAL(out)[i + n * 1] = (double)rows[i].width;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("height"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("width"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_equivolume_warmup_period(SEXP e) {
   struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_equivolume_warmup_period(h));
@@ -6008,6 +6860,29 @@ SEXP wk_estimated_leverage_ratio_new(void) {
 SEXP wk_estimated_leverage_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_estimated_leverage_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_estimated_leverage_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_estimated_leverage_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_estimated_leverage_ratio_warmup_period(SEXP e) {
   struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
@@ -6392,6 +7267,37 @@ SEXP wk_fib_arcs_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_arcs_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibArcsOutput *rows = (struct WickraFibArcsOutput *)R_alloc(n, sizeof(struct WickraFibArcsOutput));
+  wickra_fib_arcs_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].arc_382;
+    REAL(out)[i + n * 1] = (double)rows[i].arc_500;
+    REAL(out)[i + n * 2] = (double)rows[i].arc_618;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("arc_382"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("arc_500"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("arc_618"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_fib_arcs_warmup_period(SEXP e) {
   struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_fib_arcs_warmup_period(h));
@@ -6441,6 +7347,39 @@ SEXP wk_fib_channel_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_channel_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibChannelOutput *rows = (struct WickraFibChannelOutput *)R_alloc(n, sizeof(struct WickraFibChannelOutput));
+  wickra_fib_channel_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].base;
+    REAL(out)[i + n * 1] = (double)rows[i].level_618;
+    REAL(out)[i + n * 2] = (double)rows[i].level_1000;
+    REAL(out)[i + n * 3] = (double)rows[i].level_1618;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("base"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("level_618"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("level_1000"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("level_1618"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_fib_channel_warmup_period(SEXP e) {
   struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_fib_channel_warmup_period(h));
@@ -6485,6 +7424,35 @@ SEXP wk_fib_confluence_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_confluence_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibConfluenceOutput *rows = (struct WickraFibConfluenceOutput *)R_alloc(n, sizeof(struct WickraFibConfluenceOutput));
+  wickra_fib_confluence_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].price;
+    REAL(out)[i + n * 1] = (double)rows[i].strength;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("price"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("strength"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_fib_confluence_warmup_period(SEXP e) {
   struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
@@ -6537,6 +7505,41 @@ SEXP wk_fib_extension_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_extension_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibExtensionOutput *rows = (struct WickraFibExtensionOutput *)R_alloc(n, sizeof(struct WickraFibExtensionOutput));
+  wickra_fib_extension_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].level_1272;
+    REAL(out)[i + n * 1] = (double)rows[i].level_1414;
+    REAL(out)[i + n * 2] = (double)rows[i].level_1618;
+    REAL(out)[i + n * 3] = (double)rows[i].level_2000;
+    REAL(out)[i + n * 4] = (double)rows[i].level_2618;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("level_1272"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("level_1414"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("level_1618"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("level_2000"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("level_2618"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_fib_extension_warmup_period(SEXP e) {
   struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_fib_extension_warmup_period(h));
@@ -6583,6 +7586,37 @@ SEXP wk_fib_fan_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_fan_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibFanOutput *rows = (struct WickraFibFanOutput *)R_alloc(n, sizeof(struct WickraFibFanOutput));
+  wickra_fib_fan_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].fan_382;
+    REAL(out)[i + n * 1] = (double)rows[i].fan_500;
+    REAL(out)[i + n * 2] = (double)rows[i].fan_618;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("fan_382"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("fan_500"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("fan_618"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_fib_fan_warmup_period(SEXP e) {
   struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
@@ -6632,6 +7666,39 @@ SEXP wk_fib_projection_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_projection_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibProjectionOutput *rows = (struct WickraFibProjectionOutput *)R_alloc(n, sizeof(struct WickraFibProjectionOutput));
+  wickra_fib_projection_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].level_618;
+    REAL(out)[i + n * 1] = (double)rows[i].level_1000;
+    REAL(out)[i + n * 2] = (double)rows[i].level_1618;
+    REAL(out)[i + n * 3] = (double)rows[i].level_2618;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("level_618"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("level_1000"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("level_1618"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("level_2618"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_fib_projection_warmup_period(SEXP e) {
   struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
@@ -6688,6 +7755,45 @@ SEXP wk_fib_retracement_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_retracement_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibRetracementOutput *rows = (struct WickraFibRetracementOutput *)R_alloc(n, sizeof(struct WickraFibRetracementOutput));
+  wickra_fib_retracement_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 7));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].level_0;
+    REAL(out)[i + n * 1] = (double)rows[i].level_236;
+    REAL(out)[i + n * 2] = (double)rows[i].level_382;
+    REAL(out)[i + n * 3] = (double)rows[i].level_500;
+    REAL(out)[i + n * 4] = (double)rows[i].level_618;
+    REAL(out)[i + n * 5] = (double)rows[i].level_786;
+    REAL(out)[i + n * 6] = (double)rows[i].level_1000;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("level_0"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("level_236"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("level_382"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("level_500"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("level_618"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("level_786"));
+  SET_STRING_ELT(cn, 6, Rf_mkChar("level_1000"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_fib_retracement_warmup_period(SEXP e) {
   struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_fib_retracement_warmup_period(h));
@@ -6732,6 +7838,35 @@ SEXP wk_fib_time_zones_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_time_zones_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibTimeZonesOutput *rows = (struct WickraFibTimeZonesOutput *)R_alloc(n, sizeof(struct WickraFibTimeZonesOutput));
+  wickra_fib_time_zones_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].on_zone;
+    REAL(out)[i + n * 1] = (double)rows[i].bars_to_next;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("on_zone"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("bars_to_next"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_fib_time_zones_warmup_period(SEXP e) {
   struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
@@ -6787,6 +7922,45 @@ SEXP wk_fibonacci_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fibonacci_pivots_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFibonacciPivotsOutput *rows = (struct WickraFibonacciPivotsOutput *)R_alloc(n, sizeof(struct WickraFibonacciPivotsOutput));
+  wickra_fibonacci_pivots_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 7));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].pp;
+    REAL(out)[i + n * 1] = (double)rows[i].r1;
+    REAL(out)[i + n * 2] = (double)rows[i].r2;
+    REAL(out)[i + n * 3] = (double)rows[i].r3;
+    REAL(out)[i + n * 4] = (double)rows[i].s1;
+    REAL(out)[i + n * 5] = (double)rows[i].s2;
+    REAL(out)[i + n * 6] = (double)rows[i].s3;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("r3"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("s1"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("s2"));
+  SET_STRING_ELT(cn, 6, Rf_mkChar("s3"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_fibonacci_pivots_warmup_period(SEXP e) {
   struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
@@ -6966,10 +8140,20 @@ SEXP wk_footprint_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct WickraFootprintLevel buf[64];
   size_t n = wickra_footprint_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].price;
     REAL(r)[i + n * 1] = (double)buf[i].bid_vol;
     REAL(r)[i + n * 2] = (double)buf[i].ask_vol;
+  }
+  if (n > 64) {
+    struct WickraFootprintLevel *rest = (struct WickraFootprintLevel *)R_alloc(n - 64, sizeof(struct WickraFootprintLevel));
+    size_t got = wickra_footprint_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].price;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].bid_vol;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].ask_vol;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cn, 0, Rf_mkChar("price"));
@@ -7077,6 +8261,35 @@ SEXP wk_fractal_chaos_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fractal_chaos_bands_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraFractalChaosBandsOutput *rows = (struct WickraFractalChaosBandsOutput *)R_alloc(n, sizeof(struct WickraFractalChaosBandsOutput));
+  wickra_fractal_chaos_bands_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_fractal_chaos_bands_warmup_period(SEXP e) {
   struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
@@ -7210,6 +8423,29 @@ SEXP wk_funding_basis_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_basis_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_funding_basis_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_funding_basis_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_funding_basis_warmup_period(SEXP e) {
   struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_funding_basis_warmup_period(h));
@@ -7244,6 +8480,29 @@ SEXP wk_funding_implied_apr_new(SEXP a0) {
 SEXP wk_funding_implied_apr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_implied_apr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_implied_apr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_funding_implied_apr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_funding_implied_apr_warmup_period(SEXP e) {
   struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
@@ -7280,6 +8539,29 @@ SEXP wk_funding_rate_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_rate_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_funding_rate_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_funding_rate_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_funding_rate_warmup_period(SEXP e) {
   struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_funding_rate_warmup_period(h));
@@ -7315,6 +8597,29 @@ SEXP wk_funding_rate_mean_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_rate_mean_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_funding_rate_mean_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_funding_rate_mean_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_funding_rate_mean_warmup_period(SEXP e) {
   struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_funding_rate_mean_warmup_period(h));
@@ -7349,6 +8654,29 @@ SEXP wk_funding_rate_z_score_new(SEXP a0) {
 SEXP wk_funding_rate_z_score_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_rate_z_score_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_rate_z_score_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_funding_rate_z_score_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_funding_rate_z_score_warmup_period(SEXP e) {
   struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
@@ -7686,6 +9014,35 @@ SEXP wk_gator_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_gator_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraGatorOscillatorOutput *rows = (struct WickraGatorOscillatorOutput *)R_alloc(n, sizeof(struct WickraGatorOscillatorOutput));
+  wickra_gator_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_gator_oscillator_warmup_period(SEXP e) {
   struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_gator_oscillator_warmup_period(h));
@@ -7822,6 +9179,37 @@ SEXP wk_golden_pocket_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_golden_pocket_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraGoldenPocketOutput *rows = (struct WickraGoldenPocketOutput *)R_alloc(n, sizeof(struct WickraGoldenPocketOutput));
+  wickra_golden_pocket_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].low;
+    REAL(out)[i + n * 1] = (double)rows[i].mid;
+    REAL(out)[i + n * 2] = (double)rows[i].high;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("mid"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("high"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_golden_pocket_warmup_period(SEXP e) {
   struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
@@ -8276,6 +9664,39 @@ SEXP wk_heikin_ashi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_heikin_ashi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraHeikinAshiOutput *rows = (struct WickraHeikinAshiOutput *)R_alloc(n, sizeof(struct WickraHeikinAshiOutput));
+  wickra_heikin_ashi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].open;
+    REAL(out)[i + n * 1] = (double)rows[i].high;
+    REAL(out)[i + n * 2] = (double)rows[i].low;
+    REAL(out)[i + n * 3] = (double)rows[i].close;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_heikin_ashi_warmup_period(SEXP e) {
   struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_heikin_ashi_warmup_period(h));
@@ -8511,6 +9932,35 @@ SEXP wk_high_low_volume_nodes_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_high_low_volume_nodes_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraHighLowVolumeNodesOutput *rows = (struct WickraHighLowVolumeNodesOutput *)R_alloc(n, sizeof(struct WickraHighLowVolumeNodesOutput));
+  wickra_high_low_volume_nodes_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].hvn;
+    REAL(out)[i + n * 1] = (double)rows[i].lvn;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("hvn"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("lvn"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_high_low_volume_nodes_warmup_period(SEXP e) {
   struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
@@ -9035,6 +10485,28 @@ SEXP wk_ht_phasor_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ht_phasor_batch(SEXP e, SEXP a0) {
+  struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraHtPhasorOutput *rows = (struct WickraHtPhasorOutput *)R_alloc(n, sizeof(struct WickraHtPhasorOutput));
+  wickra_ht_phasor_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].inphase;
+    REAL(out)[i + n * 1] = (double)rows[i].quadrature;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("inphase"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("quadrature"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_ht_phasor_warmup_period(SEXP e) {
   struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_ht_phasor_warmup_period(h));
@@ -9126,6 +10598,37 @@ SEXP wk_hurst_channel_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_hurst_channel_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraHurstChannelOutput *rows = (struct WickraHurstChannelOutput *)R_alloc(n, sizeof(struct WickraHurstChannelOutput));
+  wickra_hurst_channel_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_hurst_channel_warmup_period(SEXP e) {
   struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
@@ -9223,6 +10726,41 @@ SEXP wk_ichimoku_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ichimoku_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraIchimokuOutput *rows = (struct WickraIchimokuOutput *)R_alloc(n, sizeof(struct WickraIchimokuOutput));
+  wickra_ichimoku_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].tenkan;
+    REAL(out)[i + n * 1] = (double)rows[i].kijun;
+    REAL(out)[i + n * 2] = (double)rows[i].senkou_a;
+    REAL(out)[i + n * 3] = (double)rows[i].senkou_b;
+    REAL(out)[i + n * 4] = (double)rows[i].chikou;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("tenkan"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("kijun"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("senkou_a"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("senkou_b"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("chikou"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_ichimoku_warmup_period(SEXP e) {
   struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_ichimoku_warmup_period(h));
@@ -9311,13 +10849,26 @@ SEXP wk_imbalance_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   struct WickraImbalanceBar buf[64];
   size_t n = wickra_imbalance_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].high;
     REAL(r)[i + n * 2] = (double)buf[i].low;
     REAL(r)[i + n * 3] = (double)buf[i].close;
     REAL(r)[i + n * 4] = (double)buf[i].imbalance;
     REAL(r)[i + n * 5] = (double)buf[i].direction;
+  }
+  if (n > 64) {
+    struct WickraImbalanceBar *rest = (struct WickraImbalanceBar *)R_alloc(n - 64, sizeof(struct WickraImbalanceBar));
+    size_t got = wickra_imbalance_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].high;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].low;
+      REAL(r)[64 + i + n * 3] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 4] = (double)rest[i].imbalance;
+      REAL(r)[64 + i + n * 5] = (double)rest[i].direction;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -9518,6 +11069,35 @@ SEXP wk_initial_balance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_initial_balance_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraInitialBalanceOutput *rows = (struct WickraInitialBalanceOutput *)R_alloc(n, sizeof(struct WickraInitialBalanceOutput));
+  wickra_initial_balance_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].high;
+    REAL(out)[i + n * 1] = (double)rows[i].low;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("low"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_initial_balance_warmup_period(SEXP e) {
   struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
@@ -10023,10 +11603,20 @@ SEXP wk_kagi_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   struct WickraKagiBar buf[64];
   size_t n = wickra_kagi_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].start;
     REAL(r)[i + n * 1] = (double)buf[i].end;
     REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  if (n > 64) {
+    struct WickraKagiBar *rest = (struct WickraKagiBar *)R_alloc(n - 64, sizeof(struct WickraKagiBar));
+    size_t got = wickra_kagi_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].start;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].end;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].direction;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cn, 0, Rf_mkChar("start"));
@@ -10076,6 +11666,31 @@ SEXP wk_kalman_hedge_ratio_update(SEXP e, SEXP a0, SEXP a1) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_kalman_hedge_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  struct WickraKalmanHedgeRatioOutput *rows = (struct WickraKalmanHedgeRatioOutput *)R_alloc(n, sizeof(struct WickraKalmanHedgeRatioOutput));
+  wickra_kalman_hedge_ratio_batch(h, REAL(a0), REAL(a1), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].hedge_ratio;
+    REAL(out)[i + n * 1] = (double)rows[i].intercept;
+    REAL(out)[i + n * 2] = (double)rows[i].spread;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("hedge_ratio"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("intercept"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("spread"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_kalman_hedge_ratio_warmup_period(SEXP e) {
   struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
@@ -10167,6 +11782,35 @@ SEXP wk_kase_dev_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_kase_dev_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraKaseDevStopOutput *rows = (struct WickraKaseDevStopOutput *)R_alloc(n, sizeof(struct WickraKaseDevStopOutput));
+  wickra_kase_dev_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].value;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_kase_dev_stop_warmup_period(SEXP e) {
   struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_kase_dev_stop_warmup_period(h));
@@ -10211,6 +11855,35 @@ SEXP wk_kase_permission_stochastic_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_kase_permission_stochastic_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraKasePermissionStochasticOutput *rows = (struct WickraKasePermissionStochasticOutput *)R_alloc(n, sizeof(struct WickraKasePermissionStochasticOutput));
+  wickra_kase_permission_stochastic_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].fast;
+    REAL(out)[i + n * 1] = (double)rows[i].slow;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("fast"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("slow"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_kase_permission_stochastic_warmup_period(SEXP e) {
   struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
@@ -10303,6 +11976,37 @@ SEXP wk_keltner_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_keltner_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraKeltnerOutput *rows = (struct WickraKeltnerOutput *)R_alloc(n, sizeof(struct WickraKeltnerOutput));
+  wickra_keltner_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_keltner_warmup_period(SEXP e) {
   struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
@@ -10499,6 +12203,28 @@ SEXP wk_kst_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_kst_batch(SEXP e, SEXP a0) {
+  struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraKstOutput *rows = (struct WickraKstOutput *)R_alloc(n, sizeof(struct WickraKstOutput));
+  wickra_kst_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].kst;
+    REAL(out)[i + n * 1] = (double)rows[i].signal;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("kst"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("signal"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_kst_warmup_period(SEXP e) {
   struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_kst_warmup_period(h));
@@ -10630,6 +12356,24 @@ SEXP wk_kyles_lambda_new(SEXP a0) {
 SEXP wk_kyles_lambda_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
   struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_kyles_lambda_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_kyles_lambda_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
+  struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_kyles_lambda_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(a4), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_kyles_lambda_warmup_period(SEXP e) {
   struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
@@ -10773,6 +12517,29 @@ SEXP wk_lead_lag_cross_correlation_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_lead_lag_cross_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  struct WickraLeadLagCrossCorrelationOutput *rows = (struct WickraLeadLagCrossCorrelationOutput *)R_alloc(n, sizeof(struct WickraLeadLagCrossCorrelationOutput));
+  wickra_lead_lag_cross_correlation_batch(h, REAL(a0), REAL(a1), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].lag;
+    REAL(out)[i + n * 1] = (double)rows[i].correlation;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("lag"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("correlation"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_lead_lag_cross_correlation_warmup_period(SEXP e) {
   struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_lead_lag_cross_correlation_warmup_period(h));
@@ -10864,6 +12631,30 @@ SEXP wk_lin_reg_channel_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_lin_reg_channel_batch(SEXP e, SEXP a0) {
+  struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraLinRegChannelOutput *rows = (struct WickraLinRegChannelOutput *)R_alloc(n, sizeof(struct WickraLinRegChannelOutput));
+  wickra_lin_reg_channel_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_lin_reg_channel_warmup_period(SEXP e) {
   struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
@@ -11051,6 +12842,47 @@ SEXP wk_liquidation_features_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_liquidation_features_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  struct WickraLiquidationFeaturesOutput *rows = (struct WickraLiquidationFeaturesOutput *)R_alloc(n, sizeof(struct WickraLiquidationFeaturesOutput));
+  wickra_liquidation_features_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].long_;
+    REAL(out)[i + n * 1] = (double)rows[i].short_;
+    REAL(out)[i + n * 2] = (double)rows[i].net;
+    REAL(out)[i + n * 3] = (double)rows[i].total;
+    REAL(out)[i + n * 4] = (double)rows[i].imbalance;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("long_"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("short_"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("net"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("total"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("imbalance"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_liquidation_features_warmup_period(SEXP e) {
   struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_liquidation_features_warmup_period(h));
@@ -11235,6 +13067,29 @@ SEXP wk_long_short_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_long_short_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_long_short_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_long_short_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_long_short_ratio_warmup_period(SEXP e) {
   struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_long_short_ratio_warmup_period(h));
@@ -11327,6 +13182,30 @@ SEXP wk_ma_envelope_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ma_envelope_batch(SEXP e, SEXP a0) {
+  struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraMaEnvelopeOutput *rows = (struct WickraMaEnvelopeOutput *)R_alloc(n, sizeof(struct WickraMaEnvelopeOutput));
+  wickra_ma_envelope_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_ma_envelope_warmup_period(SEXP e) {
   struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_ma_envelope_warmup_period(h));
@@ -11374,6 +13253,30 @@ SEXP wk_macd_ext_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_macd_ext_batch(SEXP e, SEXP a0) {
+  struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraMacdOutput *rows = (struct WickraMacdOutput *)R_alloc(n, sizeof(struct WickraMacdOutput));
+  wickra_macd_ext_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].macd;
+    REAL(out)[i + n * 1] = (double)rows[i].signal;
+    REAL(out)[i + n * 2] = (double)rows[i].histogram;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("histogram"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_macd_ext_warmup_period(SEXP e) {
   struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_macd_ext_warmup_period(h));
@@ -11420,6 +13323,30 @@ SEXP wk_macd_fix_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_macd_fix_batch(SEXP e, SEXP a0) {
+  struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraMacdOutput *rows = (struct WickraMacdOutput *)R_alloc(n, sizeof(struct WickraMacdOutput));
+  wickra_macd_fix_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].macd;
+    REAL(out)[i + n * 1] = (double)rows[i].signal;
+    REAL(out)[i + n * 2] = (double)rows[i].histogram;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("histogram"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_macd_fix_warmup_period(SEXP e) {
   struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
@@ -11513,6 +13440,30 @@ SEXP wk_macd_indicator_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_macd_indicator_batch(SEXP e, SEXP a0) {
+  struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraMacdOutput *rows = (struct WickraMacdOutput *)R_alloc(n, sizeof(struct WickraMacdOutput));
+  wickra_macd_indicator_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].macd;
+    REAL(out)[i + n * 1] = (double)rows[i].signal;
+    REAL(out)[i + n * 2] = (double)rows[i].histogram;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("histogram"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_macd_indicator_warmup_period(SEXP e) {
   struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_macd_indicator_warmup_period(h));
@@ -11557,6 +13508,28 @@ SEXP wk_mama_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_mama_batch(SEXP e, SEXP a0) {
+  struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraMamaOutput *rows = (struct WickraMamaOutput *)R_alloc(n, sizeof(struct WickraMamaOutput));
+  wickra_mama_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].mama;
+    REAL(out)[i + n * 1] = (double)rows[i].fama;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("mama"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("fama"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_mama_warmup_period(SEXP e) {
   struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
@@ -12115,6 +14088,30 @@ SEXP wk_median_channel_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_median_channel_batch(SEXP e, SEXP a0) {
+  struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraMedianChannelOutput *rows = (struct WickraMedianChannelOutput *)R_alloc(n, sizeof(struct WickraMedianChannelOutput));
+  wickra_median_channel_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_median_channel_warmup_period(SEXP e) {
   struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_median_channel_warmup_period(h));
@@ -12545,6 +14542,35 @@ SEXP wk_modified_ma_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_modified_ma_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraModifiedMaStopOutput *rows = (struct WickraModifiedMaStopOutput *)R_alloc(n, sizeof(struct WickraModifiedMaStopOutput));
+  wickra_modified_ma_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].value;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_modified_ma_stop_warmup_period(SEXP e) {
   struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_modified_ma_stop_warmup_period(h));
@@ -12752,6 +14778,49 @@ SEXP wk_murrey_math_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_murrey_math_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraMurreyMathLinesOutput *rows = (struct WickraMurreyMathLinesOutput *)R_alloc(n, sizeof(struct WickraMurreyMathLinesOutput));
+  wickra_murrey_math_lines_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 9));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].mm8_8;
+    REAL(out)[i + n * 1] = (double)rows[i].mm7_8;
+    REAL(out)[i + n * 2] = (double)rows[i].mm6_8;
+    REAL(out)[i + n * 3] = (double)rows[i].mm5_8;
+    REAL(out)[i + n * 4] = (double)rows[i].mm4_8;
+    REAL(out)[i + n * 5] = (double)rows[i].mm3_8;
+    REAL(out)[i + n * 6] = (double)rows[i].mm2_8;
+    REAL(out)[i + n * 7] = (double)rows[i].mm1_8;
+    REAL(out)[i + n * 8] = (double)rows[i].mm0_8;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 9));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("mm8_8"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("mm7_8"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("mm6_8"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("mm5_8"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("mm4_8"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("mm3_8"));
+  SET_STRING_ELT(cn, 6, Rf_mkChar("mm2_8"));
+  SET_STRING_ELT(cn, 7, Rf_mkChar("mm1_8"));
+  SET_STRING_ELT(cn, 8, Rf_mkChar("mm0_8"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_murrey_math_lines_warmup_period(SEXP e) {
   struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
@@ -12989,6 +15058,35 @@ SEXP wk_nrtr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
   UNPROTECT(2);
   return r;
 }
+SEXP wk_nrtr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraNrtrOutput *rows = (struct WickraNrtrOutput *)R_alloc(n, sizeof(struct WickraNrtrOutput));
+  wickra_nrtr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].value;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_nrtr_warmup_period(SEXP e) {
   struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_nrtr_warmup_period(h));
@@ -13128,6 +15226,29 @@ SEXP wk_oi_price_divergence_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_oi_price_divergence_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_oi_price_divergence_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_oi_price_divergence_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_oi_price_divergence_warmup_period(SEXP e) {
   struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_oi_price_divergence_warmup_period(h));
@@ -13163,6 +15284,29 @@ SEXP wk_oi_to_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_oi_to_volume_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_oi_to_volume_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_oi_to_volume_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_oi_to_volume_ratio_warmup_period(SEXP e) {
   struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_oi_to_volume_ratio_warmup_period(h));
@@ -13197,6 +15341,29 @@ SEXP wk_oi_weighted_new(void) {
 SEXP wk_oi_weighted_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_oi_weighted_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_oi_weighted_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_oi_weighted_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_oi_weighted_warmup_period(SEXP e) {
   struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
@@ -13330,6 +15497,29 @@ SEXP wk_open_interest_delta_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_open_interest_delta_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_open_interest_delta_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_open_interest_delta_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_open_interest_delta_warmup_period(SEXP e) {
   struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_open_interest_delta_warmup_period(h));
@@ -13364,6 +15554,29 @@ SEXP wk_open_interest_momentum_new(SEXP a0) {
 SEXP wk_open_interest_momentum_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_open_interest_momentum_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_open_interest_momentum_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_open_interest_momentum_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_open_interest_momentum_warmup_period(SEXP e) {
   struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
@@ -13463,6 +15676,37 @@ SEXP wk_opening_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_opening_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraOpeningRangeOutput *rows = (struct WickraOpeningRangeOutput *)R_alloc(n, sizeof(struct WickraOpeningRangeOutput));
+  wickra_opening_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].high;
+    REAL(out)[i + n * 1] = (double)rows[i].low;
+    REAL(out)[i + n * 2] = (double)rows[i].breakout_distance;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("breakout_distance"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_opening_range_warmup_period(SEXP e) {
   struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
@@ -13746,6 +15990,35 @@ SEXP wk_overnight_intraday_return_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_overnight_intraday_return_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraOvernightIntradayReturnOutput *rows = (struct WickraOvernightIntradayReturnOutput *)R_alloc(n, sizeof(struct WickraOvernightIntradayReturnOutput));
+  wickra_overnight_intraday_return_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].overnight;
+    REAL(out)[i + n * 1] = (double)rows[i].intraday;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("overnight"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("intraday"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_overnight_intraday_return_warmup_period(SEXP e) {
   struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
@@ -14142,6 +16415,29 @@ SEXP wk_perpetual_premium_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
   struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_perpetual_premium_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_perpetual_premium_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_perpetual_premium_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_perpetual_premium_index_warmup_period(SEXP e) {
   struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_perpetual_premium_index_warmup_period(h));
@@ -14280,6 +16576,23 @@ SEXP wk_pin_new(SEXP a0) {
 SEXP wk_pin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_pin_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_pin_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_pin_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_pin_warmup_period(SEXP e) {
   struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
@@ -14518,10 +16831,20 @@ SEXP wk_point_and_figure_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   struct WickraPnfColumn buf[64];
   size_t n = wickra_point_and_figure_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].direction;
     REAL(r)[i + n * 1] = (double)buf[i].high;
     REAL(r)[i + n * 2] = (double)buf[i].low;
+  }
+  if (n > 64) {
+    struct WickraPnfColumn *rest = (struct WickraPnfColumn *)R_alloc(n - 64, sizeof(struct WickraPnfColumn));
+    size_t got = wickra_point_and_figure_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].direction;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].high;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].low;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cn, 0, Rf_mkChar("direction"));
@@ -14804,6 +17127,37 @@ SEXP wk_projection_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_projection_bands_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraProjectionBandsOutput *rows = (struct WickraProjectionBandsOutput *)R_alloc(n, sizeof(struct WickraProjectionBandsOutput));
+  wickra_projection_bands_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_projection_bands_warmup_period(SEXP e) {
   struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_projection_bands_warmup_period(h));
@@ -15005,6 +17359,28 @@ SEXP wk_qqe_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_qqe_batch(SEXP e, SEXP a0) {
+  struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraQqeOutput *rows = (struct WickraQqeOutput *)R_alloc(n, sizeof(struct WickraQqeOutput));
+  wickra_qqe_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].rsi_ma;
+    REAL(out)[i + n * 1] = (double)rows[i].trailing_line;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("rsi_ma"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("trailing_line"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_qqe_warmup_period(SEXP e) {
   struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_qqe_warmup_period(h));
@@ -15103,6 +17479,30 @@ SEXP wk_quartile_bands_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_quartile_bands_batch(SEXP e, SEXP a0) {
+  struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraQuartileBandsOutput *rows = (struct WickraQuartileBandsOutput *)R_alloc(n, sizeof(struct WickraQuartileBandsOutput));
+  wickra_quartile_bands_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_quartile_bands_warmup_period(SEXP e) {
   struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
@@ -15220,10 +17620,20 @@ SEXP wk_range_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   struct WickraRangeBar buf[64];
   size_t n = wickra_range_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].close;
     REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  if (n > 64) {
+    struct WickraRangeBar *rest = (struct WickraRangeBar *)R_alloc(n - 64, sizeof(struct WickraRangeBar));
+    size_t got = wickra_range_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].direction;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -15261,6 +17671,24 @@ SEXP wk_realized_spread_new(SEXP a0) {
 SEXP wk_realized_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
   struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_realized_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_realized_spread_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
+  struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_realized_spread_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(a4), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_realized_spread_warmup_period(SEXP e) {
   struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
@@ -15541,6 +17969,31 @@ SEXP wk_relative_strength_ab_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_relative_strength_ab_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  struct WickraRelativeStrengthOutput *rows = (struct WickraRelativeStrengthOutput *)R_alloc(n, sizeof(struct WickraRelativeStrengthOutput));
+  wickra_relative_strength_ab_batch(h, REAL(a0), REAL(a1), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].ratio;
+    REAL(out)[i + n * 1] = (double)rows[i].ratio_ma;
+    REAL(out)[i + n * 2] = (double)rows[i].ratio_rsi;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("ratio"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("ratio_ma"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("ratio_rsi"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_relative_strength_ab_warmup_period(SEXP e) {
   struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_relative_strength_ab_warmup_period(h));
@@ -15577,10 +18030,20 @@ SEXP wk_renko_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   struct WickraRenkoBrick buf[64];
   size_t n = wickra_renko_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].close;
     REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  if (n > 64) {
+    struct WickraRenkoBrick *rest = (struct WickraRenkoBrick *)R_alloc(n - 64, sizeof(struct WickraRenkoBrick));
+    size_t got = wickra_renko_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].direction;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -16099,6 +18562,23 @@ SEXP wk_roll_measure_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_roll_measure_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
 }
+SEXP wk_roll_measure_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_roll_measure_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_roll_measure_warmup_period(SEXP e) {
   struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_roll_measure_warmup_period(h));
@@ -16594,13 +19074,26 @@ SEXP wk_run_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   struct WickraRunBar buf[64];
   size_t n = wickra_run_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].high;
     REAL(r)[i + n * 2] = (double)buf[i].low;
     REAL(r)[i + n * 3] = (double)buf[i].close;
     REAL(r)[i + n * 4] = (double)buf[i].length;
     REAL(r)[i + n * 5] = (double)buf[i].direction;
+  }
+  if (n > 64) {
+    struct WickraRunBar *rest = (struct WickraRunBar *)R_alloc(n - 64, sizeof(struct WickraRunBar));
+    size_t got = wickra_run_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].high;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].low;
+      REAL(r)[64 + i + n * 3] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 4] = (double)rest[i].length;
+      REAL(r)[64 + i + n * 5] = (double)rest[i].direction;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -16748,6 +19241,35 @@ SEXP wk_rwi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_rwi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraRwiOutput *rows = (struct WickraRwiOutput *)R_alloc(n, sizeof(struct WickraRwiOutput));
+  wickra_rwi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].high;
+    REAL(out)[i + n * 1] = (double)rows[i].low;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("low"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_rwi_warmup_period(SEXP e) {
   struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
@@ -16995,6 +19517,35 @@ SEXP wk_session_high_low_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_session_high_low_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraSessionHighLowOutput *rows = (struct WickraSessionHighLowOutput *)R_alloc(n, sizeof(struct WickraSessionHighLowOutput));
+  wickra_session_high_low_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].high;
+    REAL(out)[i + n * 1] = (double)rows[i].low;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("low"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_session_high_low_warmup_period(SEXP e) {
   struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_session_high_low_warmup_period(h));
@@ -17041,6 +19592,37 @@ SEXP wk_session_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_session_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraSessionRangeOutput *rows = (struct WickraSessionRangeOutput *)R_alloc(n, sizeof(struct WickraSessionRangeOutput));
+  wickra_session_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].asia;
+    REAL(out)[i + n * 1] = (double)rows[i].eu;
+    REAL(out)[i + n * 2] = (double)rows[i].us;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("asia"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("eu"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("us"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_session_range_warmup_period(SEXP e) {
   struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
@@ -17374,6 +19956,23 @@ SEXP wk_signed_volume_new(void) {
 SEXP wk_signed_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_signed_volume_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_signed_volume_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_signed_volume_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_signed_volume_warmup_period(SEXP e) {
   struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
@@ -17753,6 +20352,39 @@ SEXP wk_smoothed_heikin_ashi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_smoothed_heikin_ashi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraSmoothedHeikinAshiOutput *rows = (struct WickraSmoothedHeikinAshiOutput *)R_alloc(n, sizeof(struct WickraSmoothedHeikinAshiOutput));
+  wickra_smoothed_heikin_ashi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].open;
+    REAL(out)[i + n * 1] = (double)rows[i].high;
+    REAL(out)[i + n * 2] = (double)rows[i].low;
+    REAL(out)[i + n * 3] = (double)rows[i].close;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_smoothed_heikin_ashi_warmup_period(SEXP e) {
   struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_smoothed_heikin_ashi_warmup_period(h));
@@ -17991,6 +20623,33 @@ SEXP wk_spread_bollinger_bands_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_spread_bollinger_bands_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  struct WickraSpreadBollingerBandsOutput *rows = (struct WickraSpreadBollingerBandsOutput *)R_alloc(n, sizeof(struct WickraSpreadBollingerBandsOutput));
+  wickra_spread_bollinger_bands_batch(h, REAL(a0), REAL(a1), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].middle;
+    REAL(out)[i + n * 1] = (double)rows[i].upper;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+    REAL(out)[i + n * 3] = (double)rows[i].percent_b;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("percent_b"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_spread_bollinger_bands_warmup_period(SEXP e) {
   struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_spread_bollinger_bands_warmup_period(h));
@@ -18181,6 +20840,30 @@ SEXP wk_standard_error_bands_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_standard_error_bands_batch(SEXP e, SEXP a0) {
+  struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraStandardErrorBandsOutput *rows = (struct WickraStandardErrorBandsOutput *)R_alloc(n, sizeof(struct WickraStandardErrorBandsOutput));
+  wickra_standard_error_bands_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_standard_error_bands_warmup_period(SEXP e) {
   struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_standard_error_bands_warmup_period(h));
@@ -18227,6 +20910,37 @@ SEXP wk_starc_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_starc_bands_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraStarcBandsOutput *rows = (struct WickraStarcBandsOutput *)R_alloc(n, sizeof(struct WickraStarcBandsOutput));
+  wickra_starc_bands_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_starc_bands_warmup_period(SEXP e) {
   struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
@@ -18550,6 +21264,35 @@ SEXP wk_stochastic_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_stochastic_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraStochasticOutput *rows = (struct WickraStochasticOutput *)R_alloc(n, sizeof(struct WickraStochasticOutput));
+  wickra_stochastic_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].k;
+    REAL(out)[i + n * 1] = (double)rows[i].d;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("k"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("d"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_stochastic_warmup_period(SEXP e) {
   struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_stochastic_warmup_period(h));
@@ -18692,6 +21435,35 @@ SEXP wk_super_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_super_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraSuperTrendOutput *rows = (struct WickraSuperTrendOutput *)R_alloc(n, sizeof(struct WickraSuperTrendOutput));
+  wickra_super_trend_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].value;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_super_trend_warmup_period(SEXP e) {
   struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_super_trend_warmup_period(h));
@@ -18816,6 +21588,29 @@ SEXP wk_taker_buy_sell_ratio_new(void) {
 SEXP wk_taker_buy_sell_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_taker_buy_sell_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_taker_buy_sell_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_taker_buy_sell_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_taker_buy_sell_ratio_warmup_period(SEXP e) {
   struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
@@ -19382,6 +22177,35 @@ SEXP wk_td_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_td_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraTdLinesOutput *rows = (struct WickraTdLinesOutput *)R_alloc(n, sizeof(struct WickraTdLinesOutput));
+  wickra_td_lines_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].resistance;
+    REAL(out)[i + n * 1] = (double)rows[i].support;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("resistance"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("support"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_td_lines_warmup_period(SEXP e) {
   struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_td_lines_warmup_period(h));
@@ -19426,6 +22250,35 @@ SEXP wk_td_moving_average_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_td_moving_average_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraTdMovingAverageOutput *rows = (struct WickraTdMovingAverageOutput *)R_alloc(n, sizeof(struct WickraTdMovingAverageOutput));
+  wickra_td_moving_average_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].st1;
+    REAL(out)[i + n * 1] = (double)rows[i].st2;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("st1"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("st2"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_td_moving_average_warmup_period(SEXP e) {
   struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
@@ -19628,6 +22481,35 @@ SEXP wk_td_range_projection_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_td_range_projection_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraTdRangeProjectionOutput *rows = (struct WickraTdRangeProjectionOutput *)R_alloc(n, sizeof(struct WickraTdRangeProjectionOutput));
+  wickra_td_range_projection_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].high;
+    REAL(out)[i + n * 1] = (double)rows[i].low;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("low"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_td_range_projection_warmup_period(SEXP e) {
   struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_td_range_projection_warmup_period(h));
@@ -19725,6 +22607,35 @@ SEXP wk_td_risk_level_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_td_risk_level_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraTdRiskLevelOutput *rows = (struct WickraTdRiskLevelOutput *)R_alloc(n, sizeof(struct WickraTdRiskLevelOutput));
+  wickra_td_risk_level_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].buy_risk;
+    REAL(out)[i + n * 1] = (double)rows[i].sell_risk;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("buy_risk"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("sell_risk"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_td_risk_level_warmup_period(SEXP e) {
   struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_td_risk_level_warmup_period(h));
@@ -19771,6 +22682,37 @@ SEXP wk_td_sequential_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_td_sequential_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraTdSequentialOutput *rows = (struct WickraTdSequentialOutput *)R_alloc(n, sizeof(struct WickraTdSequentialOutput));
+  wickra_td_sequential_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].setup;
+    REAL(out)[i + n * 1] = (double)rows[i].countdown;
+    REAL(out)[i + n * 2] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("setup"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("countdown"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_td_sequential_warmup_period(SEXP e) {
   struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
@@ -19955,6 +22897,29 @@ SEXP wk_term_structure_basis_new(void) {
 SEXP wk_term_structure_basis_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_term_structure_basis_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_term_structure_basis_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a6) != REALSXP || Rf_xlength(a6) != n) Rf_error("wickra: batch argument 7 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a7) != REALSXP || Rf_xlength(a7) != n) Rf_error("wickra: batch argument 8 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a8) != REALSXP || Rf_xlength(a8) != n) Rf_error("wickra: batch argument 9 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a9) != REALSXP || Rf_xlength(a9) != n) Rf_error("wickra: batch argument 10 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a10) != REALSXP || Rf_xlength(a10) != n) Rf_error("wickra: batch argument 11 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a11) != REALSXP || Rf_xlength(a11) != n) Rf_error("wickra: batch argument 12 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b11 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b11[k] = (int64_t)REAL(a11)[k];
+  wickra_term_structure_basis_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), REAL(a5), REAL(a6), REAL(a7), REAL(a8), REAL(a9), REAL(a10), b11, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_term_structure_basis_warmup_period(SEXP e) {
   struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
@@ -20148,10 +23113,20 @@ SEXP wk_three_line_break_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   struct WickraLineBreakBar buf[64];
   size_t n = wickra_three_line_break_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].close;
     REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  if (n > 64) {
+    struct WickraLineBreakBar *rest = (struct WickraLineBreakBar *)R_alloc(n - 64, sizeof(struct WickraLineBreakBar));
+    size_t got = wickra_three_line_break_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].direction;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -20483,12 +23458,24 @@ SEXP wk_tick_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   struct WickraTickBar buf[64];
   size_t n = wickra_tick_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].high;
     REAL(r)[i + n * 2] = (double)buf[i].low;
     REAL(r)[i + n * 3] = (double)buf[i].close;
     REAL(r)[i + n * 4] = (double)buf[i].volume;
+  }
+  if (n > 64) {
+    struct WickraTickBar *rest = (struct WickraTickBar *)R_alloc(n - 64, sizeof(struct WickraTickBar));
+    size_t got = wickra_tick_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].high;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].low;
+      REAL(r)[64 + i + n * 3] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 4] = (double)rest[i].volume;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -20807,6 +23794,23 @@ SEXP wk_trade_imbalance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_trade_imbalance_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
 }
+SEXP wk_trade_imbalance_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_trade_imbalance_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_trade_imbalance_warmup_period(SEXP e) {
   struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_trade_imbalance_warmup_period(h));
@@ -20841,6 +23845,23 @@ SEXP wk_trade_sign_autocorrelation_new(SEXP a0) {
 SEXP wk_trade_sign_autocorrelation_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_trade_sign_autocorrelation_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_trade_sign_autocorrelation_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_trade_sign_autocorrelation_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_trade_sign_autocorrelation_warmup_period(SEXP e) {
   struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
@@ -21640,6 +24661,35 @@ SEXP wk_ttm_squeeze_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ttm_squeeze_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraTtmSqueezeOutput *rows = (struct WickraTtmSqueezeOutput *)R_alloc(n, sizeof(struct WickraTtmSqueezeOutput));
+  wickra_ttm_squeeze_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].squeeze;
+    REAL(out)[i + n * 1] = (double)rows[i].momentum;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("squeeze"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("momentum"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_ttm_squeeze_warmup_period(SEXP e) {
   struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_ttm_squeeze_warmup_period(h));
@@ -22377,6 +25427,37 @@ SEXP wk_value_area_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_value_area_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraValueAreaOutput *rows = (struct WickraValueAreaOutput *)R_alloc(n, sizeof(struct WickraValueAreaOutput));
+  wickra_value_area_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].poc;
+    REAL(out)[i + n * 1] = (double)rows[i].vah;
+    REAL(out)[i + n * 2] = (double)rows[i].val;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("poc"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("vah"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("val"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_value_area_warmup_period(SEXP e) {
   struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_value_area_warmup_period(h));
@@ -22654,6 +25735,41 @@ SEXP wk_volatility_cone_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_volatility_cone_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraVolatilityConeOutput *rows = (struct WickraVolatilityConeOutput *)R_alloc(n, sizeof(struct WickraVolatilityConeOutput));
+  wickra_volatility_cone_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].current;
+    REAL(out)[i + n * 1] = (double)rows[i].min;
+    REAL(out)[i + n * 2] = (double)rows[i].median;
+    REAL(out)[i + n * 3] = (double)rows[i].max;
+    REAL(out)[i + n * 4] = (double)rows[i].percentile;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("current"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("min"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("median"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("max"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("percentile"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_volatility_cone_warmup_period(SEXP e) {
   struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_volatility_cone_warmup_period(h));
@@ -22839,12 +25955,24 @@ SEXP wk_volume_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   struct WickraVolumeBar buf[64];
   size_t n = wickra_volume_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
   SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
-  for (size_t i = 0; i < n; i++) {
+  size_t written = n < 64 ? n : 64;
+  for (size_t i = 0; i < written; i++) {
     REAL(r)[i + n * 0] = (double)buf[i].open;
     REAL(r)[i + n * 1] = (double)buf[i].high;
     REAL(r)[i + n * 2] = (double)buf[i].low;
     REAL(r)[i + n * 3] = (double)buf[i].close;
     REAL(r)[i + n * 4] = (double)buf[i].volume;
+  }
+  if (n > 64) {
+    struct WickraVolumeBar *rest = (struct WickraVolumeBar *)R_alloc(n - 64, sizeof(struct WickraVolumeBar));
+    size_t got = wickra_volume_bars_drain(h, rest, n - 64);
+    for (size_t i = 0; i < got; i++) {
+      REAL(r)[64 + i + n * 0] = (double)rest[i].open;
+      REAL(r)[64 + i + n * 1] = (double)rest[i].high;
+      REAL(r)[64 + i + n * 2] = (double)rest[i].low;
+      REAL(r)[64 + i + n * 3] = (double)rest[i].close;
+      REAL(r)[64 + i + n * 4] = (double)rest[i].volume;
+    }
   }
   SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
   SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
@@ -23147,6 +26275,37 @@ SEXP wk_volume_weighted_macd_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_volume_weighted_macd_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraVolumeWeightedMacdOutput *rows = (struct WickraVolumeWeightedMacdOutput *)R_alloc(n, sizeof(struct WickraVolumeWeightedMacdOutput));
+  wickra_volume_weighted_macd_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].macd;
+    REAL(out)[i + n * 1] = (double)rows[i].signal;
+    REAL(out)[i + n * 2] = (double)rows[i].histogram;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("histogram"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_volume_weighted_macd_warmup_period(SEXP e) {
   struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_volume_weighted_macd_warmup_period(h));
@@ -23191,6 +26350,35 @@ SEXP wk_volume_weighted_sr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_volume_weighted_sr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraVolumeWeightedSrOutput *rows = (struct WickraVolumeWeightedSrOutput *)R_alloc(n, sizeof(struct WickraVolumeWeightedSrOutput));
+  wickra_volume_weighted_sr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].support;
+    REAL(out)[i + n * 1] = (double)rows[i].resistance;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("support"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("resistance"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_volume_weighted_sr_warmup_period(SEXP e) {
   struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
@@ -23237,6 +26425,35 @@ SEXP wk_vortex_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_vortex_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraVortexOutput *rows = (struct WickraVortexOutput *)R_alloc(n, sizeof(struct WickraVortexOutput));
+  wickra_vortex_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].plus;
+    REAL(out)[i + n * 1] = (double)rows[i].minus;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("plus"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("minus"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_vortex_warmup_period(SEXP e) {
   struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_vortex_warmup_period(h));
@@ -23271,6 +26488,23 @@ SEXP wk_vpin_new(SEXP a0, SEXP a1) {
 SEXP wk_vpin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_vpin_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_vpin_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  bool *b2 = (bool *)R_alloc(n, sizeof(bool));
+  for (R_xlen_t k = 0; k < n; k++) b2[k] = (bool)REAL(a2)[k];
+  int64_t *b3 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b3[k] = (int64_t)REAL(a3)[k];
+  wickra_vpin_batch(h, REAL(a0), REAL(a1), b2, b3, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_vpin_warmup_period(SEXP e) {
   struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
@@ -23372,6 +26606,39 @@ SEXP wk_vwap_std_dev_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_vwap_std_dev_bands_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraVwapStdDevBandsOutput *rows = (struct WickraVwapStdDevBandsOutput *)R_alloc(n, sizeof(struct WickraVwapStdDevBandsOutput));
+  wickra_vwap_std_dev_bands_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 4));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].upper;
+    REAL(out)[i + n * 1] = (double)rows[i].middle;
+    REAL(out)[i + n * 2] = (double)rows[i].lower;
+    REAL(out)[i + n * 3] = (double)rows[i].stddev;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("lower"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("stddev"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_vwap_std_dev_bands_warmup_period(SEXP e) {
   struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
@@ -23619,6 +26886,35 @@ SEXP wk_wave_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_wave_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraWaveTrendOutput *rows = (struct WickraWaveTrendOutput *)R_alloc(n, sizeof(struct WickraWaveTrendOutput));
+  wickra_wave_trend_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].wt1;
+    REAL(out)[i + n * 1] = (double)rows[i].wt2;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("wt1"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("wt2"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_wave_trend_warmup_period(SEXP e) {
   struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_wave_trend_warmup_period(h));
@@ -23820,6 +27116,35 @@ SEXP wk_williams_fractals_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_williams_fractals_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraWilliamsFractalsOutput *rows = (struct WickraWilliamsFractalsOutput *)R_alloc(n, sizeof(struct WickraWilliamsFractalsOutput));
+  wickra_williams_fractals_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].up;
+    REAL(out)[i + n * 1] = (double)rows[i].down;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("up"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("down"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_williams_fractals_warmup_period(SEXP e) {
   struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_williams_fractals_warmup_period(h));
@@ -24012,6 +27337,41 @@ SEXP wk_woodie_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_woodie_pivots_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraWoodiePivotsOutput *rows = (struct WickraWoodiePivotsOutput *)R_alloc(n, sizeof(struct WickraWoodiePivotsOutput));
+  wickra_woodie_pivots_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].pp;
+    REAL(out)[i + n * 1] = (double)rows[i].r1;
+    REAL(out)[i + n * 2] = (double)rows[i].r2;
+    REAL(out)[i + n * 3] = (double)rows[i].s1;
+    REAL(out)[i + n * 4] = (double)rows[i].s2;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("s1"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("s2"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_woodie_pivots_warmup_period(SEXP e) {
   struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
@@ -24209,6 +27569,30 @@ SEXP wk_zero_lag_macd_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_zero_lag_macd_batch(SEXP e, SEXP a0) {
+  struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  struct WickraZeroLagMacdOutput *rows = (struct WickraZeroLagMacdOutput *)R_alloc(n, sizeof(struct WickraZeroLagMacdOutput));
+  wickra_zero_lag_macd_batch(h, REAL(a0), rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].macd;
+    REAL(out)[i + n * 1] = (double)rows[i].signal;
+    REAL(out)[i + n * 2] = (double)rows[i].histogram;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("histogram"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_zero_lag_macd_warmup_period(SEXP e) {
   struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_zero_lag_macd_warmup_period(h));
@@ -24253,6 +27637,35 @@ SEXP wk_zig_zag_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_zig_zag_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 must be a double vector of length %lld", (long long)n);
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 must be a double vector of length %lld", (long long)n);
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  struct WickraZigZagOutput *rows = (struct WickraZigZagOutput *)R_alloc(n, sizeof(struct WickraZigZagOutput));
+  wickra_zig_zag_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, rows, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 2));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)rows[i].swing;
+    REAL(out)[i + n * 1] = (double)rows[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("swing"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_zig_zag_warmup_period(SEXP e) {
   struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
@@ -24414,6 +27827,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_absolute_breadth_index_reset", (DL_FUNC)&wk_absolute_breadth_index_reset, 1},
   {"wk_acceleration_bands_new", (DL_FUNC)&wk_acceleration_bands_new, 2},
   {"wk_acceleration_bands_update", (DL_FUNC)&wk_acceleration_bands_update, 7},
+  {"wk_acceleration_bands_batch", (DL_FUNC)&wk_acceleration_bands_batch, 7},
   {"wk_acceleration_bands_warmup_period", (DL_FUNC)&wk_acceleration_bands_warmup_period, 1},
   {"wk_acceleration_bands_is_ready", (DL_FUNC)&wk_acceleration_bands_is_ready, 1},
   {"wk_acceleration_bands_name", (DL_FUNC)&wk_acceleration_bands_name, 1},
@@ -24494,6 +27908,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_advance_decline_ratio_reset", (DL_FUNC)&wk_advance_decline_ratio_reset, 1},
   {"wk_adx_new", (DL_FUNC)&wk_adx_new, 1},
   {"wk_adx_update", (DL_FUNC)&wk_adx_update, 7},
+  {"wk_adx_batch", (DL_FUNC)&wk_adx_batch, 7},
   {"wk_adx_warmup_period", (DL_FUNC)&wk_adx_warmup_period, 1},
   {"wk_adx_is_ready", (DL_FUNC)&wk_adx_is_ready, 1},
   {"wk_adx_name", (DL_FUNC)&wk_adx_name, 1},
@@ -24507,6 +27922,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_adxr_reset", (DL_FUNC)&wk_adxr_reset, 1},
   {"wk_alligator_new", (DL_FUNC)&wk_alligator_new, 3},
   {"wk_alligator_update", (DL_FUNC)&wk_alligator_update, 7},
+  {"wk_alligator_batch", (DL_FUNC)&wk_alligator_batch, 7},
   {"wk_alligator_warmup_period", (DL_FUNC)&wk_alligator_warmup_period, 1},
   {"wk_alligator_is_ready", (DL_FUNC)&wk_alligator_is_ready, 1},
   {"wk_alligator_name", (DL_FUNC)&wk_alligator_name, 1},
@@ -24527,6 +27943,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_alpha_reset", (DL_FUNC)&wk_alpha_reset, 1},
   {"wk_amihud_illiquidity_new", (DL_FUNC)&wk_amihud_illiquidity_new, 1},
   {"wk_amihud_illiquidity_update", (DL_FUNC)&wk_amihud_illiquidity_update, 5},
+  {"wk_amihud_illiquidity_batch", (DL_FUNC)&wk_amihud_illiquidity_batch, 5},
   {"wk_amihud_illiquidity_warmup_period", (DL_FUNC)&wk_amihud_illiquidity_warmup_period, 1},
   {"wk_amihud_illiquidity_is_ready", (DL_FUNC)&wk_amihud_illiquidity_is_ready, 1},
   {"wk_amihud_illiquidity_name", (DL_FUNC)&wk_amihud_illiquidity_name, 1},
@@ -24547,6 +27964,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_anchored_vwap_reset", (DL_FUNC)&wk_anchored_vwap_reset, 1},
   {"wk_andrews_pitchfork_new", (DL_FUNC)&wk_andrews_pitchfork_new, 1},
   {"wk_andrews_pitchfork_update", (DL_FUNC)&wk_andrews_pitchfork_update, 7},
+  {"wk_andrews_pitchfork_batch", (DL_FUNC)&wk_andrews_pitchfork_batch, 7},
   {"wk_andrews_pitchfork_warmup_period", (DL_FUNC)&wk_andrews_pitchfork_warmup_period, 1},
   {"wk_andrews_pitchfork_is_ready", (DL_FUNC)&wk_andrews_pitchfork_is_ready, 1},
   {"wk_andrews_pitchfork_name", (DL_FUNC)&wk_andrews_pitchfork_name, 1},
@@ -24560,6 +27978,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_apo_reset", (DL_FUNC)&wk_apo_reset, 1},
   {"wk_aroon_new", (DL_FUNC)&wk_aroon_new, 1},
   {"wk_aroon_update", (DL_FUNC)&wk_aroon_update, 7},
+  {"wk_aroon_batch", (DL_FUNC)&wk_aroon_batch, 7},
   {"wk_aroon_warmup_period", (DL_FUNC)&wk_aroon_warmup_period, 1},
   {"wk_aroon_is_ready", (DL_FUNC)&wk_aroon_is_ready, 1},
   {"wk_aroon_name", (DL_FUNC)&wk_aroon_name, 1},
@@ -24580,12 +27999,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_atr_reset", (DL_FUNC)&wk_atr_reset, 1},
   {"wk_atr_bands_new", (DL_FUNC)&wk_atr_bands_new, 2},
   {"wk_atr_bands_update", (DL_FUNC)&wk_atr_bands_update, 7},
+  {"wk_atr_bands_batch", (DL_FUNC)&wk_atr_bands_batch, 7},
   {"wk_atr_bands_warmup_period", (DL_FUNC)&wk_atr_bands_warmup_period, 1},
   {"wk_atr_bands_is_ready", (DL_FUNC)&wk_atr_bands_is_ready, 1},
   {"wk_atr_bands_name", (DL_FUNC)&wk_atr_bands_name, 1},
   {"wk_atr_bands_reset", (DL_FUNC)&wk_atr_bands_reset, 1},
   {"wk_atr_ratchet_new", (DL_FUNC)&wk_atr_ratchet_new, 3},
   {"wk_atr_ratchet_update", (DL_FUNC)&wk_atr_ratchet_update, 7},
+  {"wk_atr_ratchet_batch", (DL_FUNC)&wk_atr_ratchet_batch, 7},
   {"wk_atr_ratchet_warmup_period", (DL_FUNC)&wk_atr_ratchet_warmup_period, 1},
   {"wk_atr_ratchet_is_ready", (DL_FUNC)&wk_atr_ratchet_is_ready, 1},
   {"wk_atr_ratchet_name", (DL_FUNC)&wk_atr_ratchet_name, 1},
@@ -24599,6 +28020,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_atr_trailing_stop_reset", (DL_FUNC)&wk_atr_trailing_stop_reset, 1},
   {"wk_auto_fib_new", (DL_FUNC)&wk_auto_fib_new, 0},
   {"wk_auto_fib_update", (DL_FUNC)&wk_auto_fib_update, 7},
+  {"wk_auto_fib_batch", (DL_FUNC)&wk_auto_fib_batch, 7},
   {"wk_auto_fib_warmup_period", (DL_FUNC)&wk_auto_fib_warmup_period, 1},
   {"wk_auto_fib_is_ready", (DL_FUNC)&wk_auto_fib_is_ready, 1},
   {"wk_auto_fib_name", (DL_FUNC)&wk_auto_fib_name, 1},
@@ -24717,6 +28139,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_body_size_pct_reset", (DL_FUNC)&wk_body_size_pct_reset, 1},
   {"wk_bollinger_bands_new", (DL_FUNC)&wk_bollinger_bands_new, 2},
   {"wk_bollinger_bands_update", (DL_FUNC)&wk_bollinger_bands_update, 2},
+  {"wk_bollinger_bands_batch", (DL_FUNC)&wk_bollinger_bands_batch, 2},
   {"wk_bollinger_bands_warmup_period", (DL_FUNC)&wk_bollinger_bands_warmup_period, 1},
   {"wk_bollinger_bands_is_ready", (DL_FUNC)&wk_bollinger_bands_is_ready, 1},
   {"wk_bollinger_bands_name", (DL_FUNC)&wk_bollinger_bands_name, 1},
@@ -24730,6 +28153,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_bollinger_bandwidth_reset", (DL_FUNC)&wk_bollinger_bandwidth_reset, 1},
   {"wk_bomar_bands_new", (DL_FUNC)&wk_bomar_bands_new, 2},
   {"wk_bomar_bands_update", (DL_FUNC)&wk_bomar_bands_update, 2},
+  {"wk_bomar_bands_batch", (DL_FUNC)&wk_bomar_bands_batch, 2},
   {"wk_bomar_bands_warmup_period", (DL_FUNC)&wk_bomar_bands_warmup_period, 1},
   {"wk_bomar_bands_is_ready", (DL_FUNC)&wk_bomar_bands_is_ready, 1},
   {"wk_bomar_bands_name", (DL_FUNC)&wk_bomar_bands_name, 1},
@@ -24769,6 +28193,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_butterfly_reset", (DL_FUNC)&wk_butterfly_reset, 1},
   {"wk_calendar_spread_new", (DL_FUNC)&wk_calendar_spread_new, 0},
   {"wk_calendar_spread_update", (DL_FUNC)&wk_calendar_spread_update, 13},
+  {"wk_calendar_spread_batch", (DL_FUNC)&wk_calendar_spread_batch, 13},
   {"wk_calendar_spread_warmup_period", (DL_FUNC)&wk_calendar_spread_warmup_period, 1},
   {"wk_calendar_spread_is_ready", (DL_FUNC)&wk_calendar_spread_is_ready, 1},
   {"wk_calendar_spread_name", (DL_FUNC)&wk_calendar_spread_name, 1},
@@ -24782,6 +28207,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_calmar_ratio_reset", (DL_FUNC)&wk_calmar_ratio_reset, 1},
   {"wk_camarilla_new", (DL_FUNC)&wk_camarilla_new, 0},
   {"wk_camarilla_update", (DL_FUNC)&wk_camarilla_update, 7},
+  {"wk_camarilla_batch", (DL_FUNC)&wk_camarilla_batch, 7},
   {"wk_camarilla_warmup_period", (DL_FUNC)&wk_camarilla_warmup_period, 1},
   {"wk_camarilla_is_ready", (DL_FUNC)&wk_camarilla_is_ready, 1},
   {"wk_camarilla_name", (DL_FUNC)&wk_camarilla_name, 1},
@@ -24790,6 +28216,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_candle_reader_read", (DL_FUNC)&wk_candle_reader_read, 1},
   {"wk_candle_volume_new", (DL_FUNC)&wk_candle_volume_new, 1},
   {"wk_candle_volume_update", (DL_FUNC)&wk_candle_volume_update, 7},
+  {"wk_candle_volume_batch", (DL_FUNC)&wk_candle_volume_batch, 7},
   {"wk_candle_volume_warmup_period", (DL_FUNC)&wk_candle_volume_warmup_period, 1},
   {"wk_candle_volume_is_ready", (DL_FUNC)&wk_candle_volume_is_ready, 1},
   {"wk_candle_volume_name", (DL_FUNC)&wk_candle_volume_name, 1},
@@ -24810,6 +28237,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_center_of_gravity_reset", (DL_FUNC)&wk_center_of_gravity_reset, 1},
   {"wk_central_pivot_range_new", (DL_FUNC)&wk_central_pivot_range_new, 0},
   {"wk_central_pivot_range_update", (DL_FUNC)&wk_central_pivot_range_update, 7},
+  {"wk_central_pivot_range_batch", (DL_FUNC)&wk_central_pivot_range_batch, 7},
   {"wk_central_pivot_range_warmup_period", (DL_FUNC)&wk_central_pivot_range_warmup_period, 1},
   {"wk_central_pivot_range_is_ready", (DL_FUNC)&wk_central_pivot_range_is_ready, 1},
   {"wk_central_pivot_range_name", (DL_FUNC)&wk_central_pivot_range_name, 1},
@@ -24844,12 +28272,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_chaikin_volatility_reset", (DL_FUNC)&wk_chaikin_volatility_reset, 1},
   {"wk_chande_kroll_stop_new", (DL_FUNC)&wk_chande_kroll_stop_new, 3},
   {"wk_chande_kroll_stop_update", (DL_FUNC)&wk_chande_kroll_stop_update, 7},
+  {"wk_chande_kroll_stop_batch", (DL_FUNC)&wk_chande_kroll_stop_batch, 7},
   {"wk_chande_kroll_stop_warmup_period", (DL_FUNC)&wk_chande_kroll_stop_warmup_period, 1},
   {"wk_chande_kroll_stop_is_ready", (DL_FUNC)&wk_chande_kroll_stop_is_ready, 1},
   {"wk_chande_kroll_stop_name", (DL_FUNC)&wk_chande_kroll_stop_name, 1},
   {"wk_chande_kroll_stop_reset", (DL_FUNC)&wk_chande_kroll_stop_reset, 1},
   {"wk_chandelier_exit_new", (DL_FUNC)&wk_chandelier_exit_new, 2},
   {"wk_chandelier_exit_update", (DL_FUNC)&wk_chandelier_exit_update, 7},
+  {"wk_chandelier_exit_batch", (DL_FUNC)&wk_chandelier_exit_batch, 7},
   {"wk_chandelier_exit_warmup_period", (DL_FUNC)&wk_chandelier_exit_warmup_period, 1},
   {"wk_chandelier_exit_is_ready", (DL_FUNC)&wk_chandelier_exit_is_ready, 1},
   {"wk_chandelier_exit_name", (DL_FUNC)&wk_chandelier_exit_name, 1},
@@ -24863,6 +28293,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_choppiness_index_reset", (DL_FUNC)&wk_choppiness_index_reset, 1},
   {"wk_classic_pivots_new", (DL_FUNC)&wk_classic_pivots_new, 0},
   {"wk_classic_pivots_update", (DL_FUNC)&wk_classic_pivots_update, 7},
+  {"wk_classic_pivots_batch", (DL_FUNC)&wk_classic_pivots_batch, 7},
   {"wk_classic_pivots_warmup_period", (DL_FUNC)&wk_classic_pivots_warmup_period, 1},
   {"wk_classic_pivots_is_ready", (DL_FUNC)&wk_classic_pivots_is_ready, 1},
   {"wk_classic_pivots_name", (DL_FUNC)&wk_classic_pivots_name, 1},
@@ -24897,6 +28328,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_coefficient_of_variation_reset", (DL_FUNC)&wk_coefficient_of_variation_reset, 1},
   {"wk_cointegration_new", (DL_FUNC)&wk_cointegration_new, 2},
   {"wk_cointegration_update", (DL_FUNC)&wk_cointegration_update, 3},
+  {"wk_cointegration_batch", (DL_FUNC)&wk_cointegration_batch, 3},
   {"wk_cointegration_warmup_period", (DL_FUNC)&wk_cointegration_warmup_period, 1},
   {"wk_cointegration_is_ready", (DL_FUNC)&wk_cointegration_is_ready, 1},
   {"wk_cointegration_name", (DL_FUNC)&wk_cointegration_name, 1},
@@ -24910,6 +28342,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_common_sense_ratio_reset", (DL_FUNC)&wk_common_sense_ratio_reset, 1},
   {"wk_composite_profile_new", (DL_FUNC)&wk_composite_profile_new, 3},
   {"wk_composite_profile_update", (DL_FUNC)&wk_composite_profile_update, 7},
+  {"wk_composite_profile_batch", (DL_FUNC)&wk_composite_profile_batch, 7},
   {"wk_composite_profile_warmup_period", (DL_FUNC)&wk_composite_profile_warmup_period, 1},
   {"wk_composite_profile_is_ready", (DL_FUNC)&wk_composite_profile_is_ready, 1},
   {"wk_composite_profile_name", (DL_FUNC)&wk_composite_profile_name, 1},
@@ -24965,6 +28398,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_crab_reset", (DL_FUNC)&wk_crab_reset, 1},
   {"wk_cumulative_volume_delta_new", (DL_FUNC)&wk_cumulative_volume_delta_new, 0},
   {"wk_cumulative_volume_delta_update", (DL_FUNC)&wk_cumulative_volume_delta_update, 5},
+  {"wk_cumulative_volume_delta_batch", (DL_FUNC)&wk_cumulative_volume_delta_batch, 5},
   {"wk_cumulative_volume_delta_warmup_period", (DL_FUNC)&wk_cumulative_volume_delta_warmup_period, 1},
   {"wk_cumulative_volume_delta_is_ready", (DL_FUNC)&wk_cumulative_volume_delta_is_ready, 1},
   {"wk_cumulative_volume_delta_name", (DL_FUNC)&wk_cumulative_volume_delta_name, 1},
@@ -25032,6 +28466,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_demand_index_reset", (DL_FUNC)&wk_demand_index_reset, 1},
   {"wk_demark_pivots_new", (DL_FUNC)&wk_demark_pivots_new, 0},
   {"wk_demark_pivots_update", (DL_FUNC)&wk_demark_pivots_update, 7},
+  {"wk_demark_pivots_batch", (DL_FUNC)&wk_demark_pivots_batch, 7},
   {"wk_demark_pivots_warmup_period", (DL_FUNC)&wk_demark_pivots_warmup_period, 1},
   {"wk_demark_pivots_is_ready", (DL_FUNC)&wk_demark_pivots_is_ready, 1},
   {"wk_demark_pivots_name", (DL_FUNC)&wk_demark_pivots_name, 1},
@@ -25090,18 +28525,21 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_dollar_bars_reset", (DL_FUNC)&wk_dollar_bars_reset, 1},
   {"wk_donchian_new", (DL_FUNC)&wk_donchian_new, 1},
   {"wk_donchian_update", (DL_FUNC)&wk_donchian_update, 7},
+  {"wk_donchian_batch", (DL_FUNC)&wk_donchian_batch, 7},
   {"wk_donchian_warmup_period", (DL_FUNC)&wk_donchian_warmup_period, 1},
   {"wk_donchian_is_ready", (DL_FUNC)&wk_donchian_is_ready, 1},
   {"wk_donchian_name", (DL_FUNC)&wk_donchian_name, 1},
   {"wk_donchian_reset", (DL_FUNC)&wk_donchian_reset, 1},
   {"wk_donchian_stop_new", (DL_FUNC)&wk_donchian_stop_new, 1},
   {"wk_donchian_stop_update", (DL_FUNC)&wk_donchian_stop_update, 7},
+  {"wk_donchian_stop_batch", (DL_FUNC)&wk_donchian_stop_batch, 7},
   {"wk_donchian_stop_warmup_period", (DL_FUNC)&wk_donchian_stop_warmup_period, 1},
   {"wk_donchian_stop_is_ready", (DL_FUNC)&wk_donchian_stop_is_ready, 1},
   {"wk_donchian_stop_name", (DL_FUNC)&wk_donchian_stop_name, 1},
   {"wk_donchian_stop_reset", (DL_FUNC)&wk_donchian_stop_reset, 1},
   {"wk_double_bollinger_new", (DL_FUNC)&wk_double_bollinger_new, 3},
   {"wk_double_bollinger_update", (DL_FUNC)&wk_double_bollinger_update, 2},
+  {"wk_double_bollinger_batch", (DL_FUNC)&wk_double_bollinger_batch, 2},
   {"wk_double_bollinger_warmup_period", (DL_FUNC)&wk_double_bollinger_warmup_period, 1},
   {"wk_double_bollinger_is_ready", (DL_FUNC)&wk_double_bollinger_is_ready, 1},
   {"wk_double_bollinger_name", (DL_FUNC)&wk_double_bollinger_name, 1},
@@ -25171,6 +28609,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_ease_of_movement_reset", (DL_FUNC)&wk_ease_of_movement_reset, 1},
   {"wk_effective_spread_new", (DL_FUNC)&wk_effective_spread_new, 0},
   {"wk_effective_spread_update", (DL_FUNC)&wk_effective_spread_update, 6},
+  {"wk_effective_spread_batch", (DL_FUNC)&wk_effective_spread_batch, 6},
   {"wk_effective_spread_warmup_period", (DL_FUNC)&wk_effective_spread_warmup_period, 1},
   {"wk_effective_spread_is_ready", (DL_FUNC)&wk_effective_spread_is_ready, 1},
   {"wk_effective_spread_name", (DL_FUNC)&wk_effective_spread_name, 1},
@@ -25198,12 +28637,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_elder_impulse_reset", (DL_FUNC)&wk_elder_impulse_reset, 1},
   {"wk_elder_ray_new", (DL_FUNC)&wk_elder_ray_new, 1},
   {"wk_elder_ray_update", (DL_FUNC)&wk_elder_ray_update, 7},
+  {"wk_elder_ray_batch", (DL_FUNC)&wk_elder_ray_batch, 7},
   {"wk_elder_ray_warmup_period", (DL_FUNC)&wk_elder_ray_warmup_period, 1},
   {"wk_elder_ray_is_ready", (DL_FUNC)&wk_elder_ray_is_ready, 1},
   {"wk_elder_ray_name", (DL_FUNC)&wk_elder_ray_name, 1},
   {"wk_elder_ray_reset", (DL_FUNC)&wk_elder_ray_reset, 1},
   {"wk_elder_safe_zone_new", (DL_FUNC)&wk_elder_safe_zone_new, 2},
   {"wk_elder_safe_zone_update", (DL_FUNC)&wk_elder_safe_zone_update, 7},
+  {"wk_elder_safe_zone_batch", (DL_FUNC)&wk_elder_safe_zone_batch, 7},
   {"wk_elder_safe_zone_warmup_period", (DL_FUNC)&wk_elder_safe_zone_warmup_period, 1},
   {"wk_elder_safe_zone_is_ready", (DL_FUNC)&wk_elder_safe_zone_is_ready, 1},
   {"wk_elder_safe_zone_name", (DL_FUNC)&wk_elder_safe_zone_name, 1},
@@ -25231,12 +28672,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_engulfing_reset", (DL_FUNC)&wk_engulfing_reset, 1},
   {"wk_equivolume_new", (DL_FUNC)&wk_equivolume_new, 1},
   {"wk_equivolume_update", (DL_FUNC)&wk_equivolume_update, 7},
+  {"wk_equivolume_batch", (DL_FUNC)&wk_equivolume_batch, 7},
   {"wk_equivolume_warmup_period", (DL_FUNC)&wk_equivolume_warmup_period, 1},
   {"wk_equivolume_is_ready", (DL_FUNC)&wk_equivolume_is_ready, 1},
   {"wk_equivolume_name", (DL_FUNC)&wk_equivolume_name, 1},
   {"wk_equivolume_reset", (DL_FUNC)&wk_equivolume_reset, 1},
   {"wk_estimated_leverage_ratio_new", (DL_FUNC)&wk_estimated_leverage_ratio_new, 0},
   {"wk_estimated_leverage_ratio_update", (DL_FUNC)&wk_estimated_leverage_ratio_update, 13},
+  {"wk_estimated_leverage_ratio_batch", (DL_FUNC)&wk_estimated_leverage_ratio_batch, 13},
   {"wk_estimated_leverage_ratio_warmup_period", (DL_FUNC)&wk_estimated_leverage_ratio_warmup_period, 1},
   {"wk_estimated_leverage_ratio_is_ready", (DL_FUNC)&wk_estimated_leverage_ratio_is_ready, 1},
   {"wk_estimated_leverage_ratio_name", (DL_FUNC)&wk_estimated_leverage_ratio_name, 1},
@@ -25292,54 +28735,63 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_fama_reset", (DL_FUNC)&wk_fama_reset, 1},
   {"wk_fib_arcs_new", (DL_FUNC)&wk_fib_arcs_new, 0},
   {"wk_fib_arcs_update", (DL_FUNC)&wk_fib_arcs_update, 7},
+  {"wk_fib_arcs_batch", (DL_FUNC)&wk_fib_arcs_batch, 7},
   {"wk_fib_arcs_warmup_period", (DL_FUNC)&wk_fib_arcs_warmup_period, 1},
   {"wk_fib_arcs_is_ready", (DL_FUNC)&wk_fib_arcs_is_ready, 1},
   {"wk_fib_arcs_name", (DL_FUNC)&wk_fib_arcs_name, 1},
   {"wk_fib_arcs_reset", (DL_FUNC)&wk_fib_arcs_reset, 1},
   {"wk_fib_channel_new", (DL_FUNC)&wk_fib_channel_new, 0},
   {"wk_fib_channel_update", (DL_FUNC)&wk_fib_channel_update, 7},
+  {"wk_fib_channel_batch", (DL_FUNC)&wk_fib_channel_batch, 7},
   {"wk_fib_channel_warmup_period", (DL_FUNC)&wk_fib_channel_warmup_period, 1},
   {"wk_fib_channel_is_ready", (DL_FUNC)&wk_fib_channel_is_ready, 1},
   {"wk_fib_channel_name", (DL_FUNC)&wk_fib_channel_name, 1},
   {"wk_fib_channel_reset", (DL_FUNC)&wk_fib_channel_reset, 1},
   {"wk_fib_confluence_new", (DL_FUNC)&wk_fib_confluence_new, 0},
   {"wk_fib_confluence_update", (DL_FUNC)&wk_fib_confluence_update, 7},
+  {"wk_fib_confluence_batch", (DL_FUNC)&wk_fib_confluence_batch, 7},
   {"wk_fib_confluence_warmup_period", (DL_FUNC)&wk_fib_confluence_warmup_period, 1},
   {"wk_fib_confluence_is_ready", (DL_FUNC)&wk_fib_confluence_is_ready, 1},
   {"wk_fib_confluence_name", (DL_FUNC)&wk_fib_confluence_name, 1},
   {"wk_fib_confluence_reset", (DL_FUNC)&wk_fib_confluence_reset, 1},
   {"wk_fib_extension_new", (DL_FUNC)&wk_fib_extension_new, 0},
   {"wk_fib_extension_update", (DL_FUNC)&wk_fib_extension_update, 7},
+  {"wk_fib_extension_batch", (DL_FUNC)&wk_fib_extension_batch, 7},
   {"wk_fib_extension_warmup_period", (DL_FUNC)&wk_fib_extension_warmup_period, 1},
   {"wk_fib_extension_is_ready", (DL_FUNC)&wk_fib_extension_is_ready, 1},
   {"wk_fib_extension_name", (DL_FUNC)&wk_fib_extension_name, 1},
   {"wk_fib_extension_reset", (DL_FUNC)&wk_fib_extension_reset, 1},
   {"wk_fib_fan_new", (DL_FUNC)&wk_fib_fan_new, 0},
   {"wk_fib_fan_update", (DL_FUNC)&wk_fib_fan_update, 7},
+  {"wk_fib_fan_batch", (DL_FUNC)&wk_fib_fan_batch, 7},
   {"wk_fib_fan_warmup_period", (DL_FUNC)&wk_fib_fan_warmup_period, 1},
   {"wk_fib_fan_is_ready", (DL_FUNC)&wk_fib_fan_is_ready, 1},
   {"wk_fib_fan_name", (DL_FUNC)&wk_fib_fan_name, 1},
   {"wk_fib_fan_reset", (DL_FUNC)&wk_fib_fan_reset, 1},
   {"wk_fib_projection_new", (DL_FUNC)&wk_fib_projection_new, 0},
   {"wk_fib_projection_update", (DL_FUNC)&wk_fib_projection_update, 7},
+  {"wk_fib_projection_batch", (DL_FUNC)&wk_fib_projection_batch, 7},
   {"wk_fib_projection_warmup_period", (DL_FUNC)&wk_fib_projection_warmup_period, 1},
   {"wk_fib_projection_is_ready", (DL_FUNC)&wk_fib_projection_is_ready, 1},
   {"wk_fib_projection_name", (DL_FUNC)&wk_fib_projection_name, 1},
   {"wk_fib_projection_reset", (DL_FUNC)&wk_fib_projection_reset, 1},
   {"wk_fib_retracement_new", (DL_FUNC)&wk_fib_retracement_new, 0},
   {"wk_fib_retracement_update", (DL_FUNC)&wk_fib_retracement_update, 7},
+  {"wk_fib_retracement_batch", (DL_FUNC)&wk_fib_retracement_batch, 7},
   {"wk_fib_retracement_warmup_period", (DL_FUNC)&wk_fib_retracement_warmup_period, 1},
   {"wk_fib_retracement_is_ready", (DL_FUNC)&wk_fib_retracement_is_ready, 1},
   {"wk_fib_retracement_name", (DL_FUNC)&wk_fib_retracement_name, 1},
   {"wk_fib_retracement_reset", (DL_FUNC)&wk_fib_retracement_reset, 1},
   {"wk_fib_time_zones_new", (DL_FUNC)&wk_fib_time_zones_new, 0},
   {"wk_fib_time_zones_update", (DL_FUNC)&wk_fib_time_zones_update, 7},
+  {"wk_fib_time_zones_batch", (DL_FUNC)&wk_fib_time_zones_batch, 7},
   {"wk_fib_time_zones_warmup_period", (DL_FUNC)&wk_fib_time_zones_warmup_period, 1},
   {"wk_fib_time_zones_is_ready", (DL_FUNC)&wk_fib_time_zones_is_ready, 1},
   {"wk_fib_time_zones_name", (DL_FUNC)&wk_fib_time_zones_name, 1},
   {"wk_fib_time_zones_reset", (DL_FUNC)&wk_fib_time_zones_reset, 1},
   {"wk_fibonacci_pivots_new", (DL_FUNC)&wk_fibonacci_pivots_new, 0},
   {"wk_fibonacci_pivots_update", (DL_FUNC)&wk_fibonacci_pivots_update, 7},
+  {"wk_fibonacci_pivots_batch", (DL_FUNC)&wk_fibonacci_pivots_batch, 7},
   {"wk_fibonacci_pivots_warmup_period", (DL_FUNC)&wk_fibonacci_pivots_warmup_period, 1},
   {"wk_fibonacci_pivots_is_ready", (DL_FUNC)&wk_fibonacci_pivots_is_ready, 1},
   {"wk_fibonacci_pivots_name", (DL_FUNC)&wk_fibonacci_pivots_name, 1},
@@ -25380,6 +28832,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_force_index_reset", (DL_FUNC)&wk_force_index_reset, 1},
   {"wk_fractal_chaos_bands_new", (DL_FUNC)&wk_fractal_chaos_bands_new, 1},
   {"wk_fractal_chaos_bands_update", (DL_FUNC)&wk_fractal_chaos_bands_update, 7},
+  {"wk_fractal_chaos_bands_batch", (DL_FUNC)&wk_fractal_chaos_bands_batch, 7},
   {"wk_fractal_chaos_bands_warmup_period", (DL_FUNC)&wk_fractal_chaos_bands_warmup_period, 1},
   {"wk_fractal_chaos_bands_is_ready", (DL_FUNC)&wk_fractal_chaos_bands_is_ready, 1},
   {"wk_fractal_chaos_bands_name", (DL_FUNC)&wk_fractal_chaos_bands_name, 1},
@@ -25400,30 +28853,35 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_fry_pan_bottom_reset", (DL_FUNC)&wk_fry_pan_bottom_reset, 1},
   {"wk_funding_basis_new", (DL_FUNC)&wk_funding_basis_new, 0},
   {"wk_funding_basis_update", (DL_FUNC)&wk_funding_basis_update, 13},
+  {"wk_funding_basis_batch", (DL_FUNC)&wk_funding_basis_batch, 13},
   {"wk_funding_basis_warmup_period", (DL_FUNC)&wk_funding_basis_warmup_period, 1},
   {"wk_funding_basis_is_ready", (DL_FUNC)&wk_funding_basis_is_ready, 1},
   {"wk_funding_basis_name", (DL_FUNC)&wk_funding_basis_name, 1},
   {"wk_funding_basis_reset", (DL_FUNC)&wk_funding_basis_reset, 1},
   {"wk_funding_implied_apr_new", (DL_FUNC)&wk_funding_implied_apr_new, 1},
   {"wk_funding_implied_apr_update", (DL_FUNC)&wk_funding_implied_apr_update, 13},
+  {"wk_funding_implied_apr_batch", (DL_FUNC)&wk_funding_implied_apr_batch, 13},
   {"wk_funding_implied_apr_warmup_period", (DL_FUNC)&wk_funding_implied_apr_warmup_period, 1},
   {"wk_funding_implied_apr_is_ready", (DL_FUNC)&wk_funding_implied_apr_is_ready, 1},
   {"wk_funding_implied_apr_name", (DL_FUNC)&wk_funding_implied_apr_name, 1},
   {"wk_funding_implied_apr_reset", (DL_FUNC)&wk_funding_implied_apr_reset, 1},
   {"wk_funding_rate_new", (DL_FUNC)&wk_funding_rate_new, 0},
   {"wk_funding_rate_update", (DL_FUNC)&wk_funding_rate_update, 13},
+  {"wk_funding_rate_batch", (DL_FUNC)&wk_funding_rate_batch, 13},
   {"wk_funding_rate_warmup_period", (DL_FUNC)&wk_funding_rate_warmup_period, 1},
   {"wk_funding_rate_is_ready", (DL_FUNC)&wk_funding_rate_is_ready, 1},
   {"wk_funding_rate_name", (DL_FUNC)&wk_funding_rate_name, 1},
   {"wk_funding_rate_reset", (DL_FUNC)&wk_funding_rate_reset, 1},
   {"wk_funding_rate_mean_new", (DL_FUNC)&wk_funding_rate_mean_new, 1},
   {"wk_funding_rate_mean_update", (DL_FUNC)&wk_funding_rate_mean_update, 13},
+  {"wk_funding_rate_mean_batch", (DL_FUNC)&wk_funding_rate_mean_batch, 13},
   {"wk_funding_rate_mean_warmup_period", (DL_FUNC)&wk_funding_rate_mean_warmup_period, 1},
   {"wk_funding_rate_mean_is_ready", (DL_FUNC)&wk_funding_rate_mean_is_ready, 1},
   {"wk_funding_rate_mean_name", (DL_FUNC)&wk_funding_rate_mean_name, 1},
   {"wk_funding_rate_mean_reset", (DL_FUNC)&wk_funding_rate_mean_reset, 1},
   {"wk_funding_rate_z_score_new", (DL_FUNC)&wk_funding_rate_z_score_new, 1},
   {"wk_funding_rate_z_score_update", (DL_FUNC)&wk_funding_rate_z_score_update, 13},
+  {"wk_funding_rate_z_score_batch", (DL_FUNC)&wk_funding_rate_z_score_batch, 13},
   {"wk_funding_rate_z_score_warmup_period", (DL_FUNC)&wk_funding_rate_z_score_warmup_period, 1},
   {"wk_funding_rate_z_score_is_ready", (DL_FUNC)&wk_funding_rate_z_score_is_ready, 1},
   {"wk_funding_rate_z_score_name", (DL_FUNC)&wk_funding_rate_z_score_name, 1},
@@ -25472,6 +28930,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_gartley_reset", (DL_FUNC)&wk_gartley_reset, 1},
   {"wk_gator_oscillator_new", (DL_FUNC)&wk_gator_oscillator_new, 3},
   {"wk_gator_oscillator_update", (DL_FUNC)&wk_gator_oscillator_update, 7},
+  {"wk_gator_oscillator_batch", (DL_FUNC)&wk_gator_oscillator_batch, 7},
   {"wk_gator_oscillator_warmup_period", (DL_FUNC)&wk_gator_oscillator_warmup_period, 1},
   {"wk_gator_oscillator_is_ready", (DL_FUNC)&wk_gator_oscillator_is_ready, 1},
   {"wk_gator_oscillator_name", (DL_FUNC)&wk_gator_oscillator_name, 1},
@@ -25492,6 +28951,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_geometric_ma_reset", (DL_FUNC)&wk_geometric_ma_reset, 1},
   {"wk_golden_pocket_new", (DL_FUNC)&wk_golden_pocket_new, 0},
   {"wk_golden_pocket_update", (DL_FUNC)&wk_golden_pocket_update, 7},
+  {"wk_golden_pocket_batch", (DL_FUNC)&wk_golden_pocket_batch, 7},
   {"wk_golden_pocket_warmup_period", (DL_FUNC)&wk_golden_pocket_warmup_period, 1},
   {"wk_golden_pocket_is_ready", (DL_FUNC)&wk_golden_pocket_is_ready, 1},
   {"wk_golden_pocket_name", (DL_FUNC)&wk_golden_pocket_name, 1},
@@ -25554,6 +29014,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_head_and_shoulders_reset", (DL_FUNC)&wk_head_and_shoulders_reset, 1},
   {"wk_heikin_ashi_new", (DL_FUNC)&wk_heikin_ashi_new, 0},
   {"wk_heikin_ashi_update", (DL_FUNC)&wk_heikin_ashi_update, 7},
+  {"wk_heikin_ashi_batch", (DL_FUNC)&wk_heikin_ashi_batch, 7},
   {"wk_heikin_ashi_warmup_period", (DL_FUNC)&wk_heikin_ashi_warmup_period, 1},
   {"wk_heikin_ashi_is_ready", (DL_FUNC)&wk_heikin_ashi_is_ready, 1},
   {"wk_heikin_ashi_name", (DL_FUNC)&wk_heikin_ashi_name, 1},
@@ -25587,6 +29048,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_high_low_range_reset", (DL_FUNC)&wk_high_low_range_reset, 1},
   {"wk_high_low_volume_nodes_new", (DL_FUNC)&wk_high_low_volume_nodes_new, 2},
   {"wk_high_low_volume_nodes_update", (DL_FUNC)&wk_high_low_volume_nodes_update, 7},
+  {"wk_high_low_volume_nodes_batch", (DL_FUNC)&wk_high_low_volume_nodes_batch, 7},
   {"wk_high_low_volume_nodes_warmup_period", (DL_FUNC)&wk_high_low_volume_nodes_warmup_period, 1},
   {"wk_high_low_volume_nodes_is_ready", (DL_FUNC)&wk_high_low_volume_nodes_is_ready, 1},
   {"wk_high_low_volume_nodes_name", (DL_FUNC)&wk_high_low_volume_nodes_name, 1},
@@ -25663,6 +29125,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_ht_dc_phase_reset", (DL_FUNC)&wk_ht_dc_phase_reset, 1},
   {"wk_ht_phasor_new", (DL_FUNC)&wk_ht_phasor_new, 0},
   {"wk_ht_phasor_update", (DL_FUNC)&wk_ht_phasor_update, 2},
+  {"wk_ht_phasor_batch", (DL_FUNC)&wk_ht_phasor_batch, 2},
   {"wk_ht_phasor_warmup_period", (DL_FUNC)&wk_ht_phasor_warmup_period, 1},
   {"wk_ht_phasor_is_ready", (DL_FUNC)&wk_ht_phasor_is_ready, 1},
   {"wk_ht_phasor_name", (DL_FUNC)&wk_ht_phasor_name, 1},
@@ -25676,6 +29139,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_ht_trend_mode_reset", (DL_FUNC)&wk_ht_trend_mode_reset, 1},
   {"wk_hurst_channel_new", (DL_FUNC)&wk_hurst_channel_new, 2},
   {"wk_hurst_channel_update", (DL_FUNC)&wk_hurst_channel_update, 7},
+  {"wk_hurst_channel_batch", (DL_FUNC)&wk_hurst_channel_batch, 7},
   {"wk_hurst_channel_warmup_period", (DL_FUNC)&wk_hurst_channel_warmup_period, 1},
   {"wk_hurst_channel_is_ready", (DL_FUNC)&wk_hurst_channel_is_ready, 1},
   {"wk_hurst_channel_name", (DL_FUNC)&wk_hurst_channel_name, 1},
@@ -25689,6 +29153,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_hurst_exponent_reset", (DL_FUNC)&wk_hurst_exponent_reset, 1},
   {"wk_ichimoku_new", (DL_FUNC)&wk_ichimoku_new, 4},
   {"wk_ichimoku_update", (DL_FUNC)&wk_ichimoku_update, 7},
+  {"wk_ichimoku_batch", (DL_FUNC)&wk_ichimoku_batch, 7},
   {"wk_ichimoku_warmup_period", (DL_FUNC)&wk_ichimoku_warmup_period, 1},
   {"wk_ichimoku_is_ready", (DL_FUNC)&wk_ichimoku_is_ready, 1},
   {"wk_ichimoku_name", (DL_FUNC)&wk_ichimoku_name, 1},
@@ -25727,6 +29192,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_information_ratio_reset", (DL_FUNC)&wk_information_ratio_reset, 1},
   {"wk_initial_balance_new", (DL_FUNC)&wk_initial_balance_new, 1},
   {"wk_initial_balance_update", (DL_FUNC)&wk_initial_balance_update, 7},
+  {"wk_initial_balance_batch", (DL_FUNC)&wk_initial_balance_batch, 7},
   {"wk_initial_balance_warmup_period", (DL_FUNC)&wk_initial_balance_warmup_period, 1},
   {"wk_initial_balance_is_ready", (DL_FUNC)&wk_initial_balance_is_ready, 1},
   {"wk_initial_balance_name", (DL_FUNC)&wk_initial_balance_name, 1},
@@ -25806,6 +29272,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_kagi_bars_reset", (DL_FUNC)&wk_kagi_bars_reset, 1},
   {"wk_kalman_hedge_ratio_new", (DL_FUNC)&wk_kalman_hedge_ratio_new, 2},
   {"wk_kalman_hedge_ratio_update", (DL_FUNC)&wk_kalman_hedge_ratio_update, 3},
+  {"wk_kalman_hedge_ratio_batch", (DL_FUNC)&wk_kalman_hedge_ratio_batch, 3},
   {"wk_kalman_hedge_ratio_warmup_period", (DL_FUNC)&wk_kalman_hedge_ratio_warmup_period, 1},
   {"wk_kalman_hedge_ratio_is_ready", (DL_FUNC)&wk_kalman_hedge_ratio_is_ready, 1},
   {"wk_kalman_hedge_ratio_name", (DL_FUNC)&wk_kalman_hedge_ratio_name, 1},
@@ -25819,12 +29286,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_kama_reset", (DL_FUNC)&wk_kama_reset, 1},
   {"wk_kase_dev_stop_new", (DL_FUNC)&wk_kase_dev_stop_new, 2},
   {"wk_kase_dev_stop_update", (DL_FUNC)&wk_kase_dev_stop_update, 7},
+  {"wk_kase_dev_stop_batch", (DL_FUNC)&wk_kase_dev_stop_batch, 7},
   {"wk_kase_dev_stop_warmup_period", (DL_FUNC)&wk_kase_dev_stop_warmup_period, 1},
   {"wk_kase_dev_stop_is_ready", (DL_FUNC)&wk_kase_dev_stop_is_ready, 1},
   {"wk_kase_dev_stop_name", (DL_FUNC)&wk_kase_dev_stop_name, 1},
   {"wk_kase_dev_stop_reset", (DL_FUNC)&wk_kase_dev_stop_reset, 1},
   {"wk_kase_permission_stochastic_new", (DL_FUNC)&wk_kase_permission_stochastic_new, 2},
   {"wk_kase_permission_stochastic_update", (DL_FUNC)&wk_kase_permission_stochastic_update, 7},
+  {"wk_kase_permission_stochastic_batch", (DL_FUNC)&wk_kase_permission_stochastic_batch, 7},
   {"wk_kase_permission_stochastic_warmup_period", (DL_FUNC)&wk_kase_permission_stochastic_warmup_period, 1},
   {"wk_kase_permission_stochastic_is_ready", (DL_FUNC)&wk_kase_permission_stochastic_is_ready, 1},
   {"wk_kase_permission_stochastic_name", (DL_FUNC)&wk_kase_permission_stochastic_name, 1},
@@ -25838,6 +29307,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_kelly_criterion_reset", (DL_FUNC)&wk_kelly_criterion_reset, 1},
   {"wk_keltner_new", (DL_FUNC)&wk_keltner_new, 3},
   {"wk_keltner_update", (DL_FUNC)&wk_keltner_update, 7},
+  {"wk_keltner_batch", (DL_FUNC)&wk_keltner_batch, 7},
   {"wk_keltner_warmup_period", (DL_FUNC)&wk_keltner_warmup_period, 1},
   {"wk_keltner_is_ready", (DL_FUNC)&wk_keltner_is_ready, 1},
   {"wk_keltner_name", (DL_FUNC)&wk_keltner_name, 1},
@@ -25865,6 +29335,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_kicking_by_length_reset", (DL_FUNC)&wk_kicking_by_length_reset, 1},
   {"wk_kst_new", (DL_FUNC)&wk_kst_new, 9},
   {"wk_kst_update", (DL_FUNC)&wk_kst_update, 2},
+  {"wk_kst_batch", (DL_FUNC)&wk_kst_batch, 2},
   {"wk_kst_warmup_period", (DL_FUNC)&wk_kst_warmup_period, 1},
   {"wk_kst_is_ready", (DL_FUNC)&wk_kst_is_ready, 1},
   {"wk_kst_name", (DL_FUNC)&wk_kst_name, 1},
@@ -25885,6 +29356,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_kvo_reset", (DL_FUNC)&wk_kvo_reset, 1},
   {"wk_kyles_lambda_new", (DL_FUNC)&wk_kyles_lambda_new, 1},
   {"wk_kyles_lambda_update", (DL_FUNC)&wk_kyles_lambda_update, 6},
+  {"wk_kyles_lambda_batch", (DL_FUNC)&wk_kyles_lambda_batch, 6},
   {"wk_kyles_lambda_warmup_period", (DL_FUNC)&wk_kyles_lambda_warmup_period, 1},
   {"wk_kyles_lambda_is_ready", (DL_FUNC)&wk_kyles_lambda_is_ready, 1},
   {"wk_kyles_lambda_name", (DL_FUNC)&wk_kyles_lambda_name, 1},
@@ -25905,6 +29377,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_laguerre_rsi_reset", (DL_FUNC)&wk_laguerre_rsi_reset, 1},
   {"wk_lead_lag_cross_correlation_new", (DL_FUNC)&wk_lead_lag_cross_correlation_new, 2},
   {"wk_lead_lag_cross_correlation_update", (DL_FUNC)&wk_lead_lag_cross_correlation_update, 3},
+  {"wk_lead_lag_cross_correlation_batch", (DL_FUNC)&wk_lead_lag_cross_correlation_batch, 3},
   {"wk_lead_lag_cross_correlation_warmup_period", (DL_FUNC)&wk_lead_lag_cross_correlation_warmup_period, 1},
   {"wk_lead_lag_cross_correlation_is_ready", (DL_FUNC)&wk_lead_lag_cross_correlation_is_ready, 1},
   {"wk_lead_lag_cross_correlation_name", (DL_FUNC)&wk_lead_lag_cross_correlation_name, 1},
@@ -25918,6 +29391,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_lin_reg_angle_reset", (DL_FUNC)&wk_lin_reg_angle_reset, 1},
   {"wk_lin_reg_channel_new", (DL_FUNC)&wk_lin_reg_channel_new, 2},
   {"wk_lin_reg_channel_update", (DL_FUNC)&wk_lin_reg_channel_update, 2},
+  {"wk_lin_reg_channel_batch", (DL_FUNC)&wk_lin_reg_channel_batch, 2},
   {"wk_lin_reg_channel_warmup_period", (DL_FUNC)&wk_lin_reg_channel_warmup_period, 1},
   {"wk_lin_reg_channel_is_ready", (DL_FUNC)&wk_lin_reg_channel_is_ready, 1},
   {"wk_lin_reg_channel_name", (DL_FUNC)&wk_lin_reg_channel_name, 1},
@@ -25945,6 +29419,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_linear_regression_reset", (DL_FUNC)&wk_linear_regression_reset, 1},
   {"wk_liquidation_features_new", (DL_FUNC)&wk_liquidation_features_new, 0},
   {"wk_liquidation_features_update", (DL_FUNC)&wk_liquidation_features_update, 13},
+  {"wk_liquidation_features_batch", (DL_FUNC)&wk_liquidation_features_batch, 13},
   {"wk_liquidation_features_warmup_period", (DL_FUNC)&wk_liquidation_features_warmup_period, 1},
   {"wk_liquidation_features_is_ready", (DL_FUNC)&wk_liquidation_features_is_ready, 1},
   {"wk_liquidation_features_name", (DL_FUNC)&wk_liquidation_features_name, 1},
@@ -25972,6 +29447,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_long_line_reset", (DL_FUNC)&wk_long_line_reset, 1},
   {"wk_long_short_ratio_new", (DL_FUNC)&wk_long_short_ratio_new, 0},
   {"wk_long_short_ratio_update", (DL_FUNC)&wk_long_short_ratio_update, 13},
+  {"wk_long_short_ratio_batch", (DL_FUNC)&wk_long_short_ratio_batch, 13},
   {"wk_long_short_ratio_warmup_period", (DL_FUNC)&wk_long_short_ratio_warmup_period, 1},
   {"wk_long_short_ratio_is_ready", (DL_FUNC)&wk_long_short_ratio_is_ready, 1},
   {"wk_long_short_ratio_name", (DL_FUNC)&wk_long_short_ratio_name, 1},
@@ -25985,18 +29461,21 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_m2_measure_reset", (DL_FUNC)&wk_m2_measure_reset, 1},
   {"wk_ma_envelope_new", (DL_FUNC)&wk_ma_envelope_new, 2},
   {"wk_ma_envelope_update", (DL_FUNC)&wk_ma_envelope_update, 2},
+  {"wk_ma_envelope_batch", (DL_FUNC)&wk_ma_envelope_batch, 2},
   {"wk_ma_envelope_warmup_period", (DL_FUNC)&wk_ma_envelope_warmup_period, 1},
   {"wk_ma_envelope_is_ready", (DL_FUNC)&wk_ma_envelope_is_ready, 1},
   {"wk_ma_envelope_name", (DL_FUNC)&wk_ma_envelope_name, 1},
   {"wk_ma_envelope_reset", (DL_FUNC)&wk_ma_envelope_reset, 1},
   {"wk_macd_ext_new", (DL_FUNC)&wk_macd_ext_new, 6},
   {"wk_macd_ext_update", (DL_FUNC)&wk_macd_ext_update, 2},
+  {"wk_macd_ext_batch", (DL_FUNC)&wk_macd_ext_batch, 2},
   {"wk_macd_ext_warmup_period", (DL_FUNC)&wk_macd_ext_warmup_period, 1},
   {"wk_macd_ext_is_ready", (DL_FUNC)&wk_macd_ext_is_ready, 1},
   {"wk_macd_ext_name", (DL_FUNC)&wk_macd_ext_name, 1},
   {"wk_macd_ext_reset", (DL_FUNC)&wk_macd_ext_reset, 1},
   {"wk_macd_fix_new", (DL_FUNC)&wk_macd_fix_new, 1},
   {"wk_macd_fix_update", (DL_FUNC)&wk_macd_fix_update, 2},
+  {"wk_macd_fix_batch", (DL_FUNC)&wk_macd_fix_batch, 2},
   {"wk_macd_fix_warmup_period", (DL_FUNC)&wk_macd_fix_warmup_period, 1},
   {"wk_macd_fix_is_ready", (DL_FUNC)&wk_macd_fix_is_ready, 1},
   {"wk_macd_fix_name", (DL_FUNC)&wk_macd_fix_name, 1},
@@ -26010,12 +29489,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_macd_histogram_reset", (DL_FUNC)&wk_macd_histogram_reset, 1},
   {"wk_macd_indicator_new", (DL_FUNC)&wk_macd_indicator_new, 3},
   {"wk_macd_indicator_update", (DL_FUNC)&wk_macd_indicator_update, 2},
+  {"wk_macd_indicator_batch", (DL_FUNC)&wk_macd_indicator_batch, 2},
   {"wk_macd_indicator_warmup_period", (DL_FUNC)&wk_macd_indicator_warmup_period, 1},
   {"wk_macd_indicator_is_ready", (DL_FUNC)&wk_macd_indicator_is_ready, 1},
   {"wk_macd_indicator_name", (DL_FUNC)&wk_macd_indicator_name, 1},
   {"wk_macd_indicator_reset", (DL_FUNC)&wk_macd_indicator_reset, 1},
   {"wk_mama_new", (DL_FUNC)&wk_mama_new, 2},
   {"wk_mama_update", (DL_FUNC)&wk_mama_update, 2},
+  {"wk_mama_batch", (DL_FUNC)&wk_mama_batch, 2},
   {"wk_mama_warmup_period", (DL_FUNC)&wk_mama_warmup_period, 1},
   {"wk_mama_is_ready", (DL_FUNC)&wk_mama_is_ready, 1},
   {"wk_mama_name", (DL_FUNC)&wk_mama_name, 1},
@@ -26097,6 +29578,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_median_absolute_deviation_reset", (DL_FUNC)&wk_median_absolute_deviation_reset, 1},
   {"wk_median_channel_new", (DL_FUNC)&wk_median_channel_new, 2},
   {"wk_median_channel_update", (DL_FUNC)&wk_median_channel_update, 2},
+  {"wk_median_channel_batch", (DL_FUNC)&wk_median_channel_batch, 2},
   {"wk_median_channel_warmup_period", (DL_FUNC)&wk_median_channel_warmup_period, 1},
   {"wk_median_channel_is_ready", (DL_FUNC)&wk_median_channel_is_ready, 1},
   {"wk_median_channel_name", (DL_FUNC)&wk_median_channel_name, 1},
@@ -26158,6 +29640,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_minus_dm_reset", (DL_FUNC)&wk_minus_dm_reset, 1},
   {"wk_modified_ma_stop_new", (DL_FUNC)&wk_modified_ma_stop_new, 1},
   {"wk_modified_ma_stop_update", (DL_FUNC)&wk_modified_ma_stop_update, 7},
+  {"wk_modified_ma_stop_batch", (DL_FUNC)&wk_modified_ma_stop_batch, 7},
   {"wk_modified_ma_stop_warmup_period", (DL_FUNC)&wk_modified_ma_stop_warmup_period, 1},
   {"wk_modified_ma_stop_is_ready", (DL_FUNC)&wk_modified_ma_stop_is_ready, 1},
   {"wk_modified_ma_stop_name", (DL_FUNC)&wk_modified_ma_stop_name, 1},
@@ -26185,6 +29668,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_morning_evening_star_reset", (DL_FUNC)&wk_morning_evening_star_reset, 1},
   {"wk_murrey_math_lines_new", (DL_FUNC)&wk_murrey_math_lines_new, 1},
   {"wk_murrey_math_lines_update", (DL_FUNC)&wk_murrey_math_lines_update, 7},
+  {"wk_murrey_math_lines_batch", (DL_FUNC)&wk_murrey_math_lines_batch, 7},
   {"wk_murrey_math_lines_warmup_period", (DL_FUNC)&wk_murrey_math_lines_warmup_period, 1},
   {"wk_murrey_math_lines_is_ready", (DL_FUNC)&wk_murrey_math_lines_is_ready, 1},
   {"wk_murrey_math_lines_name", (DL_FUNC)&wk_murrey_math_lines_name, 1},
@@ -26218,6 +29702,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_new_price_lines_reset", (DL_FUNC)&wk_new_price_lines_reset, 1},
   {"wk_nrtr_new", (DL_FUNC)&wk_nrtr_new, 1},
   {"wk_nrtr_update", (DL_FUNC)&wk_nrtr_update, 7},
+  {"wk_nrtr_batch", (DL_FUNC)&wk_nrtr_batch, 7},
   {"wk_nrtr_warmup_period", (DL_FUNC)&wk_nrtr_warmup_period, 1},
   {"wk_nrtr_is_ready", (DL_FUNC)&wk_nrtr_is_ready, 1},
   {"wk_nrtr_name", (DL_FUNC)&wk_nrtr_name, 1},
@@ -26238,18 +29723,21 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_obv_reset", (DL_FUNC)&wk_obv_reset, 1},
   {"wk_oi_price_divergence_new", (DL_FUNC)&wk_oi_price_divergence_new, 1},
   {"wk_oi_price_divergence_update", (DL_FUNC)&wk_oi_price_divergence_update, 13},
+  {"wk_oi_price_divergence_batch", (DL_FUNC)&wk_oi_price_divergence_batch, 13},
   {"wk_oi_price_divergence_warmup_period", (DL_FUNC)&wk_oi_price_divergence_warmup_period, 1},
   {"wk_oi_price_divergence_is_ready", (DL_FUNC)&wk_oi_price_divergence_is_ready, 1},
   {"wk_oi_price_divergence_name", (DL_FUNC)&wk_oi_price_divergence_name, 1},
   {"wk_oi_price_divergence_reset", (DL_FUNC)&wk_oi_price_divergence_reset, 1},
   {"wk_oi_to_volume_ratio_new", (DL_FUNC)&wk_oi_to_volume_ratio_new, 0},
   {"wk_oi_to_volume_ratio_update", (DL_FUNC)&wk_oi_to_volume_ratio_update, 13},
+  {"wk_oi_to_volume_ratio_batch", (DL_FUNC)&wk_oi_to_volume_ratio_batch, 13},
   {"wk_oi_to_volume_ratio_warmup_period", (DL_FUNC)&wk_oi_to_volume_ratio_warmup_period, 1},
   {"wk_oi_to_volume_ratio_is_ready", (DL_FUNC)&wk_oi_to_volume_ratio_is_ready, 1},
   {"wk_oi_to_volume_ratio_name", (DL_FUNC)&wk_oi_to_volume_ratio_name, 1},
   {"wk_oi_to_volume_ratio_reset", (DL_FUNC)&wk_oi_to_volume_ratio_reset, 1},
   {"wk_oi_weighted_new", (DL_FUNC)&wk_oi_weighted_new, 0},
   {"wk_oi_weighted_update", (DL_FUNC)&wk_oi_weighted_update, 13},
+  {"wk_oi_weighted_batch", (DL_FUNC)&wk_oi_weighted_batch, 13},
   {"wk_oi_weighted_warmup_period", (DL_FUNC)&wk_oi_weighted_warmup_period, 1},
   {"wk_oi_weighted_is_ready", (DL_FUNC)&wk_oi_weighted_is_ready, 1},
   {"wk_oi_weighted_name", (DL_FUNC)&wk_oi_weighted_name, 1},
@@ -26270,12 +29758,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_on_neck_reset", (DL_FUNC)&wk_on_neck_reset, 1},
   {"wk_open_interest_delta_new", (DL_FUNC)&wk_open_interest_delta_new, 0},
   {"wk_open_interest_delta_update", (DL_FUNC)&wk_open_interest_delta_update, 13},
+  {"wk_open_interest_delta_batch", (DL_FUNC)&wk_open_interest_delta_batch, 13},
   {"wk_open_interest_delta_warmup_period", (DL_FUNC)&wk_open_interest_delta_warmup_period, 1},
   {"wk_open_interest_delta_is_ready", (DL_FUNC)&wk_open_interest_delta_is_ready, 1},
   {"wk_open_interest_delta_name", (DL_FUNC)&wk_open_interest_delta_name, 1},
   {"wk_open_interest_delta_reset", (DL_FUNC)&wk_open_interest_delta_reset, 1},
   {"wk_open_interest_momentum_new", (DL_FUNC)&wk_open_interest_momentum_new, 1},
   {"wk_open_interest_momentum_update", (DL_FUNC)&wk_open_interest_momentum_update, 13},
+  {"wk_open_interest_momentum_batch", (DL_FUNC)&wk_open_interest_momentum_batch, 13},
   {"wk_open_interest_momentum_warmup_period", (DL_FUNC)&wk_open_interest_momentum_warmup_period, 1},
   {"wk_open_interest_momentum_is_ready", (DL_FUNC)&wk_open_interest_momentum_is_ready, 1},
   {"wk_open_interest_momentum_name", (DL_FUNC)&wk_open_interest_momentum_name, 1},
@@ -26289,6 +29779,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_opening_marubozu_reset", (DL_FUNC)&wk_opening_marubozu_reset, 1},
   {"wk_opening_range_new", (DL_FUNC)&wk_opening_range_new, 1},
   {"wk_opening_range_update", (DL_FUNC)&wk_opening_range_update, 7},
+  {"wk_opening_range_batch", (DL_FUNC)&wk_opening_range_batch, 7},
   {"wk_opening_range_warmup_period", (DL_FUNC)&wk_opening_range_warmup_period, 1},
   {"wk_opening_range_is_ready", (DL_FUNC)&wk_opening_range_is_ready, 1},
   {"wk_opening_range_name", (DL_FUNC)&wk_opening_range_name, 1},
@@ -26333,6 +29824,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_overnight_gap_reset", (DL_FUNC)&wk_overnight_gap_reset, 1},
   {"wk_overnight_intraday_return_new", (DL_FUNC)&wk_overnight_intraday_return_new, 1},
   {"wk_overnight_intraday_return_update", (DL_FUNC)&wk_overnight_intraday_return_update, 7},
+  {"wk_overnight_intraday_return_batch", (DL_FUNC)&wk_overnight_intraday_return_batch, 7},
   {"wk_overnight_intraday_return_warmup_period", (DL_FUNC)&wk_overnight_intraday_return_warmup_period, 1},
   {"wk_overnight_intraday_return_is_ready", (DL_FUNC)&wk_overnight_intraday_return_is_ready, 1},
   {"wk_overnight_intraday_return_name", (DL_FUNC)&wk_overnight_intraday_return_name, 1},
@@ -26394,6 +29886,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_percentage_trailing_stop_reset", (DL_FUNC)&wk_percentage_trailing_stop_reset, 1},
   {"wk_perpetual_premium_index_new", (DL_FUNC)&wk_perpetual_premium_index_new, 0},
   {"wk_perpetual_premium_index_update", (DL_FUNC)&wk_perpetual_premium_index_update, 13},
+  {"wk_perpetual_premium_index_batch", (DL_FUNC)&wk_perpetual_premium_index_batch, 13},
   {"wk_perpetual_premium_index_warmup_period", (DL_FUNC)&wk_perpetual_premium_index_warmup_period, 1},
   {"wk_perpetual_premium_index_is_ready", (DL_FUNC)&wk_perpetual_premium_index_is_ready, 1},
   {"wk_perpetual_premium_index_name", (DL_FUNC)&wk_perpetual_premium_index_name, 1},
@@ -26414,6 +29907,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_piercing_dark_cloud_reset", (DL_FUNC)&wk_piercing_dark_cloud_reset, 1},
   {"wk_pin_new", (DL_FUNC)&wk_pin_new, 1},
   {"wk_pin_update", (DL_FUNC)&wk_pin_update, 5},
+  {"wk_pin_batch", (DL_FUNC)&wk_pin_batch, 5},
   {"wk_pin_warmup_period", (DL_FUNC)&wk_pin_warmup_period, 1},
   {"wk_pin_is_ready", (DL_FUNC)&wk_pin_is_ready, 1},
   {"wk_pin_name", (DL_FUNC)&wk_pin_name, 1},
@@ -26487,6 +29981,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_profit_factor_reset", (DL_FUNC)&wk_profit_factor_reset, 1},
   {"wk_projection_bands_new", (DL_FUNC)&wk_projection_bands_new, 1},
   {"wk_projection_bands_update", (DL_FUNC)&wk_projection_bands_update, 7},
+  {"wk_projection_bands_batch", (DL_FUNC)&wk_projection_bands_batch, 7},
   {"wk_projection_bands_warmup_period", (DL_FUNC)&wk_projection_bands_warmup_period, 1},
   {"wk_projection_bands_is_ready", (DL_FUNC)&wk_projection_bands_is_ready, 1},
   {"wk_projection_bands_name", (DL_FUNC)&wk_projection_bands_name, 1},
@@ -26514,6 +30009,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_pvi_reset", (DL_FUNC)&wk_pvi_reset, 1},
   {"wk_qqe_new", (DL_FUNC)&wk_qqe_new, 3},
   {"wk_qqe_update", (DL_FUNC)&wk_qqe_update, 2},
+  {"wk_qqe_batch", (DL_FUNC)&wk_qqe_batch, 2},
   {"wk_qqe_warmup_period", (DL_FUNC)&wk_qqe_warmup_period, 1},
   {"wk_qqe_is_ready", (DL_FUNC)&wk_qqe_is_ready, 1},
   {"wk_qqe_name", (DL_FUNC)&wk_qqe_name, 1},
@@ -26527,6 +30023,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_qstick_reset", (DL_FUNC)&wk_qstick_reset, 1},
   {"wk_quartile_bands_new", (DL_FUNC)&wk_quartile_bands_new, 1},
   {"wk_quartile_bands_update", (DL_FUNC)&wk_quartile_bands_update, 2},
+  {"wk_quartile_bands_batch", (DL_FUNC)&wk_quartile_bands_batch, 2},
   {"wk_quartile_bands_warmup_period", (DL_FUNC)&wk_quartile_bands_warmup_period, 1},
   {"wk_quartile_bands_is_ready", (DL_FUNC)&wk_quartile_bands_is_ready, 1},
   {"wk_quartile_bands_name", (DL_FUNC)&wk_quartile_bands_name, 1},
@@ -26550,6 +30047,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_range_bars_reset", (DL_FUNC)&wk_range_bars_reset, 1},
   {"wk_realized_spread_new", (DL_FUNC)&wk_realized_spread_new, 1},
   {"wk_realized_spread_update", (DL_FUNC)&wk_realized_spread_update, 6},
+  {"wk_realized_spread_batch", (DL_FUNC)&wk_realized_spread_batch, 6},
   {"wk_realized_spread_warmup_period", (DL_FUNC)&wk_realized_spread_warmup_period, 1},
   {"wk_realized_spread_is_ready", (DL_FUNC)&wk_realized_spread_is_ready, 1},
   {"wk_realized_spread_name", (DL_FUNC)&wk_realized_spread_name, 1},
@@ -26591,6 +30089,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_regime_label_reset", (DL_FUNC)&wk_regime_label_reset, 1},
   {"wk_relative_strength_ab_new", (DL_FUNC)&wk_relative_strength_ab_new, 2},
   {"wk_relative_strength_ab_update", (DL_FUNC)&wk_relative_strength_ab_update, 3},
+  {"wk_relative_strength_ab_batch", (DL_FUNC)&wk_relative_strength_ab_batch, 3},
   {"wk_relative_strength_ab_warmup_period", (DL_FUNC)&wk_relative_strength_ab_warmup_period, 1},
   {"wk_relative_strength_ab_is_ready", (DL_FUNC)&wk_relative_strength_ab_is_ready, 1},
   {"wk_relative_strength_ab_name", (DL_FUNC)&wk_relative_strength_ab_name, 1},
@@ -26667,6 +30166,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_rogers_satchell_volatility_reset", (DL_FUNC)&wk_rogers_satchell_volatility_reset, 1},
   {"wk_roll_measure_new", (DL_FUNC)&wk_roll_measure_new, 1},
   {"wk_roll_measure_update", (DL_FUNC)&wk_roll_measure_update, 5},
+  {"wk_roll_measure_batch", (DL_FUNC)&wk_roll_measure_batch, 5},
   {"wk_roll_measure_warmup_period", (DL_FUNC)&wk_roll_measure_warmup_period, 1},
   {"wk_roll_measure_is_ready", (DL_FUNC)&wk_roll_measure_is_ready, 1},
   {"wk_roll_measure_name", (DL_FUNC)&wk_roll_measure_name, 1},
@@ -26761,6 +30261,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_rvi_volatility_reset", (DL_FUNC)&wk_rvi_volatility_reset, 1},
   {"wk_rwi_new", (DL_FUNC)&wk_rwi_new, 1},
   {"wk_rwi_update", (DL_FUNC)&wk_rwi_update, 7},
+  {"wk_rwi_batch", (DL_FUNC)&wk_rwi_batch, 7},
   {"wk_rwi_warmup_period", (DL_FUNC)&wk_rwi_warmup_period, 1},
   {"wk_rwi_is_ready", (DL_FUNC)&wk_rwi_is_ready, 1},
   {"wk_rwi_name", (DL_FUNC)&wk_rwi_name, 1},
@@ -26795,12 +30296,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_separating_lines_reset", (DL_FUNC)&wk_separating_lines_reset, 1},
   {"wk_session_high_low_new", (DL_FUNC)&wk_session_high_low_new, 1},
   {"wk_session_high_low_update", (DL_FUNC)&wk_session_high_low_update, 7},
+  {"wk_session_high_low_batch", (DL_FUNC)&wk_session_high_low_batch, 7},
   {"wk_session_high_low_warmup_period", (DL_FUNC)&wk_session_high_low_warmup_period, 1},
   {"wk_session_high_low_is_ready", (DL_FUNC)&wk_session_high_low_is_ready, 1},
   {"wk_session_high_low_name", (DL_FUNC)&wk_session_high_low_name, 1},
   {"wk_session_high_low_reset", (DL_FUNC)&wk_session_high_low_reset, 1},
   {"wk_session_range_new", (DL_FUNC)&wk_session_range_new, 1},
   {"wk_session_range_update", (DL_FUNC)&wk_session_range_update, 7},
+  {"wk_session_range_batch", (DL_FUNC)&wk_session_range_batch, 7},
   {"wk_session_range_warmup_period", (DL_FUNC)&wk_session_range_warmup_period, 1},
   {"wk_session_range_is_ready", (DL_FUNC)&wk_session_range_is_ready, 1},
   {"wk_session_range_name", (DL_FUNC)&wk_session_range_name, 1},
@@ -26849,6 +30352,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_short_line_reset", (DL_FUNC)&wk_short_line_reset, 1},
   {"wk_signed_volume_new", (DL_FUNC)&wk_signed_volume_new, 0},
   {"wk_signed_volume_update", (DL_FUNC)&wk_signed_volume_update, 5},
+  {"wk_signed_volume_batch", (DL_FUNC)&wk_signed_volume_batch, 5},
   {"wk_signed_volume_warmup_period", (DL_FUNC)&wk_signed_volume_warmup_period, 1},
   {"wk_signed_volume_is_ready", (DL_FUNC)&wk_signed_volume_is_ready, 1},
   {"wk_signed_volume_name", (DL_FUNC)&wk_signed_volume_name, 1},
@@ -26904,6 +30408,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_smma_reset", (DL_FUNC)&wk_smma_reset, 1},
   {"wk_smoothed_heikin_ashi_new", (DL_FUNC)&wk_smoothed_heikin_ashi_new, 1},
   {"wk_smoothed_heikin_ashi_update", (DL_FUNC)&wk_smoothed_heikin_ashi_update, 7},
+  {"wk_smoothed_heikin_ashi_batch", (DL_FUNC)&wk_smoothed_heikin_ashi_batch, 7},
   {"wk_smoothed_heikin_ashi_warmup_period", (DL_FUNC)&wk_smoothed_heikin_ashi_warmup_period, 1},
   {"wk_smoothed_heikin_ashi_is_ready", (DL_FUNC)&wk_smoothed_heikin_ashi_is_ready, 1},
   {"wk_smoothed_heikin_ashi_name", (DL_FUNC)&wk_smoothed_heikin_ashi_name, 1},
@@ -26938,6 +30443,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_spread_ar1_coefficient_reset", (DL_FUNC)&wk_spread_ar1_coefficient_reset, 1},
   {"wk_spread_bollinger_bands_new", (DL_FUNC)&wk_spread_bollinger_bands_new, 2},
   {"wk_spread_bollinger_bands_update", (DL_FUNC)&wk_spread_bollinger_bands_update, 3},
+  {"wk_spread_bollinger_bands_batch", (DL_FUNC)&wk_spread_bollinger_bands_batch, 3},
   {"wk_spread_bollinger_bands_warmup_period", (DL_FUNC)&wk_spread_bollinger_bands_warmup_period, 1},
   {"wk_spread_bollinger_bands_is_ready", (DL_FUNC)&wk_spread_bollinger_bands_is_ready, 1},
   {"wk_spread_bollinger_bands_name", (DL_FUNC)&wk_spread_bollinger_bands_name, 1},
@@ -26965,12 +30471,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_standard_error_reset", (DL_FUNC)&wk_standard_error_reset, 1},
   {"wk_standard_error_bands_new", (DL_FUNC)&wk_standard_error_bands_new, 2},
   {"wk_standard_error_bands_update", (DL_FUNC)&wk_standard_error_bands_update, 2},
+  {"wk_standard_error_bands_batch", (DL_FUNC)&wk_standard_error_bands_batch, 2},
   {"wk_standard_error_bands_warmup_period", (DL_FUNC)&wk_standard_error_bands_warmup_period, 1},
   {"wk_standard_error_bands_is_ready", (DL_FUNC)&wk_standard_error_bands_is_ready, 1},
   {"wk_standard_error_bands_name", (DL_FUNC)&wk_standard_error_bands_name, 1},
   {"wk_standard_error_bands_reset", (DL_FUNC)&wk_standard_error_bands_reset, 1},
   {"wk_starc_bands_new", (DL_FUNC)&wk_starc_bands_new, 3},
   {"wk_starc_bands_update", (DL_FUNC)&wk_starc_bands_update, 7},
+  {"wk_starc_bands_batch", (DL_FUNC)&wk_starc_bands_batch, 7},
   {"wk_starc_bands_warmup_period", (DL_FUNC)&wk_starc_bands_warmup_period, 1},
   {"wk_starc_bands_is_ready", (DL_FUNC)&wk_starc_bands_is_ready, 1},
   {"wk_starc_bands_name", (DL_FUNC)&wk_starc_bands_name, 1},
@@ -27019,6 +30527,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_stoch_rsi_reset", (DL_FUNC)&wk_stoch_rsi_reset, 1},
   {"wk_stochastic_new", (DL_FUNC)&wk_stochastic_new, 2},
   {"wk_stochastic_update", (DL_FUNC)&wk_stochastic_update, 7},
+  {"wk_stochastic_batch", (DL_FUNC)&wk_stochastic_batch, 7},
   {"wk_stochastic_warmup_period", (DL_FUNC)&wk_stochastic_warmup_period, 1},
   {"wk_stochastic_is_ready", (DL_FUNC)&wk_stochastic_is_ready, 1},
   {"wk_stochastic_name", (DL_FUNC)&wk_stochastic_name, 1},
@@ -27039,6 +30548,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_super_smoother_reset", (DL_FUNC)&wk_super_smoother_reset, 1},
   {"wk_super_trend_new", (DL_FUNC)&wk_super_trend_new, 2},
   {"wk_super_trend_update", (DL_FUNC)&wk_super_trend_update, 7},
+  {"wk_super_trend_batch", (DL_FUNC)&wk_super_trend_batch, 7},
   {"wk_super_trend_warmup_period", (DL_FUNC)&wk_super_trend_warmup_period, 1},
   {"wk_super_trend_is_ready", (DL_FUNC)&wk_super_trend_is_ready, 1},
   {"wk_super_trend_name", (DL_FUNC)&wk_super_trend_name, 1},
@@ -27059,6 +30569,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_tail_ratio_reset", (DL_FUNC)&wk_tail_ratio_reset, 1},
   {"wk_taker_buy_sell_ratio_new", (DL_FUNC)&wk_taker_buy_sell_ratio_new, 0},
   {"wk_taker_buy_sell_ratio_update", (DL_FUNC)&wk_taker_buy_sell_ratio_update, 13},
+  {"wk_taker_buy_sell_ratio_batch", (DL_FUNC)&wk_taker_buy_sell_ratio_batch, 13},
   {"wk_taker_buy_sell_ratio_warmup_period", (DL_FUNC)&wk_taker_buy_sell_ratio_warmup_period, 1},
   {"wk_taker_buy_sell_ratio_is_ready", (DL_FUNC)&wk_taker_buy_sell_ratio_is_ready, 1},
   {"wk_taker_buy_sell_ratio_name", (DL_FUNC)&wk_taker_buy_sell_ratio_name, 1},
@@ -27135,12 +30646,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_td_differential_reset", (DL_FUNC)&wk_td_differential_reset, 1},
   {"wk_td_lines_new", (DL_FUNC)&wk_td_lines_new, 2},
   {"wk_td_lines_update", (DL_FUNC)&wk_td_lines_update, 7},
+  {"wk_td_lines_batch", (DL_FUNC)&wk_td_lines_batch, 7},
   {"wk_td_lines_warmup_period", (DL_FUNC)&wk_td_lines_warmup_period, 1},
   {"wk_td_lines_is_ready", (DL_FUNC)&wk_td_lines_is_ready, 1},
   {"wk_td_lines_name", (DL_FUNC)&wk_td_lines_name, 1},
   {"wk_td_lines_reset", (DL_FUNC)&wk_td_lines_reset, 1},
   {"wk_td_moving_average_new", (DL_FUNC)&wk_td_moving_average_new, 2},
   {"wk_td_moving_average_update", (DL_FUNC)&wk_td_moving_average_update, 7},
+  {"wk_td_moving_average_batch", (DL_FUNC)&wk_td_moving_average_batch, 7},
   {"wk_td_moving_average_warmup_period", (DL_FUNC)&wk_td_moving_average_warmup_period, 1},
   {"wk_td_moving_average_is_ready", (DL_FUNC)&wk_td_moving_average_is_ready, 1},
   {"wk_td_moving_average_name", (DL_FUNC)&wk_td_moving_average_name, 1},
@@ -27168,6 +30681,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_td_propulsion_reset", (DL_FUNC)&wk_td_propulsion_reset, 1},
   {"wk_td_range_projection_new", (DL_FUNC)&wk_td_range_projection_new, 0},
   {"wk_td_range_projection_update", (DL_FUNC)&wk_td_range_projection_update, 7},
+  {"wk_td_range_projection_batch", (DL_FUNC)&wk_td_range_projection_batch, 7},
   {"wk_td_range_projection_warmup_period", (DL_FUNC)&wk_td_range_projection_warmup_period, 1},
   {"wk_td_range_projection_is_ready", (DL_FUNC)&wk_td_range_projection_is_ready, 1},
   {"wk_td_range_projection_name", (DL_FUNC)&wk_td_range_projection_name, 1},
@@ -27181,12 +30695,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_td_rei_reset", (DL_FUNC)&wk_td_rei_reset, 1},
   {"wk_td_risk_level_new", (DL_FUNC)&wk_td_risk_level_new, 2},
   {"wk_td_risk_level_update", (DL_FUNC)&wk_td_risk_level_update, 7},
+  {"wk_td_risk_level_batch", (DL_FUNC)&wk_td_risk_level_batch, 7},
   {"wk_td_risk_level_warmup_period", (DL_FUNC)&wk_td_risk_level_warmup_period, 1},
   {"wk_td_risk_level_is_ready", (DL_FUNC)&wk_td_risk_level_is_ready, 1},
   {"wk_td_risk_level_name", (DL_FUNC)&wk_td_risk_level_name, 1},
   {"wk_td_risk_level_reset", (DL_FUNC)&wk_td_risk_level_reset, 1},
   {"wk_td_sequential_new", (DL_FUNC)&wk_td_sequential_new, 4},
   {"wk_td_sequential_update", (DL_FUNC)&wk_td_sequential_update, 7},
+  {"wk_td_sequential_batch", (DL_FUNC)&wk_td_sequential_batch, 7},
   {"wk_td_sequential_warmup_period", (DL_FUNC)&wk_td_sequential_warmup_period, 1},
   {"wk_td_sequential_is_ready", (DL_FUNC)&wk_td_sequential_is_ready, 1},
   {"wk_td_sequential_name", (DL_FUNC)&wk_td_sequential_name, 1},
@@ -27214,6 +30730,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_tema_reset", (DL_FUNC)&wk_tema_reset, 1},
   {"wk_term_structure_basis_new", (DL_FUNC)&wk_term_structure_basis_new, 0},
   {"wk_term_structure_basis_update", (DL_FUNC)&wk_term_structure_basis_update, 13},
+  {"wk_term_structure_basis_batch", (DL_FUNC)&wk_term_structure_basis_batch, 13},
   {"wk_term_structure_basis_warmup_period", (DL_FUNC)&wk_term_structure_basis_warmup_period, 1},
   {"wk_term_structure_basis_is_ready", (DL_FUNC)&wk_term_structure_basis_is_ready, 1},
   {"wk_term_structure_basis_name", (DL_FUNC)&wk_term_structure_basis_name, 1},
@@ -27325,12 +30842,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_tpo_profile_reset", (DL_FUNC)&wk_tpo_profile_reset, 1},
   {"wk_trade_imbalance_new", (DL_FUNC)&wk_trade_imbalance_new, 1},
   {"wk_trade_imbalance_update", (DL_FUNC)&wk_trade_imbalance_update, 5},
+  {"wk_trade_imbalance_batch", (DL_FUNC)&wk_trade_imbalance_batch, 5},
   {"wk_trade_imbalance_warmup_period", (DL_FUNC)&wk_trade_imbalance_warmup_period, 1},
   {"wk_trade_imbalance_is_ready", (DL_FUNC)&wk_trade_imbalance_is_ready, 1},
   {"wk_trade_imbalance_name", (DL_FUNC)&wk_trade_imbalance_name, 1},
   {"wk_trade_imbalance_reset", (DL_FUNC)&wk_trade_imbalance_reset, 1},
   {"wk_trade_sign_autocorrelation_new", (DL_FUNC)&wk_trade_sign_autocorrelation_new, 1},
   {"wk_trade_sign_autocorrelation_update", (DL_FUNC)&wk_trade_sign_autocorrelation_update, 5},
+  {"wk_trade_sign_autocorrelation_batch", (DL_FUNC)&wk_trade_sign_autocorrelation_batch, 5},
   {"wk_trade_sign_autocorrelation_warmup_period", (DL_FUNC)&wk_trade_sign_autocorrelation_warmup_period, 1},
   {"wk_trade_sign_autocorrelation_is_ready", (DL_FUNC)&wk_trade_sign_autocorrelation_is_ready, 1},
   {"wk_trade_sign_autocorrelation_name", (DL_FUNC)&wk_trade_sign_autocorrelation_name, 1},
@@ -27448,6 +30967,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_tsv_reset", (DL_FUNC)&wk_tsv_reset, 1},
   {"wk_ttm_squeeze_new", (DL_FUNC)&wk_ttm_squeeze_new, 3},
   {"wk_ttm_squeeze_update", (DL_FUNC)&wk_ttm_squeeze_update, 7},
+  {"wk_ttm_squeeze_batch", (DL_FUNC)&wk_ttm_squeeze_batch, 7},
   {"wk_ttm_squeeze_warmup_period", (DL_FUNC)&wk_ttm_squeeze_warmup_period, 1},
   {"wk_ttm_squeeze_is_ready", (DL_FUNC)&wk_ttm_squeeze_is_ready, 1},
   {"wk_ttm_squeeze_name", (DL_FUNC)&wk_ttm_squeeze_name, 1},
@@ -27551,6 +31071,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_upside_potential_ratio_reset", (DL_FUNC)&wk_upside_potential_ratio_reset, 1},
   {"wk_value_area_new", (DL_FUNC)&wk_value_area_new, 3},
   {"wk_value_area_update", (DL_FUNC)&wk_value_area_update, 7},
+  {"wk_value_area_batch", (DL_FUNC)&wk_value_area_batch, 7},
   {"wk_value_area_warmup_period", (DL_FUNC)&wk_value_area_warmup_period, 1},
   {"wk_value_area_is_ready", (DL_FUNC)&wk_value_area_is_ready, 1},
   {"wk_value_area_name", (DL_FUNC)&wk_value_area_name, 1},
@@ -27592,6 +31113,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_vidya_reset", (DL_FUNC)&wk_vidya_reset, 1},
   {"wk_volatility_cone_new", (DL_FUNC)&wk_volatility_cone_new, 2},
   {"wk_volatility_cone_update", (DL_FUNC)&wk_volatility_cone_update, 7},
+  {"wk_volatility_cone_batch", (DL_FUNC)&wk_volatility_cone_batch, 7},
   {"wk_volatility_cone_warmup_period", (DL_FUNC)&wk_volatility_cone_warmup_period, 1},
   {"wk_volatility_cone_is_ready", (DL_FUNC)&wk_volatility_cone_is_ready, 1},
   {"wk_volatility_cone_name", (DL_FUNC)&wk_volatility_cone_name, 1},
@@ -27656,24 +31178,28 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_volume_rsi_reset", (DL_FUNC)&wk_volume_rsi_reset, 1},
   {"wk_volume_weighted_macd_new", (DL_FUNC)&wk_volume_weighted_macd_new, 3},
   {"wk_volume_weighted_macd_update", (DL_FUNC)&wk_volume_weighted_macd_update, 7},
+  {"wk_volume_weighted_macd_batch", (DL_FUNC)&wk_volume_weighted_macd_batch, 7},
   {"wk_volume_weighted_macd_warmup_period", (DL_FUNC)&wk_volume_weighted_macd_warmup_period, 1},
   {"wk_volume_weighted_macd_is_ready", (DL_FUNC)&wk_volume_weighted_macd_is_ready, 1},
   {"wk_volume_weighted_macd_name", (DL_FUNC)&wk_volume_weighted_macd_name, 1},
   {"wk_volume_weighted_macd_reset", (DL_FUNC)&wk_volume_weighted_macd_reset, 1},
   {"wk_volume_weighted_sr_new", (DL_FUNC)&wk_volume_weighted_sr_new, 1},
   {"wk_volume_weighted_sr_update", (DL_FUNC)&wk_volume_weighted_sr_update, 7},
+  {"wk_volume_weighted_sr_batch", (DL_FUNC)&wk_volume_weighted_sr_batch, 7},
   {"wk_volume_weighted_sr_warmup_period", (DL_FUNC)&wk_volume_weighted_sr_warmup_period, 1},
   {"wk_volume_weighted_sr_is_ready", (DL_FUNC)&wk_volume_weighted_sr_is_ready, 1},
   {"wk_volume_weighted_sr_name", (DL_FUNC)&wk_volume_weighted_sr_name, 1},
   {"wk_volume_weighted_sr_reset", (DL_FUNC)&wk_volume_weighted_sr_reset, 1},
   {"wk_vortex_new", (DL_FUNC)&wk_vortex_new, 1},
   {"wk_vortex_update", (DL_FUNC)&wk_vortex_update, 7},
+  {"wk_vortex_batch", (DL_FUNC)&wk_vortex_batch, 7},
   {"wk_vortex_warmup_period", (DL_FUNC)&wk_vortex_warmup_period, 1},
   {"wk_vortex_is_ready", (DL_FUNC)&wk_vortex_is_ready, 1},
   {"wk_vortex_name", (DL_FUNC)&wk_vortex_name, 1},
   {"wk_vortex_reset", (DL_FUNC)&wk_vortex_reset, 1},
   {"wk_vpin_new", (DL_FUNC)&wk_vpin_new, 2},
   {"wk_vpin_update", (DL_FUNC)&wk_vpin_update, 5},
+  {"wk_vpin_batch", (DL_FUNC)&wk_vpin_batch, 5},
   {"wk_vpin_warmup_period", (DL_FUNC)&wk_vpin_warmup_period, 1},
   {"wk_vpin_is_ready", (DL_FUNC)&wk_vpin_is_ready, 1},
   {"wk_vpin_name", (DL_FUNC)&wk_vpin_name, 1},
@@ -27687,6 +31213,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_vwap_reset", (DL_FUNC)&wk_vwap_reset, 1},
   {"wk_vwap_std_dev_bands_new", (DL_FUNC)&wk_vwap_std_dev_bands_new, 1},
   {"wk_vwap_std_dev_bands_update", (DL_FUNC)&wk_vwap_std_dev_bands_update, 7},
+  {"wk_vwap_std_dev_bands_batch", (DL_FUNC)&wk_vwap_std_dev_bands_batch, 7},
   {"wk_vwap_std_dev_bands_warmup_period", (DL_FUNC)&wk_vwap_std_dev_bands_warmup_period, 1},
   {"wk_vwap_std_dev_bands_is_ready", (DL_FUNC)&wk_vwap_std_dev_bands_is_ready, 1},
   {"wk_vwap_std_dev_bands_name", (DL_FUNC)&wk_vwap_std_dev_bands_name, 1},
@@ -27721,6 +31248,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_wave_pm_reset", (DL_FUNC)&wk_wave_pm_reset, 1},
   {"wk_wave_trend_new", (DL_FUNC)&wk_wave_trend_new, 3},
   {"wk_wave_trend_update", (DL_FUNC)&wk_wave_trend_update, 7},
+  {"wk_wave_trend_batch", (DL_FUNC)&wk_wave_trend_batch, 7},
   {"wk_wave_trend_warmup_period", (DL_FUNC)&wk_wave_trend_warmup_period, 1},
   {"wk_wave_trend_is_ready", (DL_FUNC)&wk_wave_trend_is_ready, 1},
   {"wk_wave_trend_name", (DL_FUNC)&wk_wave_trend_name, 1},
@@ -27748,6 +31276,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_wick_ratio_reset", (DL_FUNC)&wk_wick_ratio_reset, 1},
   {"wk_williams_fractals_new", (DL_FUNC)&wk_williams_fractals_new, 0},
   {"wk_williams_fractals_update", (DL_FUNC)&wk_williams_fractals_update, 7},
+  {"wk_williams_fractals_batch", (DL_FUNC)&wk_williams_fractals_batch, 7},
   {"wk_williams_fractals_warmup_period", (DL_FUNC)&wk_williams_fractals_warmup_period, 1},
   {"wk_williams_fractals_is_ready", (DL_FUNC)&wk_williams_fractals_is_ready, 1},
   {"wk_williams_fractals_name", (DL_FUNC)&wk_williams_fractals_name, 1},
@@ -27775,6 +31304,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_wma_reset", (DL_FUNC)&wk_wma_reset, 1},
   {"wk_woodie_pivots_new", (DL_FUNC)&wk_woodie_pivots_new, 0},
   {"wk_woodie_pivots_update", (DL_FUNC)&wk_woodie_pivots_update, 7},
+  {"wk_woodie_pivots_batch", (DL_FUNC)&wk_woodie_pivots_batch, 7},
   {"wk_woodie_pivots_warmup_period", (DL_FUNC)&wk_woodie_pivots_warmup_period, 1},
   {"wk_woodie_pivots_is_ready", (DL_FUNC)&wk_woodie_pivots_is_ready, 1},
   {"wk_woodie_pivots_name", (DL_FUNC)&wk_woodie_pivots_name, 1},
@@ -27802,12 +31332,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_z_score_reset", (DL_FUNC)&wk_z_score_reset, 1},
   {"wk_zero_lag_macd_new", (DL_FUNC)&wk_zero_lag_macd_new, 3},
   {"wk_zero_lag_macd_update", (DL_FUNC)&wk_zero_lag_macd_update, 2},
+  {"wk_zero_lag_macd_batch", (DL_FUNC)&wk_zero_lag_macd_batch, 2},
   {"wk_zero_lag_macd_warmup_period", (DL_FUNC)&wk_zero_lag_macd_warmup_period, 1},
   {"wk_zero_lag_macd_is_ready", (DL_FUNC)&wk_zero_lag_macd_is_ready, 1},
   {"wk_zero_lag_macd_name", (DL_FUNC)&wk_zero_lag_macd_name, 1},
   {"wk_zero_lag_macd_reset", (DL_FUNC)&wk_zero_lag_macd_reset, 1},
   {"wk_zig_zag_new", (DL_FUNC)&wk_zig_zag_new, 1},
   {"wk_zig_zag_update", (DL_FUNC)&wk_zig_zag_update, 7},
+  {"wk_zig_zag_batch", (DL_FUNC)&wk_zig_zag_batch, 7},
   {"wk_zig_zag_warmup_period", (DL_FUNC)&wk_zig_zag_warmup_period, 1},
   {"wk_zig_zag_is_ready", (DL_FUNC)&wk_zig_zag_is_ready, 1},
   {"wk_zig_zag_name", (DL_FUNC)&wk_zig_zag_name, 1},

@@ -657,6 +657,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cross-section, order-book, bar-builder and profile families — were unreachable
   from those two for the same reason. All three generated bindings now expose a
   batch for every one of the 514 indicators.
+- **R gained the multi-output batch.** `batch()` was wired only for the scalar
+  indicators, so 158 of the 514 had a native batch R could not call. The
+  multi-output ones come back as an `n x k` matrix with the field names as
+  columns; 475 of the 514 have a batch now.
+- **The R bar builders read past their buffer.** The `update` shim indexed a
+  64-element stack array with the number of bars the candle completed rather
+  than the number that fit — undefined behaviour in C, where the other bindings
+  raised. It drains the surplus now, like they do.
 - **Profile indicators report their width.** The C-family bindings sized their
   output buffer by guessing from the constructor parameter names, falling back
   to 4096 elements when none looked like a count — which is what
