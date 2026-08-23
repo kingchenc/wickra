@@ -77,8 +77,8 @@ function requireNative() {
       try {
         const binding = require('wickra-android-arm64')
         const bindingPackageVersion = require('wickra-android-arm64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -93,8 +93,8 @@ function requireNative() {
       try {
         const binding = require('wickra-android-arm-eabi')
         const bindingPackageVersion = require('wickra-android-arm-eabi/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -114,8 +114,8 @@ function requireNative() {
       try {
         const binding = require('wickra-win32-x64-gnu')
         const bindingPackageVersion = require('wickra-win32-x64-gnu/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -130,8 +130,8 @@ function requireNative() {
       try {
         const binding = require('wickra-win32-x64-msvc')
         const bindingPackageVersion = require('wickra-win32-x64-msvc/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -147,8 +147,8 @@ function requireNative() {
       try {
         const binding = require('wickra-win32-ia32-msvc')
         const bindingPackageVersion = require('wickra-win32-ia32-msvc/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -163,8 +163,8 @@ function requireNative() {
       try {
         const binding = require('wickra-win32-arm64-msvc')
         const bindingPackageVersion = require('wickra-win32-arm64-msvc/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -182,8 +182,8 @@ function requireNative() {
     try {
       const binding = require('wickra-darwin-universal')
       const bindingPackageVersion = require('wickra-darwin-universal/package.json').version
-      if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-        throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+      if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+        throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
       }
       return binding
     } catch (e) {
@@ -198,8 +198,8 @@ function requireNative() {
       try {
         const binding = require('wickra-darwin-x64')
         const bindingPackageVersion = require('wickra-darwin-x64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -214,8 +214,8 @@ function requireNative() {
       try {
         const binding = require('wickra-darwin-arm64')
         const bindingPackageVersion = require('wickra-darwin-arm64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -234,8 +234,8 @@ function requireNative() {
       try {
         const binding = require('wickra-freebsd-x64')
         const bindingPackageVersion = require('wickra-freebsd-x64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -250,8 +250,8 @@ function requireNative() {
       try {
         const binding = require('wickra-freebsd-arm64')
         const bindingPackageVersion = require('wickra-freebsd-arm64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -271,8 +271,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-x64-musl')
           const bindingPackageVersion = require('wickra-linux-x64-musl/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -287,8 +287,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-x64-gnu')
           const bindingPackageVersion = require('wickra-linux-x64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -305,8 +305,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-arm64-musl')
           const bindingPackageVersion = require('wickra-linux-arm64-musl/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -321,8 +321,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-arm64-gnu')
           const bindingPackageVersion = require('wickra-linux-arm64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -339,8 +339,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-arm-musleabihf')
           const bindingPackageVersion = require('wickra-linux-arm-musleabihf/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -355,8 +355,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-arm-gnueabihf')
           const bindingPackageVersion = require('wickra-linux-arm-gnueabihf/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -373,8 +373,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-loong64-musl')
           const bindingPackageVersion = require('wickra-linux-loong64-musl/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -389,8 +389,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-loong64-gnu')
           const bindingPackageVersion = require('wickra-linux-loong64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -407,8 +407,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-riscv64-musl')
           const bindingPackageVersion = require('wickra-linux-riscv64-musl/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -423,8 +423,8 @@ function requireNative() {
         try {
           const binding = require('wickra-linux-riscv64-gnu')
           const bindingPackageVersion = require('wickra-linux-riscv64-gnu/package.json').version
-          if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -440,8 +440,8 @@ function requireNative() {
       try {
         const binding = require('wickra-linux-ppc64-gnu')
         const bindingPackageVersion = require('wickra-linux-ppc64-gnu/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -456,8 +456,8 @@ function requireNative() {
       try {
         const binding = require('wickra-linux-s390x-gnu')
         const bindingPackageVersion = require('wickra-linux-s390x-gnu/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -476,8 +476,8 @@ function requireNative() {
       try {
         const binding = require('wickra-openharmony-arm64')
         const bindingPackageVersion = require('wickra-openharmony-arm64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -492,8 +492,8 @@ function requireNative() {
       try {
         const binding = require('wickra-openharmony-x64')
         const bindingPackageVersion = require('wickra-openharmony-x64/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -508,8 +508,8 @@ function requireNative() {
       try {
         const binding = require('wickra-openharmony-arm')
         const bindingPackageVersion = require('wickra-openharmony-arm/package.json').version
-        if (bindingPackageVersion !== '0.9.7' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 0.9.7 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        if (bindingPackageVersion !== '0.9.9' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 0.9.9 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -588,1040 +588,522 @@ if (!nativeBinding) {
 
 module.exports = nativeBinding
 module.exports.AbandonedBaby = nativeBinding.AbandonedBaby
-module.exports.AbandonedBabyNode = nativeBinding.AbandonedBabyNode
 module.exports.Abcd = nativeBinding.Abcd
-module.exports.AbcdNode = nativeBinding.AbcdNode
 module.exports.AbsoluteBreadthIndex = nativeBinding.AbsoluteBreadthIndex
-module.exports.AbsoluteBreadthIndexNode = nativeBinding.AbsoluteBreadthIndexNode
 module.exports.AccelerationBands = nativeBinding.AccelerationBands
-module.exports.AccelerationBandsNode = nativeBinding.AccelerationBandsNode
 module.exports.AcceleratorOscillator = nativeBinding.AcceleratorOscillator
-module.exports.AcceleratorOscillatorNode = nativeBinding.AcceleratorOscillatorNode
 module.exports.ADAPTIVECCI = nativeBinding.ADAPTIVECCI
-module.exports.AdaptiveCciNode = nativeBinding.AdaptiveCciNode
 module.exports.AdaptiveCycle = nativeBinding.AdaptiveCycle
-module.exports.AdaptiveCycleNode = nativeBinding.AdaptiveCycleNode
 module.exports.AdaptiveLaguerre = nativeBinding.AdaptiveLaguerre
-module.exports.AdaptiveLaguerreFilterNode = nativeBinding.AdaptiveLaguerreFilterNode
 module.exports.ADAPTIVERSI = nativeBinding.ADAPTIVERSI
-module.exports.AdaptiveRsiNode = nativeBinding.AdaptiveRsiNode
 module.exports.ADL = nativeBinding.ADL
-module.exports.AdlNode = nativeBinding.AdlNode
 module.exports.ADOSC = nativeBinding.ADOSC
-module.exports.AdOscillatorNode = nativeBinding.AdOscillatorNode
 module.exports.AdvanceBlock = nativeBinding.AdvanceBlock
-module.exports.AdvanceBlockNode = nativeBinding.AdvanceBlockNode
 module.exports.AdvanceDecline = nativeBinding.AdvanceDecline
-module.exports.AdvanceDeclineNode = nativeBinding.AdvanceDeclineNode
 module.exports.AdvanceDeclineRatio = nativeBinding.AdvanceDeclineRatio
-module.exports.AdvanceDeclineRatioNode = nativeBinding.AdvanceDeclineRatioNode
 module.exports.AdVolumeLine = nativeBinding.AdVolumeLine
-module.exports.AdVolumeLineNode = nativeBinding.AdVolumeLineNode
 module.exports.ADX = nativeBinding.ADX
-module.exports.AdxNode = nativeBinding.AdxNode
 module.exports.ADXR = nativeBinding.ADXR
-module.exports.AdxrNode = nativeBinding.AdxrNode
 module.exports.Alligator = nativeBinding.Alligator
-module.exports.AlligatorNode = nativeBinding.AlligatorNode
 module.exports.ALMA = nativeBinding.ALMA
-module.exports.AlmaNode = nativeBinding.AlmaNode
 module.exports.Alpha = nativeBinding.Alpha
-module.exports.AlphaNode = nativeBinding.AlphaNode
 module.exports.AmihudIlliquidity = nativeBinding.AmihudIlliquidity
-module.exports.AmihudIlliquidityNode = nativeBinding.AmihudIlliquidityNode
 module.exports.AnchoredRSI = nativeBinding.AnchoredRSI
-module.exports.AnchoredRsiNode = nativeBinding.AnchoredRsiNode
 module.exports.AnchoredVWAP = nativeBinding.AnchoredVWAP
-module.exports.AnchoredVwapNode = nativeBinding.AnchoredVwapNode
 module.exports.AndrewsPitchfork = nativeBinding.AndrewsPitchfork
-module.exports.AndrewsPitchforkNode = nativeBinding.AndrewsPitchforkNode
 module.exports.APO = nativeBinding.APO
-module.exports.ApoNode = nativeBinding.ApoNode
 module.exports.Aroon = nativeBinding.Aroon
-module.exports.AroonNode = nativeBinding.AroonNode
 module.exports.AroonOscillator = nativeBinding.AroonOscillator
-module.exports.AroonOscillatorNode = nativeBinding.AroonOscillatorNode
 module.exports.ATR = nativeBinding.ATR
-module.exports.AtrNode = nativeBinding.AtrNode
 module.exports.AtrBands = nativeBinding.AtrBands
-module.exports.AtrBandsNode = nativeBinding.AtrBandsNode
 module.exports.AtrRatchet = nativeBinding.AtrRatchet
-module.exports.AtrRatchetNode = nativeBinding.AtrRatchetNode
 module.exports.AtrTrailingStop = nativeBinding.AtrTrailingStop
-module.exports.AtrTrailingStopNode = nativeBinding.AtrTrailingStopNode
 module.exports.Autocorrelation = nativeBinding.Autocorrelation
-module.exports.AutocorrelationNode = nativeBinding.AutocorrelationNode
 module.exports.AUTOCORRPGRAM = nativeBinding.AUTOCORRPGRAM
-module.exports.AutocorrelationPeriodogramNode = nativeBinding.AutocorrelationPeriodogramNode
 module.exports.AutoFib = nativeBinding.AutoFib
-module.exports.AutoFibNode = nativeBinding.AutoFibNode
 module.exports.AverageDailyRange = nativeBinding.AverageDailyRange
-module.exports.AverageDailyRangeNode = nativeBinding.AverageDailyRangeNode
 module.exports.AverageDrawdown = nativeBinding.AverageDrawdown
-module.exports.AverageDrawdownNode = nativeBinding.AverageDrawdownNode
 module.exports.AVGPRICE = nativeBinding.AVGPRICE
-module.exports.AvgPriceNode = nativeBinding.AvgPriceNode
 module.exports.AwesomeOscillator = nativeBinding.AwesomeOscillator
-module.exports.AoNode = nativeBinding.AoNode
 module.exports.AwesomeOscillatorHistogram = nativeBinding.AwesomeOscillatorHistogram
-module.exports.AwesomeOscillatorHistogramNode = nativeBinding.AwesomeOscillatorHistogramNode
 module.exports.BalanceOfPower = nativeBinding.BalanceOfPower
-module.exports.BalanceOfPowerNode = nativeBinding.BalanceOfPowerNode
 module.exports.BANDPASS = nativeBinding.BANDPASS
-module.exports.BandpassFilterNode = nativeBinding.BandpassFilterNode
 module.exports.Bat = nativeBinding.Bat
-module.exports.BatNode = nativeBinding.BatNode
 module.exports.BeltHold = nativeBinding.BeltHold
-module.exports.BeltHoldNode = nativeBinding.BeltHoldNode
 module.exports.Beta = nativeBinding.Beta
-module.exports.BetaNode = nativeBinding.BetaNode
 module.exports.BetaNeutralSpread = nativeBinding.BetaNeutralSpread
-module.exports.BetaNeutralSpreadNode = nativeBinding.BetaNeutralSpreadNode
 module.exports.BetterVolume = nativeBinding.BetterVolume
-module.exports.BetterVolumeNode = nativeBinding.BetterVolumeNode
 module.exports.BinanceFeed = nativeBinding.BinanceFeed
-module.exports.BinanceFeedNode = nativeBinding.BinanceFeedNode
 module.exports.BipowerVariation = nativeBinding.BipowerVariation
-module.exports.BipowerVariationNode = nativeBinding.BipowerVariationNode
 module.exports.BodySizePct = nativeBinding.BodySizePct
-module.exports.BodySizePctNode = nativeBinding.BodySizePctNode
 module.exports.BollingerBands = nativeBinding.BollingerBands
-module.exports.BollingerNode = nativeBinding.BollingerNode
 module.exports.BollingerBandwidth = nativeBinding.BollingerBandwidth
-module.exports.BollingerBandwidthNode = nativeBinding.BollingerBandwidthNode
 module.exports.BomarBands = nativeBinding.BomarBands
-module.exports.BomarBandsNode = nativeBinding.BomarBandsNode
 module.exports.BreadthThrust = nativeBinding.BreadthThrust
-module.exports.BreadthThrustNode = nativeBinding.BreadthThrustNode
 module.exports.Breakaway = nativeBinding.Breakaway
-module.exports.BreakawayNode = nativeBinding.BreakawayNode
 module.exports.BullishPercentIndex = nativeBinding.BullishPercentIndex
-module.exports.BullishPercentIndexNode = nativeBinding.BullishPercentIndexNode
 module.exports.BurkeRatio = nativeBinding.BurkeRatio
-module.exports.BurkeRatioNode = nativeBinding.BurkeRatioNode
 module.exports.Butterfly = nativeBinding.Butterfly
-module.exports.ButterflyNode = nativeBinding.ButterflyNode
 module.exports.CalendarSpread = nativeBinding.CalendarSpread
-module.exports.CalendarSpreadNode = nativeBinding.CalendarSpreadNode
 module.exports.CalmarRatio = nativeBinding.CalmarRatio
-module.exports.CalmarRatioNode = nativeBinding.CalmarRatioNode
 module.exports.Camarilla = nativeBinding.Camarilla
-module.exports.CamarillaNode = nativeBinding.CamarillaNode
 module.exports.CandleReader = nativeBinding.CandleReader
-module.exports.CandleReaderNode = nativeBinding.CandleReaderNode
 module.exports.CandleVolume = nativeBinding.CandleVolume
-module.exports.CandleVolumeNode = nativeBinding.CandleVolumeNode
 module.exports.CCI = nativeBinding.CCI
-module.exports.CciNode = nativeBinding.CciNode
 module.exports.CenterOfGravity = nativeBinding.CenterOfGravity
-module.exports.CenterOfGravityNode = nativeBinding.CenterOfGravityNode
 module.exports.CentralPivotRange = nativeBinding.CentralPivotRange
-module.exports.CentralPivotRangeNode = nativeBinding.CentralPivotRangeNode
 module.exports.CFO = nativeBinding.CFO
-module.exports.CfoNode = nativeBinding.CfoNode
 module.exports.ChaikinMoneyFlow = nativeBinding.ChaikinMoneyFlow
-module.exports.ChaikinMoneyFlowNode = nativeBinding.ChaikinMoneyFlowNode
 module.exports.ChaikinOscillator = nativeBinding.ChaikinOscillator
-module.exports.ChaikinOscillatorNode = nativeBinding.ChaikinOscillatorNode
 module.exports.ChaikinVolatility = nativeBinding.ChaikinVolatility
-module.exports.ChaikinVolatilityNode = nativeBinding.ChaikinVolatilityNode
 module.exports.ChandeKrollStop = nativeBinding.ChandeKrollStop
-module.exports.ChandeKrollStopNode = nativeBinding.ChandeKrollStopNode
 module.exports.ChandelierExit = nativeBinding.ChandelierExit
-module.exports.ChandelierExitNode = nativeBinding.ChandelierExitNode
 module.exports.ChoppinessIndex = nativeBinding.ChoppinessIndex
-module.exports.ChoppinessIndexNode = nativeBinding.ChoppinessIndexNode
 module.exports.ClassicPivots = nativeBinding.ClassicPivots
-module.exports.ClassicPivotsNode = nativeBinding.ClassicPivotsNode
 module.exports.CloseVsOpen = nativeBinding.CloseVsOpen
-module.exports.CloseVsOpenNode = nativeBinding.CloseVsOpenNode
 module.exports.ClosingMarubozu = nativeBinding.ClosingMarubozu
-module.exports.ClosingMarubozuNode = nativeBinding.ClosingMarubozuNode
 module.exports.CMO = nativeBinding.CMO
-module.exports.CmoNode = nativeBinding.CmoNode
 module.exports.CoefficientOfVariation = nativeBinding.CoefficientOfVariation
-module.exports.CoefficientOfVariationNode = nativeBinding.CoefficientOfVariationNode
 module.exports.Cointegration = nativeBinding.Cointegration
-module.exports.CointegrationNode = nativeBinding.CointegrationNode
 module.exports.CommonSenseRatio = nativeBinding.CommonSenseRatio
-module.exports.CommonSenseRatioNode = nativeBinding.CommonSenseRatioNode
 module.exports.CompositeProfile = nativeBinding.CompositeProfile
-module.exports.CompositeProfileNode = nativeBinding.CompositeProfileNode
 module.exports.ConcealingBabySwallow = nativeBinding.ConcealingBabySwallow
-module.exports.ConcealingBabySwallowNode = nativeBinding.ConcealingBabySwallowNode
 module.exports.ConditionalValueAtRisk = nativeBinding.ConditionalValueAtRisk
-module.exports.ConditionalValueAtRiskNode = nativeBinding.ConditionalValueAtRiskNode
 module.exports.ConnorsRSI = nativeBinding.ConnorsRSI
-module.exports.ConnorsRsiNode = nativeBinding.ConnorsRsiNode
 module.exports.Coppock = nativeBinding.Coppock
-module.exports.CoppockNode = nativeBinding.CoppockNode
 module.exports.Counterattack = nativeBinding.Counterattack
-module.exports.CounterattackNode = nativeBinding.CounterattackNode
 module.exports.Crab = nativeBinding.Crab
-module.exports.CrabNode = nativeBinding.CrabNode
 module.exports.CTI = nativeBinding.CTI
-module.exports.CorrelationTrendIndicatorNode = nativeBinding.CorrelationTrendIndicatorNode
 module.exports.CumulativeVolumeDelta = nativeBinding.CumulativeVolumeDelta
-module.exports.CumulativeVolumeDeltaNode = nativeBinding.CumulativeVolumeDeltaNode
 module.exports.CumulativeVolumeIndex = nativeBinding.CumulativeVolumeIndex
-module.exports.CumulativeVolumeIndexNode = nativeBinding.CumulativeVolumeIndexNode
 module.exports.CupAndHandle = nativeBinding.CupAndHandle
-module.exports.CupAndHandleNode = nativeBinding.CupAndHandleNode
 module.exports.CyberneticCycle = nativeBinding.CyberneticCycle
-module.exports.CyberneticCycleNode = nativeBinding.CyberneticCycleNode
 module.exports.Cypher = nativeBinding.Cypher
-module.exports.CypherNode = nativeBinding.CypherNode
 module.exports.DayOfWeekProfile = nativeBinding.DayOfWeekProfile
-module.exports.DayOfWeekProfileNode = nativeBinding.DayOfWeekProfileNode
 module.exports.Decycler = nativeBinding.Decycler
-module.exports.DecyclerNode = nativeBinding.DecyclerNode
 module.exports.DecyclerOscillator = nativeBinding.DecyclerOscillator
-module.exports.DecyclerOscillatorNode = nativeBinding.DecyclerOscillatorNode
 module.exports.DEMA = nativeBinding.DEMA
-module.exports.DemaNode = nativeBinding.DemaNode
 module.exports.DemandIndex = nativeBinding.DemandIndex
-module.exports.DemandIndexNode = nativeBinding.DemandIndexNode
 module.exports.DemarkPivots = nativeBinding.DemarkPivots
-module.exports.DemarkPivotsNode = nativeBinding.DemarkPivotsNode
 module.exports.DepthSlope = nativeBinding.DepthSlope
-module.exports.DepthSlopeNode = nativeBinding.DepthSlopeNode
 module.exports.DerivativeOscillator = nativeBinding.DerivativeOscillator
-module.exports.DerivativeOscillatorNode = nativeBinding.DerivativeOscillatorNode
 module.exports.DetrendedStdDev = nativeBinding.DetrendedStdDev
-module.exports.DetrendedStdDevNode = nativeBinding.DetrendedStdDevNode
 module.exports.DisparityIndex = nativeBinding.DisparityIndex
-module.exports.DisparityIndexNode = nativeBinding.DisparityIndexNode
 module.exports.DistanceSsd = nativeBinding.DistanceSsd
-module.exports.DistanceSsdNode = nativeBinding.DistanceSsdNode
 module.exports.Doji = nativeBinding.Doji
-module.exports.DojiNode = nativeBinding.DojiNode
 module.exports.DojiStar = nativeBinding.DojiStar
-module.exports.DojiStarNode = nativeBinding.DojiStarNode
 module.exports.DollarBars = nativeBinding.DollarBars
-module.exports.DollarBarsNode = nativeBinding.DollarBarsNode
 module.exports.Donchian = nativeBinding.Donchian
-module.exports.DonchianNode = nativeBinding.DonchianNode
 module.exports.DonchianStop = nativeBinding.DonchianStop
-module.exports.DonchianStopNode = nativeBinding.DonchianStopNode
 module.exports.DoubleBollinger = nativeBinding.DoubleBollinger
-module.exports.DoubleBollingerNode = nativeBinding.DoubleBollingerNode
 module.exports.DoubleTopBottom = nativeBinding.DoubleTopBottom
-module.exports.DoubleTopBottomNode = nativeBinding.DoubleTopBottomNode
 module.exports.DownsideGapThreeMethods = nativeBinding.DownsideGapThreeMethods
-module.exports.DownsideGapThreeMethodsNode = nativeBinding.DownsideGapThreeMethodsNode
 module.exports.DPO = nativeBinding.DPO
-module.exports.DpoNode = nativeBinding.DpoNode
 module.exports.DragonflyDoji = nativeBinding.DragonflyDoji
-module.exports.DragonflyDojiNode = nativeBinding.DragonflyDojiNode
 module.exports.DrawdownDuration = nativeBinding.DrawdownDuration
-module.exports.DrawdownDurationNode = nativeBinding.DrawdownDurationNode
 module.exports.DumplingTop = nativeBinding.DumplingTop
-module.exports.DumplingTopNode = nativeBinding.DumplingTopNode
 module.exports.DX = nativeBinding.DX
-module.exports.DxNode = nativeBinding.DxNode
 module.exports.DynamicMomentumIndex = nativeBinding.DynamicMomentumIndex
-module.exports.DynamicMomentumIndexNode = nativeBinding.DynamicMomentumIndexNode
 module.exports.EaseOfMovement = nativeBinding.EaseOfMovement
-module.exports.EaseOfMovementNode = nativeBinding.EaseOfMovementNode
 module.exports.EffectiveSpread = nativeBinding.EffectiveSpread
-module.exports.EffectiveSpreadNode = nativeBinding.EffectiveSpreadNode
 module.exports.EhlersStochastic = nativeBinding.EhlersStochastic
-module.exports.EhlersStochasticNode = nativeBinding.EhlersStochasticNode
 module.exports.EHMA = nativeBinding.EHMA
-module.exports.EhmaNode = nativeBinding.EhmaNode
 module.exports.ElderImpulse = nativeBinding.ElderImpulse
-module.exports.ElderImpulseNode = nativeBinding.ElderImpulseNode
 module.exports.ElderRay = nativeBinding.ElderRay
-module.exports.ElderRayNode = nativeBinding.ElderRayNode
 module.exports.ElderSafeZone = nativeBinding.ElderSafeZone
-module.exports.ElderSafeZoneNode = nativeBinding.ElderSafeZoneNode
 module.exports.EMA = nativeBinding.EMA
-module.exports.EmaNode = nativeBinding.EmaNode
 module.exports.EmpiricalModeDecomposition = nativeBinding.EmpiricalModeDecomposition
-module.exports.EmpiricalModeDecompositionNode = nativeBinding.EmpiricalModeDecompositionNode
 module.exports.Engulfing = nativeBinding.Engulfing
-module.exports.EngulfingNode = nativeBinding.EngulfingNode
 module.exports.Equivolume = nativeBinding.Equivolume
-module.exports.EquivolumeNode = nativeBinding.EquivolumeNode
 module.exports.EstimatedLeverageRatio = nativeBinding.EstimatedLeverageRatio
-module.exports.EstimatedLeverageRatioNode = nativeBinding.EstimatedLeverageRatioNode
 module.exports.EVENBETTERSINE = nativeBinding.EVENBETTERSINE
-module.exports.EvenBetterSinewaveNode = nativeBinding.EvenBetterSinewaveNode
 module.exports.EveningDojiStar = nativeBinding.EveningDojiStar
-module.exports.EveningDojiStarNode = nativeBinding.EveningDojiStarNode
 module.exports.EVWMA = nativeBinding.EVWMA
-module.exports.EvwmaNode = nativeBinding.EvwmaNode
 module.exports.EwmaVolatility = nativeBinding.EwmaVolatility
-module.exports.EwmaVolatilityNode = nativeBinding.EwmaVolatilityNode
 module.exports.Expectancy = nativeBinding.Expectancy
-module.exports.ExpectancyNode = nativeBinding.ExpectancyNode
 module.exports.FallingThreeMethods = nativeBinding.FallingThreeMethods
-module.exports.FallingThreeMethodsNode = nativeBinding.FallingThreeMethodsNode
 module.exports.FAMA = nativeBinding.FAMA
-module.exports.FamaNode = nativeBinding.FamaNode
 module.exports.FibArcs = nativeBinding.FibArcs
-module.exports.FibArcsNode = nativeBinding.FibArcsNode
 module.exports.FibChannel = nativeBinding.FibChannel
-module.exports.FibChannelNode = nativeBinding.FibChannelNode
 module.exports.FibConfluence = nativeBinding.FibConfluence
-module.exports.FibConfluenceNode = nativeBinding.FibConfluenceNode
 module.exports.FibExtension = nativeBinding.FibExtension
-module.exports.FibExtensionNode = nativeBinding.FibExtensionNode
 module.exports.FibFan = nativeBinding.FibFan
-module.exports.FibFanNode = nativeBinding.FibFanNode
 module.exports.FibonacciPivots = nativeBinding.FibonacciPivots
-module.exports.FibonacciPivotsNode = nativeBinding.FibonacciPivotsNode
 module.exports.FibProjection = nativeBinding.FibProjection
-module.exports.FibProjectionNode = nativeBinding.FibProjectionNode
 module.exports.FibRetracement = nativeBinding.FibRetracement
-module.exports.FibRetracementNode = nativeBinding.FibRetracementNode
 module.exports.FibTimeZones = nativeBinding.FibTimeZones
-module.exports.FibTimeZonesNode = nativeBinding.FibTimeZonesNode
 module.exports.FisherRSI = nativeBinding.FisherRSI
-module.exports.FisherRsiNode = nativeBinding.FisherRsiNode
 module.exports.FisherTransform = nativeBinding.FisherTransform
-module.exports.FisherTransformNode = nativeBinding.FisherTransformNode
 module.exports.FlagPennant = nativeBinding.FlagPennant
-module.exports.FlagPennantNode = nativeBinding.FlagPennantNode
 module.exports.Footprint = nativeBinding.Footprint
-module.exports.FootprintNode = nativeBinding.FootprintNode
 module.exports.ForceIndex = nativeBinding.ForceIndex
-module.exports.ForceIndexNode = nativeBinding.ForceIndexNode
 module.exports.FractalChaosBands = nativeBinding.FractalChaosBands
-module.exports.FractalChaosBandsNode = nativeBinding.FractalChaosBandsNode
 module.exports.FRAMA = nativeBinding.FRAMA
-module.exports.FramaNode = nativeBinding.FramaNode
 module.exports.FryPanBottom = nativeBinding.FryPanBottom
-module.exports.FryPanBottomNode = nativeBinding.FryPanBottomNode
 module.exports.FundingBasis = nativeBinding.FundingBasis
-module.exports.FundingBasisNode = nativeBinding.FundingBasisNode
 module.exports.FundingImpliedApr = nativeBinding.FundingImpliedApr
-module.exports.FundingImpliedAprNode = nativeBinding.FundingImpliedAprNode
 module.exports.FundingRate = nativeBinding.FundingRate
-module.exports.FundingRateNode = nativeBinding.FundingRateNode
 module.exports.FundingRateMean = nativeBinding.FundingRateMean
-module.exports.FundingRateMeanNode = nativeBinding.FundingRateMeanNode
 module.exports.FundingRateZScore = nativeBinding.FundingRateZScore
-module.exports.FundingRateZScoreNode = nativeBinding.FundingRateZScoreNode
 module.exports.GainLossRatio = nativeBinding.GainLossRatio
-module.exports.GainLossRatioNode = nativeBinding.GainLossRatioNode
 module.exports.GainToPainRatio = nativeBinding.GainToPainRatio
-module.exports.GainToPainRatioNode = nativeBinding.GainToPainRatioNode
 module.exports.GapSideBySideWhite = nativeBinding.GapSideBySideWhite
-module.exports.GapSideBySideWhiteNode = nativeBinding.GapSideBySideWhiteNode
 module.exports.Garch11 = nativeBinding.Garch11
-module.exports.Garch11Node = nativeBinding.Garch11Node
 module.exports.GarmanKlassVolatility = nativeBinding.GarmanKlassVolatility
-module.exports.GarmanKlassVolatilityNode = nativeBinding.GarmanKlassVolatilityNode
 module.exports.Gartley = nativeBinding.Gartley
-module.exports.GartleyNode = nativeBinding.GartleyNode
 module.exports.GatorOscillator = nativeBinding.GatorOscillator
-module.exports.GatorOscillatorNode = nativeBinding.GatorOscillatorNode
 module.exports.GD = nativeBinding.GD
-module.exports.GeneralizedDemaNode = nativeBinding.GeneralizedDemaNode
 module.exports.GMA = nativeBinding.GMA
-module.exports.GeometricMaNode = nativeBinding.GeometricMaNode
 module.exports.GoldenPocket = nativeBinding.GoldenPocket
-module.exports.GoldenPocketNode = nativeBinding.GoldenPocketNode
 module.exports.GrangerCausality = nativeBinding.GrangerCausality
-module.exports.GrangerCausalityNode = nativeBinding.GrangerCausalityNode
 module.exports.GravestoneDoji = nativeBinding.GravestoneDoji
-module.exports.GravestoneDojiNode = nativeBinding.GravestoneDojiNode
 module.exports.Hammer = nativeBinding.Hammer
-module.exports.HammerNode = nativeBinding.HammerNode
 module.exports.HangingMan = nativeBinding.HangingMan
-module.exports.HangingManNode = nativeBinding.HangingManNode
 module.exports.Harami = nativeBinding.Harami
-module.exports.HaramiNode = nativeBinding.HaramiNode
 module.exports.HaramiCross = nativeBinding.HaramiCross
-module.exports.HaramiCrossNode = nativeBinding.HaramiCrossNode
 module.exports.HasbrouckInformationShare = nativeBinding.HasbrouckInformationShare
-module.exports.HasbrouckInformationShareNode = nativeBinding.HasbrouckInformationShareNode
 module.exports.HeadAndShoulders = nativeBinding.HeadAndShoulders
-module.exports.HeadAndShouldersNode = nativeBinding.HeadAndShouldersNode
 module.exports.HeikinAshi = nativeBinding.HeikinAshi
-module.exports.HeikinAshiNode = nativeBinding.HeikinAshiNode
 module.exports.HeikinAshiOscillator = nativeBinding.HeikinAshiOscillator
-module.exports.HeikinAshiOscillatorNode = nativeBinding.HeikinAshiOscillatorNode
 module.exports.HighLowIndex = nativeBinding.HighLowIndex
-module.exports.HighLowIndexNode = nativeBinding.HighLowIndexNode
 module.exports.HighLowRange = nativeBinding.HighLowRange
-module.exports.HighLowRangeNode = nativeBinding.HighLowRangeNode
 module.exports.HighLowVolumeNodes = nativeBinding.HighLowVolumeNodes
-module.exports.HighLowVolumeNodesNode = nativeBinding.HighLowVolumeNodesNode
 module.exports.HIGHPASS = nativeBinding.HIGHPASS
-module.exports.HighpassFilterNode = nativeBinding.HighpassFilterNode
 module.exports.HighWave = nativeBinding.HighWave
-module.exports.HighWaveNode = nativeBinding.HighWaveNode
 module.exports.Hikkake = nativeBinding.Hikkake
-module.exports.HikkakeNode = nativeBinding.HikkakeNode
 module.exports.HikkakeModified = nativeBinding.HikkakeModified
-module.exports.HikkakeModifiedNode = nativeBinding.HikkakeModifiedNode
 module.exports.HilbertDominantCycle = nativeBinding.HilbertDominantCycle
-module.exports.HilbertDominantCycleNode = nativeBinding.HilbertDominantCycleNode
 module.exports.HiLoActivator = nativeBinding.HiLoActivator
-module.exports.HiLoActivatorNode = nativeBinding.HiLoActivatorNode
 module.exports.HistoricalVolatility = nativeBinding.HistoricalVolatility
-module.exports.HistoricalVolatilityNode = nativeBinding.HistoricalVolatilityNode
 module.exports.HMA = nativeBinding.HMA
-module.exports.HmaNode = nativeBinding.HmaNode
 module.exports.HoltWinters = nativeBinding.HoltWinters
-module.exports.HoltWintersNode = nativeBinding.HoltWintersNode
 module.exports.HomingPigeon = nativeBinding.HomingPigeon
-module.exports.HomingPigeonNode = nativeBinding.HomingPigeonNode
 module.exports.HT_DCPHASE = nativeBinding.HT_DCPHASE
-module.exports.HtDcPhaseNode = nativeBinding.HtDcPhaseNode
 module.exports.HT_PHASOR = nativeBinding.HT_PHASOR
-module.exports.HtPhasorNode = nativeBinding.HtPhasorNode
 module.exports.HT_TRENDMODE = nativeBinding.HT_TRENDMODE
-module.exports.HtTrendModeNode = nativeBinding.HtTrendModeNode
 module.exports.HurstChannel = nativeBinding.HurstChannel
-module.exports.HurstChannelNode = nativeBinding.HurstChannelNode
 module.exports.HurstExponent = nativeBinding.HurstExponent
-module.exports.HurstExponentNode = nativeBinding.HurstExponentNode
 module.exports.Ichimoku = nativeBinding.Ichimoku
-module.exports.IchimokuNode = nativeBinding.IchimokuNode
 module.exports.IdenticalThreeCrows = nativeBinding.IdenticalThreeCrows
-module.exports.IdenticalThreeCrowsNode = nativeBinding.IdenticalThreeCrowsNode
 module.exports.ImbalanceBars = nativeBinding.ImbalanceBars
-module.exports.ImbalanceBarsNode = nativeBinding.ImbalanceBarsNode
 module.exports.IMI = nativeBinding.IMI
-module.exports.ImiNode = nativeBinding.ImiNode
 module.exports.Inertia = nativeBinding.Inertia
-module.exports.InertiaNode = nativeBinding.InertiaNode
 module.exports.InformationRatio = nativeBinding.InformationRatio
-module.exports.InformationRatioNode = nativeBinding.InformationRatioNode
 module.exports.InitialBalance = nativeBinding.InitialBalance
-module.exports.InitialBalanceNode = nativeBinding.InitialBalanceNode
 module.exports.InNeck = nativeBinding.InNeck
-module.exports.InNeckNode = nativeBinding.InNeckNode
 module.exports.InstantaneousTrendline = nativeBinding.InstantaneousTrendline
-module.exports.InstantaneousTrendlineNode = nativeBinding.InstantaneousTrendlineNode
 module.exports.IntradayIntensity = nativeBinding.IntradayIntensity
-module.exports.IntradayIntensityNode = nativeBinding.IntradayIntensityNode
 module.exports.IntradayVolatilityProfile = nativeBinding.IntradayVolatilityProfile
-module.exports.IntradayVolatilityProfileNode = nativeBinding.IntradayVolatilityProfileNode
 module.exports.InverseFisherTransform = nativeBinding.InverseFisherTransform
-module.exports.InverseFisherTransformNode = nativeBinding.InverseFisherTransformNode
 module.exports.InvertedHammer = nativeBinding.InvertedHammer
-module.exports.InvertedHammerNode = nativeBinding.InvertedHammerNode
 module.exports.JARQUEBERA = nativeBinding.JARQUEBERA
-module.exports.JarqueBeraNode = nativeBinding.JarqueBeraNode
 module.exports.JMA = nativeBinding.JMA
-module.exports.JmaNode = nativeBinding.JmaNode
 module.exports.JumpIndicator = nativeBinding.JumpIndicator
-module.exports.JumpIndicatorNode = nativeBinding.JumpIndicatorNode
 module.exports.KagiBars = nativeBinding.KagiBars
-module.exports.KagiBarsNode = nativeBinding.KagiBarsNode
 module.exports.KalmanHedgeRatio = nativeBinding.KalmanHedgeRatio
-module.exports.KalmanHedgeRatioNode = nativeBinding.KalmanHedgeRatioNode
 module.exports.KAMA = nativeBinding.KAMA
-module.exports.KamaNode = nativeBinding.KamaNode
 module.exports.KaseDevStop = nativeBinding.KaseDevStop
-module.exports.KaseDevStopNode = nativeBinding.KaseDevStopNode
 module.exports.KasePermissionStochastic = nativeBinding.KasePermissionStochastic
-module.exports.KasePermissionStochasticNode = nativeBinding.KasePermissionStochasticNode
 module.exports.KellyCriterion = nativeBinding.KellyCriterion
-module.exports.KellyCriterionNode = nativeBinding.KellyCriterionNode
 module.exports.Keltner = nativeBinding.Keltner
-module.exports.KeltnerNode = nativeBinding.KeltnerNode
 module.exports.KendallTau = nativeBinding.KendallTau
-module.exports.KendallTauNode = nativeBinding.KendallTauNode
 module.exports.Kicking = nativeBinding.Kicking
-module.exports.KickingNode = nativeBinding.KickingNode
 module.exports.KickingByLength = nativeBinding.KickingByLength
-module.exports.KickingByLengthNode = nativeBinding.KickingByLengthNode
 module.exports.KRatio = nativeBinding.KRatio
-module.exports.KRatioNode = nativeBinding.KRatioNode
 module.exports.KST = nativeBinding.KST
-module.exports.KstNode = nativeBinding.KstNode
 module.exports.Kurtosis = nativeBinding.Kurtosis
-module.exports.KurtosisNode = nativeBinding.KurtosisNode
 module.exports.KVO = nativeBinding.KVO
-module.exports.KvoNode = nativeBinding.KvoNode
 module.exports.KylesLambda = nativeBinding.KylesLambda
-module.exports.KylesLambdaNode = nativeBinding.KylesLambdaNode
 module.exports.LadderBottom = nativeBinding.LadderBottom
-module.exports.LadderBottomNode = nativeBinding.LadderBottomNode
 module.exports.LaguerreRSI = nativeBinding.LaguerreRSI
-module.exports.LaguerreRsiNode = nativeBinding.LaguerreRsiNode
 module.exports.LeadLagCrossCorrelation = nativeBinding.LeadLagCrossCorrelation
-module.exports.LeadLagCrossCorrelationNode = nativeBinding.LeadLagCrossCorrelationNode
 module.exports.LINEARREG_INTERCEPT = nativeBinding.LINEARREG_INTERCEPT
-module.exports.LinRegInterceptNode = nativeBinding.LinRegInterceptNode
 module.exports.LinearRegression = nativeBinding.LinearRegression
-module.exports.LinearRegressionNode = nativeBinding.LinearRegressionNode
 module.exports.LinRegAngle = nativeBinding.LinRegAngle
-module.exports.LinRegAngleNode = nativeBinding.LinRegAngleNode
 module.exports.LinRegChannel = nativeBinding.LinRegChannel
-module.exports.LinRegChannelNode = nativeBinding.LinRegChannelNode
 module.exports.LinRegSlope = nativeBinding.LinRegSlope
-module.exports.LinRegSlopeNode = nativeBinding.LinRegSlopeNode
 module.exports.LiquidationFeatures = nativeBinding.LiquidationFeatures
-module.exports.LiquidationFeaturesNode = nativeBinding.LiquidationFeaturesNode
 module.exports.LogReturn = nativeBinding.LogReturn
-module.exports.LogReturnNode = nativeBinding.LogReturnNode
 module.exports.LongLeggedDoji = nativeBinding.LongLeggedDoji
-module.exports.LongLeggedDojiNode = nativeBinding.LongLeggedDojiNode
 module.exports.LongLine = nativeBinding.LongLine
-module.exports.LongLineNode = nativeBinding.LongLineNode
 module.exports.LongShortRatio = nativeBinding.LongShortRatio
-module.exports.LongShortRatioNode = nativeBinding.LongShortRatioNode
 module.exports.M2Measure = nativeBinding.M2Measure
-module.exports.M2MeasureNode = nativeBinding.M2MeasureNode
 module.exports.MACD = nativeBinding.MACD
-module.exports.MacdNode = nativeBinding.MacdNode
 module.exports.MACDEXT = nativeBinding.MACDEXT
-module.exports.MacdExtNode = nativeBinding.MacdExtNode
 module.exports.MACDFIX = nativeBinding.MACDFIX
-module.exports.MacdFixNode = nativeBinding.MacdFixNode
 module.exports.MacdHistogram = nativeBinding.MacdHistogram
-module.exports.MacdHistogramNode = nativeBinding.MacdHistogramNode
 module.exports.MaEnvelope = nativeBinding.MaEnvelope
-module.exports.MaEnvelopeNode = nativeBinding.MaEnvelopeNode
 module.exports.MAMA = nativeBinding.MAMA
-module.exports.MamaNode = nativeBinding.MamaNode
 module.exports.MarketFacilitationIndex = nativeBinding.MarketFacilitationIndex
-module.exports.MarketFacilitationIndexNode = nativeBinding.MarketFacilitationIndexNode
 module.exports.MartinRatio = nativeBinding.MartinRatio
-module.exports.MartinRatioNode = nativeBinding.MartinRatioNode
 module.exports.Marubozu = nativeBinding.Marubozu
-module.exports.MarubozuNode = nativeBinding.MarubozuNode
 module.exports.MassIndex = nativeBinding.MassIndex
-module.exports.MassIndexNode = nativeBinding.MassIndexNode
 module.exports.MatchingLow = nativeBinding.MatchingLow
-module.exports.MatchingLowNode = nativeBinding.MatchingLowNode
 module.exports.MatHold = nativeBinding.MatHold
-module.exports.MatHoldNode = nativeBinding.MatHoldNode
 module.exports.MaxDrawdown = nativeBinding.MaxDrawdown
-module.exports.MaxDrawdownNode = nativeBinding.MaxDrawdownNode
 module.exports.McClellanOscillator = nativeBinding.McClellanOscillator
-module.exports.McClellanOscillatorNode = nativeBinding.McClellanOscillatorNode
 module.exports.McClellanSummationIndex = nativeBinding.McClellanSummationIndex
-module.exports.McClellanSummationIndexNode = nativeBinding.McClellanSummationIndexNode
 module.exports.McGinleyDynamic = nativeBinding.McGinleyDynamic
-module.exports.McGinleyDynamicNode = nativeBinding.McGinleyDynamicNode
 module.exports.MedianAbsoluteDeviation = nativeBinding.MedianAbsoluteDeviation
-module.exports.MedianAbsoluteDeviationNode = nativeBinding.MedianAbsoluteDeviationNode
 module.exports.MedianChannel = nativeBinding.MedianChannel
-module.exports.MedianChannelNode = nativeBinding.MedianChannelNode
 module.exports.MedianMA = nativeBinding.MedianMA
-module.exports.MedianMaNode = nativeBinding.MedianMaNode
 module.exports.MedianPrice = nativeBinding.MedianPrice
-module.exports.MedianPriceNode = nativeBinding.MedianPriceNode
 module.exports.MFI = nativeBinding.MFI
-module.exports.MfiNode = nativeBinding.MfiNode
 module.exports.Microprice = nativeBinding.Microprice
-module.exports.MicropriceNode = nativeBinding.MicropriceNode
 module.exports.MIDPOINT = nativeBinding.MIDPOINT
-module.exports.MidPointNode = nativeBinding.MidPointNode
 module.exports.MIDPRICE = nativeBinding.MIDPRICE
-module.exports.MidPriceNode = nativeBinding.MidPriceNode
 module.exports.MINUS_DI = nativeBinding.MINUS_DI
-module.exports.MinusDiNode = nativeBinding.MinusDiNode
 module.exports.MINUS_DM = nativeBinding.MINUS_DM
-module.exports.MinusDmNode = nativeBinding.MinusDmNode
 module.exports.ModifiedMaStop = nativeBinding.ModifiedMaStop
-module.exports.ModifiedMaStopNode = nativeBinding.ModifiedMaStopNode
 module.exports.MOM = nativeBinding.MOM
-module.exports.MomNode = nativeBinding.MomNode
 module.exports.MorningDojiStar = nativeBinding.MorningDojiStar
-module.exports.MorningDojiStarNode = nativeBinding.MorningDojiStarNode
 module.exports.MorningEveningStar = nativeBinding.MorningEveningStar
-module.exports.MorningEveningStarNode = nativeBinding.MorningEveningStarNode
 module.exports.MurreyMathLines = nativeBinding.MurreyMathLines
-module.exports.MurreyMathLinesNode = nativeBinding.MurreyMathLinesNode
 module.exports.NakedPoc = nativeBinding.NakedPoc
-module.exports.NakedPocNode = nativeBinding.NakedPocNode
 module.exports.NATR = nativeBinding.NATR
-module.exports.NatrNode = nativeBinding.NatrNode
 module.exports.NewHighsNewLows = nativeBinding.NewHighsNewLows
-module.exports.NewHighsNewLowsNode = nativeBinding.NewHighsNewLowsNode
 module.exports.NewPriceLines = nativeBinding.NewPriceLines
-module.exports.NewPriceLinesNode = nativeBinding.NewPriceLinesNode
 module.exports.Nrtr = nativeBinding.Nrtr
-module.exports.NrtrNode = nativeBinding.NrtrNode
 module.exports.NVI = nativeBinding.NVI
-module.exports.NviNode = nativeBinding.NviNode
 module.exports.OBV = nativeBinding.OBV
-module.exports.ObvNode = nativeBinding.ObvNode
 module.exports.OIPriceDivergence = nativeBinding.OIPriceDivergence
-module.exports.OIPriceDivergenceNode = nativeBinding.OIPriceDivergenceNode
 module.exports.OiToVolumeRatio = nativeBinding.OiToVolumeRatio
-module.exports.OiToVolumeRatioNode = nativeBinding.OiToVolumeRatioNode
 module.exports.OIWeighted = nativeBinding.OIWeighted
-module.exports.OIWeightedNode = nativeBinding.OIWeightedNode
 module.exports.OmegaRatio = nativeBinding.OmegaRatio
-module.exports.OmegaRatioNode = nativeBinding.OmegaRatioNode
 module.exports.OnNeck = nativeBinding.OnNeck
-module.exports.OnNeckNode = nativeBinding.OnNeckNode
 module.exports.OpeningMarubozu = nativeBinding.OpeningMarubozu
-module.exports.OpeningMarubozuNode = nativeBinding.OpeningMarubozuNode
 module.exports.OpeningRange = nativeBinding.OpeningRange
-module.exports.OpeningRangeNode = nativeBinding.OpeningRangeNode
 module.exports.OpenInterestDelta = nativeBinding.OpenInterestDelta
-module.exports.OpenInterestDeltaNode = nativeBinding.OpenInterestDeltaNode
 module.exports.OpenInterestMomentum = nativeBinding.OpenInterestMomentum
-module.exports.OpenInterestMomentumNode = nativeBinding.OpenInterestMomentumNode
 module.exports.OrderBookImbalanceFull = nativeBinding.OrderBookImbalanceFull
-module.exports.OrderBookImbalanceFullNode = nativeBinding.OrderBookImbalanceFullNode
 module.exports.OrderBookImbalanceTop1 = nativeBinding.OrderBookImbalanceTop1
-module.exports.OrderBookImbalanceTop1Node = nativeBinding.OrderBookImbalanceTop1Node
 module.exports.OrderBookImbalanceTopN = nativeBinding.OrderBookImbalanceTopN
-module.exports.OrderBookImbalanceTopNNode = nativeBinding.OrderBookImbalanceTopNNode
 module.exports.OrderFlowImbalance = nativeBinding.OrderFlowImbalance
-module.exports.OrderFlowImbalanceNode = nativeBinding.OrderFlowImbalanceNode
 module.exports.OuHalfLife = nativeBinding.OuHalfLife
-module.exports.OuHalfLifeNode = nativeBinding.OuHalfLifeNode
 module.exports.OvernightGap = nativeBinding.OvernightGap
-module.exports.OvernightGapNode = nativeBinding.OvernightGapNode
 module.exports.OvernightIntradayReturn = nativeBinding.OvernightIntradayReturn
-module.exports.OvernightIntradayReturnNode = nativeBinding.OvernightIntradayReturnNode
 module.exports.PainIndex = nativeBinding.PainIndex
-module.exports.PainIndexNode = nativeBinding.PainIndexNode
 module.exports.PairSpreadZScore = nativeBinding.PairSpreadZScore
-module.exports.PairSpreadZScoreNode = nativeBinding.PairSpreadZScoreNode
 module.exports.PairwiseBeta = nativeBinding.PairwiseBeta
-module.exports.PairwiseBetaNode = nativeBinding.PairwiseBetaNode
 module.exports.ParkinsonVolatility = nativeBinding.ParkinsonVolatility
-module.exports.ParkinsonVolatilityNode = nativeBinding.ParkinsonVolatilityNode
 module.exports.PearsonCorrelation = nativeBinding.PearsonCorrelation
-module.exports.PearsonCorrelationNode = nativeBinding.PearsonCorrelationNode
 module.exports.PercentAboveMa = nativeBinding.PercentAboveMa
-module.exports.PercentAboveMaNode = nativeBinding.PercentAboveMaNode
 module.exports.PercentageTrailingStop = nativeBinding.PercentageTrailingStop
-module.exports.PercentageTrailingStopNode = nativeBinding.PercentageTrailingStopNode
 module.exports.PercentB = nativeBinding.PercentB
-module.exports.PercentBNode = nativeBinding.PercentBNode
 module.exports.PerpetualPremiumIndex = nativeBinding.PerpetualPremiumIndex
-module.exports.PerpetualPremiumIndexNode = nativeBinding.PerpetualPremiumIndexNode
 module.exports.PGO = nativeBinding.PGO
-module.exports.PgoNode = nativeBinding.PgoNode
 module.exports.PiercingDarkCloud = nativeBinding.PiercingDarkCloud
-module.exports.PiercingDarkCloudNode = nativeBinding.PiercingDarkCloudNode
 module.exports.Pin = nativeBinding.Pin
-module.exports.PinNode = nativeBinding.PinNode
 module.exports.PivotReversal = nativeBinding.PivotReversal
-module.exports.PivotReversalNode = nativeBinding.PivotReversalNode
 module.exports.PLUS_DI = nativeBinding.PLUS_DI
-module.exports.PlusDiNode = nativeBinding.PlusDiNode
 module.exports.PLUS_DM = nativeBinding.PLUS_DM
-module.exports.PlusDmNode = nativeBinding.PlusDmNode
 module.exports.PMO = nativeBinding.PMO
-module.exports.PmoNode = nativeBinding.PmoNode
 module.exports.PointAndFigureBars = nativeBinding.PointAndFigureBars
-module.exports.PointAndFigureBarsNode = nativeBinding.PointAndFigureBarsNode
 module.exports.POLARIZED_FRACTAL_EFFICIENCY = nativeBinding.POLARIZED_FRACTAL_EFFICIENCY
-module.exports.PolarizedFractalEfficiencyNode = nativeBinding.PolarizedFractalEfficiencyNode
 module.exports.PPO = nativeBinding.PPO
-module.exports.PpoNode = nativeBinding.PpoNode
 module.exports.PpoHistogram = nativeBinding.PpoHistogram
-module.exports.PpoHistogramNode = nativeBinding.PpoHistogramNode
 module.exports.ProfileShape = nativeBinding.ProfileShape
-module.exports.ProfileShapeNode = nativeBinding.ProfileShapeNode
 module.exports.ProfitFactor = nativeBinding.ProfitFactor
-module.exports.ProfitFactorNode = nativeBinding.ProfitFactorNode
 module.exports.ProjectionBands = nativeBinding.ProjectionBands
-module.exports.ProjectionBandsNode = nativeBinding.ProjectionBandsNode
 module.exports.ProjectionOscillator = nativeBinding.ProjectionOscillator
-module.exports.ProjectionOscillatorNode = nativeBinding.ProjectionOscillatorNode
 module.exports.PSAR = nativeBinding.PSAR
-module.exports.PsarNode = nativeBinding.PsarNode
 module.exports.PVI = nativeBinding.PVI
-module.exports.PviNode = nativeBinding.PviNode
 module.exports.QQE = nativeBinding.QQE
-module.exports.QqeNode = nativeBinding.QqeNode
 module.exports.Qstick = nativeBinding.Qstick
-module.exports.QstickNode = nativeBinding.QstickNode
 module.exports.QuartileBands = nativeBinding.QuartileBands
-module.exports.QuartileBandsNode = nativeBinding.QuartileBandsNode
 module.exports.QuotedSpread = nativeBinding.QuotedSpread
-module.exports.QuotedSpreadNode = nativeBinding.QuotedSpreadNode
 module.exports.RangeBars = nativeBinding.RangeBars
-module.exports.RangeBarsNode = nativeBinding.RangeBarsNode
 module.exports.RealizedSpread = nativeBinding.RealizedSpread
-module.exports.RealizedSpreadNode = nativeBinding.RealizedSpreadNode
 module.exports.RealizedVolatility = nativeBinding.RealizedVolatility
-module.exports.RealizedVolatilityNode = nativeBinding.RealizedVolatilityNode
 module.exports.RecoveryFactor = nativeBinding.RecoveryFactor
-module.exports.RecoveryFactorNode = nativeBinding.RecoveryFactorNode
 module.exports.RectangleRange = nativeBinding.RectangleRange
-module.exports.RectangleRangeNode = nativeBinding.RectangleRangeNode
 module.exports.REFLEX = nativeBinding.REFLEX
-module.exports.ReflexNode = nativeBinding.ReflexNode
 module.exports.RegimeLabel = nativeBinding.RegimeLabel
-module.exports.RegimeLabelNode = nativeBinding.RegimeLabelNode
 module.exports.RelativeStrengthAB = nativeBinding.RelativeStrengthAB
-module.exports.RelativeStrengthABNode = nativeBinding.RelativeStrengthABNode
 module.exports.RenkoBars = nativeBinding.RenkoBars
-module.exports.RenkoBarsNode = nativeBinding.RenkoBarsNode
 module.exports.RenkoTrailingStop = nativeBinding.RenkoTrailingStop
-module.exports.RenkoTrailingStopNode = nativeBinding.RenkoTrailingStopNode
 module.exports.Resampler = nativeBinding.Resampler
-module.exports.ResamplerNode = nativeBinding.ResamplerNode
 module.exports.RickshawMan = nativeBinding.RickshawMan
-module.exports.RickshawManNode = nativeBinding.RickshawManNode
 module.exports.RisingThreeMethods = nativeBinding.RisingThreeMethods
-module.exports.RisingThreeMethodsNode = nativeBinding.RisingThreeMethodsNode
 module.exports.RMI = nativeBinding.RMI
-module.exports.RmiNode = nativeBinding.RmiNode
 module.exports.ROC = nativeBinding.ROC
-module.exports.RocNode = nativeBinding.RocNode
 module.exports.ROCP = nativeBinding.ROCP
-module.exports.RocpNode = nativeBinding.RocpNode
 module.exports.ROCR = nativeBinding.ROCR
-module.exports.RocrNode = nativeBinding.RocrNode
 module.exports.ROCR100 = nativeBinding.ROCR100
-module.exports.Rocr100Node = nativeBinding.Rocr100Node
 module.exports.RogersSatchellVolatility = nativeBinding.RogersSatchellVolatility
-module.exports.RogersSatchellVolatilityNode = nativeBinding.RogersSatchellVolatilityNode
 module.exports.RollingCorrelation = nativeBinding.RollingCorrelation
-module.exports.RollingCorrelationNode = nativeBinding.RollingCorrelationNode
 module.exports.RollingCovariance = nativeBinding.RollingCovariance
-module.exports.RollingCovarianceNode = nativeBinding.RollingCovarianceNode
 module.exports.RollingIqr = nativeBinding.RollingIqr
-module.exports.RollingIqrNode = nativeBinding.RollingIqrNode
 module.exports.ROLLINGMINMAX = nativeBinding.ROLLINGMINMAX
-module.exports.RollingMinMaxScalerNode = nativeBinding.RollingMinMaxScalerNode
 module.exports.RollingPercentileRank = nativeBinding.RollingPercentileRank
-module.exports.RollingPercentileRankNode = nativeBinding.RollingPercentileRankNode
 module.exports.RollingQuantile = nativeBinding.RollingQuantile
-module.exports.RollingQuantileNode = nativeBinding.RollingQuantileNode
 module.exports.RollingVWAP = nativeBinding.RollingVWAP
-module.exports.RollingVwapNode = nativeBinding.RollingVwapNode
 module.exports.RollMeasure = nativeBinding.RollMeasure
-module.exports.RollMeasureNode = nativeBinding.RollMeasureNode
 module.exports.RoofingFilter = nativeBinding.RoofingFilter
-module.exports.RoofingFilterNode = nativeBinding.RoofingFilterNode
 module.exports.RSI = nativeBinding.RSI
-module.exports.RsiNode = nativeBinding.RsiNode
 module.exports.RSquared = nativeBinding.RSquared
-module.exports.RSquaredNode = nativeBinding.RSquaredNode
 module.exports.RSX = nativeBinding.RSX
-module.exports.RsxNode = nativeBinding.RsxNode
 module.exports.RunBars = nativeBinding.RunBars
-module.exports.RunBarsNode = nativeBinding.RunBarsNode
 module.exports.RVI = nativeBinding.RVI
-module.exports.RviNode = nativeBinding.RviNode
 module.exports.RVIVolatility = nativeBinding.RVIVolatility
-module.exports.RviVolatilityNode = nativeBinding.RviVolatilityNode
 module.exports.RWI = nativeBinding.RWI
-module.exports.RwiNode = nativeBinding.RwiNode
 module.exports.SAMPLEENT = nativeBinding.SAMPLEENT
-module.exports.SampleEntropyNode = nativeBinding.SampleEntropyNode
 module.exports.SAREXT = nativeBinding.SAREXT
-module.exports.SarExtNode = nativeBinding.SarExtNode
 module.exports.SeasonalZScore = nativeBinding.SeasonalZScore
-module.exports.SeasonalZScoreNode = nativeBinding.SeasonalZScoreNode
 module.exports.SeparatingLines = nativeBinding.SeparatingLines
-module.exports.SeparatingLinesNode = nativeBinding.SeparatingLinesNode
 module.exports.SessionHighLow = nativeBinding.SessionHighLow
-module.exports.SessionHighLowNode = nativeBinding.SessionHighLowNode
 module.exports.SessionRange = nativeBinding.SessionRange
-module.exports.SessionRangeNode = nativeBinding.SessionRangeNode
 module.exports.SessionVwap = nativeBinding.SessionVwap
-module.exports.SessionVwapNode = nativeBinding.SessionVwapNode
 module.exports.SHANNONENT = nativeBinding.SHANNONENT
-module.exports.ShannonEntropyNode = nativeBinding.ShannonEntropyNode
 module.exports.Shark = nativeBinding.Shark
-module.exports.SharkNode = nativeBinding.SharkNode
 module.exports.SharpeRatio = nativeBinding.SharpeRatio
-module.exports.SharpeRatioNode = nativeBinding.SharpeRatioNode
 module.exports.ShootingStar = nativeBinding.ShootingStar
-module.exports.ShootingStarNode = nativeBinding.ShootingStarNode
 module.exports.ShortLine = nativeBinding.ShortLine
-module.exports.ShortLineNode = nativeBinding.ShortLineNode
 module.exports.SignedVolume = nativeBinding.SignedVolume
-module.exports.SignedVolumeNode = nativeBinding.SignedVolumeNode
 module.exports.SineWave = nativeBinding.SineWave
-module.exports.SineWaveNode = nativeBinding.SineWaveNode
 module.exports.SinglePrints = nativeBinding.SinglePrints
-module.exports.SinglePrintsNode = nativeBinding.SinglePrintsNode
 module.exports.Skewness = nativeBinding.Skewness
-module.exports.SkewnessNode = nativeBinding.SkewnessNode
 module.exports.SMA = nativeBinding.SMA
-module.exports.SmaNode = nativeBinding.SmaNode
 module.exports.SMI = nativeBinding.SMI
-module.exports.SmiNode = nativeBinding.SmiNode
 module.exports.SMMA = nativeBinding.SMMA
-module.exports.SmmaNode = nativeBinding.SmmaNode
 module.exports.SmoothedHeikinAshi = nativeBinding.SmoothedHeikinAshi
-module.exports.SmoothedHeikinAshiNode = nativeBinding.SmoothedHeikinAshiNode
 module.exports.SortinoRatio = nativeBinding.SortinoRatio
-module.exports.SortinoRatioNode = nativeBinding.SortinoRatioNode
 module.exports.SpearmanCorrelation = nativeBinding.SpearmanCorrelation
-module.exports.SpearmanCorrelationNode = nativeBinding.SpearmanCorrelationNode
 module.exports.SpinningTop = nativeBinding.SpinningTop
-module.exports.SpinningTopNode = nativeBinding.SpinningTopNode
 module.exports.SpreadAr1Coefficient = nativeBinding.SpreadAr1Coefficient
-module.exports.SpreadAr1CoefficientNode = nativeBinding.SpreadAr1CoefficientNode
 module.exports.SpreadBollingerBands = nativeBinding.SpreadBollingerBands
-module.exports.SpreadBollingerBandsNode = nativeBinding.SpreadBollingerBandsNode
 module.exports.SpreadHurst = nativeBinding.SpreadHurst
-module.exports.SpreadHurstNode = nativeBinding.SpreadHurstNode
 module.exports.StalledPattern = nativeBinding.StalledPattern
-module.exports.StalledPatternNode = nativeBinding.StalledPatternNode
 module.exports.StandardError = nativeBinding.StandardError
-module.exports.StandardErrorNode = nativeBinding.StandardErrorNode
 module.exports.StandardErrorBands = nativeBinding.StandardErrorBands
-module.exports.StandardErrorBandsNode = nativeBinding.StandardErrorBandsNode
 module.exports.StarcBands = nativeBinding.StarcBands
-module.exports.StarcBandsNode = nativeBinding.StarcBandsNode
 module.exports.STC = nativeBinding.STC
-module.exports.StcNode = nativeBinding.StcNode
 module.exports.StdDev = nativeBinding.StdDev
-module.exports.StdDevNode = nativeBinding.StdDevNode
 module.exports.StepTrailingStop = nativeBinding.StepTrailingStop
-module.exports.StepTrailingStopNode = nativeBinding.StepTrailingStopNode
 module.exports.SterlingRatio = nativeBinding.SterlingRatio
-module.exports.SterlingRatioNode = nativeBinding.SterlingRatioNode
 module.exports.StickSandwich = nativeBinding.StickSandwich
-module.exports.StickSandwichNode = nativeBinding.StickSandwichNode
 module.exports.Stochastic = nativeBinding.Stochastic
-module.exports.StochNode = nativeBinding.StochNode
 module.exports.StochasticCCI = nativeBinding.StochasticCCI
-module.exports.StochasticCciNode = nativeBinding.StochasticCciNode
 module.exports.StochRSI = nativeBinding.StochRSI
-module.exports.StochRsiNode = nativeBinding.StochRsiNode
 module.exports.SuperSmoother = nativeBinding.SuperSmoother
-module.exports.SuperSmootherNode = nativeBinding.SuperSmootherNode
 module.exports.SuperTrend = nativeBinding.SuperTrend
-module.exports.SuperTrendNode = nativeBinding.SuperTrendNode
 module.exports.SWMA = nativeBinding.SWMA
-module.exports.SineWeightedMaNode = nativeBinding.SineWeightedMaNode
 module.exports.T3 = nativeBinding.T3
-module.exports.T3Node = nativeBinding.T3Node
 module.exports.TailRatio = nativeBinding.TailRatio
-module.exports.TailRatioNode = nativeBinding.TailRatioNode
 module.exports.TakerBuySellRatio = nativeBinding.TakerBuySellRatio
-module.exports.TakerBuySellRatioNode = nativeBinding.TakerBuySellRatioNode
 module.exports.Takuri = nativeBinding.Takuri
-module.exports.TakuriNode = nativeBinding.TakuriNode
 module.exports.TasukiGap = nativeBinding.TasukiGap
-module.exports.TasukiGapNode = nativeBinding.TasukiGapNode
 module.exports.TDCamouflage = nativeBinding.TDCamouflage
-module.exports.TdCamouflageNode = nativeBinding.TdCamouflageNode
 module.exports.TDClop = nativeBinding.TDClop
-module.exports.TdClopNode = nativeBinding.TdClopNode
 module.exports.TDClopwin = nativeBinding.TDClopwin
-module.exports.TdClopwinNode = nativeBinding.TdClopwinNode
 module.exports.TDCombo = nativeBinding.TDCombo
-module.exports.TdComboNode = nativeBinding.TdComboNode
 module.exports.TDCountdown = nativeBinding.TDCountdown
-module.exports.TdCountdownNode = nativeBinding.TdCountdownNode
 module.exports.TDDeMarker = nativeBinding.TDDeMarker
-module.exports.TdDeMarkerNode = nativeBinding.TdDeMarkerNode
 module.exports.TDDifferential = nativeBinding.TDDifferential
-module.exports.TdDifferentialNode = nativeBinding.TdDifferentialNode
 module.exports.TDDWave = nativeBinding.TDDWave
-module.exports.TdDWaveNode = nativeBinding.TdDWaveNode
 module.exports.TDLines = nativeBinding.TDLines
-module.exports.TdLinesNode = nativeBinding.TdLinesNode
 module.exports.TDMovingAverage = nativeBinding.TDMovingAverage
-module.exports.TdMovingAverageNode = nativeBinding.TdMovingAverageNode
 module.exports.TDOpen = nativeBinding.TDOpen
-module.exports.TdOpenNode = nativeBinding.TdOpenNode
 module.exports.TDPressure = nativeBinding.TDPressure
-module.exports.TdPressureNode = nativeBinding.TdPressureNode
 module.exports.TDPropulsion = nativeBinding.TDPropulsion
-module.exports.TdPropulsionNode = nativeBinding.TdPropulsionNode
 module.exports.TDRangeProjection = nativeBinding.TDRangeProjection
-module.exports.TdRangeProjectionNode = nativeBinding.TdRangeProjectionNode
 module.exports.TDREI = nativeBinding.TDREI
-module.exports.TdReiNode = nativeBinding.TdReiNode
 module.exports.TDRiskLevel = nativeBinding.TDRiskLevel
-module.exports.TdRiskLevelNode = nativeBinding.TdRiskLevelNode
 module.exports.TDSequential = nativeBinding.TDSequential
-module.exports.TdSequentialNode = nativeBinding.TdSequentialNode
 module.exports.TDSetup = nativeBinding.TDSetup
-module.exports.TdSetupNode = nativeBinding.TdSetupNode
 module.exports.TDTrap = nativeBinding.TDTrap
-module.exports.TdTrapNode = nativeBinding.TdTrapNode
 module.exports.TEMA = nativeBinding.TEMA
-module.exports.TemaNode = nativeBinding.TemaNode
 module.exports.TermStructureBasis = nativeBinding.TermStructureBasis
-module.exports.TermStructureBasisNode = nativeBinding.TermStructureBasisNode
 module.exports.ThreeDrives = nativeBinding.ThreeDrives
-module.exports.ThreeDrivesNode = nativeBinding.ThreeDrivesNode
 module.exports.ThreeInside = nativeBinding.ThreeInside
-module.exports.ThreeInsideNode = nativeBinding.ThreeInsideNode
 module.exports.ThreeLineBreak = nativeBinding.ThreeLineBreak
-module.exports.ThreeLineBreakNode = nativeBinding.ThreeLineBreakNode
 module.exports.ThreeLineBreakBars = nativeBinding.ThreeLineBreakBars
-module.exports.ThreeLineBreakBarsNode = nativeBinding.ThreeLineBreakBarsNode
 module.exports.ThreeLineStrike = nativeBinding.ThreeLineStrike
-module.exports.ThreeLineStrikeNode = nativeBinding.ThreeLineStrikeNode
 module.exports.ThreeOutside = nativeBinding.ThreeOutside
-module.exports.ThreeOutsideNode = nativeBinding.ThreeOutsideNode
 module.exports.ThreeSoldiersOrCrows = nativeBinding.ThreeSoldiersOrCrows
-module.exports.ThreeSoldiersOrCrowsNode = nativeBinding.ThreeSoldiersOrCrowsNode
 module.exports.ThreeStarsInSouth = nativeBinding.ThreeStarsInSouth
-module.exports.ThreeStarsInSouthNode = nativeBinding.ThreeStarsInSouthNode
 module.exports.Thrusting = nativeBinding.Thrusting
-module.exports.ThrustingNode = nativeBinding.ThrustingNode
 module.exports.TickAggregator = nativeBinding.TickAggregator
-module.exports.TickAggregatorNode = nativeBinding.TickAggregatorNode
 module.exports.TickBars = nativeBinding.TickBars
-module.exports.TickBarsNode = nativeBinding.TickBarsNode
 module.exports.TickIndex = nativeBinding.TickIndex
-module.exports.TickIndexNode = nativeBinding.TickIndexNode
 module.exports.TII = nativeBinding.TII
-module.exports.TiiNode = nativeBinding.TiiNode
 module.exports.TimeBasedStop = nativeBinding.TimeBasedStop
-module.exports.TimeBasedStopNode = nativeBinding.TimeBasedStopNode
 module.exports.TimeOfDayReturnProfile = nativeBinding.TimeOfDayReturnProfile
-module.exports.TimeOfDayReturnProfileNode = nativeBinding.TimeOfDayReturnProfileNode
 module.exports.TowerTopBottom = nativeBinding.TowerTopBottom
-module.exports.TowerTopBottomNode = nativeBinding.TowerTopBottomNode
 module.exports.TpoProfile = nativeBinding.TpoProfile
-module.exports.TpoProfileNode = nativeBinding.TpoProfileNode
 module.exports.TradeImbalance = nativeBinding.TradeImbalance
-module.exports.TradeImbalanceNode = nativeBinding.TradeImbalanceNode
 module.exports.TradeSignAutocorrelation = nativeBinding.TradeSignAutocorrelation
-module.exports.TradeSignAutocorrelationNode = nativeBinding.TradeSignAutocorrelationNode
 module.exports.TradeVolumeIndex = nativeBinding.TradeVolumeIndex
-module.exports.TradeVolumeIndexNode = nativeBinding.TradeVolumeIndexNode
 module.exports.TREND_STRENGTH_INDEX = nativeBinding.TREND_STRENGTH_INDEX
-module.exports.TrendStrengthIndexNode = nativeBinding.TrendStrengthIndexNode
 module.exports.TRENDFLEX = nativeBinding.TRENDFLEX
-module.exports.TrendflexNode = nativeBinding.TrendflexNode
 module.exports.TrendLabel = nativeBinding.TrendLabel
-module.exports.TrendLabelNode = nativeBinding.TrendLabelNode
 module.exports.TreynorRatio = nativeBinding.TreynorRatio
-module.exports.TreynorRatioNode = nativeBinding.TreynorRatioNode
 module.exports.Triangle = nativeBinding.Triangle
-module.exports.TriangleNode = nativeBinding.TriangleNode
 module.exports.TRIMA = nativeBinding.TRIMA
-module.exports.TrimaNode = nativeBinding.TrimaNode
 module.exports.Trin = nativeBinding.Trin
-module.exports.TrinNode = nativeBinding.TrinNode
 module.exports.TripleTopBottom = nativeBinding.TripleTopBottom
-module.exports.TripleTopBottomNode = nativeBinding.TripleTopBottomNode
 module.exports.Tristar = nativeBinding.Tristar
-module.exports.TristarNode = nativeBinding.TristarNode
 module.exports.TRIX = nativeBinding.TRIX
-module.exports.TrixNode = nativeBinding.TrixNode
 module.exports.TrueRange = nativeBinding.TrueRange
-module.exports.TrueRangeNode = nativeBinding.TrueRangeNode
 module.exports.TSF = nativeBinding.TSF
-module.exports.TsfNode = nativeBinding.TsfNode
 module.exports.TsfOscillator = nativeBinding.TsfOscillator
-module.exports.TsfOscillatorNode = nativeBinding.TsfOscillatorNode
 module.exports.TSI = nativeBinding.TSI
-module.exports.TsiNode = nativeBinding.TsiNode
 module.exports.TSV = nativeBinding.TSV
-module.exports.TsvNode = nativeBinding.TsvNode
 module.exports.TTM_TREND = nativeBinding.TTM_TREND
-module.exports.TtmTrendNode = nativeBinding.TtmTrendNode
 module.exports.TtmSqueeze = nativeBinding.TtmSqueeze
-module.exports.TtmSqueezeNode = nativeBinding.TtmSqueezeNode
 module.exports.TurnOfMonth = nativeBinding.TurnOfMonth
-module.exports.TurnOfMonthNode = nativeBinding.TurnOfMonthNode
 module.exports.Tweezer = nativeBinding.Tweezer
-module.exports.TweezerNode = nativeBinding.TweezerNode
 module.exports.TwiggsMoneyFlow = nativeBinding.TwiggsMoneyFlow
-module.exports.TwiggsMoneyFlowNode = nativeBinding.TwiggsMoneyFlowNode
 module.exports.TwoCrows = nativeBinding.TwoCrows
-module.exports.TwoCrowsNode = nativeBinding.TwoCrowsNode
 module.exports.TypicalPrice = nativeBinding.TypicalPrice
-module.exports.TypicalPriceNode = nativeBinding.TypicalPriceNode
 module.exports.UlcerIndex = nativeBinding.UlcerIndex
-module.exports.UlcerIndexNode = nativeBinding.UlcerIndexNode
 module.exports.UltimateOscillator = nativeBinding.UltimateOscillator
-module.exports.UltimateOscillatorNode = nativeBinding.UltimateOscillatorNode
 module.exports.UniqueThreeRiver = nativeBinding.UniqueThreeRiver
-module.exports.UniqueThreeRiverNode = nativeBinding.UniqueThreeRiverNode
 module.exports.UNIVERSALOSC = nativeBinding.UNIVERSALOSC
-module.exports.UniversalOscillatorNode = nativeBinding.UniversalOscillatorNode
 module.exports.UpDownVolumeRatio = nativeBinding.UpDownVolumeRatio
-module.exports.UpDownVolumeRatioNode = nativeBinding.UpDownVolumeRatioNode
 module.exports.UpsideGapThreeMethods = nativeBinding.UpsideGapThreeMethods
-module.exports.UpsideGapThreeMethodsNode = nativeBinding.UpsideGapThreeMethodsNode
 module.exports.UpsideGapTwoCrows = nativeBinding.UpsideGapTwoCrows
-module.exports.UpsideGapTwoCrowsNode = nativeBinding.UpsideGapTwoCrowsNode
 module.exports.UpsidePotentialRatio = nativeBinding.UpsidePotentialRatio
-module.exports.UpsidePotentialRatioNode = nativeBinding.UpsidePotentialRatioNode
 module.exports.ValueArea = nativeBinding.ValueArea
-module.exports.ValueAreaNode = nativeBinding.ValueAreaNode
 module.exports.ValueAtRisk = nativeBinding.ValueAtRisk
-module.exports.ValueAtRiskNode = nativeBinding.ValueAtRiskNode
 module.exports.Variance = nativeBinding.Variance
-module.exports.VarianceNode = nativeBinding.VarianceNode
 module.exports.VarianceRatio = nativeBinding.VarianceRatio
-module.exports.VarianceRatioNode = nativeBinding.VarianceRatioNode
 module.exports.VerticalHorizontalFilter = nativeBinding.VerticalHorizontalFilter
-module.exports.VerticalHorizontalFilterNode = nativeBinding.VerticalHorizontalFilterNode
 module.exports.VIDYA = nativeBinding.VIDYA
-module.exports.VidyaNode = nativeBinding.VidyaNode
 module.exports.VolatilityCone = nativeBinding.VolatilityCone
-module.exports.VolatilityConeNode = nativeBinding.VolatilityConeNode
 module.exports.VolatilityOfVolatility = nativeBinding.VolatilityOfVolatility
-module.exports.VolatilityOfVolatilityNode = nativeBinding.VolatilityOfVolatilityNode
 module.exports.VolatilityRatio = nativeBinding.VolatilityRatio
-module.exports.VolatilityRatioNode = nativeBinding.VolatilityRatioNode
 module.exports.VoltyStop = nativeBinding.VoltyStop
-module.exports.VoltyStopNode = nativeBinding.VoltyStopNode
 module.exports.VolumeBars = nativeBinding.VolumeBars
-module.exports.VolumeBarsNode = nativeBinding.VolumeBarsNode
 module.exports.VolumeByTimeProfile = nativeBinding.VolumeByTimeProfile
-module.exports.VolumeByTimeProfileNode = nativeBinding.VolumeByTimeProfileNode
 module.exports.VolumeOscillator = nativeBinding.VolumeOscillator
-module.exports.VolumeOscillatorNode = nativeBinding.VolumeOscillatorNode
 module.exports.VolumePriceTrend = nativeBinding.VolumePriceTrend
-module.exports.VolumePriceTrendNode = nativeBinding.VolumePriceTrendNode
 module.exports.VolumeProfile = nativeBinding.VolumeProfile
-module.exports.VolumeProfileNode = nativeBinding.VolumeProfileNode
 module.exports.VolumeRsi = nativeBinding.VolumeRsi
-module.exports.VolumeRsiNode = nativeBinding.VolumeRsiNode
 module.exports.VolumeWeightedMacd = nativeBinding.VolumeWeightedMacd
-module.exports.VolumeWeightedMacdNode = nativeBinding.VolumeWeightedMacdNode
 module.exports.VolumeWeightedSr = nativeBinding.VolumeWeightedSr
-module.exports.VolumeWeightedSrNode = nativeBinding.VolumeWeightedSrNode
 module.exports.Vortex = nativeBinding.Vortex
-module.exports.VortexNode = nativeBinding.VortexNode
 module.exports.Vpin = nativeBinding.Vpin
-module.exports.VpinNode = nativeBinding.VpinNode
 module.exports.VWAP = nativeBinding.VWAP
-module.exports.VwapNode = nativeBinding.VwapNode
 module.exports.VwapStdDevBands = nativeBinding.VwapStdDevBands
-module.exports.VwapStdDevBandsNode = nativeBinding.VwapStdDevBandsNode
 module.exports.VWMA = nativeBinding.VWMA
-module.exports.VwmaNode = nativeBinding.VwmaNode
 module.exports.VZO = nativeBinding.VZO
-module.exports.VzoNode = nativeBinding.VzoNode
 module.exports.Wad = nativeBinding.Wad
-module.exports.WadNode = nativeBinding.WadNode
 module.exports.WAVE_PM = nativeBinding.WAVE_PM
-module.exports.WavePmNode = nativeBinding.WavePmNode
 module.exports.WaveTrend = nativeBinding.WaveTrend
-module.exports.WaveTrendNode = nativeBinding.WaveTrendNode
 module.exports.Wedge = nativeBinding.Wedge
-module.exports.WedgeNode = nativeBinding.WedgeNode
 module.exports.WeightedClose = nativeBinding.WeightedClose
-module.exports.WeightedCloseNode = nativeBinding.WeightedCloseNode
 module.exports.WickRatio = nativeBinding.WickRatio
-module.exports.WickRatioNode = nativeBinding.WickRatioNode
 module.exports.WilliamsFractals = nativeBinding.WilliamsFractals
-module.exports.WilliamsFractalsNode = nativeBinding.WilliamsFractalsNode
 module.exports.WilliamsR = nativeBinding.WilliamsR
-module.exports.WilliamsRNode = nativeBinding.WilliamsRNode
 module.exports.WinRate = nativeBinding.WinRate
-module.exports.WinRateNode = nativeBinding.WinRateNode
 module.exports.WMA = nativeBinding.WMA
-module.exports.WmaNode = nativeBinding.WmaNode
 module.exports.WoodiePivots = nativeBinding.WoodiePivots
-module.exports.WoodiePivotsNode = nativeBinding.WoodiePivotsNode
 module.exports.YangZhangVolatility = nativeBinding.YangZhangVolatility
-module.exports.YangZhangVolatilityNode = nativeBinding.YangZhangVolatilityNode
 module.exports.YoyoExit = nativeBinding.YoyoExit
-module.exports.YoyoExitNode = nativeBinding.YoyoExitNode
 module.exports.ZeroLagMACD = nativeBinding.ZeroLagMACD
-module.exports.ZeroLagMacdNode = nativeBinding.ZeroLagMacdNode
 module.exports.ZigZag = nativeBinding.ZigZag
-module.exports.ZigZagNode = nativeBinding.ZigZagNode
 module.exports.ZLEMA = nativeBinding.ZLEMA
-module.exports.ZlemaNode = nativeBinding.ZlemaNode
 module.exports.ZScore = nativeBinding.ZScore
-module.exports.ZScoreNode = nativeBinding.ZScoreNode
 module.exports.fetchBinanceKlines = nativeBinding.fetchBinanceKlines
 module.exports.version = nativeBinding.version

@@ -62,7 +62,10 @@ python -m pytest -q
 ```bash
 cd bindings/node
 npm install
-npx napi build --platform --release
+# `npm run build` is `napi build` plus the prune step that removes the
+# type-only re-exports NAPI-RS emits as runtime values; run it rather than
+# `napi build` on its own, or `completeness.test.js` will fail.
+npm run build
 node --test __tests__/
 ```
 

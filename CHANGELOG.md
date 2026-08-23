@@ -569,6 +569,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **The Go binding's copy of the C header was stale.** `bindings/go/include/`
   carries a committed copy that CI diffs against `bindings/c/include/`, and the
   resampler change updated only the latter. Both are in sync again.
+- **Half of what the Node package exported was `undefined`.** NAPI-RS emits a
+  TypeScript alias for the Rust name of any class that sets a `js_name`
+  (`export type SmaNode = SMA`), and then re-exports that alias as a runtime
+  value as well. The native module only registers the `js_name`, so 518 of the
+  package's 1038 exports resolved to `undefined`. They are pruned after the
+  build, driven off the type aliases the generator itself declares; the names
+  remain importable as types. The package now exports 520 names, all defined.
+- **The generated loader was two releases stale.** `index.js` is a committed,
+  published artifact, and it pinned `0.9.7` in all 26 of its per-platform
+  version checks — so `NAPI_RS_ENFORCE_VERSION_CHECK` would have rejected a
+  correctly matched platform package. Regenerated, and a test now compares the
+  pinned version against `package.json`.
+- **The Node type definitions declare `Count`.** Validating the integer
+  parameters gave them a Rust newtype, which the generator writes into
+  `index.d.ts` verbatim — 435 references to a type nothing declared, which
+  would have broken every TypeScript consumer as soon as the loader was
+  regenerated. It is declared as `number`, with the boundary check documented.
+- **The Node completeness test asserts the catalogue exactly.** It accepted
+  `>= 200` classes while claiming 214 in a comment and the real figure was 504,
+  so a partial native build that dropped half the catalogue still passed. It
+  now asserts 504, that no export is `undefined`, and that the classes in
+  `index.d.ts` and in the native module are the same 518.
+
 
 
 

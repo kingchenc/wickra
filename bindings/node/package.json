@@ -31,6 +31,7 @@
   ],
   "napi": {
     "name": "wickra",
+    "dtsHeaderFile": "dts-header.d.ts",
     "triples": {
       "defaults": false,
       "additional": [
@@ -55,8 +56,8 @@
     "wickra-win32-arm64-msvc": "0.9.9"
   },
   "scripts": {
-    "build": "napi build --platform --release",
-    "build:debug": "napi build --platform",
+    "build": "napi build --platform --release && node scripts/prune-type-only-exports.mjs",
+    "build:debug": "napi build --platform && node scripts/prune-type-only-exports.mjs",
     "artifacts": "napi artifacts",
     "universal": "napi universal",
     "version": "napi version",

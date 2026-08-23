@@ -6,6 +6,8 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const { readFileSync } = require('node:fs');
+const { join } = require('node:path');
 const wickra = require('..');
 
 // Bar builders (Renko / Kagi / Point & Figure) implement the `BarBuilder`
@@ -49,13 +51,67 @@ function indicatorClasses() {
   });
 }
 
+// The catalogue is a deliberate number, so assert it exactly: a `>=` bound
+// passes just as happily when a partial native build drops a hundred classes.
+// Adding an indicator means bumping this, which is the point.
+const INDICATOR_CLASS_COUNT = 504;
+
 test('the binding exports the full indicator catalogue', () => {
   const names = indicatorClasses();
-  // The published catalogue is 214 indicators. Guard against a regression that
-  // silently drops exported classes (e.g. a stale or partial native build).
-  assert.ok(
-    names.length >= 200,
-    `expected at least 200 indicator classes, got ${names.length}`,
+  assert.equal(
+    names.length,
+    INDICATOR_CLASS_COUNT,
+    `expected ${INDICATOR_CLASS_COUNT} indicator classes, got ${names.length}` +
+      ' — if an indicator was added or removed, update INDICATOR_CLASS_COUNT',
+  );
+});
+
+test('no export resolves to undefined', () => {
+  // NAPI-RS re-exports its TypeScript-only aliases as runtime values. The
+  // native module never registers those names, so `module.exports.SmaNode`
+  // was `undefined` — 518 of 1038 exports. `npm run build` prunes them
+  // (scripts/prune-type-only-exports.mjs); this is what notices if a build
+  // skipped that step, or if the generator grows a new way to export nothing.
+  const dead = Object.keys(wickra).filter((name) => wickra[name] === undefined);
+  assert.deepEqual(dead, [], `exports resolving to undefined: ${dead.join(', ')}`);
+});
+
+test('index.d.ts and the native module declare the same classes', () => {
+  const dts = readFileSync(join(__dirname, '..', 'index.d.ts'), 'utf8');
+  const declared = [...dts.matchAll(/^export declare class ([A-Za-z0-9_$]+)/gm)]
+    .map((match) => match[1])
+    .sort();
+  // A runtime class is an exported constructor carrying prototype methods;
+  // `version` and `fetchBinanceKlines` are plain functions and are declared as
+  // such.
+  const runtime = Object.keys(wickra)
+    .filter((name) => {
+      const value = wickra[name];
+      return (
+        typeof value === 'function' &&
+        value.prototype &&
+        Object.getOwnPropertyNames(value.prototype).length > 1
+      );
+    })
+    .sort();
+  assert.deepEqual(runtime, declared);
+});
+
+test('the committed loader was generated at the current package version', () => {
+  // `index.js` hard-codes the version each per-platform binding must report.
+  // It is a generated file that is committed and published as-is, so it goes
+  // stale silently: it sat at 0.9.7 through two releases, which would have
+  // rejected every correctly matched platform package under
+  // NAPI_RS_ENFORCE_VERSION_CHECK.
+  const { version } = require('../package.json');
+  const js = readFileSync(join(__dirname, '..', 'index.js'), 'utf8');
+  const pinned = [...js.matchAll(/bindingPackageVersion !== '([^']+)'/g)].map((m) => m[1]);
+  assert.ok(pinned.length > 0, 'expected index.js to pin a binding version');
+  assert.deepEqual(
+    [...new Set(pinned)],
+    [version],
+    `index.js pins ${[...new Set(pinned)].join(', ')} but package.json is ${version}` +
+      ' — regenerate with `npm run build` and commit index.js',
   );
 });
 

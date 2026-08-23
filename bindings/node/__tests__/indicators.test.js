@@ -870,9 +870,13 @@ test('HurstExponent of a monotone ramp is above 0.5', () => {
   assert.ok(out[out.length - 1] > 0.5);
 });
 
-test('Ichimoku classic warmup is 77 and tenkan emits at bar 9', () => {
+test('Ichimoku emits from the first bar and tenkan fills in at bar 9', () => {
   const ichi = new wickra.Ichimoku(9, 26, 52, 26);
-  assert.equal(ichi.warmupPeriod(), 77);
+  // A row is emitted from the first bar -- every component is optional and
+  // they fill in as history allows -- so the declared warmup is 1. The 77 bars
+  // the classic (9, 26, 52, 26) configuration needs are when the LAST component
+  // arrives, which is a different question from when a value first appears.
+  assert.equal(ichi.warmupPeriod(), 1);
   const n = 30;
   const h = Array.from({ length: n }, (_, i) => 100 + i + 2);
   const l = Array.from({ length: n }, (_, i) => 100 + i - 2);

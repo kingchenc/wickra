@@ -63,7 +63,7 @@ cross-library ratio (the same Rust core runs under every binding) — see the
 repository [BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
 
 ```bash
-npx napi build --platform --release
+npm run build
 node benchmarks/throughput.js
 ```
 

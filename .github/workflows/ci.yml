@@ -656,6 +656,14 @@ jobs:
         # exist yet for win32-x64-msvc).
         run: npx napi build --platform --release
 
+      # NAPI-RS re-exports its TypeScript-only aliases as runtime values, which
+      # resolve to `undefined` (see scripts/prune-type-only-exports.mjs). The
+      # committed `index.js` has them removed, so the freshly generated one has
+      # to be pruned the same way or `completeness.test.js` fails here.
+      - name: Prune type-only re-exports from the generated loader
+        working-directory: bindings/node
+        run: node scripts/prune-type-only-exports.mjs
+
       # The Node test process has wedged on macOS runners (the step hung for
       # 1h+ while the same tests passed in ~1.5 min elsewhere). Wrap it so a
       # hung attempt is killed after 6 min and retried once, rather than
