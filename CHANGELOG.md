@@ -657,6 +657,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cross-section, order-book, bar-builder and profile families — were unreachable
   from those two for the same reason. All three generated bindings now expose a
   batch for every one of the 514 indicators.
+- **A batch row the indicator did not produce is `NaN` in every field.** It was
+  `NaN` only in the floating-point ones, which left two gaps: the single
+  multi-output struct carrying an integer (`LeadLagCrossCorrelation`'s lag) read
+  back as `0` during warmup, and the profile batches left their scalar fields
+  untouched, so those read back as zeros too. Integers surface as `f64` in the C
+  output structs now, so the whole row can say "no value".
+- **The Go golden suite drives `batch` as well as `update`.** All 514 indicators
+  are replayed through both against the same fixtures; the suite had only ever
+  exercised the streaming path, which is how the warmup gaps above survived.
 - **R gained the multi-output batch.** `batch()` was wired only for the scalar
   indicators, so 158 of the 514 had a native batch R could not call. The
   multi-output ones come back as an `n x k` matrix with the field names as

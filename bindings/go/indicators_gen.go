@@ -414,7 +414,7 @@ type KstOutput struct {
 
 // LeadLagCrossCorrelationOutput is the output of the LeadLagCrossCorrelation indicator.
 type LeadLagCrossCorrelationOutput struct {
-	Lag         int64
+	Lag         float64
 	Correlation float64
 }
 
@@ -23163,7 +23163,7 @@ func (ind *LeadLagCrossCorrelation) Update(x float64, y float64) (LeadLagCrossCo
 	if !ok {
 		return LeadLagCrossCorrelationOutput{}, false
 	}
-	return LeadLagCrossCorrelationOutput{int64(out.lag), float64(out.correlation)}, true
+	return LeadLagCrossCorrelationOutput{float64(out.lag), float64(out.correlation)}, true
 }
 
 // Batch runs the indicator over whole slices in one FFI call and returns
@@ -23184,7 +23184,7 @@ func (ind *LeadLagCrossCorrelation) Batch(x []float64, y []float64) []LeadLagCro
 	runtime.KeepAlive(x)
 	runtime.KeepAlive(y)
 	for i := range buf {
-		out[i] = LeadLagCrossCorrelationOutput{int64(buf[i].lag), float64(buf[i].correlation)}
+		out[i] = LeadLagCrossCorrelationOutput{float64(buf[i].lag), float64(buf[i].correlation)}
 	}
 	return out
 }

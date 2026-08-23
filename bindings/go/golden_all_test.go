@@ -183,6 +183,165 @@ func obLists(r []float64) ([]float64, []float64, []float64, []float64) {
 	return bidPx, bidSz, askPx, askSz
 }
 
+// The per-bar universe and book depth gen_golden uses; the batch entry points
+// take them flat, so the stride has to be stated.
+const (
+	crossMembers = 5
+	obDepth      = 5
+)
+
+type goldenCols struct {
+	open, high, low, close, volume []float64
+	mid, ones                      []float64
+	isBuy                          []bool
+	index, zeroTs                  []int64
+}
+
+// goldenColumns lifts the shared input to the column form the batch entry points
+// take. The values match what the streaming pass feeds row by row -- including
+// the constants the bar archetypes use (volume 1.0, timestamp 0).
+func goldenColumns(rows [][]float64) goldenCols {
+	n := len(rows)
+	c := goldenCols{
+		open: make([]float64, n), high: make([]float64, n), low: make([]float64, n),
+		close: make([]float64, n), volume: make([]float64, n), mid: make([]float64, n),
+		ones:  make([]float64, n),
+		isBuy: make([]bool, n), index: make([]int64, n), zeroTs: make([]int64, n),
+	}
+	for i, r := range rows {
+		c.open[i], c.high[i], c.low[i], c.close[i], c.volume[i] = r[0], r[1], r[2], r[3], r[4]
+		c.mid[i] = (r[1] + r[2]) / 2
+		c.ones[i] = 1.0
+		c.isBuy[i] = r[3] >= r[0]
+		c.index[i] = int64(i)
+	}
+	return c
+}
+
+func derivColumns(rows [][]float64) [11][]float64 {
+	var cols [11][]float64
+	for k := range cols {
+		cols[k] = make([]float64, len(rows))
+	}
+	for i, r := range rows {
+		d := derivFields(r)
+		for k := range cols {
+			cols[k][i] = d[k]
+		}
+	}
+	return cols
+}
+
+type crossCols struct {
+	change, volume                  []float64
+	newHigh, newLow, aboveMa, onBuy []bool
+}
+
+// crossColumns flattens the per-bar member arrays: bar i occupies
+// [i*crossMembers, (i+1)*crossMembers).
+func crossColumns(rows [][]float64) crossCols {
+	n := len(rows) * crossMembers
+	c := crossCols{
+		change: make([]float64, n), volume: make([]float64, n),
+		newHigh: make([]bool, n), newLow: make([]bool, n),
+		aboveMa: make([]bool, n), onBuy: make([]bool, n),
+	}
+	for i, r := range rows {
+		ch, vo, nh, nl, am, ob := crossLists(r)
+		copy(c.change[i*crossMembers:], ch)
+		copy(c.volume[i*crossMembers:], vo)
+		copy(c.newHigh[i*crossMembers:], nh)
+		copy(c.newLow[i*crossMembers:], nl)
+		copy(c.aboveMa[i*crossMembers:], am)
+		copy(c.onBuy[i*crossMembers:], ob)
+	}
+	return c
+}
+
+type obCols struct {
+	bidPx, bidSz, askPx, askSz []float64
+}
+
+func obColumns(rows [][]float64) obCols {
+	n := len(rows) * obDepth
+	c := obCols{
+		bidPx: make([]float64, n), bidSz: make([]float64, n),
+		askPx: make([]float64, n), askSz: make([]float64, n),
+	}
+	for i, r := range rows {
+		bp, bs, ap, as := obLists(r)
+		copy(c.bidPx[i*obDepth:], bp)
+		copy(c.bidSz[i*obDepth:], bs)
+		copy(c.askPx[i*obDepth:], ap)
+		copy(c.askSz[i*obDepth:], as)
+	}
+	return c
+}
+
+func scalarRows(values []float64) [][]float64 {
+	rows := make([][]float64, len(values))
+	for i, v := range values {
+		rows[i] = []float64{v}
+	}
+	return rows
+}
+
+// structRows flattens one output struct per bar. A row the indicator did not
+// produce already carries NaN in every field, so there is no ok flag to consult.
+func structRows(out any, width int) [][]float64 {
+	v := reflect.ValueOf(out)
+	rows := make([][]float64, v.Len())
+	for i := 0; i < v.Len(); i++ {
+		row := make([]float64, 0, width)
+		elem := v.Index(i)
+		for k := 0; k < elem.NumField(); k++ {
+			row = appendField(row, elem.Field(k))
+		}
+		rows[i] = row
+	}
+	return rows
+}
+
+// compareGoldenFlat checks a single concatenated run against every fixture cell
+// in order, for the bar builders whose batch cannot be split back into rows.
+func compareGoldenFlat(t *testing.T, name string, got []float64) {
+	t.Helper()
+	exp := readGoldenRaw(t, "g_"+name)
+	var want []float64
+	for _, row := range exp {
+		for _, cell := range row {
+			want = append(want, goldenCell(cell))
+		}
+	}
+	if len(want) != len(got) {
+		t.Fatalf("%s: %d fixture values vs %d batched", name, len(want), len(got))
+	}
+	tol := goldenTolFor(name)
+	for i := range want {
+		if math.Abs(got[i]-want[i]) > tol*math.Max(1.0, math.Abs(want[i])) {
+			t.Fatalf("%s value %d: got %v want %v", name, i, got[i], want[i])
+		}
+	}
+}
+
+// compareGoldenLastRow is for Footprint, which reports the whole book after each
+// trade: the batch holds the final snapshot, which is the fixture's last row.
+func compareGoldenLastRow(t *testing.T, name string, got []float64) {
+	t.Helper()
+	exp := readGoldenRaw(t, "g_"+name)
+	last := exp[len(exp)-1]
+	if len(last) != len(got) {
+		t.Fatalf("%s: final row has %d values, batch produced %d", name, len(last), len(got))
+	}
+	tol := goldenTolFor(name)
+	for i := range last {
+		want := goldenCell(last[i])
+		if math.Abs(got[i]-want) > tol*math.Max(1.0, math.Abs(want)) {
+			t.Fatalf("%s final value %d: got %v want %v", name, i, got[i], want)
+		}
+	}
+}
+
 func compareGolden(t *testing.T, name string, got [][]float64) {
 	t.Helper()
 	exp := readGoldenRaw(t, "g_"+name)
@@ -7566,6 +7725,5185 @@ func TestGoldenAll(t *testing.T) {
 		for i, r := range rows {
 			got[i] = []float64{ind.Update(r[3])}
 		}
+		compareGolden(t, "Zlema", got)
+	})
+}
+
+// TestGoldenAllBatch drives the same series through Batch. The streaming pass
+// above is the only thing the golden suite used to exercise, so a batch that
+// disagreed with it went unnoticed.
+func TestGoldenAllBatch(t *testing.T) {
+	rows := goldenInput(t)
+	t.Run("AbandonedBaby", func(t *testing.T) {
+		ind, err := NewAbandonedBaby()
+		if err != nil {
+			t.Fatalf("construct AbandonedBaby: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AbandonedBaby", got)
+	})
+	t.Run("Abcd", func(t *testing.T) {
+		ind, err := NewAbcd()
+		if err != nil {
+			t.Fatalf("construct Abcd: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Abcd", got)
+	})
+	t.Run("AbsoluteBreadthIndex", func(t *testing.T) {
+		ind, err := NewAbsoluteBreadthIndex()
+		if err != nil {
+			t.Fatalf("construct AbsoluteBreadthIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "AbsoluteBreadthIndex", got)
+	})
+	t.Run("AccelerationBands", func(t *testing.T) {
+		ind, err := NewAccelerationBands(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct AccelerationBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "AccelerationBands", got)
+	})
+	t.Run("AcceleratorOscillator", func(t *testing.T) {
+		ind, err := NewAcceleratorOscillator(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct AcceleratorOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AcceleratorOscillator", got)
+	})
+	t.Run("AdOscillator", func(t *testing.T) {
+		ind, err := NewAdOscillator()
+		if err != nil {
+			t.Fatalf("construct AdOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AdOscillator", got)
+	})
+	t.Run("AdVolumeLine", func(t *testing.T) {
+		ind, err := NewAdVolumeLine()
+		if err != nil {
+			t.Fatalf("construct AdVolumeLine: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "AdVolumeLine", got)
+	})
+	t.Run("AdaptiveCci", func(t *testing.T) {
+		ind, err := NewAdaptiveCci(14.0)
+		if err != nil {
+			t.Fatalf("construct AdaptiveCci: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AdaptiveCci", got)
+	})
+	t.Run("AdaptiveCycle", func(t *testing.T) {
+		ind, err := NewAdaptiveCycle()
+		if err != nil {
+			t.Fatalf("construct AdaptiveCycle: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "AdaptiveCycle", got)
+	})
+	t.Run("AdaptiveLaguerreFilter", func(t *testing.T) {
+		ind, err := NewAdaptiveLaguerreFilter(20.0)
+		if err != nil {
+			t.Fatalf("construct AdaptiveLaguerreFilter: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "AdaptiveLaguerreFilter", got)
+	})
+	t.Run("AdaptiveRsi", func(t *testing.T) {
+		ind, err := NewAdaptiveRsi(14.0)
+		if err != nil {
+			t.Fatalf("construct AdaptiveRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "AdaptiveRsi", got)
+	})
+	t.Run("Adl", func(t *testing.T) {
+		ind, err := NewAdl()
+		if err != nil {
+			t.Fatalf("construct Adl: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Adl", got)
+	})
+	t.Run("AdvanceBlock", func(t *testing.T) {
+		ind, err := NewAdvanceBlock()
+		if err != nil {
+			t.Fatalf("construct AdvanceBlock: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AdvanceBlock", got)
+	})
+	t.Run("AdvanceDecline", func(t *testing.T) {
+		ind, err := NewAdvanceDecline()
+		if err != nil {
+			t.Fatalf("construct AdvanceDecline: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "AdvanceDecline", got)
+	})
+	t.Run("AdvanceDeclineRatio", func(t *testing.T) {
+		ind, err := NewAdvanceDeclineRatio()
+		if err != nil {
+			t.Fatalf("construct AdvanceDeclineRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "AdvanceDeclineRatio", got)
+	})
+	t.Run("Adx", func(t *testing.T) {
+		ind, err := NewAdx(14.0)
+		if err != nil {
+			t.Fatalf("construct Adx: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "Adx", got)
+	})
+	t.Run("Adxr", func(t *testing.T) {
+		ind, err := NewAdxr(14.0)
+		if err != nil {
+			t.Fatalf("construct Adxr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Adxr", got)
+	})
+	t.Run("Alligator", func(t *testing.T) {
+		ind, err := NewAlligator(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct Alligator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "Alligator", got)
+	})
+	t.Run("Alma", func(t *testing.T) {
+		ind, err := NewAlma(9.0, 0.85, 6.0)
+		if err != nil {
+			t.Fatalf("construct Alma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Alma", got)
+	})
+	t.Run("Alpha", func(t *testing.T) {
+		ind, err := NewAlpha(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct Alpha: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "Alpha", got)
+	})
+	t.Run("AmihudIlliquidity", func(t *testing.T) {
+		ind, err := NewAmihudIlliquidity(20.0)
+		if err != nil {
+			t.Fatalf("construct AmihudIlliquidity: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "AmihudIlliquidity", got)
+	})
+	t.Run("AnchoredRsi", func(t *testing.T) {
+		ind, err := NewAnchoredRsi()
+		if err != nil {
+			t.Fatalf("construct AnchoredRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "AnchoredRsi", got)
+	})
+	t.Run("AnchoredVwap", func(t *testing.T) {
+		ind, err := NewAnchoredVwap()
+		if err != nil {
+			t.Fatalf("construct AnchoredVwap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AnchoredVwap", got)
+	})
+	t.Run("AndrewsPitchfork", func(t *testing.T) {
+		ind, err := NewAndrewsPitchfork(14.0)
+		if err != nil {
+			t.Fatalf("construct AndrewsPitchfork: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "AndrewsPitchfork", got)
+	})
+	t.Run("Apo", func(t *testing.T) {
+		ind, err := NewApo(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Apo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Apo", got)
+	})
+	t.Run("Aroon", func(t *testing.T) {
+		ind, err := NewAroon(14.0)
+		if err != nil {
+			t.Fatalf("construct Aroon: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "Aroon", got)
+	})
+	t.Run("AroonOscillator", func(t *testing.T) {
+		ind, err := NewAroonOscillator(14.0)
+		if err != nil {
+			t.Fatalf("construct AroonOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AroonOscillator", got)
+	})
+	t.Run("Atr", func(t *testing.T) {
+		ind, err := NewAtr(14.0)
+		if err != nil {
+			t.Fatalf("construct Atr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Atr", got)
+	})
+	t.Run("AtrBands", func(t *testing.T) {
+		ind, err := NewAtrBands(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct AtrBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "AtrBands", got)
+	})
+	t.Run("AtrRatchet", func(t *testing.T) {
+		ind, err := NewAtrRatchet(14.0, 2.0, 0.5)
+		if err != nil {
+			t.Fatalf("construct AtrRatchet: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "AtrRatchet", got)
+	})
+	t.Run("AtrTrailingStop", func(t *testing.T) {
+		ind, err := NewAtrTrailingStop(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct AtrTrailingStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AtrTrailingStop", got)
+	})
+	t.Run("AutoFib", func(t *testing.T) {
+		ind, err := NewAutoFib()
+		if err != nil {
+			t.Fatalf("construct AutoFib: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 7)
+		compareGolden(t, "AutoFib", got)
+	})
+	t.Run("Autocorrelation", func(t *testing.T) {
+		ind, err := NewAutocorrelation(10.0, 1.0)
+		if err != nil {
+			t.Fatalf("construct Autocorrelation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Autocorrelation", got)
+	})
+	t.Run("AutocorrelationPeriodogram", func(t *testing.T) {
+		ind, err := NewAutocorrelationPeriodogram(10.0, 48.0)
+		if err != nil {
+			t.Fatalf("construct AutocorrelationPeriodogram: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "AutocorrelationPeriodogram", got)
+	})
+	t.Run("AverageDailyRange", func(t *testing.T) {
+		ind, err := NewAverageDailyRange(14.0, 0.0)
+		if err != nil {
+			t.Fatalf("construct AverageDailyRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AverageDailyRange", got)
+	})
+	t.Run("AverageDrawdown", func(t *testing.T) {
+		ind, err := NewAverageDrawdown(14.0)
+		if err != nil {
+			t.Fatalf("construct AverageDrawdown: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "AverageDrawdown", got)
+	})
+	t.Run("AvgPrice", func(t *testing.T) {
+		ind, err := NewAvgPrice()
+		if err != nil {
+			t.Fatalf("construct AvgPrice: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AvgPrice", got)
+	})
+	t.Run("AwesomeOscillator", func(t *testing.T) {
+		ind, err := NewAwesomeOscillator(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct AwesomeOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AwesomeOscillator", got)
+	})
+	t.Run("AwesomeOscillatorHistogram", func(t *testing.T) {
+		ind, err := NewAwesomeOscillatorHistogram(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct AwesomeOscillatorHistogram: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "AwesomeOscillatorHistogram", got)
+	})
+	t.Run("BalanceOfPower", func(t *testing.T) {
+		ind, err := NewBalanceOfPower()
+		if err != nil {
+			t.Fatalf("construct BalanceOfPower: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "BalanceOfPower", got)
+	})
+	t.Run("BandpassFilter", func(t *testing.T) {
+		ind, err := NewBandpassFilter(20.0, 0.3)
+		if err != nil {
+			t.Fatalf("construct BandpassFilter: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "BandpassFilter", got)
+	})
+	t.Run("Bat", func(t *testing.T) {
+		ind, err := NewBat()
+		if err != nil {
+			t.Fatalf("construct Bat: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Bat", got)
+	})
+	t.Run("BeltHold", func(t *testing.T) {
+		ind, err := NewBeltHold()
+		if err != nil {
+			t.Fatalf("construct BeltHold: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "BeltHold", got)
+	})
+	t.Run("Beta", func(t *testing.T) {
+		ind, err := NewBeta(14.0)
+		if err != nil {
+			t.Fatalf("construct Beta: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "Beta", got)
+	})
+	t.Run("BetaNeutralSpread", func(t *testing.T) {
+		ind, err := NewBetaNeutralSpread(14.0)
+		if err != nil {
+			t.Fatalf("construct BetaNeutralSpread: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "BetaNeutralSpread", got)
+	})
+	t.Run("BetterVolume", func(t *testing.T) {
+		ind, err := NewBetterVolume(14.0)
+		if err != nil {
+			t.Fatalf("construct BetterVolume: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "BetterVolume", got)
+	})
+	t.Run("BipowerVariation", func(t *testing.T) {
+		ind, err := NewBipowerVariation(14.0)
+		if err != nil {
+			t.Fatalf("construct BipowerVariation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "BipowerVariation", got)
+	})
+	t.Run("BodySizePct", func(t *testing.T) {
+		ind, err := NewBodySizePct()
+		if err != nil {
+			t.Fatalf("construct BodySizePct: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "BodySizePct", got)
+	})
+	t.Run("BollingerBands", func(t *testing.T) {
+		ind, err := NewBollingerBands(20.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct BollingerBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 4)
+		compareGolden(t, "BollingerBands", got)
+	})
+	t.Run("BollingerBandwidth", func(t *testing.T) {
+		ind, err := NewBollingerBandwidth(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct BollingerBandwidth: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "BollingerBandwidth", got)
+	})
+	t.Run("BomarBands", func(t *testing.T) {
+		ind, err := NewBomarBands(4.0, 0.85)
+		if err != nil {
+			t.Fatalf("construct BomarBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "BomarBands", got)
+	})
+	t.Run("BreadthThrust", func(t *testing.T) {
+		ind, err := NewBreadthThrust(10.0)
+		if err != nil {
+			t.Fatalf("construct BreadthThrust: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "BreadthThrust", got)
+	})
+	t.Run("Breakaway", func(t *testing.T) {
+		ind, err := NewBreakaway()
+		if err != nil {
+			t.Fatalf("construct Breakaway: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Breakaway", got)
+	})
+	t.Run("BullishPercentIndex", func(t *testing.T) {
+		ind, err := NewBullishPercentIndex()
+		if err != nil {
+			t.Fatalf("construct BullishPercentIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "BullishPercentIndex", got)
+	})
+	t.Run("BurkeRatio", func(t *testing.T) {
+		ind, err := NewBurkeRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct BurkeRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "BurkeRatio", got)
+	})
+	t.Run("Butterfly", func(t *testing.T) {
+		ind, err := NewButterfly()
+		if err != nil {
+			t.Fatalf("construct Butterfly: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Butterfly", got)
+	})
+	t.Run("CalendarSpread", func(t *testing.T) {
+		ind, err := NewCalendarSpread()
+		if err != nil {
+			t.Fatalf("construct CalendarSpread: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "CalendarSpread", got)
+	})
+	t.Run("CalmarRatio", func(t *testing.T) {
+		ind, err := NewCalmarRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct CalmarRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "CalmarRatio", got)
+	})
+	t.Run("Camarilla", func(t *testing.T) {
+		ind, err := NewCamarilla()
+		if err != nil {
+			t.Fatalf("construct Camarilla: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 9)
+		compareGolden(t, "Camarilla", got)
+	})
+	t.Run("CandleVolume", func(t *testing.T) {
+		ind, err := NewCandleVolume(14.0)
+		if err != nil {
+			t.Fatalf("construct CandleVolume: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "CandleVolume", got)
+	})
+	t.Run("Cci", func(t *testing.T) {
+		ind, err := NewCci(14.0)
+		if err != nil {
+			t.Fatalf("construct Cci: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Cci", got)
+	})
+	t.Run("CenterOfGravity", func(t *testing.T) {
+		ind, err := NewCenterOfGravity(14.0)
+		if err != nil {
+			t.Fatalf("construct CenterOfGravity: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "CenterOfGravity", got)
+	})
+	t.Run("CentralPivotRange", func(t *testing.T) {
+		ind, err := NewCentralPivotRange()
+		if err != nil {
+			t.Fatalf("construct CentralPivotRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "CentralPivotRange", got)
+	})
+	t.Run("Cfo", func(t *testing.T) {
+		ind, err := NewCfo(14.0)
+		if err != nil {
+			t.Fatalf("construct Cfo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Cfo", got)
+	})
+	t.Run("ChaikinMoneyFlow", func(t *testing.T) {
+		ind, err := NewChaikinMoneyFlow(20.0)
+		if err != nil {
+			t.Fatalf("construct ChaikinMoneyFlow: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ChaikinMoneyFlow", got)
+	})
+	t.Run("ChaikinOscillator", func(t *testing.T) {
+		ind, err := NewChaikinOscillator(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct ChaikinOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ChaikinOscillator", got)
+	})
+	t.Run("ChaikinVolatility", func(t *testing.T) {
+		ind, err := NewChaikinVolatility(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct ChaikinVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ChaikinVolatility", got)
+	})
+	t.Run("ChandeKrollStop", func(t *testing.T) {
+		ind, err := NewChandeKrollStop(3.0, 2.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct ChandeKrollStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "ChandeKrollStop", got)
+	})
+	t.Run("ChandelierExit", func(t *testing.T) {
+		ind, err := NewChandelierExit(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct ChandelierExit: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "ChandelierExit", got)
+	})
+	t.Run("ChoppinessIndex", func(t *testing.T) {
+		ind, err := NewChoppinessIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct ChoppinessIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ChoppinessIndex", got)
+	})
+	t.Run("ClassicPivots", func(t *testing.T) {
+		ind, err := NewClassicPivots()
+		if err != nil {
+			t.Fatalf("construct ClassicPivots: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 7)
+		compareGolden(t, "ClassicPivots", got)
+	})
+	t.Run("CloseVsOpen", func(t *testing.T) {
+		ind, err := NewCloseVsOpen()
+		if err != nil {
+			t.Fatalf("construct CloseVsOpen: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "CloseVsOpen", got)
+	})
+	t.Run("ClosingMarubozu", func(t *testing.T) {
+		ind, err := NewClosingMarubozu()
+		if err != nil {
+			t.Fatalf("construct ClosingMarubozu: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ClosingMarubozu", got)
+	})
+	t.Run("Cmo", func(t *testing.T) {
+		ind, err := NewCmo(14.0)
+		if err != nil {
+			t.Fatalf("construct Cmo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Cmo", got)
+	})
+	t.Run("CoefficientOfVariation", func(t *testing.T) {
+		ind, err := NewCoefficientOfVariation(14.0)
+		if err != nil {
+			t.Fatalf("construct CoefficientOfVariation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "CoefficientOfVariation", got)
+	})
+	t.Run("Cointegration", func(t *testing.T) {
+		ind, err := NewCointegration(40.0, 1.0)
+		if err != nil {
+			t.Fatalf("construct Cointegration: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close, cols.open), 3)
+		compareGolden(t, "Cointegration", got)
+	})
+	t.Run("CommonSenseRatio", func(t *testing.T) {
+		ind, err := NewCommonSenseRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct CommonSenseRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "CommonSenseRatio", got)
+	})
+	t.Run("CompositeProfile", func(t *testing.T) {
+		ind, err := NewCompositeProfile(20.0, 24.0, 0.7)
+		if err != nil {
+			t.Fatalf("construct CompositeProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "CompositeProfile", got)
+	})
+	t.Run("ConcealingBabySwallow", func(t *testing.T) {
+		ind, err := NewConcealingBabySwallow()
+		if err != nil {
+			t.Fatalf("construct ConcealingBabySwallow: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ConcealingBabySwallow", got)
+	})
+	t.Run("ConditionalValueAtRisk", func(t *testing.T) {
+		ind, err := NewConditionalValueAtRisk(20.0, 0.95)
+		if err != nil {
+			t.Fatalf("construct ConditionalValueAtRisk: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ConditionalValueAtRisk", got)
+	})
+	t.Run("ConnorsRsi", func(t *testing.T) {
+		ind, err := NewConnorsRsi(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct ConnorsRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ConnorsRsi", got)
+	})
+	t.Run("Coppock", func(t *testing.T) {
+		ind, err := NewCoppock(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct Coppock: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Coppock", got)
+	})
+	t.Run("CorrelationTrendIndicator", func(t *testing.T) {
+		ind, err := NewCorrelationTrendIndicator(14.0)
+		if err != nil {
+			t.Fatalf("construct CorrelationTrendIndicator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "CorrelationTrendIndicator", got)
+	})
+	t.Run("Counterattack", func(t *testing.T) {
+		ind, err := NewCounterattack()
+		if err != nil {
+			t.Fatalf("construct Counterattack: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Counterattack", got)
+	})
+	t.Run("Crab", func(t *testing.T) {
+		ind, err := NewCrab()
+		if err != nil {
+			t.Fatalf("construct Crab: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Crab", got)
+	})
+	t.Run("CumulativeVolumeDelta", func(t *testing.T) {
+		ind, err := NewCumulativeVolumeDelta()
+		if err != nil {
+			t.Fatalf("construct CumulativeVolumeDelta: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "CumulativeVolumeDelta", got)
+	})
+	t.Run("CumulativeVolumeIndex", func(t *testing.T) {
+		ind, err := NewCumulativeVolumeIndex()
+		if err != nil {
+			t.Fatalf("construct CumulativeVolumeIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "CumulativeVolumeIndex", got)
+	})
+	t.Run("CupAndHandle", func(t *testing.T) {
+		ind, err := NewCupAndHandle()
+		if err != nil {
+			t.Fatalf("construct CupAndHandle: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "CupAndHandle", got)
+	})
+	t.Run("CyberneticCycle", func(t *testing.T) {
+		ind, err := NewCyberneticCycle(14.0)
+		if err != nil {
+			t.Fatalf("construct CyberneticCycle: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "CyberneticCycle", got)
+	})
+	t.Run("Cypher", func(t *testing.T) {
+		ind, err := NewCypher()
+		if err != nil {
+			t.Fatalf("construct Cypher: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Cypher", got)
+	})
+	t.Run("DayOfWeekProfile", func(t *testing.T) {
+		ind, err := NewDayOfWeekProfile(0.0)
+		if err != nil {
+			t.Fatalf("construct DayOfWeekProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index)
+		compareGolden(t, "DayOfWeekProfile", got)
+	})
+	t.Run("Decycler", func(t *testing.T) {
+		ind, err := NewDecycler(14.0)
+		if err != nil {
+			t.Fatalf("construct Decycler: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Decycler", got)
+	})
+	t.Run("DecyclerOscillator", func(t *testing.T) {
+		ind, err := NewDecyclerOscillator(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct DecyclerOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "DecyclerOscillator", got)
+	})
+	t.Run("Dema", func(t *testing.T) {
+		ind, err := NewDema(14.0)
+		if err != nil {
+			t.Fatalf("construct Dema: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Dema", got)
+	})
+	t.Run("DemandIndex", func(t *testing.T) {
+		ind, err := NewDemandIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct DemandIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "DemandIndex", got)
+	})
+	t.Run("DemarkPivots", func(t *testing.T) {
+		ind, err := NewDemarkPivots()
+		if err != nil {
+			t.Fatalf("construct DemarkPivots: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "DemarkPivots", got)
+	})
+	t.Run("DepthSlope", func(t *testing.T) {
+		ind, err := NewDepthSlope()
+		if err != nil {
+			t.Fatalf("construct DepthSlope: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "DepthSlope", got)
+	})
+	t.Run("DerivativeOscillator", func(t *testing.T) {
+		ind, err := NewDerivativeOscillator(3.0, 7.0, 14.0, 28.0)
+		if err != nil {
+			t.Fatalf("construct DerivativeOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "DerivativeOscillator", got)
+	})
+	t.Run("DetrendedStdDev", func(t *testing.T) {
+		ind, err := NewDetrendedStdDev(14.0)
+		if err != nil {
+			t.Fatalf("construct DetrendedStdDev: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "DetrendedStdDev", got)
+	})
+	t.Run("DisparityIndex", func(t *testing.T) {
+		ind, err := NewDisparityIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct DisparityIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "DisparityIndex", got)
+	})
+	t.Run("DistanceSsd", func(t *testing.T) {
+		ind, err := NewDistanceSsd(14.0)
+		if err != nil {
+			t.Fatalf("construct DistanceSsd: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "DistanceSsd", got)
+	})
+	t.Run("Doji", func(t *testing.T) {
+		ind, err := NewDoji()
+		if err != nil {
+			t.Fatalf("construct Doji: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Doji", got)
+	})
+	t.Run("DojiStar", func(t *testing.T) {
+		ind, err := NewDojiStar()
+		if err != nil {
+			t.Fatalf("construct DojiStar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "DojiStar", got)
+	})
+	t.Run("DollarBars", func(t *testing.T) {
+		ind, err := NewDollarBars(50000.0)
+		if err != nil {
+			t.Fatalf("construct DollarBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.zeroTs))
+		compareGoldenFlat(t, "DollarBars", got)
+	})
+	t.Run("Donchian", func(t *testing.T) {
+		ind, err := NewDonchian(14.0)
+		if err != nil {
+			t.Fatalf("construct Donchian: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "Donchian", got)
+	})
+	t.Run("DonchianStop", func(t *testing.T) {
+		ind, err := NewDonchianStop(14.0)
+		if err != nil {
+			t.Fatalf("construct DonchianStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "DonchianStop", got)
+	})
+	t.Run("DoubleBollinger", func(t *testing.T) {
+		ind, err := NewDoubleBollinger(20.0, 1.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct DoubleBollinger: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 5)
+		compareGolden(t, "DoubleBollinger", got)
+	})
+	t.Run("DoubleTopBottom", func(t *testing.T) {
+		ind, err := NewDoubleTopBottom()
+		if err != nil {
+			t.Fatalf("construct DoubleTopBottom: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "DoubleTopBottom", got)
+	})
+	t.Run("DownsideGapThreeMethods", func(t *testing.T) {
+		ind, err := NewDownsideGapThreeMethods()
+		if err != nil {
+			t.Fatalf("construct DownsideGapThreeMethods: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "DownsideGapThreeMethods", got)
+	})
+	t.Run("Dpo", func(t *testing.T) {
+		ind, err := NewDpo(14.0)
+		if err != nil {
+			t.Fatalf("construct Dpo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Dpo", got)
+	})
+	t.Run("DragonflyDoji", func(t *testing.T) {
+		ind, err := NewDragonflyDoji()
+		if err != nil {
+			t.Fatalf("construct DragonflyDoji: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "DragonflyDoji", got)
+	})
+	t.Run("DrawdownDuration", func(t *testing.T) {
+		ind, err := NewDrawdownDuration()
+		if err != nil {
+			t.Fatalf("construct DrawdownDuration: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "DrawdownDuration", got)
+	})
+	t.Run("DumplingTop", func(t *testing.T) {
+		ind, err := NewDumplingTop(14.0)
+		if err != nil {
+			t.Fatalf("construct DumplingTop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "DumplingTop", got)
+	})
+	t.Run("Dx", func(t *testing.T) {
+		ind, err := NewDx(14.0)
+		if err != nil {
+			t.Fatalf("construct Dx: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Dx", got)
+	})
+	t.Run("DynamicMomentumIndex", func(t *testing.T) {
+		ind, err := NewDynamicMomentumIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct DynamicMomentumIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "DynamicMomentumIndex", got)
+	})
+	t.Run("EaseOfMovement", func(t *testing.T) {
+		ind, err := NewEaseOfMovement(14.0)
+		if err != nil {
+			t.Fatalf("construct EaseOfMovement: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "EaseOfMovement", got)
+	})
+	t.Run("EffectiveSpread", func(t *testing.T) {
+		ind, err := NewEffectiveSpread()
+		if err != nil {
+			t.Fatalf("construct EffectiveSpread: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index, cols.mid))
+		compareGolden(t, "EffectiveSpread", got)
+	})
+	t.Run("EhlersStochastic", func(t *testing.T) {
+		ind, err := NewEhlersStochastic(14.0)
+		if err != nil {
+			t.Fatalf("construct EhlersStochastic: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "EhlersStochastic", got)
+	})
+	t.Run("Ehma", func(t *testing.T) {
+		ind, err := NewEhma(14.0)
+		if err != nil {
+			t.Fatalf("construct Ehma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Ehma", got)
+	})
+	t.Run("ElderImpulse", func(t *testing.T) {
+		ind, err := NewElderImpulse(3.0, 7.0, 14.0, 28.0)
+		if err != nil {
+			t.Fatalf("construct ElderImpulse: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ElderImpulse", got)
+	})
+	t.Run("ElderRay", func(t *testing.T) {
+		ind, err := NewElderRay(14.0)
+		if err != nil {
+			t.Fatalf("construct ElderRay: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "ElderRay", got)
+	})
+	t.Run("ElderSafeZone", func(t *testing.T) {
+		ind, err := NewElderSafeZone(10.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct ElderSafeZone: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "ElderSafeZone", got)
+	})
+	t.Run("Ema", func(t *testing.T) {
+		ind, err := NewEma(14.0)
+		if err != nil {
+			t.Fatalf("construct Ema: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Ema", got)
+	})
+	t.Run("EmpiricalModeDecomposition", func(t *testing.T) {
+		ind, err := NewEmpiricalModeDecomposition(20.0, 0.1)
+		if err != nil {
+			t.Fatalf("construct EmpiricalModeDecomposition: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "EmpiricalModeDecomposition", got)
+	})
+	t.Run("Engulfing", func(t *testing.T) {
+		ind, err := NewEngulfing()
+		if err != nil {
+			t.Fatalf("construct Engulfing: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Engulfing", got)
+	})
+	t.Run("Equivolume", func(t *testing.T) {
+		ind, err := NewEquivolume(14.0)
+		if err != nil {
+			t.Fatalf("construct Equivolume: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "Equivolume", got)
+	})
+	t.Run("EstimatedLeverageRatio", func(t *testing.T) {
+		ind, err := NewEstimatedLeverageRatio()
+		if err != nil {
+			t.Fatalf("construct EstimatedLeverageRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "EstimatedLeverageRatio", got)
+	})
+	t.Run("EvenBetterSinewave", func(t *testing.T) {
+		ind, err := NewEvenBetterSinewave(40.0, 10.0)
+		if err != nil {
+			t.Fatalf("construct EvenBetterSinewave: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "EvenBetterSinewave", got)
+	})
+	t.Run("EveningDojiStar", func(t *testing.T) {
+		ind, err := NewEveningDojiStar()
+		if err != nil {
+			t.Fatalf("construct EveningDojiStar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "EveningDojiStar", got)
+	})
+	t.Run("Evwma", func(t *testing.T) {
+		ind, err := NewEvwma(14.0)
+		if err != nil {
+			t.Fatalf("construct Evwma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Evwma", got)
+	})
+	t.Run("EwmaVolatility", func(t *testing.T) {
+		ind, err := NewEwmaVolatility(0.94)
+		if err != nil {
+			t.Fatalf("construct EwmaVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "EwmaVolatility", got)
+	})
+	t.Run("Expectancy", func(t *testing.T) {
+		ind, err := NewExpectancy(14.0)
+		if err != nil {
+			t.Fatalf("construct Expectancy: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Expectancy", got)
+	})
+	t.Run("FallingThreeMethods", func(t *testing.T) {
+		ind, err := NewFallingThreeMethods()
+		if err != nil {
+			t.Fatalf("construct FallingThreeMethods: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "FallingThreeMethods", got)
+	})
+	t.Run("Fama", func(t *testing.T) {
+		ind, err := NewFama(0.5, 0.05)
+		if err != nil {
+			t.Fatalf("construct Fama: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Fama", got)
+	})
+	t.Run("FibArcs", func(t *testing.T) {
+		ind, err := NewFibArcs()
+		if err != nil {
+			t.Fatalf("construct FibArcs: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "FibArcs", got)
+	})
+	t.Run("FibChannel", func(t *testing.T) {
+		ind, err := NewFibChannel()
+		if err != nil {
+			t.Fatalf("construct FibChannel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 4)
+		compareGolden(t, "FibChannel", got)
+	})
+	t.Run("FibConfluence", func(t *testing.T) {
+		ind, err := NewFibConfluence()
+		if err != nil {
+			t.Fatalf("construct FibConfluence: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "FibConfluence", got)
+	})
+	t.Run("FibExtension", func(t *testing.T) {
+		ind, err := NewFibExtension()
+		if err != nil {
+			t.Fatalf("construct FibExtension: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 5)
+		compareGolden(t, "FibExtension", got)
+	})
+	t.Run("FibFan", func(t *testing.T) {
+		ind, err := NewFibFan()
+		if err != nil {
+			t.Fatalf("construct FibFan: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "FibFan", got)
+	})
+	t.Run("FibProjection", func(t *testing.T) {
+		ind, err := NewFibProjection()
+		if err != nil {
+			t.Fatalf("construct FibProjection: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 4)
+		compareGolden(t, "FibProjection", got)
+	})
+	t.Run("FibRetracement", func(t *testing.T) {
+		ind, err := NewFibRetracement()
+		if err != nil {
+			t.Fatalf("construct FibRetracement: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 7)
+		compareGolden(t, "FibRetracement", got)
+	})
+	t.Run("FibTimeZones", func(t *testing.T) {
+		ind, err := NewFibTimeZones()
+		if err != nil {
+			t.Fatalf("construct FibTimeZones: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "FibTimeZones", got)
+	})
+	t.Run("FibonacciPivots", func(t *testing.T) {
+		ind, err := NewFibonacciPivots()
+		if err != nil {
+			t.Fatalf("construct FibonacciPivots: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 7)
+		compareGolden(t, "FibonacciPivots", got)
+	})
+	t.Run("FisherRsi", func(t *testing.T) {
+		ind, err := NewFisherRsi(14.0)
+		if err != nil {
+			t.Fatalf("construct FisherRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "FisherRsi", got)
+	})
+	t.Run("FisherTransform", func(t *testing.T) {
+		ind, err := NewFisherTransform(14.0)
+		if err != nil {
+			t.Fatalf("construct FisherTransform: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "FisherTransform", got)
+	})
+	t.Run("FlagPennant", func(t *testing.T) {
+		ind, err := NewFlagPennant()
+		if err != nil {
+			t.Fatalf("construct FlagPennant: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "FlagPennant", got)
+	})
+	t.Run("Footprint", func(t *testing.T) {
+		ind, err := NewFootprint(1.0)
+		if err != nil {
+			t.Fatalf("construct Footprint: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGoldenLastRow(t, "Footprint", got)
+	})
+	t.Run("ForceIndex", func(t *testing.T) {
+		ind, err := NewForceIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct ForceIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ForceIndex", got)
+	})
+	t.Run("FractalChaosBands", func(t *testing.T) {
+		ind, err := NewFractalChaosBands(14.0)
+		if err != nil {
+			t.Fatalf("construct FractalChaosBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "FractalChaosBands", got)
+	})
+	t.Run("Frama", func(t *testing.T) {
+		ind, err := NewFrama(14.0)
+		if err != nil {
+			t.Fatalf("construct Frama: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Frama", got)
+	})
+	t.Run("FryPanBottom", func(t *testing.T) {
+		ind, err := NewFryPanBottom(14.0)
+		if err != nil {
+			t.Fatalf("construct FryPanBottom: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "FryPanBottom", got)
+	})
+	t.Run("FundingBasis", func(t *testing.T) {
+		ind, err := NewFundingBasis()
+		if err != nil {
+			t.Fatalf("construct FundingBasis: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "FundingBasis", got)
+	})
+	t.Run("FundingImpliedApr", func(t *testing.T) {
+		ind, err := NewFundingImpliedApr(1095.0)
+		if err != nil {
+			t.Fatalf("construct FundingImpliedApr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "FundingImpliedApr", got)
+	})
+	t.Run("FundingRate", func(t *testing.T) {
+		ind, err := NewFundingRate()
+		if err != nil {
+			t.Fatalf("construct FundingRate: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "FundingRate", got)
+	})
+	t.Run("FundingRateMean", func(t *testing.T) {
+		ind, err := NewFundingRateMean(20.0)
+		if err != nil {
+			t.Fatalf("construct FundingRateMean: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "FundingRateMean", got)
+	})
+	t.Run("FundingRateZScore", func(t *testing.T) {
+		ind, err := NewFundingRateZScore(20.0)
+		if err != nil {
+			t.Fatalf("construct FundingRateZScore: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "FundingRateZScore", got)
+	})
+	t.Run("GainLossRatio", func(t *testing.T) {
+		ind, err := NewGainLossRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct GainLossRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "GainLossRatio", got)
+	})
+	t.Run("GainToPainRatio", func(t *testing.T) {
+		ind, err := NewGainToPainRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct GainToPainRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "GainToPainRatio", got)
+	})
+	t.Run("GapSideBySideWhite", func(t *testing.T) {
+		ind, err := NewGapSideBySideWhite()
+		if err != nil {
+			t.Fatalf("construct GapSideBySideWhite: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "GapSideBySideWhite", got)
+	})
+	t.Run("Garch11", func(t *testing.T) {
+		ind, err := NewGarch11(2e-06, 0.1, 0.88)
+		if err != nil {
+			t.Fatalf("construct Garch11: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Garch11", got)
+	})
+	t.Run("GarmanKlassVolatility", func(t *testing.T) {
+		ind, err := NewGarmanKlassVolatility(20.0, 252.0)
+		if err != nil {
+			t.Fatalf("construct GarmanKlassVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "GarmanKlassVolatility", got)
+	})
+	t.Run("Gartley", func(t *testing.T) {
+		ind, err := NewGartley()
+		if err != nil {
+			t.Fatalf("construct Gartley: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Gartley", got)
+	})
+	t.Run("GatorOscillator", func(t *testing.T) {
+		ind, err := NewGatorOscillator(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct GatorOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "GatorOscillator", got)
+	})
+	t.Run("GeneralizedDema", func(t *testing.T) {
+		ind, err := NewGeneralizedDema(5.0, 0.7)
+		if err != nil {
+			t.Fatalf("construct GeneralizedDema: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "GeneralizedDema", got)
+	})
+	t.Run("GeometricMa", func(t *testing.T) {
+		ind, err := NewGeometricMa(14.0)
+		if err != nil {
+			t.Fatalf("construct GeometricMa: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "GeometricMa", got)
+	})
+	t.Run("GoldenPocket", func(t *testing.T) {
+		ind, err := NewGoldenPocket()
+		if err != nil {
+			t.Fatalf("construct GoldenPocket: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "GoldenPocket", got)
+	})
+	t.Run("GrangerCausality", func(t *testing.T) {
+		ind, err := NewGrangerCausality(60.0, 1.0)
+		if err != nil {
+			t.Fatalf("construct GrangerCausality: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "GrangerCausality", got)
+	})
+	t.Run("GravestoneDoji", func(t *testing.T) {
+		ind, err := NewGravestoneDoji()
+		if err != nil {
+			t.Fatalf("construct GravestoneDoji: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "GravestoneDoji", got)
+	})
+	t.Run("Hammer", func(t *testing.T) {
+		ind, err := NewHammer()
+		if err != nil {
+			t.Fatalf("construct Hammer: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Hammer", got)
+	})
+	t.Run("HangingMan", func(t *testing.T) {
+		ind, err := NewHangingMan()
+		if err != nil {
+			t.Fatalf("construct HangingMan: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HangingMan", got)
+	})
+	t.Run("Harami", func(t *testing.T) {
+		ind, err := NewHarami()
+		if err != nil {
+			t.Fatalf("construct Harami: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Harami", got)
+	})
+	t.Run("HaramiCross", func(t *testing.T) {
+		ind, err := NewHaramiCross()
+		if err != nil {
+			t.Fatalf("construct HaramiCross: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HaramiCross", got)
+	})
+	t.Run("HasbrouckInformationShare", func(t *testing.T) {
+		ind, err := NewHasbrouckInformationShare(14.0)
+		if err != nil {
+			t.Fatalf("construct HasbrouckInformationShare: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "HasbrouckInformationShare", got)
+	})
+	t.Run("HeadAndShoulders", func(t *testing.T) {
+		ind, err := NewHeadAndShoulders()
+		if err != nil {
+			t.Fatalf("construct HeadAndShoulders: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HeadAndShoulders", got)
+	})
+	t.Run("HeikinAshi", func(t *testing.T) {
+		ind, err := NewHeikinAshi()
+		if err != nil {
+			t.Fatalf("construct HeikinAshi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 4)
+		compareGolden(t, "HeikinAshi", got)
+	})
+	t.Run("HeikinAshiOscillator", func(t *testing.T) {
+		ind, err := NewHeikinAshiOscillator(14.0)
+		if err != nil {
+			t.Fatalf("construct HeikinAshiOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HeikinAshiOscillator", got)
+	})
+	t.Run("HiLoActivator", func(t *testing.T) {
+		ind, err := NewHiLoActivator(14.0)
+		if err != nil {
+			t.Fatalf("construct HiLoActivator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HiLoActivator", got)
+	})
+	t.Run("HighLowIndex", func(t *testing.T) {
+		ind, err := NewHighLowIndex(10.0)
+		if err != nil {
+			t.Fatalf("construct HighLowIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "HighLowIndex", got)
+	})
+	t.Run("HighLowRange", func(t *testing.T) {
+		ind, err := NewHighLowRange()
+		if err != nil {
+			t.Fatalf("construct HighLowRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HighLowRange", got)
+	})
+	t.Run("HighLowVolumeNodes", func(t *testing.T) {
+		ind, err := NewHighLowVolumeNodes(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct HighLowVolumeNodes: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "HighLowVolumeNodes", got)
+	})
+	t.Run("HighWave", func(t *testing.T) {
+		ind, err := NewHighWave()
+		if err != nil {
+			t.Fatalf("construct HighWave: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HighWave", got)
+	})
+	t.Run("HighpassFilter", func(t *testing.T) {
+		ind, err := NewHighpassFilter(14.0)
+		if err != nil {
+			t.Fatalf("construct HighpassFilter: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HighpassFilter", got)
+	})
+	t.Run("Hikkake", func(t *testing.T) {
+		ind, err := NewHikkake()
+		if err != nil {
+			t.Fatalf("construct Hikkake: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Hikkake", got)
+	})
+	t.Run("HikkakeModified", func(t *testing.T) {
+		ind, err := NewHikkakeModified()
+		if err != nil {
+			t.Fatalf("construct HikkakeModified: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HikkakeModified", got)
+	})
+	t.Run("HilbertDominantCycle", func(t *testing.T) {
+		ind, err := NewHilbertDominantCycle()
+		if err != nil {
+			t.Fatalf("construct HilbertDominantCycle: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HilbertDominantCycle", got)
+	})
+	t.Run("HistoricalVolatility", func(t *testing.T) {
+		ind, err := NewHistoricalVolatility(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct HistoricalVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HistoricalVolatility", got)
+	})
+	t.Run("Hma", func(t *testing.T) {
+		ind, err := NewHma(14.0)
+		if err != nil {
+			t.Fatalf("construct Hma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Hma", got)
+	})
+	t.Run("HoltWinters", func(t *testing.T) {
+		ind, err := NewHoltWinters(0.5, 0.1)
+		if err != nil {
+			t.Fatalf("construct HoltWinters: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HoltWinters", got)
+	})
+	t.Run("HomingPigeon", func(t *testing.T) {
+		ind, err := NewHomingPigeon()
+		if err != nil {
+			t.Fatalf("construct HomingPigeon: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "HomingPigeon", got)
+	})
+	t.Run("HtDcPhase", func(t *testing.T) {
+		ind, err := NewHtDcPhase()
+		if err != nil {
+			t.Fatalf("construct HtDcPhase: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HtDcPhase", got)
+	})
+	t.Run("HtPhasor", func(t *testing.T) {
+		ind, err := NewHtPhasor()
+		if err != nil {
+			t.Fatalf("construct HtPhasor: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 2)
+		compareGolden(t, "HtPhasor", got)
+	})
+	t.Run("HtTrendMode", func(t *testing.T) {
+		ind, err := NewHtTrendMode()
+		if err != nil {
+			t.Fatalf("construct HtTrendMode: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HtTrendMode", got)
+	})
+	t.Run("HurstChannel", func(t *testing.T) {
+		ind, err := NewHurstChannel(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct HurstChannel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "HurstChannel", got)
+	})
+	t.Run("HurstExponent", func(t *testing.T) {
+		ind, err := NewHurstExponent(100.0, 4.0)
+		if err != nil {
+			t.Fatalf("construct HurstExponent: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "HurstExponent", got)
+	})
+	t.Run("Ichimoku", func(t *testing.T) {
+		ind, err := NewIchimoku(9.0, 26.0, 52.0, 26.0)
+		if err != nil {
+			t.Fatalf("construct Ichimoku: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 5)
+		compareGolden(t, "Ichimoku", got)
+	})
+	t.Run("IdenticalThreeCrows", func(t *testing.T) {
+		ind, err := NewIdenticalThreeCrows()
+		if err != nil {
+			t.Fatalf("construct IdenticalThreeCrows: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "IdenticalThreeCrows", got)
+	})
+	t.Run("ImbalanceBars", func(t *testing.T) {
+		ind, err := NewImbalanceBars(5.0)
+		if err != nil {
+			t.Fatalf("construct ImbalanceBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "ImbalanceBars", got)
+	})
+	t.Run("InNeck", func(t *testing.T) {
+		ind, err := NewInNeck()
+		if err != nil {
+			t.Fatalf("construct InNeck: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "InNeck", got)
+	})
+	t.Run("Inertia", func(t *testing.T) {
+		ind, err := NewInertia(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Inertia: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Inertia", got)
+	})
+	t.Run("InformationRatio", func(t *testing.T) {
+		ind, err := NewInformationRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct InformationRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "InformationRatio", got)
+	})
+	t.Run("InitialBalance", func(t *testing.T) {
+		ind, err := NewInitialBalance(14.0)
+		if err != nil {
+			t.Fatalf("construct InitialBalance: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "InitialBalance", got)
+	})
+	t.Run("InstantaneousTrendline", func(t *testing.T) {
+		ind, err := NewInstantaneousTrendline(14.0)
+		if err != nil {
+			t.Fatalf("construct InstantaneousTrendline: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "InstantaneousTrendline", got)
+	})
+	t.Run("IntradayIntensity", func(t *testing.T) {
+		ind, err := NewIntradayIntensity()
+		if err != nil {
+			t.Fatalf("construct IntradayIntensity: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "IntradayIntensity", got)
+	})
+	t.Run("IntradayMomentumIndex", func(t *testing.T) {
+		ind, err := NewIntradayMomentumIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct IntradayMomentumIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "IntradayMomentumIndex", got)
+	})
+	t.Run("IntradayVolatilityProfile", func(t *testing.T) {
+		ind, err := NewIntradayVolatilityProfile(24.0, 0.0)
+		if err != nil {
+			t.Fatalf("construct IntradayVolatilityProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index)
+		compareGolden(t, "IntradayVolatilityProfile", got)
+	})
+	t.Run("InverseFisherTransform", func(t *testing.T) {
+		ind, err := NewInverseFisherTransform(2.0)
+		if err != nil {
+			t.Fatalf("construct InverseFisherTransform: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "InverseFisherTransform", got)
+	})
+	t.Run("InvertedHammer", func(t *testing.T) {
+		ind, err := NewInvertedHammer()
+		if err != nil {
+			t.Fatalf("construct InvertedHammer: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "InvertedHammer", got)
+	})
+	t.Run("JarqueBera", func(t *testing.T) {
+		ind, err := NewJarqueBera(14.0)
+		if err != nil {
+			t.Fatalf("construct JarqueBera: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "JarqueBera", got)
+	})
+	t.Run("Jma", func(t *testing.T) {
+		ind, err := NewJma(7.0, 0.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct Jma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Jma", got)
+	})
+	t.Run("JumpIndicator", func(t *testing.T) {
+		ind, err := NewJumpIndicator(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct JumpIndicator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "JumpIndicator", got)
+	})
+	t.Run("KRatio", func(t *testing.T) {
+		ind, err := NewKRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct KRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "KRatio", got)
+	})
+	t.Run("KagiBars", func(t *testing.T) {
+		ind, err := NewKagiBars(2.0)
+		if err != nil {
+			t.Fatalf("construct KagiBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.close, cols.close, cols.close, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "KagiBars", got)
+	})
+	t.Run("KalmanHedgeRatio", func(t *testing.T) {
+		ind, err := NewKalmanHedgeRatio(0.01, 0.001)
+		if err != nil {
+			t.Fatalf("construct KalmanHedgeRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close, cols.open), 3)
+		compareGolden(t, "KalmanHedgeRatio", got)
+	})
+	t.Run("Kama", func(t *testing.T) {
+		ind, err := NewKama(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct Kama: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Kama", got)
+	})
+	t.Run("KaseDevStop", func(t *testing.T) {
+		ind, err := NewKaseDevStop(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct KaseDevStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "KaseDevStop", got)
+	})
+	t.Run("KasePermissionStochastic", func(t *testing.T) {
+		ind, err := NewKasePermissionStochastic(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct KasePermissionStochastic: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "KasePermissionStochastic", got)
+	})
+	t.Run("KellyCriterion", func(t *testing.T) {
+		ind, err := NewKellyCriterion(14.0)
+		if err != nil {
+			t.Fatalf("construct KellyCriterion: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "KellyCriterion", got)
+	})
+	t.Run("Keltner", func(t *testing.T) {
+		ind, err := NewKeltner(3.0, 7.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct Keltner: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "Keltner", got)
+	})
+	t.Run("KendallTau", func(t *testing.T) {
+		ind, err := NewKendallTau(14.0)
+		if err != nil {
+			t.Fatalf("construct KendallTau: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "KendallTau", got)
+	})
+	t.Run("Kicking", func(t *testing.T) {
+		ind, err := NewKicking()
+		if err != nil {
+			t.Fatalf("construct Kicking: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Kicking", got)
+	})
+	t.Run("KickingByLength", func(t *testing.T) {
+		ind, err := NewKickingByLength()
+		if err != nil {
+			t.Fatalf("construct KickingByLength: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "KickingByLength", got)
+	})
+	t.Run("Kst", func(t *testing.T) {
+		ind, err := NewKst(3.0, 7.0, 14.0, 28.0, 35.0, 42.0, 56.0, 63.0, 70.0)
+		if err != nil {
+			t.Fatalf("construct Kst: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 2)
+		compareGolden(t, "Kst", got)
+	})
+	t.Run("Kurtosis", func(t *testing.T) {
+		ind, err := NewKurtosis(14.0)
+		if err != nil {
+			t.Fatalf("construct Kurtosis: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Kurtosis", got)
+	})
+	t.Run("Kvo", func(t *testing.T) {
+		ind, err := NewKvo(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Kvo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Kvo", got)
+	})
+	t.Run("KylesLambda", func(t *testing.T) {
+		ind, err := NewKylesLambda(20.0)
+		if err != nil {
+			t.Fatalf("construct KylesLambda: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index, cols.mid))
+		compareGolden(t, "KylesLambda", got)
+	})
+	t.Run("LadderBottom", func(t *testing.T) {
+		ind, err := NewLadderBottom()
+		if err != nil {
+			t.Fatalf("construct LadderBottom: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "LadderBottom", got)
+	})
+	t.Run("LaguerreRsi", func(t *testing.T) {
+		ind, err := NewLaguerreRsi(0.5)
+		if err != nil {
+			t.Fatalf("construct LaguerreRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "LaguerreRsi", got)
+	})
+	t.Run("LeadLagCrossCorrelation", func(t *testing.T) {
+		ind, err := NewLeadLagCrossCorrelation(20.0, 10.0)
+		if err != nil {
+			t.Fatalf("construct LeadLagCrossCorrelation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close, cols.open), 2)
+		compareGolden(t, "LeadLagCrossCorrelation", got)
+	})
+	t.Run("LinRegAngle", func(t *testing.T) {
+		ind, err := NewLinRegAngle(14.0)
+		if err != nil {
+			t.Fatalf("construct LinRegAngle: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "LinRegAngle", got)
+	})
+	t.Run("LinRegChannel", func(t *testing.T) {
+		ind, err := NewLinRegChannel(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct LinRegChannel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "LinRegChannel", got)
+	})
+	t.Run("LinRegIntercept", func(t *testing.T) {
+		ind, err := NewLinRegIntercept(14.0)
+		if err != nil {
+			t.Fatalf("construct LinRegIntercept: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "LinRegIntercept", got)
+	})
+	t.Run("LinRegSlope", func(t *testing.T) {
+		ind, err := NewLinRegSlope(14.0)
+		if err != nil {
+			t.Fatalf("construct LinRegSlope: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "LinRegSlope", got)
+	})
+	t.Run("LinearRegression", func(t *testing.T) {
+		ind, err := NewLinearRegression(14.0)
+		if err != nil {
+			t.Fatalf("construct LinearRegression: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "LinearRegression", got)
+	})
+	t.Run("LiquidationFeatures", func(t *testing.T) {
+		ind, err := NewLiquidationFeatures()
+		if err != nil {
+			t.Fatalf("construct LiquidationFeatures: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := structRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index), 5)
+		compareGolden(t, "LiquidationFeatures", got)
+	})
+	t.Run("LogReturn", func(t *testing.T) {
+		ind, err := NewLogReturn(14.0)
+		if err != nil {
+			t.Fatalf("construct LogReturn: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "LogReturn", got)
+	})
+	t.Run("LongLeggedDoji", func(t *testing.T) {
+		ind, err := NewLongLeggedDoji()
+		if err != nil {
+			t.Fatalf("construct LongLeggedDoji: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "LongLeggedDoji", got)
+	})
+	t.Run("LongLine", func(t *testing.T) {
+		ind, err := NewLongLine()
+		if err != nil {
+			t.Fatalf("construct LongLine: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "LongLine", got)
+	})
+	t.Run("LongShortRatio", func(t *testing.T) {
+		ind, err := NewLongShortRatio()
+		if err != nil {
+			t.Fatalf("construct LongShortRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "LongShortRatio", got)
+	})
+	t.Run("M2Measure", func(t *testing.T) {
+		ind, err := NewM2Measure(14.0, 2.0, 0.5)
+		if err != nil {
+			t.Fatalf("construct M2Measure: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "M2Measure", got)
+	})
+	t.Run("MaEnvelope", func(t *testing.T) {
+		ind, err := NewMaEnvelope(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct MaEnvelope: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "MaEnvelope", got)
+	})
+	t.Run("MacdExt", func(t *testing.T) {
+		ind, err := NewMacdExt(12.0, 0.0, 26.0, 0.0, 9.0, 0.0)
+		if err != nil {
+			t.Fatalf("construct MacdExt: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "MacdExt", got)
+	})
+	t.Run("MacdFix", func(t *testing.T) {
+		ind, err := NewMacdFix(9.0)
+		if err != nil {
+			t.Fatalf("construct MacdFix: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "MacdFix", got)
+	})
+	t.Run("MacdHistogram", func(t *testing.T) {
+		ind, err := NewMacdHistogram(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct MacdHistogram: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "MacdHistogram", got)
+	})
+	t.Run("MacdIndicator", func(t *testing.T) {
+		ind, err := NewMacdIndicator(12.0, 26.0, 9.0)
+		if err != nil {
+			t.Fatalf("construct MacdIndicator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "MacdIndicator", got)
+	})
+	t.Run("Mama", func(t *testing.T) {
+		ind, err := NewMama(0.5, 0.05)
+		if err != nil {
+			t.Fatalf("construct Mama: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 2)
+		compareGolden(t, "Mama", got)
+	})
+	t.Run("MarketFacilitationIndex", func(t *testing.T) {
+		ind, err := NewMarketFacilitationIndex()
+		if err != nil {
+			t.Fatalf("construct MarketFacilitationIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MarketFacilitationIndex", got)
+	})
+	t.Run("MartinRatio", func(t *testing.T) {
+		ind, err := NewMartinRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct MartinRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "MartinRatio", got)
+	})
+	t.Run("Marubozu", func(t *testing.T) {
+		ind, err := NewMarubozu()
+		if err != nil {
+			t.Fatalf("construct Marubozu: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Marubozu", got)
+	})
+	t.Run("MassIndex", func(t *testing.T) {
+		ind, err := NewMassIndex(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct MassIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MassIndex", got)
+	})
+	t.Run("MatHold", func(t *testing.T) {
+		ind, err := NewMatHold()
+		if err != nil {
+			t.Fatalf("construct MatHold: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MatHold", got)
+	})
+	t.Run("MatchingLow", func(t *testing.T) {
+		ind, err := NewMatchingLow()
+		if err != nil {
+			t.Fatalf("construct MatchingLow: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MatchingLow", got)
+	})
+	t.Run("MaxDrawdown", func(t *testing.T) {
+		ind, err := NewMaxDrawdown(14.0)
+		if err != nil {
+			t.Fatalf("construct MaxDrawdown: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "MaxDrawdown", got)
+	})
+	t.Run("McClellanOscillator", func(t *testing.T) {
+		ind, err := NewMcClellanOscillator()
+		if err != nil {
+			t.Fatalf("construct McClellanOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "McClellanOscillator", got)
+	})
+	t.Run("McClellanSummationIndex", func(t *testing.T) {
+		ind, err := NewMcClellanSummationIndex()
+		if err != nil {
+			t.Fatalf("construct McClellanSummationIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "McClellanSummationIndex", got)
+	})
+	t.Run("McGinleyDynamic", func(t *testing.T) {
+		ind, err := NewMcGinleyDynamic(14.0)
+		if err != nil {
+			t.Fatalf("construct McGinleyDynamic: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "McGinleyDynamic", got)
+	})
+	t.Run("MedianAbsoluteDeviation", func(t *testing.T) {
+		ind, err := NewMedianAbsoluteDeviation(14.0)
+		if err != nil {
+			t.Fatalf("construct MedianAbsoluteDeviation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "MedianAbsoluteDeviation", got)
+	})
+	t.Run("MedianChannel", func(t *testing.T) {
+		ind, err := NewMedianChannel(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct MedianChannel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "MedianChannel", got)
+	})
+	t.Run("MedianMa", func(t *testing.T) {
+		ind, err := NewMedianMa(14.0)
+		if err != nil {
+			t.Fatalf("construct MedianMa: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "MedianMa", got)
+	})
+	t.Run("MedianPrice", func(t *testing.T) {
+		ind, err := NewMedianPrice()
+		if err != nil {
+			t.Fatalf("construct MedianPrice: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MedianPrice", got)
+	})
+	t.Run("Mfi", func(t *testing.T) {
+		ind, err := NewMfi(14.0)
+		if err != nil {
+			t.Fatalf("construct Mfi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Mfi", got)
+	})
+	t.Run("Microprice", func(t *testing.T) {
+		ind, err := NewMicroprice()
+		if err != nil {
+			t.Fatalf("construct Microprice: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "Microprice", got)
+	})
+	t.Run("MidPoint", func(t *testing.T) {
+		ind, err := NewMidPoint(14.0)
+		if err != nil {
+			t.Fatalf("construct MidPoint: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "MidPoint", got)
+	})
+	t.Run("MidPrice", func(t *testing.T) {
+		ind, err := NewMidPrice(14.0)
+		if err != nil {
+			t.Fatalf("construct MidPrice: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MidPrice", got)
+	})
+	t.Run("MinusDi", func(t *testing.T) {
+		ind, err := NewMinusDi(14.0)
+		if err != nil {
+			t.Fatalf("construct MinusDi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MinusDi", got)
+	})
+	t.Run("MinusDm", func(t *testing.T) {
+		ind, err := NewMinusDm(14.0)
+		if err != nil {
+			t.Fatalf("construct MinusDm: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MinusDm", got)
+	})
+	t.Run("ModifiedMaStop", func(t *testing.T) {
+		ind, err := NewModifiedMaStop(14.0)
+		if err != nil {
+			t.Fatalf("construct ModifiedMaStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "ModifiedMaStop", got)
+	})
+	t.Run("Mom", func(t *testing.T) {
+		ind, err := NewMom(14.0)
+		if err != nil {
+			t.Fatalf("construct Mom: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Mom", got)
+	})
+	t.Run("MorningDojiStar", func(t *testing.T) {
+		ind, err := NewMorningDojiStar()
+		if err != nil {
+			t.Fatalf("construct MorningDojiStar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MorningDojiStar", got)
+	})
+	t.Run("MorningEveningStar", func(t *testing.T) {
+		ind, err := NewMorningEveningStar()
+		if err != nil {
+			t.Fatalf("construct MorningEveningStar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "MorningEveningStar", got)
+	})
+	t.Run("MurreyMathLines", func(t *testing.T) {
+		ind, err := NewMurreyMathLines(14.0)
+		if err != nil {
+			t.Fatalf("construct MurreyMathLines: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 9)
+		compareGolden(t, "MurreyMathLines", got)
+	})
+	t.Run("NakedPoc", func(t *testing.T) {
+		ind, err := NewNakedPoc(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct NakedPoc: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "NakedPoc", got)
+	})
+	t.Run("Natr", func(t *testing.T) {
+		ind, err := NewNatr(14.0)
+		if err != nil {
+			t.Fatalf("construct Natr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Natr", got)
+	})
+	t.Run("NewHighsNewLows", func(t *testing.T) {
+		ind, err := NewNewHighsNewLows()
+		if err != nil {
+			t.Fatalf("construct NewHighsNewLows: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "NewHighsNewLows", got)
+	})
+	t.Run("NewPriceLines", func(t *testing.T) {
+		ind, err := NewNewPriceLines(14.0)
+		if err != nil {
+			t.Fatalf("construct NewPriceLines: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "NewPriceLines", got)
+	})
+	t.Run("Nrtr", func(t *testing.T) {
+		ind, err := NewNrtr(2.0)
+		if err != nil {
+			t.Fatalf("construct Nrtr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "Nrtr", got)
+	})
+	t.Run("Nvi", func(t *testing.T) {
+		ind, err := NewNvi()
+		if err != nil {
+			t.Fatalf("construct Nvi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Nvi", got)
+	})
+	t.Run("OIPriceDivergence", func(t *testing.T) {
+		ind, err := NewOIPriceDivergence(20.0)
+		if err != nil {
+			t.Fatalf("construct OIPriceDivergence: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "OIPriceDivergence", got)
+	})
+	t.Run("OIWeighted", func(t *testing.T) {
+		ind, err := NewOIWeighted()
+		if err != nil {
+			t.Fatalf("construct OIWeighted: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "OIWeighted", got)
+	})
+	t.Run("Obv", func(t *testing.T) {
+		ind, err := NewObv()
+		if err != nil {
+			t.Fatalf("construct Obv: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Obv", got)
+	})
+	t.Run("OiToVolumeRatio", func(t *testing.T) {
+		ind, err := NewOiToVolumeRatio()
+		if err != nil {
+			t.Fatalf("construct OiToVolumeRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "OiToVolumeRatio", got)
+	})
+	t.Run("OmegaRatio", func(t *testing.T) {
+		ind, err := NewOmegaRatio(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct OmegaRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "OmegaRatio", got)
+	})
+	t.Run("OnNeck", func(t *testing.T) {
+		ind, err := NewOnNeck()
+		if err != nil {
+			t.Fatalf("construct OnNeck: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "OnNeck", got)
+	})
+	t.Run("OpenInterestDelta", func(t *testing.T) {
+		ind, err := NewOpenInterestDelta()
+		if err != nil {
+			t.Fatalf("construct OpenInterestDelta: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "OpenInterestDelta", got)
+	})
+	t.Run("OpenInterestMomentum", func(t *testing.T) {
+		ind, err := NewOpenInterestMomentum(10.0)
+		if err != nil {
+			t.Fatalf("construct OpenInterestMomentum: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "OpenInterestMomentum", got)
+	})
+	t.Run("OpeningMarubozu", func(t *testing.T) {
+		ind, err := NewOpeningMarubozu()
+		if err != nil {
+			t.Fatalf("construct OpeningMarubozu: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "OpeningMarubozu", got)
+	})
+	t.Run("OpeningRange", func(t *testing.T) {
+		ind, err := NewOpeningRange(14.0)
+		if err != nil {
+			t.Fatalf("construct OpeningRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "OpeningRange", got)
+	})
+	t.Run("OrderBookImbalanceFull", func(t *testing.T) {
+		ind, err := NewOrderBookImbalanceFull()
+		if err != nil {
+			t.Fatalf("construct OrderBookImbalanceFull: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "OrderBookImbalanceFull", got)
+	})
+	t.Run("OrderBookImbalanceTop1", func(t *testing.T) {
+		ind, err := NewOrderBookImbalanceTop1()
+		if err != nil {
+			t.Fatalf("construct OrderBookImbalanceTop1: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "OrderBookImbalanceTop1", got)
+	})
+	t.Run("OrderBookImbalanceTopN", func(t *testing.T) {
+		ind, err := NewOrderBookImbalanceTopN(5.0)
+		if err != nil {
+			t.Fatalf("construct OrderBookImbalanceTopN: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "OrderBookImbalanceTopN", got)
+	})
+	t.Run("OrderFlowImbalance", func(t *testing.T) {
+		ind, err := NewOrderFlowImbalance(20.0)
+		if err != nil {
+			t.Fatalf("construct OrderFlowImbalance: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "OrderFlowImbalance", got)
+	})
+	t.Run("OuHalfLife", func(t *testing.T) {
+		ind, err := NewOuHalfLife(14.0)
+		if err != nil {
+			t.Fatalf("construct OuHalfLife: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "OuHalfLife", got)
+	})
+	t.Run("OvernightGap", func(t *testing.T) {
+		ind, err := NewOvernightGap(0.0)
+		if err != nil {
+			t.Fatalf("construct OvernightGap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "OvernightGap", got)
+	})
+	t.Run("OvernightIntradayReturn", func(t *testing.T) {
+		ind, err := NewOvernightIntradayReturn(14.0)
+		if err != nil {
+			t.Fatalf("construct OvernightIntradayReturn: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "OvernightIntradayReturn", got)
+	})
+	t.Run("PainIndex", func(t *testing.T) {
+		ind, err := NewPainIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct PainIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "PainIndex", got)
+	})
+	t.Run("PairSpreadZScore", func(t *testing.T) {
+		ind, err := NewPairSpreadZScore(20.0, 20.0)
+		if err != nil {
+			t.Fatalf("construct PairSpreadZScore: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "PairSpreadZScore", got)
+	})
+	t.Run("PairwiseBeta", func(t *testing.T) {
+		ind, err := NewPairwiseBeta(14.0)
+		if err != nil {
+			t.Fatalf("construct PairwiseBeta: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "PairwiseBeta", got)
+	})
+	t.Run("ParkinsonVolatility", func(t *testing.T) {
+		ind, err := NewParkinsonVolatility(20.0, 252.0)
+		if err != nil {
+			t.Fatalf("construct ParkinsonVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ParkinsonVolatility", got)
+	})
+	t.Run("PearsonCorrelation", func(t *testing.T) {
+		ind, err := NewPearsonCorrelation(14.0)
+		if err != nil {
+			t.Fatalf("construct PearsonCorrelation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "PearsonCorrelation", got)
+	})
+	t.Run("PercentAboveMa", func(t *testing.T) {
+		ind, err := NewPercentAboveMa()
+		if err != nil {
+			t.Fatalf("construct PercentAboveMa: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "PercentAboveMa", got)
+	})
+	t.Run("PercentB", func(t *testing.T) {
+		ind, err := NewPercentB(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct PercentB: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "PercentB", got)
+	})
+	t.Run("PercentageTrailingStop", func(t *testing.T) {
+		ind, err := NewPercentageTrailingStop(2.0)
+		if err != nil {
+			t.Fatalf("construct PercentageTrailingStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "PercentageTrailingStop", got)
+	})
+	t.Run("PerpetualPremiumIndex", func(t *testing.T) {
+		ind, err := NewPerpetualPremiumIndex()
+		if err != nil {
+			t.Fatalf("construct PerpetualPremiumIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "PerpetualPremiumIndex", got)
+	})
+	t.Run("Pgo", func(t *testing.T) {
+		ind, err := NewPgo(14.0)
+		if err != nil {
+			t.Fatalf("construct Pgo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Pgo", got)
+	})
+	t.Run("PiercingDarkCloud", func(t *testing.T) {
+		ind, err := NewPiercingDarkCloud()
+		if err != nil {
+			t.Fatalf("construct PiercingDarkCloud: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "PiercingDarkCloud", got)
+	})
+	t.Run("Pin", func(t *testing.T) {
+		ind, err := NewPin(20.0)
+		if err != nil {
+			t.Fatalf("construct Pin: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "Pin", got)
+	})
+	t.Run("PivotReversal", func(t *testing.T) {
+		ind, err := NewPivotReversal(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct PivotReversal: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "PivotReversal", got)
+	})
+	t.Run("PlusDi", func(t *testing.T) {
+		ind, err := NewPlusDi(14.0)
+		if err != nil {
+			t.Fatalf("construct PlusDi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "PlusDi", got)
+	})
+	t.Run("PlusDm", func(t *testing.T) {
+		ind, err := NewPlusDm(14.0)
+		if err != nil {
+			t.Fatalf("construct PlusDm: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "PlusDm", got)
+	})
+	t.Run("Pmo", func(t *testing.T) {
+		ind, err := NewPmo(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Pmo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Pmo", got)
+	})
+	t.Run("PointAndFigureBars", func(t *testing.T) {
+		ind, err := NewPointAndFigureBars(2.0, 3.0)
+		if err != nil {
+			t.Fatalf("construct PointAndFigureBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.close, cols.close, cols.close, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "PointAndFigureBars", got)
+	})
+	t.Run("PolarizedFractalEfficiency", func(t *testing.T) {
+		ind, err := NewPolarizedFractalEfficiency(10.0, 5.0)
+		if err != nil {
+			t.Fatalf("construct PolarizedFractalEfficiency: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "PolarizedFractalEfficiency", got)
+	})
+	t.Run("Ppo", func(t *testing.T) {
+		ind, err := NewPpo(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Ppo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Ppo", got)
+	})
+	t.Run("PpoHistogram", func(t *testing.T) {
+		ind, err := NewPpoHistogram(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct PpoHistogram: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "PpoHistogram", got)
+	})
+	t.Run("ProfileShape", func(t *testing.T) {
+		ind, err := NewProfileShape(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct ProfileShape: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ProfileShape", got)
+	})
+	t.Run("ProfitFactor", func(t *testing.T) {
+		ind, err := NewProfitFactor(14.0)
+		if err != nil {
+			t.Fatalf("construct ProfitFactor: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ProfitFactor", got)
+	})
+	t.Run("ProjectionBands", func(t *testing.T) {
+		ind, err := NewProjectionBands(14.0)
+		if err != nil {
+			t.Fatalf("construct ProjectionBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "ProjectionBands", got)
+	})
+	t.Run("ProjectionOscillator", func(t *testing.T) {
+		ind, err := NewProjectionOscillator(14.0)
+		if err != nil {
+			t.Fatalf("construct ProjectionOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ProjectionOscillator", got)
+	})
+	t.Run("Psar", func(t *testing.T) {
+		ind, err := NewPsar(0.02, 0.02, 0.2)
+		if err != nil {
+			t.Fatalf("construct Psar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Psar", got)
+	})
+	t.Run("Pvi", func(t *testing.T) {
+		ind, err := NewPvi()
+		if err != nil {
+			t.Fatalf("construct Pvi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Pvi", got)
+	})
+	t.Run("Qqe", func(t *testing.T) {
+		ind, err := NewQqe(3.0, 7.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct Qqe: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 2)
+		compareGolden(t, "Qqe", got)
+	})
+	t.Run("Qstick", func(t *testing.T) {
+		ind, err := NewQstick(14.0)
+		if err != nil {
+			t.Fatalf("construct Qstick: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Qstick", got)
+	})
+	t.Run("QuartileBands", func(t *testing.T) {
+		ind, err := NewQuartileBands(14.0)
+		if err != nil {
+			t.Fatalf("construct QuartileBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "QuartileBands", got)
+	})
+	t.Run("QuotedSpread", func(t *testing.T) {
+		ind, err := NewQuotedSpread()
+		if err != nil {
+			t.Fatalf("construct QuotedSpread: %v", err)
+		}
+		defer ind.Close()
+		ob := obColumns(rows)
+		got := scalarRows(ind.Batch(ob.bidPx, ob.bidSz, obDepth, ob.askPx, ob.askSz, obDepth))
+		compareGolden(t, "QuotedSpread", got)
+	})
+	t.Run("RSquared", func(t *testing.T) {
+		ind, err := NewRSquared(14.0)
+		if err != nil {
+			t.Fatalf("construct RSquared: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RSquared", got)
+	})
+	t.Run("RangeBars", func(t *testing.T) {
+		ind, err := NewRangeBars(2.0)
+		if err != nil {
+			t.Fatalf("construct RangeBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.close, cols.close, cols.close, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "RangeBars", got)
+	})
+	t.Run("RealizedSpread", func(t *testing.T) {
+		ind, err := NewRealizedSpread(20.0)
+		if err != nil {
+			t.Fatalf("construct RealizedSpread: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index, cols.mid))
+		compareGolden(t, "RealizedSpread", got)
+	})
+	t.Run("RealizedVolatility", func(t *testing.T) {
+		ind, err := NewRealizedVolatility(14.0)
+		if err != nil {
+			t.Fatalf("construct RealizedVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RealizedVolatility", got)
+	})
+	t.Run("RecoveryFactor", func(t *testing.T) {
+		ind, err := NewRecoveryFactor()
+		if err != nil {
+			t.Fatalf("construct RecoveryFactor: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RecoveryFactor", got)
+	})
+	t.Run("RectangleRange", func(t *testing.T) {
+		ind, err := NewRectangleRange()
+		if err != nil {
+			t.Fatalf("construct RectangleRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "RectangleRange", got)
+	})
+	t.Run("Reflex", func(t *testing.T) {
+		ind, err := NewReflex(14.0)
+		if err != nil {
+			t.Fatalf("construct Reflex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Reflex", got)
+	})
+	t.Run("RegimeLabel", func(t *testing.T) {
+		ind, err := NewRegimeLabel(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct RegimeLabel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RegimeLabel", got)
+	})
+	t.Run("RelativeStrengthAB", func(t *testing.T) {
+		ind, err := NewRelativeStrengthAB(14.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct RelativeStrengthAB: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close, cols.open), 3)
+		compareGolden(t, "RelativeStrengthAB", got)
+	})
+	t.Run("RenkoBars", func(t *testing.T) {
+		ind, err := NewRenkoBars(2.0)
+		if err != nil {
+			t.Fatalf("construct RenkoBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.close, cols.close, cols.close, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "RenkoBars", got)
+	})
+	t.Run("RenkoTrailingStop", func(t *testing.T) {
+		ind, err := NewRenkoTrailingStop(2.0)
+		if err != nil {
+			t.Fatalf("construct RenkoTrailingStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RenkoTrailingStop", got)
+	})
+	t.Run("RickshawMan", func(t *testing.T) {
+		ind, err := NewRickshawMan()
+		if err != nil {
+			t.Fatalf("construct RickshawMan: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "RickshawMan", got)
+	})
+	t.Run("RisingThreeMethods", func(t *testing.T) {
+		ind, err := NewRisingThreeMethods()
+		if err != nil {
+			t.Fatalf("construct RisingThreeMethods: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "RisingThreeMethods", got)
+	})
+	t.Run("Rmi", func(t *testing.T) {
+		ind, err := NewRmi(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Rmi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Rmi", got)
+	})
+	t.Run("Roc", func(t *testing.T) {
+		ind, err := NewRoc(14.0)
+		if err != nil {
+			t.Fatalf("construct Roc: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Roc", got)
+	})
+	t.Run("Rocp", func(t *testing.T) {
+		ind, err := NewRocp(14.0)
+		if err != nil {
+			t.Fatalf("construct Rocp: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Rocp", got)
+	})
+	t.Run("Rocr", func(t *testing.T) {
+		ind, err := NewRocr(14.0)
+		if err != nil {
+			t.Fatalf("construct Rocr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Rocr", got)
+	})
+	t.Run("Rocr100", func(t *testing.T) {
+		ind, err := NewRocr100(14.0)
+		if err != nil {
+			t.Fatalf("construct Rocr100: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Rocr100", got)
+	})
+	t.Run("RogersSatchellVolatility", func(t *testing.T) {
+		ind, err := NewRogersSatchellVolatility(20.0, 252.0)
+		if err != nil {
+			t.Fatalf("construct RogersSatchellVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "RogersSatchellVolatility", got)
+	})
+	t.Run("RollMeasure", func(t *testing.T) {
+		ind, err := NewRollMeasure(20.0)
+		if err != nil {
+			t.Fatalf("construct RollMeasure: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "RollMeasure", got)
+	})
+	t.Run("RollingCorrelation", func(t *testing.T) {
+		ind, err := NewRollingCorrelation(14.0)
+		if err != nil {
+			t.Fatalf("construct RollingCorrelation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "RollingCorrelation", got)
+	})
+	t.Run("RollingCovariance", func(t *testing.T) {
+		ind, err := NewRollingCovariance(14.0)
+		if err != nil {
+			t.Fatalf("construct RollingCovariance: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "RollingCovariance", got)
+	})
+	t.Run("RollingIqr", func(t *testing.T) {
+		ind, err := NewRollingIqr(14.0)
+		if err != nil {
+			t.Fatalf("construct RollingIqr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RollingIqr", got)
+	})
+	t.Run("RollingMinMaxScaler", func(t *testing.T) {
+		ind, err := NewRollingMinMaxScaler(14.0)
+		if err != nil {
+			t.Fatalf("construct RollingMinMaxScaler: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RollingMinMaxScaler", got)
+	})
+	t.Run("RollingPercentileRank", func(t *testing.T) {
+		ind, err := NewRollingPercentileRank(14.0)
+		if err != nil {
+			t.Fatalf("construct RollingPercentileRank: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RollingPercentileRank", got)
+	})
+	t.Run("RollingQuantile", func(t *testing.T) {
+		ind, err := NewRollingQuantile(20.0, 0.5)
+		if err != nil {
+			t.Fatalf("construct RollingQuantile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RollingQuantile", got)
+	})
+	t.Run("RollingVwap", func(t *testing.T) {
+		ind, err := NewRollingVwap(14.0)
+		if err != nil {
+			t.Fatalf("construct RollingVwap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "RollingVwap", got)
+	})
+	t.Run("RoofingFilter", func(t *testing.T) {
+		ind, err := NewRoofingFilter(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct RoofingFilter: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RoofingFilter", got)
+	})
+	t.Run("Rsi", func(t *testing.T) {
+		ind, err := NewRsi(14.0)
+		if err != nil {
+			t.Fatalf("construct Rsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Rsi", got)
+	})
+	t.Run("Rsx", func(t *testing.T) {
+		ind, err := NewRsx(14.0)
+		if err != nil {
+			t.Fatalf("construct Rsx: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Rsx", got)
+	})
+	t.Run("RunBars", func(t *testing.T) {
+		ind, err := NewRunBars(3.0)
+		if err != nil {
+			t.Fatalf("construct RunBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "RunBars", got)
+	})
+	t.Run("Rvi", func(t *testing.T) {
+		ind, err := NewRvi(14.0)
+		if err != nil {
+			t.Fatalf("construct Rvi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Rvi", got)
+	})
+	t.Run("RviVolatility", func(t *testing.T) {
+		ind, err := NewRviVolatility(14.0)
+		if err != nil {
+			t.Fatalf("construct RviVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "RviVolatility", got)
+	})
+	t.Run("Rwi", func(t *testing.T) {
+		ind, err := NewRwi(14.0)
+		if err != nil {
+			t.Fatalf("construct Rwi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "Rwi", got)
+	})
+	t.Run("SampleEntropy", func(t *testing.T) {
+		ind, err := NewSampleEntropy(20.0, 2.0, 0.2)
+		if err != nil {
+			t.Fatalf("construct SampleEntropy: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SampleEntropy", got)
+	})
+	t.Run("SarExt", func(t *testing.T) {
+		ind, err := NewSarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+		if err != nil {
+			t.Fatalf("construct SarExt: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "SarExt", got)
+	})
+	t.Run("SeasonalZScore", func(t *testing.T) {
+		ind, err := NewSeasonalZScore(14.0)
+		if err != nil {
+			t.Fatalf("construct SeasonalZScore: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "SeasonalZScore", got)
+	})
+	t.Run("SeparatingLines", func(t *testing.T) {
+		ind, err := NewSeparatingLines()
+		if err != nil {
+			t.Fatalf("construct SeparatingLines: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "SeparatingLines", got)
+	})
+	t.Run("SessionHighLow", func(t *testing.T) {
+		ind, err := NewSessionHighLow(14.0)
+		if err != nil {
+			t.Fatalf("construct SessionHighLow: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "SessionHighLow", got)
+	})
+	t.Run("SessionRange", func(t *testing.T) {
+		ind, err := NewSessionRange(14.0)
+		if err != nil {
+			t.Fatalf("construct SessionRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "SessionRange", got)
+	})
+	t.Run("SessionVwap", func(t *testing.T) {
+		ind, err := NewSessionVwap(14.0)
+		if err != nil {
+			t.Fatalf("construct SessionVwap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "SessionVwap", got)
+	})
+	t.Run("ShannonEntropy", func(t *testing.T) {
+		ind, err := NewShannonEntropy(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct ShannonEntropy: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ShannonEntropy", got)
+	})
+	t.Run("Shark", func(t *testing.T) {
+		ind, err := NewShark()
+		if err != nil {
+			t.Fatalf("construct Shark: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Shark", got)
+	})
+	t.Run("SharpeRatio", func(t *testing.T) {
+		ind, err := NewSharpeRatio(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct SharpeRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SharpeRatio", got)
+	})
+	t.Run("ShootingStar", func(t *testing.T) {
+		ind, err := NewShootingStar()
+		if err != nil {
+			t.Fatalf("construct ShootingStar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ShootingStar", got)
+	})
+	t.Run("ShortLine", func(t *testing.T) {
+		ind, err := NewShortLine()
+		if err != nil {
+			t.Fatalf("construct ShortLine: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ShortLine", got)
+	})
+	t.Run("SignedVolume", func(t *testing.T) {
+		ind, err := NewSignedVolume()
+		if err != nil {
+			t.Fatalf("construct SignedVolume: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "SignedVolume", got)
+	})
+	t.Run("SineWave", func(t *testing.T) {
+		ind, err := NewSineWave()
+		if err != nil {
+			t.Fatalf("construct SineWave: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SineWave", got)
+	})
+	t.Run("SineWeightedMa", func(t *testing.T) {
+		ind, err := NewSineWeightedMa(14.0)
+		if err != nil {
+			t.Fatalf("construct SineWeightedMa: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SineWeightedMa", got)
+	})
+	t.Run("SinglePrints", func(t *testing.T) {
+		ind, err := NewSinglePrints(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct SinglePrints: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "SinglePrints", got)
+	})
+	t.Run("Skewness", func(t *testing.T) {
+		ind, err := NewSkewness(14.0)
+		if err != nil {
+			t.Fatalf("construct Skewness: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Skewness", got)
+	})
+	t.Run("Sma", func(t *testing.T) {
+		ind, err := NewSma(14.0)
+		if err != nil {
+			t.Fatalf("construct Sma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Sma", got)
+	})
+	t.Run("Smi", func(t *testing.T) {
+		ind, err := NewSmi(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct Smi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Smi", got)
+	})
+	t.Run("Smma", func(t *testing.T) {
+		ind, err := NewSmma(14.0)
+		if err != nil {
+			t.Fatalf("construct Smma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Smma", got)
+	})
+	t.Run("SmoothedHeikinAshi", func(t *testing.T) {
+		ind, err := NewSmoothedHeikinAshi(14.0)
+		if err != nil {
+			t.Fatalf("construct SmoothedHeikinAshi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 4)
+		compareGolden(t, "SmoothedHeikinAshi", got)
+	})
+	t.Run("SortinoRatio", func(t *testing.T) {
+		ind, err := NewSortinoRatio(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct SortinoRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SortinoRatio", got)
+	})
+	t.Run("SpearmanCorrelation", func(t *testing.T) {
+		ind, err := NewSpearmanCorrelation(14.0)
+		if err != nil {
+			t.Fatalf("construct SpearmanCorrelation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "SpearmanCorrelation", got)
+	})
+	t.Run("SpinningTop", func(t *testing.T) {
+		ind, err := NewSpinningTop()
+		if err != nil {
+			t.Fatalf("construct SpinningTop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "SpinningTop", got)
+	})
+	t.Run("SpreadAr1Coefficient", func(t *testing.T) {
+		ind, err := NewSpreadAr1Coefficient(14.0)
+		if err != nil {
+			t.Fatalf("construct SpreadAr1Coefficient: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "SpreadAr1Coefficient", got)
+	})
+	t.Run("SpreadBollingerBands", func(t *testing.T) {
+		ind, err := NewSpreadBollingerBands(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct SpreadBollingerBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close, cols.open), 4)
+		compareGolden(t, "SpreadBollingerBands", got)
+	})
+	t.Run("SpreadHurst", func(t *testing.T) {
+		ind, err := NewSpreadHurst(14.0)
+		if err != nil {
+			t.Fatalf("construct SpreadHurst: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "SpreadHurst", got)
+	})
+	t.Run("StalledPattern", func(t *testing.T) {
+		ind, err := NewStalledPattern()
+		if err != nil {
+			t.Fatalf("construct StalledPattern: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "StalledPattern", got)
+	})
+	t.Run("StandardError", func(t *testing.T) {
+		ind, err := NewStandardError(14.0)
+		if err != nil {
+			t.Fatalf("construct StandardError: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "StandardError", got)
+	})
+	t.Run("StandardErrorBands", func(t *testing.T) {
+		ind, err := NewStandardErrorBands(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct StandardErrorBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "StandardErrorBands", got)
+	})
+	t.Run("StarcBands", func(t *testing.T) {
+		ind, err := NewStarcBands(3.0, 7.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct StarcBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "StarcBands", got)
+	})
+	t.Run("Stc", func(t *testing.T) {
+		ind, err := NewStc(10.0, 23.0, 10.0, 0.5)
+		if err != nil {
+			t.Fatalf("construct Stc: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Stc", got)
+	})
+	t.Run("StdDev", func(t *testing.T) {
+		ind, err := NewStdDev(14.0)
+		if err != nil {
+			t.Fatalf("construct StdDev: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "StdDev", got)
+	})
+	t.Run("StepTrailingStop", func(t *testing.T) {
+		ind, err := NewStepTrailingStop(2.0)
+		if err != nil {
+			t.Fatalf("construct StepTrailingStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "StepTrailingStop", got)
+	})
+	t.Run("SterlingRatio", func(t *testing.T) {
+		ind, err := NewSterlingRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct SterlingRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SterlingRatio", got)
+	})
+	t.Run("StickSandwich", func(t *testing.T) {
+		ind, err := NewStickSandwich()
+		if err != nil {
+			t.Fatalf("construct StickSandwich: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "StickSandwich", got)
+	})
+	t.Run("StochRsi", func(t *testing.T) {
+		ind, err := NewStochRsi(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct StochRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "StochRsi", got)
+	})
+	t.Run("Stochastic", func(t *testing.T) {
+		ind, err := NewStochastic(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Stochastic: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "Stochastic", got)
+	})
+	t.Run("StochasticCci", func(t *testing.T) {
+		ind, err := NewStochasticCci(14.0)
+		if err != nil {
+			t.Fatalf("construct StochasticCci: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "StochasticCci", got)
+	})
+	t.Run("SuperSmoother", func(t *testing.T) {
+		ind, err := NewSuperSmoother(14.0)
+		if err != nil {
+			t.Fatalf("construct SuperSmoother: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "SuperSmoother", got)
+	})
+	t.Run("SuperTrend", func(t *testing.T) {
+		ind, err := NewSuperTrend(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct SuperTrend: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "SuperTrend", got)
+	})
+	t.Run("T3", func(t *testing.T) {
+		ind, err := NewT3(5.0, 0.7)
+		if err != nil {
+			t.Fatalf("construct T3: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "T3", got)
+	})
+	t.Run("TailRatio", func(t *testing.T) {
+		ind, err := NewTailRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct TailRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "TailRatio", got)
+	})
+	t.Run("TakerBuySellRatio", func(t *testing.T) {
+		ind, err := NewTakerBuySellRatio()
+		if err != nil {
+			t.Fatalf("construct TakerBuySellRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "TakerBuySellRatio", got)
+	})
+	t.Run("Takuri", func(t *testing.T) {
+		ind, err := NewTakuri()
+		if err != nil {
+			t.Fatalf("construct Takuri: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Takuri", got)
+	})
+	t.Run("TasukiGap", func(t *testing.T) {
+		ind, err := NewTasukiGap()
+		if err != nil {
+			t.Fatalf("construct TasukiGap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TasukiGap", got)
+	})
+	t.Run("TdCamouflage", func(t *testing.T) {
+		ind, err := NewTdCamouflage()
+		if err != nil {
+			t.Fatalf("construct TdCamouflage: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdCamouflage", got)
+	})
+	t.Run("TdClop", func(t *testing.T) {
+		ind, err := NewTdClop()
+		if err != nil {
+			t.Fatalf("construct TdClop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdClop", got)
+	})
+	t.Run("TdClopwin", func(t *testing.T) {
+		ind, err := NewTdClopwin()
+		if err != nil {
+			t.Fatalf("construct TdClopwin: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdClopwin", got)
+	})
+	t.Run("TdCombo", func(t *testing.T) {
+		ind, err := NewTdCombo(3.0, 7.0, 14.0, 28.0)
+		if err != nil {
+			t.Fatalf("construct TdCombo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdCombo", got)
+	})
+	t.Run("TdCountdown", func(t *testing.T) {
+		ind, err := NewTdCountdown(3.0, 7.0, 14.0, 28.0)
+		if err != nil {
+			t.Fatalf("construct TdCountdown: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdCountdown", got)
+	})
+	t.Run("TdDWave", func(t *testing.T) {
+		ind, err := NewTdDWave(2.0)
+		if err != nil {
+			t.Fatalf("construct TdDWave: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdDWave", got)
+	})
+	t.Run("TdDeMarker", func(t *testing.T) {
+		ind, err := NewTdDeMarker(14.0)
+		if err != nil {
+			t.Fatalf("construct TdDeMarker: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdDeMarker", got)
+	})
+	t.Run("TdDifferential", func(t *testing.T) {
+		ind, err := NewTdDifferential()
+		if err != nil {
+			t.Fatalf("construct TdDifferential: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdDifferential", got)
+	})
+	t.Run("TdLines", func(t *testing.T) {
+		ind, err := NewTdLines(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct TdLines: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "TdLines", got)
+	})
+	t.Run("TdMovingAverage", func(t *testing.T) {
+		ind, err := NewTdMovingAverage(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct TdMovingAverage: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "TdMovingAverage", got)
+	})
+	t.Run("TdOpen", func(t *testing.T) {
+		ind, err := NewTdOpen()
+		if err != nil {
+			t.Fatalf("construct TdOpen: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdOpen", got)
+	})
+	t.Run("TdPressure", func(t *testing.T) {
+		ind, err := NewTdPressure(14.0)
+		if err != nil {
+			t.Fatalf("construct TdPressure: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdPressure", got)
+	})
+	t.Run("TdPropulsion", func(t *testing.T) {
+		ind, err := NewTdPropulsion()
+		if err != nil {
+			t.Fatalf("construct TdPropulsion: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdPropulsion", got)
+	})
+	t.Run("TdRangeProjection", func(t *testing.T) {
+		ind, err := NewTdRangeProjection()
+		if err != nil {
+			t.Fatalf("construct TdRangeProjection: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "TdRangeProjection", got)
+	})
+	t.Run("TdRei", func(t *testing.T) {
+		ind, err := NewTdRei(14.0)
+		if err != nil {
+			t.Fatalf("construct TdRei: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdRei", got)
+	})
+	t.Run("TdRiskLevel", func(t *testing.T) {
+		ind, err := NewTdRiskLevel(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct TdRiskLevel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "TdRiskLevel", got)
+	})
+	t.Run("TdSequential", func(t *testing.T) {
+		ind, err := NewTdSequential(3.0, 7.0, 14.0, 28.0)
+		if err != nil {
+			t.Fatalf("construct TdSequential: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "TdSequential", got)
+	})
+	t.Run("TdSetup", func(t *testing.T) {
+		ind, err := NewTdSetup(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct TdSetup: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdSetup", got)
+	})
+	t.Run("TdTrap", func(t *testing.T) {
+		ind, err := NewTdTrap()
+		if err != nil {
+			t.Fatalf("construct TdTrap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TdTrap", got)
+	})
+	t.Run("Tema", func(t *testing.T) {
+		ind, err := NewTema(14.0)
+		if err != nil {
+			t.Fatalf("construct Tema: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Tema", got)
+	})
+	t.Run("TermStructureBasis", func(t *testing.T) {
+		ind, err := NewTermStructureBasis()
+		if err != nil {
+			t.Fatalf("construct TermStructureBasis: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		d := derivColumns(rows)
+		got := scalarRows(ind.Batch(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], cols.index))
+		compareGolden(t, "TermStructureBasis", got)
+	})
+	t.Run("ThreeDrives", func(t *testing.T) {
+		ind, err := NewThreeDrives()
+		if err != nil {
+			t.Fatalf("construct ThreeDrives: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeDrives", got)
+	})
+	t.Run("ThreeInside", func(t *testing.T) {
+		ind, err := NewThreeInside()
+		if err != nil {
+			t.Fatalf("construct ThreeInside: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeInside", got)
+	})
+	t.Run("ThreeLineBreak", func(t *testing.T) {
+		ind, err := NewThreeLineBreak(14.0)
+		if err != nil {
+			t.Fatalf("construct ThreeLineBreak: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeLineBreak", got)
+	})
+	t.Run("ThreeLineBreakBars", func(t *testing.T) {
+		ind, err := NewThreeLineBreakBars(3.0)
+		if err != nil {
+			t.Fatalf("construct ThreeLineBreakBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.close, cols.close, cols.close, cols.close, cols.ones, cols.zeroTs))
+		compareGoldenFlat(t, "ThreeLineBreakBars", got)
+	})
+	t.Run("ThreeLineStrike", func(t *testing.T) {
+		ind, err := NewThreeLineStrike()
+		if err != nil {
+			t.Fatalf("construct ThreeLineStrike: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeLineStrike", got)
+	})
+	t.Run("ThreeOutside", func(t *testing.T) {
+		ind, err := NewThreeOutside()
+		if err != nil {
+			t.Fatalf("construct ThreeOutside: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeOutside", got)
+	})
+	t.Run("ThreeSoldiersOrCrows", func(t *testing.T) {
+		ind, err := NewThreeSoldiersOrCrows()
+		if err != nil {
+			t.Fatalf("construct ThreeSoldiersOrCrows: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeSoldiersOrCrows", got)
+	})
+	t.Run("ThreeStarsInSouth", func(t *testing.T) {
+		ind, err := NewThreeStarsInSouth()
+		if err != nil {
+			t.Fatalf("construct ThreeStarsInSouth: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "ThreeStarsInSouth", got)
+	})
+	t.Run("Thrusting", func(t *testing.T) {
+		ind, err := NewThrusting()
+		if err != nil {
+			t.Fatalf("construct Thrusting: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Thrusting", got)
+	})
+	t.Run("TickBars", func(t *testing.T) {
+		ind, err := NewTickBars(2.0)
+		if err != nil {
+			t.Fatalf("construct TickBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.zeroTs))
+		compareGoldenFlat(t, "TickBars", got)
+	})
+	t.Run("TickIndex", func(t *testing.T) {
+		ind, err := NewTickIndex()
+		if err != nil {
+			t.Fatalf("construct TickIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "TickIndex", got)
+	})
+	t.Run("Tii", func(t *testing.T) {
+		ind, err := NewTii(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Tii: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Tii", got)
+	})
+	t.Run("TimeBasedStop", func(t *testing.T) {
+		ind, err := NewTimeBasedStop(14.0)
+		if err != nil {
+			t.Fatalf("construct TimeBasedStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TimeBasedStop", got)
+	})
+	t.Run("TimeOfDayReturnProfile", func(t *testing.T) {
+		ind, err := NewTimeOfDayReturnProfile(24.0, 0.0)
+		if err != nil {
+			t.Fatalf("construct TimeOfDayReturnProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index)
+		compareGolden(t, "TimeOfDayReturnProfile", got)
+	})
+	t.Run("TowerTopBottom", func(t *testing.T) {
+		ind, err := NewTowerTopBottom()
+		if err != nil {
+			t.Fatalf("construct TowerTopBottom: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TowerTopBottom", got)
+	})
+	t.Run("TpoProfile", func(t *testing.T) {
+		ind, err := NewTpoProfile(30.0, 50.0)
+		if err != nil {
+			t.Fatalf("construct TpoProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 52)
+		compareGolden(t, "TpoProfile", got)
+	})
+	t.Run("TradeImbalance", func(t *testing.T) {
+		ind, err := NewTradeImbalance(20.0)
+		if err != nil {
+			t.Fatalf("construct TradeImbalance: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "TradeImbalance", got)
+	})
+	t.Run("TradeSignAutocorrelation", func(t *testing.T) {
+		ind, err := NewTradeSignAutocorrelation(20.0)
+		if err != nil {
+			t.Fatalf("construct TradeSignAutocorrelation: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "TradeSignAutocorrelation", got)
+	})
+	t.Run("TradeVolumeIndex", func(t *testing.T) {
+		ind, err := NewTradeVolumeIndex(2.0)
+		if err != nil {
+			t.Fatalf("construct TradeVolumeIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TradeVolumeIndex", got)
+	})
+	t.Run("TrendLabel", func(t *testing.T) {
+		ind, err := NewTrendLabel(14.0)
+		if err != nil {
+			t.Fatalf("construct TrendLabel: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "TrendLabel", got)
+	})
+	t.Run("TrendStrengthIndex", func(t *testing.T) {
+		ind, err := NewTrendStrengthIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct TrendStrengthIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "TrendStrengthIndex", got)
+	})
+	t.Run("Trendflex", func(t *testing.T) {
+		ind, err := NewTrendflex(14.0)
+		if err != nil {
+			t.Fatalf("construct Trendflex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Trendflex", got)
+	})
+	t.Run("TreynorRatio", func(t *testing.T) {
+		ind, err := NewTreynorRatio(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct TreynorRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "TreynorRatio", got)
+	})
+	t.Run("Triangle", func(t *testing.T) {
+		ind, err := NewTriangle()
+		if err != nil {
+			t.Fatalf("construct Triangle: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Triangle", got)
+	})
+	t.Run("Trima", func(t *testing.T) {
+		ind, err := NewTrima(14.0)
+		if err != nil {
+			t.Fatalf("construct Trima: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Trima", got)
+	})
+	t.Run("Trin", func(t *testing.T) {
+		ind, err := NewTrin()
+		if err != nil {
+			t.Fatalf("construct Trin: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "Trin", got)
+	})
+	t.Run("TripleTopBottom", func(t *testing.T) {
+		ind, err := NewTripleTopBottom()
+		if err != nil {
+			t.Fatalf("construct TripleTopBottom: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TripleTopBottom", got)
+	})
+	t.Run("Tristar", func(t *testing.T) {
+		ind, err := NewTristar()
+		if err != nil {
+			t.Fatalf("construct Tristar: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Tristar", got)
+	})
+	t.Run("Trix", func(t *testing.T) {
+		ind, err := NewTrix(14.0)
+		if err != nil {
+			t.Fatalf("construct Trix: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Trix", got)
+	})
+	t.Run("TrueRange", func(t *testing.T) {
+		ind, err := NewTrueRange()
+		if err != nil {
+			t.Fatalf("construct TrueRange: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TrueRange", got)
+	})
+	t.Run("Tsf", func(t *testing.T) {
+		ind, err := NewTsf(14.0)
+		if err != nil {
+			t.Fatalf("construct Tsf: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Tsf", got)
+	})
+	t.Run("TsfOscillator", func(t *testing.T) {
+		ind, err := NewTsfOscillator(14.0)
+		if err != nil {
+			t.Fatalf("construct TsfOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "TsfOscillator", got)
+	})
+	t.Run("Tsi", func(t *testing.T) {
+		ind, err := NewTsi(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Tsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Tsi", got)
+	})
+	t.Run("Tsv", func(t *testing.T) {
+		ind, err := NewTsv(14.0)
+		if err != nil {
+			t.Fatalf("construct Tsv: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Tsv", got)
+	})
+	t.Run("TtmSqueeze", func(t *testing.T) {
+		ind, err := NewTtmSqueeze(14.0, 2.0, 0.5)
+		if err != nil {
+			t.Fatalf("construct TtmSqueeze: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "TtmSqueeze", got)
+	})
+	t.Run("TtmTrend", func(t *testing.T) {
+		ind, err := NewTtmTrend(14.0)
+		if err != nil {
+			t.Fatalf("construct TtmTrend: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TtmTrend", got)
+	})
+	t.Run("TurnOfMonth", func(t *testing.T) {
+		ind, err := NewTurnOfMonth(3.0, 3.0, 0.0)
+		if err != nil {
+			t.Fatalf("construct TurnOfMonth: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TurnOfMonth", got)
+	})
+	t.Run("Tweezer", func(t *testing.T) {
+		ind, err := NewTweezer()
+		if err != nil {
+			t.Fatalf("construct Tweezer: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Tweezer", got)
+	})
+	t.Run("TwiggsMoneyFlow", func(t *testing.T) {
+		ind, err := NewTwiggsMoneyFlow(14.0)
+		if err != nil {
+			t.Fatalf("construct TwiggsMoneyFlow: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TwiggsMoneyFlow", got)
+	})
+	t.Run("TwoCrows", func(t *testing.T) {
+		ind, err := NewTwoCrows()
+		if err != nil {
+			t.Fatalf("construct TwoCrows: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TwoCrows", got)
+	})
+	t.Run("TypicalPrice", func(t *testing.T) {
+		ind, err := NewTypicalPrice()
+		if err != nil {
+			t.Fatalf("construct TypicalPrice: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "TypicalPrice", got)
+	})
+	t.Run("UlcerIndex", func(t *testing.T) {
+		ind, err := NewUlcerIndex(14.0)
+		if err != nil {
+			t.Fatalf("construct UlcerIndex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "UlcerIndex", got)
+	})
+	t.Run("UltimateOscillator", func(t *testing.T) {
+		ind, err := NewUltimateOscillator(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct UltimateOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "UltimateOscillator", got)
+	})
+	t.Run("UniqueThreeRiver", func(t *testing.T) {
+		ind, err := NewUniqueThreeRiver()
+		if err != nil {
+			t.Fatalf("construct UniqueThreeRiver: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "UniqueThreeRiver", got)
+	})
+	t.Run("UniversalOscillator", func(t *testing.T) {
+		ind, err := NewUniversalOscillator(14.0)
+		if err != nil {
+			t.Fatalf("construct UniversalOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "UniversalOscillator", got)
+	})
+	t.Run("UpDownVolumeRatio", func(t *testing.T) {
+		ind, err := NewUpDownVolumeRatio()
+		if err != nil {
+			t.Fatalf("construct UpDownVolumeRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		cs := crossColumns(rows)
+		got := scalarRows(ind.Batch(cs.change, cs.volume, cs.newHigh, cs.newLow, cs.aboveMa, cs.onBuy, crossMembers, cols.index))
+		compareGolden(t, "UpDownVolumeRatio", got)
+	})
+	t.Run("UpsideGapThreeMethods", func(t *testing.T) {
+		ind, err := NewUpsideGapThreeMethods()
+		if err != nil {
+			t.Fatalf("construct UpsideGapThreeMethods: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "UpsideGapThreeMethods", got)
+	})
+	t.Run("UpsideGapTwoCrows", func(t *testing.T) {
+		ind, err := NewUpsideGapTwoCrows()
+		if err != nil {
+			t.Fatalf("construct UpsideGapTwoCrows: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "UpsideGapTwoCrows", got)
+	})
+	t.Run("UpsidePotentialRatio", func(t *testing.T) {
+		ind, err := NewUpsidePotentialRatio(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct UpsidePotentialRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "UpsidePotentialRatio", got)
+	})
+	t.Run("ValueArea", func(t *testing.T) {
+		ind, err := NewValueArea(20.0, 50.0, 0.7)
+		if err != nil {
+			t.Fatalf("construct ValueArea: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "ValueArea", got)
+	})
+	t.Run("ValueAtRisk", func(t *testing.T) {
+		ind, err := NewValueAtRisk(20.0, 0.95)
+		if err != nil {
+			t.Fatalf("construct ValueAtRisk: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ValueAtRisk", got)
+	})
+	t.Run("Variance", func(t *testing.T) {
+		ind, err := NewVariance(14.0)
+		if err != nil {
+			t.Fatalf("construct Variance: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Variance", got)
+	})
+	t.Run("VarianceRatio", func(t *testing.T) {
+		ind, err := NewVarianceRatio(60.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct VarianceRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.open))
+		compareGolden(t, "VarianceRatio", got)
+	})
+	t.Run("VerticalHorizontalFilter", func(t *testing.T) {
+		ind, err := NewVerticalHorizontalFilter(14.0)
+		if err != nil {
+			t.Fatalf("construct VerticalHorizontalFilter: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "VerticalHorizontalFilter", got)
+	})
+	t.Run("Vidya", func(t *testing.T) {
+		ind, err := NewVidya(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct Vidya: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Vidya", got)
+	})
+	t.Run("VolatilityCone", func(t *testing.T) {
+		ind, err := NewVolatilityCone(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct VolatilityCone: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 5)
+		compareGolden(t, "VolatilityCone", got)
+	})
+	t.Run("VolatilityOfVolatility", func(t *testing.T) {
+		ind, err := NewVolatilityOfVolatility(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct VolatilityOfVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "VolatilityOfVolatility", got)
+	})
+	t.Run("VolatilityRatio", func(t *testing.T) {
+		ind, err := NewVolatilityRatio(14.0)
+		if err != nil {
+			t.Fatalf("construct VolatilityRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "VolatilityRatio", got)
+	})
+	t.Run("VoltyStop", func(t *testing.T) {
+		ind, err := NewVoltyStop(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct VoltyStop: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "VoltyStop", got)
+	})
+	t.Run("VolumeBars", func(t *testing.T) {
+		ind, err := NewVolumeBars(500.0)
+		if err != nil {
+			t.Fatalf("construct VolumeBars: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := flattenBars(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.zeroTs))
+		compareGoldenFlat(t, "VolumeBars", got)
+	})
+	t.Run("VolumeByTimeProfile", func(t *testing.T) {
+		ind, err := NewVolumeByTimeProfile(24.0, 0.0)
+		if err != nil {
+			t.Fatalf("construct VolumeByTimeProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index)
+		compareGolden(t, "VolumeByTimeProfile", got)
+	})
+	t.Run("VolumeOscillator", func(t *testing.T) {
+		ind, err := NewVolumeOscillator(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct VolumeOscillator: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "VolumeOscillator", got)
+	})
+	t.Run("VolumePriceTrend", func(t *testing.T) {
+		ind, err := NewVolumePriceTrend()
+		if err != nil {
+			t.Fatalf("construct VolumePriceTrend: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "VolumePriceTrend", got)
+	})
+	t.Run("VolumeProfile", func(t *testing.T) {
+		ind, err := NewVolumeProfile(20.0, 50.0)
+		if err != nil {
+			t.Fatalf("construct VolumeProfile: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 52)
+		compareGolden(t, "VolumeProfile", got)
+	})
+	t.Run("VolumeRsi", func(t *testing.T) {
+		ind, err := NewVolumeRsi(14.0)
+		if err != nil {
+			t.Fatalf("construct VolumeRsi: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "VolumeRsi", got)
+	})
+	t.Run("VolumeWeightedMacd", func(t *testing.T) {
+		ind, err := NewVolumeWeightedMacd(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct VolumeWeightedMacd: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 3)
+		compareGolden(t, "VolumeWeightedMacd", got)
+	})
+	t.Run("VolumeWeightedSr", func(t *testing.T) {
+		ind, err := NewVolumeWeightedSr(14.0)
+		if err != nil {
+			t.Fatalf("construct VolumeWeightedSr: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "VolumeWeightedSr", got)
+	})
+	t.Run("Vortex", func(t *testing.T) {
+		ind, err := NewVortex(14.0)
+		if err != nil {
+			t.Fatalf("construct Vortex: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "Vortex", got)
+	})
+	t.Run("Vpin", func(t *testing.T) {
+		ind, err := NewVpin(5000.0, 10.0)
+		if err != nil {
+			t.Fatalf("construct Vpin: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close, cols.volume, cols.isBuy, cols.index))
+		compareGolden(t, "Vpin", got)
+	})
+	t.Run("Vwap", func(t *testing.T) {
+		ind, err := NewVwap()
+		if err != nil {
+			t.Fatalf("construct Vwap: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Vwap", got)
+	})
+	t.Run("VwapStdDevBands", func(t *testing.T) {
+		ind, err := NewVwapStdDevBands(2.0)
+		if err != nil {
+			t.Fatalf("construct VwapStdDevBands: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 4)
+		compareGolden(t, "VwapStdDevBands", got)
+	})
+	t.Run("Vwma", func(t *testing.T) {
+		ind, err := NewVwma(14.0)
+		if err != nil {
+			t.Fatalf("construct Vwma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Vwma", got)
+	})
+	t.Run("Vzo", func(t *testing.T) {
+		ind, err := NewVzo(14.0)
+		if err != nil {
+			t.Fatalf("construct Vzo: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Vzo", got)
+	})
+	t.Run("Wad", func(t *testing.T) {
+		ind, err := NewWad()
+		if err != nil {
+			t.Fatalf("construct Wad: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Wad", got)
+	})
+	t.Run("WavePm", func(t *testing.T) {
+		ind, err := NewWavePm(3.0, 7.0)
+		if err != nil {
+			t.Fatalf("construct WavePm: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "WavePm", got)
+	})
+	t.Run("WaveTrend", func(t *testing.T) {
+		ind, err := NewWaveTrend(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct WaveTrend: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "WaveTrend", got)
+	})
+	t.Run("Wedge", func(t *testing.T) {
+		ind, err := NewWedge()
+		if err != nil {
+			t.Fatalf("construct Wedge: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "Wedge", got)
+	})
+	t.Run("WeightedClose", func(t *testing.T) {
+		ind, err := NewWeightedClose()
+		if err != nil {
+			t.Fatalf("construct WeightedClose: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "WeightedClose", got)
+	})
+	t.Run("WickRatio", func(t *testing.T) {
+		ind, err := NewWickRatio()
+		if err != nil {
+			t.Fatalf("construct WickRatio: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "WickRatio", got)
+	})
+	t.Run("WilliamsFractals", func(t *testing.T) {
+		ind, err := NewWilliamsFractals()
+		if err != nil {
+			t.Fatalf("construct WilliamsFractals: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "WilliamsFractals", got)
+	})
+	t.Run("WilliamsR", func(t *testing.T) {
+		ind, err := NewWilliamsR(14.0)
+		if err != nil {
+			t.Fatalf("construct WilliamsR: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "WilliamsR", got)
+	})
+	t.Run("WinRate", func(t *testing.T) {
+		ind, err := NewWinRate(14.0)
+		if err != nil {
+			t.Fatalf("construct WinRate: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "WinRate", got)
+	})
+	t.Run("Wma", func(t *testing.T) {
+		ind, err := NewWma(14.0)
+		if err != nil {
+			t.Fatalf("construct Wma: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "Wma", got)
+	})
+	t.Run("WoodiePivots", func(t *testing.T) {
+		ind, err := NewWoodiePivots()
+		if err != nil {
+			t.Fatalf("construct WoodiePivots: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 5)
+		compareGolden(t, "WoodiePivots", got)
+	})
+	t.Run("YangZhangVolatility", func(t *testing.T) {
+		ind, err := NewYangZhangVolatility(20.0, 252.0)
+		if err != nil {
+			t.Fatalf("construct YangZhangVolatility: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "YangZhangVolatility", got)
+	})
+	t.Run("YoyoExit", func(t *testing.T) {
+		ind, err := NewYoyoExit(14.0, 2.0)
+		if err != nil {
+			t.Fatalf("construct YoyoExit: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index))
+		compareGolden(t, "YoyoExit", got)
+	})
+	t.Run("ZScore", func(t *testing.T) {
+		ind, err := NewZScore(14.0)
+		if err != nil {
+			t.Fatalf("construct ZScore: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
+		compareGolden(t, "ZScore", got)
+	})
+	t.Run("ZeroLagMacd", func(t *testing.T) {
+		ind, err := NewZeroLagMacd(3.0, 7.0, 14.0)
+		if err != nil {
+			t.Fatalf("construct ZeroLagMacd: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.close), 3)
+		compareGolden(t, "ZeroLagMacd", got)
+	})
+	t.Run("ZigZag", func(t *testing.T) {
+		ind, err := NewZigZag(0.02)
+		if err != nil {
+			t.Fatalf("construct ZigZag: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := structRows(ind.Batch(cols.open, cols.high, cols.low, cols.close, cols.volume, cols.index), 2)
+		compareGolden(t, "ZigZag", got)
+	})
+	t.Run("Zlema", func(t *testing.T) {
+		ind, err := NewZlema(14.0)
+		if err != nil {
+			t.Fatalf("construct Zlema: %v", err)
+		}
+		defer ind.Close()
+		cols := goldenColumns(rows)
+		got := scalarRows(ind.Batch(cols.close))
 		compareGolden(t, "Zlema", got)
 	})
 }

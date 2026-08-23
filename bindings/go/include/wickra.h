@@ -1348,7 +1348,7 @@ typedef struct WickraKstOutput {
 } WickraKstOutput;
 
 typedef struct WickraLeadLagCrossCorrelationOutput {
-    int64_t lag;
+    double lag;
     double correlation;
 } WickraLeadLagCrossCorrelationOutput;
 

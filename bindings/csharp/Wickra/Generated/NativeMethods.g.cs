@@ -13435,7 +13435,7 @@ internal static partial class NativeMethods
     [StructLayout(LayoutKind.Sequential)]
     internal struct WickraLeadLagCrossCorrelationOutput
     {
-        public long lag;
+        public double lag;
         public double correlation;
     }
 

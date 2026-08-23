@@ -57747,7 +57747,7 @@ pub struct WickraKstOutput {
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct WickraLeadLagCrossCorrelationOutput {
-    pub lag: i64,
+    pub lag: f64,
     pub correlation: f64,
 }
 
@@ -58170,8 +58170,8 @@ pub unsafe extern "C" fn wickra_acceleration_bands_update(
 
 /// Run over the input series, writing one `WickraAccelerationBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_acceleration_bands_new`, not freed); every input pointer covers
@@ -58357,8 +58357,8 @@ pub unsafe extern "C" fn wickra_adx_update(
 
 /// Run over the input series, writing one `WickraAdxOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_adx_new`, not freed); every input pointer covers
@@ -58542,8 +58542,8 @@ pub unsafe extern "C" fn wickra_alligator_update(
 
 /// Run over the input series, writing one `WickraAlligatorOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_alligator_new`, not freed); every input pointer covers
@@ -58723,8 +58723,8 @@ pub unsafe extern "C" fn wickra_andrews_pitchfork_update(
 
 /// Run over the input series, writing one `WickraAndrewsPitchforkOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_andrews_pitchfork_new`, not freed); every input pointer covers
@@ -58907,8 +58907,8 @@ pub unsafe extern "C" fn wickra_aroon_update(
 
 /// Run over the input series, writing one `WickraAroonOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_aroon_new`, not freed); every input pointer covers
@@ -59086,8 +59086,8 @@ pub unsafe extern "C" fn wickra_atr_bands_update(
 
 /// Run over the input series, writing one `WickraAtrBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_atr_bands_new`, not freed); every input pointer covers
@@ -59270,8 +59270,8 @@ pub unsafe extern "C" fn wickra_atr_ratchet_update(
 
 /// Run over the input series, writing one `WickraAtrRatchetOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_atr_ratchet_new`, not freed); every input pointer covers
@@ -59450,8 +59450,8 @@ pub unsafe extern "C" fn wickra_auto_fib_update(
 
 /// Run over the input series, writing one `WickraAutoFibOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_auto_fib_new`, not freed); every input pointer covers
@@ -59635,8 +59635,8 @@ pub unsafe extern "C" fn wickra_bollinger_bands_update(
 
 /// Run over the input series, writing one `WickraBollingerOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_bollinger_bands_new`, not freed); every input pointer covers
@@ -59784,8 +59784,8 @@ pub unsafe extern "C" fn wickra_bomar_bands_update(
 
 /// Run over the input series, writing one `WickraBomarBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_bomar_bands_new`, not freed); every input pointer covers
@@ -59940,8 +59940,8 @@ pub unsafe extern "C" fn wickra_camarilla_update(
 
 /// Run over the input series, writing one `WickraCamarillaPivotsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_camarilla_new`, not freed); every input pointer covers
@@ -60132,8 +60132,8 @@ pub unsafe extern "C" fn wickra_candle_volume_update(
 
 /// Run over the input series, writing one `WickraCandleVolumeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_candle_volume_new`, not freed); every input pointer covers
@@ -60308,8 +60308,8 @@ pub unsafe extern "C" fn wickra_central_pivot_range_update(
 
 /// Run over the input series, writing one `WickraCentralPivotRangeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_central_pivot_range_new`, not freed); every input pointer covers
@@ -60498,8 +60498,8 @@ pub unsafe extern "C" fn wickra_chande_kroll_stop_update(
 
 /// Run over the input series, writing one `WickraChandeKrollStopOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_chande_kroll_stop_new`, not freed); every input pointer covers
@@ -60683,8 +60683,8 @@ pub unsafe extern "C" fn wickra_chandelier_exit_update(
 
 /// Run over the input series, writing one `WickraChandelierExitOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_chandelier_exit_new`, not freed); every input pointer covers
@@ -60865,8 +60865,8 @@ pub unsafe extern "C" fn wickra_classic_pivots_update(
 
 /// Run over the input series, writing one `WickraClassicPivotsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_classic_pivots_new`, not freed); every input pointer covers
@@ -61047,8 +61047,8 @@ pub unsafe extern "C" fn wickra_cointegration_update(
 
 /// Run over the input series, writing one `WickraCointegrationOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_cointegration_new`, not freed); every input pointer covers
@@ -61206,8 +61206,8 @@ pub unsafe extern "C" fn wickra_composite_profile_update(
 
 /// Run over the input series, writing one `WickraCompositeProfileOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_composite_profile_new`, not freed); every input pointer covers
@@ -61388,8 +61388,8 @@ pub unsafe extern "C" fn wickra_demark_pivots_update(
 
 /// Run over the input series, writing one `WickraDemarkPivotsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_demark_pivots_new`, not freed); every input pointer covers
@@ -61569,8 +61569,8 @@ pub unsafe extern "C" fn wickra_donchian_update(
 
 /// Run over the input series, writing one `WickraDonchianOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_donchian_new`, not freed); every input pointer covers
@@ -61749,8 +61749,8 @@ pub unsafe extern "C" fn wickra_donchian_stop_update(
 
 /// Run over the input series, writing one `WickraDonchianStopOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_donchian_stop_new`, not freed); every input pointer covers
@@ -61926,8 +61926,8 @@ pub unsafe extern "C" fn wickra_double_bollinger_update(
 
 /// Run over the input series, writing one `WickraDoubleBollingerOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_double_bollinger_new`, not freed); every input pointer covers
@@ -62086,8 +62086,8 @@ pub unsafe extern "C" fn wickra_elder_ray_update(
 
 /// Run over the input series, writing one `WickraElderRayOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_elder_ray_new`, not freed); every input pointer covers
@@ -62264,8 +62264,8 @@ pub unsafe extern "C" fn wickra_elder_safe_zone_update(
 
 /// Run over the input series, writing one `WickraElderSafeZoneOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_elder_safe_zone_new`, not freed); every input pointer covers
@@ -62442,8 +62442,8 @@ pub unsafe extern "C" fn wickra_equivolume_update(
 
 /// Run over the input series, writing one `WickraEquivolumeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_equivolume_new`, not freed); every input pointer covers
@@ -62618,8 +62618,8 @@ pub unsafe extern "C" fn wickra_fib_arcs_update(
 
 /// Run over the input series, writing one `WickraFibArcsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_arcs_new`, not freed); every input pointer covers
@@ -62797,8 +62797,8 @@ pub unsafe extern "C" fn wickra_fib_channel_update(
 
 /// Run over the input series, writing one `WickraFibChannelOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_channel_new`, not freed); every input pointer covers
@@ -62976,8 +62976,8 @@ pub unsafe extern "C" fn wickra_fib_confluence_update(
 
 /// Run over the input series, writing one `WickraFibConfluenceOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_confluence_new`, not freed); every input pointer covers
@@ -63154,8 +63154,8 @@ pub unsafe extern "C" fn wickra_fib_extension_update(
 
 /// Run over the input series, writing one `WickraFibExtensionOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_extension_new`, not freed); every input pointer covers
@@ -63336,8 +63336,8 @@ pub unsafe extern "C" fn wickra_fib_fan_update(
 
 /// Run over the input series, writing one `WickraFibFanOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_fan_new`, not freed); every input pointer covers
@@ -63515,8 +63515,8 @@ pub unsafe extern "C" fn wickra_fib_projection_update(
 
 /// Run over the input series, writing one `WickraFibProjectionOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_projection_new`, not freed); every input pointer covers
@@ -63699,8 +63699,8 @@ pub unsafe extern "C" fn wickra_fib_retracement_update(
 
 /// Run over the input series, writing one `WickraFibRetracementOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_retracement_new`, not freed); every input pointer covers
@@ -63886,8 +63886,8 @@ pub unsafe extern "C" fn wickra_fib_time_zones_update(
 
 /// Run over the input series, writing one `WickraFibTimeZonesOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fib_time_zones_new`, not freed); every input pointer covers
@@ -64066,8 +64066,8 @@ pub unsafe extern "C" fn wickra_fibonacci_pivots_update(
 
 /// Run over the input series, writing one `WickraFibonacciPivotsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fibonacci_pivots_new`, not freed); every input pointer covers
@@ -64258,8 +64258,8 @@ pub unsafe extern "C" fn wickra_fractal_chaos_bands_update(
 
 /// Run over the input series, writing one `WickraFractalChaosBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_fractal_chaos_bands_new`, not freed); every input pointer covers
@@ -64446,8 +64446,8 @@ pub unsafe extern "C" fn wickra_gator_oscillator_update(
 
 /// Run over the input series, writing one `WickraGatorOscillatorOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_gator_oscillator_new`, not freed); every input pointer covers
@@ -64626,8 +64626,8 @@ pub unsafe extern "C" fn wickra_golden_pocket_update(
 
 /// Run over the input series, writing one `WickraGoldenPocketOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_golden_pocket_new`, not freed); every input pointer covers
@@ -64805,8 +64805,8 @@ pub unsafe extern "C" fn wickra_heikin_ashi_update(
 
 /// Run over the input series, writing one `WickraHeikinAshiOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_heikin_ashi_new`, not freed); every input pointer covers
@@ -64990,8 +64990,8 @@ pub unsafe extern "C" fn wickra_high_low_volume_nodes_update(
 
 /// Run over the input series, writing one `WickraHighLowVolumeNodesOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_high_low_volume_nodes_new`, not freed); every input pointer covers
@@ -65163,8 +65163,8 @@ pub unsafe extern "C" fn wickra_ht_phasor_update(
 
 /// Run over the input series, writing one `WickraHtPhasorOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_ht_phasor_new`, not freed); every input pointer covers
@@ -65314,8 +65314,8 @@ pub unsafe extern "C" fn wickra_hurst_channel_update(
 
 /// Run over the input series, writing one `WickraHurstChannelOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_hurst_channel_new`, not freed); every input pointer covers
@@ -65502,8 +65502,8 @@ pub unsafe extern "C" fn wickra_ichimoku_update(
 
 /// Run over the input series, writing one `WickraIchimokuOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_ichimoku_new`, not freed); every input pointer covers
@@ -65686,8 +65686,8 @@ pub unsafe extern "C" fn wickra_initial_balance_update(
 
 /// Run over the input series, writing one `WickraInitialBalanceOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_initial_balance_new`, not freed); every input pointer covers
@@ -65863,8 +65863,8 @@ pub unsafe extern "C" fn wickra_kalman_hedge_ratio_update(
 
 /// Run over the input series, writing one `WickraKalmanHedgeRatioOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_kalman_hedge_ratio_new`, not freed); every input pointer covers
@@ -66021,8 +66021,8 @@ pub unsafe extern "C" fn wickra_kase_dev_stop_update(
 
 /// Run over the input series, writing one `WickraKaseDevStopOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_kase_dev_stop_new`, not freed); every input pointer covers
@@ -66202,8 +66202,8 @@ pub unsafe extern "C" fn wickra_kase_permission_stochastic_update(
 
 /// Run over the input series, writing one `WickraKasePermissionStochasticOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_kase_permission_stochastic_new`, not freed); every input pointer covers
@@ -66395,8 +66395,8 @@ pub unsafe extern "C" fn wickra_keltner_update(
 
 /// Run over the input series, writing one `WickraKeltnerOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_keltner_new`, not freed); every input pointer covers
@@ -66577,8 +66577,8 @@ pub unsafe extern "C" fn wickra_kst_update(
 
 /// Run over the input series, writing one `WickraKstOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_kst_new`, not freed); every input pointer covers
@@ -66712,7 +66712,7 @@ pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_update(
     match ind.update((x, y)) {
         Some(out_val) => {
             *out = WickraLeadLagCrossCorrelationOutput {
-                lag: out_val.lag,
+                lag: out_val.lag as f64,
                 correlation: out_val.correlation,
             };
             true
@@ -66723,8 +66723,8 @@ pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_update(
 
 /// Run over the input series, writing one `WickraLeadLagCrossCorrelationOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_lead_lag_cross_correlation_new`, not freed); every input pointer covers
@@ -66746,12 +66746,12 @@ pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (i, slot) in outputs.iter_mut().enumerate() {
         *slot = WickraLeadLagCrossCorrelationOutput {
-            lag: 0,
+            lag: f64::NAN,
             correlation: f64::NAN,
         };
         if let Some(out_val) = ind.update((xs[i], ys[i])) {
             *slot = WickraLeadLagCrossCorrelationOutput {
-                lag: out_val.lag,
+                lag: out_val.lag as f64,
                 correlation: out_val.correlation,
             };
         }
@@ -66878,8 +66878,8 @@ pub unsafe extern "C" fn wickra_lin_reg_channel_update(
 
 /// Run over the input series, writing one `WickraLinRegChannelOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_lin_reg_channel_new`, not freed); every input pointer covers
@@ -67049,8 +67049,8 @@ pub unsafe extern "C" fn wickra_liquidation_features_update(
 
 /// Run over the input series, writing one `WickraLiquidationFeaturesOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_liquidation_features_new`, not freed); every input pointer covers
@@ -67256,8 +67256,8 @@ pub unsafe extern "C" fn wickra_ma_envelope_update(
 
 /// Run over the input series, writing one `WickraMaEnvelopeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_ma_envelope_new`, not freed); every input pointer covers
@@ -67405,8 +67405,8 @@ pub unsafe extern "C" fn wickra_macd_indicator_update(
 
 /// Run over the input series, writing one `WickraMacdOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_macd_indicator_new`, not freed); every input pointer covers
@@ -67550,8 +67550,8 @@ pub unsafe extern "C" fn wickra_macd_fix_update(
 
 /// Run over the input series, writing one `WickraMacdOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_macd_fix_new`, not freed); every input pointer covers
@@ -67694,8 +67694,8 @@ pub unsafe extern "C" fn wickra_mama_update(
 
 /// Run over the input series, writing one `WickraMamaOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_mama_new`, not freed); every input pointer covers
@@ -67837,8 +67837,8 @@ pub unsafe extern "C" fn wickra_median_channel_update(
 
 /// Run over the input series, writing one `WickraMedianChannelOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_median_channel_new`, not freed); every input pointer covers
@@ -67989,8 +67989,8 @@ pub unsafe extern "C" fn wickra_modified_ma_stop_update(
 
 /// Run over the input series, writing one `WickraModifiedMaStopOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_modified_ma_stop_new`, not freed); every input pointer covers
@@ -68178,8 +68178,8 @@ pub unsafe extern "C" fn wickra_murrey_math_lines_update(
 
 /// Run over the input series, writing one `WickraMurreyMathLinesOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_murrey_math_lines_new`, not freed); every input pointer covers
@@ -68374,8 +68374,8 @@ pub unsafe extern "C" fn wickra_nrtr_update(
 
 /// Run over the input series, writing one `WickraNrtrOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_nrtr_new`, not freed); every input pointer covers
@@ -68553,8 +68553,8 @@ pub unsafe extern "C" fn wickra_opening_range_update(
 
 /// Run over the input series, writing one `WickraOpeningRangeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_opening_range_new`, not freed); every input pointer covers
@@ -68732,8 +68732,8 @@ pub unsafe extern "C" fn wickra_overnight_intraday_return_update(
 
 /// Run over the input series, writing one `WickraOvernightIntradayReturnOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_overnight_intraday_return_new`, not freed); every input pointer covers
@@ -68921,8 +68921,8 @@ pub unsafe extern "C" fn wickra_projection_bands_update(
 
 /// Run over the input series, writing one `WickraProjectionBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_projection_bands_new`, not freed); every input pointer covers
@@ -69097,8 +69097,8 @@ pub unsafe extern "C" fn wickra_qqe_update(
 
 /// Run over the input series, writing one `WickraQqeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_qqe_new`, not freed); every input pointer covers
@@ -69240,8 +69240,8 @@ pub unsafe extern "C" fn wickra_quartile_bands_update(
 
 /// Run over the input series, writing one `WickraQuartileBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_quartile_bands_new`, not freed); every input pointer covers
@@ -69389,8 +69389,8 @@ pub unsafe extern "C" fn wickra_relative_strength_ab_update(
 
 /// Run over the input series, writing one `WickraRelativeStrengthOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_relative_strength_ab_new`, not freed); every input pointer covers
@@ -69549,8 +69549,8 @@ pub unsafe extern "C" fn wickra_rwi_update(
 
 /// Run over the input series, writing one `WickraRwiOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_rwi_new`, not freed); every input pointer covers
@@ -69724,8 +69724,8 @@ pub unsafe extern "C" fn wickra_session_high_low_update(
 
 /// Run over the input series, writing one `WickraSessionHighLowOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_session_high_low_new`, not freed); every input pointer covers
@@ -69904,8 +69904,8 @@ pub unsafe extern "C" fn wickra_session_range_update(
 
 /// Run over the input series, writing one `WickraSessionRangeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_session_range_new`, not freed); every input pointer covers
@@ -70086,8 +70086,8 @@ pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_update(
 
 /// Run over the input series, writing one `WickraSmoothedHeikinAshiOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_smoothed_heikin_ashi_new`, not freed); every input pointer covers
@@ -70272,8 +70272,8 @@ pub unsafe extern "C" fn wickra_spread_bollinger_bands_update(
 
 /// Run over the input series, writing one `WickraSpreadBollingerBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_spread_bollinger_bands_new`, not freed); every input pointer covers
@@ -70430,8 +70430,8 @@ pub unsafe extern "C" fn wickra_standard_error_bands_update(
 
 /// Run over the input series, writing one `WickraStandardErrorBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_standard_error_bands_new`, not freed); every input pointer covers
@@ -70593,8 +70593,8 @@ pub unsafe extern "C" fn wickra_starc_bands_update(
 
 /// Run over the input series, writing one `WickraStarcBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_starc_bands_new`, not freed); every input pointer covers
@@ -70773,8 +70773,8 @@ pub unsafe extern "C" fn wickra_stochastic_update(
 
 /// Run over the input series, writing one `WickraStochasticOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_stochastic_new`, not freed); every input pointer covers
@@ -70951,8 +70951,8 @@ pub unsafe extern "C" fn wickra_super_trend_update(
 
 /// Run over the input series, writing one `WickraSuperTrendOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_super_trend_new`, not freed); every input pointer covers
@@ -71129,8 +71129,8 @@ pub unsafe extern "C" fn wickra_td_lines_update(
 
 /// Run over the input series, writing one `WickraTdLinesOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_td_lines_new`, not freed); every input pointer covers
@@ -71310,8 +71310,8 @@ pub unsafe extern "C" fn wickra_td_moving_average_update(
 
 /// Run over the input series, writing one `WickraTdMovingAverageOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_td_moving_average_new`, not freed); every input pointer covers
@@ -71489,8 +71489,8 @@ pub unsafe extern "C" fn wickra_td_range_projection_update(
 
 /// Run over the input series, writing one `WickraTdRangeProjectionOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_td_range_projection_new`, not freed); every input pointer covers
@@ -71673,8 +71673,8 @@ pub unsafe extern "C" fn wickra_td_risk_level_update(
 
 /// Run over the input series, writing one `WickraTdRiskLevelOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_td_risk_level_new`, not freed); every input pointer covers
@@ -71862,8 +71862,8 @@ pub unsafe extern "C" fn wickra_td_sequential_update(
 
 /// Run over the input series, writing one `WickraTdSequentialOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_td_sequential_new`, not freed); every input pointer covers
@@ -72046,8 +72046,8 @@ pub unsafe extern "C" fn wickra_ttm_squeeze_update(
 
 /// Run over the input series, writing one `WickraTtmSqueezeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_ttm_squeeze_new`, not freed); every input pointer covers
@@ -72229,8 +72229,8 @@ pub unsafe extern "C" fn wickra_value_area_update(
 
 /// Run over the input series, writing one `WickraValueAreaOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_value_area_new`, not freed); every input pointer covers
@@ -72415,8 +72415,8 @@ pub unsafe extern "C" fn wickra_volatility_cone_update(
 
 /// Run over the input series, writing one `WickraVolatilityConeOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_volatility_cone_new`, not freed); every input pointer covers
@@ -72606,8 +72606,8 @@ pub unsafe extern "C" fn wickra_volume_weighted_macd_update(
 
 /// Run over the input series, writing one `WickraVolumeWeightedMacdOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_volume_weighted_macd_new`, not freed); every input pointer covers
@@ -72792,8 +72792,8 @@ pub unsafe extern "C" fn wickra_volume_weighted_sr_update(
 
 /// Run over the input series, writing one `WickraVolumeWeightedSrOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_volume_weighted_sr_new`, not freed); every input pointer covers
@@ -72974,8 +72974,8 @@ pub unsafe extern "C" fn wickra_vortex_update(
 
 /// Run over the input series, writing one `WickraVortexOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_vortex_new`, not freed); every input pointer covers
@@ -73154,8 +73154,8 @@ pub unsafe extern "C" fn wickra_vwap_std_dev_bands_update(
 
 /// Run over the input series, writing one `WickraVwapStdDevBandsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_vwap_std_dev_bands_new`, not freed); every input pointer covers
@@ -73344,8 +73344,8 @@ pub unsafe extern "C" fn wickra_wave_trend_update(
 
 /// Run over the input series, writing one `WickraWaveTrendOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_wave_trend_new`, not freed); every input pointer covers
@@ -73519,8 +73519,8 @@ pub unsafe extern "C" fn wickra_williams_fractals_update(
 
 /// Run over the input series, writing one `WickraWilliamsFractalsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_williams_fractals_new`, not freed); every input pointer covers
@@ -73701,8 +73701,8 @@ pub unsafe extern "C" fn wickra_woodie_pivots_update(
 
 /// Run over the input series, writing one `WickraWoodiePivotsOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_woodie_pivots_new`, not freed); every input pointer covers
@@ -73882,8 +73882,8 @@ pub unsafe extern "C" fn wickra_zero_lag_macd_update(
 
 /// Run over the input series, writing one `WickraZeroLagMacdOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_zero_lag_macd_new`, not freed); every input pointer covers
@@ -74034,8 +74034,8 @@ pub unsafe extern "C" fn wickra_zig_zag_update(
 
 /// Run over the input series, writing one `WickraZigZagOutput` per input into
 /// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
-/// rejected -- is written with every floating-point field set to `NaN`, which is
-/// how a caller tells the two apart from a real value.
+/// rejected -- is written with every field set to `NaN`, which is how a caller
+/// tells the two apart from a real value.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_zig_zag_new`, not freed); every input pointer covers
@@ -74881,7 +74881,7 @@ pub unsafe extern "C" fn wickra_tpo_profile_width(handle: *mut TpoProfile) -> us
 /// input it rejected -- is filled with `NaN`. `width` is the payload length the
 /// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
 /// The scalar fields of each row are written to `scalars[i]` when `scalars`
-/// is non-`NULL`; a row the indicator did not produce is left untouched.
+/// is non-`NULL`; a row the indicator did not produce is filled with `NaN`.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_tpo_profile_new`, not freed) or `NULL`; every input
@@ -74929,6 +74929,14 @@ pub unsafe extern "C" fn wickra_tpo_profile_batch(
         Some(slice::from_raw_parts_mut(scalars, n))
     };
     let mut scalar_rows = scalar_rows;
+    if let Some(rows) = scalar_rows.as_mut() {
+        for row in rows.iter_mut() {
+            *row = WickraTpoProfileOutputScalars {
+                price_low: f64::NAN,
+                price_high: f64::NAN,
+            };
+        }
+    }
     for i in 0..n {
         let Ok(input) = Candle::new(
             opens[i],
@@ -75308,7 +75316,7 @@ pub unsafe extern "C" fn wickra_volume_profile_width(handle: *mut VolumeProfile)
 /// input it rejected -- is filled with `NaN`. `width` is the payload length the
 /// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
 /// The scalar fields of each row are written to `scalars[i]` when `scalars`
-/// is non-`NULL`; a row the indicator did not produce is left untouched.
+/// is non-`NULL`; a row the indicator did not produce is filled with `NaN`.
 ///
 /// # Safety
 /// `handle` valid (from `wickra_volume_profile_new`, not freed) or `NULL`; every input
@@ -75356,6 +75364,14 @@ pub unsafe extern "C" fn wickra_volume_profile_batch(
         Some(slice::from_raw_parts_mut(scalars, n))
     };
     let mut scalar_rows = scalar_rows;
+    if let Some(rows) = scalar_rows.as_mut() {
+        for row in rows.iter_mut() {
+            *row = WickraVolumeProfileOutputScalars {
+                price_low: f64::NAN,
+                price_high: f64::NAN,
+            };
+        }
+    }
     for i in 0..n {
         let Ok(input) = Candle::new(
             opens[i],

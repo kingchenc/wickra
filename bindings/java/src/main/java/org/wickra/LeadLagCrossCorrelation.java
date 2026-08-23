@@ -44,7 +44,7 @@ public final class LeadLagCrossCorrelation implements AutoCloseable {
                 return null;
             }
             return new LeadLagCrossCorrelationOutput(
-                (double) out.get(JAVA_LONG, 0L),
+                out.get(JAVA_DOUBLE, 0L),
                 out.get(JAVA_DOUBLE, 8L));
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
@@ -71,7 +71,7 @@ public final class LeadLagCrossCorrelation implements AutoCloseable {
             LeadLagCrossCorrelationOutput[] out = new LeadLagCrossCorrelationOutput[n];
             for (int i = 0; i < n; i++) {
                 out[i] = new LeadLagCrossCorrelationOutput(
-                        (double) outSeg.get(JAVA_LONG, i * 16L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 16L + 0L),
                         outSeg.get(JAVA_DOUBLE, i * 16L + 8L));
             }
             return out;
