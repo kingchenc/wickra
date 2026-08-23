@@ -16,7 +16,8 @@ is a deliberate trade for warmup/NaN semantics, not a ceiling.
 
 ## 1. Streaming — the structural win
 
-Live trading feeds one tick at a time. Wickra updates every indicator in **O(1)**;
+Live trading feeds one tick at a time. Wickra updates every indicator
+incrementally, with no pass over the history behind the tick;
 batch-only libraries (TA-Lib, tulipy, finta, pandas-ta) have no incremental API
 and must recompute the whole history on every tick. Only `talipp` (Python) and
 `ta-rs` / `yata` (Rust) carry real per-tick state. This is the gap the library

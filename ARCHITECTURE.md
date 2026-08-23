@@ -86,7 +86,7 @@ pub trait Indicator {
 Four design choices that are non-negotiable:
 
 1. **Streaming-first.** `update` is the only computation entry point. Each
-   call must be O(1) amortised — no replays over history, no `clone`s of
+   call must not replay history — no passes over the series behind the tick, no `clone`s of
    the input window unless absolutely necessary.
 2. **`Option<Output>` warmup.** A new indicator returns `None` until it has
    ingested `warmup_period()` inputs. After that it returns `Some(value)`
@@ -282,14 +282,15 @@ calls).
 - **Charting / visualization.** Out of scope for the Rust core. The
   WASM examples include a `lightweight-charts` integration as a
   starting point, but no charting code lives in the published packages.
-- **GPU / SIMD optimisation.** Indicators are O(1) per update — the
+- **GPU / SIMD optimisation.** An update touches buffered state only — the
   bottleneck is not vector throughput. SIMD would only help large-batch
   workloads, which already saturate memory bandwidth via the cache-
   friendly `VecDeque` window.
 
 ## Performance characteristics
 
-Every indicator is amortised O(1) per `update`. The constant factor
+Every `update` is bounded by the configured window, never by the history
+behind it. The constant factor
 varies:
 
 | Class | Indicators | Per-`update` cost (approx) |

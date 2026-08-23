@@ -18,7 +18,7 @@ prebuilt native library, no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and any
-other C-capable language. Every indicator is an O(1)
+other C-capable language. Every indicator is an incremental
 streaming state machine, so live trading bots and historical backtests share
 the exact same implementation. This package is the C# binding; it consumes the
 C ABI hub through `[LibraryImport]` P/Invoke and exposes all 514 streaming-first
@@ -44,7 +44,7 @@ var prices = Enumerable.Range(0, 1000).Select(i => 100.0 + i * 0.1).ToArray();
 using var sma = new Sma(20);
 double[] values = sma.Batch(prices);
 
-// Streaming: the same indicator, fed tick by tick in O(1).
+// Streaming: the same indicator, fed tick by tick.
 using var rsi = new Rsi(14);
 foreach (var price in liveFeed)
 {

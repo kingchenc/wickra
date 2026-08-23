@@ -18,7 +18,7 @@ prebuilt native binary, no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and any
-other C-capable language. Every indicator is an O(1)
+other C-capable language. Every indicator is an incremental
 streaming state machine, so live trading bots and historical backtests share
 the exact same implementation. This package is the Node.js binding (napi-rs);
 it exposes all 514 streaming-first indicators across twenty-four families.
@@ -42,7 +42,7 @@ const wickra = require('wickra');
 const prices = Array.from({ length: 1000 }, (_, i) => 100 + i * 0.1);
 const values = new wickra.RSI(14).batch(prices); // null during warmup
 
-// Streaming: the same indicator, fed tick by tick in O(1).
+// Streaming: the same indicator, fed tick by tick.
 const rsi = new wickra.RSI(14);
 for (const price of liveFeed) {
   const value = rsi.update(price); // no recomputation over history

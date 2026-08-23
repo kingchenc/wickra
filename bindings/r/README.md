@@ -17,7 +17,7 @@
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R
-and any other C-capable language. Every indicator is an O(1) streaming state
+and any other C-capable language. Every indicator is an incremental streaming state
 machine, so live trading and historical backtests share the exact same
 implementation. This package is the R binding; it reaches the C ABI hub through
 R's native `.Call` interface and exposes all 514 indicators as constructors that
@@ -50,7 +50,7 @@ prices <- 100 + (0:999) * 0.1
 sma <- Sma(20)
 values <- batch(sma, prices)
 
-# Streaming: the same indicator, fed one observation at a time in O(1).
+# Streaming: the same indicator, fed one observation at a time.
 rsi <- Rsi(14)
 for (price in prices) {
   v <- update(rsi, price) # NaN during warmup

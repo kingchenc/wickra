@@ -18,7 +18,7 @@ wickra-wasm` — pure WebAssembly, runs anywhere a modern JS engine does.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and any
-other C-capable language. Every indicator is an O(1)
+other C-capable language. Every indicator is an incremental
 streaming state machine, so live trading dashboards and historical backtests
 share the exact same implementation. This package is the WASM binding
 (wasm-bindgen, built for the `web` target); it exposes all 514 streaming-first
@@ -40,7 +40,7 @@ import init, { RSI } from 'wickra-wasm';
 
 await init(); // load the WebAssembly module once
 
-// Streaming: feed prices tick by tick in O(1).
+// Streaming: feed prices tick by tick.
 const rsi = new RSI(14);
 for (const price of liveFeed) {
   const value = rsi.update(price); // null during warmup

@@ -657,6 +657,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cross-section, order-book, bar-builder and profile families — were unreachable
   from those two for the same reason. All three generated bindings now expose a
   batch for every one of the 514 indicators.
+- **The O(1) claim is qualified to what is actually true.** The documentation
+  said every indicator updates in O(1) per tick, which reads as constant work
+  regardless of period — and is false for any indicator that needs a full-window
+  pass, as CCI does for its mean absolute deviation and RollingQuantile does for
+  its sort. The contract `traits.rs` states is O(1) *in the input length*: a
+  tick never triggers a pass over the history behind it, and the cost is bounded
+  by the window you configure. Corrected in the README, BENCHMARKS,
+  ARCHITECTURE, ROADMAP and all eight binding READMEs.
 - **A batch row the indicator did not produce is `NaN` in every field.** It was
   `NaN` only in the floating-point ones, which left two gaps: the single
   multi-output struct carrying an integer (`LeadLagCrossCorrelation`'s lag) read

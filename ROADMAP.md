@@ -19,7 +19,7 @@ minor releases; breaking changes are called out in the changelog.
 - **API stabilization toward 1.0.** Settle the public `Indicator` and
   `BarBuilder` traits and the binding surfaces, then commit to semantic
   versioning stability for a 1.0 release.
-- **Performance.** Keep per-tick updates O(1) and maintain the benchmark suite;
+- **Performance.** Keep a tick free of any pass over the history behind it, and maintain the benchmark suite;
   investigate further allocation and cache improvements.
 - **Bindings parity.** Keep the Python, Node.js and WASM bindings — plus
   the C ABI and the C#, Go, Java and R bindings generated from it — in lockstep with the

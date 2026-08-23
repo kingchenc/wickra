@@ -17,7 +17,7 @@
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and
-any other C-capable language. Every indicator is an O(1) streaming state machine,
+any other C-capable language. Every indicator is an incremental streaming state machine,
 so live trading bots and historical backtests share the exact same
 implementation. This package is the Go binding; it consumes the C ABI hub through
 cgo and exposes all 514 streaming-first indicators as idiomatic types.
@@ -77,7 +77,7 @@ func main() {
 	defer sma.Close()
 	values := sma.Batch(prices)
 
-	// Streaming: the same indicator, fed tick by tick in O(1).
+	// Streaming: the same indicator, fed tick by tick.
 	rsi, _ := wickra.NewRsi(14)
 	defer rsi.Close()
 	for _, price := range prices {

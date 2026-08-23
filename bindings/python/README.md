@@ -18,7 +18,7 @@ third-party dependencies (not even NumPy), no system dependencies, no C build to
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and any
-other C-capable language. Every indicator is an O(1)
+other C-capable language. Every indicator is an incremental
 streaming state machine, so live trading bots and historical backtests share
 the exact same implementation. This package is the Python binding (PyO3); it
 exposes all 514 streaming-first indicators across twenty-four families.
@@ -45,7 +45,7 @@ rsi = ta.RSI(14)
 values = rsi.batch(prices)              # array.array('d'), NaN during warmup
                                         # np.asarray(values) wraps it zero-copy if you use NumPy
 
-# Streaming: the same indicator, fed tick by tick in O(1).
+# Streaming: the same indicator, fed tick by tick.
 rsi = ta.RSI(14)
 for price in live_feed:
     value = rsi.update(price)           # no recomputation over history

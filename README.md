@@ -32,8 +32,8 @@
 Wickra is a multi-language technical-analysis library with a Rust core and
 native bindings for Python, Node.js and WASM, plus a C ABI that C, C++,
 C#, Go, Java, R and any other C-capable language links against. Every indicator is a
-state machine that updates in O(1) per new data point, so live trading bots and
-historical backtests share the exact same implementation.
+state machine: a tick touches buffered state and never the history behind it, so
+live trading bots and historical backtests share the exact same implementation.
 
 ```python
 import wickra as ta                     # zero third-party deps — not even NumPy
@@ -47,7 +47,7 @@ values = rsi.batch(prices)              # array.array('d'), NaN during warmup
 # Streaming: same indicator, fed tick by tick
 rsi = ta.RSI(14)
 for price in live_feed:
-    value = rsi.update(price)           # O(1) — no recomputation over history
+    value = rsi.update(price)           # no recomputation over history
     if value is not None and value > 70:
         print("overbought")
 ```
@@ -88,8 +88,8 @@ times to get there.
 - **The biggest streaming-native catalogue, period.** 514 indicators across 24
   families — candlesticks, harmonic & chart patterns, market profile, market
   breadth, Renko/Kagi/Point&Figure bars, Ehlers DSP cycles, risk/performance
-  metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
-  none of them stream.
+  metrics — **every single one updating incrementally**, with no pass over the
+  history behind the tick. TA-Lib ships ~150 and none of them stream.
 - **One Rust core, five first-class targets.** Native **Rust · Python · Node.js ·
   WASM** plus a **C ABI** for C, C++, C#, Go, Java, R and any other C-capable language —
   identical math, identical results, zero per-language reimplementation and zero
@@ -129,7 +129,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node.js · WASM · C · C++ · C# · Go · Java · R** | **514** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, all 514** | **Rust · Python · Node.js · WASM · C · C++ · C# · Go · Java · R** | **514** | **yes** |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -151,9 +151,13 @@ useful version of that itch is the one other people can build on too.
 
 ## Benchmarks
 
-Wickra updates every indicator in **O(1)** per tick. In **streaming** — the
-workload it is built for — it is **11–56× faster** than the only other incremental
-peer and **thousands of times** faster than recompute-on-every-tick libraries.
+Wickra updates every indicator incrementally: the cost of a tick is bounded by
+the window you configure, never by how much history has gone before it. Most
+indicators do constant work; the ones that need an order statistic or a full-window
+pass — a rolling quantile sorts, CCI averages absolute deviations — scale with the
+period, not the series. In **streaming** — the workload it is built for — it is
+**11–56× faster** than the only other incremental peer and **thousands of times**
+faster than recompute-on-every-tick libraries.
 **Batch** is competitive: it wins several rows outright and trades a few µs
 elsewhere for `None`-warmup, NaN-safety and bit-exact `batch == streaming`.
 

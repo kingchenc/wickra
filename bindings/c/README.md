@@ -18,7 +18,7 @@ library plus a generated `wickra.h` — no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and any
-other C-capable language. Every indicator is an O(1)
+other C-capable language. Every indicator is an incremental
 streaming state machine, so live trading bots and historical backtests share
 the exact same implementation. This package is the **C ABI hub**: it compiles the
 core to a C-compatible shared/static library plus a generated header, so any
@@ -55,7 +55,7 @@ wickra_rsi_free(rsi);                              /* exactly once per _new   */
 ```
 
 Every indicator is an opaque handle with the same five functions —
-`_new` / `_update` / `_batch` / `_reset` / `_free`. `update` is O(1); there is no
+`_new` / `_update` / `_batch` / `_reset` / `_free`. `update` touches buffered state only, never the history behind the tick; there is no
 RAII across the C boundary, so each `_new` needs exactly one `_free`, and every
 function is NULL-safe (a NULL handle yields `NaN` or a no-op, never a crash).
 Multi-output indicators (MACD, Bollinger, ADX, …) take a pointer to a `#[repr(C)]`
