@@ -46,7 +46,7 @@ use wickra_core::{
     Counterattack, Crab, CrossSection, CumulativeVolumeDelta, CumulativeVolumeIndex, CupAndHandle,
     CyberneticCycle, Cypher, DayOfWeekProfile, Decycler, DecyclerOscillator, Dema, DemandIndex,
     DemarkPivots, DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev,
-    DisparityIndex, DistanceSsd, Doji, DojiStar, DollarBars, Donchian, DonchianStop,
+    DisparityIndex, DistanceSsd, Doji, DojiStar, DollarBar, Donchian, DonchianStop,
     DoubleBollinger, DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji,
     DrawdownDuration, DumplingTop, Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread,
     EhlersStochastic, Ehma, ElderImpulse, ElderRay, ElderSafeZone, Ema, EmpiricalModeDecomposition,
@@ -61,13 +61,13 @@ use wickra_core::{
     HeikinAshi, HeikinAshiOscillator, HiLoActivator, HighLowIndex, HighLowRange,
     HighLowVolumeNodes, HighWave, HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle,
     HistoricalVolatility, Hma, HoltWinters, HomingPigeon, HtDcPhase, HtPhasor, HtTrendMode,
-    HurstChannel, HurstExponent, Ichimoku, IdenticalThreeCrows, ImbalanceBars, InNeck, Indicator,
+    HurstChannel, HurstExponent, Ichimoku, IdenticalThreeCrows, ImbalanceBar, InNeck, Indicator,
     Inertia, InformationRatio, InitialBalance, InstantaneousTrendline, IntradayIntensity,
     IntradayMomentumIndex, IntradayVolatilityProfile, InverseFisherTransform, InvertedHammer,
-    JarqueBera, Jma, JumpIndicator, KRatio, KagiBars, KalmanHedgeRatio, Kama, KaseDevStop,
+    JarqueBera, Jma, JumpIndicator, KRatio, KagiBar, KalmanHedgeRatio, Kama, KaseDevStop,
     KasePermissionStochastic, KellyCriterion, Keltner, KendallTau, Kicking, KickingByLength, Kst,
     Kurtosis, Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, Level,
-    LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression,
+    LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LineBreakBar, LinearRegression,
     LiquidationFeatures, LogReturn, LongLeggedDoji, LongLine, LongShortRatio, M2Measure,
     MaEnvelope, MaType, MacdExt, MacdFix, MacdHistogram, MacdIndicator, Mama,
     MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
@@ -80,14 +80,14 @@ use wickra_core::{
     OrderBookImbalanceTopN, OrderFlowImbalance, OuHalfLife, OvernightGap, OvernightIntradayReturn,
     PainIndex, PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation,
     PercentAboveMa, PercentB, PercentageTrailingStop, PerpetualPremiumIndex, Pgo,
-    PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo, PointAndFigureBars,
+    PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo, PnfColumn,
     PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfileShape, ProfitFactor, ProjectionBands,
-    ProjectionOscillator, Psar, Pvi, Qqe, Qstick, QuartileBands, QuotedSpread, RSquared, RangeBars,
+    ProjectionOscillator, Psar, Pvi, Qqe, Qstick, QuartileBands, QuotedSpread, RSquared, RangeBar,
     RealizedSpread, RealizedVolatility, RecoveryFactor, RectangleRange, Reflex, RegimeLabel,
-    RelativeStrengthAB, RenkoBars, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc,
+    RelativeStrengthAB, RenkoBrick, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc,
     Rocp, Rocr, Rocr100, RogersSatchellVolatility, RollMeasure, RollingCorrelation,
     RollingCovariance, RollingIqr, RollingMinMaxScaler, RollingPercentileRank, RollingQuantile,
-    RollingVwap, RoofingFilter, Rsi, Rsx, RunBars, Rvi, RviVolatility, Rwi, SampleEntropy, SarExt,
+    RollingVwap, RoofingFilter, Rsi, Rsx, RunBar, Rvi, RviVolatility, Rwi, SampleEntropy, SarExt,
     SeasonalZScore, SeparatingLines, SessionHighLow, SessionRange, SessionVwap, ShannonEntropy,
     Shark, SharpeRatio, ShootingStar, ShortLine, Side, SignedVolume, SineWave, SineWeightedMa,
     SinglePrints, Skewness, Sma, Smi, Smma, SmoothedHeikinAshi, SortinoRatio, SpearmanCorrelation,
@@ -97,26 +97,36 @@ use wickra_core::{
     TakerBuySellRatio, Takuri, TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo, TdCountdown,
     TdDWave, TdDeMarker, TdDifferential, TdLines, TdMovingAverage, TdOpen, TdPressure,
     TdPropulsion, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, TdTrap, Tema,
-    TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineBreakBars,
-    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tick,
-    TickBars, TickIndex, Tii, TimeBasedStop, TimeOfDayReturnProfile, TowerTopBottom, TpoProfile,
-    Trade, TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
-    TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar,
-    Trix, TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer,
-    TwiggsMoneyFlow, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver,
-    UniversalOscillator, UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows,
-    UpsidePotentialRatio, ValueArea, ValueAtRisk, Variance, VarianceRatio,
-    VerticalHorizontalFilter, Vidya, VolatilityCone, VolatilityOfVolatility, VolatilityRatio,
-    VoltyStop, VolumeBars, VolumeByTimeProfile, VolumeOscillator, VolumePriceTrend, VolumeProfile,
-    VolumeRsi, VolumeWeightedMacd, VolumeWeightedSr, Vortex, Vpin, Vwap, VwapStdDevBands, Vwma,
-    Vzo, Wad, WavePm, WaveTrend, Wedge, WeightedClose, WickRatio, WilliamsFractals, WilliamsR,
-    WinRate, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZigZag, Zlema,
-    T3,
+    TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineStrike, ThreeOutside,
+    ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tick, TickBar, TickIndex, Tii,
+    TimeBasedStop, TimeOfDayReturnProfile, TowerTopBottom, TpoProfile, Trade, TradeImbalance,
+    TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel, TrendStrengthIndex,
+    Trendflex, TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar, Trix, TrueRange, Tsf,
+    TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow, TwoCrows,
+    TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
+    UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueArea,
+    ValueAtRisk, Variance, VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityCone,
+    VolatilityOfVolatility, VolatilityRatio, VoltyStop, VolumeBar, VolumeByTimeProfile,
+    VolumeOscillator, VolumePriceTrend, VolumeProfile, VolumeRsi, VolumeWeightedMacd,
+    VolumeWeightedSr, Vortex, Vpin, Vwap, VwapStdDevBands, Vwma, Vzo, Wad, WavePm, WaveTrend,
+    Wedge, WeightedClose, WickRatio, WilliamsFractals, WilliamsR, WinRate, Wma, WoodiePivots,
+    YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZigZag, Zlema, T3,
 };
 
 use wickra_data::aggregator::{TickAggregator as DataTickAggregator, Timeframe};
 
 use wickra_data::resample::Resampler as DataResampler;
+
+use wickra_core::DollarBars as CoreDollarBars;
+use wickra_core::ImbalanceBars as CoreImbalanceBars;
+use wickra_core::KagiBars as CoreKagiBars;
+use wickra_core::PointAndFigureBars as CorePointAndFigureBars;
+use wickra_core::RangeBars as CoreRangeBars;
+use wickra_core::RenkoBars as CoreRenkoBars;
+use wickra_core::RunBars as CoreRunBars;
+use wickra_core::ThreeLineBreakBars as CoreThreeLineBreakBars;
+use wickra_core::TickBars as CoreTickBars;
+use wickra_core::VolumeBars as CoreVolumeBars;
 
 // ===== Scalar indicators (f64 -> f64) =====
 
@@ -75033,21 +75043,38 @@ pub struct WickraVolumeBar {
     pub volume: f64,
 }
 
+/// Opaque `DollarBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_dollar_bars_drain`, the same
+/// shape the resampler uses. Named `DollarBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct DollarBars {
+    inner: CoreDollarBars,
+    pending: Vec<DollarBar>,
+}
+
 /// Create a `DollarBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_dollar_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_dollar_bars_new(dollar_per_bar: f64) -> *mut DollarBars {
-    match DollarBars::new(dollar_per_bar) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreDollarBars::new(dollar_per_bar) {
+        Ok(inner) => Box::into_raw(Box::new(DollarBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_dollar_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_dollar_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75070,10 +75097,12 @@ pub unsafe extern "C" fn wickra_dollar_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraDollarBar {
                 open: bar.open,
                 high: bar.high,
@@ -75084,7 +75113,42 @@ pub unsafe extern "C" fn wickra_dollar_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_dollar_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraDollarBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dollar_bars_drain(
+    handle: *mut DollarBars,
+    out: *mut WickraDollarBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraDollarBar {
+            open: bar.open,
+            high: bar.high,
+            low: bar.low,
+            close: bar.close,
+            volume: bar.volume,
+            dollar: bar.dollar,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75098,7 +75162,7 @@ pub unsafe extern "C" fn wickra_dollar_bars_name(handle: *mut DollarBars) -> *co
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75113,7 +75177,7 @@ pub unsafe extern "C" fn wickra_dollar_bars_name(handle: *mut DollarBars) -> *co
 #[no_mangle]
 pub unsafe extern "C" fn wickra_dollar_bars_reset(handle: *mut DollarBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75128,21 +75192,38 @@ pub unsafe extern "C" fn wickra_dollar_bars_free(handle: *mut DollarBars) {
     }
 }
 
+/// Opaque `ImbalanceBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_imbalance_bars_drain`, the same
+/// shape the resampler uses. Named `ImbalanceBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct ImbalanceBars {
+    inner: CoreImbalanceBars,
+    pending: Vec<ImbalanceBar>,
+}
+
 /// Create a `ImbalanceBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_imbalance_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_imbalance_bars_new(threshold: f64) -> *mut ImbalanceBars {
-    match ImbalanceBars::new(threshold) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreImbalanceBars::new(threshold) {
+        Ok(inner) => Box::into_raw(Box::new(ImbalanceBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_imbalance_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_imbalance_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75165,10 +75246,12 @@ pub unsafe extern "C" fn wickra_imbalance_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraImbalanceBar {
                 open: bar.open,
                 high: bar.high,
@@ -75179,7 +75262,42 @@ pub unsafe extern "C" fn wickra_imbalance_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_imbalance_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraImbalanceBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_imbalance_bars_drain(
+    handle: *mut ImbalanceBars,
+    out: *mut WickraImbalanceBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraImbalanceBar {
+            open: bar.open,
+            high: bar.high,
+            low: bar.low,
+            close: bar.close,
+            imbalance: bar.imbalance,
+            direction: bar.direction,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75193,7 +75311,7 @@ pub unsafe extern "C" fn wickra_imbalance_bars_name(handle: *mut ImbalanceBars) 
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75208,7 +75326,7 @@ pub unsafe extern "C" fn wickra_imbalance_bars_name(handle: *mut ImbalanceBars) 
 #[no_mangle]
 pub unsafe extern "C" fn wickra_imbalance_bars_reset(handle: *mut ImbalanceBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75223,21 +75341,38 @@ pub unsafe extern "C" fn wickra_imbalance_bars_free(handle: *mut ImbalanceBars) 
     }
 }
 
+/// Opaque `KagiBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_kagi_bars_drain`, the same
+/// shape the resampler uses. Named `KagiBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct KagiBars {
+    inner: CoreKagiBars,
+    pending: Vec<KagiBar>,
+}
+
 /// Create a `KagiBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_kagi_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_kagi_bars_new(reversal: f64) -> *mut KagiBars {
-    match KagiBars::new(reversal) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreKagiBars::new(reversal) {
+        Ok(inner) => Box::into_raw(Box::new(KagiBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_kagi_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_kagi_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75260,10 +75395,12 @@ pub unsafe extern "C" fn wickra_kagi_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraKagiBar {
                 start: bar.start,
                 end: bar.end,
@@ -75271,7 +75408,39 @@ pub unsafe extern "C" fn wickra_kagi_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_kagi_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraKagiBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kagi_bars_drain(
+    handle: *mut KagiBars,
+    out: *mut WickraKagiBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraKagiBar {
+            start: bar.start,
+            end: bar.end,
+            direction: bar.direction,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75285,7 +75454,7 @@ pub unsafe extern "C" fn wickra_kagi_bars_name(handle: *mut KagiBars) -> *const 
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75300,7 +75469,7 @@ pub unsafe extern "C" fn wickra_kagi_bars_name(handle: *mut KagiBars) -> *const 
 #[no_mangle]
 pub unsafe extern "C" fn wickra_kagi_bars_reset(handle: *mut KagiBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75315,6 +75484,19 @@ pub unsafe extern "C" fn wickra_kagi_bars_free(handle: *mut KagiBars) {
     }
 }
 
+/// Opaque `PointAndFigureBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_point_and_figure_bars_drain`, the same
+/// shape the resampler uses. Named `PointAndFigureBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct PointAndFigureBars {
+    inner: CorePointAndFigureBars,
+    pending: Vec<PnfColumn>,
+}
+
 /// Create a `PointAndFigureBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_point_and_figure_bars_free`.
@@ -75323,16 +75505,20 @@ pub extern "C" fn wickra_point_and_figure_bars_new(
     box_size: f64,
     reversal: usize,
 ) -> *mut PointAndFigureBars {
-    match PointAndFigureBars::new(box_size, reversal) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CorePointAndFigureBars::new(box_size, reversal) {
+        Ok(inner) => Box::into_raw(Box::new(PointAndFigureBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_point_and_figure_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_point_and_figure_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75355,10 +75541,12 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraPnfColumn {
                 direction: bar.direction,
                 high: bar.high,
@@ -75366,7 +75554,39 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_point_and_figure_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraPnfColumn` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_point_and_figure_bars_drain(
+    handle: *mut PointAndFigureBars,
+    out: *mut WickraPnfColumn,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraPnfColumn {
+            direction: bar.direction,
+            high: bar.high,
+            low: bar.low,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75382,7 +75602,7 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_name(
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75397,7 +75617,7 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_name(
 #[no_mangle]
 pub unsafe extern "C" fn wickra_point_and_figure_bars_reset(handle: *mut PointAndFigureBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75412,21 +75632,38 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_free(handle: *mut PointAnd
     }
 }
 
+/// Opaque `RangeBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_range_bars_drain`, the same
+/// shape the resampler uses. Named `RangeBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct RangeBars {
+    inner: CoreRangeBars,
+    pending: Vec<RangeBar>,
+}
+
 /// Create a `RangeBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_range_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_range_bars_new(range: f64) -> *mut RangeBars {
-    match RangeBars::new(range) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreRangeBars::new(range) {
+        Ok(inner) => Box::into_raw(Box::new(RangeBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_range_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_range_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75449,10 +75686,12 @@ pub unsafe extern "C" fn wickra_range_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraRangeBar {
                 open: bar.open,
                 close: bar.close,
@@ -75460,7 +75699,39 @@ pub unsafe extern "C" fn wickra_range_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_range_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraRangeBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_range_bars_drain(
+    handle: *mut RangeBars,
+    out: *mut WickraRangeBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraRangeBar {
+            open: bar.open,
+            close: bar.close,
+            direction: bar.direction,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75474,7 +75745,7 @@ pub unsafe extern "C" fn wickra_range_bars_name(handle: *mut RangeBars) -> *cons
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75489,7 +75760,7 @@ pub unsafe extern "C" fn wickra_range_bars_name(handle: *mut RangeBars) -> *cons
 #[no_mangle]
 pub unsafe extern "C" fn wickra_range_bars_reset(handle: *mut RangeBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75504,21 +75775,38 @@ pub unsafe extern "C" fn wickra_range_bars_free(handle: *mut RangeBars) {
     }
 }
 
+/// Opaque `RenkoBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_renko_bars_drain`, the same
+/// shape the resampler uses. Named `RenkoBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct RenkoBars {
+    inner: CoreRenkoBars,
+    pending: Vec<RenkoBrick>,
+}
+
 /// Create a `RenkoBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_renko_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_renko_bars_new(box_size: f64) -> *mut RenkoBars {
-    match RenkoBars::new(box_size) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreRenkoBars::new(box_size) {
+        Ok(inner) => Box::into_raw(Box::new(RenkoBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_renko_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_renko_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75541,10 +75829,12 @@ pub unsafe extern "C" fn wickra_renko_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraRenkoBrick {
                 open: bar.open,
                 close: bar.close,
@@ -75552,7 +75842,39 @@ pub unsafe extern "C" fn wickra_renko_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_renko_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraRenkoBrick` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_bars_drain(
+    handle: *mut RenkoBars,
+    out: *mut WickraRenkoBrick,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraRenkoBrick {
+            open: bar.open,
+            close: bar.close,
+            direction: bar.direction,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75566,7 +75888,7 @@ pub unsafe extern "C" fn wickra_renko_bars_name(handle: *mut RenkoBars) -> *cons
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75581,7 +75903,7 @@ pub unsafe extern "C" fn wickra_renko_bars_name(handle: *mut RenkoBars) -> *cons
 #[no_mangle]
 pub unsafe extern "C" fn wickra_renko_bars_reset(handle: *mut RenkoBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75596,21 +75918,38 @@ pub unsafe extern "C" fn wickra_renko_bars_free(handle: *mut RenkoBars) {
     }
 }
 
+/// Opaque `RunBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_run_bars_drain`, the same
+/// shape the resampler uses. Named `RunBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct RunBars {
+    inner: CoreRunBars,
+    pending: Vec<RunBar>,
+}
+
 /// Create a `RunBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_run_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_run_bars_new(run_length: usize) -> *mut RunBars {
-    match RunBars::new(run_length) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreRunBars::new(run_length) {
+        Ok(inner) => Box::into_raw(Box::new(RunBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_run_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_run_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75633,10 +75972,12 @@ pub unsafe extern "C" fn wickra_run_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraRunBar {
                 open: bar.open,
                 high: bar.high,
@@ -75647,7 +75988,42 @@ pub unsafe extern "C" fn wickra_run_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_run_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraRunBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_run_bars_drain(
+    handle: *mut RunBars,
+    out: *mut WickraRunBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraRunBar {
+            open: bar.open,
+            high: bar.high,
+            low: bar.low,
+            close: bar.close,
+            length: bar.length,
+            direction: bar.direction,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75661,7 +76037,7 @@ pub unsafe extern "C" fn wickra_run_bars_name(handle: *mut RunBars) -> *const c_
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75676,7 +76052,7 @@ pub unsafe extern "C" fn wickra_run_bars_name(handle: *mut RunBars) -> *const c_
 #[no_mangle]
 pub unsafe extern "C" fn wickra_run_bars_reset(handle: *mut RunBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75691,21 +76067,38 @@ pub unsafe extern "C" fn wickra_run_bars_free(handle: *mut RunBars) {
     }
 }
 
+/// Opaque `ThreeLineBreakBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_three_line_break_bars_drain`, the same
+/// shape the resampler uses. Named `ThreeLineBreakBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct ThreeLineBreakBars {
+    inner: CoreThreeLineBreakBars,
+    pending: Vec<LineBreakBar>,
+}
+
 /// Create a `ThreeLineBreakBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_three_line_break_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_three_line_break_bars_new(lines: usize) -> *mut ThreeLineBreakBars {
-    match ThreeLineBreakBars::new(lines) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreThreeLineBreakBars::new(lines) {
+        Ok(inner) => Box::into_raw(Box::new(ThreeLineBreakBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_three_line_break_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_three_line_break_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75728,10 +76121,12 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraLineBreakBar {
                 open: bar.open,
                 close: bar.close,
@@ -75739,7 +76134,39 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_three_line_break_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraLineBreakBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_bars_drain(
+    handle: *mut ThreeLineBreakBars,
+    out: *mut WickraLineBreakBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraLineBreakBar {
+            open: bar.open,
+            close: bar.close,
+            direction: bar.direction,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75755,7 +76182,7 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_name(
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75770,7 +76197,7 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_name(
 #[no_mangle]
 pub unsafe extern "C" fn wickra_three_line_break_bars_reset(handle: *mut ThreeLineBreakBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75785,21 +76212,38 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_free(handle: *mut ThreeLin
     }
 }
 
+/// Opaque `TickBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_tick_bars_drain`, the same
+/// shape the resampler uses. Named `TickBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct TickBars {
+    inner: CoreTickBars,
+    pending: Vec<TickBar>,
+}
+
 /// Create a `TickBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_tick_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_tick_bars_new(ticks: usize) -> *mut TickBars {
-    match TickBars::new(ticks) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreTickBars::new(ticks) {
+        Ok(inner) => Box::into_raw(Box::new(TickBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_tick_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_tick_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75822,10 +76266,12 @@ pub unsafe extern "C" fn wickra_tick_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraTickBar {
                 open: bar.open,
                 high: bar.high,
@@ -75835,7 +76281,41 @@ pub unsafe extern "C" fn wickra_tick_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_tick_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraTickBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_bars_drain(
+    handle: *mut TickBars,
+    out: *mut WickraTickBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraTickBar {
+            open: bar.open,
+            high: bar.high,
+            low: bar.low,
+            close: bar.close,
+            volume: bar.volume,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75849,7 +76329,7 @@ pub unsafe extern "C" fn wickra_tick_bars_name(handle: *mut TickBars) -> *const 
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75864,7 +76344,7 @@ pub unsafe extern "C" fn wickra_tick_bars_name(handle: *mut TickBars) -> *const 
 #[no_mangle]
 pub unsafe extern "C" fn wickra_tick_bars_reset(handle: *mut TickBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -75879,21 +76359,38 @@ pub unsafe extern "C" fn wickra_tick_bars_free(handle: *mut TickBars) {
     }
 }
 
+/// Opaque `VolumeBars` handle plus the bars the last update could not fit.
+///
+/// One candle can complete any number of bars -- a gap of a hundred box sizes
+/// completes a hundred bars -- so a fixed out-buffer cannot be sized in advance.
+/// The surplus stays here and comes out through `wickra_volume_bars_drain`, the same
+/// shape the resampler uses. Named `VolumeBars` because the generated bindings
+/// take their public class name from this struct; the core builder is aliased.
+#[derive(Debug)]
+pub struct VolumeBars {
+    inner: CoreVolumeBars,
+    pending: Vec<VolumeBar>,
+}
+
 /// Create a `VolumeBars` bar builder.
 ///
 /// Returns `NULL` on invalid parameters; release with `wickra_volume_bars_free`.
 #[no_mangle]
 pub extern "C" fn wickra_volume_bars_new(volume_per_bar: f64) -> *mut VolumeBars {
-    match VolumeBars::new(volume_per_bar) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreVolumeBars::new(volume_per_bar) {
+        Ok(inner) => Box::into_raw(Box::new(VolumeBars {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
-/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
-/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
-/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns
+/// the total number completed on this candle (0, 1, or several). Any that did not
+/// fit are buffered -- retrieve them with `wickra_volume_bars_drain`, which is the only
+/// way to get them and must be called before the next `update`. Returns 0 on a
+/// `NULL` handle or an invalid candle.
 ///
 /// # Safety
 /// `handle` (from `wickra_volume_bars_new`, not freed) and `out` must be valid or `NULL`; when
@@ -75916,10 +76413,12 @@ pub unsafe extern "C" fn wickra_volume_bars_update(
     let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
         return 0;
     };
-    let bars = builder.update(candle);
+    let bars = builder.inner.update(candle);
+    let total = bars.len();
+    let mut rest = bars.into_iter();
     if !out.is_null() {
         let slots = slice::from_raw_parts_mut(out, cap);
-        for (slot, bar) in slots.iter_mut().zip(&bars) {
+        for (slot, bar) in slots.iter_mut().zip(rest.by_ref()) {
             *slot = WickraVolumeBar {
                 open: bar.open,
                 high: bar.high,
@@ -75929,7 +76428,41 @@ pub unsafe extern "C" fn wickra_volume_bars_update(
             };
         }
     }
-    bars.len()
+    builder.pending = rest.collect();
+    total
+}
+
+/// Copy up to `cap` bars the last `update` could not fit into `out`, remove them
+/// from the buffer, and return the number written. Returns 0 on a `NULL` handle /
+/// `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_volume_bars_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraVolumeBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_bars_drain(
+    handle: *mut VolumeBars,
+    out: *mut WickraVolumeBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = builder.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, bar) in slots.iter_mut().zip(builder.pending.drain(..count)) {
+        *slot = WickraVolumeBar {
+            open: bar.open,
+            high: bar.high,
+            low: bar.low,
+            close: bar.close,
+            volume: bar.volume,
+        };
+    }
+    count
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75943,7 +76476,7 @@ pub unsafe extern "C" fn wickra_volume_bars_name(handle: *mut VolumeBars) -> *co
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -75958,7 +76491,7 @@ pub unsafe extern "C" fn wickra_volume_bars_name(handle: *mut VolumeBars) -> *co
 #[no_mangle]
 pub unsafe extern "C" fn wickra_volume_bars_reset(handle: *mut VolumeBars) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
     }
 }
 
@@ -77154,6 +77687,72 @@ mod tests {
             wickra_microprice_free(streamed);
         }
         assert!((batched[0] - batched[SNAPSHOT_BARS - 1]).abs() > 1e-9);
+    }
+
+    #[test]
+    fn bar_builder_keeps_the_bars_that_did_not_fit() {
+        // One candle can complete far more bars than any fixed buffer holds: a
+        // Renko builder with a box size of 1 turns a 500-point move into 500
+        // bricks. The return says how many were completed; the surplus has to
+        // come out of the drain rather than being dropped.
+        const CAP: usize = 8;
+        let zero = WickraRenkoBrick {
+            open: 0.0,
+            close: 0.0,
+            direction: 0,
+        };
+        let mut first = [zero; CAP];
+        unsafe {
+            let handle = wickra_renko_bars_new(1.0);
+            assert!(!handle.is_null());
+            wickra_renko_bars_update(
+                handle,
+                100.0,
+                100.0,
+                100.0,
+                100.0,
+                1.0,
+                0,
+                first.as_mut_ptr(),
+                CAP,
+            );
+
+            let total = wickra_renko_bars_update(
+                handle,
+                600.0,
+                600.0,
+                600.0,
+                600.0,
+                1.0,
+                1,
+                first.as_mut_ptr(),
+                CAP,
+            );
+            assert!(total > CAP, "expected more bricks than the buffer holds");
+
+            let mut rest = vec![zero; total - CAP];
+            let drained = wickra_renko_bars_drain(handle, rest.as_mut_ptr(), rest.len());
+            assert_eq!(
+                drained,
+                total - CAP,
+                "the drain must yield every surplus bar"
+            );
+
+            // The bricks are consecutive, so the run reads as one ladder.
+            let mut previous = first[CAP - 1].close;
+            for brick in &rest {
+                assert!((brick.open - previous).abs() < 1e-9);
+                assert!((brick.close - brick.open - 1.0).abs() < 1e-9);
+                previous = brick.close;
+            }
+
+            // A second drain has nothing left.
+            assert_eq!(
+                wickra_renko_bars_drain(handle, rest.as_mut_ptr(), rest.len()),
+                0
+            );
+            wickra_renko_bars_free(handle);
+        }
     }
 
     #[test]

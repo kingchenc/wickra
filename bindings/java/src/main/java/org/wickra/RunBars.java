@@ -42,7 +42,8 @@ public final class RunBars implements AutoCloseable {
                 return new RunBar[0];
             }
             RunBar[] result = new RunBar[(int) n];
-            for (int i = 0; i < n; i++) {
+            long written = Math.min(n, cap);
+            for (int i = 0; i < written; i++) {
                 long b = (long) i * 48L;
                 result[i] = new RunBar(
                     out.get(JAVA_DOUBLE, b + 0L),
@@ -51,6 +52,22 @@ public final class RunBars implements AutoCloseable {
                     out.get(JAVA_DOUBLE, b + 24L),
                     (double) out.get(JAVA_LONG, b + 32L),
                     (double) out.get(JAVA_BYTE, b + 40L));
+            }
+            if (n > cap) {
+                // One candle completed more bars than the buffer holds;
+                // the surplus waits on the handle rather than being dropped.
+                MemorySegment more = a.allocate(48L * (n - cap));
+                long drained = (long) NativeMethods.WICKRA_RUN_BARS_DRAIN.invokeExact(handle(), more, n - cap);
+                for (int i = 0; i < drained; i++) {
+                    long b = (long) i * 48L;
+                    result[(int) cap + i] = new RunBar(
+                    more.get(JAVA_DOUBLE, b + 0L),
+                    more.get(JAVA_DOUBLE, b + 8L),
+                    more.get(JAVA_DOUBLE, b + 16L),
+                    more.get(JAVA_DOUBLE, b + 24L),
+                    (double) more.get(JAVA_LONG, b + 32L),
+                    (double) more.get(JAVA_BYTE, b + 40L));
+                }
             }
             return result;
         } catch (Throwable t) {

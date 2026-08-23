@@ -39,7 +39,8 @@ public final class Footprint implements AutoCloseable {
                 return new FootprintLevel[0];
             }
             FootprintLevel[] result = new FootprintLevel[(int) n];
-            for (int i = 0; i < n; i++) {
+            long written = Math.min(n, cap);
+            for (int i = 0; i < written; i++) {
                 long b = (long) i * 24L;
                 result[i] = new FootprintLevel(
                     out.get(JAVA_DOUBLE, b + 0L),

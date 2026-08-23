@@ -42,7 +42,8 @@ public final class TickBars implements AutoCloseable {
                 return new TickBar[0];
             }
             TickBar[] result = new TickBar[(int) n];
-            for (int i = 0; i < n; i++) {
+            long written = Math.min(n, cap);
+            for (int i = 0; i < written; i++) {
                 long b = (long) i * 40L;
                 result[i] = new TickBar(
                     out.get(JAVA_DOUBLE, b + 0L),
@@ -50,6 +51,21 @@ public final class TickBars implements AutoCloseable {
                     out.get(JAVA_DOUBLE, b + 16L),
                     out.get(JAVA_DOUBLE, b + 24L),
                     out.get(JAVA_DOUBLE, b + 32L));
+            }
+            if (n > cap) {
+                // One candle completed more bars than the buffer holds;
+                // the surplus waits on the handle rather than being dropped.
+                MemorySegment more = a.allocate(40L * (n - cap));
+                long drained = (long) NativeMethods.WICKRA_TICK_BARS_DRAIN.invokeExact(handle(), more, n - cap);
+                for (int i = 0; i < drained; i++) {
+                    long b = (long) i * 40L;
+                    result[(int) cap + i] = new TickBar(
+                    more.get(JAVA_DOUBLE, b + 0L),
+                    more.get(JAVA_DOUBLE, b + 8L),
+                    more.get(JAVA_DOUBLE, b + 16L),
+                    more.get(JAVA_DOUBLE, b + 24L),
+                    more.get(JAVA_DOUBLE, b + 32L));
+                }
             }
             return result;
         } catch (Throwable t) {

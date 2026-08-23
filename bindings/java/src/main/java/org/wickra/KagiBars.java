@@ -39,12 +39,26 @@ public final class KagiBars implements AutoCloseable {
                 return new KagiBar[0];
             }
             KagiBar[] result = new KagiBar[(int) n];
-            for (int i = 0; i < n; i++) {
+            long written = Math.min(n, cap);
+            for (int i = 0; i < written; i++) {
                 long b = (long) i * 24L;
                 result[i] = new KagiBar(
                     out.get(JAVA_DOUBLE, b + 0L),
                     out.get(JAVA_DOUBLE, b + 8L),
                     (double) out.get(JAVA_BYTE, b + 16L));
+            }
+            if (n > cap) {
+                // One candle completed more bars than the buffer holds;
+                // the surplus waits on the handle rather than being dropped.
+                MemorySegment more = a.allocate(24L * (n - cap));
+                long drained = (long) NativeMethods.WICKRA_KAGI_BARS_DRAIN.invokeExact(handle(), more, n - cap);
+                for (int i = 0; i < drained; i++) {
+                    long b = (long) i * 24L;
+                    result[(int) cap + i] = new KagiBar(
+                    more.get(JAVA_DOUBLE, b + 0L),
+                    more.get(JAVA_DOUBLE, b + 8L),
+                    (double) more.get(JAVA_BYTE, b + 16L));
+                }
             }
             return result;
         } catch (Throwable t) {

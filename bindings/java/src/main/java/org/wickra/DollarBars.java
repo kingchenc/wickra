@@ -39,7 +39,8 @@ public final class DollarBars implements AutoCloseable {
                 return new DollarBar[0];
             }
             DollarBar[] result = new DollarBar[(int) n];
-            for (int i = 0; i < n; i++) {
+            long written = Math.min(n, cap);
+            for (int i = 0; i < written; i++) {
                 long b = (long) i * 48L;
                 result[i] = new DollarBar(
                     out.get(JAVA_DOUBLE, b + 0L),
@@ -48,6 +49,22 @@ public final class DollarBars implements AutoCloseable {
                     out.get(JAVA_DOUBLE, b + 24L),
                     out.get(JAVA_DOUBLE, b + 32L),
                     out.get(JAVA_DOUBLE, b + 40L));
+            }
+            if (n > cap) {
+                // One candle completed more bars than the buffer holds;
+                // the surplus waits on the handle rather than being dropped.
+                MemorySegment more = a.allocate(48L * (n - cap));
+                long drained = (long) NativeMethods.WICKRA_DOLLAR_BARS_DRAIN.invokeExact(handle(), more, n - cap);
+                for (int i = 0; i < drained; i++) {
+                    long b = (long) i * 48L;
+                    result[(int) cap + i] = new DollarBar(
+                    more.get(JAVA_DOUBLE, b + 0L),
+                    more.get(JAVA_DOUBLE, b + 8L),
+                    more.get(JAVA_DOUBLE, b + 16L),
+                    more.get(JAVA_DOUBLE, b + 24L),
+                    more.get(JAVA_DOUBLE, b + 32L),
+                    more.get(JAVA_DOUBLE, b + 40L));
+                }
             }
             return result;
         } catch (Throwable t) {

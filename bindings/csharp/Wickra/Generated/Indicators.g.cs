@@ -9093,9 +9093,30 @@ public sealed class DollarBars : IDisposable
         }
 
         var result = new DollarBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new DollarBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume, buffer[i].dollar);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraDollarBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraDollarBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_dollar_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new DollarBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].volume, rest[i].dollar);
+            }
         }
 
         return result;
@@ -12944,7 +12965,8 @@ public sealed class Footprint : IDisposable
         }
 
         var result = new FootprintLevel[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new FootprintLevel(buffer[i].price, buffer[i].bid_vol, buffer[i].ask_vol);
         }
@@ -17420,9 +17442,30 @@ public sealed class ImbalanceBars : IDisposable
         }
 
         var result = new ImbalanceBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new ImbalanceBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].imbalance, buffer[i].direction);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraImbalanceBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraImbalanceBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_imbalance_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new ImbalanceBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].imbalance, rest[i].direction);
+            }
         }
 
         return result;
@@ -18602,9 +18645,30 @@ public sealed class KagiBars : IDisposable
         }
 
         var result = new KagiBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new KagiBar(buffer[i].start, buffer[i].end, buffer[i].direction);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraKagiBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraKagiBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_kagi_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new KagiBar(rest[i].start, rest[i].end, rest[i].direction);
+            }
         }
 
         return result;
@@ -27161,9 +27225,30 @@ public sealed class PointAndFigureBars : IDisposable
         }
 
         var result = new PnfColumn[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new PnfColumn(buffer[i].direction, buffer[i].high, buffer[i].low);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraPnfColumn[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraPnfColumn* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_point_and_figure_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new PnfColumn(rest[i].direction, rest[i].high, rest[i].low);
+            }
         }
 
         return result;
@@ -28377,9 +28462,30 @@ public sealed class RangeBars : IDisposable
         }
 
         var result = new RangeBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new RangeBar(buffer[i].open, buffer[i].close, buffer[i].direction);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraRangeBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraRangeBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_range_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new RangeBar(rest[i].open, rest[i].close, rest[i].direction);
+            }
         }
 
         return result;
@@ -28977,9 +29083,30 @@ public sealed class RenkoBars : IDisposable
         }
 
         var result = new RenkoBrick[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new RenkoBrick(buffer[i].open, buffer[i].close, buffer[i].direction);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraRenkoBrick[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraRenkoBrick* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_renko_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new RenkoBrick(rest[i].open, rest[i].close, rest[i].direction);
+            }
         }
 
         return result;
@@ -30575,9 +30702,30 @@ public sealed class RunBars : IDisposable
         }
 
         var result = new RunBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new RunBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].length, buffer[i].direction);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraRunBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraRunBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_run_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new RunBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].length, rest[i].direction);
+            }
         }
 
         return result;
@@ -37099,9 +37247,30 @@ public sealed class ThreeLineBreakBars : IDisposable
         }
 
         var result = new LineBreakBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new LineBreakBar(buffer[i].open, buffer[i].close, buffer[i].direction);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraLineBreakBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraLineBreakBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_three_line_break_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new LineBreakBar(rest[i].open, rest[i].close, rest[i].direction);
+            }
         }
 
         return result;
@@ -37660,9 +37829,30 @@ public sealed class TickBars : IDisposable
         }
 
         var result = new TickBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new TickBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraTickBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraTickBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_tick_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new TickBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].volume);
+            }
         }
 
         return result;
@@ -41769,9 +41959,30 @@ public sealed class VolumeBars : IDisposable
         }
 
         var result = new VolumeBar[count];
-        for (var i = 0; i < count; i++)
+        var written = count < cap ? (int)count : cap;
+        for (var i = 0; i < written; i++)
         {
             result[i] = new VolumeBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume);
+        }
+
+        if (count > cap)
+        {
+            // One candle completed more bars than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraVolumeBar[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraVolumeBar* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_volume_bars_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new VolumeBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].volume);
+            }
         }
 
         return result;

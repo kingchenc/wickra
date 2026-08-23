@@ -10615,8 +10615,22 @@ func (ind *DollarBars) Update(open float64, high float64, low float64, close flo
 		return nil
 	}
 	out := make([]DollarBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = DollarBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume), float64(buf[i].dollar)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraDollarBar, n-capacity)
+		got := int(C.wickra_dollar_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = DollarBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), float64(rest[i].volume), float64(rest[i].dollar)}
+		}
 	}
 	return out
 }
@@ -14759,7 +14773,11 @@ func (ind *Footprint) Update(price float64, size float64, isBuy bool, timestamp 
 		return nil
 	}
 	out := make([]FootprintLevel, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = FootprintLevel{float64(buf[i].price), float64(buf[i].bid_vol), float64(buf[i].ask_vol)}
 	}
 	return out
@@ -19601,8 +19619,22 @@ func (ind *ImbalanceBars) Update(open float64, high float64, low float64, close 
 		return nil
 	}
 	out := make([]ImbalanceBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = ImbalanceBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].imbalance), int8(buf[i].direction)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraImbalanceBar, n-capacity)
+		got := int(C.wickra_imbalance_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = ImbalanceBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), float64(rest[i].imbalance), int8(rest[i].direction)}
+		}
 	}
 	return out
 }
@@ -20919,8 +20951,22 @@ func (ind *KagiBars) Update(open float64, high float64, low float64, close float
 		return nil
 	}
 	out := make([]KagiBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = KagiBar{float64(buf[i].start), float64(buf[i].end), int8(buf[i].direction)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraKagiBar, n-capacity)
+		got := int(C.wickra_kagi_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = KagiBar{float64(rest[i].start), float64(rest[i].end), int8(rest[i].direction)}
+		}
 	}
 	return out
 }
@@ -30277,8 +30323,22 @@ func (ind *PointAndFigureBars) Update(open float64, high float64, low float64, c
 		return nil
 	}
 	out := make([]PnfColumn, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = PnfColumn{int8(buf[i].direction), float64(buf[i].high), float64(buf[i].low)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraPnfColumn, n-capacity)
+		got := int(C.wickra_point_and_figure_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = PnfColumn{int8(rest[i].direction), float64(rest[i].high), float64(rest[i].low)}
+		}
 	}
 	return out
 }
@@ -31637,8 +31697,22 @@ func (ind *RangeBars) Update(open float64, high float64, low float64, close floa
 		return nil
 	}
 	out := make([]RangeBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = RangeBar{float64(buf[i].open), float64(buf[i].close), int8(buf[i].direction)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraRangeBar, n-capacity)
+		got := int(C.wickra_range_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = RangeBar{float64(rest[i].open), float64(rest[i].close), int8(rest[i].direction)}
+		}
 	}
 	return out
 }
@@ -32317,8 +32391,22 @@ func (ind *RenkoBars) Update(open float64, high float64, low float64, close floa
 		return nil
 	}
 	out := make([]RenkoBrick, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = RenkoBrick{float64(buf[i].open), float64(buf[i].close), int8(buf[i].direction)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraRenkoBrick, n-capacity)
+		got := int(C.wickra_renko_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = RenkoBrick{float64(rest[i].open), float64(rest[i].close), int8(rest[i].direction)}
+		}
 	}
 	return out
 }
@@ -34174,8 +34262,22 @@ func (ind *RunBars) Update(open float64, high float64, low float64, close float6
 		return nil
 	}
 	out := make([]RunBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = RunBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), int(buf[i].length), int8(buf[i].direction)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraRunBar, n-capacity)
+		got := int(C.wickra_run_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = RunBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), int(rest[i].length), int8(rest[i].direction)}
+		}
 	}
 	return out
 }
@@ -41339,8 +41441,22 @@ func (ind *ThreeLineBreakBars) Update(open float64, high float64, low float64, c
 		return nil
 	}
 	out := make([]LineBreakBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = LineBreakBar{float64(buf[i].open), float64(buf[i].close), int8(buf[i].direction)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraLineBreakBar, n-capacity)
+		got := int(C.wickra_three_line_break_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = LineBreakBar{float64(rest[i].open), float64(rest[i].close), int8(rest[i].direction)}
+		}
 	}
 	return out
 }
@@ -41935,8 +42051,22 @@ func (ind *TickBars) Update(open float64, high float64, low float64, close float
 		return nil
 	}
 	out := make([]TickBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = TickBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraTickBar, n-capacity)
+		got := int(C.wickra_tick_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = TickBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), float64(rest[i].volume)}
+		}
 	}
 	return out
 }
@@ -46511,8 +46641,22 @@ func (ind *VolumeBars) Update(open float64, high float64, low float64, close flo
 		return nil
 	}
 	out := make([]VolumeBar, n)
-	for i := 0; i < n; i++ {
+	written := n
+	if written > capacity {
+		written = capacity
+	}
+	for i := 0; i < written; i++ {
 		out[i] = VolumeBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume)}
+	}
+	if n > capacity {
+		// One candle completed more bars than the buffer holds; the
+		// surplus waits on the handle rather than being dropped.
+		rest := make([]C.struct_WickraVolumeBar, n-capacity)
+		got := int(C.wickra_volume_bars_drain(ind.handle, &rest[0], C.uintptr_t(len(rest))))
+		runtime.KeepAlive(ind)
+		for i := 0; i < got; i++ {
+			out[capacity+i] = VolumeBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), float64(rest[i].volume)}
+		}
 	}
 	return out
 }

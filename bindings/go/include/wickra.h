@@ -14934,6 +14934,10 @@ uintptr_t wickra_dollar_bars_update(struct DollarBars *handle,
                                     struct WickraDollarBar *out,
                                     uintptr_t cap);
 
+uintptr_t wickra_dollar_bars_drain(struct DollarBars *handle,
+                                   struct WickraDollarBar *out,
+                                   uintptr_t cap);
+
 const char *wickra_dollar_bars_name(struct DollarBars *handle);
 
 void wickra_dollar_bars_reset(struct DollarBars *handle);
@@ -14951,6 +14955,10 @@ uintptr_t wickra_imbalance_bars_update(struct ImbalanceBars *handle,
                                        int64_t timestamp,
                                        struct WickraImbalanceBar *out,
                                        uintptr_t cap);
+
+uintptr_t wickra_imbalance_bars_drain(struct ImbalanceBars *handle,
+                                      struct WickraImbalanceBar *out,
+                                      uintptr_t cap);
 
 const char *wickra_imbalance_bars_name(struct ImbalanceBars *handle);
 
@@ -14970,6 +14978,8 @@ uintptr_t wickra_kagi_bars_update(struct KagiBars *handle,
                                   struct WickraKagiBar *out,
                                   uintptr_t cap);
 
+uintptr_t wickra_kagi_bars_drain(struct KagiBars *handle, struct WickraKagiBar *out, uintptr_t cap);
+
 const char *wickra_kagi_bars_name(struct KagiBars *handle);
 
 void wickra_kagi_bars_reset(struct KagiBars *handle);
@@ -14987,6 +14997,10 @@ uintptr_t wickra_point_and_figure_bars_update(struct PointAndFigureBars *handle,
                                               int64_t timestamp,
                                               struct WickraPnfColumn *out,
                                               uintptr_t cap);
+
+uintptr_t wickra_point_and_figure_bars_drain(struct PointAndFigureBars *handle,
+                                             struct WickraPnfColumn *out,
+                                             uintptr_t cap);
 
 const char *wickra_point_and_figure_bars_name(struct PointAndFigureBars *handle);
 
@@ -15006,6 +15020,10 @@ uintptr_t wickra_range_bars_update(struct RangeBars *handle,
                                    struct WickraRangeBar *out,
                                    uintptr_t cap);
 
+uintptr_t wickra_range_bars_drain(struct RangeBars *handle,
+                                  struct WickraRangeBar *out,
+                                  uintptr_t cap);
+
 const char *wickra_range_bars_name(struct RangeBars *handle);
 
 void wickra_range_bars_reset(struct RangeBars *handle);
@@ -15023,6 +15041,10 @@ uintptr_t wickra_renko_bars_update(struct RenkoBars *handle,
                                    int64_t timestamp,
                                    struct WickraRenkoBrick *out,
                                    uintptr_t cap);
+
+uintptr_t wickra_renko_bars_drain(struct RenkoBars *handle,
+                                  struct WickraRenkoBrick *out,
+                                  uintptr_t cap);
 
 const char *wickra_renko_bars_name(struct RenkoBars *handle);
 
@@ -15042,6 +15064,8 @@ uintptr_t wickra_run_bars_update(struct RunBars *handle,
                                  struct WickraRunBar *out,
                                  uintptr_t cap);
 
+uintptr_t wickra_run_bars_drain(struct RunBars *handle, struct WickraRunBar *out, uintptr_t cap);
+
 const char *wickra_run_bars_name(struct RunBars *handle);
 
 void wickra_run_bars_reset(struct RunBars *handle);
@@ -15059,6 +15083,10 @@ uintptr_t wickra_three_line_break_bars_update(struct ThreeLineBreakBars *handle,
                                               int64_t timestamp,
                                               struct WickraLineBreakBar *out,
                                               uintptr_t cap);
+
+uintptr_t wickra_three_line_break_bars_drain(struct ThreeLineBreakBars *handle,
+                                             struct WickraLineBreakBar *out,
+                                             uintptr_t cap);
 
 const char *wickra_three_line_break_bars_name(struct ThreeLineBreakBars *handle);
 
@@ -15078,6 +15106,8 @@ uintptr_t wickra_tick_bars_update(struct TickBars *handle,
                                   struct WickraTickBar *out,
                                   uintptr_t cap);
 
+uintptr_t wickra_tick_bars_drain(struct TickBars *handle, struct WickraTickBar *out, uintptr_t cap);
+
 const char *wickra_tick_bars_name(struct TickBars *handle);
 
 void wickra_tick_bars_reset(struct TickBars *handle);
@@ -15095,6 +15125,10 @@ uintptr_t wickra_volume_bars_update(struct VolumeBars *handle,
                                     int64_t timestamp,
                                     struct WickraVolumeBar *out,
                                     uintptr_t cap);
+
+uintptr_t wickra_volume_bars_drain(struct VolumeBars *handle,
+                                   struct WickraVolumeBar *out,
+                                   uintptr_t cap);
 
 const char *wickra_volume_bars_name(struct VolumeBars *handle);
 

@@ -12636,6 +12636,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nuint wickra_dollar_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraDollarBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_dollar_bars_drain(WickraHandle handle, WickraDollarBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_dollar_bars_name(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12649,6 +12652,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nuint wickra_imbalance_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraImbalanceBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_imbalance_bars_drain(WickraHandle handle, WickraImbalanceBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_imbalance_bars_name(WickraHandle handle);
@@ -12666,6 +12672,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nuint wickra_kagi_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraKagiBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_kagi_bars_drain(WickraHandle handle, WickraKagiBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_kagi_bars_name(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12679,6 +12688,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nuint wickra_point_and_figure_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraPnfColumn* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_point_and_figure_bars_drain(WickraHandle handle, WickraPnfColumn* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_point_and_figure_bars_name(WickraHandle handle);
@@ -12696,6 +12708,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nuint wickra_range_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraRangeBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_range_bars_drain(WickraHandle handle, WickraRangeBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_range_bars_name(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12709,6 +12724,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nuint wickra_renko_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraRenkoBrick* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_renko_bars_drain(WickraHandle handle, WickraRenkoBrick* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_renko_bars_name(WickraHandle handle);
@@ -12726,6 +12744,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nuint wickra_run_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraRunBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_run_bars_drain(WickraHandle handle, WickraRunBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_run_bars_name(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12739,6 +12760,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nuint wickra_three_line_break_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraLineBreakBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_three_line_break_bars_drain(WickraHandle handle, WickraLineBreakBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_three_line_break_bars_name(WickraHandle handle);
@@ -12756,6 +12780,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nuint wickra_tick_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraTickBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_tick_bars_drain(WickraHandle handle, WickraTickBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_tick_bars_name(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12769,6 +12796,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nuint wickra_volume_bars_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraVolumeBar* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial nuint wickra_volume_bars_drain(WickraHandle handle, WickraVolumeBar* @out, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nint wickra_volume_bars_name(WickraHandle handle);

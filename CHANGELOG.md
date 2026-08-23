@@ -649,6 +649,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   been missed only because its constructor takes moving-average type codes and
   it therefore sits outside the generated section. 475 of the 517 handles have a
   batch now.
+- **The bar builders dropped bars, and crashed three bindings doing it.** One
+  candle can complete any number of bars — a Renko builder with a box size of 1
+  turns a 500-point move into 500 bricks — but `update` writes into a
+  caller-sized buffer, and every generated binding passed a hard-coded 64 and
+  then indexed it with the *returned* count. Go panicked with `index out of
+  range [64] with length 64`; C# and Java read past their buffers the same way.
+  The surplus is buffered on the handle now and comes out through a `drain`,
+  which the Go, C# and Java wrappers call, so a large move returns every bar
+  instead of crashing.
 - **The cross-section and order-book indicators gained `batch` too.** They take
   an array per bar rather than a scalar, so the batch takes the flat form: the
   member and level arrays cover `n * members` elements with the stride passed

@@ -42,12 +42,26 @@ public final class PointAndFigureBars implements AutoCloseable {
                 return new PnfColumn[0];
             }
             PnfColumn[] result = new PnfColumn[(int) n];
-            for (int i = 0; i < n; i++) {
+            long written = Math.min(n, cap);
+            for (int i = 0; i < written; i++) {
                 long b = (long) i * 24L;
                 result[i] = new PnfColumn(
                     (double) out.get(JAVA_BYTE, b + 0L),
                     out.get(JAVA_DOUBLE, b + 8L),
                     out.get(JAVA_DOUBLE, b + 16L));
+            }
+            if (n > cap) {
+                // One candle completed more bars than the buffer holds;
+                // the surplus waits on the handle rather than being dropped.
+                MemorySegment more = a.allocate(24L * (n - cap));
+                long drained = (long) NativeMethods.WICKRA_POINT_AND_FIGURE_BARS_DRAIN.invokeExact(handle(), more, n - cap);
+                for (int i = 0; i < drained; i++) {
+                    long b = (long) i * 24L;
+                    result[(int) cap + i] = new PnfColumn(
+                    (double) more.get(JAVA_BYTE, b + 0L),
+                    more.get(JAVA_DOUBLE, b + 8L),
+                    more.get(JAVA_DOUBLE, b + 16L));
+                }
             }
             return result;
         } catch (Throwable t) {
