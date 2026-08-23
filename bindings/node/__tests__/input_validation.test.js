@@ -82,3 +82,50 @@ test('ValueArea batch rejects unequal-length columns', () => {
   const volume = [10, 10, 10];
   assert.throws(() => new wickra.ValueArea(2, 10, 0.7).batch(high, low, volume), /.*/);
 });
+
+// --- A JS number reaching a period parameter is checked, not reinterpreted ---
+//
+// Every numeric parameter used to be declared `u32`, and napi converts a JS
+// number to `u32` the way a bitwise operator would. `-1` arrived as 4294967295,
+// `1.5` as `1`, and `1e10` as its low 32 bits — all plausible-looking periods,
+// so the Rust constructor's validation had nothing to reject and the caller got
+// an indicator quietly configured for something they never asked for.
+
+test('a negative period is rejected rather than wrapping to 4294967295', () => {
+  assert.throws(() => new wickra.SMA(-1), /non-negative/);
+});
+
+test('a fractional period is rejected rather than truncating', () => {
+  // 1.5 used to become 1, which constructs successfully and behaves like a
+  // pass-through: the wrong indicator, with no error anywhere.
+  assert.throws(() => new wickra.SMA(1.5), /whole number/);
+});
+
+test('a period beyond the exact-integer range is rejected', () => {
+  assert.throws(() => new wickra.SMA(1e300), /too large/);
+});
+
+test('NaN and Infinity are rejected', () => {
+  assert.throws(() => new wickra.SMA(NaN), /whole number/);
+  assert.throws(() => new wickra.SMA(Infinity), /whole number/);
+});
+
+test('the check applies to every numeric parameter, not just the first', () => {
+  // MACD takes three; the second and third go through the same conversion.
+  assert.throws(() => new wickra.MACD(12, -1, 9), /non-negative/);
+  assert.throws(() => new wickra.MACD(12, 26, 9.5), /whole number/);
+});
+
+test('a valid period still constructs and computes', () => {
+  const sma = new wickra.SMA(3);
+  assert.equal(sma.update(1), null);
+  assert.equal(sma.update(2), null);
+  assert.equal(sma.update(3), 2);
+});
+
+test('a large but exact period is accepted by the conversion', () => {
+  // The conversion only refuses numbers that are not exact integers; the
+  // domain rules stay with the Rust constructor, which rejects this one for
+  // exceeding the maximum window length.
+  assert.throws(() => new wickra.SMA(2 ** 40), /period|window|length/i);
+});

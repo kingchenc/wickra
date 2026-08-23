@@ -527,6 +527,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   header is true. The header also names where documentation belongs now, since
   saying "do not edit" without saying where to edit instead is how this
   happened.
+- **Node: a number reaching a period parameter is checked instead of
+  reinterpreted.** Every numeric parameter was declared `u32`, and napi converts
+  a JS number to `u32` the way a bitwise operator would: `new SMA(-1)` produced
+  a period of 4294967295, `new SMA(1.5)` silently became 1, and `new SMA(1e10)`
+  wrapped to its low 32 bits. All three reached the Rust constructor as a
+  plausible period, so the validation there had nothing to reject and the caller
+  got an indicator configured for something they never asked for.
+
+  A `Count` wrapper now takes the value as `f64` — which is what a JS number is
+  — and refuses anything that is not a whole, non-negative, exactly
+  representable integer, naming what was passed. 350 parameters across 115 names
+  go through it. The domain rules stay where they were, in the Rust
+  constructors.
+
+  Three things deliberately kept their old type, because the blanket change was
+  wrong for them: the moving-average `matype` arguments are *codes* that
+  `MaType::from_code` range-checks itself, `RunBarValue.length` is an output
+  field leaving for JavaScript, and the `-> u32` returns such as
+  `warmupPeriod()` are values on the way out, where nothing wraps. Where a core
+  constructor genuinely takes a `u32` — `Jma`'s power, `TurnOfMonth`'s bounds —
+  the narrowing is checked rather than cast.
+
 
 
 

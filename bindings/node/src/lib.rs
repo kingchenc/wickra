@@ -18,6 +18,98 @@ use napi_derive::napi;
 use wickra_core as wc;
 use wickra_core::{BarBuilder, BatchExt, Indicator};
 
+/// An integer argument arriving from JavaScript.
+///
+/// Every numeric parameter here used to be declared `u32`, and napi converts a
+/// JS number to `u32` the way a bitwise operator would: `-1` arrives as
+/// 4294967295, `1.5` as `1`, and `1e10` as its low 32 bits. All three reached
+/// the Rust constructor as a plausible-looking period, so the validation there
+/// had nothing to reject.
+///
+/// Taking the value as `f64` -- which is what a JS number is -- makes the
+/// original visible, so it can be refused with a message naming what was
+/// passed. The domain rules (a period of zero, the maximum window length) stay
+/// where they were, in the Rust constructor; this only guarantees it sees the
+/// number the caller wrote.
+#[derive(Debug, Clone, Copy)]
+pub struct Count(usize);
+
+impl Count {
+    /// The validated value.
+    pub const fn get(self) -> usize {
+        self.0
+    }
+}
+
+impl napi::bindgen_prelude::FromNapiValue for Count {
+    // The trait method is `unsafe` because it takes raw napi handles. The crate
+    // denies rather than forbids `unsafe_code` exactly so a conversion like this
+    // can opt in; the body only reads the value through napi's own safe f64
+    // conversion and does no pointer work of its own.
+    #[allow(unsafe_code)]
+    unsafe fn from_napi_value(
+        env: napi::sys::napi_env,
+        value: napi::sys::napi_value,
+    ) -> napi::Result<Self> {
+        let raw = f64::from_napi_value(env, value)?;
+        if !raw.is_finite() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                format!("expected a whole number, got {raw}"),
+            ));
+        }
+        if raw.fract() != 0.0 {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                format!("expected a whole number, got {raw}"),
+            ));
+        }
+        if raw < 0.0 {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                format!("expected a non-negative number, got {raw}"),
+            ));
+        }
+        // Beyond 2^53 a JS number can no longer represent consecutive integers,
+        // so a value this large is a mistake rather than an intent -- and every
+        // parameter here is a window length that the core rejects long before
+        // this bound.
+        if raw > 9_007_199_254_740_992.0 {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                format!("{raw} is too large to be an exact integer"),
+            ));
+        }
+        Ok(Self(raw as usize))
+    }
+}
+
+impl napi::bindgen_prelude::ValidateNapiValue for Count {}
+
+/// Narrow a validated count to the `u32` a few core constructors take.
+///
+/// `Count` already refused anything that is not a whole non-negative number, so
+/// the only way to arrive here out of range is a genuinely huge value -- which
+/// gets a message naming the parameter rather than a silent wrap.
+fn narrow(value: Count, what: &str) -> napi::Result<u32> {
+    u32::try_from(value.get()).map_err(|_| {
+        NapiError::new(
+            Status::InvalidArg,
+            format!("{what} is too large: {}", value.get()),
+        )
+    })
+}
+
+impl napi::bindgen_prelude::TypeName for Count {
+    fn type_name() -> &'static str {
+        "number"
+    }
+
+    fn value_type() -> napi::ValueType {
+        napi::ValueType::Number
+    }
+}
+
 fn map_err(e: wc::Error) -> NapiError {
     NapiError::new(Status::InvalidArg, e.to_string())
 }
@@ -44,9 +136,9 @@ macro_rules! node_scalar_indicator {
         #[napi]
         impl $wrapper {
             #[napi(constructor)]
-            pub fn new(period: u32) -> napi::Result<Self> {
+            pub fn new(period: Count) -> napi::Result<Self> {
                 Ok(Self {
-                    inner: <$rust_ty>::new(period as usize).map_err(map_err)?,
+                    inner: <$rust_ty>::new(period.get()).map_err(map_err)?,
                 })
             }
             #[napi]
@@ -134,9 +226,9 @@ pub struct RviVolatilityNode {
 #[napi]
 impl RviVolatilityNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RviVolatility::new(period as usize).map_err(map_err)?,
+            inner: wc::RviVolatility::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -277,9 +369,9 @@ pub struct UpsidePotentialRatioNode {
 #[napi]
 impl UpsidePotentialRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32, mar: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, mar: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::UpsidePotentialRatio::new(period as usize, mar).map_err(map_err)?,
+            inner: wc::UpsidePotentialRatio::new(period.get(), mar).map_err(map_err)?,
         })
     }
     #[napi]
@@ -317,9 +409,9 @@ pub struct M2MeasureNode {
 #[napi]
 impl M2MeasureNode {
     #[napi(constructor)]
-    pub fn new(period: u32, risk_free: f64, benchmark_stddev: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, risk_free: f64, benchmark_stddev: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::M2Measure::new(period as usize, risk_free, benchmark_stddev)
+            inner: wc::M2Measure::new(period.get(), risk_free, benchmark_stddev)
                 .map_err(map_err)?,
         })
     }
@@ -358,9 +450,9 @@ pub struct BandpassFilterNode {
 #[napi]
 impl BandpassFilterNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bandwidth: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, bandwidth: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::BandpassFilter::new(period as usize, bandwidth).map_err(map_err)?,
+            inner: wc::BandpassFilter::new(period.get(), bandwidth).map_err(map_err)?,
         })
     }
     #[napi]
@@ -398,9 +490,9 @@ pub struct EvenBetterSinewaveNode {
 #[napi]
 impl EvenBetterSinewaveNode {
     #[napi(constructor)]
-    pub fn new(hp_period: u32, ssf_length: u32) -> napi::Result<Self> {
+    pub fn new(hp_period: Count, ssf_length: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::EvenBetterSinewave::new(hp_period as usize, ssf_length as usize)
+            inner: wc::EvenBetterSinewave::new(hp_period.get(), ssf_length.get())
                 .map_err(map_err)?,
         })
     }
@@ -439,9 +531,9 @@ pub struct AutocorrelationPeriodogramNode {
 #[napi]
 impl AutocorrelationPeriodogramNode {
     #[napi(constructor)]
-    pub fn new(min_period: u32, max_period: u32) -> napi::Result<Self> {
+    pub fn new(min_period: Count, max_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AutocorrelationPeriodogram::new(min_period as usize, max_period as usize)
+            inner: wc::AutocorrelationPeriodogram::new(min_period.get(), max_period.get())
                 .map_err(map_err)?,
         })
     }
@@ -483,9 +575,9 @@ pub struct ShannonEntropyNode {
 #[napi]
 impl ShannonEntropyNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bins: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, bins: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ShannonEntropy::new(period as usize, bins as usize).map_err(map_err)?,
+            inner: wc::ShannonEntropy::new(period.get(), bins.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -523,10 +615,9 @@ pub struct SampleEntropyNode {
 #[napi]
 impl SampleEntropyNode {
     #[napi(constructor)]
-    pub fn new(period: u32, m: u32, r_factor: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, m: Count, r_factor: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SampleEntropy::new(period as usize, m as usize, r_factor)
-                .map_err(map_err)?,
+            inner: wc::SampleEntropy::new(period.get(), m.get(), r_factor).map_err(map_err)?,
         })
     }
     #[napi]
@@ -644,9 +735,9 @@ pub struct VolatilityOfVolatilityNode {
 #[napi]
 impl VolatilityOfVolatilityNode {
     #[napi(constructor)]
-    pub fn new(vol_window: u32, vov_window: u32) -> napi::Result<Self> {
+    pub fn new(vol_window: Count, vov_window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolatilityOfVolatility::new(vol_window as usize, vov_window as usize)
+            inner: wc::VolatilityOfVolatility::new(vol_window.get(), vov_window.get())
                 .map_err(map_err)?,
         })
     }
@@ -696,9 +787,9 @@ pub struct VolatilityConeNode {
 #[napi]
 impl VolatilityConeNode {
     #[napi(constructor)]
-    pub fn new(window: u32, lookback: u32) -> napi::Result<Self> {
+    pub fn new(window: Count, lookback: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolatilityCone::new(window as usize, lookback as usize).map_err(map_err)?,
+            inner: wc::VolatilityCone::new(window.get(), lookback.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -771,9 +862,9 @@ pub struct JumpIndicatorNode {
 #[napi]
 impl JumpIndicatorNode {
     #[napi(constructor)]
-    pub fn new(period: u32, threshold: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, threshold: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::JumpIndicator::new(period as usize, threshold).map_err(map_err)?,
+            inner: wc::JumpIndicator::new(period.get(), threshold).map_err(map_err)?,
         })
     }
     #[napi]
@@ -811,9 +902,9 @@ pub struct RegimeLabelNode {
 #[napi]
 impl RegimeLabelNode {
     #[napi(constructor)]
-    pub fn new(vol_period: u32, lookback: u32) -> napi::Result<Self> {
+    pub fn new(vol_period: Count, lookback: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RegimeLabel::new(vol_period as usize, lookback as usize).map_err(map_err)?,
+            inner: wc::RegimeLabel::new(vol_period.get(), lookback.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -851,9 +942,9 @@ pub struct RollingQuantileNode {
 #[napi]
 impl RollingQuantileNode {
     #[napi(constructor)]
-    pub fn new(period: u32, quantile: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, quantile: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RollingQuantile::new(period as usize, quantile).map_err(map_err)?,
+            inner: wc::RollingQuantile::new(period.get(), quantile).map_err(map_err)?,
         })
     }
     #[napi]
@@ -893,9 +984,9 @@ pub struct AutocorrelationNode {
 #[napi]
 impl AutocorrelationNode {
     #[napi(constructor)]
-    pub fn new(period: u32, lag: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, lag: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Autocorrelation::new(period as usize, lag as usize).map_err(map_err)?,
+            inner: wc::Autocorrelation::new(period.get(), lag.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -935,9 +1026,9 @@ pub struct HurstExponentNode {
 #[napi]
 impl HurstExponentNode {
     #[napi(constructor)]
-    pub fn new(period: u32, chunks: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, chunks: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HurstExponent::new(period as usize, chunks as usize).map_err(map_err)?,
+            inner: wc::HurstExponent::new(period.get(), chunks.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -979,9 +1070,9 @@ macro_rules! node_pair_indicator {
         #[napi]
         impl $wrapper {
             #[napi(constructor)]
-            pub fn new(period: u32) -> napi::Result<Self> {
+            pub fn new(period: Count) -> napi::Result<Self> {
                 Ok(Self {
-                    inner: <$rust_ty>::new(period as usize).map_err(map_err)?,
+                    inner: <$rust_ty>::new(period.get()).map_err(map_err)?,
                 })
             }
             #[napi]
@@ -1079,10 +1170,9 @@ pub struct PairSpreadZScoreNode {
 #[napi]
 impl PairSpreadZScoreNode {
     #[napi(constructor)]
-    pub fn new(beta_period: u32, z_period: u32) -> napi::Result<Self> {
+    pub fn new(beta_period: Count, z_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PairSpreadZScore::new(beta_period as usize, z_period as usize)
-                .map_err(map_err)?,
+            inner: wc::PairSpreadZScore::new(beta_period.get(), z_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1143,9 +1233,9 @@ pub struct LeadLagCrossCorrelationNode {
 #[napi]
 impl LeadLagCrossCorrelationNode {
     #[napi(constructor)]
-    pub fn new(window: u32, max_lag: u32) -> napi::Result<Self> {
+    pub fn new(window: Count, max_lag: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::LeadLagCrossCorrelation::new(window as usize, max_lag as usize)
+            inner: wc::LeadLagCrossCorrelation::new(window.get(), max_lag.get())
                 .map_err(map_err)?,
         })
     }
@@ -1217,9 +1307,9 @@ pub struct CointegrationNode {
 #[napi]
 impl CointegrationNode {
     #[napi(constructor)]
-    pub fn new(period: u32, adf_lags: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, adf_lags: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Cointegration::new(period as usize, adf_lags as usize).map_err(map_err)?,
+            inner: wc::Cointegration::new(period.get(), adf_lags.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1291,9 +1381,9 @@ pub struct RelativeStrengthABNode {
 #[napi]
 impl RelativeStrengthABNode {
     #[napi(constructor)]
-    pub fn new(ma_period: u32, rsi_period: u32) -> napi::Result<Self> {
+    pub fn new(ma_period: Count, rsi_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RelativeStrengthAB::new(ma_period as usize, rsi_period as usize)
+            inner: wc::RelativeStrengthAB::new(ma_period.get(), rsi_period.get())
                 .map_err(map_err)?,
         })
     }
@@ -1357,9 +1447,9 @@ pub struct VarianceRatioNode {
 #[napi]
 impl VarianceRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32, q: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, q: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VarianceRatio::new(period as usize, q as usize).map_err(map_err)?,
+            inner: wc::VarianceRatio::new(period.get(), q.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1413,9 +1503,9 @@ pub struct GrangerCausalityNode {
 #[napi]
 impl GrangerCausalityNode {
     #[napi(constructor)]
-    pub fn new(period: u32, lag: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, lag: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::GrangerCausality::new(period as usize, lag as usize).map_err(map_err)?,
+            inner: wc::GrangerCausality::new(period.get(), lag.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1554,9 +1644,9 @@ pub struct SpreadBollingerBandsNode {
 #[napi]
 impl SpreadBollingerBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32, num_std: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, num_std: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SpreadBollingerBands::new(period as usize, num_std).map_err(map_err)?,
+            inner: wc::SpreadBollingerBands::new(period.get(), num_std).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1629,10 +1719,9 @@ pub struct MacdNode {
 #[napi]
 impl MacdNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, signal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MacdIndicator::new(fast as usize, slow as usize, signal as usize)
-                .map_err(map_err)?,
+            inner: wc::MacdIndicator::new(fast.get(), slow.get(), signal.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1685,9 +1774,9 @@ pub struct MacdFixNode {
 #[napi]
 impl MacdFixNode {
     #[napi(constructor)]
-    pub fn new(signal: u32) -> napi::Result<Self> {
+    pub fn new(signal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MacdFix::new(signal as usize).map_err(map_err)?,
+            inner: wc::MacdFix::new(signal.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1742,20 +1831,20 @@ impl MacdExtNode {
     /// (SMA, EMA, WMA, DEMA, TEMA, TRIMA).
     #[napi(constructor)]
     pub fn new(
-        fast: u32,
+        fast: Count,
         fast_matype: u32,
-        slow: u32,
+        slow: Count,
         slow_matype: u32,
-        signal: u32,
+        signal: Count,
         signal_matype: u32,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::MacdExt::new(
-                fast as usize,
+                fast.get(),
                 wc::MaType::from_code(fast_matype).map_err(map_err)?,
-                slow as usize,
+                slow.get(),
                 wc::MaType::from_code(slow_matype).map_err(map_err)?,
-                signal as usize,
+                signal.get(),
                 wc::MaType::from_code(signal_matype).map_err(map_err)?,
             )
             .map_err(map_err)?,
@@ -1820,9 +1909,9 @@ pub struct BollingerNode {
 #[napi]
 impl BollingerNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::BollingerBands::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::BollingerBands::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1883,9 +1972,9 @@ pub struct AtrNode {
 #[napi]
 impl AtrNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Atr::new(period as usize).map_err(map_err)?,
+            inner: wc::Atr::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1941,9 +2030,9 @@ pub struct PlusDmNode {
 #[napi]
 impl PlusDmNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PlusDm::new(period as usize).map_err(map_err)?,
+            inner: wc::PlusDm::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1999,9 +2088,9 @@ pub struct MinusDmNode {
 #[napi]
 impl MinusDmNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MinusDm::new(period as usize).map_err(map_err)?,
+            inner: wc::MinusDm::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2057,9 +2146,9 @@ pub struct PlusDiNode {
 #[napi]
 impl PlusDiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PlusDi::new(period as usize).map_err(map_err)?,
+            inner: wc::PlusDi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2115,9 +2204,9 @@ pub struct MinusDiNode {
 #[napi]
 impl MinusDiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MinusDi::new(period as usize).map_err(map_err)?,
+            inner: wc::MinusDi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2173,9 +2262,9 @@ pub struct DxNode {
 #[napi]
 impl DxNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Dx::new(period as usize).map_err(map_err)?,
+            inner: wc::Dx::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2231,9 +2320,9 @@ pub struct MidPriceNode {
 #[napi]
 impl MidPriceNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MidPrice::new(period as usize).map_err(map_err)?,
+            inner: wc::MidPrice::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2782,9 +2871,9 @@ pub struct StochasticCciNode {
 #[napi]
 impl StochasticCciNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::StochasticCci::new(period as usize).map_err(map_err)?,
+            inner: wc::StochasticCci::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2840,9 +2929,9 @@ pub struct ImiNode {
 #[napi]
 impl ImiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::IntradayMomentumIndex::new(period as usize).map_err(map_err)?,
+            inner: wc::IntradayMomentumIndex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2912,10 +3001,9 @@ pub struct QqeNode {
 #[napi]
 impl QqeNode {
     #[napi(constructor)]
-    pub fn new(rsi_period: u32, smoothing: u32, factor: f64) -> napi::Result<Self> {
+    pub fn new(rsi_period: Count, smoothing: Count, factor: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Qqe::new(rsi_period as usize, smoothing as usize, factor)
-                .map_err(map_err)?,
+            inner: wc::Qqe::new(rsi_period.get(), smoothing.get(), factor).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2969,9 +3057,9 @@ pub struct ElderRayNode {
 #[napi]
 impl ElderRayNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ElderRay::new(period as usize).map_err(map_err)?,
+            inner: wc::ElderRay::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3038,9 +3126,9 @@ pub struct TtmTrendNode {
 #[napi]
 impl TtmTrendNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TtmTrend::new(period as usize).map_err(map_err)?,
+            inner: wc::TtmTrend::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3096,9 +3184,9 @@ pub struct QstickNode {
 #[napi]
 impl QstickNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Qstick::new(period as usize).map_err(map_err)?,
+            inner: wc::Qstick::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3153,9 +3241,9 @@ pub struct PolarizedFractalEfficiencyNode {
 #[napi]
 impl PolarizedFractalEfficiencyNode {
     #[napi(constructor)]
-    pub fn new(period: u32, smoothing: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, smoothing: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PolarizedFractalEfficiency::new(period as usize, smoothing as usize)
+            inner: wc::PolarizedFractalEfficiency::new(period.get(), smoothing.get())
                 .map_err(map_err)?,
         })
     }
@@ -3194,9 +3282,9 @@ pub struct WavePmNode {
 #[napi]
 impl WavePmNode {
     #[napi(constructor)]
-    pub fn new(length: u32, smoothing: u32) -> napi::Result<Self> {
+    pub fn new(length: Count, smoothing: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::WavePm::new(length as usize, smoothing as usize).map_err(map_err)?,
+            inner: wc::WavePm::new(length.get(), smoothing.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3240,12 +3328,12 @@ pub struct GatorOscillatorNode {
 #[napi]
 impl GatorOscillatorNode {
     #[napi(constructor)]
-    pub fn new(jaw_period: u32, teeth_period: u32, lips_period: u32) -> napi::Result<Self> {
+    pub fn new(jaw_period: Count, teeth_period: Count, lips_period: Count) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::GatorOscillator::new(
-                jaw_period as usize,
-                teeth_period as usize,
-                lips_period as usize,
+                jaw_period.get(),
+                teeth_period.get(),
+                lips_period.get(),
             )
             .map_err(map_err)?,
         })
@@ -3320,9 +3408,9 @@ pub struct KasePermissionStochasticNode {
 #[napi]
 impl KasePermissionStochasticNode {
     #[napi(constructor)]
-    pub fn new(length: u32, smooth: u32) -> napi::Result<Self> {
+    pub fn new(length: Count, smooth: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::KasePermissionStochastic::new(length as usize, smooth as usize)
+            inner: wc::KasePermissionStochastic::new(length.get(), smooth.get())
                 .map_err(map_err)?,
         })
     }
@@ -3390,9 +3478,9 @@ pub struct VolatilityRatioNode {
 #[napi]
 impl VolatilityRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolatilityRatio::new(period as usize).map_err(map_err)?,
+            inner: wc::VolatilityRatio::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3448,9 +3536,9 @@ pub struct ProjectionOscillatorNode {
 #[napi]
 impl ProjectionOscillatorNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ProjectionOscillator::new(period as usize).map_err(map_err)?,
+            inner: wc::ProjectionOscillator::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3506,9 +3594,9 @@ pub struct TimeBasedStopNode {
 #[napi]
 impl TimeBasedStopNode {
     #[napi(constructor)]
-    pub fn new(max_bars: u32) -> napi::Result<Self> {
+    pub fn new(max_bars: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TimeBasedStop::new(max_bars as usize).map_err(map_err)?,
+            inner: wc::TimeBasedStop::new(max_bars.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3564,9 +3652,9 @@ pub struct AdaptiveCciNode {
 #[napi]
 impl AdaptiveCciNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AdaptiveCci::new(period as usize).map_err(map_err)?,
+            inner: wc::AdaptiveCci::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3628,9 +3716,9 @@ pub struct StochNode {
 #[napi]
 impl StochNode {
     #[napi(constructor)]
-    pub fn new(k_period: u32, d_period: u32) -> napi::Result<Self> {
+    pub fn new(k_period: Count, d_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Stochastic::new(k_period as usize, d_period as usize).map_err(map_err)?,
+            inner: wc::Stochastic::new(k_period.get(), d_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3757,9 +3845,9 @@ pub struct AdxNode {
 #[napi]
 impl AdxNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Adx::new(period as usize).map_err(map_err)?,
+            inner: wc::Adx::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3823,9 +3911,9 @@ pub struct AdxrNode {
 #[napi]
 impl AdxrNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Adxr::new(period as usize).map_err(map_err)?,
+            inner: wc::Adxr::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3879,9 +3967,9 @@ pub struct CciNode {
 #[napi]
 impl CciNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Cci::new(period as usize).map_err(map_err)?,
+            inner: wc::Cci::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3936,9 +4024,9 @@ pub struct WilliamsRNode {
 #[napi]
 impl WilliamsRNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::WilliamsR::new(period as usize).map_err(map_err)?,
+            inner: wc::WilliamsR::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -3993,9 +4081,9 @@ pub struct MfiNode {
 #[napi]
 impl MfiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Mfi::new(period as usize).map_err(map_err)?,
+            inner: wc::Mfi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4121,9 +4209,9 @@ pub struct KeltnerNode {
 #[napi]
 impl KeltnerNode {
     #[napi(constructor)]
-    pub fn new(ema_period: u32, atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(ema_period: Count, atr_period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Keltner::new(ema_period as usize, atr_period as usize, multiplier)
+            inner: wc::Keltner::new(ema_period.get(), atr_period.get(), multiplier)
                 .map_err(map_err)?,
         })
     }
@@ -4199,9 +4287,9 @@ pub struct DonchianNode {
 #[napi]
 impl DonchianNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Donchian::new(period as usize).map_err(map_err)?,
+            inner: wc::Donchian::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4328,9 +4416,9 @@ pub struct RollingVwapNode {
 #[napi]
 impl RollingVwapNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RollingVwap::new(period as usize).map_err(map_err)?,
+            inner: wc::RollingVwap::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi(getter)]
@@ -4396,9 +4484,9 @@ pub struct AoNode {
 #[napi]
 impl AoNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AwesomeOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::AwesomeOscillator::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4454,9 +4542,9 @@ pub struct AroonNode {
 #[napi]
 impl AroonNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Aroon::new(period as usize).map_err(map_err)?,
+            inner: wc::Aroon::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4518,10 +4606,9 @@ pub struct InertiaNode {
 #[napi]
 impl InertiaNode {
     #[napi(constructor)]
-    pub fn new(rvi_period: u32, linreg_period: u32) -> napi::Result<Self> {
+    pub fn new(rvi_period: Count, linreg_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Inertia::new(rvi_period as usize, linreg_period as usize)
-                .map_err(map_err)?,
+            inner: wc::Inertia::new(rvi_period.get(), linreg_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4583,14 +4670,10 @@ pub struct ConnorsRsiNode {
 #[napi]
 impl ConnorsRsiNode {
     #[napi(constructor)]
-    pub fn new(period_rsi: u32, period_streak: u32, period_rank: u32) -> napi::Result<Self> {
+    pub fn new(period_rsi: Count, period_streak: Count, period_rank: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ConnorsRsi::new(
-                period_rsi as usize,
-                period_streak as usize,
-                period_rank as usize,
-            )
-            .map_err(map_err)?,
+            inner: wc::ConnorsRsi::new(period_rsi.get(), period_streak.get(), period_rank.get())
+                .map_err(map_err)?,
         })
     }
     #[napi]
@@ -4666,10 +4749,9 @@ pub struct SmiNode {
 #[napi]
 impl SmiNode {
     #[napi(constructor)]
-    pub fn new(period: u32, d_period: u32, d2_period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, d_period: Count, d2_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Smi::new(period as usize, d_period as usize, d2_period as usize)
-                .map_err(map_err)?,
+            inner: wc::Smi::new(period.get(), d_period.get(), d2_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4732,27 +4814,27 @@ impl KstNode {
     #[napi(constructor)]
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        roc1: u32,
-        roc2: u32,
-        roc3: u32,
-        roc4: u32,
-        sma1: u32,
-        sma2: u32,
-        sma3: u32,
-        sma4: u32,
-        signal: u32,
+        roc1: Count,
+        roc2: Count,
+        roc3: Count,
+        roc4: Count,
+        sma1: Count,
+        sma2: Count,
+        sma3: Count,
+        sma4: Count,
+        signal: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::Kst::new(
-                roc1 as usize,
-                roc2 as usize,
-                roc3 as usize,
-                roc4 as usize,
-                sma1 as usize,
-                sma2 as usize,
-                sma3 as usize,
-                sma4 as usize,
-                signal as usize,
+                roc1.get(),
+                roc2.get(),
+                roc3.get(),
+                roc4.get(),
+                sma1.get(),
+                sma2.get(),
+                sma3.get(),
+                sma4.get(),
+                signal.get(),
             )
             .map_err(map_err)?,
         })
@@ -4808,9 +4890,9 @@ pub struct PgoNode {
 #[napi]
 impl PgoNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Pgo::new(period as usize).map_err(map_err)?,
+            inner: wc::Pgo::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4865,9 +4947,9 @@ pub struct RviNode {
 #[napi]
 impl RviNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Rvi::new(period as usize).map_err(map_err)?,
+            inner: wc::Rvi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -4929,14 +5011,10 @@ pub struct AwesomeOscillatorHistogramNode {
 #[napi]
 impl AwesomeOscillatorHistogramNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, sma_period: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, sma_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AwesomeOscillatorHistogram::new(
-                fast as usize,
-                slow as usize,
-                sma_period as usize,
-            )
-            .map_err(map_err)?,
+            inner: wc::AwesomeOscillatorHistogram::new(fast.get(), slow.get(), sma_period.get())
+                .map_err(map_err)?,
         })
     }
     #[napi]
@@ -4986,9 +5064,9 @@ pub struct StcNode {
 #[napi]
 impl StcNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, schaff_period: u32, factor: f64) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, schaff_period: Count, factor: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Stc::new(fast as usize, slow as usize, schaff_period as usize, factor)
+            inner: wc::Stc::new(fast.get(), slow.get(), schaff_period.get(), factor)
                 .map_err(map_err)?,
         })
     }
@@ -5027,17 +5105,17 @@ pub struct ElderImpulseNode {
 impl ElderImpulseNode {
     #[napi(constructor)]
     pub fn new(
-        ema_period: u32,
-        macd_fast: u32,
-        macd_slow: u32,
-        macd_signal: u32,
+        ema_period: Count,
+        macd_fast: Count,
+        macd_slow: Count,
+        macd_signal: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::ElderImpulse::new(
-                ema_period as usize,
-                macd_fast as usize,
-                macd_slow as usize,
-                macd_signal as usize,
+                ema_period.get(),
+                macd_fast.get(),
+                macd_slow.get(),
+                macd_signal.get(),
             )
             .map_err(map_err)?,
         })
@@ -5083,10 +5161,9 @@ pub struct ZeroLagMacdNode {
 #[napi]
 impl ZeroLagMacdNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, signal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ZeroLagMacd::new(fast as usize, slow as usize, signal as usize)
-                .map_err(map_err)?,
+            inner: wc::ZeroLagMacd::new(fast.get(), slow.get(), signal.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5136,9 +5213,9 @@ pub struct CfoNode {
 #[napi]
 impl CfoNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Cfo::new(period as usize).map_err(map_err)?,
+            inner: wc::Cfo::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5175,9 +5252,9 @@ pub struct ApoNode {
 #[napi]
 impl ApoNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Apo::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::Apo::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5214,10 +5291,9 @@ pub struct KamaNode {
 #[napi]
 impl KamaNode {
     #[napi(constructor)]
-    pub fn new(er_period: u32, fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(er_period: Count, fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Kama::new(er_period as usize, fast as usize, slow as usize)
-                .map_err(map_err)?,
+            inner: wc::Kama::new(er_period.get(), fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5256,9 +5332,9 @@ pub struct EvwmaNode {
 #[napi]
 impl EvwmaNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Evwma::new(period as usize).map_err(map_err)?,
+            inner: wc::Evwma::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5317,10 +5393,9 @@ pub struct AlligatorNode {
 #[napi]
 impl AlligatorNode {
     #[napi(constructor)]
-    pub fn new(jaw: u32, teeth: u32, lips: u32) -> napi::Result<Self> {
+    pub fn new(jaw: Count, teeth: Count, lips: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Alligator::new(jaw as usize, teeth as usize, lips as usize)
-                .map_err(map_err)?,
+            inner: wc::Alligator::new(jaw.get(), teeth.get(), lips.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5380,9 +5455,9 @@ pub struct JmaNode {
 #[napi]
 impl JmaNode {
     #[napi(constructor)]
-    pub fn new(period: u32, phase: f64, power: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, phase: f64, power: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Jma::new(period as usize, phase, power).map_err(map_err)?,
+            inner: wc::Jma::new(period.get(), phase, narrow(power, "power")?).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5421,9 +5496,9 @@ pub struct VidyaNode {
 #[napi]
 impl VidyaNode {
     #[napi(constructor)]
-    pub fn new(period: u32, cmo_period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, cmo_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Vidya::new(period as usize, cmo_period as usize).map_err(map_err)?,
+            inner: wc::Vidya::new(period.get(), cmo_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5462,9 +5537,9 @@ pub struct AlmaNode {
 #[napi]
 impl AlmaNode {
     #[napi(constructor)]
-    pub fn new(period: u32, offset: f64, sigma: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, offset: f64, sigma: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Alma::new(period as usize, offset, sigma).map_err(map_err)?,
+            inner: wc::Alma::new(period.get(), offset, sigma).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5504,9 +5579,9 @@ pub struct T3Node {
 #[napi]
 impl T3Node {
     #[napi(constructor)]
-    pub fn new(period: u32, v: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, v: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::T3::new(period as usize, v).map_err(map_err)?,
+            inner: wc::T3::new(period.get(), v).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5546,9 +5621,9 @@ pub struct GeneralizedDemaNode {
 #[napi]
 impl GeneralizedDemaNode {
     #[napi(constructor)]
-    pub fn new(period: u32, v: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, v: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::GeneralizedDema::new(period as usize, v).map_err(map_err)?,
+            inner: wc::GeneralizedDema::new(period.get(), v).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5630,9 +5705,9 @@ pub struct RmiNode {
 #[napi]
 impl RmiNode {
     #[napi(constructor)]
-    pub fn new(period: u32, momentum: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, momentum: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Rmi::new(period as usize, momentum as usize).map_err(map_err)?,
+            inner: wc::Rmi::new(period.get(), momentum.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5673,17 +5748,17 @@ pub struct DerivativeOscillatorNode {
 impl DerivativeOscillatorNode {
     #[napi(constructor)]
     pub fn new(
-        rsi_period: u32,
-        smooth1: u32,
-        smooth2: u32,
-        signal_period: u32,
+        rsi_period: Count,
+        smooth1: Count,
+        smooth2: Count,
+        signal_period: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::DerivativeOscillator::new(
-                rsi_period as usize,
-                smooth1 as usize,
-                smooth2 as usize,
-                signal_period as usize,
+                rsi_period.get(),
+                smooth1.get(),
+                smooth2.get(),
+                signal_period.get(),
             )
             .map_err(map_err)?,
         })
@@ -5725,10 +5800,9 @@ pub struct MacdHistogramNode {
 #[napi]
 impl MacdHistogramNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, signal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MacdHistogram::new(fast as usize, slow as usize, signal as usize)
-                .map_err(map_err)?,
+            inner: wc::MacdHistogram::new(fast.get(), slow.get(), signal.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5768,10 +5842,9 @@ pub struct PpoHistogramNode {
 #[napi]
 impl PpoHistogramNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, signal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PpoHistogram::new(fast as usize, slow as usize, signal as usize)
-                .map_err(map_err)?,
+            inner: wc::PpoHistogram::new(fast.get(), slow.get(), signal.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5811,9 +5884,9 @@ pub struct TsiNode {
 #[napi]
 impl TsiNode {
     #[napi(constructor)]
-    pub fn new(long: u32, short: u32) -> napi::Result<Self> {
+    pub fn new(long: Count, short: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Tsi::new(long as usize, short as usize).map_err(map_err)?,
+            inner: wc::Tsi::new(long.get(), short.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5853,9 +5926,9 @@ pub struct PmoNode {
 #[napi]
 impl PmoNode {
     #[napi(constructor)]
-    pub fn new(smoothing1: u32, smoothing2: u32) -> napi::Result<Self> {
+    pub fn new(smoothing1: Count, smoothing2: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Pmo::new(smoothing1 as usize, smoothing2 as usize).map_err(map_err)?,
+            inner: wc::Pmo::new(smoothing1.get(), smoothing2.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -5897,9 +5970,9 @@ pub struct TiiNode {
 #[napi]
 impl TiiNode {
     #[napi(constructor)]
-    pub fn new(sma_period: u32, dev_period: u32) -> napi::Result<Self> {
+    pub fn new(sma_period: Count, dev_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Tii::new(sma_period as usize, dev_period as usize).map_err(map_err)?,
+            inner: wc::Tii::new(sma_period.get(), dev_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6073,9 +6146,9 @@ pub struct ChaikinMoneyFlowNode {
 #[napi]
 impl ChaikinMoneyFlowNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ChaikinMoneyFlow::new(period as usize).map_err(map_err)?,
+            inner: wc::ChaikinMoneyFlow::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6140,9 +6213,9 @@ pub struct ChaikinOscillatorNode {
 #[napi]
 impl ChaikinOscillatorNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ChaikinOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::ChaikinOscillator::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6207,9 +6280,9 @@ pub struct ForceIndexNode {
 #[napi]
 impl ForceIndexNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ForceIndex::new(period as usize).map_err(map_err)?,
+            inner: wc::ForceIndex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6372,9 +6445,9 @@ pub struct VolumeOscillatorNode {
 #[napi]
 impl VolumeOscillatorNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolumeOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::VolumeOscillator::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6422,9 +6495,9 @@ pub struct KvoNode {
 #[napi]
 impl KvoNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Kvo::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::Kvo::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6669,9 +6742,9 @@ pub struct DemandIndexNode {
 #[napi]
 impl DemandIndexNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::DemandIndex::new(period as usize).map_err(map_err)?,
+            inner: wc::DemandIndex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6736,9 +6809,9 @@ pub struct TsvNode {
 #[napi]
 impl TsvNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Tsv::new(period as usize).map_err(map_err)?,
+            inner: wc::Tsv::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6791,9 +6864,9 @@ pub struct VzoNode {
 #[napi]
 impl VzoNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Vzo::new(period as usize).map_err(map_err)?,
+            inner: wc::Vzo::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6907,9 +6980,9 @@ pub struct EaseOfMovementNode {
 #[napi]
 impl EaseOfMovementNode {
     #[napi(constructor)]
-    pub fn new(period: u32, divisor: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, divisor: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::EaseOfMovement::with_divisor(period as usize, divisor).map_err(map_err)?,
+            inner: wc::EaseOfMovement::with_divisor(period.get(), divisor).map_err(map_err)?,
         })
     }
     #[napi]
@@ -6973,9 +7046,9 @@ pub struct SuperTrendNode {
 #[napi]
 impl SuperTrendNode {
     #[napi(constructor)]
-    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(atr_period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SuperTrend::new(atr_period as usize, multiplier).map_err(map_err)?,
+            inner: wc::SuperTrend::new(atr_period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7052,9 +7125,9 @@ pub struct ChandelierExitNode {
 #[napi]
 impl ChandelierExitNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ChandelierExit::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::ChandelierExit::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7131,14 +7204,10 @@ pub struct ChandeKrollStopNode {
 #[napi]
 impl ChandeKrollStopNode {
     #[napi(constructor)]
-    pub fn new(atr_period: u32, atr_multiplier: f64, stop_period: u32) -> napi::Result<Self> {
+    pub fn new(atr_period: Count, atr_multiplier: f64, stop_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ChandeKrollStop::new(
-                atr_period as usize,
-                atr_multiplier,
-                stop_period as usize,
-            )
-            .map_err(map_err)?,
+            inner: wc::ChandeKrollStop::new(atr_period.get(), atr_multiplier, stop_period.get())
+                .map_err(map_err)?,
         })
     }
     #[napi]
@@ -7209,9 +7278,9 @@ pub struct AtrTrailingStopNode {
 #[napi]
 impl AtrTrailingStopNode {
     #[napi(constructor)]
-    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(atr_period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AtrTrailingStop::new(atr_period as usize, multiplier).map_err(map_err)?,
+            inner: wc::AtrTrailingStop::new(atr_period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7269,9 +7338,9 @@ pub struct HiLoActivatorNode {
 #[napi]
 impl HiLoActivatorNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HiLoActivator::new(period as usize).map_err(map_err)?,
+            inner: wc::HiLoActivator::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7329,9 +7398,9 @@ pub struct VoltyStopNode {
 #[napi]
 impl VoltyStopNode {
     #[napi(constructor)]
-    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(atr_period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VoltyStop::new(atr_period as usize, multiplier).map_err(map_err)?,
+            inner: wc::VoltyStop::new(atr_period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7389,9 +7458,9 @@ pub struct YoyoExitNode {
 #[napi]
 impl YoyoExitNode {
     #[napi(constructor)]
-    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(atr_period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::YoyoExit::new(atr_period as usize, multiplier).map_err(map_err)?,
+            inner: wc::YoyoExit::new(atr_period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7459,9 +7528,9 @@ pub struct DonchianStopNode {
 #[napi]
 impl DonchianStopNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::DonchianStop::new(period as usize).map_err(map_err)?,
+            inner: wc::DonchianStop::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7654,9 +7723,9 @@ pub struct KaseDevStopNode {
 #[napi]
 impl KaseDevStopNode {
     #[napi(constructor)]
-    pub fn new(period: u32, dev: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, dev: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::KaseDevStop::new(period as usize, dev).map_err(map_err)?,
+            inner: wc::KaseDevStop::new(period.get(), dev).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7733,9 +7802,9 @@ pub struct ElderSafeZoneNode {
 #[napi]
 impl ElderSafeZoneNode {
     #[napi(constructor)]
-    pub fn new(period: u32, coeff: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, coeff: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ElderSafeZone::new(period as usize, coeff).map_err(map_err)?,
+            inner: wc::ElderSafeZone::new(period.get(), coeff).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7812,10 +7881,9 @@ pub struct AtrRatchetNode {
 #[napi]
 impl AtrRatchetNode {
     #[napi(constructor)]
-    pub fn new(atr_period: u32, start_mult: f64, increment: f64) -> napi::Result<Self> {
+    pub fn new(atr_period: Count, start_mult: f64, increment: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AtrRatchet::new(atr_period as usize, start_mult, increment)
-                .map_err(map_err)?,
+            inner: wc::AtrRatchet::new(atr_period.get(), start_mult, increment).map_err(map_err)?,
         })
     }
     #[napi]
@@ -7966,9 +8034,9 @@ pub struct ModifiedMaStopNode {
 #[napi]
 impl ModifiedMaStopNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ModifiedMaStop::new(period as usize).map_err(map_err)?,
+            inner: wc::ModifiedMaStop::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -8232,9 +8300,9 @@ pub struct LinearRegressionNode {
 #[napi]
 impl LinearRegressionNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::LinearRegression::new(period as usize).map_err(map_err)?,
+            inner: wc::LinearRegression::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -8274,9 +8342,9 @@ pub struct LinRegSlopeNode {
 #[napi]
 impl LinRegSlopeNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::LinRegSlope::new(period as usize).map_err(map_err)?,
+            inner: wc::LinRegSlope::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -8316,12 +8384,12 @@ pub struct AcceleratorOscillatorNode {
 #[napi]
 impl AcceleratorOscillatorNode {
     #[napi(constructor)]
-    pub fn new(ao_fast: u32, ao_slow: u32, signal_period: u32) -> napi::Result<Self> {
+    pub fn new(ao_fast: Count, ao_slow: Count, signal_period: Count) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::AcceleratorOscillator::new(
-                ao_fast as usize,
-                ao_slow as usize,
-                signal_period as usize,
+                ao_fast.get(),
+                ao_slow.get(),
+                signal_period.get(),
             )
             .map_err(map_err)?,
         })
@@ -8448,9 +8516,9 @@ pub struct ChoppinessIndexNode {
 #[napi]
 impl ChoppinessIndexNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ChoppinessIndex::new(period as usize).map_err(map_err)?,
+            inner: wc::ChoppinessIndex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -8574,9 +8642,9 @@ pub struct ChaikinVolatilityNode {
 #[napi]
 impl ChaikinVolatilityNode {
     #[napi(constructor)]
-    pub fn new(ema_period: u32, roc_period: u32) -> napi::Result<Self> {
+    pub fn new(ema_period: Count, roc_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ChaikinVolatility::new(ema_period as usize, roc_period as usize)
+            inner: wc::ChaikinVolatility::new(ema_period.get(), roc_period.get())
                 .map_err(map_err)?,
         })
     }
@@ -8630,9 +8698,9 @@ pub struct YangZhangVolatilityNode {
 #[napi]
 impl YangZhangVolatilityNode {
     #[napi(constructor)]
-    pub fn new(period: u32, trading_periods: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, trading_periods: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::YangZhangVolatility::new(period as usize, trading_periods as usize)
+            inner: wc::YangZhangVolatility::new(period.get(), trading_periods.get())
                 .map_err(map_err)?,
         })
     }
@@ -8698,9 +8766,9 @@ pub struct RogersSatchellVolatilityNode {
 #[napi]
 impl RogersSatchellVolatilityNode {
     #[napi(constructor)]
-    pub fn new(period: u32, trading_periods: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, trading_periods: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RogersSatchellVolatility::new(period as usize, trading_periods as usize)
+            inner: wc::RogersSatchellVolatility::new(period.get(), trading_periods.get())
                 .map_err(map_err)?,
         })
     }
@@ -8766,9 +8834,9 @@ pub struct GarmanKlassVolatilityNode {
 #[napi]
 impl GarmanKlassVolatilityNode {
     #[napi(constructor)]
-    pub fn new(period: u32, trading_periods: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, trading_periods: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::GarmanKlassVolatility::new(period as usize, trading_periods as usize)
+            inner: wc::GarmanKlassVolatility::new(period.get(), trading_periods.get())
                 .map_err(map_err)?,
         })
     }
@@ -8834,9 +8902,9 @@ pub struct ParkinsonVolatilityNode {
 #[napi]
 impl ParkinsonVolatilityNode {
     #[napi(constructor)]
-    pub fn new(period: u32, trading_periods: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, trading_periods: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ParkinsonVolatility::new(period as usize, trading_periods as usize)
+            inner: wc::ParkinsonVolatility::new(period.get(), trading_periods.get())
                 .map_err(map_err)?,
         })
     }
@@ -8890,9 +8958,9 @@ pub struct LinRegAngleNode {
 #[napi]
 impl LinRegAngleNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::LinRegAngle::new(period as usize).map_err(map_err)?,
+            inner: wc::LinRegAngle::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -8932,9 +9000,9 @@ pub struct BollingerBandwidthNode {
 #[napi]
 impl BollingerBandwidthNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::BollingerBandwidth::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::BollingerBandwidth::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -8974,9 +9042,9 @@ pub struct PercentBNode {
 #[napi]
 impl PercentBNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PercentB::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::PercentB::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9016,9 +9084,9 @@ pub struct NatrNode {
 #[napi]
 impl NatrNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Natr::new(period as usize).map_err(map_err)?,
+            inner: wc::Natr::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9076,9 +9144,9 @@ pub struct HistoricalVolatilityNode {
 #[napi]
 impl HistoricalVolatilityNode {
     #[napi(constructor)]
-    pub fn new(period: u32, trading_periods: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, trading_periods: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HistoricalVolatility::new(period as usize, trading_periods as usize)
+            inner: wc::HistoricalVolatility::new(period.get(), trading_periods.get())
                 .map_err(map_err)?,
         })
     }
@@ -9119,9 +9187,9 @@ pub struct AroonOscillatorNode {
 #[napi]
 impl AroonOscillatorNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AroonOscillator::new(period as usize).map_err(map_err)?,
+            inner: wc::AroonOscillator::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9195,12 +9263,16 @@ pub struct WaveTrendNode {
 #[napi]
 impl WaveTrendNode {
     #[napi(constructor)]
-    pub fn new(channel_period: u32, average_period: u32, signal_period: u32) -> napi::Result<Self> {
+    pub fn new(
+        channel_period: Count,
+        average_period: Count,
+        signal_period: Count,
+    ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::WaveTrend::new(
-                channel_period as usize,
-                average_period as usize,
-                signal_period as usize,
+                channel_period.get(),
+                average_period.get(),
+                signal_period.get(),
             )
             .map_err(map_err)?,
         })
@@ -9275,9 +9347,9 @@ pub struct RwiNode {
 #[napi]
 impl RwiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Rwi::new(period as usize).map_err(map_err)?,
+            inner: wc::Rwi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9340,9 +9412,9 @@ pub struct VortexNode {
 #[napi]
 impl VortexNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Vortex::new(period as usize).map_err(map_err)?,
+            inner: wc::Vortex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9407,9 +9479,9 @@ pub struct MassIndexNode {
 #[napi]
 impl MassIndexNode {
     #[napi(constructor)]
-    pub fn new(ema_period: u32, sum_period: u32) -> napi::Result<Self> {
+    pub fn new(ema_period: Count, sum_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MassIndex::new(ema_period as usize, sum_period as usize).map_err(map_err)?,
+            inner: wc::MassIndex::new(ema_period.get(), sum_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9462,10 +9534,9 @@ pub struct StochRsiNode {
 #[napi]
 impl StochRsiNode {
     #[napi(constructor)]
-    pub fn new(rsi_period: u32, stoch_period: u32) -> napi::Result<Self> {
+    pub fn new(rsi_period: Count, stoch_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::StochRsi::new(rsi_period as usize, stoch_period as usize)
-                .map_err(map_err)?,
+            inner: wc::StochRsi::new(rsi_period.get(), stoch_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9505,9 +9576,9 @@ pub struct UltimateOscillatorNode {
 #[napi]
 impl UltimateOscillatorNode {
     #[napi(constructor)]
-    pub fn new(short: u32, mid: u32, long: u32) -> napi::Result<Self> {
+    pub fn new(short: Count, mid: Count, long: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::UltimateOscillator::new(short as usize, mid as usize, long as usize)
+            inner: wc::UltimateOscillator::new(short.get(), mid.get(), long.get())
                 .map_err(map_err)?,
         })
     }
@@ -9566,9 +9637,9 @@ pub struct PpoNode {
 #[napi]
 impl PpoNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Ppo::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::Ppo::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9608,9 +9679,9 @@ pub struct CoppockNode {
 #[napi]
 impl CoppockNode {
     #[napi(constructor)]
-    pub fn new(roc_long: u32, roc_short: u32, wma_period: u32) -> napi::Result<Self> {
+    pub fn new(roc_long: Count, roc_short: Count, wma_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Coppock::new(roc_long as usize, roc_short as usize, wma_period as usize)
+            inner: wc::Coppock::new(roc_long.get(), roc_short.get(), wma_period.get())
                 .map_err(map_err)?,
         })
     }
@@ -9649,9 +9720,9 @@ pub struct VwmaNode {
 #[napi]
 impl VwmaNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Vwma::new(period as usize).map_err(map_err)?,
+            inner: wc::Vwma::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9712,9 +9783,9 @@ pub struct MaEnvelopeNode {
 #[napi]
 impl MaEnvelopeNode {
     #[napi(constructor)]
-    pub fn new(period: u32, percent: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, percent: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MaEnvelope::new(period as usize, percent).map_err(map_err)?,
+            inner: wc::MaEnvelope::new(period.get(), percent).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9774,9 +9845,9 @@ pub struct AccelerationBandsNode {
 #[napi]
 impl AccelerationBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32, factor: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, factor: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AccelerationBands::new(period as usize, factor).map_err(map_err)?,
+            inner: wc::AccelerationBands::new(period.get(), factor).map_err(map_err)?,
         })
     }
     #[napi]
@@ -9854,9 +9925,9 @@ pub struct StarcBandsNode {
 #[napi]
 impl StarcBandsNode {
     #[napi(constructor)]
-    pub fn new(sma_period: u32, atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(sma_period: Count, atr_period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::StarcBands::new(sma_period as usize, atr_period as usize, multiplier)
+            inner: wc::StarcBands::new(sma_period.get(), atr_period.get(), multiplier)
                 .map_err(map_err)?,
         })
     }
@@ -9935,9 +10006,9 @@ pub struct AtrBandsNode {
 #[napi]
 impl AtrBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AtrBands::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::AtrBands::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10015,9 +10086,9 @@ pub struct HurstChannelNode {
 #[napi]
 impl HurstChannelNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HurstChannel::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::HurstChannel::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10095,9 +10166,9 @@ pub struct LinRegChannelNode {
 #[napi]
 impl LinRegChannelNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::LinRegChannel::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::LinRegChannel::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10156,9 +10227,9 @@ pub struct StandardErrorBandsNode {
 #[napi]
 impl StandardErrorBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::StandardErrorBands::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::StandardErrorBands::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10217,9 +10288,9 @@ pub struct QuartileBandsNode {
 #[napi]
 impl QuartileBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::QuartileBands::new(period as usize).map_err(map_err)?,
+            inner: wc::QuartileBands::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10278,9 +10349,9 @@ pub struct BomarBandsNode {
 #[napi]
 impl BomarBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32, coverage: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, coverage: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::BomarBands::new(period as usize, coverage).map_err(map_err)?,
+            inner: wc::BomarBands::new(period.get(), coverage).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10339,9 +10410,9 @@ pub struct MedianChannelNode {
 #[napi]
 impl MedianChannelNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, multiplier: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MedianChannel::new(period as usize, multiplier).map_err(map_err)?,
+            inner: wc::MedianChannel::new(period.get(), multiplier).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10400,9 +10471,9 @@ pub struct ProjectionBandsNode {
 #[napi]
 impl ProjectionBandsNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ProjectionBands::new(period as usize).map_err(map_err)?,
+            inner: wc::ProjectionBands::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10571,9 +10642,9 @@ pub struct MurreyMathLinesNode {
 #[napi]
 impl MurreyMathLinesNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MurreyMathLines::new(period as usize).map_err(map_err)?,
+            inner: wc::MurreyMathLines::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10653,9 +10724,9 @@ pub struct AndrewsPitchforkNode {
 #[napi]
 impl AndrewsPitchforkNode {
     #[napi(constructor)]
-    pub fn new(strength: u32) -> napi::Result<Self> {
+    pub fn new(strength: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AndrewsPitchfork::new(strength as usize).map_err(map_err)?,
+            inner: wc::AndrewsPitchfork::new(strength.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10722,9 +10793,9 @@ pub struct VolumeWeightedSrNode {
 #[napi]
 impl VolumeWeightedSrNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolumeWeightedSr::new(period as usize).map_err(map_err)?,
+            inner: wc::VolumeWeightedSr::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10793,9 +10864,9 @@ pub struct PivotReversalNode {
 #[napi]
 impl PivotReversalNode {
     #[napi(constructor)]
-    pub fn new(left: u32, right: u32) -> napi::Result<Self> {
+    pub fn new(left: Count, right: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PivotReversal::new(left as usize, right as usize).map_err(map_err)?,
+            inner: wc::PivotReversal::new(left.get(), right.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10866,9 +10937,9 @@ pub struct DoubleBollingerNode {
 #[napi]
 impl DoubleBollingerNode {
     #[napi(constructor)]
-    pub fn new(period: u32, k_inner: f64, k_outer: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, k_inner: f64, k_outer: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::DoubleBollinger::new(period as usize, k_inner, k_outer).map_err(map_err)?,
+            inner: wc::DoubleBollinger::new(period.get(), k_inner, k_outer).map_err(map_err)?,
         })
     }
     #[napi]
@@ -10931,9 +11002,9 @@ pub struct TtmSqueezeNode {
 #[napi]
 impl TtmSqueezeNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bb_mult: f64, kc_mult: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, bb_mult: f64, kc_mult: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TtmSqueeze::new(period as usize, bb_mult, kc_mult).map_err(map_err)?,
+            inner: wc::TtmSqueeze::new(period.get(), bb_mult, kc_mult).map_err(map_err)?,
         })
     }
     #[napi]
@@ -11009,9 +11080,9 @@ pub struct FractalChaosBandsNode {
 #[napi]
 impl FractalChaosBandsNode {
     #[napi(constructor)]
-    pub fn new(k: u32) -> napi::Result<Self> {
+    pub fn new(k: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::FractalChaosBands::new(k as usize).map_err(map_err)?,
+            inner: wc::FractalChaosBands::new(k.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -11776,9 +11847,9 @@ pub struct TdSetupNode {
 #[napi]
 impl TdSetupNode {
     #[napi(constructor)]
-    pub fn new(lookback: u32, target: u32) -> napi::Result<Self> {
+    pub fn new(lookback: Count, target: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdSetup::new(lookback as usize, target as usize).map_err(map_err)?,
+            inner: wc::TdSetup::new(lookback.get(), target.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -11845,17 +11916,17 @@ pub struct TdSequentialNode {
 impl TdSequentialNode {
     #[napi(constructor)]
     pub fn new(
-        setup_lookback: u32,
-        setup_target: u32,
-        countdown_lookback: u32,
-        countdown_target: u32,
+        setup_lookback: Count,
+        setup_target: Count,
+        countdown_lookback: Count,
+        countdown_target: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::TdSequential::new(
-                setup_lookback as usize,
-                setup_target as usize,
-                countdown_lookback as usize,
-                countdown_target as usize,
+                setup_lookback.get(),
+                setup_target.get(),
+                countdown_lookback.get(),
+                countdown_target.get(),
             )
             .map_err(map_err)?,
         })
@@ -11929,9 +12000,9 @@ pub struct TdDeMarkerNode {
 #[napi]
 impl TdDeMarkerNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdDeMarker::new(period as usize).map_err(map_err)?,
+            inner: wc::TdDeMarker::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -11984,9 +12055,9 @@ pub struct TdReiNode {
 #[napi]
 impl TdReiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdRei::new(period as usize).map_err(map_err)?,
+            inner: wc::TdRei::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12039,9 +12110,9 @@ pub struct TdPressureNode {
 #[napi]
 impl TdPressureNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdPressure::new(period as usize).map_err(map_err)?,
+            inner: wc::TdPressure::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12112,17 +12183,17 @@ pub struct TdComboNode {
 impl TdComboNode {
     #[napi(constructor)]
     pub fn new(
-        setup_lookback: u32,
-        setup_target: u32,
-        countdown_lookback: u32,
-        countdown_target: u32,
+        setup_lookback: Count,
+        setup_target: Count,
+        countdown_lookback: Count,
+        countdown_target: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::TdCombo::new(
-                setup_lookback as usize,
-                setup_target as usize,
-                countdown_lookback as usize,
-                countdown_target as usize,
+                setup_lookback.get(),
+                setup_target.get(),
+                countdown_lookback.get(),
+                countdown_target.get(),
             )
             .map_err(map_err)?,
         })
@@ -12182,9 +12253,9 @@ pub struct TdDWaveNode {
 #[napi]
 impl TdDWaveNode {
     #[napi(constructor)]
-    pub fn new(strength: u32) -> napi::Result<Self> {
+    pub fn new(strength: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdDWave::new(strength as usize).map_err(map_err)?,
+            inner: wc::TdDWave::new(strength.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12248,10 +12319,9 @@ pub struct TdMovingAverageNode {
 #[napi]
 impl TdMovingAverageNode {
     #[napi(constructor)]
-    pub fn new(period_st1: u32, period_st2: u32) -> napi::Result<Self> {
+    pub fn new(period_st1: Count, period_st2: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdMovingAverage::new(period_st1 as usize, period_st2 as usize)
-                .map_err(map_err)?,
+            inner: wc::TdMovingAverage::new(period_st1.get(), period_st2.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12311,17 +12381,17 @@ pub struct TdCountdownNode {
 impl TdCountdownNode {
     #[napi(constructor)]
     pub fn new(
-        setup_lookback: u32,
-        setup_target: u32,
-        countdown_lookback: u32,
-        countdown_target: u32,
+        setup_lookback: Count,
+        setup_target: Count,
+        countdown_lookback: Count,
+        countdown_target: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::TdCountdown::new(
-                setup_lookback as usize,
-                setup_target as usize,
-                countdown_lookback as usize,
-                countdown_target as usize,
+                setup_lookback.get(),
+                setup_target.get(),
+                countdown_lookback.get(),
+                countdown_target.get(),
             )
             .map_err(map_err)?,
         })
@@ -12388,9 +12458,9 @@ pub struct TdLinesNode {
 #[napi]
 impl TdLinesNode {
     #[napi(constructor)]
-    pub fn new(lookback: u32, target: u32) -> napi::Result<Self> {
+    pub fn new(lookback: Count, target: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdLines::new(lookback as usize, target as usize).map_err(map_err)?,
+            inner: wc::TdLines::new(lookback.get(), target.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12693,9 +12763,9 @@ pub struct TdRiskLevelNode {
 #[napi]
 impl TdRiskLevelNode {
     #[napi(constructor)]
-    pub fn new(lookback: u32, target: u32) -> napi::Result<Self> {
+    pub fn new(lookback: Count, target: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TdRiskLevel::new(lookback as usize, target as usize).map_err(map_err)?,
+            inner: wc::TdRiskLevel::new(lookback.get(), target.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12805,9 +12875,9 @@ pub struct DecyclerOscillatorNode {
 #[napi]
 impl DecyclerOscillatorNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::DecyclerOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+            inner: wc::DecyclerOscillator::new(fast.get(), slow.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12845,10 +12915,9 @@ pub struct RoofingFilterNode {
 #[napi]
 impl RoofingFilterNode {
     #[napi(constructor)]
-    pub fn new(lp_period: u32, hp_period: u32) -> napi::Result<Self> {
+    pub fn new(lp_period: Count, hp_period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RoofingFilter::new(lp_period as usize, hp_period as usize)
-                .map_err(map_err)?,
+            inner: wc::RoofingFilter::new(lp_period.get(), hp_period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -12886,10 +12955,9 @@ pub struct EmpiricalModeDecompositionNode {
 #[napi]
 impl EmpiricalModeDecompositionNode {
     #[napi(constructor)]
-    pub fn new(period: u32, fraction: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, fraction: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::EmpiricalModeDecomposition::new(period as usize, fraction)
-                .map_err(map_err)?,
+            inner: wc::EmpiricalModeDecomposition::new(period.get(), fraction).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13274,17 +13342,17 @@ pub struct IchimokuNode {
 impl IchimokuNode {
     #[napi(constructor)]
     pub fn new(
-        tenkan_period: u32,
-        kijun_period: u32,
-        senkou_b_period: u32,
-        displacement: u32,
+        tenkan_period: Count,
+        kijun_period: Count,
+        senkou_b_period: Count,
+        displacement: Count,
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::Ichimoku::new(
-                tenkan_period as usize,
-                kijun_period as usize,
-                senkou_b_period as usize,
-                displacement as usize,
+                tenkan_period.get(),
+                kijun_period.get(),
+                senkou_b_period.get(),
+                displacement.get(),
             )
             .map_err(map_err)?,
         })
@@ -13464,9 +13532,9 @@ pub struct HeikinAshiOscillatorNode {
 #[napi]
 impl HeikinAshiOscillatorNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HeikinAshiOscillator::new(period as usize).map_err(map_err)?,
+            inner: wc::HeikinAshiOscillator::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13529,9 +13597,9 @@ pub struct ThreeLineBreakNode {
 #[napi]
 impl ThreeLineBreakNode {
     #[napi(constructor)]
-    pub fn new(lines: u32) -> napi::Result<Self> {
+    pub fn new(lines: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ThreeLineBreak::new(lines as usize).map_err(map_err)?,
+            inner: wc::ThreeLineBreak::new(lines.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13597,9 +13665,9 @@ pub struct SmoothedHeikinAshiNode {
 #[napi]
 impl SmoothedHeikinAshiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SmoothedHeikinAshi::new(period as usize).map_err(map_err)?,
+            inner: wc::SmoothedHeikinAshi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13679,9 +13747,9 @@ pub struct EquivolumeNode {
 #[napi]
 impl EquivolumeNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Equivolume::new(period as usize).map_err(map_err)?,
+            inner: wc::Equivolume::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13756,9 +13824,9 @@ pub struct CandleVolumeNode {
 #[napi]
 impl CandleVolumeNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::CandleVolume::new(period as usize).map_err(map_err)?,
+            inner: wc::CandleVolume::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13830,9 +13898,9 @@ pub struct FryPanBottomNode {
 #[napi]
 impl FryPanBottomNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::FryPanBottom::new(period as usize).map_err(map_err)?,
+            inner: wc::FryPanBottom::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13890,9 +13958,9 @@ pub struct DumplingTopNode {
 #[napi]
 impl DumplingTopNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::DumplingTop::new(period as usize).map_err(map_err)?,
+            inner: wc::DumplingTop::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -13950,9 +14018,9 @@ pub struct NewPriceLinesNode {
 #[napi]
 impl NewPriceLinesNode {
     #[napi(constructor)]
-    pub fn new(count: u32) -> napi::Result<Self> {
+    pub fn new(count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::NewPriceLines::new(count as usize).map_err(map_err)?,
+            inner: wc::NewPriceLines::new(count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14016,9 +14084,9 @@ pub struct ValueAreaNode {
 #[napi]
 impl ValueAreaNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32, value_area_pct: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count, value_area_pct: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ValueArea::new(period as usize, bin_count as usize, value_area_pct)
+            inner: wc::ValueArea::new(period.get(), bin_count.get(), value_area_pct)
                 .map_err(map_err)?,
         })
     }
@@ -14100,9 +14168,9 @@ pub struct NakedPocNode {
 #[napi]
 impl NakedPocNode {
     #[napi(constructor)]
-    pub fn new(session_len: u32, bin_count: u32) -> napi::Result<Self> {
+    pub fn new(session_len: Count, bin_count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::NakedPoc::new(session_len as usize, bin_count as usize).map_err(map_err)?,
+            inner: wc::NakedPoc::new(session_len.get(), bin_count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14166,9 +14234,9 @@ pub struct SinglePrintsNode {
 #[napi]
 impl SinglePrintsNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SinglePrints::new(period as usize, bin_count as usize).map_err(map_err)?,
+            inner: wc::SinglePrints::new(period.get(), bin_count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14224,9 +14292,9 @@ pub struct ProfileShapeNode {
 #[napi]
 impl ProfileShapeNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ProfileShape::new(period as usize, bin_count as usize).map_err(map_err)?,
+            inner: wc::ProfileShape::new(period.get(), bin_count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14296,10 +14364,9 @@ pub struct HighLowVolumeNodesNode {
 #[napi]
 impl HighLowVolumeNodesNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HighLowVolumeNodes::new(period as usize, bin_count as usize)
-                .map_err(map_err)?,
+            inner: wc::HighLowVolumeNodes::new(period.get(), bin_count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14376,9 +14443,9 @@ pub struct CompositeProfileNode {
 #[napi]
 impl CompositeProfileNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32, value_area_pct: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count, value_area_pct: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::CompositeProfile::new(period as usize, bin_count as usize, value_area_pct)
+            inner: wc::CompositeProfile::new(period.get(), bin_count.get(), value_area_pct)
                 .map_err(map_err)?,
         })
     }
@@ -14449,9 +14516,9 @@ pub struct VolumeProfileNode {
 #[napi]
 impl VolumeProfileNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolumeProfile::new(period as usize, bin_count as usize).map_err(map_err)?,
+            inner: wc::VolumeProfile::new(period.get(), bin_count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14533,9 +14600,9 @@ pub struct TpoProfileNode {
 #[napi]
 impl TpoProfileNode {
     #[napi(constructor)]
-    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+    pub fn new(period: Count, bin_count: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TpoProfile::new(period as usize, bin_count as usize).map_err(map_err)?,
+            inner: wc::TpoProfile::new(period.get(), bin_count.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14605,9 +14672,9 @@ pub struct InitialBalanceNode {
 #[napi]
 impl InitialBalanceNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::InitialBalance::new(period as usize).map_err(map_err)?,
+            inner: wc::InitialBalance::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -14677,9 +14744,9 @@ pub struct OpeningRangeNode {
 #[napi]
 impl OpeningRangeNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::OpeningRange::new(period as usize).map_err(map_err)?,
+            inner: wc::OpeningRange::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15170,9 +15237,9 @@ pub struct OrderBookImbalanceTopNNode {
 #[napi]
 impl OrderBookImbalanceTopNNode {
     #[napi(constructor)]
-    pub fn new(levels: u32) -> napi::Result<Self> {
+    pub fn new(levels: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::OrderBookImbalanceTopN::new(levels as usize).map_err(map_err)?,
+            inner: wc::OrderBookImbalanceTopN::new(levels.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15315,9 +15382,9 @@ pub struct TradeImbalanceNode {
 #[napi]
 impl TradeImbalanceNode {
     #[napi(constructor)]
-    pub fn new(window: u32) -> napi::Result<Self> {
+    pub fn new(window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TradeImbalance::new(window as usize).map_err(map_err)?,
+            inner: wc::TradeImbalance::new(window.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15371,9 +15438,9 @@ pub struct TradeSignAutocorrelationNode {
 #[napi]
 impl TradeSignAutocorrelationNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TradeSignAutocorrelation::new(period as usize).map_err(map_err)?,
+            inner: wc::TradeSignAutocorrelation::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15427,9 +15494,9 @@ pub struct PinNode {
 #[napi]
 impl PinNode {
     #[napi(constructor)]
-    pub fn new(window: u32) -> napi::Result<Self> {
+    pub fn new(window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Pin::new(window as usize).map_err(map_err)?,
+            inner: wc::Pin::new(window.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15483,9 +15550,9 @@ pub struct OrderFlowImbalanceNode {
 #[napi]
 impl OrderFlowImbalanceNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::OrderFlowImbalance::new(period as usize).map_err(map_err)?,
+            inner: wc::OrderFlowImbalance::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15536,9 +15603,9 @@ pub struct VpinNode {
 #[napi]
 impl VpinNode {
     #[napi(constructor)]
-    pub fn new(bucket_volume: f64, num_buckets: u32) -> napi::Result<Self> {
+    pub fn new(bucket_volume: f64, num_buckets: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Vpin::new(bucket_volume, num_buckets as usize).map_err(map_err)?,
+            inner: wc::Vpin::new(bucket_volume, num_buckets.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15592,9 +15659,9 @@ pub struct AmihudIlliquidityNode {
 #[napi]
 impl AmihudIlliquidityNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AmihudIlliquidity::new(period as usize).map_err(map_err)?,
+            inner: wc::AmihudIlliquidity::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15648,9 +15715,9 @@ pub struct RollMeasureNode {
 #[napi]
 impl RollMeasureNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RollMeasure::new(period as usize).map_err(map_err)?,
+            inner: wc::RollMeasure::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15800,9 +15867,9 @@ pub struct RealizedSpreadNode {
 #[napi]
 impl RealizedSpreadNode {
     #[napi(constructor)]
-    pub fn new(horizon: u32) -> napi::Result<Self> {
+    pub fn new(horizon: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RealizedSpread::new(horizon as usize).map_err(map_err)?,
+            inner: wc::RealizedSpread::new(horizon.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -15865,9 +15932,9 @@ pub struct KylesLambdaNode {
 #[napi]
 impl KylesLambdaNode {
     #[napi(constructor)]
-    pub fn new(window: u32) -> napi::Result<Self> {
+    pub fn new(window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::KylesLambda::new(window as usize).map_err(map_err)?,
+            inner: wc::KylesLambda::new(window.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -16277,9 +16344,9 @@ pub struct FundingRateMeanNode {
 #[napi]
 impl FundingRateMeanNode {
     #[napi(constructor)]
-    pub fn new(window: u32) -> napi::Result<Self> {
+    pub fn new(window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::FundingRateMean::new(window as usize).map_err(map_err)?,
+            inner: wc::FundingRateMean::new(window.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -16321,9 +16388,9 @@ pub struct FundingRateZScoreNode {
 #[napi]
 impl FundingRateZScoreNode {
     #[napi(constructor)]
-    pub fn new(window: u32) -> napi::Result<Self> {
+    pub fn new(window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::FundingRateZScore::new(window as usize).map_err(map_err)?,
+            inner: wc::FundingRateZScore::new(window.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -16474,9 +16541,9 @@ pub struct OIPriceDivergenceNode {
 #[napi]
 impl OIPriceDivergenceNode {
     #[napi(constructor)]
-    pub fn new(window: u32) -> napi::Result<Self> {
+    pub fn new(window: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::OIPriceDivergence::new(window as usize).map_err(map_err)?,
+            inner: wc::OIPriceDivergence::new(window.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -17208,9 +17275,9 @@ pub struct OpenInterestMomentumNode {
 #[napi]
 impl OpenInterestMomentumNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::OpenInterestMomentum::new(period as usize).map_err(map_err)?,
+            inner: wc::OpenInterestMomentum::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -17778,9 +17845,9 @@ pub struct BreadthThrustNode {
 #[napi]
 impl BreadthThrustNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::BreadthThrust::new(period as usize).map_err(map_err)?,
+            inner: wc::BreadthThrust::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -17918,9 +17985,9 @@ pub struct HighLowIndexNode {
 #[napi]
 impl HighLowIndexNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::HighLowIndex::new(period as usize).map_err(map_err)?,
+            inner: wc::HighLowIndex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18453,9 +18520,9 @@ pub struct SharpeRatioNode {
 #[napi]
 impl SharpeRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32, risk_free: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, risk_free: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SharpeRatio::new(period as usize, risk_free).map_err(map_err)?,
+            inner: wc::SharpeRatio::new(period.get(), risk_free).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18493,9 +18560,9 @@ pub struct SortinoRatioNode {
 #[napi]
 impl SortinoRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32, mar: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, mar: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::SortinoRatio::new(period as usize, mar).map_err(map_err)?,
+            inner: wc::SortinoRatio::new(period.get(), mar).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18533,9 +18600,9 @@ pub struct CalmarRatioNode {
 #[napi]
 impl CalmarRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::CalmarRatio::new(period as usize).map_err(map_err)?,
+            inner: wc::CalmarRatio::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18573,9 +18640,9 @@ pub struct OmegaRatioNode {
 #[napi]
 impl OmegaRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32, threshold: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, threshold: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::OmegaRatio::new(period as usize, threshold).map_err(map_err)?,
+            inner: wc::OmegaRatio::new(period.get(), threshold).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18613,9 +18680,9 @@ pub struct MaxDrawdownNode {
 #[napi]
 impl MaxDrawdownNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::MaxDrawdown::new(period as usize).map_err(map_err)?,
+            inner: wc::MaxDrawdown::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18653,9 +18720,9 @@ pub struct AverageDrawdownNode {
 #[napi]
 impl AverageDrawdownNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AverageDrawdown::new(period as usize).map_err(map_err)?,
+            inner: wc::AverageDrawdown::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18742,9 +18809,9 @@ pub struct PainIndexNode {
 #[napi]
 impl PainIndexNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PainIndex::new(period as usize).map_err(map_err)?,
+            inner: wc::PainIndex::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18782,9 +18849,9 @@ pub struct ValueAtRiskNode {
 #[napi]
 impl ValueAtRiskNode {
     #[napi(constructor)]
-    pub fn new(period: u32, confidence: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, confidence: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ValueAtRisk::new(period as usize, confidence).map_err(map_err)?,
+            inner: wc::ValueAtRisk::new(period.get(), confidence).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18822,9 +18889,9 @@ pub struct ConditionalValueAtRiskNode {
 #[napi]
 impl ConditionalValueAtRiskNode {
     #[napi(constructor)]
-    pub fn new(period: u32, confidence: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, confidence: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ConditionalValueAtRisk::new(period as usize, confidence).map_err(map_err)?,
+            inner: wc::ConditionalValueAtRisk::new(period.get(), confidence).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18862,9 +18929,9 @@ pub struct ProfitFactorNode {
 #[napi]
 impl ProfitFactorNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ProfitFactor::new(period as usize).map_err(map_err)?,
+            inner: wc::ProfitFactor::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18902,9 +18969,9 @@ pub struct GainLossRatioNode {
 #[napi]
 impl GainLossRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::GainLossRatio::new(period as usize).map_err(map_err)?,
+            inner: wc::GainLossRatio::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -18988,9 +19055,9 @@ pub struct KellyCriterionNode {
 #[napi]
 impl KellyCriterionNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::KellyCriterion::new(period as usize).map_err(map_err)?,
+            inner: wc::KellyCriterion::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19036,9 +19103,9 @@ pub struct TreynorRatioNode {
 #[napi]
 impl TreynorRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32, risk_free: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, risk_free: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TreynorRatio::new(period as usize, risk_free).map_err(map_err)?,
+            inner: wc::TreynorRatio::new(period.get(), risk_free).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19089,9 +19156,9 @@ pub struct InformationRatioNode {
 #[napi]
 impl InformationRatioNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::InformationRatio::new(period as usize).map_err(map_err)?,
+            inner: wc::InformationRatio::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19280,9 +19347,9 @@ pub struct PointAndFigureBarsNode {
 #[napi]
 impl PointAndFigureBarsNode {
     #[napi(constructor)]
-    pub fn new(box_size: f64, reversal: u32) -> napi::Result<Self> {
+    pub fn new(box_size: f64, reversal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::PointAndFigureBars::new(box_size, reversal as usize).map_err(map_err)?,
+            inner: wc::PointAndFigureBars::new(box_size, reversal.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19412,9 +19479,9 @@ pub struct TickBarsNode {
 #[napi]
 impl TickBarsNode {
     #[napi(constructor)]
-    pub fn new(ticks: u32) -> napi::Result<Self> {
+    pub fn new(ticks: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TickBars::new(ticks as usize).map_err(map_err)?,
+            inner: wc::TickBars::new(ticks.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19785,9 +19852,9 @@ pub struct RunBarsNode {
 #[napi]
 impl RunBarsNode {
     #[napi(constructor)]
-    pub fn new(run_length: u32) -> napi::Result<Self> {
+    pub fn new(run_length: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::RunBars::new(run_length as usize).map_err(map_err)?,
+            inner: wc::RunBars::new(run_length.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19872,9 +19939,9 @@ pub struct ThreeLineBreakBarsNode {
 #[napi]
 impl ThreeLineBreakBarsNode {
     #[napi(constructor)]
-    pub fn new(lines: u32) -> napi::Result<Self> {
+    pub fn new(lines: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ThreeLineBreakBars::new(lines as usize).map_err(map_err)?,
+            inner: wc::ThreeLineBreakBars::new(lines.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -19929,9 +19996,9 @@ pub struct AlphaNode {
 #[napi]
 impl AlphaNode {
     #[napi(constructor)]
-    pub fn new(period: u32, risk_free: f64) -> napi::Result<Self> {
+    pub fn new(period: Count, risk_free: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Alpha::new(period as usize, risk_free).map_err(map_err)?,
+            inner: wc::Alpha::new(period.get(), risk_free).map_err(map_err)?,
         })
     }
     #[napi]
@@ -20091,10 +20158,9 @@ macro_rules! node_seasonality_bucket_profile {
         #[napi]
         impl $wrapper {
             #[napi(constructor)]
-            pub fn new(buckets: u32, utc_offset_minutes: i32) -> napi::Result<Self> {
+            pub fn new(buckets: Count, utc_offset_minutes: i32) -> napi::Result<Self> {
                 Ok(Self {
-                    inner: <$rust_ty>::new(buckets as usize, utc_offset_minutes)
-                        .map_err(map_err)?,
+                    inner: <$rust_ty>::new(buckets.get(), utc_offset_minutes).map_err(map_err)?,
                 })
             }
             #[napi]
@@ -20279,10 +20345,9 @@ pub struct AverageDailyRangeNode {
 #[napi]
 impl AverageDailyRangeNode {
     #[napi(constructor)]
-    pub fn new(period: u32, utc_offset_minutes: i32) -> napi::Result<Self> {
+    pub fn new(period: Count, utc_offset_minutes: i32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::AverageDailyRange::new(period as usize, utc_offset_minutes)
-                .map_err(map_err)?,
+            inner: wc::AverageDailyRange::new(period.get(), utc_offset_minutes).map_err(map_err)?,
         })
     }
     #[napi]
@@ -20341,9 +20406,14 @@ pub struct TurnOfMonthNode {
 #[napi]
 impl TurnOfMonthNode {
     #[napi(constructor)]
-    pub fn new(n_first: u32, n_last: u32, utc_offset_minutes: i32) -> napi::Result<Self> {
+    pub fn new(n_first: Count, n_last: Count, utc_offset_minutes: i32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TurnOfMonth::new(n_first, n_last, utc_offset_minutes).map_err(map_err)?,
+            inner: wc::TurnOfMonth::new(
+                narrow(n_first, "n_first")?,
+                narrow(n_last, "n_last")?,
+                utc_offset_minutes,
+            )
+            .map_err(map_err)?,
         })
     }
     #[napi]
@@ -21414,9 +21484,9 @@ pub struct VolumeRsiNode {
 #[napi]
 impl VolumeRsiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolumeRsi::new(period as usize).map_err(map_err)?,
+            inner: wc::VolumeRsi::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -21535,9 +21605,9 @@ pub struct TwiggsMoneyFlowNode {
 #[napi]
 impl TwiggsMoneyFlowNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::TwiggsMoneyFlow::new(period as usize).map_err(map_err)?,
+            inner: wc::TwiggsMoneyFlow::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -21730,9 +21800,9 @@ pub struct BetterVolumeNode {
 #[napi]
 impl BetterVolumeNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> napi::Result<Self> {
+    pub fn new(period: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::BetterVolume::new(period as usize).map_err(map_err)?,
+            inner: wc::BetterVolume::new(period.get()).map_err(map_err)?,
         })
     }
     #[napi]
@@ -21804,9 +21874,9 @@ pub struct VolumeWeightedMacdNode {
 #[napi]
 impl VolumeWeightedMacdNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+    pub fn new(fast: Count, slow: Count, signal: Count) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::VolumeWeightedMacd::new(fast as usize, slow as usize, signal as usize)
+            inner: wc::VolumeWeightedMacd::new(fast.get(), slow.get(), signal.get())
                 .map_err(map_err)?,
         })
     }
@@ -22026,7 +22096,7 @@ impl BinanceFeedNode {
 pub fn fetch_binance_klines(
     symbol: String,
     interval: u8,
-    limit: u32,
+    limit: Count,
     start_ms: Option<f64>,
     end_ms: Option<f64>,
     base_url: Option<String>,
@@ -22037,7 +22107,7 @@ pub fn fetch_binance_klines(
             "unknown interval code (expected 0..=15)",
         )
     })?;
-    let limit = u16::try_from(limit)
+    let limit = u16::try_from(limit.get())
         .map_err(|_| NapiError::new(Status::InvalidArg, "limit must be in 1..=1000"))?;
     let start = start_ms.map(|v| v as i64);
     let end = end_ms.map(|v| v as i64);
