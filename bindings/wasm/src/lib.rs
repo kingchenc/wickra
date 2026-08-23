@@ -169,6 +169,16 @@ impl WasmKst {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
@@ -1141,6 +1151,11 @@ impl WasmMacd {
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 // ---------- Bollinger ----------
@@ -1191,6 +1206,16 @@ impl WasmBb {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1463,6 +1488,16 @@ impl WasmAtr {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = PLUS_DM)]
@@ -1504,6 +1539,16 @@ impl WasmPlusDm {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1547,6 +1592,16 @@ impl WasmMinusDm {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = PLUS_DI)]
@@ -1588,6 +1643,16 @@ impl WasmPlusDi {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1631,6 +1696,16 @@ impl WasmMinusDi {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = DX)]
@@ -1673,6 +1748,16 @@ impl WasmDx {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = MIDPRICE)]
@@ -1714,6 +1799,16 @@ impl WasmMidPrice {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1771,6 +1866,16 @@ impl WasmAvgPrice {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1835,6 +1940,16 @@ impl WasmMacdExt {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = MACDFIX)]
@@ -1881,6 +1996,16 @@ impl WasmMacdFix {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1944,6 +2069,16 @@ impl WasmSarExt {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = HT_PHASOR)]
@@ -1994,6 +2129,16 @@ impl WasmHtPhasor {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -2050,6 +2195,16 @@ impl WasmCloseVsOpen {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = BodySizePct)]
@@ -2104,6 +2259,16 @@ impl WasmBodySizePct {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -2160,6 +2325,16 @@ impl WasmWickRatio {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = HighLowRange)]
@@ -2215,6 +2390,16 @@ impl WasmHighLowRange {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = StochasticCCI)]
@@ -2256,6 +2441,16 @@ impl WasmStochasticCci {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -2477,6 +2672,16 @@ impl WasmTtmTrend {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -2707,6 +2912,16 @@ impl WasmVolatilityRatio {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ProjectionOscillator)]
@@ -2748,6 +2963,16 @@ impl WasmProjectionOscillator {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -2791,6 +3016,16 @@ impl WasmTimeBasedStop {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ADAPTIVECCI)]
@@ -2832,6 +3067,16 @@ impl WasmAdaptiveCci {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -2990,6 +3235,16 @@ impl WasmUltimateOscillator {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ADL)]
@@ -3048,6 +3303,16 @@ impl WasmAdl {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = VolumePriceTrend)]
@@ -3090,6 +3355,16 @@ impl WasmVolumePriceTrend {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3143,6 +3418,16 @@ impl WasmChaikinMoneyFlow {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ChaikinOscillator)]
@@ -3195,6 +3480,16 @@ impl WasmChaikinOscillator {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ForceIndex)]
@@ -3232,6 +3527,16 @@ impl WasmForceIndex {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = VolumeOscillator)]
@@ -3265,6 +3570,16 @@ impl WasmVolumeOscillator {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3303,6 +3618,16 @@ impl WasmNvi {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = PVI)]
@@ -3339,6 +3664,16 @@ impl WasmPvi {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3392,6 +3727,16 @@ impl WasmKvo {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ADOSC)]
@@ -3435,6 +3780,16 @@ impl WasmAdOscillator {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3535,6 +3890,16 @@ impl WasmAnchoredVwap {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = DemandIndex)]
@@ -3587,6 +3952,16 @@ impl WasmDemandIndex {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = TSV)]
@@ -3624,6 +3999,16 @@ impl WasmTsv {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = VZO)]
@@ -3660,6 +4045,16 @@ impl WasmVzo {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3705,6 +4100,16 @@ impl WasmMarketFacilitationIndex {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = EaseOfMovement)]
@@ -3747,6 +4152,16 @@ impl WasmEaseOfMovement {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3805,6 +4220,16 @@ impl WasmSuperTrend {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ChandelierExit)]
@@ -3860,6 +4285,16 @@ impl WasmChandelierExit {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -3922,6 +4357,16 @@ impl WasmChandeKrollStop {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = AtrTrailingStop)]
@@ -3964,6 +4409,16 @@ impl WasmAtrTrailingStop {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4010,6 +4465,16 @@ impl WasmHiLoActivator {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = VoltyStop)]
@@ -4052,6 +4517,16 @@ impl WasmVoltyStop {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4099,6 +4574,16 @@ impl WasmYoyoExit {
     #[wasm_bindgen(js_name = inTrade)]
     pub fn in_trade(&self) -> bool {
         self.inner.in_trade()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4151,6 +4636,16 @@ impl WasmDonchianStop {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = PercentageTrailingStop)]
@@ -4179,6 +4674,16 @@ impl WasmPercentageTrailingStop {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4209,6 +4714,16 @@ impl WasmStepTrailingStop {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = RenkoTrailingStop)]
@@ -4237,6 +4752,16 @@ impl WasmRenkoTrailingStop {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4295,6 +4820,16 @@ impl WasmKaseDevStop {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ElderSafeZone)]
@@ -4351,6 +4886,16 @@ impl WasmElderSafeZone {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4413,6 +4958,16 @@ impl WasmAtrRatchet {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = Nrtr)]
@@ -4469,6 +5024,16 @@ impl WasmNrtr {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4527,6 +5092,16 @@ impl WasmModifiedMaStop {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = TypicalPrice)]
@@ -4576,6 +5151,16 @@ impl WasmTypicalPrice {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = MedianPrice)]
@@ -4618,6 +5203,16 @@ impl WasmMedianPrice {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4668,6 +5263,16 @@ impl WasmWeightedClose {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = AcceleratorOscillator)]
@@ -4709,6 +5314,16 @@ impl WasmAcceleratorOscillator {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4766,6 +5381,16 @@ impl WasmBalanceOfPower {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ChoppinessIndex)]
@@ -4808,6 +5433,16 @@ impl WasmChoppinessIndex {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4858,6 +5493,16 @@ impl WasmTrueRange {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ChaikinVolatility)]
@@ -4894,6 +5539,16 @@ impl WasmChaikinVolatility {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -4937,6 +5592,16 @@ impl WasmNatr {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = AroonOscillator)]
@@ -4973,6 +5638,16 @@ impl WasmAroonOscillator {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -5028,6 +5703,16 @@ impl WasmVortex {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -5093,6 +5778,16 @@ impl WasmWaveTrend {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = RWI)]
@@ -5148,6 +5843,16 @@ impl WasmRwi {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = MassIndex)]
@@ -5184,6 +5889,16 @@ impl WasmMassIndex {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -5266,6 +5981,16 @@ impl WasmVwma {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Whether enough input has arrived for `update` to produce a value.
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    /// How many inputs `update` needs before it first produces a value.
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 

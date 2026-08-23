@@ -615,6 +615,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **73 WASM classes can be asked whether they are ready.** `isReady` and
+  `warmupPeriod` are part of the indicator contract everywhere else, and the
+  macro-generated WASM wrappers had them from the start — but the classes
+  written out by hand did not, so a caller had no way to tell warmup output
+  from a real value for 73 of the 517. Both are delegations to the same core
+  object; for every class Node and WASM can both construct without arguments,
+  the two now report identical values.
 - **The resampler fills gaps in every binding, not just the C ABI.** Gap
   filling arrived with the streaming resampler but was only wired into the C
   entry point, which Go, Java and C# inherit; Node, Python and WASM could not
