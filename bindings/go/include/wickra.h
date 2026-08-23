@@ -11403,6 +11403,16 @@ double wickra_depth_slope_update(struct DepthSlope *handle,
                                  const double *ask_size,
                                  uintptr_t n_asks);
 
+void wickra_depth_slope_batch(struct DepthSlope *handle,
+                              const double *bid_price,
+                              const double *bid_size,
+                              uintptr_t n_bids,
+                              const double *ask_price,
+                              const double *ask_size,
+                              uintptr_t n_asks,
+                              double *out,
+                              uintptr_t n);
+
 uintptr_t wickra_depth_slope_warmup_period(struct DepthSlope *handle);
 
 bool wickra_depth_slope_is_ready(struct DepthSlope *handle);
@@ -11422,6 +11432,16 @@ double wickra_microprice_update(struct Microprice *handle,
                                 const double *ask_price,
                                 const double *ask_size,
                                 uintptr_t n_asks);
+
+void wickra_microprice_batch(struct Microprice *handle,
+                             const double *bid_price,
+                             const double *bid_size,
+                             uintptr_t n_bids,
+                             const double *ask_price,
+                             const double *ask_size,
+                             uintptr_t n_asks,
+                             double *out,
+                             uintptr_t n);
 
 uintptr_t wickra_microprice_warmup_period(struct Microprice *handle);
 
@@ -11443,6 +11463,16 @@ double wickra_order_book_imbalance_full_update(struct OrderBookImbalanceFull *ha
                                                const double *ask_size,
                                                uintptr_t n_asks);
 
+void wickra_order_book_imbalance_full_batch(struct OrderBookImbalanceFull *handle,
+                                            const double *bid_price,
+                                            const double *bid_size,
+                                            uintptr_t n_bids,
+                                            const double *ask_price,
+                                            const double *ask_size,
+                                            uintptr_t n_asks,
+                                            double *out,
+                                            uintptr_t n);
+
 uintptr_t wickra_order_book_imbalance_full_warmup_period(struct OrderBookImbalanceFull *handle);
 
 bool wickra_order_book_imbalance_full_is_ready(struct OrderBookImbalanceFull *handle);
@@ -11462,6 +11492,16 @@ double wickra_order_book_imbalance_top1_update(struct OrderBookImbalanceTop1 *ha
                                                const double *ask_price,
                                                const double *ask_size,
                                                uintptr_t n_asks);
+
+void wickra_order_book_imbalance_top1_batch(struct OrderBookImbalanceTop1 *handle,
+                                            const double *bid_price,
+                                            const double *bid_size,
+                                            uintptr_t n_bids,
+                                            const double *ask_price,
+                                            const double *ask_size,
+                                            uintptr_t n_asks,
+                                            double *out,
+                                            uintptr_t n);
 
 uintptr_t wickra_order_book_imbalance_top1_warmup_period(struct OrderBookImbalanceTop1 *handle);
 
@@ -11483,6 +11523,16 @@ double wickra_order_book_imbalance_top_n_update(struct OrderBookImbalanceTopN *h
                                                 const double *ask_size,
                                                 uintptr_t n_asks);
 
+void wickra_order_book_imbalance_top_n_batch(struct OrderBookImbalanceTopN *handle,
+                                             const double *bid_price,
+                                             const double *bid_size,
+                                             uintptr_t n_bids,
+                                             const double *ask_price,
+                                             const double *ask_size,
+                                             uintptr_t n_asks,
+                                             double *out,
+                                             uintptr_t n);
+
 uintptr_t wickra_order_book_imbalance_top_n_warmup_period(struct OrderBookImbalanceTopN *handle);
 
 bool wickra_order_book_imbalance_top_n_is_ready(struct OrderBookImbalanceTopN *handle);
@@ -11503,6 +11553,16 @@ double wickra_order_flow_imbalance_update(struct OrderFlowImbalance *handle,
                                           const double *ask_size,
                                           uintptr_t n_asks);
 
+void wickra_order_flow_imbalance_batch(struct OrderFlowImbalance *handle,
+                                       const double *bid_price,
+                                       const double *bid_size,
+                                       uintptr_t n_bids,
+                                       const double *ask_price,
+                                       const double *ask_size,
+                                       uintptr_t n_asks,
+                                       double *out,
+                                       uintptr_t n);
+
 uintptr_t wickra_order_flow_imbalance_warmup_period(struct OrderFlowImbalance *handle);
 
 bool wickra_order_flow_imbalance_is_ready(struct OrderFlowImbalance *handle);
@@ -11522,6 +11582,16 @@ double wickra_quoted_spread_update(struct QuotedSpread *handle,
                                    const double *ask_price,
                                    const double *ask_size,
                                    uintptr_t n_asks);
+
+void wickra_quoted_spread_batch(struct QuotedSpread *handle,
+                                const double *bid_price,
+                                const double *bid_size,
+                                uintptr_t n_bids,
+                                const double *ask_price,
+                                const double *ask_size,
+                                uintptr_t n_asks,
+                                double *out,
+                                uintptr_t n);
 
 uintptr_t wickra_quoted_spread_warmup_period(struct QuotedSpread *handle);
 
@@ -11545,6 +11615,18 @@ double wickra_absolute_breadth_index_update(struct AbsoluteBreadthIndex *handle,
                                             uintptr_t n,
                                             int64_t timestamp);
 
+void wickra_absolute_breadth_index_batch(struct AbsoluteBreadthIndex *handle,
+                                         const double *change,
+                                         const double *volume,
+                                         const bool *new_high,
+                                         const bool *new_low,
+                                         const bool *above_ma,
+                                         const bool *on_buy_signal,
+                                         uintptr_t members,
+                                         const int64_t *timestamp,
+                                         double *out,
+                                         uintptr_t n);
+
 uintptr_t wickra_absolute_breadth_index_warmup_period(struct AbsoluteBreadthIndex *handle);
 
 bool wickra_absolute_breadth_index_is_ready(struct AbsoluteBreadthIndex *handle);
@@ -11566,6 +11648,18 @@ double wickra_ad_volume_line_update(struct AdVolumeLine *handle,
                                     const bool *on_buy_signal,
                                     uintptr_t n,
                                     int64_t timestamp);
+
+void wickra_ad_volume_line_batch(struct AdVolumeLine *handle,
+                                 const double *change,
+                                 const double *volume,
+                                 const bool *new_high,
+                                 const bool *new_low,
+                                 const bool *above_ma,
+                                 const bool *on_buy_signal,
+                                 uintptr_t members,
+                                 const int64_t *timestamp,
+                                 double *out,
+                                 uintptr_t n);
 
 uintptr_t wickra_ad_volume_line_warmup_period(struct AdVolumeLine *handle);
 
@@ -11589,6 +11683,18 @@ double wickra_advance_decline_update(struct AdvanceDecline *handle,
                                      uintptr_t n,
                                      int64_t timestamp);
 
+void wickra_advance_decline_batch(struct AdvanceDecline *handle,
+                                  const double *change,
+                                  const double *volume,
+                                  const bool *new_high,
+                                  const bool *new_low,
+                                  const bool *above_ma,
+                                  const bool *on_buy_signal,
+                                  uintptr_t members,
+                                  const int64_t *timestamp,
+                                  double *out,
+                                  uintptr_t n);
+
 uintptr_t wickra_advance_decline_warmup_period(struct AdvanceDecline *handle);
 
 bool wickra_advance_decline_is_ready(struct AdvanceDecline *handle);
@@ -11610,6 +11716,18 @@ double wickra_advance_decline_ratio_update(struct AdvanceDeclineRatio *handle,
                                            const bool *on_buy_signal,
                                            uintptr_t n,
                                            int64_t timestamp);
+
+void wickra_advance_decline_ratio_batch(struct AdvanceDeclineRatio *handle,
+                                        const double *change,
+                                        const double *volume,
+                                        const bool *new_high,
+                                        const bool *new_low,
+                                        const bool *above_ma,
+                                        const bool *on_buy_signal,
+                                        uintptr_t members,
+                                        const int64_t *timestamp,
+                                        double *out,
+                                        uintptr_t n);
 
 uintptr_t wickra_advance_decline_ratio_warmup_period(struct AdvanceDeclineRatio *handle);
 
@@ -11633,6 +11751,18 @@ double wickra_breadth_thrust_update(struct BreadthThrust *handle,
                                     uintptr_t n,
                                     int64_t timestamp);
 
+void wickra_breadth_thrust_batch(struct BreadthThrust *handle,
+                                 const double *change,
+                                 const double *volume,
+                                 const bool *new_high,
+                                 const bool *new_low,
+                                 const bool *above_ma,
+                                 const bool *on_buy_signal,
+                                 uintptr_t members,
+                                 const int64_t *timestamp,
+                                 double *out,
+                                 uintptr_t n);
+
 uintptr_t wickra_breadth_thrust_warmup_period(struct BreadthThrust *handle);
 
 bool wickra_breadth_thrust_is_ready(struct BreadthThrust *handle);
@@ -11654,6 +11784,18 @@ double wickra_bullish_percent_index_update(struct BullishPercentIndex *handle,
                                            const bool *on_buy_signal,
                                            uintptr_t n,
                                            int64_t timestamp);
+
+void wickra_bullish_percent_index_batch(struct BullishPercentIndex *handle,
+                                        const double *change,
+                                        const double *volume,
+                                        const bool *new_high,
+                                        const bool *new_low,
+                                        const bool *above_ma,
+                                        const bool *on_buy_signal,
+                                        uintptr_t members,
+                                        const int64_t *timestamp,
+                                        double *out,
+                                        uintptr_t n);
 
 uintptr_t wickra_bullish_percent_index_warmup_period(struct BullishPercentIndex *handle);
 
@@ -11677,6 +11819,18 @@ double wickra_cumulative_volume_index_update(struct CumulativeVolumeIndex *handl
                                              uintptr_t n,
                                              int64_t timestamp);
 
+void wickra_cumulative_volume_index_batch(struct CumulativeVolumeIndex *handle,
+                                          const double *change,
+                                          const double *volume,
+                                          const bool *new_high,
+                                          const bool *new_low,
+                                          const bool *above_ma,
+                                          const bool *on_buy_signal,
+                                          uintptr_t members,
+                                          const int64_t *timestamp,
+                                          double *out,
+                                          uintptr_t n);
+
 uintptr_t wickra_cumulative_volume_index_warmup_period(struct CumulativeVolumeIndex *handle);
 
 bool wickra_cumulative_volume_index_is_ready(struct CumulativeVolumeIndex *handle);
@@ -11698,6 +11852,18 @@ double wickra_high_low_index_update(struct HighLowIndex *handle,
                                     const bool *on_buy_signal,
                                     uintptr_t n,
                                     int64_t timestamp);
+
+void wickra_high_low_index_batch(struct HighLowIndex *handle,
+                                 const double *change,
+                                 const double *volume,
+                                 const bool *new_high,
+                                 const bool *new_low,
+                                 const bool *above_ma,
+                                 const bool *on_buy_signal,
+                                 uintptr_t members,
+                                 const int64_t *timestamp,
+                                 double *out,
+                                 uintptr_t n);
 
 uintptr_t wickra_high_low_index_warmup_period(struct HighLowIndex *handle);
 
@@ -11721,6 +11887,18 @@ double wickra_mc_clellan_oscillator_update(struct McClellanOscillator *handle,
                                            uintptr_t n,
                                            int64_t timestamp);
 
+void wickra_mc_clellan_oscillator_batch(struct McClellanOscillator *handle,
+                                        const double *change,
+                                        const double *volume,
+                                        const bool *new_high,
+                                        const bool *new_low,
+                                        const bool *above_ma,
+                                        const bool *on_buy_signal,
+                                        uintptr_t members,
+                                        const int64_t *timestamp,
+                                        double *out,
+                                        uintptr_t n);
+
 uintptr_t wickra_mc_clellan_oscillator_warmup_period(struct McClellanOscillator *handle);
 
 bool wickra_mc_clellan_oscillator_is_ready(struct McClellanOscillator *handle);
@@ -11742,6 +11920,18 @@ double wickra_mc_clellan_summation_index_update(struct McClellanSummationIndex *
                                                 const bool *on_buy_signal,
                                                 uintptr_t n,
                                                 int64_t timestamp);
+
+void wickra_mc_clellan_summation_index_batch(struct McClellanSummationIndex *handle,
+                                             const double *change,
+                                             const double *volume,
+                                             const bool *new_high,
+                                             const bool *new_low,
+                                             const bool *above_ma,
+                                             const bool *on_buy_signal,
+                                             uintptr_t members,
+                                             const int64_t *timestamp,
+                                             double *out,
+                                             uintptr_t n);
 
 uintptr_t wickra_mc_clellan_summation_index_warmup_period(struct McClellanSummationIndex *handle);
 
@@ -11765,6 +11955,18 @@ double wickra_new_highs_new_lows_update(struct NewHighsNewLows *handle,
                                         uintptr_t n,
                                         int64_t timestamp);
 
+void wickra_new_highs_new_lows_batch(struct NewHighsNewLows *handle,
+                                     const double *change,
+                                     const double *volume,
+                                     const bool *new_high,
+                                     const bool *new_low,
+                                     const bool *above_ma,
+                                     const bool *on_buy_signal,
+                                     uintptr_t members,
+                                     const int64_t *timestamp,
+                                     double *out,
+                                     uintptr_t n);
+
 uintptr_t wickra_new_highs_new_lows_warmup_period(struct NewHighsNewLows *handle);
 
 bool wickra_new_highs_new_lows_is_ready(struct NewHighsNewLows *handle);
@@ -11786,6 +11988,18 @@ double wickra_percent_above_ma_update(struct PercentAboveMa *handle,
                                       const bool *on_buy_signal,
                                       uintptr_t n,
                                       int64_t timestamp);
+
+void wickra_percent_above_ma_batch(struct PercentAboveMa *handle,
+                                   const double *change,
+                                   const double *volume,
+                                   const bool *new_high,
+                                   const bool *new_low,
+                                   const bool *above_ma,
+                                   const bool *on_buy_signal,
+                                   uintptr_t members,
+                                   const int64_t *timestamp,
+                                   double *out,
+                                   uintptr_t n);
 
 uintptr_t wickra_percent_above_ma_warmup_period(struct PercentAboveMa *handle);
 
@@ -11809,6 +12023,18 @@ double wickra_tick_index_update(struct TickIndex *handle,
                                 uintptr_t n,
                                 int64_t timestamp);
 
+void wickra_tick_index_batch(struct TickIndex *handle,
+                             const double *change,
+                             const double *volume,
+                             const bool *new_high,
+                             const bool *new_low,
+                             const bool *above_ma,
+                             const bool *on_buy_signal,
+                             uintptr_t members,
+                             const int64_t *timestamp,
+                             double *out,
+                             uintptr_t n);
+
 uintptr_t wickra_tick_index_warmup_period(struct TickIndex *handle);
 
 bool wickra_tick_index_is_ready(struct TickIndex *handle);
@@ -11831,6 +12057,18 @@ double wickra_trin_update(struct Trin *handle,
                           uintptr_t n,
                           int64_t timestamp);
 
+void wickra_trin_batch(struct Trin *handle,
+                       const double *change,
+                       const double *volume,
+                       const bool *new_high,
+                       const bool *new_low,
+                       const bool *above_ma,
+                       const bool *on_buy_signal,
+                       uintptr_t members,
+                       const int64_t *timestamp,
+                       double *out,
+                       uintptr_t n);
+
 uintptr_t wickra_trin_warmup_period(struct Trin *handle);
 
 bool wickra_trin_is_ready(struct Trin *handle);
@@ -11852,6 +12090,18 @@ double wickra_up_down_volume_ratio_update(struct UpDownVolumeRatio *handle,
                                           const bool *on_buy_signal,
                                           uintptr_t n,
                                           int64_t timestamp);
+
+void wickra_up_down_volume_ratio_batch(struct UpDownVolumeRatio *handle,
+                                       const double *change,
+                                       const double *volume,
+                                       const bool *new_high,
+                                       const bool *new_low,
+                                       const bool *above_ma,
+                                       const bool *on_buy_signal,
+                                       uintptr_t members,
+                                       const int64_t *timestamp,
+                                       double *out,
+                                       uintptr_t n);
 
 uintptr_t wickra_up_down_volume_ratio_warmup_period(struct UpDownVolumeRatio *handle);
 

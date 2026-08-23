@@ -53427,6 +53427,49 @@ pub unsafe extern "C" fn wickra_depth_slope_update(
     }
 }
 
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_depth_slope_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_batch(
+    handle: *mut DepthSlope,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_depth_slope_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -53548,6 +53591,49 @@ pub unsafe extern "C" fn wickra_microprice_update(
     }
 }
 
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_microprice_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_batch(
+    handle: *mut Microprice,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_microprice_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -53666,6 +53752,49 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_full_update(
     match OrderBook::new(bids, asks) {
         Ok(book) => ind.update(book).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_book_imbalance_full_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_batch(
+    handle: *mut OrderBookImbalanceFull,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_order_book_imbalance_full_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
     }
 }
 
@@ -53797,6 +53926,49 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_top1_update(
     match OrderBook::new(bids, asks) {
         Ok(book) => ind.update(book).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_book_imbalance_top1_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_batch(
+    handle: *mut OrderBookImbalanceTop1,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_order_book_imbalance_top1_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
     }
 }
 
@@ -53936,6 +54108,49 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_update(
     }
 }
 
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_book_imbalance_top_n_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_batch(
+    handle: *mut OrderBookImbalanceTopN,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_order_book_imbalance_top_n_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -54070,6 +54285,49 @@ pub unsafe extern "C" fn wickra_order_flow_imbalance_update(
     }
 }
 
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_flow_imbalance_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_batch(
+    handle: *mut OrderFlowImbalance,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_order_flow_imbalance_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -54197,6 +54455,49 @@ pub unsafe extern "C" fn wickra_quoted_spread_update(
     }
 }
 
+/// Run over `n` order-book snapshots into `out[0..n]` (`NaN` at warmup or on an
+/// invalid book). Each snapshot occupies `n_bids` / `n_asks` consecutive
+/// elements, so the arrays are flat and every snapshot must carry the same depth.
+///
+/// # Safety
+/// `handle` valid (from `wickra_quoted_spread_new`, not freed) or `NULL`.
+/// `bid_price`/`bid_size` each cover `n * n_bids` elements, `ask_price`/`ask_size`
+/// each cover `n * n_asks`, and `out` covers `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_batch(
+    handle: *mut QuotedSpread,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || bid_price.is_null()
+        || bid_size.is_null()
+        || ask_price.is_null()
+        || ask_size.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = wickra_quoted_spread_update(
+            handle,
+            bid_price.add(i * n_bids),
+            bid_size.add(i * n_bids),
+            n_bids,
+            ask_price.add(i * n_asks),
+            ask_size.add(i * n_asks),
+            n_asks,
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -54321,6 +54622,58 @@ pub unsafe extern "C" fn wickra_absolute_breadth_index_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_absolute_breadth_index_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_batch(
+    handle: *mut AbsoluteBreadthIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_absolute_breadth_index_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -54455,6 +54808,58 @@ pub unsafe extern "C" fn wickra_ad_volume_line_update(
     }
 }
 
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_ad_volume_line_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_volume_line_batch(
+    handle: *mut AdVolumeLine,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_ad_volume_line_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -54577,6 +54982,58 @@ pub unsafe extern "C" fn wickra_advance_decline_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_advance_decline_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_batch(
+    handle: *mut AdvanceDecline,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_advance_decline_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -54704,6 +55161,58 @@ pub unsafe extern "C" fn wickra_advance_decline_ratio_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_advance_decline_ratio_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_batch(
+    handle: *mut AdvanceDeclineRatio,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_advance_decline_ratio_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -54841,6 +55350,58 @@ pub unsafe extern "C" fn wickra_breadth_thrust_update(
     }
 }
 
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_breadth_thrust_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breadth_thrust_batch(
+    handle: *mut BreadthThrust,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_breadth_thrust_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -54963,6 +55524,58 @@ pub unsafe extern "C" fn wickra_bullish_percent_index_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_bullish_percent_index_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bullish_percent_index_batch(
+    handle: *mut BullishPercentIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_bullish_percent_index_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -55094,6 +55707,58 @@ pub unsafe extern "C" fn wickra_cumulative_volume_index_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_cumulative_volume_index_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_batch(
+    handle: *mut CumulativeVolumeIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_cumulative_volume_index_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -55231,6 +55896,58 @@ pub unsafe extern "C" fn wickra_high_low_index_update(
     }
 }
 
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_high_low_index_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_index_batch(
+    handle: *mut HighLowIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_high_low_index_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -55353,6 +56070,58 @@ pub unsafe extern "C" fn wickra_mc_clellan_oscillator_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_mc_clellan_oscillator_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_batch(
+    handle: *mut McClellanOscillator,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_mc_clellan_oscillator_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -55484,6 +56253,58 @@ pub unsafe extern "C" fn wickra_mc_clellan_summation_index_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_mc_clellan_summation_index_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_batch(
+    handle: *mut McClellanSummationIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_mc_clellan_summation_index_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -55622,6 +56443,58 @@ pub unsafe extern "C" fn wickra_new_highs_new_lows_update(
     }
 }
 
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_new_highs_new_lows_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_batch(
+    handle: *mut NewHighsNewLows,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_new_highs_new_lows_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -55748,6 +56621,58 @@ pub unsafe extern "C" fn wickra_percent_above_ma_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_percent_above_ma_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_above_ma_batch(
+    handle: *mut PercentAboveMa,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_percent_above_ma_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -55880,6 +56805,58 @@ pub unsafe extern "C" fn wickra_tick_index_update(
     }
 }
 
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_tick_index_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_index_batch(
+    handle: *mut TickIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_tick_index_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56005,6 +56982,58 @@ pub unsafe extern "C" fn wickra_trin_update(
     }
 }
 
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_trin_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trin_batch(
+    handle: *mut Trin,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_trin_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56127,6 +57156,58 @@ pub unsafe extern "C" fn wickra_up_down_volume_ratio_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over `n` cross-sectional snapshots into `out[0..n]` (`NaN` at warmup or on
+/// an invalid snapshot). Each snapshot occupies `members` consecutive elements of
+/// every member array, so they are flat and every snapshot must carry the same
+/// universe size.
+///
+/// # Safety
+/// `handle` valid (from `wickra_up_down_volume_ratio_new`, not freed) or `NULL`. Every member
+/// array covers `n * members` elements; `timestamp` and `out` each cover `n`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_batch(
+    handle: *mut UpDownVolumeRatio,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    members: usize,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let at = i * members;
+        *slot = wickra_up_down_volume_ratio_update(
+            handle,
+            change.add(at),
+            volume.add(at),
+            new_high.add(at),
+            new_low.add(at),
+            above_ma.add(at),
+            on_buy_signal.add(at),
+            members,
+            stamps[i],
+        );
     }
 }
 
@@ -75947,6 +77028,132 @@ mod tests {
             wickra_signed_volume_free(handle);
         }
         assert!((batched[n - 1] - other[n - 1]).abs() > 1e-9);
+    }
+
+    /// Bars and per-bar universe size shared by the two snapshot batch tests.
+    const SNAPSHOT_BARS: usize = 6;
+
+    #[test]
+    fn cross_section_batch_matches_streaming() {
+        // The batch walks a flat array a snapshot at a time with an offset
+        // pointer. A wrong stride would still produce plausible numbers, so this
+        // checks against the streaming calls rather than against constants.
+        const MEMBERS: usize = 3;
+
+        let mut change = [0.0_f64; SNAPSHOT_BARS * MEMBERS];
+        let mut volume = [0.0_f64; SNAPSHOT_BARS * MEMBERS];
+        let mut new_high = [false; SNAPSHOT_BARS * MEMBERS];
+        let mut new_low = [false; SNAPSHOT_BARS * MEMBERS];
+        let mut above_ma = [false; SNAPSHOT_BARS * MEMBERS];
+        let mut on_buy = [false; SNAPSHOT_BARS * MEMBERS];
+        for bar in 0..SNAPSHOT_BARS {
+            for member in 0..MEMBERS {
+                let at = bar * MEMBERS + member;
+                #[allow(clippy::cast_precision_loss)]
+                let seed = at as f64;
+                change[at] = seed.mul_add(0.37, -2.0);
+                volume[at] = 100.0 + seed * 5.0;
+                new_high[at] = (bar + member) % 2 == 0;
+                new_low[at] = (bar + member) % 3 == 0;
+                above_ma[at] = member % 2 == 0;
+                on_buy[at] = bar % 2 == 0;
+            }
+        }
+        let stamps: [i64; SNAPSHOT_BARS] = [0, 1, 2, 3, 4, 5];
+        let mut batched = [0.0_f64; SNAPSHOT_BARS];
+        unsafe {
+            let handle = wickra_advance_decline_new();
+            wickra_advance_decline_batch(
+                handle,
+                change.as_ptr(),
+                volume.as_ptr(),
+                new_high.as_ptr(),
+                new_low.as_ptr(),
+                above_ma.as_ptr(),
+                on_buy.as_ptr(),
+                MEMBERS,
+                stamps.as_ptr(),
+                batched.as_mut_ptr(),
+                SNAPSHOT_BARS,
+            );
+            wickra_advance_decline_free(handle);
+
+            let streamed = wickra_advance_decline_new();
+            for (bar, &got) in batched.iter().enumerate() {
+                let at = bar * MEMBERS;
+                let one = wickra_advance_decline_update(
+                    streamed,
+                    change.as_ptr().add(at),
+                    volume.as_ptr().add(at),
+                    new_high.as_ptr().add(at),
+                    new_low.as_ptr().add(at),
+                    above_ma.as_ptr().add(at),
+                    on_buy.as_ptr().add(at),
+                    MEMBERS,
+                    stamps[bar],
+                );
+                assert!((got - one).abs() < 1e-12, "cross-section bar {bar}");
+            }
+            wickra_advance_decline_free(streamed);
+        }
+        // The snapshots differ, so a stride bug could not match by accident.
+        assert!((batched[0] - batched[SNAPSHOT_BARS - 1]).abs() > 1e-9);
+    }
+
+    #[test]
+    fn order_book_batch_matches_streaming() {
+        const DEPTH: usize = 2;
+
+        let mut bid_px = [0.0_f64; SNAPSHOT_BARS * DEPTH];
+        let mut bid_sz = [0.0_f64; SNAPSHOT_BARS * DEPTH];
+        let mut ask_px = [0.0_f64; SNAPSHOT_BARS * DEPTH];
+        let mut ask_sz = [0.0_f64; SNAPSHOT_BARS * DEPTH];
+        for bar in 0..SNAPSHOT_BARS {
+            for level in 0..DEPTH {
+                let at = bar * DEPTH + level;
+                #[allow(clippy::cast_precision_loss)]
+                let drift = bar as f64 * 0.25;
+                #[allow(clippy::cast_precision_loss)]
+                let step = level as f64 * 0.1;
+                bid_px[at] = 100.0 + drift - step;
+                bid_sz[at] = 5.0 + step;
+                ask_px[at] = 100.2 + drift + step;
+                ask_sz[at] = 4.0 + step;
+            }
+        }
+        let mut batched = [0.0_f64; SNAPSHOT_BARS];
+        unsafe {
+            let handle = wickra_microprice_new();
+            wickra_microprice_batch(
+                handle,
+                bid_px.as_ptr(),
+                bid_sz.as_ptr(),
+                DEPTH,
+                ask_px.as_ptr(),
+                ask_sz.as_ptr(),
+                DEPTH,
+                batched.as_mut_ptr(),
+                SNAPSHOT_BARS,
+            );
+            wickra_microprice_free(handle);
+
+            let streamed = wickra_microprice_new();
+            for (bar, &got) in batched.iter().enumerate() {
+                let at = bar * DEPTH;
+                let one = wickra_microprice_update(
+                    streamed,
+                    bid_px.as_ptr().add(at),
+                    bid_sz.as_ptr().add(at),
+                    DEPTH,
+                    ask_px.as_ptr().add(at),
+                    ask_sz.as_ptr().add(at),
+                    DEPTH,
+                );
+                assert!((got - one).abs() < 1e-12, "order book bar {bar}");
+            }
+            wickra_microprice_free(streamed);
+        }
+        assert!((batched[0] - batched[SNAPSHOT_BARS - 1]).abs() > 1e-9);
     }
 
     #[test]

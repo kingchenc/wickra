@@ -9588,6 +9588,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_depth_slope_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_depth_slope_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_depth_slope_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9608,6 +9611,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_microprice_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_microprice_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_microprice_warmup_period(WickraHandle handle);
@@ -9632,6 +9638,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_order_book_imbalance_full_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_order_book_imbalance_full_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_order_book_imbalance_full_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9652,6 +9661,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_order_book_imbalance_top1_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_order_book_imbalance_top1_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_order_book_imbalance_top1_warmup_period(WickraHandle handle);
@@ -9676,6 +9688,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_order_book_imbalance_top_n_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_order_book_imbalance_top_n_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_order_book_imbalance_top_n_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9696,6 +9711,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_order_flow_imbalance_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_order_flow_imbalance_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_order_flow_imbalance_warmup_period(WickraHandle handle);
@@ -9720,6 +9738,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_quoted_spread_update(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_quoted_spread_batch(WickraHandle handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_quoted_spread_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9740,6 +9761,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_absolute_breadth_index_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_absolute_breadth_index_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_absolute_breadth_index_warmup_period(WickraHandle handle);
@@ -9764,6 +9788,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_ad_volume_line_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_ad_volume_line_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_ad_volume_line_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9784,6 +9811,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_advance_decline_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_advance_decline_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_advance_decline_warmup_period(WickraHandle handle);
@@ -9808,6 +9838,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_advance_decline_ratio_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_advance_decline_ratio_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_advance_decline_ratio_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9828,6 +9861,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_breadth_thrust_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_breadth_thrust_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_breadth_thrust_warmup_period(WickraHandle handle);
@@ -9852,6 +9888,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_bullish_percent_index_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_bullish_percent_index_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_bullish_percent_index_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9872,6 +9911,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_cumulative_volume_index_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_cumulative_volume_index_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_cumulative_volume_index_warmup_period(WickraHandle handle);
@@ -9896,6 +9938,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_high_low_index_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_high_low_index_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_high_low_index_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9916,6 +9961,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_mc_clellan_oscillator_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_mc_clellan_oscillator_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_mc_clellan_oscillator_warmup_period(WickraHandle handle);
@@ -9940,6 +9988,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_mc_clellan_summation_index_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_mc_clellan_summation_index_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_mc_clellan_summation_index_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9960,6 +10011,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_new_highs_new_lows_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_new_highs_new_lows_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_new_highs_new_lows_warmup_period(WickraHandle handle);
@@ -9984,6 +10038,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_percent_above_ma_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_percent_above_ma_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_percent_above_ma_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -10004,6 +10061,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_tick_index_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_tick_index_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_tick_index_warmup_period(WickraHandle handle);
@@ -10028,6 +10088,9 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_trin_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_trin_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_trin_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -10048,6 +10111,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_up_down_volume_ratio_update(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_up_down_volume_ratio_batch(WickraHandle handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint members, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_up_down_volume_ratio_warmup_period(WickraHandle handle);

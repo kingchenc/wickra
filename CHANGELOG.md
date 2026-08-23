@@ -649,6 +649,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   been missed only because its constructor takes moving-average type codes and
   it therefore sits outside the generated section. 475 of the 517 handles have a
   batch now.
+- **The cross-section and order-book indicators gained `batch` too.** They take
+  an array per bar rather than a scalar, so the batch takes the flat form: the
+  member and level arrays cover `n * members` elements with the stride passed
+  explicitly. 497 of the 517 C ABI handles now have a vectorized path; the 20
+  left are the bar builders, profiles and data-layer types, whose output length
+  depends on the data rather than on the input length.
 - **`dotnet publish` failed for every Windows app using the NuGet package.**
   The managed assembly is `Wickra.dll` and the native library shipped as
   `wickra.dll`; Windows file names are case-insensitive and a RID-specific
