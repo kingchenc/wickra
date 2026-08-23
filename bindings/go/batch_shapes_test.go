@@ -154,6 +154,16 @@ func TestProfileBatchMatchesStreaming(t *testing.T) {
 	defer batched.Close()
 	got := batched.Batch(closes, closes, closes, closes, vols, stamps)
 
+	// The width comes from the indicator now. It used to be guessed from the
+	// constructor parameter names, and this one takes only a UTC offset, so it
+	// fell back to 4096 -- which a batch multiplies by the series length.
+	if len(got) != n {
+		t.Fatalf("expected one row per bar, got %d", len(got))
+	}
+	if len(got[0]) != 7 {
+		t.Fatalf("a weekday profile is 7 wide, got %d", len(got[0]))
+	}
+
 	streamed, err := NewDayOfWeekProfile(0)
 	if err != nil {
 		t.Fatal(err)

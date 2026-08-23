@@ -3983,6 +3983,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_ZIG_ZAG_FREE;
     public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_NEW;
     public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_UPDATE;
+    public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_WIDTH;
     public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_BATCH;
     public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_WARMUP_PERIOD;
     public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_IS_READY;
@@ -3991,6 +3992,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_DAY_OF_WEEK_PROFILE_FREE;
     public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_NEW;
     public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_UPDATE;
+    public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_WIDTH;
     public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_BATCH;
     public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_WARMUP_PERIOD;
     public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_IS_READY;
@@ -3999,6 +4001,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_INTRADAY_VOLATILITY_PROFILE_FREE;
     public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_NEW;
     public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_UPDATE;
+    public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_WIDTH;
     public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_BATCH;
     public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_WARMUP_PERIOD;
     public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_IS_READY;
@@ -4007,6 +4010,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_TIME_OF_DAY_RETURN_PROFILE_FREE;
     public static MethodHandle WICKRA_TPO_PROFILE_NEW;
     public static MethodHandle WICKRA_TPO_PROFILE_UPDATE;
+    public static MethodHandle WICKRA_TPO_PROFILE_WIDTH;
     public static MethodHandle WICKRA_TPO_PROFILE_BATCH;
     public static MethodHandle WICKRA_TPO_PROFILE_WARMUP_PERIOD;
     public static MethodHandle WICKRA_TPO_PROFILE_IS_READY;
@@ -4015,6 +4019,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_TPO_PROFILE_FREE;
     public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_NEW;
     public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_UPDATE;
+    public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_WIDTH;
     public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_BATCH;
     public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_WARMUP_PERIOD;
     public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_IS_READY;
@@ -4023,6 +4028,7 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_VOLUME_BY_TIME_PROFILE_FREE;
     public static MethodHandle WICKRA_VOLUME_PROFILE_NEW;
     public static MethodHandle WICKRA_VOLUME_PROFILE_UPDATE;
+    public static MethodHandle WICKRA_VOLUME_PROFILE_WIDTH;
     public static MethodHandle WICKRA_VOLUME_PROFILE_BATCH;
     public static MethodHandle WICKRA_VOLUME_PROFILE_WARMUP_PERIOD;
     public static MethodHandle WICKRA_VOLUME_PROFILE_IS_READY;
@@ -8243,6 +8249,7 @@ public final class NativeMethods {
         WICKRA_ZIG_ZAG_FREE = h("wickra_zig_zag_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_DAY_OF_WEEK_PROFILE_NEW = h("wickra_day_of_week_profile_new", FunctionDescriptor.of(ADDRESS, JAVA_INT));
         WICKRA_DAY_OF_WEEK_PROFILE_UPDATE = h("wickra_day_of_week_profile_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, JAVA_LONG));
+        WICKRA_DAY_OF_WEEK_PROFILE_WIDTH = h("wickra_day_of_week_profile_width", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_DAY_OF_WEEK_PROFILE_BATCH = h("wickra_day_of_week_profile_batch", FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_DAY_OF_WEEK_PROFILE_WARMUP_PERIOD = h("wickra_day_of_week_profile_warmup_period", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_DAY_OF_WEEK_PROFILE_IS_READY = h("wickra_day_of_week_profile_is_ready", FunctionDescriptor.of(JAVA_BYTE, ADDRESS));
@@ -8251,6 +8258,7 @@ public final class NativeMethods {
         WICKRA_DAY_OF_WEEK_PROFILE_FREE = h("wickra_day_of_week_profile_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_INTRADAY_VOLATILITY_PROFILE_NEW = h("wickra_intraday_volatility_profile_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_INT));
         WICKRA_INTRADAY_VOLATILITY_PROFILE_UPDATE = h("wickra_intraday_volatility_profile_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, JAVA_LONG));
+        WICKRA_INTRADAY_VOLATILITY_PROFILE_WIDTH = h("wickra_intraday_volatility_profile_width", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_INTRADAY_VOLATILITY_PROFILE_BATCH = h("wickra_intraday_volatility_profile_batch", FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_INTRADAY_VOLATILITY_PROFILE_WARMUP_PERIOD = h("wickra_intraday_volatility_profile_warmup_period", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_INTRADAY_VOLATILITY_PROFILE_IS_READY = h("wickra_intraday_volatility_profile_is_ready", FunctionDescriptor.of(JAVA_BYTE, ADDRESS));
@@ -8259,6 +8267,7 @@ public final class NativeMethods {
         WICKRA_INTRADAY_VOLATILITY_PROFILE_FREE = h("wickra_intraday_volatility_profile_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_TIME_OF_DAY_RETURN_PROFILE_NEW = h("wickra_time_of_day_return_profile_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_INT));
         WICKRA_TIME_OF_DAY_RETURN_PROFILE_UPDATE = h("wickra_time_of_day_return_profile_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, JAVA_LONG));
+        WICKRA_TIME_OF_DAY_RETURN_PROFILE_WIDTH = h("wickra_time_of_day_return_profile_width", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_TIME_OF_DAY_RETURN_PROFILE_BATCH = h("wickra_time_of_day_return_profile_batch", FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_TIME_OF_DAY_RETURN_PROFILE_WARMUP_PERIOD = h("wickra_time_of_day_return_profile_warmup_period", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_TIME_OF_DAY_RETURN_PROFILE_IS_READY = h("wickra_time_of_day_return_profile_is_ready", FunctionDescriptor.of(JAVA_BYTE, ADDRESS));
@@ -8267,6 +8276,7 @@ public final class NativeMethods {
         WICKRA_TIME_OF_DAY_RETURN_PROFILE_FREE = h("wickra_time_of_day_return_profile_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_TPO_PROFILE_NEW = h("wickra_tpo_profile_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_TPO_PROFILE_UPDATE = h("wickra_tpo_profile_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
+        WICKRA_TPO_PROFILE_WIDTH = h("wickra_tpo_profile_width", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_TPO_PROFILE_BATCH = h("wickra_tpo_profile_batch", FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_TPO_PROFILE_WARMUP_PERIOD = h("wickra_tpo_profile_warmup_period", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_TPO_PROFILE_IS_READY = h("wickra_tpo_profile_is_ready", FunctionDescriptor.of(JAVA_BYTE, ADDRESS));
@@ -8275,6 +8285,7 @@ public final class NativeMethods {
         WICKRA_TPO_PROFILE_FREE = h("wickra_tpo_profile_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_VOLUME_BY_TIME_PROFILE_NEW = h("wickra_volume_by_time_profile_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_INT));
         WICKRA_VOLUME_BY_TIME_PROFILE_UPDATE = h("wickra_volume_by_time_profile_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, JAVA_LONG));
+        WICKRA_VOLUME_BY_TIME_PROFILE_WIDTH = h("wickra_volume_by_time_profile_width", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_VOLUME_BY_TIME_PROFILE_BATCH = h("wickra_volume_by_time_profile_batch", FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_VOLUME_BY_TIME_PROFILE_WARMUP_PERIOD = h("wickra_volume_by_time_profile_warmup_period", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_VOLUME_BY_TIME_PROFILE_IS_READY = h("wickra_volume_by_time_profile_is_ready", FunctionDescriptor.of(JAVA_BYTE, ADDRESS));
@@ -8283,6 +8294,7 @@ public final class NativeMethods {
         WICKRA_VOLUME_BY_TIME_PROFILE_FREE = h("wickra_volume_by_time_profile_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_VOLUME_PROFILE_NEW = h("wickra_volume_profile_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_VOLUME_PROFILE_UPDATE = h("wickra_volume_profile_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
+        WICKRA_VOLUME_PROFILE_WIDTH = h("wickra_volume_profile_width", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_VOLUME_PROFILE_BATCH = h("wickra_volume_profile_batch", FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG, JAVA_LONG));
         WICKRA_VOLUME_PROFILE_WARMUP_PERIOD = h("wickra_volume_profile_warmup_period", FunctionDescriptor.of(JAVA_LONG, ADDRESS));
         WICKRA_VOLUME_PROFILE_IS_READY = h("wickra_volume_profile_is_ready", FunctionDescriptor.of(JAVA_BYTE, ADDRESS));
@@ -8347,15 +8359,15 @@ public final class NativeMethods {
         WICKRA_THREE_LINE_BREAK_BARS_FREE = h("wickra_three_line_break_bars_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_TICK_BARS_NEW = h("wickra_tick_bars_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG));
         WICKRA_TICK_BARS_UPDATE = h("wickra_tick_bars_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, JAVA_LONG));
+    }
+
+    private static void init34() {
         WICKRA_TICK_BARS_DRAIN = h("wickra_tick_bars_drain", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_TICK_BARS_BATCH = h("wickra_tick_bars_batch", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_TICK_BARS_NAME = h("wickra_tick_bars_name", FunctionDescriptor.of(ADDRESS, ADDRESS));
         WICKRA_TICK_BARS_RESET = h("wickra_tick_bars_reset", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_TICK_BARS_FREE = h("wickra_tick_bars_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_VOLUME_BARS_NEW = h("wickra_volume_bars_new", FunctionDescriptor.of(ADDRESS, JAVA_DOUBLE));
-    }
-
-    private static void init34() {
         WICKRA_VOLUME_BARS_UPDATE = h("wickra_volume_bars_update", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS, JAVA_LONG));
         WICKRA_VOLUME_BARS_DRAIN = h("wickra_volume_bars_drain", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_VOLUME_BARS_BATCH = h("wickra_volume_bars_batch", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS, JAVA_LONG));

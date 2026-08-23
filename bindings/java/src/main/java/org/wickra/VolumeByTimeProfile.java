@@ -31,7 +31,11 @@ public final class VolumeByTimeProfile implements AutoCloseable {
         }
         this.handle = h;
         this.cleanable = WickraNative.register(this, h, NativeMethods.WICKRA_VOLUME_BY_TIME_PROFILE_FREE);
-        this.valuesCapacity = buckets;
+        try {
+            this.valuesCapacity = (int) (long) NativeMethods.WICKRA_VOLUME_BY_TIME_PROFILE_WIDTH.invokeExact(h);
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
     }
 
     /** Push one observation; returns the profile values, or null during warmup. */

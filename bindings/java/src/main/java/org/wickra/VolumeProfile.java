@@ -34,7 +34,11 @@ public final class VolumeProfile implements AutoCloseable {
         }
         this.handle = h;
         this.cleanable = WickraNative.register(this, h, NativeMethods.WICKRA_VOLUME_PROFILE_FREE);
-        this.valuesCapacity = binCount;
+        try {
+            this.valuesCapacity = (int) (long) NativeMethods.WICKRA_VOLUME_PROFILE_WIDTH.invokeExact(h);
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
     }
 
     /** Push one observation; returns the profile, or null during warmup. */

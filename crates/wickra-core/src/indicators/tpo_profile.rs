@@ -89,6 +89,14 @@ impl TpoProfile {
         (self.period, self.bin_count)
     }
 
+    /// How many values every emitted profile carries -- the bin count fixed at construction.
+    ///
+    /// Fixed for the lifetime of the indicator, so a caller can size a
+    /// buffer once instead of guessing.
+    pub const fn width(&self) -> usize {
+        self.bin_count
+    }
+
     /// Most recent profile if available.
     pub fn value(&self) -> Option<&TpoProfileOutput> {
         self.last.as_ref()
@@ -188,6 +196,27 @@ impl Indicator for TpoProfile {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn width_matches_the_emitted_payload() {
+        // The point of `width` is that a caller can size a buffer before
+        // the first value arrives, so it has to equal what update emits.
+        let mut ind = TpoProfile::new(10, 20).unwrap();
+        let width = ind.width();
+        let mut emitted = 0;
+        for i in 0..40 {
+            #[allow(clippy::cast_precision_loss)]
+            let step = i as f64;
+            let price = 100.0 + step;
+            let candle =
+                Candle::new(price, price + 1.0, price - 1.0, price, 10.0, i * 3_600_000).unwrap();
+            if let Some(out) = ind.update(candle) {
+                assert_eq!(out.counts.len(), width);
+                emitted += 1;
+            }
+        }
+        assert!(emitted > 0, "the fixture must clear warmup");
+    }
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 

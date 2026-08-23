@@ -12504,6 +12504,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nint wickra_day_of_week_profile_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_day_of_week_profile_width(WickraHandle handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_day_of_week_profile_batch(WickraHandle handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* values, nuint width, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12527,6 +12530,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_intraday_volatility_profile_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_intraday_volatility_profile_width(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_intraday_volatility_profile_batch(WickraHandle handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* values, nuint width, nuint n);
@@ -12554,6 +12560,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nint wickra_time_of_day_return_profile_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_time_of_day_return_profile_width(WickraHandle handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_time_of_day_return_profile_batch(WickraHandle handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* values, nuint width, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12577,6 +12586,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_tpo_profile_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraTpoProfileOutputScalars* scalars, double* values, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tpo_profile_width(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tpo_profile_batch(WickraHandle handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, WickraTpoProfileOutputScalars* scalars, double* values, nuint width, nuint n);
@@ -12604,6 +12616,9 @@ internal static partial class NativeMethods
     internal static unsafe partial nint wickra_volume_by_time_profile_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_by_time_profile_width(WickraHandle handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_volume_by_time_profile_batch(WickraHandle handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* values, nuint width, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -12627,6 +12642,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_volume_profile_update(WickraHandle handle, double open, double high, double low, double close, double volume, long timestamp, WickraVolumeProfileOutputScalars* scalars, double* values, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_profile_width(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_volume_profile_batch(WickraHandle handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, WickraVolumeProfileOutputScalars* scalars, double* values, nuint width, nuint n);

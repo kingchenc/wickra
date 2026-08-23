@@ -657,6 +657,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cross-section, order-book, bar-builder and profile families — were unreachable
   from those two for the same reason. All three generated bindings now expose a
   batch for every one of the 514 indicators.
+- **Profile indicators report their width.** The C-family bindings sized their
+  output buffer by guessing from the constructor parameter names, falling back
+  to 4096 elements when none looked like a count — which is what
+  `DayOfWeekProfile` got, for a profile that is seven wide. `width()` is part of
+  the six profile indicators now and the bindings ask for it.
 - **Every indicator in the C ABI has a `batch`.** The bar builders feed the
   whole series and buffer the bars for the drain; the profiles write a flat
   `n * width` block with `NaN` rows during warmup. Of the 517 handles, the only

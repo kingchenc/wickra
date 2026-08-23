@@ -34,7 +34,11 @@ public final class TpoProfile implements AutoCloseable {
         }
         this.handle = h;
         this.cleanable = WickraNative.register(this, h, NativeMethods.WICKRA_TPO_PROFILE_FREE);
-        this.valuesCapacity = binCount;
+        try {
+            this.valuesCapacity = (int) (long) NativeMethods.WICKRA_TPO_PROFILE_WIDTH.invokeExact(h);
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
     }
 
     /** Push one observation; returns the profile, or null during warmup. */

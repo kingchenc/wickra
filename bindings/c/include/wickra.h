@@ -14797,6 +14797,8 @@ intptr_t wickra_day_of_week_profile_update(struct DayOfWeekProfile *handle,
                                            double *values,
                                            uintptr_t cap);
 
+uintptr_t wickra_day_of_week_profile_width(struct DayOfWeekProfile *handle);
+
 void wickra_day_of_week_profile_batch(struct DayOfWeekProfile *handle,
                                       const double *open,
                                       const double *high,
@@ -14830,6 +14832,8 @@ intptr_t wickra_intraday_volatility_profile_update(struct IntradayVolatilityProf
                                                    int64_t timestamp,
                                                    double *values,
                                                    uintptr_t cap);
+
+uintptr_t wickra_intraday_volatility_profile_width(struct IntradayVolatilityProfile *handle);
 
 void wickra_intraday_volatility_profile_batch(struct IntradayVolatilityProfile *handle,
                                               const double *open,
@@ -14865,6 +14869,8 @@ intptr_t wickra_time_of_day_return_profile_update(struct TimeOfDayReturnProfile 
                                                   double *values,
                                                   uintptr_t cap);
 
+uintptr_t wickra_time_of_day_return_profile_width(struct TimeOfDayReturnProfile *handle);
+
 void wickra_time_of_day_return_profile_batch(struct TimeOfDayReturnProfile *handle,
                                              const double *open,
                                              const double *high,
@@ -14898,6 +14904,8 @@ intptr_t wickra_tpo_profile_update(struct TpoProfile *handle,
                                    struct WickraTpoProfileOutputScalars *scalars,
                                    double *values,
                                    uintptr_t cap);
+
+uintptr_t wickra_tpo_profile_width(struct TpoProfile *handle);
 
 void wickra_tpo_profile_batch(struct TpoProfile *handle,
                               const double *open,
@@ -14934,6 +14942,8 @@ intptr_t wickra_volume_by_time_profile_update(struct VolumeByTimeProfile *handle
                                               double *values,
                                               uintptr_t cap);
 
+uintptr_t wickra_volume_by_time_profile_width(struct VolumeByTimeProfile *handle);
+
 void wickra_volume_by_time_profile_batch(struct VolumeByTimeProfile *handle,
                                          const double *open,
                                          const double *high,
@@ -14967,6 +14977,8 @@ intptr_t wickra_volume_profile_update(struct VolumeProfile *handle,
                                       struct WickraVolumeProfileOutputScalars *scalars,
                                       double *values,
                                       uintptr_t cap);
+
+uintptr_t wickra_volume_profile_width(struct VolumeProfile *handle);
 
 void wickra_volume_profile_batch(struct VolumeProfile *handle,
                                  const double *open,

@@ -74228,6 +74228,20 @@ pub unsafe extern "C" fn wickra_day_of_week_profile_update(
     }
 }
 
+/// How many values every emitted profile carries. Fixed for the lifetime of the
+/// handle, so a caller can size a buffer once instead of guessing. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_day_of_week_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_width(handle: *mut DayOfWeekProfile) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.width(),
+        None => 0,
+    }
+}
+
 /// Run over the input series, writing one profile per input into `values` as a
 /// flat `n * width` block. A row the indicator did not produce -- warmup, or an
 /// input it rejected -- is filled with `NaN`. `width` is the payload length the
@@ -74417,6 +74431,22 @@ pub unsafe extern "C" fn wickra_intraday_volatility_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// How many values every emitted profile carries. Fixed for the lifetime of the
+/// handle, so a caller can size a buffer once instead of guessing. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_volatility_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_width(
+    handle: *mut IntradayVolatilityProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.width(),
+        None => 0,
     }
 }
 
@@ -74613,6 +74643,22 @@ pub unsafe extern "C" fn wickra_time_of_day_return_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// How many values every emitted profile carries. Fixed for the lifetime of the
+/// handle, so a caller can size a buffer once instead of guessing. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_of_day_return_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_width(
+    handle: *mut TimeOfDayReturnProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.width(),
+        None => 0,
     }
 }
 
@@ -74813,6 +74859,20 @@ pub unsafe extern "C" fn wickra_tpo_profile_update(
             isize::try_from(out_val.counts.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// How many values every emitted profile carries. Fixed for the lifetime of the
+/// handle, so a caller can size a buffer once instead of guessing. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tpo_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_width(handle: *mut TpoProfile) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.width(),
+        None => 0,
     }
 }
 
@@ -75017,6 +75077,22 @@ pub unsafe extern "C" fn wickra_volume_by_time_profile_update(
     }
 }
 
+/// How many values every emitted profile carries. Fixed for the lifetime of the
+/// handle, so a caller can size a buffer once instead of guessing. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_by_time_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_width(
+    handle: *mut VolumeByTimeProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.width(),
+        None => 0,
+    }
+}
+
 /// Run over the input series, writing one profile per input into `values` as a
 /// flat `n * width` block. A row the indicator did not produce -- warmup, or an
 /// input it rejected -- is filled with `NaN`. `width` is the payload length the
@@ -75210,6 +75286,20 @@ pub unsafe extern "C" fn wickra_volume_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// How many values every emitted profile carries. Fixed for the lifetime of the
+/// handle, so a caller can size a buffer once instead of guessing. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_width(handle: *mut VolumeProfile) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.width(),
+        None => 0,
     }
 }
 

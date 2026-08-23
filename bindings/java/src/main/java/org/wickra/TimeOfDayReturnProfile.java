@@ -31,7 +31,11 @@ public final class TimeOfDayReturnProfile implements AutoCloseable {
         }
         this.handle = h;
         this.cleanable = WickraNative.register(this, h, NativeMethods.WICKRA_TIME_OF_DAY_RETURN_PROFILE_FREE);
-        this.valuesCapacity = buckets;
+        try {
+            this.valuesCapacity = (int) (long) NativeMethods.WICKRA_TIME_OF_DAY_RETURN_PROFILE_WIDTH.invokeExact(h);
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
     }
 
     /** Push one observation; returns the profile values, or null during warmup. */

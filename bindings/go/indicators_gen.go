@@ -9766,7 +9766,7 @@ func NewDayOfWeekProfile(utcOffsetMinutes int32) (*DayOfWeekProfile, error) {
 		return nil, ErrInvalidParams
 	}
 	obj := &DayOfWeekProfile{handle: ptr}
-	obj.valuesCap = 4096
+	obj.valuesCap = int(C.wickra_day_of_week_profile_width(ptr))
 	runtime.SetFinalizer(obj, (*DayOfWeekProfile).Close)
 	return obj, nil
 }
@@ -20922,7 +20922,7 @@ func NewIntradayVolatilityProfile(buckets int, utcOffsetMinutes int32) (*Intrada
 		return nil, ErrInvalidParams
 	}
 	obj := &IntradayVolatilityProfile{handle: ptr}
-	obj.valuesCap = buckets
+	obj.valuesCap = int(C.wickra_intraday_volatility_profile_width(ptr))
 	runtime.SetFinalizer(obj, (*IntradayVolatilityProfile).Close)
 	return obj, nil
 }
@@ -43725,7 +43725,7 @@ func NewTimeOfDayReturnProfile(buckets int, utcOffsetMinutes int32) (*TimeOfDayR
 		return nil, ErrInvalidParams
 	}
 	obj := &TimeOfDayReturnProfile{handle: ptr}
-	obj.valuesCap = buckets
+	obj.valuesCap = int(C.wickra_time_of_day_return_profile_width(ptr))
 	runtime.SetFinalizer(obj, (*TimeOfDayReturnProfile).Close)
 	return obj, nil
 }
@@ -43940,7 +43940,7 @@ func NewTpoProfile(period int, binCount int) (*TpoProfile, error) {
 		return nil, ErrInvalidParams
 	}
 	obj := &TpoProfile{handle: ptr}
-	obj.valuesCap = binCount
+	obj.valuesCap = int(C.wickra_tpo_profile_width(ptr))
 	runtime.SetFinalizer(obj, (*TpoProfile).Close)
 	return obj, nil
 }
@@ -48254,7 +48254,7 @@ func NewVolumeByTimeProfile(buckets int, utcOffsetMinutes int32) (*VolumeByTimeP
 		return nil, ErrInvalidParams
 	}
 	obj := &VolumeByTimeProfile{handle: ptr}
-	obj.valuesCap = buckets
+	obj.valuesCap = int(C.wickra_volume_by_time_profile_width(ptr))
 	runtime.SetFinalizer(obj, (*VolumeByTimeProfile).Close)
 	return obj, nil
 }
@@ -48575,7 +48575,7 @@ func NewVolumeProfile(period int, binCount int) (*VolumeProfile, error) {
 		return nil, ErrInvalidParams
 	}
 	obj := &VolumeProfile{handle: ptr}
-	obj.valuesCap = binCount
+	obj.valuesCap = int(C.wickra_volume_profile_width(ptr))
 	runtime.SetFinalizer(obj, (*VolumeProfile).Close)
 	return obj, nil
 }

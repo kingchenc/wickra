@@ -31,7 +31,11 @@ public final class IntradayVolatilityProfile implements AutoCloseable {
         }
         this.handle = h;
         this.cleanable = WickraNative.register(this, h, NativeMethods.WICKRA_INTRADAY_VOLATILITY_PROFILE_FREE);
-        this.valuesCapacity = buckets;
+        try {
+            this.valuesCapacity = (int) (long) NativeMethods.WICKRA_INTRADAY_VOLATILITY_PROFILE_WIDTH.invokeExact(h);
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
     }
 
     /** Push one observation; returns the profile values, or null during warmup. */

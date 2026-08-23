@@ -84,6 +84,14 @@ impl IntradayVolatilityProfile {
         (self.buckets, self.utc_offset_minutes)
     }
 
+    /// How many values every emitted profile carries -- the bucket count fixed at construction.
+    ///
+    /// Fixed for the lifetime of the indicator, so a caller can size a
+    /// buffer once instead of guessing.
+    pub const fn width(&self) -> usize {
+        self.buckets
+    }
+
     /// Most recent profile if at least one return has been recorded.
     pub fn value(&self) -> Option<&IntradayVolatilityProfileOutput> {
         self.last.as_ref()
@@ -167,6 +175,27 @@ impl Indicator for IntradayVolatilityProfile {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn width_matches_the_emitted_payload() {
+        // The point of `width` is that a caller can size a buffer before
+        // the first value arrives, so it has to equal what update emits.
+        let mut ind = IntradayVolatilityProfile::new(12, 0).unwrap();
+        let width = ind.width();
+        let mut emitted = 0;
+        for i in 0..40 {
+            #[allow(clippy::cast_precision_loss)]
+            let step = i as f64;
+            let price = 100.0 + step;
+            let candle =
+                Candle::new(price, price + 1.0, price - 1.0, price, 10.0, i * 3_600_000).unwrap();
+            if let Some(out) = ind.update(candle) {
+                assert_eq!(out.bins.len(), width);
+                emitted += 1;
+            }
+        }
+        assert!(emitted > 0, "the fixture must clear warmup");
+    }
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 

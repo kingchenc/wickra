@@ -8523,7 +8523,7 @@ public sealed class DayOfWeekProfile : IDisposable
         }
 
         _handle = new WickraHandle(ptr, NativeMethods.wickra_day_of_week_profile_free);
-        _valuesCapacity = 4096;
+        _valuesCapacity = (int)NativeMethods.wickra_day_of_week_profile_width(_handle);
     }
 
     public double[]? Update(double open, double high, double low, double close, double volume, long timestamp)
@@ -18989,7 +18989,7 @@ public sealed class IntradayVolatilityProfile : IDisposable
         }
 
         _handle = new WickraHandle(ptr, NativeMethods.wickra_intraday_volatility_profile_free);
-        _valuesCapacity = buckets;
+        _valuesCapacity = (int)NativeMethods.wickra_intraday_volatility_profile_width(_handle);
     }
 
     public double[]? Update(double open, double high, double low, double close, double volume, long timestamp)
@@ -40217,7 +40217,7 @@ public sealed class TimeOfDayReturnProfile : IDisposable
         }
 
         _handle = new WickraHandle(ptr, NativeMethods.wickra_time_of_day_return_profile_free);
-        _valuesCapacity = buckets;
+        _valuesCapacity = (int)NativeMethods.wickra_time_of_day_return_profile_width(_handle);
     }
 
     public double[]? Update(double open, double high, double low, double close, double volume, long timestamp)
@@ -40442,7 +40442,7 @@ public sealed class TpoProfile : IDisposable
         }
 
         _handle = new WickraHandle(ptr, NativeMethods.wickra_tpo_profile_free);
-        _valuesCapacity = binCount;
+        _valuesCapacity = (int)NativeMethods.wickra_tpo_profile_width(_handle);
     }
 
     public TpoProfileOutputScalars? Update(double open, double high, double low, double close, double volume, long timestamp)
@@ -44426,7 +44426,7 @@ public sealed class VolumeByTimeProfile : IDisposable
         }
 
         _handle = new WickraHandle(ptr, NativeMethods.wickra_volume_by_time_profile_free);
-        _valuesCapacity = buckets;
+        _valuesCapacity = (int)NativeMethods.wickra_volume_by_time_profile_width(_handle);
     }
 
     public double[]? Update(double open, double high, double low, double close, double volume, long timestamp)
@@ -44745,7 +44745,7 @@ public sealed class VolumeProfile : IDisposable
         }
 
         _handle = new WickraHandle(ptr, NativeMethods.wickra_volume_profile_free);
-        _valuesCapacity = binCount;
+        _valuesCapacity = (int)NativeMethods.wickra_volume_profile_width(_handle);
     }
 
     public VolumeProfileOutputScalars? Update(double open, double high, double low, double close, double volume, long timestamp)
