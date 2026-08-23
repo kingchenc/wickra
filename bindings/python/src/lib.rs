@@ -491,7 +491,7 @@ impl PyMacd {
             .update(value)
             .map(|o| (o.macd, o.signal, o.histogram))
     }
-    /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
+    /// Batch over a series of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
@@ -643,7 +643,7 @@ impl PyAtr {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -723,7 +723,7 @@ impl PyPlusDm {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -795,7 +795,7 @@ impl PyMinusDm {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -867,7 +867,7 @@ impl PyPlusDi {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -939,7 +939,7 @@ impl PyMinusDi {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -1011,7 +1011,7 @@ impl PyDx {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -1083,7 +1083,7 @@ impl PyMidPrice {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -1202,7 +1202,7 @@ impl PyAvgPrice {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: open, high, low, close (all 1-D, equal length).
+    /// Batch over input columns: open, high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -1520,7 +1520,7 @@ impl PyMacdFix {
             .update(value)
             .map(|o| (o.macd, o.signal, o.histogram))
     }
-    /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
+    /// Batch over a series of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
@@ -1609,7 +1609,7 @@ impl PySarExt {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -1703,7 +1703,7 @@ impl PyMacdExt {
             .update(value)
             .map(|o| (o.macd, o.signal, o.histogram))
     }
-    /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
+    /// Batch over a series of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
@@ -1758,7 +1758,7 @@ impl PyHtPhasor {
     fn update(&mut self, value: f64) -> Option<(f64, f64)> {
         self.inner.update(value).map(|o| (o.inphase, o.quadrature))
     }
-    /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 2)`
+    /// Batch over a series of closes. Returns a 2D array of shape `(n, 2)`
     /// with columns `[inphase, quadrature]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
@@ -2072,7 +2072,7 @@ impl PyCloseVsOpen {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: open, high, low, close (all 1-D, equal length).
+    /// Batch over input columns: open, high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -2143,7 +2143,7 @@ impl PyBodySizePct {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: open, high, low, close (all 1-D, equal length).
+    /// Batch over input columns: open, high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -2214,7 +2214,7 @@ impl PyWickRatio {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: open, high, low, close (all 1-D, equal length).
+    /// Batch over input columns: open, high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -2285,7 +2285,7 @@ impl PyHighLowRange {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: open, high, low, close (all 1-D, equal length).
+    /// Batch over input columns: open, high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -3051,7 +3051,7 @@ impl PyStochasticCci {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -3123,7 +3123,7 @@ impl PyTtmTrend {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -3247,7 +3247,7 @@ impl PyQstick {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over open/close numpy columns (Qstick reads the body close-open).
+    /// Batch over open/close input columns (Qstick reads the body close-open).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -3420,7 +3420,7 @@ impl PyGatorOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.upper, o.lower)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for
+    /// Batch over high/low/close input columns. Returns shape `(n, 2)` for
     /// `[upper, lower]`.
     fn batch<'py>(
         &mut self,
@@ -3494,7 +3494,7 @@ impl PyKasePermissionStochastic {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.fast, o.slow)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for
+    /// Batch over high/low/close input columns. Returns shape `(n, 2)` for
     /// `[fast, slow]`.
     fn batch<'py>(
         &mut self,
@@ -3758,7 +3758,7 @@ impl PyVolatilityRatio {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -3834,7 +3834,7 @@ impl PyProjectionOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -3906,7 +3906,7 @@ impl PyTimeBasedStop {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     /// Ignores price; counts bars. Returns progress in `[0, 1]`.
     fn batch<'py>(
         &mut self,
@@ -4363,7 +4363,7 @@ impl PyAdaptiveCci {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -4778,7 +4778,7 @@ impl PyImi {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over open/high/low/close numpy columns (the IMI needs the open).
+    /// Batch over open/high/low/close input columns (the IMI needs the open).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -4852,7 +4852,7 @@ impl PyQqe {
             .update(value)
             .map(|o| (o.rsi_ma, o.trailing_line))
     }
-    /// Batch over a numpy array of closes. Returns shape `(n, 2)` with columns
+    /// Batch over a series of closes. Returns shape `(n, 2)` with columns
     /// `[rsi_ma, trailing_line]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
@@ -4906,7 +4906,7 @@ impl PyElderRay {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.bull_power, o.bear_power)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for
+    /// Batch over high/low/close input columns. Returns shape `(n, 2)` for
     /// `[bull_power, bear_power]`.
     fn batch<'py>(
         &mut self,
@@ -4978,7 +4978,7 @@ impl PyStoch {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.k, o.d)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for `[k, d]`.
+    /// Batch over high/low/close input columns. Returns shape `(n, 2)` for `[k, d]`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -5054,7 +5054,7 @@ impl PyObv {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy close + volume arrays.
+    /// Batch over close + volume series.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -7355,7 +7355,7 @@ impl PyAdl {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close, volume (all equal length).
+    /// Batch over input columns: high, low, close, volume (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -7434,7 +7434,7 @@ impl PyVolumePriceTrend {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    /// Batch over close + volume series (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -7626,7 +7626,7 @@ impl PyNatr {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -7867,7 +7867,7 @@ impl PyAroonOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high + low columns (both 1-D, equal length).
+    /// Batch over high + low columns (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -7938,7 +7938,7 @@ impl PyVortex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.plus, o.minus)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for `[plus, minus]`.
+    /// Batch over high/low/close input columns. Returns shape `(n, 2)` for `[plus, minus]`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -8015,7 +8015,7 @@ impl PyRwi {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.high, o.low)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for `[high, low]`.
+    /// Batch over high/low/close input columns. Returns shape `(n, 2)` for `[high, low]`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -8174,7 +8174,7 @@ impl PyMassIndex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high + low columns (both 1-D, equal length).
+    /// Batch over high + low columns (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -8464,7 +8464,7 @@ impl PyUltimateOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9149,7 +9149,7 @@ impl PyVwma {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    /// Batch over close + volume series (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9327,7 +9327,7 @@ impl PyChaikinMoneyFlow {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close, volume (all equal length).
+    /// Batch over input columns: high, low, close, volume (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9407,7 +9407,7 @@ impl PyChaikinOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close, volume (all equal length).
+    /// Batch over input columns: high, low, close, volume (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9484,7 +9484,7 @@ impl PyForceIndex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    /// Batch over close + volume series (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9552,7 +9552,7 @@ impl PyNvi {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over close + volume numpy arrays.
+    /// Batch over close + volume series.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9683,7 +9683,7 @@ impl PyVolumeOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over a 1-D numpy volume array.
+    /// Batch over a 1-D volume series.
     fn batch<'py>(&mut self, py: Python<'py>, volume: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let v = volume
             .as_slice()
@@ -9739,7 +9739,7 @@ impl PyKvo {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over high/low/close/volume numpy columns.
+    /// Batch over high/low/close/volume input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9815,7 +9815,7 @@ impl PyAdOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over high/low/close numpy columns.
+    /// Batch over high/low/close input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -9885,7 +9885,7 @@ impl PyAnchoredRsi {
     fn set_anchor(&mut self) {
         self.inner.set_anchor();
     }
-    /// Batch over a close-price numpy column.
+    /// Batch over a close-price column.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let slice = prices
             .as_slice()
@@ -9938,7 +9938,7 @@ impl PyAnchoredVwap {
     fn set_anchor(&mut self) {
         self.inner.set_anchor();
     }
-    /// Batch over high/low/close/volume numpy columns.
+    /// Batch over high/low/close/volume input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -10010,7 +10010,7 @@ impl PyDemandIndex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over high/low/close/volume numpy columns.
+    /// Batch over high/low/close/volume input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -10086,7 +10086,7 @@ impl PyTsv {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over close + volume numpy columns.
+    /// Batch over close + volume input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -10154,7 +10154,7 @@ impl PyVzo {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over close + volume numpy columns.
+    /// Batch over close + volume input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -10225,7 +10225,7 @@ impl PyMarketFacilitationIndex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over high/low/volume numpy columns.
+    /// Batch over high/low/volume input columns.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -10297,7 +10297,7 @@ impl PyEaseOfMovement {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, volume (all equal length).
+    /// Batch over input columns: high, low, volume (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -10377,7 +10377,7 @@ impl PySuperTrend {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[value, direction]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -10459,7 +10459,7 @@ impl PyChandelierExit {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.long_stop, o.short_stop)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[long_stop, short_stop]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -10542,7 +10542,7 @@ impl PyChandeKrollStop {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.stop_long, o.stop_short)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[stop_long, stop_short]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -10626,7 +10626,7 @@ impl PyAtrTrailingStop {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low, close (all equal length).
+    /// Batch over input columns high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -11143,7 +11143,7 @@ impl PyKaseDevStop {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[value, direction]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -11221,7 +11221,7 @@ impl PyElderSafeZone {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[value, direction]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -11299,7 +11299,7 @@ impl PyAtrRatchet {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[value, direction]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -11379,7 +11379,7 @@ impl PyNrtr {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[value, direction]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -11460,7 +11460,7 @@ impl PyModifiedMaStop {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low, close. Returns shape `(n, 2)` with
     /// columns `[value, direction]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -11536,7 +11536,7 @@ impl PyTypicalPrice {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low, close (all equal length).
+    /// Batch over input columns high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -11603,7 +11603,7 @@ impl PyMedianPrice {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low (both equal length).
+    /// Batch over input columns high, low (both equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -11664,7 +11664,7 @@ impl PyWeightedClose {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low, close (all equal length).
+    /// Batch over input columns high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -11837,7 +11837,7 @@ impl PyAcceleratorOscillator {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low (both equal length).
+    /// Batch over input columns high, low (both equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -11907,7 +11907,7 @@ impl PyBalanceOfPower {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns open, high, low, close (all equal length).
+    /// Batch over input columns open, high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -11983,7 +11983,7 @@ impl PyChoppinessIndex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low, close (all equal length).
+    /// Batch over input columns high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -12106,7 +12106,7 @@ impl PyTrueRange {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low, close (all equal length).
+    /// Batch over input columns high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -12178,7 +12178,7 @@ impl PyChaikinVolatility {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low (both equal length).
+    /// Batch over input columns high, low (both equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -12343,7 +12343,7 @@ impl PyYangZhangVolatility {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns open, high, low, close (all equal length).
+    /// Batch over input columns open, high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -12428,7 +12428,7 @@ impl PyRogersSatchellVolatility {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns open, high, low, close (all equal length).
+    /// Batch over input columns open, high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -12509,7 +12509,7 @@ impl PyGarmanKlassVolatility {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns open, high, low, close (all equal length).
+    /// Batch over input columns open, high, low, close (all equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -12590,7 +12590,7 @@ impl PyParkinsonVolatility {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns high, low (both equal length).
+    /// Batch over input columns high, low (both equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -13674,7 +13674,7 @@ impl PyPivotReversal {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    /// Batch over input columns: high, low, close (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -14032,7 +14032,7 @@ impl PyClassicPivots {
             .update(c)
             .map(|o| (o.pp, o.r1, o.r2, o.r3, o.s1, o.s2, o.s3)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 7)` for
+    /// Batch over input columns high, low, close. Returns shape `(n, 7)` for
     /// `[pp, r1, r2, r3, s1, s2, s3]`.
     fn batch<'py>(
         &mut self,
@@ -14193,7 +14193,7 @@ impl PyCamarilla {
             .update(c)
             .map(|o| (o.pp, o.r1, o.r2, o.r3, o.r4, o.s1, o.s2, o.s3, o.s4)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 9)` for
+    /// Batch over input columns high, low, close. Returns shape `(n, 9)` for
     /// `[pp, r1, r2, r3, r4, s1, s2, s3, s4]`.
     fn batch<'py>(
         &mut self,
@@ -14270,7 +14270,7 @@ impl PyWoodiePivots {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.pp, o.r1, o.r2, o.s1, o.s2)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 5)` for
+    /// Batch over input columns high, low, close. Returns shape `(n, 5)` for
     /// `[pp, r1, r2, s1, s2]`.
     fn batch<'py>(
         &mut self,
@@ -14343,7 +14343,7 @@ impl PyDemarkPivots {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.pp, o.r1, o.s1)))
     }
-    /// Batch over numpy columns open, high, low, close. Returns shape `(n, 3)`
+    /// Batch over input columns open, high, low, close. Returns shape `(n, 3)`
     /// for `[pp, r1, s1]`.
     fn batch<'py>(
         &mut self,
@@ -14427,7 +14427,7 @@ impl PyWilliamsFractals {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.up, o.down)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 2)` for
+    /// Batch over input columns high, low. Returns shape `(n, 2)` for
     /// `[up_fractal, down_fractal]`. Values are NaN both during warmup and on
     /// bars where no fractal was confirmed.
     fn batch<'py>(
@@ -14498,7 +14498,7 @@ impl PyZigZag {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.swing, o.direction)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 2)` for
+    /// Batch over input columns high, low. Returns shape `(n, 2)` for
     /// `[swing_price, direction]`. NaN on bars without a confirmed swing.
     fn batch<'py>(
         &mut self,
@@ -14860,7 +14860,7 @@ impl PyTdPressure {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy columns: open, high, low, close, volume.
+    /// Batch over input columns: open, high, low, close, volume.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -16096,7 +16096,7 @@ impl PyIchimoku {
             .update(c)
             .map(|o| (o.tenkan, o.kijun, o.senkou_a, o.senkou_b, o.chikou)))
     }
-    /// Batch over high/low/close numpy columns. Returns shape `(n, 5)` with
+    /// Batch over high/low/close input columns. Returns shape `(n, 5)` with
     /// columns `[tenkan, kijun, senkou_a, senkou_b, chikou]`. Any cell whose
     /// underlying line is undefined at that bar is `NaN`.
     fn batch<'py>(
@@ -16191,7 +16191,7 @@ impl PyHeikinAshi {
             .update(c)
             .map(|o| (o.open, o.high, o.low, o.close)))
     }
-    /// Batch over OHLC numpy columns. Returns shape `(n, 4)` with columns
+    /// Batch over OHLC input columns. Returns shape `(n, 4)` with columns
     /// `[ha_open, ha_high, ha_low, ha_close]`.
     fn batch<'py>(
         &mut self,
@@ -17337,7 +17337,7 @@ impl PyPearsonCorrelation {
     fn update(&mut self, x: f64, y: f64) -> Option<f64> {
         self.inner.update((x, y))
     }
-    /// Batch over two equally-sized numpy arrays.
+    /// Batch over two equally-sized series.
     fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = x
             .as_slice()
@@ -17396,7 +17396,7 @@ impl PyBeta {
     fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
         self.inner.update((asset, benchmark))
     }
-    /// Batch over two equally-sized numpy arrays: asset and benchmark.
+    /// Batch over two equally-sized series: asset and benchmark.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -17462,7 +17462,7 @@ impl PyPairwiseBeta {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
+    /// Batch over two equally-sized series of prices: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -17525,7 +17525,7 @@ impl PySpreadAr1Coefficient {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
+    /// Batch over two equally-sized series of prices: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -17588,7 +17588,7 @@ impl PyPairSpreadZScore {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
+    /// Batch over two equally-sized series of prices: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -17661,7 +17661,7 @@ impl PyLeadLagCrossCorrelation {
     fn update(&mut self, a: f64, b: f64) -> Option<(i64, f64)> {
         self.inner.update((a, b)).map(|o| (o.lag, o.correlation))
     }
-    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// Batch over two equally-sized series. Returns a 2D array of shape
     /// `(n, 2)` with columns `[lag, correlation]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
@@ -17736,7 +17736,7 @@ impl PyCointegration {
             .update((a, b))
             .map(|o| (o.hedge_ratio, o.spread, o.adf_stat))
     }
-    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// Batch over two equally-sized series. Returns a 2D array of shape
     /// `(n, 3)` with columns `[hedge_ratio, spread, adf_stat]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
@@ -17817,7 +17817,7 @@ impl PyRelativeStrengthAB {
             .update((a, b))
             .map(|o| (o.ratio, o.ratio_ma, o.ratio_rsi))
     }
-    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// Batch over two equally-sized series. Returns a 2D array of shape
     /// `(n, 3)` with columns `[ratio, ratio_ma, ratio_rsi]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
@@ -17895,7 +17895,7 @@ impl PyRollingCorrelation {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -17958,7 +17958,7 @@ impl PyHasbrouckInformationShare {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18021,7 +18021,7 @@ impl PyRollingCovariance {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18080,7 +18080,7 @@ impl PyOuHalfLife {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18139,7 +18139,7 @@ impl PySpreadHurst {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18198,7 +18198,7 @@ impl PyDistanceSsd {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18261,7 +18261,7 @@ impl PyBetaNeutralSpread {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18320,7 +18320,7 @@ impl PyVarianceRatio {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18391,7 +18391,7 @@ impl PyGrangerCausality {
     fn update(&mut self, a: f64, b: f64) -> Option<f64> {
         self.inner.update((a, b))
     }
-    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = a
             .as_slice()
@@ -18465,7 +18465,7 @@ impl PyKalmanHedgeRatio {
             .update((a, b))
             .map(|o| (o.hedge_ratio, o.intercept, o.spread))
     }
-    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// Batch over two equally-sized series. Returns a 2D array of shape
     /// `(n, 3)` with columns `[hedge_ratio, intercept, spread]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
@@ -18546,7 +18546,7 @@ impl PySpreadBollingerBands {
             .update((a, b))
             .map(|o| (o.middle, o.upper, o.lower, o.percent_b))
     }
-    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// Batch over two equally-sized series. Returns a 2D array of shape
     /// `(n, 4)` with columns `[middle, upper, lower, percent_b]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
@@ -18625,7 +18625,7 @@ impl PySpearmanCorrelation {
     fn update(&mut self, x: f64, y: f64) -> Option<f64> {
         self.inner.update((x, y))
     }
-    /// Batch over two equally-sized numpy arrays.
+    /// Batch over two equally-sized series.
     fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = x
             .as_slice()
@@ -18685,7 +18685,7 @@ impl PyValueArea {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.poc, o.vah, o.val)))
     }
-    /// Batch over numpy columns high, low, volume. Returns shape `(n, 3)`
+    /// Batch over input columns high, low, volume. Returns shape `(n, 3)`
     /// with columns `[poc, vah, val]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -18779,7 +18779,7 @@ impl PyVolumeProfile {
             .map(|o| PyResult::Ok((o.price_low, o.price_high, f64_array(py, &o.bins)?)))
             .transpose()
     }
-    /// Batch over numpy columns high, low, volume. Returns shape `(n, bin_count + 2)`
+    /// Batch over input columns high, low, volume. Returns shape `(n, bin_count + 2)`
     /// with columns `[price_low, price_high, bin_0, ..., bin_{k-1}]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -18870,7 +18870,7 @@ impl PyTpoProfile {
             .map(|o| PyResult::Ok((o.price_low, o.price_high, f64_array(py, &o.counts)?)))
             .transpose()
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, bin_count + 2)`
+    /// Batch over input columns high, low. Returns shape `(n, bin_count + 2)`
     /// with columns `[price_low, price_high, count_0, ..., count_{k-1}]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -18951,7 +18951,7 @@ impl PyInitialBalance {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.high, o.low)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 2)` with
+    /// Batch over input columns high, low. Returns shape `(n, 2)` with
     /// columns `[high, low]`.
     fn batch<'py>(
         &mut self,
@@ -19029,7 +19029,7 @@ impl PyOpeningRange {
             .update(c)
             .map(|o| (o.high, o.low, o.breakout_distance)))
     }
-    /// Batch over numpy columns high, low, close. Returns shape `(n, 3)`
+    /// Batch over input columns high, low, close. Returns shape `(n, 3)`
     /// with columns `[high, low, breakout_distance]`.
     fn batch<'py>(
         &mut self,
@@ -19109,7 +19109,7 @@ impl PyNakedPoc {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    /// Batch over high, low, close, volume series (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -19181,7 +19181,7 @@ impl PySinglePrints {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low arrays (1-D, equal length).
+    /// Batch over high, low series (1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -19244,7 +19244,7 @@ impl PyProfileShape {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low, volume arrays (1-D, equal length).
+    /// Batch over high, low, volume series (1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -19317,7 +19317,7 @@ impl PyHighLowVolumeNodes {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.hvn, o.lvn)))
     }
-    /// Batch over numpy high, low, volume. Returns shape `(n, 2)` `[hvn, lvn]`.
+    /// Batch over high, low, volume columns. Returns shape `(n, 2)` `[hvn, lvn]`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -19394,7 +19394,7 @@ impl PyCompositeProfile {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.poc, o.vah, o.val)))
     }
-    /// Batch over numpy high, low, volume. Returns shape `(n, 3)` `[poc, vah, val]`.
+    /// Batch over high, low, volume columns. Returns shape `(n, 3)` `[poc, vah, val]`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25420,7 +25420,7 @@ impl PyFibRetracement {
             )
         }))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 7)`.
+    /// Batch over input columns high, low. Returns shape `(n, 7)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25499,7 +25499,7 @@ impl PyFibExtension {
             )
         }))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 5)`.
+    /// Batch over input columns high, low. Returns shape `(n, 5)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25571,7 +25571,7 @@ impl PyFibProjection {
             .update(c)
             .map(|o| (o.level_618, o.level_1000, o.level_1618, o.level_2618)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 4)`.
+    /// Batch over input columns high, low. Returns shape `(n, 4)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25649,7 +25649,7 @@ impl PyAutoFib {
             )
         }))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 7)`.
+    /// Batch over input columns high, low. Returns shape `(n, 7)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25720,7 +25720,7 @@ impl PyGoldenPocket {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.low, o.mid, o.high)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 3)`.
+    /// Batch over input columns high, low. Returns shape `(n, 3)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25787,7 +25787,7 @@ impl PyFibConfluence {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.price, o.strength)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 2)`.
+    /// Batch over input columns high, low. Returns shape `(n, 2)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25856,7 +25856,7 @@ impl PyFibFan {
             .update(c)
             .map(|o| (o.fan_382, o.fan_500, o.fan_618)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 3)`.
+    /// Batch over input columns high, low. Returns shape `(n, 3)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25926,7 +25926,7 @@ impl PyFibArcs {
             .update(c)
             .map(|o| (o.arc_382, o.arc_500, o.arc_618)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 3)`.
+    /// Batch over input columns high, low. Returns shape `(n, 3)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -25996,7 +25996,7 @@ impl PyFibChannel {
             .update(c)
             .map(|o| (o.base, o.level_618, o.level_1000, o.level_1618)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 4)`.
+    /// Batch over input columns high, low. Returns shape `(n, 4)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26064,7 +26064,7 @@ impl PyFibTimeZones {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.on_zone, o.bars_to_next)))
     }
-    /// Batch over numpy columns high, low. Returns shape `(n, 2)`.
+    /// Batch over input columns high, low. Returns shape `(n, 2)`.
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26373,7 +26373,7 @@ impl PyVolumeRsi {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    /// Batch over close + volume series (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26440,7 +26440,7 @@ impl PyWad {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low, close arrays (all 1-D, equal length).
+    /// Batch over high, low, close series (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26512,7 +26512,7 @@ impl PyTwiggsMoneyFlow {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    /// Batch over high, low, close, volume series (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26592,7 +26592,7 @@ impl PyTradeVolumeIndex {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    /// Batch over close + volume series (both 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26663,7 +26663,7 @@ impl PyIntradayIntensity {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    /// Batch over high, low, close, volume series (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26735,7 +26735,7 @@ impl PyBetterVolume {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c))
     }
-    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    /// Batch over high, low, close, volume series (all 1-D, equal length).
     fn batch<'py>(
         &mut self,
         py: Python<'py>,
@@ -26818,7 +26818,7 @@ impl PyVolumeWeightedMacd {
             .update(c)
             .map(|o| (o.macd, o.signal, o.histogram)))
     }
-    /// Batch over numpy close + volume arrays. Returns shape `(n, 3)` with
+    /// Batch over close + volume series. Returns shape `(n, 3)` with
     /// columns `[macd, signal, histogram]`; warmup rows are `NaN`.
     fn batch<'py>(
         &mut self,
@@ -26998,7 +26998,7 @@ impl PyKendallTau {
     fn update(&mut self, x: f64, y: f64) -> Option<f64> {
         self.inner.update((x, y))
     }
-    /// Batch over two equally-sized numpy arrays.
+    /// Batch over two equally-sized series.
     fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
         let xs = x
             .as_slice()
@@ -27208,6 +27208,10 @@ impl PyAutocorrelationPeriodogram {
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
+    // The result type of every multi-output `batch`. It was documented but
+    // never registered, so callers could neither import it nor name it in a
+    // type annotation or an `isinstance` check.
+    m.add_class::<Matrix>()?;
     m.add_class::<PySma>()?;
     m.add_class::<PyEma>()?;
     m.add_class::<PyWma>()?;

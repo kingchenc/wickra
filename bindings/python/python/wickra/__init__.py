@@ -36,6 +36,7 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    Matrix,
     M2Measure,
     UpsidePotentialRatio,
     GainToPainRatio,
@@ -167,7 +168,6 @@ from ._wickra import (
     UltimateOscillator,
     RVI,
     PGO,
-    KST,
     SMI,
     LaguerreRSI,
     ConnorsRSI,
@@ -585,6 +585,8 @@ from ._wickra import (
 )
 
 __all__ = [
+    # The result type of a multi-output batch.
+    "Matrix",
     "M2Measure",
     "UpsidePotentialRatio",
     "GainToPainRatio",
@@ -717,7 +719,6 @@ __all__ = [
     "UltimateOscillator",
     "RVI",
     "PGO",
-    "KST",
     "SMI",
     "LaguerreRSI",
     "ConnorsRSI",

@@ -591,6 +591,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   so a partial native build that dropped half the catalogue still passed. It
   now asserts 504, that no export is `undefined`, and that the classes in
   `index.d.ts` and in the native module are the same 518.
+- **The Python type stubs are generated, and cover the whole package.**
+  `__init__.pyi` was hand-written and had reached 72 of the 520 exported names,
+  so a type checker rejected almost everything the package exports. It is
+  produced from the binding source now, and a test re-runs the generator to
+  keep it that way.
+- **The stubs no longer describe NumPy.** They annotated batch inputs and
+  results as `numpy.typing.NDArray`, which the binding stopped returning when
+  the NumPy dependency was dropped: a batch takes any sequence and returns a
+  stdlib `array.array("d")`, or a `Matrix` when the indicator has several
+  outputs. 133 doc comments still saying "Batch over numpy columns" — the text
+  `help()` prints — were corrected with them.
+- **`Matrix` is exported.** The result type of every multi-output `batch` was
+  described in the package docstring but never registered on the module, so it
+  could not be imported, annotated, or used in an `isinstance` check.
+- **`KST` was listed twice** in `__all__` and in the import block.
 
 
 
