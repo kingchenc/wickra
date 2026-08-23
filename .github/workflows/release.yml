@@ -708,7 +708,19 @@ jobs:
             dest="$base/${RID[$target]}/native"; mkdir -p "$dest"
             for f in libwickra.so libwickra.dylib wickra.dll; do
               src=$(find "$tmp" -name "$f" | head -1)
-              [ -n "$src" ] && cp "$src" "$dest/"
+              [ -z "$src" ] && continue
+              # The managed assembly is Wickra.dll and Windows file names are
+              # case-insensitive, so shipping the native library as wickra.dll
+              # gives two package files the same relative path once a
+              # RID-specific publish flattens runtimes/ into the output folder.
+              # The SDK rejects that with NETSDK1152, which made `dotnet publish`
+              # fail for every Windows app referencing the package. WickraNative
+              # looks for this name first.
+              if [ "$f" = "wickra.dll" ]; then
+                cp "$src" "$dest/wickra_native.dll"
+              else
+                cp "$src" "$dest/"
+              fi
             done
             echo "staged ${RID[$target]}:"; ls -l "$dest"
           done

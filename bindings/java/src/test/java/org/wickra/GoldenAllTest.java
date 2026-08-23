@@ -1146,17 +1146,30 @@ class GoldenAllTest {
         };
     }
 
+    /** The two numeric cross-section columns: 0 = change, 1 = volume. */
     private static double[] crossList(double[] r, int which) {
         double o = r[0], c = r[3], v = r[4];
         double[] out = new double[5];
         for (int j = 0; j < 5; j++) {
+            out[j] = which == 0 ? (c - o) + j : v + j * 10.0;
+        }
+        return out;
+    }
+
+    /**
+     * The four cross-section state columns. These are {@code boolean[]} in the
+     * binding -- the C ABI takes them as {@code const bool*} -- so they cannot
+     * be built as doubles: reflection matches parameter types exactly.
+     * 2 = newHigh, 3 = newLow, 4 = aboveMa, 5 = onBuySignal.
+     */
+    private static boolean[] crossFlags(int which) {
+        boolean[] out = new boolean[5];
+        for (int j = 0; j < 5; j++) {
             out[j] = switch (which) {
-                case 0 -> (c - o) + j;
-                case 1 -> v + j * 10.0;
-                case 2 -> j % 2 == 0 ? 1.0 : 0.0; // newHigh
-                case 3 -> j % 3 == 0 ? 1.0 : 0.0; // newLow
-                case 4 -> j % 2 == 0 ? 1.0 : 0.0; // aboveMa
-                default -> j % 3 == 0 ? 1.0 : 0.0; // onBuySignal
+                case 2 -> j % 2 == 0; // newHigh
+                case 3 -> j % 3 == 0; // newLow
+                case 4 -> j % 2 == 0; // aboveMa
+                default -> j % 3 == 0; // onBuySignal
             };
         }
         return out;
@@ -1235,8 +1248,8 @@ class GoldenAllTest {
             case "trade" -> upd.invoke(ind, c, v, c >= o, (long) i);
             case "trademid" -> upd.invoke(ind, c, v, c >= o, (long) i, (h + l) / 2);
             case "ob" -> upd.invoke(ind, obList(r, 0), obList(r, 1), obList(r, 2), obList(r, 3));
-            case "cross" -> upd.invoke(ind, crossList(r, 0), crossList(r, 1), crossList(r, 2),
-                crossList(r, 3), crossList(r, 4), crossList(r, 5), (long) i);
+            case "cross" -> upd.invoke(ind, crossList(r, 0), crossList(r, 1), crossFlags(2),
+                crossFlags(3), crossFlags(4), crossFlags(5), (long) i);
             case "deriv", "deriv_multi" -> {
                 double[] d = derivFields(r);
                 yield upd.invoke(ind, d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], (long) i);
@@ -1270,6 +1283,7 @@ class GoldenAllTest {
                 Method upd = updateMethod(ind);
                 double[][] exp = fixture(s.canonical());
                 assertTrue(exp.length == rows.length, s.canonical() + ": row count " + exp.length + " vs " + rows.length);
+                double indicatorTol = tolFor(s.canonical());
                 for (int i = 0; i < rows.length; i++) {
                     double[] got = row(s, ind, upd, rows[i], i);
                     double[] want = exp[i];
@@ -1283,7 +1297,7 @@ class GoldenAllTest {
                             assertTrue(Double.isInfinite(g) && Math.signum(g) == Math.signum(w),
                                 s.canonical() + " row " + i + " col " + k + ": want " + w + " got " + g);
                         } else {
-                            double tol = tolFor(name) * Math.max(1.0, Math.abs(w));
+                            double tol = indicatorTol * Math.max(1.0, Math.abs(w));
                             assertTrue(Math.abs(g - w) <= tol,
                                 s.canonical() + " row " + i + " col " + k + ": got " + g + " want " + w);
                         }

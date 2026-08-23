@@ -615,6 +615,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **`dotnet publish` failed for every Windows app using the NuGet package.**
+  The managed assembly is `Wickra.dll` and the native library shipped as
+  `wickra.dll`; Windows file names are case-insensitive and a RID-specific
+  publish flattens `runtimes/` into the output folder, so the SDK saw two
+  outputs claiming one path and stopped with `NETSDK1152`. The Windows native
+  asset is packaged as `wickra_native.dll` now, which the resolver looks for
+  first.
+- **The .NET resolver no longer falls back to unvalidated probing.** When it
+  found nothing it returned zero, handing the load back to the runtime's own
+  search — which does none of the ABI validation the resolver exists for, so a
+  same-named library that exports nothing would be accepted and surface later
+  as an `EntryPointNotFoundException` from inside an unrelated call. It throws
+  a `DllNotFoundException` naming every location it probed.
+- **The Java loader tries every candidate.** It took the first file named like
+  the native library and gave up if that one did not export the Wickra ABI, so
+  a stale build earlier in the search order hid a good one further up. It now
+  skips a candidate that fails the check and reports all of them if none works.
 - **68 WASM classes gained `batch`.** 63 indicators had no batch method at all,
   so a browser caller had to loop in JavaScript and pay a boundary crossing per
   bar — the opposite of what the batch API is for — and five of the ten bar

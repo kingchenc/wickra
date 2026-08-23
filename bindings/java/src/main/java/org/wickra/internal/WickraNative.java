@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -24,8 +26,9 @@ import java.util.Locale;
  * time. For local development (running against a {@code cargo build}) the
  * resolver walks up the directory tree to find {@code target/release} or
  * {@code target/debug}. Every candidate is validated to actually export the
- * Wickra ABI before it is accepted, so an unrelated library of the same name
- * cannot shadow the real one.
+ * Wickra ABI before it is accepted, and one that fails is skipped rather than
+ * aborting the load, so an unrelated library of the same name can neither
+ * shadow the real one nor hide it.
  *
  * <p>This is internal plumbing; application code uses the generated indicator
  * classes in {@code org.wickra}.
@@ -94,26 +97,46 @@ public final class WickraNative {
     }
 
     private static SymbolLookup loadLibrary() {
-        Path lib = locate();
-        if (lib == null) {
-            throw new UnsatisfiedLinkError(
-                    "wickra: could not locate the native library (" + libraryFileName()
-                            + "). Bundle it under resources/native/" + platformDir()
-                            + "/ or build the C ABI with `cargo build -p wickra-c --release`.");
+        List<String> rejected = new ArrayList<>();
+        for (Path lib : locate()) {
+            SymbolLookup lookup;
+            try {
+                lookup = SymbolLookup.libraryLookup(lib, LIB_ARENA);
+            } catch (IllegalArgumentException e) {
+                rejected.add(lib + " (" + e.getMessage() + ")");
+                continue;
+            }
+            if (lookup.find(SENTINEL).isPresent()) {
+                return lookup;
+            }
+            // A file of the right name that is not our library -- keep looking
+            // rather than aborting, which is what a stale build or an unrelated
+            // library earlier in the search order used to do. It stays loaded
+            // until the process exits; there is no unload in the FFM API, and
+            // the alternative would be to dlopen it a second time to accept it.
+            rejected.add(lib + " (does not export the C ABI)");
         }
-        SymbolLookup lookup = SymbolLookup.libraryLookup(lib, LIB_ARENA);
-        if (lookup.find(SENTINEL).isEmpty()) {
-            throw new UnsatisfiedLinkError("wickra: " + lib + " does not export the C ABI");
-        }
-        return lookup;
+        throw new UnsatisfiedLinkError(
+                "wickra: could not load the native library (" + libraryFileName()
+                        + "). Bundle it under resources/native/" + platformDir()
+                        + "/ or build the C ABI with `cargo build -p wickra-c --release`."
+                        + (rejected.isEmpty() ? "" : " Rejected: " + String.join("; ", rejected)));
     }
 
-    private static Path locate() {
+    /**
+     * Every place the library might be, in the order they should be tried: the
+     * bundled copy first, then each {@code target/release} or {@code target/debug}
+     * found by walking up from the working directory and from this class's own
+     * location.
+     */
+    private static List<Path> locate() {
+        List<Path> candidates = new ArrayList<>();
         Path bundled = extractBundled();
         if (bundled != null) {
-            return bundled;
+            candidates.add(bundled);
         }
-        return findInCargoTarget();
+        candidates.addAll(findInCargoTarget());
+        return candidates;
     }
 
     private static Path extractBundled() {
@@ -131,22 +154,32 @@ public final class WickraNative {
         }
     }
 
-    private static Path findInCargoTarget() {
+    private static List<Path> findInCargoTarget() {
+        return findInCargoTarget(
+                new Path[] {Paths.get(System.getProperty("user.dir", ".")), codeSourceDir()});
+    }
+
+    /**
+     * Walk up from each base looking for {@code target/<profile>/<library>},
+     * collecting every hit rather than stopping at the first. Package-private so
+     * the resolution test can point it at a synthetic tree.
+     */
+    static List<Path> findInCargoTarget(Path[] bases) {
         String file = libraryFileName();
-        Path[] bases = {Paths.get(System.getProperty("user.dir", ".")), codeSourceDir()};
+        List<Path> found = new ArrayList<>();
         for (Path base : bases) {
             Path dir = base;
             for (int i = 0; i < 16 && dir != null; i++) {
                 for (String profile : new String[] {"release", "debug"}) {
                     Path candidate = dir.resolve("target").resolve(profile).resolve(file);
-                    if (Files.isRegularFile(candidate)) {
-                        return candidate;
+                    if (Files.isRegularFile(candidate) && !found.contains(candidate)) {
+                        found.add(candidate);
                     }
                 }
                 dir = dir.getParent();
             }
         }
-        return null;
+        return found;
     }
 
     private static Path codeSourceDir() {
