@@ -513,6 +513,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   has to construct deliberately. The documentation says plainly what is
   guaranteed and where the guarantee stops, rather than implying an invariant
   the type does not enforce.
+- **The R binding's documentation survives a regeneration.**
+  `bindings/r/R/indicators.R` carries a DO-NOT-EDIT header and had been edited
+  anyway: seven blocks of roxygen — the constructors for `CandleReader`,
+  `Resampler` and `TickAggregator`, and the parameter and return documentation
+  for the four Binance entry points — existed only in the generated file, where
+  the generator emitted a one-line stub. That documentation ships to CRAN and
+  r-universe, so the next regeneration would have deleted it silently.
+
+  The blocks now live in the generator, keyed by function name, together with
+  the one signature default that had been hand-applied. Regenerating reproduces
+  the committed file byte for byte, which is the only condition under which the
+  header is true. The header also names where documentation belongs now, since
+  saying "do not edit" without saying where to edit instead is how this
+  happened.
+
 
 
 

@@ -1,4 +1,8 @@
 # Generated from bindings/c/include/wickra.h. DO NOT EDIT.
+#
+# Roxygen for the data-layer and Binance entry points lives in
+# R_DOC_OVERRIDES in gen_r.py, not here -- editing this file loses it
+# on the next regeneration.
 
 # Internal: build an S3 wickra_indicator object holding the external
 # pointer (handle, auto-freed by a C finalizer) and the C-symbol prefix.
