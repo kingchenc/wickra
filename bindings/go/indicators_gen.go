@@ -9,8 +9,9 @@ package wickra
 import "C"
 
 import (
-	"time"
+	"fmt"
 	"runtime"
+	"time"
 	"unsafe"
 )
 
@@ -20,75 +21,75 @@ var _ = unsafe.Pointer(nil)
 
 // AccelerationBandsOutput is the output of the AccelerationBands indicator.
 type AccelerationBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // AdxOutput is the output of the Adx indicator.
 type AdxOutput struct {
-	PlusDi float64
+	PlusDi  float64
 	MinusDi float64
-	Adx float64
+	Adx     float64
 }
 
 // AlligatorOutput is the output of the Alligator indicator.
 type AlligatorOutput struct {
-	Jaw float64
+	Jaw   float64
 	Teeth float64
-	Lips float64
+	Lips  float64
 }
 
 // AndrewsPitchforkOutput is the output of the AndrewsPitchfork indicator.
 type AndrewsPitchforkOutput struct {
 	Median float64
-	Upper float64
-	Lower float64
+	Upper  float64
+	Lower  float64
 }
 
 // AroonOutput is the output of the Aroon indicator.
 type AroonOutput struct {
-	Up float64
+	Up   float64
 	Down float64
 }
 
 // AtrBandsOutput is the output of the AtrBands indicator.
 type AtrBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // AtrRatchetOutput is the output of the AtrRatchet indicator.
 type AtrRatchetOutput struct {
-	Value float64
+	Value     float64
 	Direction float64
 }
 
 // AutoFibOutput is the output of the AutoFib indicator.
 type AutoFibOutput struct {
-	Level0 float64
-	Level236 float64
-	Level382 float64
-	Level500 float64
-	Level618 float64
-	Level786 float64
+	Level0    float64
+	Level236  float64
+	Level382  float64
+	Level500  float64
+	Level618  float64
+	Level786  float64
 	Level1000 float64
 }
 
 // BollingerOutput is the output of the Bollinger indicator.
 type BollingerOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 	Stddev float64
 }
 
 // BomarBandsOutput is the output of the BomarBands indicator.
 type BomarBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // CamarillaPivotsOutput is the output of the CamarillaPivots indicator.
@@ -106,36 +107,36 @@ type CamarillaPivotsOutput struct {
 
 // Candle is the output of the Candle indicator.
 type Candle struct {
-	Open float64
-	High float64
-	Low float64
-	Close float64
-	Volume float64
+	Open      float64
+	High      float64
+	Low       float64
+	Close     float64
+	Volume    float64
 	Timestamp int64
 }
 
 // CandleVolumeOutput is the output of the CandleVolume indicator.
 type CandleVolumeOutput struct {
-	Body float64
+	Body  float64
 	Width float64
 }
 
 // CentralPivotRangeOutput is the output of the CentralPivotRange indicator.
 type CentralPivotRangeOutput struct {
 	Pivot float64
-	Tc float64
-	Bc float64
+	Tc    float64
+	Bc    float64
 }
 
 // ChandeKrollStopOutput is the output of the ChandeKrollStop indicator.
 type ChandeKrollStopOutput struct {
-	StopLong float64
+	StopLong  float64
 	StopShort float64
 }
 
 // ChandelierExitOutput is the output of the ChandelierExit indicator.
 type ChandelierExitOutput struct {
-	LongStop float64
+	LongStop  float64
 	ShortStop float64
 }
 
@@ -153,8 +154,8 @@ type ClassicPivotsOutput struct {
 // CointegrationOutput is the output of the Cointegration indicator.
 type CointegrationOutput struct {
 	HedgeRatio float64
-	Spread float64
-	AdfStat float64
+	Spread     float64
+	AdfStat    float64
 }
 
 // CompositeProfileOutput is the output of the CompositeProfile indicator.
@@ -173,24 +174,24 @@ type DemarkPivotsOutput struct {
 
 // DollarBar is the output of the DollarBar indicator.
 type DollarBar struct {
-	Open float64
-	High float64
-	Low float64
-	Close float64
+	Open   float64
+	High   float64
+	Low    float64
+	Close  float64
 	Volume float64
 	Dollar float64
 }
 
 // DonchianOutput is the output of the Donchian indicator.
 type DonchianOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // DonchianStopOutput is the output of the DonchianStop indicator.
 type DonchianStopOutput struct {
-	StopLong float64
+	StopLong  float64
 	StopShort float64
 }
 
@@ -198,7 +199,7 @@ type DonchianStopOutput struct {
 type DoubleBollingerOutput struct {
 	UpperOuter float64
 	UpperInner float64
-	Middle float64
+	Middle     float64
 	LowerInner float64
 	LowerOuter float64
 }
@@ -211,14 +212,14 @@ type ElderRayOutput struct {
 
 // ElderSafeZoneOutput is the output of the ElderSafeZone indicator.
 type ElderSafeZoneOutput struct {
-	Value float64
+	Value     float64
 	Direction float64
 }
 
 // EquivolumeOutput is the output of the Equivolume indicator.
 type EquivolumeOutput struct {
 	Height float64
-	Width float64
+	Width  float64
 }
 
 // FibArcsOutput is the output of the FibArcs indicator.
@@ -230,15 +231,15 @@ type FibArcsOutput struct {
 
 // FibChannelOutput is the output of the FibChannel indicator.
 type FibChannelOutput struct {
-	Base float64
-	Level618 float64
+	Base      float64
+	Level618  float64
 	Level1000 float64
 	Level1618 float64
 }
 
 // FibConfluenceOutput is the output of the FibConfluence indicator.
 type FibConfluenceOutput struct {
-	Price float64
+	Price    float64
 	Strength float64
 }
 
@@ -260,7 +261,7 @@ type FibFanOutput struct {
 
 // FibProjectionOutput is the output of the FibProjection indicator.
 type FibProjectionOutput struct {
-	Level618 float64
+	Level618  float64
 	Level1000 float64
 	Level1618 float64
 	Level2618 float64
@@ -268,18 +269,18 @@ type FibProjectionOutput struct {
 
 // FibRetracementOutput is the output of the FibRetracement indicator.
 type FibRetracementOutput struct {
-	Level0 float64
-	Level236 float64
-	Level382 float64
-	Level500 float64
-	Level618 float64
-	Level786 float64
+	Level0    float64
+	Level236  float64
+	Level382  float64
+	Level500  float64
+	Level618  float64
+	Level786  float64
 	Level1000 float64
 }
 
 // FibTimeZonesOutput is the output of the FibTimeZones indicator.
 type FibTimeZonesOutput struct {
-	OnZone float64
+	OnZone     float64
 	BarsToNext float64
 }
 
@@ -296,7 +297,7 @@ type FibonacciPivotsOutput struct {
 
 // FootprintLevel is the output of the FootprintLevel indicator.
 type FootprintLevel struct {
-	Price float64
+	Price  float64
 	BidVol float64
 	AskVol float64
 }
@@ -315,16 +316,16 @@ type GatorOscillatorOutput struct {
 
 // GoldenPocketOutput is the output of the GoldenPocket indicator.
 type GoldenPocketOutput struct {
-	Low float64
-	Mid float64
+	Low  float64
+	Mid  float64
 	High float64
 }
 
 // HeikinAshiOutput is the output of the HeikinAshi indicator.
 type HeikinAshiOutput struct {
-	Open float64
-	High float64
-	Low float64
+	Open  float64
+	High  float64
+	Low   float64
 	Close float64
 }
 
@@ -336,32 +337,32 @@ type HighLowVolumeNodesOutput struct {
 
 // HtPhasorOutput is the output of the HtPhasor indicator.
 type HtPhasorOutput struct {
-	Inphase float64
+	Inphase    float64
 	Quadrature float64
 }
 
 // HurstChannelOutput is the output of the HurstChannel indicator.
 type HurstChannelOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // IchimokuOutput is the output of the Ichimoku indicator.
 type IchimokuOutput struct {
-	Tenkan float64
-	Kijun float64
+	Tenkan  float64
+	Kijun   float64
 	SenkouA float64
 	SenkouB float64
-	Chikou float64
+	Chikou  float64
 }
 
 // ImbalanceBar is the output of the ImbalanceBar indicator.
 type ImbalanceBar struct {
-	Open float64
-	High float64
-	Low float64
-	Close float64
+	Open      float64
+	High      float64
+	Low       float64
+	Close     float64
 	Imbalance float64
 	Direction int8
 }
@@ -369,26 +370,26 @@ type ImbalanceBar struct {
 // InitialBalanceOutput is the output of the InitialBalance indicator.
 type InitialBalanceOutput struct {
 	High float64
-	Low float64
+	Low  float64
 }
 
 // KagiBar is the output of the KagiBar indicator.
 type KagiBar struct {
-	Start float64
-	End float64
+	Start     float64
+	End       float64
 	Direction int8
 }
 
 // KalmanHedgeRatioOutput is the output of the KalmanHedgeRatio indicator.
 type KalmanHedgeRatioOutput struct {
 	HedgeRatio float64
-	Intercept float64
-	Spread float64
+	Intercept  float64
+	Spread     float64
 }
 
 // KaseDevStopOutput is the output of the KaseDevStop indicator.
 type KaseDevStopOutput struct {
-	Value float64
+	Value     float64
 	Direction float64
 }
 
@@ -400,57 +401,57 @@ type KasePermissionStochasticOutput struct {
 
 // KeltnerOutput is the output of the Keltner indicator.
 type KeltnerOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // KstOutput is the output of the Kst indicator.
 type KstOutput struct {
-	Kst float64
+	Kst    float64
 	Signal float64
 }
 
 // LeadLagCrossCorrelationOutput is the output of the LeadLagCrossCorrelation indicator.
 type LeadLagCrossCorrelationOutput struct {
-	Lag int64
+	Lag         int64
 	Correlation float64
 }
 
 // LinRegChannelOutput is the output of the LinRegChannel indicator.
 type LinRegChannelOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // LineBreakBar is the output of the LineBreakBar indicator.
 type LineBreakBar struct {
-	Open float64
-	Close float64
+	Open      float64
+	Close     float64
 	Direction int8
 }
 
 // LiquidationFeaturesOutput is the output of the LiquidationFeatures indicator.
 type LiquidationFeaturesOutput struct {
-	Long float64
-	Short float64
-	Net float64
-	Total float64
+	Long      float64
+	Short     float64
+	Net       float64
+	Total     float64
 	Imbalance float64
 }
 
 // MaEnvelopeOutput is the output of the MaEnvelope indicator.
 type MaEnvelopeOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // MacdOutput is the output of the Macd indicator.
 type MacdOutput struct {
-	Macd float64
-	Signal float64
+	Macd      float64
+	Signal    float64
 	Histogram float64
 }
 
@@ -462,14 +463,14 @@ type MamaOutput struct {
 
 // MedianChannelOutput is the output of the MedianChannel indicator.
 type MedianChannelOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // ModifiedMaStopOutput is the output of the ModifiedMaStop indicator.
 type ModifiedMaStopOutput struct {
-	Value float64
+	Value     float64
 	Direction float64
 }
 
@@ -488,128 +489,128 @@ type MurreyMathLinesOutput struct {
 
 // NrtrOutput is the output of the Nrtr indicator.
 type NrtrOutput struct {
-	Value float64
+	Value     float64
 	Direction float64
 }
 
 // OpeningRangeOutput is the output of the OpeningRange indicator.
 type OpeningRangeOutput struct {
-	High float64
-	Low float64
+	High             float64
+	Low              float64
 	BreakoutDistance float64
 }
 
 // OvernightIntradayReturnOutput is the output of the OvernightIntradayReturn indicator.
 type OvernightIntradayReturnOutput struct {
 	Overnight float64
-	Intraday float64
+	Intraday  float64
 }
 
 // PnfColumn is the output of the PnfColumn indicator.
 type PnfColumn struct {
 	Direction int8
-	High float64
-	Low float64
+	High      float64
+	Low       float64
 }
 
 // ProjectionBandsOutput is the output of the ProjectionBands indicator.
 type ProjectionBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // QqeOutput is the output of the Qqe indicator.
 type QqeOutput struct {
-	RsiMa float64
+	RsiMa        float64
 	TrailingLine float64
 }
 
 // QuartileBandsOutput is the output of the QuartileBands indicator.
 type QuartileBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // RangeBar is the output of the RangeBar indicator.
 type RangeBar struct {
-	Open float64
-	Close float64
+	Open      float64
+	Close     float64
 	Direction int8
 }
 
 // RelativeStrengthOutput is the output of the RelativeStrength indicator.
 type RelativeStrengthOutput struct {
-	Ratio float64
-	RatioMa float64
+	Ratio    float64
+	RatioMa  float64
 	RatioRsi float64
 }
 
 // RenkoBrick is the output of the RenkoBrick indicator.
 type RenkoBrick struct {
-	Open float64
-	Close float64
+	Open      float64
+	Close     float64
 	Direction int8
 }
 
 // RunBar is the output of the RunBar indicator.
 type RunBar struct {
-	Open float64
-	High float64
-	Low float64
-	Close float64
-	Length int
+	Open      float64
+	High      float64
+	Low       float64
+	Close     float64
+	Length    int
 	Direction int8
 }
 
 // RwiOutput is the output of the Rwi indicator.
 type RwiOutput struct {
 	High float64
-	Low float64
+	Low  float64
 }
 
 // SessionHighLowOutput is the output of the SessionHighLow indicator.
 type SessionHighLowOutput struct {
 	High float64
-	Low float64
+	Low  float64
 }
 
 // SessionRangeOutput is the output of the SessionRange indicator.
 type SessionRangeOutput struct {
 	Asia float64
-	Eu float64
-	Us float64
+	Eu   float64
+	Us   float64
 }
 
 // SmoothedHeikinAshiOutput is the output of the SmoothedHeikinAshi indicator.
 type SmoothedHeikinAshiOutput struct {
-	Open float64
-	High float64
-	Low float64
+	Open  float64
+	High  float64
+	Low   float64
 	Close float64
 }
 
 // SpreadBollingerBandsOutput is the output of the SpreadBollingerBands indicator.
 type SpreadBollingerBandsOutput struct {
-	Middle float64
-	Upper float64
-	Lower float64
+	Middle   float64
+	Upper    float64
+	Lower    float64
 	PercentB float64
 }
 
 // StandardErrorBandsOutput is the output of the StandardErrorBands indicator.
 type StandardErrorBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // StarcBandsOutput is the output of the StarcBands indicator.
 type StarcBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 }
 
 // StochasticOutput is the output of the Stochastic indicator.
@@ -620,14 +621,14 @@ type StochasticOutput struct {
 
 // SuperTrendOutput is the output of the SuperTrend indicator.
 type SuperTrendOutput struct {
-	Value float64
+	Value     float64
 	Direction float64
 }
 
 // TdLinesOutput is the output of the TdLines indicator.
 type TdLinesOutput struct {
 	Resistance float64
-	Support float64
+	Support    float64
 }
 
 // TdMovingAverageOutput is the output of the TdMovingAverage indicator.
@@ -639,41 +640,41 @@ type TdMovingAverageOutput struct {
 // TdRangeProjectionOutput is the output of the TdRangeProjection indicator.
 type TdRangeProjectionOutput struct {
 	High float64
-	Low float64
+	Low  float64
 }
 
 // TdRiskLevelOutput is the output of the TdRiskLevel indicator.
 type TdRiskLevelOutput struct {
-	BuyRisk float64
+	BuyRisk  float64
 	SellRisk float64
 }
 
 // TdSequentialOutput is the output of the TdSequential indicator.
 type TdSequentialOutput struct {
-	Setup float64
+	Setup     float64
 	Countdown float64
 	Direction float64
 }
 
 // TickBar is the output of the TickBar indicator.
 type TickBar struct {
-	Open float64
-	High float64
-	Low float64
-	Close float64
+	Open   float64
+	High   float64
+	Low    float64
+	Close  float64
 	Volume float64
 }
 
 // TpoProfileOutputScalars is the output of the TpoProfileOutputScalars indicator.
 type TpoProfileOutputScalars struct {
-	PriceLow float64
+	PriceLow  float64
 	PriceHigh float64
-	Values []float64
+	Values    []float64
 }
 
 // TtmSqueezeOutput is the output of the TtmSqueeze indicator.
 type TtmSqueezeOutput struct {
-	Squeeze float64
+	Squeeze  float64
 	Momentum float64
 }
 
@@ -686,53 +687,53 @@ type ValueAreaOutput struct {
 
 // VolatilityConeOutput is the output of the VolatilityCone indicator.
 type VolatilityConeOutput struct {
-	Current float64
-	Min float64
-	Median float64
-	Max float64
+	Current    float64
+	Min        float64
+	Median     float64
+	Max        float64
 	Percentile float64
 }
 
 // VolumeBar is the output of the VolumeBar indicator.
 type VolumeBar struct {
-	Open float64
-	High float64
-	Low float64
-	Close float64
+	Open   float64
+	High   float64
+	Low    float64
+	Close  float64
 	Volume float64
 }
 
 // VolumeProfileOutputScalars is the output of the VolumeProfileOutputScalars indicator.
 type VolumeProfileOutputScalars struct {
-	PriceLow float64
+	PriceLow  float64
 	PriceHigh float64
-	Values []float64
+	Values    []float64
 }
 
 // VolumeWeightedMacdOutput is the output of the VolumeWeightedMacd indicator.
 type VolumeWeightedMacdOutput struct {
-	Macd float64
-	Signal float64
+	Macd      float64
+	Signal    float64
 	Histogram float64
 }
 
 // VolumeWeightedSrOutput is the output of the VolumeWeightedSr indicator.
 type VolumeWeightedSrOutput struct {
-	Support float64
+	Support    float64
 	Resistance float64
 }
 
 // VortexOutput is the output of the Vortex indicator.
 type VortexOutput struct {
-	Plus float64
+	Plus  float64
 	Minus float64
 }
 
 // VwapStdDevBandsOutput is the output of the VwapStdDevBands indicator.
 type VwapStdDevBandsOutput struct {
-	Upper float64
+	Upper  float64
 	Middle float64
-	Lower float64
+	Lower  float64
 	Stddev float64
 }
 
@@ -744,7 +745,7 @@ type WaveTrendOutput struct {
 
 // WilliamsFractalsOutput is the output of the WilliamsFractals indicator.
 type WilliamsFractalsOutput struct {
-	Up float64
+	Up   float64
 	Down float64
 }
 
@@ -759,14 +760,14 @@ type WoodiePivotsOutput struct {
 
 // ZeroLagMacdOutput is the output of the ZeroLagMacd indicator.
 type ZeroLagMacdOutput struct {
-	Macd float64
-	Signal float64
+	Macd      float64
+	Signal    float64
 	Histogram float64
 }
 
 // ZigZagOutput is the output of the ZigZag indicator.
 type ZigZagOutput struct {
-	Swing float64
+	Swing     float64
 	Direction float64
 }
 
@@ -1059,6 +1060,10 @@ type AccelerationBands struct {
 // NewAccelerationBands constructs a AccelerationBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAccelerationBands(period int, factor float64) (*AccelerationBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_acceleration_bands_new(C.uintptr_t(period), C.double(factor))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -1127,6 +1132,18 @@ type AcceleratorOscillator struct {
 // NewAcceleratorOscillator constructs a AcceleratorOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAcceleratorOscillator(aoFast int, aoSlow int, signalPeriod int) (*AcceleratorOscillator, error) {
+	if aoFast < 0 {
+		return nil, fmt.Errorf("%w: aoFast must not be negative, got %d",
+			ErrInvalidParams, aoFast)
+	}
+	if aoSlow < 0 {
+		return nil, fmt.Errorf("%w: aoSlow must not be negative, got %d",
+			ErrInvalidParams, aoSlow)
+	}
+	if signalPeriod < 0 {
+		return nil, fmt.Errorf("%w: signalPeriod must not be negative, got %d",
+			ErrInvalidParams, signalPeriod)
+	}
 	ptr := C.wickra_accelerator_oscillator_new(C.uintptr_t(aoFast), C.uintptr_t(aoSlow), C.uintptr_t(signalPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -1408,6 +1425,10 @@ type AdaptiveCci struct {
 // NewAdaptiveCci constructs a AdaptiveCci. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAdaptiveCci(period int) (*AdaptiveCci, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_adaptive_cci_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -1584,6 +1605,10 @@ type AdaptiveLaguerreFilter struct {
 // NewAdaptiveLaguerreFilter constructs a AdaptiveLaguerreFilter. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAdaptiveLaguerreFilter(period int) (*AdaptiveLaguerreFilter, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_adaptive_laguerre_filter_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -1662,6 +1687,10 @@ type AdaptiveRsi struct {
 // NewAdaptiveRsi constructs a AdaptiveRsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAdaptiveRsi(period int) (*AdaptiveRsi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_adaptive_rsi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2106,6 +2135,10 @@ type Adx struct {
 // NewAdx constructs a Adx. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAdx(period int) (*Adx, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_adx_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2174,6 +2207,10 @@ type Adxr struct {
 // NewAdxr constructs a Adxr. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAdxr(period int) (*Adxr, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_adxr_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2272,6 +2309,18 @@ type Alligator struct {
 // NewAlligator constructs a Alligator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAlligator(jawPeriod int, teethPeriod int, lipsPeriod int) (*Alligator, error) {
+	if jawPeriod < 0 {
+		return nil, fmt.Errorf("%w: jawPeriod must not be negative, got %d",
+			ErrInvalidParams, jawPeriod)
+	}
+	if teethPeriod < 0 {
+		return nil, fmt.Errorf("%w: teethPeriod must not be negative, got %d",
+			ErrInvalidParams, teethPeriod)
+	}
+	if lipsPeriod < 0 {
+		return nil, fmt.Errorf("%w: lipsPeriod must not be negative, got %d",
+			ErrInvalidParams, lipsPeriod)
+	}
 	ptr := C.wickra_alligator_new(C.uintptr_t(jawPeriod), C.uintptr_t(teethPeriod), C.uintptr_t(lipsPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2340,6 +2389,10 @@ type Alma struct {
 // NewAlma constructs a Alma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAlma(period int, offset float64, sigma float64) (*Alma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_alma_new(C.uintptr_t(period), C.double(offset), C.double(sigma))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2418,6 +2471,10 @@ type Alpha struct {
 // NewAlpha constructs a Alpha. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAlpha(period int, riskFree float64) (*Alpha, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_alpha_new(C.uintptr_t(period), C.double(riskFree))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2500,6 +2557,10 @@ type AmihudIlliquidity struct {
 // NewAmihudIlliquidity constructs a AmihudIlliquidity. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAmihudIlliquidity(period int) (*AmihudIlliquidity, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_amihud_illiquidity_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2740,6 +2801,10 @@ type AndrewsPitchfork struct {
 // NewAndrewsPitchfork constructs a AndrewsPitchfork. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAndrewsPitchfork(strength int) (*AndrewsPitchfork, error) {
+	if strength < 0 {
+		return nil, fmt.Errorf("%w: strength must not be negative, got %d",
+			ErrInvalidParams, strength)
+	}
 	ptr := C.wickra_andrews_pitchfork_new(C.uintptr_t(strength))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2808,6 +2873,14 @@ type Apo struct {
 // NewApo constructs a Apo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewApo(fast int, slow int) (*Apo, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_apo_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2886,6 +2959,10 @@ type Aroon struct {
 // NewAroon constructs a Aroon. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAroon(period int) (*Aroon, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_aroon_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -2954,6 +3031,10 @@ type AroonOscillator struct {
 // NewAroonOscillator constructs a AroonOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAroonOscillator(period int) (*AroonOscillator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_aroon_oscillator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3052,6 +3133,10 @@ type Atr struct {
 // NewAtr constructs a Atr. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAtr(period int) (*Atr, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_atr_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3150,6 +3235,10 @@ type AtrBands struct {
 // NewAtrBands constructs a AtrBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAtrBands(period int, multiplier float64) (*AtrBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_atr_bands_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3218,6 +3307,10 @@ type AtrRatchet struct {
 // NewAtrRatchet constructs a AtrRatchet. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAtrRatchet(atrPeriod int, startMult float64, increment float64) (*AtrRatchet, error) {
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_atr_ratchet_new(C.uintptr_t(atrPeriod), C.double(startMult), C.double(increment))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3286,6 +3379,10 @@ type AtrTrailingStop struct {
 // NewAtrTrailingStop constructs a AtrTrailingStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAtrTrailingStop(atrPeriod int, multiplier float64) (*AtrTrailingStop, error) {
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_atr_trailing_stop_new(C.uintptr_t(atrPeriod), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3452,6 +3549,14 @@ type Autocorrelation struct {
 // NewAutocorrelation constructs a Autocorrelation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAutocorrelation(period int, lag int) (*Autocorrelation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if lag < 0 {
+		return nil, fmt.Errorf("%w: lag must not be negative, got %d",
+			ErrInvalidParams, lag)
+	}
 	ptr := C.wickra_autocorrelation_new(C.uintptr_t(period), C.uintptr_t(lag))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3530,6 +3635,14 @@ type AutocorrelationPeriodogram struct {
 // NewAutocorrelationPeriodogram constructs a AutocorrelationPeriodogram. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAutocorrelationPeriodogram(minPeriod int, maxPeriod int) (*AutocorrelationPeriodogram, error) {
+	if minPeriod < 0 {
+		return nil, fmt.Errorf("%w: minPeriod must not be negative, got %d",
+			ErrInvalidParams, minPeriod)
+	}
+	if maxPeriod < 0 {
+		return nil, fmt.Errorf("%w: maxPeriod must not be negative, got %d",
+			ErrInvalidParams, maxPeriod)
+	}
 	ptr := C.wickra_autocorrelation_periodogram_new(C.uintptr_t(minPeriod), C.uintptr_t(maxPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3608,6 +3721,10 @@ type AverageDailyRange struct {
 // NewAverageDailyRange constructs a AverageDailyRange. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAverageDailyRange(period int, utcOffsetMinutes int32) (*AverageDailyRange, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_average_daily_range_new(C.uintptr_t(period), C.int32_t(utcOffsetMinutes))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3706,6 +3823,10 @@ type AverageDrawdown struct {
 // NewAverageDrawdown constructs a AverageDrawdown. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAverageDrawdown(period int) (*AverageDrawdown, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_average_drawdown_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3882,6 +4003,14 @@ type AwesomeOscillator struct {
 // NewAwesomeOscillator constructs a AwesomeOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAwesomeOscillator(fast int, slow int) (*AwesomeOscillator, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_awesome_oscillator_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -3980,6 +4109,18 @@ type AwesomeOscillatorHistogram struct {
 // NewAwesomeOscillatorHistogram constructs a AwesomeOscillatorHistogram. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewAwesomeOscillatorHistogram(fast int, slow int, lookback int) (*AwesomeOscillatorHistogram, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if lookback < 0 {
+		return nil, fmt.Errorf("%w: lookback must not be negative, got %d",
+			ErrInvalidParams, lookback)
+	}
 	ptr := C.wickra_awesome_oscillator_histogram_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(lookback))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4176,6 +4317,10 @@ type BandpassFilter struct {
 // NewBandpassFilter constructs a BandpassFilter. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBandpassFilter(period int, bandwidth float64) (*BandpassFilter, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_bandpass_filter_new(C.uintptr_t(period), C.double(bandwidth))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4450,6 +4595,10 @@ type Beta struct {
 // NewBeta constructs a Beta. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBeta(period int) (*Beta, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_beta_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4532,6 +4681,10 @@ type BetaNeutralSpread struct {
 // NewBetaNeutralSpread constructs a BetaNeutralSpread. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBetaNeutralSpread(period int) (*BetaNeutralSpread, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_beta_neutral_spread_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4614,6 +4767,10 @@ type BetterVolume struct {
 // NewBetterVolume constructs a BetterVolume. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBetterVolume(period int) (*BetterVolume, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_better_volume_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4712,6 +4869,10 @@ type BipowerVariation struct {
 // NewBipowerVariation constructs a BipowerVariation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBipowerVariation(period int) (*BipowerVariation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_bipower_variation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4888,6 +5049,10 @@ type BollingerBands struct {
 // NewBollingerBands constructs a BollingerBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBollingerBands(period int, multiplier float64) (*BollingerBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_bollinger_bands_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -4956,6 +5121,10 @@ type BollingerBandwidth struct {
 // NewBollingerBandwidth constructs a BollingerBandwidth. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBollingerBandwidth(period int, multiplier float64) (*BollingerBandwidth, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_bollinger_bandwidth_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5034,6 +5203,10 @@ type BomarBands struct {
 // NewBomarBands constructs a BomarBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBomarBands(period int, coverage float64) (*BomarBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_bomar_bands_new(C.uintptr_t(period), C.double(coverage))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5102,6 +5275,10 @@ type BreadthThrust struct {
 // NewBreadthThrust constructs a BreadthThrust. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBreadthThrust(period int) (*BreadthThrust, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_breadth_thrust_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5370,6 +5547,10 @@ type BurkeRatio struct {
 // NewBurkeRatio constructs a BurkeRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewBurkeRatio(period int) (*BurkeRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_burke_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5610,6 +5791,10 @@ type CalmarRatio struct {
 // NewCalmarRatio constructs a CalmarRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCalmarRatio(period int) (*CalmarRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_calmar_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5807,6 +5992,10 @@ type CandleVolume struct {
 // NewCandleVolume constructs a CandleVolume. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCandleVolume(period int) (*CandleVolume, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_candle_volume_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5875,6 +6064,10 @@ type Cci struct {
 // NewCci constructs a Cci. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCci(period int) (*Cci, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_cci_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -5973,6 +6166,10 @@ type CenterOfGravity struct {
 // NewCenterOfGravity constructs a CenterOfGravity. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCenterOfGravity(period int) (*CenterOfGravity, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_center_of_gravity_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6119,6 +6316,10 @@ type Cfo struct {
 // NewCfo constructs a Cfo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCfo(period int) (*Cfo, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_cfo_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6197,6 +6398,10 @@ type ChaikinMoneyFlow struct {
 // NewChaikinMoneyFlow constructs a ChaikinMoneyFlow. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewChaikinMoneyFlow(period int) (*ChaikinMoneyFlow, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_chaikin_money_flow_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6295,6 +6500,14 @@ type ChaikinOscillator struct {
 // NewChaikinOscillator constructs a ChaikinOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewChaikinOscillator(fast int, slow int) (*ChaikinOscillator, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_chaikin_oscillator_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6393,6 +6606,14 @@ type ChaikinVolatility struct {
 // NewChaikinVolatility constructs a ChaikinVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewChaikinVolatility(emaPeriod int, rocPeriod int) (*ChaikinVolatility, error) {
+	if emaPeriod < 0 {
+		return nil, fmt.Errorf("%w: emaPeriod must not be negative, got %d",
+			ErrInvalidParams, emaPeriod)
+	}
+	if rocPeriod < 0 {
+		return nil, fmt.Errorf("%w: rocPeriod must not be negative, got %d",
+			ErrInvalidParams, rocPeriod)
+	}
 	ptr := C.wickra_chaikin_volatility_new(C.uintptr_t(emaPeriod), C.uintptr_t(rocPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6491,6 +6712,14 @@ type ChandeKrollStop struct {
 // NewChandeKrollStop constructs a ChandeKrollStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewChandeKrollStop(atrPeriod int, atrMultiplier float64, stopPeriod int) (*ChandeKrollStop, error) {
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
+	if stopPeriod < 0 {
+		return nil, fmt.Errorf("%w: stopPeriod must not be negative, got %d",
+			ErrInvalidParams, stopPeriod)
+	}
 	ptr := C.wickra_chande_kroll_stop_new(C.uintptr_t(atrPeriod), C.double(atrMultiplier), C.uintptr_t(stopPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6559,6 +6788,10 @@ type ChandelierExit struct {
 // NewChandelierExit constructs a ChandelierExit. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewChandelierExit(period int, multiplier float64) (*ChandelierExit, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_chandelier_exit_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6627,6 +6860,10 @@ type ChoppinessIndex struct {
 // NewChoppinessIndex constructs a ChoppinessIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewChoppinessIndex(period int) (*ChoppinessIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_choppiness_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -6989,6 +7226,10 @@ type Cmo struct {
 // NewCmo constructs a Cmo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCmo(period int) (*Cmo, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_cmo_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7067,6 +7308,10 @@ type CoefficientOfVariation struct {
 // NewCoefficientOfVariation constructs a CoefficientOfVariation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCoefficientOfVariation(period int) (*CoefficientOfVariation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_coefficient_of_variation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7145,6 +7390,14 @@ type Cointegration struct {
 // NewCointegration constructs a Cointegration. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCointegration(period int, adfLags int) (*Cointegration, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if adfLags < 0 {
+		return nil, fmt.Errorf("%w: adfLags must not be negative, got %d",
+			ErrInvalidParams, adfLags)
+	}
 	ptr := C.wickra_cointegration_new(C.uintptr_t(period), C.uintptr_t(adfLags))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7213,6 +7466,10 @@ type CommonSenseRatio struct {
 // NewCommonSenseRatio constructs a CommonSenseRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCommonSenseRatio(period int) (*CommonSenseRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_common_sense_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7291,6 +7548,14 @@ type CompositeProfile struct {
 // NewCompositeProfile constructs a CompositeProfile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCompositeProfile(period int, bins int, valueAreaPct float64) (*CompositeProfile, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if bins < 0 {
+		return nil, fmt.Errorf("%w: bins must not be negative, got %d",
+			ErrInvalidParams, bins)
+	}
 	ptr := C.wickra_composite_profile_new(C.uintptr_t(period), C.uintptr_t(bins), C.double(valueAreaPct))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7457,6 +7722,10 @@ type ConditionalValueAtRisk struct {
 // NewConditionalValueAtRisk constructs a ConditionalValueAtRisk. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewConditionalValueAtRisk(period int, confidence float64) (*ConditionalValueAtRisk, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_conditional_value_at_risk_new(C.uintptr_t(period), C.double(confidence))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7535,6 +7804,18 @@ type ConnorsRsi struct {
 // NewConnorsRsi constructs a ConnorsRsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewConnorsRsi(periodRsi int, periodStreak int, periodRank int) (*ConnorsRsi, error) {
+	if periodRsi < 0 {
+		return nil, fmt.Errorf("%w: periodRsi must not be negative, got %d",
+			ErrInvalidParams, periodRsi)
+	}
+	if periodStreak < 0 {
+		return nil, fmt.Errorf("%w: periodStreak must not be negative, got %d",
+			ErrInvalidParams, periodStreak)
+	}
+	if periodRank < 0 {
+		return nil, fmt.Errorf("%w: periodRank must not be negative, got %d",
+			ErrInvalidParams, periodRank)
+	}
 	ptr := C.wickra_connors_rsi_new(C.uintptr_t(periodRsi), C.uintptr_t(periodStreak), C.uintptr_t(periodRank))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7613,6 +7894,18 @@ type Coppock struct {
 // NewCoppock constructs a Coppock. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCoppock(rocLongPeriod int, rocShortPeriod int, wmaPeriod int) (*Coppock, error) {
+	if rocLongPeriod < 0 {
+		return nil, fmt.Errorf("%w: rocLongPeriod must not be negative, got %d",
+			ErrInvalidParams, rocLongPeriod)
+	}
+	if rocShortPeriod < 0 {
+		return nil, fmt.Errorf("%w: rocShortPeriod must not be negative, got %d",
+			ErrInvalidParams, rocShortPeriod)
+	}
+	if wmaPeriod < 0 {
+		return nil, fmt.Errorf("%w: wmaPeriod must not be negative, got %d",
+			ErrInvalidParams, wmaPeriod)
+	}
 	ptr := C.wickra_coppock_new(C.uintptr_t(rocLongPeriod), C.uintptr_t(rocShortPeriod), C.uintptr_t(wmaPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -7691,6 +7984,10 @@ type CorrelationTrendIndicator struct {
 // NewCorrelationTrendIndicator constructs a CorrelationTrendIndicator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCorrelationTrendIndicator(period int) (*CorrelationTrendIndicator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_correlation_trend_indicator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -8212,6 +8509,10 @@ type CyberneticCycle struct {
 // NewCyberneticCycle constructs a CyberneticCycle. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewCyberneticCycle(period int) (*CyberneticCycle, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_cybernetic_cycle_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -8382,7 +8683,7 @@ func (ind *Cypher) Close() {
 
 // DayOfWeekProfile wraps the DayOfWeekProfile indicator over the Wickra C ABI.
 type DayOfWeekProfile struct {
-	handle *C.struct_DayOfWeekProfile
+	handle    *C.struct_DayOfWeekProfile
 	valuesCap int
 }
 
@@ -8458,6 +8759,10 @@ type Decycler struct {
 // NewDecycler constructs a Decycler. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDecycler(period int) (*Decycler, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_decycler_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -8536,6 +8841,14 @@ type DecyclerOscillator struct {
 // NewDecyclerOscillator constructs a DecyclerOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDecyclerOscillator(fast int, slow int) (*DecyclerOscillator, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_decycler_oscillator_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -8614,6 +8927,10 @@ type Dema struct {
 // NewDema constructs a Dema. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDema(period int) (*Dema, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_dema_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -8692,6 +9009,10 @@ type DemandIndex struct {
 // NewDemandIndex constructs a DemandIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDemandIndex(period int) (*DemandIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_demand_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -8932,6 +9253,22 @@ type DerivativeOscillator struct {
 // NewDerivativeOscillator constructs a DerivativeOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDerivativeOscillator(rsiPeriod int, smooth1 int, smooth2 int, signalPeriod int) (*DerivativeOscillator, error) {
+	if rsiPeriod < 0 {
+		return nil, fmt.Errorf("%w: rsiPeriod must not be negative, got %d",
+			ErrInvalidParams, rsiPeriod)
+	}
+	if smooth1 < 0 {
+		return nil, fmt.Errorf("%w: smooth1 must not be negative, got %d",
+			ErrInvalidParams, smooth1)
+	}
+	if smooth2 < 0 {
+		return nil, fmt.Errorf("%w: smooth2 must not be negative, got %d",
+			ErrInvalidParams, smooth2)
+	}
+	if signalPeriod < 0 {
+		return nil, fmt.Errorf("%w: signalPeriod must not be negative, got %d",
+			ErrInvalidParams, signalPeriod)
+	}
 	ptr := C.wickra_derivative_oscillator_new(C.uintptr_t(rsiPeriod), C.uintptr_t(smooth1), C.uintptr_t(smooth2), C.uintptr_t(signalPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9010,6 +9347,10 @@ type DetrendedStdDev struct {
 // NewDetrendedStdDev constructs a DetrendedStdDev. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDetrendedStdDev(period int) (*DetrendedStdDev, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_detrended_std_dev_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9088,6 +9429,10 @@ type DisparityIndex struct {
 // NewDisparityIndex constructs a DisparityIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDisparityIndex(period int) (*DisparityIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_disparity_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9166,6 +9511,10 @@ type DistanceSsd struct {
 // NewDistanceSsd constructs a DistanceSsd. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDistanceSsd(period int) (*DistanceSsd, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_distance_ssd_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9501,6 +9850,10 @@ type Donchian struct {
 // NewDonchian constructs a Donchian. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDonchian(period int) (*Donchian, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_donchian_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9569,6 +9922,10 @@ type DonchianStop struct {
 // NewDonchianStop constructs a DonchianStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDonchianStop(period int) (*DonchianStop, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_donchian_stop_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9637,6 +9994,10 @@ type DoubleBollinger struct {
 // NewDoubleBollinger constructs a DoubleBollinger. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDoubleBollinger(period int, kInner float64, kOuter float64) (*DoubleBollinger, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_double_bollinger_new(C.uintptr_t(period), C.double(kInner), C.double(kOuter))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -9901,6 +10262,10 @@ type Dpo struct {
 // NewDpo constructs a Dpo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDpo(period int) (*Dpo, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_dpo_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10155,6 +10520,10 @@ type DumplingTop struct {
 // NewDumplingTop constructs a DumplingTop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDumplingTop(period int) (*DumplingTop, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_dumpling_top_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10253,6 +10622,10 @@ type Dx struct {
 // NewDx constructs a Dx. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDx(period int) (*Dx, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_dx_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10351,6 +10724,10 @@ type DynamicMomentumIndex struct {
 // NewDynamicMomentumIndex constructs a DynamicMomentumIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewDynamicMomentumIndex(period int) (*DynamicMomentumIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_dynamic_momentum_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10429,6 +10806,10 @@ type EaseOfMovement struct {
 // NewEaseOfMovement constructs a EaseOfMovement. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEaseOfMovement(period int) (*EaseOfMovement, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ease_of_movement_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10591,6 +10972,10 @@ type EhlersStochastic struct {
 // NewEhlersStochastic constructs a EhlersStochastic. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEhlersStochastic(period int) (*EhlersStochastic, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ehlers_stochastic_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10669,6 +11054,10 @@ type Ehma struct {
 // NewEhma constructs a Ehma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEhma(period int) (*Ehma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ehma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10747,6 +11136,22 @@ type ElderImpulse struct {
 // NewElderImpulse constructs a ElderImpulse. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewElderImpulse(emaPeriod int, macdFast int, macdSlow int, macdSignal int) (*ElderImpulse, error) {
+	if emaPeriod < 0 {
+		return nil, fmt.Errorf("%w: emaPeriod must not be negative, got %d",
+			ErrInvalidParams, emaPeriod)
+	}
+	if macdFast < 0 {
+		return nil, fmt.Errorf("%w: macdFast must not be negative, got %d",
+			ErrInvalidParams, macdFast)
+	}
+	if macdSlow < 0 {
+		return nil, fmt.Errorf("%w: macdSlow must not be negative, got %d",
+			ErrInvalidParams, macdSlow)
+	}
+	if macdSignal < 0 {
+		return nil, fmt.Errorf("%w: macdSignal must not be negative, got %d",
+			ErrInvalidParams, macdSignal)
+	}
 	ptr := C.wickra_elder_impulse_new(C.uintptr_t(emaPeriod), C.uintptr_t(macdFast), C.uintptr_t(macdSlow), C.uintptr_t(macdSignal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10825,6 +11230,10 @@ type ElderRay struct {
 // NewElderRay constructs a ElderRay. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewElderRay(period int) (*ElderRay, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_elder_ray_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10893,6 +11302,10 @@ type ElderSafeZone struct {
 // NewElderSafeZone constructs a ElderSafeZone. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewElderSafeZone(period int, coeff float64) (*ElderSafeZone, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_elder_safe_zone_new(C.uintptr_t(period), C.double(coeff))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -10961,6 +11374,10 @@ type Ema struct {
 // NewEma constructs a Ema. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEma(period int) (*Ema, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ema_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -11039,6 +11456,10 @@ type EmpiricalModeDecomposition struct {
 // NewEmpiricalModeDecomposition constructs a EmpiricalModeDecomposition. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEmpiricalModeDecomposition(period int, fraction float64) (*EmpiricalModeDecomposition, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_empirical_mode_decomposition_new(C.uintptr_t(period), C.double(fraction))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -11215,6 +11636,10 @@ type Equivolume struct {
 // NewEquivolume constructs a Equivolume. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEquivolume(period int) (*Equivolume, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_equivolume_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -11347,6 +11772,14 @@ type EvenBetterSinewave struct {
 // NewEvenBetterSinewave constructs a EvenBetterSinewave. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEvenBetterSinewave(hpPeriod int, ssfLength int) (*EvenBetterSinewave, error) {
+	if hpPeriod < 0 {
+		return nil, fmt.Errorf("%w: hpPeriod must not be negative, got %d",
+			ErrInvalidParams, hpPeriod)
+	}
+	if ssfLength < 0 {
+		return nil, fmt.Errorf("%w: ssfLength must not be negative, got %d",
+			ErrInvalidParams, ssfLength)
+	}
 	ptr := C.wickra_even_better_sinewave_new(C.uintptr_t(hpPeriod), C.uintptr_t(ssfLength))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -11523,6 +11956,10 @@ type Evwma struct {
 // NewEvwma constructs a Evwma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewEvwma(period int) (*Evwma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_evwma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -11699,6 +12136,10 @@ type Expectancy struct {
 // NewExpectancy constructs a Expectancy. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewExpectancy(period int) (*Expectancy, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_expectancy_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -12565,6 +13006,10 @@ type FisherRsi struct {
 // NewFisherRsi constructs a FisherRsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFisherRsi(period int) (*FisherRsi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_fisher_rsi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -12643,6 +13088,10 @@ type FisherTransform struct {
 // NewFisherTransform constructs a FisherTransform. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFisherTransform(period int) (*FisherTransform, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_fisher_transform_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -12892,6 +13341,10 @@ type ForceIndex struct {
 // NewForceIndex constructs a ForceIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewForceIndex(period int) (*ForceIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_force_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -12990,6 +13443,10 @@ type FractalChaosBands struct {
 // NewFractalChaosBands constructs a FractalChaosBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFractalChaosBands(k int) (*FractalChaosBands, error) {
+	if k < 0 {
+		return nil, fmt.Errorf("%w: k must not be negative, got %d",
+			ErrInvalidParams, k)
+	}
 	ptr := C.wickra_fractal_chaos_bands_new(C.uintptr_t(k))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13058,6 +13515,10 @@ type Frama struct {
 // NewFrama constructs a Frama. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFrama(period int) (*Frama, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_frama_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13136,6 +13597,10 @@ type FryPanBottom struct {
 // NewFryPanBottom constructs a FryPanBottom. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFryPanBottom(period int) (*FryPanBottom, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_fry_pan_bottom_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13426,6 +13891,10 @@ type FundingRateMean struct {
 // NewFundingRateMean constructs a FundingRateMean. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFundingRateMean(window int) (*FundingRateMean, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
 	ptr := C.wickra_funding_rate_mean_new(C.uintptr_t(window))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13490,6 +13959,10 @@ type FundingRateZScore struct {
 // NewFundingRateZScore constructs a FundingRateZScore. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewFundingRateZScore(window int) (*FundingRateZScore, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
 	ptr := C.wickra_funding_rate_z_score_new(C.uintptr_t(window))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13554,6 +14027,10 @@ type GainLossRatio struct {
 // NewGainLossRatio constructs a GainLossRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGainLossRatio(period int) (*GainLossRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_gain_loss_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13632,6 +14109,10 @@ type GainToPainRatio struct {
 // NewGainToPainRatio constructs a GainToPainRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGainToPainRatio(period int) (*GainToPainRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_gain_to_pain_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -13886,6 +14367,14 @@ type GarmanKlassVolatility struct {
 // NewGarmanKlassVolatility constructs a GarmanKlassVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGarmanKlassVolatility(period int, tradingPeriods int) (*GarmanKlassVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if tradingPeriods < 0 {
+		return nil, fmt.Errorf("%w: tradingPeriods must not be negative, got %d",
+			ErrInvalidParams, tradingPeriods)
+	}
 	ptr := C.wickra_garman_klass_volatility_new(C.uintptr_t(period), C.uintptr_t(tradingPeriods))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -14082,6 +14571,18 @@ type GatorOscillator struct {
 // NewGatorOscillator constructs a GatorOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGatorOscillator(jawPeriod int, teethPeriod int, lipsPeriod int) (*GatorOscillator, error) {
+	if jawPeriod < 0 {
+		return nil, fmt.Errorf("%w: jawPeriod must not be negative, got %d",
+			ErrInvalidParams, jawPeriod)
+	}
+	if teethPeriod < 0 {
+		return nil, fmt.Errorf("%w: teethPeriod must not be negative, got %d",
+			ErrInvalidParams, teethPeriod)
+	}
+	if lipsPeriod < 0 {
+		return nil, fmt.Errorf("%w: lipsPeriod must not be negative, got %d",
+			ErrInvalidParams, lipsPeriod)
+	}
 	ptr := C.wickra_gator_oscillator_new(C.uintptr_t(jawPeriod), C.uintptr_t(teethPeriod), C.uintptr_t(lipsPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -14150,6 +14651,10 @@ type GeneralizedDema struct {
 // NewGeneralizedDema constructs a GeneralizedDema. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGeneralizedDema(period int, v float64) (*GeneralizedDema, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_generalized_dema_new(C.uintptr_t(period), C.double(v))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -14228,6 +14733,10 @@ type GeometricMa struct {
 // NewGeometricMa constructs a GeometricMa. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGeometricMa(period int) (*GeometricMa, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_geometric_ma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -14374,6 +14883,14 @@ type GrangerCausality struct {
 // NewGrangerCausality constructs a GrangerCausality. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewGrangerCausality(period int, lag int) (*GrangerCausality, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if lag < 0 {
+		return nil, fmt.Errorf("%w: lag must not be negative, got %d",
+			ErrInvalidParams, lag)
+	}
 	ptr := C.wickra_granger_causality_new(C.uintptr_t(period), C.uintptr_t(lag))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -14946,6 +15463,10 @@ type HasbrouckInformationShare struct {
 // NewHasbrouckInformationShare constructs a HasbrouckInformationShare. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHasbrouckInformationShare(period int) (*HasbrouckInformationShare, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_hasbrouck_information_share_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -15194,6 +15715,10 @@ type HeikinAshiOscillator struct {
 // NewHeikinAshiOscillator constructs a HeikinAshiOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHeikinAshiOscillator(period int) (*HeikinAshiOscillator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_heikin_ashi_oscillator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -15292,6 +15817,10 @@ type HiLoActivator struct {
 // NewHiLoActivator constructs a HiLoActivator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHiLoActivator(period int) (*HiLoActivator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_hi_lo_activator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -15390,6 +15919,10 @@ type HighLowIndex struct {
 // NewHighLowIndex constructs a HighLowIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHighLowIndex(period int) (*HighLowIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_high_low_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -15573,6 +16106,14 @@ type HighLowVolumeNodes struct {
 // NewHighLowVolumeNodes constructs a HighLowVolumeNodes. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHighLowVolumeNodes(period int, bins int) (*HighLowVolumeNodes, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if bins < 0 {
+		return nil, fmt.Errorf("%w: bins must not be negative, got %d",
+			ErrInvalidParams, bins)
+	}
 	ptr := C.wickra_high_low_volume_nodes_new(C.uintptr_t(period), C.uintptr_t(bins))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -15739,6 +16280,10 @@ type HighpassFilter struct {
 // NewHighpassFilter constructs a HighpassFilter. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHighpassFilter(period int) (*HighpassFilter, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_highpass_filter_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -16091,6 +16636,14 @@ type HistoricalVolatility struct {
 // NewHistoricalVolatility constructs a HistoricalVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHistoricalVolatility(period int, tradingPeriods int) (*HistoricalVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if tradingPeriods < 0 {
+		return nil, fmt.Errorf("%w: tradingPeriods must not be negative, got %d",
+			ErrInvalidParams, tradingPeriods)
+	}
 	ptr := C.wickra_historical_volatility_new(C.uintptr_t(period), C.uintptr_t(tradingPeriods))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -16169,6 +16722,10 @@ type Hma struct {
 // NewHma constructs a Hma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHma(period int) (*Hma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_hma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -16647,6 +17204,10 @@ type HurstChannel struct {
 // NewHurstChannel constructs a HurstChannel. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHurstChannel(period int, multiplier float64) (*HurstChannel, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_hurst_channel_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -16715,6 +17276,14 @@ type HurstExponent struct {
 // NewHurstExponent constructs a HurstExponent. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewHurstExponent(period int, chunks int) (*HurstExponent, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if chunks < 0 {
+		return nil, fmt.Errorf("%w: chunks must not be negative, got %d",
+			ErrInvalidParams, chunks)
+	}
 	ptr := C.wickra_hurst_exponent_new(C.uintptr_t(period), C.uintptr_t(chunks))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -16793,6 +17362,22 @@ type Ichimoku struct {
 // NewIchimoku constructs a Ichimoku. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewIchimoku(tenkanPeriod int, kijunPeriod int, senkouBPeriod int, displacement int) (*Ichimoku, error) {
+	if tenkanPeriod < 0 {
+		return nil, fmt.Errorf("%w: tenkanPeriod must not be negative, got %d",
+			ErrInvalidParams, tenkanPeriod)
+	}
+	if kijunPeriod < 0 {
+		return nil, fmt.Errorf("%w: kijunPeriod must not be negative, got %d",
+			ErrInvalidParams, kijunPeriod)
+	}
+	if senkouBPeriod < 0 {
+		return nil, fmt.Errorf("%w: senkouBPeriod must not be negative, got %d",
+			ErrInvalidParams, senkouBPeriod)
+	}
+	if displacement < 0 {
+		return nil, fmt.Errorf("%w: displacement must not be negative, got %d",
+			ErrInvalidParams, displacement)
+	}
 	ptr := C.wickra_ichimoku_new(C.uintptr_t(tenkanPeriod), C.uintptr_t(kijunPeriod), C.uintptr_t(senkouBPeriod), C.uintptr_t(displacement))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17114,6 +17699,14 @@ type Inertia struct {
 // NewInertia constructs a Inertia. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewInertia(rviPeriod int, linregPeriod int) (*Inertia, error) {
+	if rviPeriod < 0 {
+		return nil, fmt.Errorf("%w: rviPeriod must not be negative, got %d",
+			ErrInvalidParams, rviPeriod)
+	}
+	if linregPeriod < 0 {
+		return nil, fmt.Errorf("%w: linregPeriod must not be negative, got %d",
+			ErrInvalidParams, linregPeriod)
+	}
 	ptr := C.wickra_inertia_new(C.uintptr_t(rviPeriod), C.uintptr_t(linregPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17212,6 +17805,10 @@ type InformationRatio struct {
 // NewInformationRatio constructs a InformationRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewInformationRatio(period int) (*InformationRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_information_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17294,6 +17891,10 @@ type InitialBalance struct {
 // NewInitialBalance constructs a InitialBalance. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewInitialBalance(period int) (*InitialBalance, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_initial_balance_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17362,6 +17963,10 @@ type InstantaneousTrendline struct {
 // NewInstantaneousTrendline constructs a InstantaneousTrendline. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewInstantaneousTrendline(period int) (*InstantaneousTrendline, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_instantaneous_trendline_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17538,6 +18143,10 @@ type IntradayMomentumIndex struct {
 // NewIntradayMomentumIndex constructs a IntradayMomentumIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewIntradayMomentumIndex(period int) (*IntradayMomentumIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_intraday_momentum_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17630,13 +18239,17 @@ func (ind *IntradayMomentumIndex) Close() {
 
 // IntradayVolatilityProfile wraps the IntradayVolatilityProfile indicator over the Wickra C ABI.
 type IntradayVolatilityProfile struct {
-	handle *C.struct_IntradayVolatilityProfile
+	handle    *C.struct_IntradayVolatilityProfile
 	valuesCap int
 }
 
 // NewIntradayVolatilityProfile constructs a IntradayVolatilityProfile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewIntradayVolatilityProfile(buckets int, utcOffsetMinutes int32) (*IntradayVolatilityProfile, error) {
+	if buckets < 0 {
+		return nil, fmt.Errorf("%w: buckets must not be negative, got %d",
+			ErrInvalidParams, buckets)
+	}
 	ptr := C.wickra_intraday_volatility_profile_new(C.uintptr_t(buckets), C.int32_t(utcOffsetMinutes))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17882,6 +18495,10 @@ type JarqueBera struct {
 // NewJarqueBera constructs a JarqueBera. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewJarqueBera(period int) (*JarqueBera, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_jarque_bera_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -17960,6 +18577,10 @@ type Jma struct {
 // NewJma constructs a Jma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewJma(period int, phase float64, power uint32) (*Jma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_jma_new(C.uintptr_t(period), C.double(phase), C.uint32_t(power))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18038,6 +18659,10 @@ type JumpIndicator struct {
 // NewJumpIndicator constructs a JumpIndicator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewJumpIndicator(period int, threshold float64) (*JumpIndicator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_jump_indicator_new(C.uintptr_t(period), C.double(threshold))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18116,6 +18741,10 @@ type KRatio struct {
 // NewKRatio constructs a KRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKRatio(period int) (*KRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_k_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18319,6 +18948,18 @@ type Kama struct {
 // NewKama constructs a Kama. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKama(erPeriod int, fast int, slow int) (*Kama, error) {
+	if erPeriod < 0 {
+		return nil, fmt.Errorf("%w: erPeriod must not be negative, got %d",
+			ErrInvalidParams, erPeriod)
+	}
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_kama_new(C.uintptr_t(erPeriod), C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18397,6 +19038,10 @@ type KaseDevStop struct {
 // NewKaseDevStop constructs a KaseDevStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKaseDevStop(period int, dev float64) (*KaseDevStop, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_kase_dev_stop_new(C.uintptr_t(period), C.double(dev))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18465,6 +19110,14 @@ type KasePermissionStochastic struct {
 // NewKasePermissionStochastic constructs a KasePermissionStochastic. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKasePermissionStochastic(length int, smooth int) (*KasePermissionStochastic, error) {
+	if length < 0 {
+		return nil, fmt.Errorf("%w: length must not be negative, got %d",
+			ErrInvalidParams, length)
+	}
+	if smooth < 0 {
+		return nil, fmt.Errorf("%w: smooth must not be negative, got %d",
+			ErrInvalidParams, smooth)
+	}
 	ptr := C.wickra_kase_permission_stochastic_new(C.uintptr_t(length), C.uintptr_t(smooth))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18533,6 +19186,10 @@ type KellyCriterion struct {
 // NewKellyCriterion constructs a KellyCriterion. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKellyCriterion(period int) (*KellyCriterion, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_kelly_criterion_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18611,6 +19268,14 @@ type Keltner struct {
 // NewKeltner constructs a Keltner. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKeltner(emaPeriod int, atrPeriod int, multiplier float64) (*Keltner, error) {
+	if emaPeriod < 0 {
+		return nil, fmt.Errorf("%w: emaPeriod must not be negative, got %d",
+			ErrInvalidParams, emaPeriod)
+	}
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_keltner_new(C.uintptr_t(emaPeriod), C.uintptr_t(atrPeriod), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18679,6 +19344,10 @@ type KendallTau struct {
 // NewKendallTau constructs a KendallTau. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKendallTau(period int) (*KendallTau, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_kendall_tau_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -18957,6 +19626,42 @@ type Kst struct {
 // NewKst constructs a Kst. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKst(roc1 int, roc2 int, roc3 int, roc4 int, sma1 int, sma2 int, sma3 int, sma4 int, signal int) (*Kst, error) {
+	if roc1 < 0 {
+		return nil, fmt.Errorf("%w: roc1 must not be negative, got %d",
+			ErrInvalidParams, roc1)
+	}
+	if roc2 < 0 {
+		return nil, fmt.Errorf("%w: roc2 must not be negative, got %d",
+			ErrInvalidParams, roc2)
+	}
+	if roc3 < 0 {
+		return nil, fmt.Errorf("%w: roc3 must not be negative, got %d",
+			ErrInvalidParams, roc3)
+	}
+	if roc4 < 0 {
+		return nil, fmt.Errorf("%w: roc4 must not be negative, got %d",
+			ErrInvalidParams, roc4)
+	}
+	if sma1 < 0 {
+		return nil, fmt.Errorf("%w: sma1 must not be negative, got %d",
+			ErrInvalidParams, sma1)
+	}
+	if sma2 < 0 {
+		return nil, fmt.Errorf("%w: sma2 must not be negative, got %d",
+			ErrInvalidParams, sma2)
+	}
+	if sma3 < 0 {
+		return nil, fmt.Errorf("%w: sma3 must not be negative, got %d",
+			ErrInvalidParams, sma3)
+	}
+	if sma4 < 0 {
+		return nil, fmt.Errorf("%w: sma4 must not be negative, got %d",
+			ErrInvalidParams, sma4)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_kst_new(C.uintptr_t(roc1), C.uintptr_t(roc2), C.uintptr_t(roc3), C.uintptr_t(roc4), C.uintptr_t(sma1), C.uintptr_t(sma2), C.uintptr_t(sma3), C.uintptr_t(sma4), C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19025,6 +19730,10 @@ type Kurtosis struct {
 // NewKurtosis constructs a Kurtosis. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKurtosis(period int) (*Kurtosis, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_kurtosis_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19103,6 +19812,14 @@ type Kvo struct {
 // NewKvo constructs a Kvo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKvo(fast int, slow int) (*Kvo, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_kvo_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19201,6 +19918,10 @@ type KylesLambda struct {
 // NewKylesLambda constructs a KylesLambda. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewKylesLambda(window int) (*KylesLambda, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
 	ptr := C.wickra_kyles_lambda_new(C.uintptr_t(window))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19441,6 +20162,14 @@ type LeadLagCrossCorrelation struct {
 // NewLeadLagCrossCorrelation constructs a LeadLagCrossCorrelation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLeadLagCrossCorrelation(window int, maxLag int) (*LeadLagCrossCorrelation, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
+	if maxLag < 0 {
+		return nil, fmt.Errorf("%w: maxLag must not be negative, got %d",
+			ErrInvalidParams, maxLag)
+	}
 	ptr := C.wickra_lead_lag_cross_correlation_new(C.uintptr_t(window), C.uintptr_t(maxLag))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19509,6 +20238,10 @@ type LinRegAngle struct {
 // NewLinRegAngle constructs a LinRegAngle. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLinRegAngle(period int) (*LinRegAngle, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_lin_reg_angle_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19587,6 +20320,10 @@ type LinRegChannel struct {
 // NewLinRegChannel constructs a LinRegChannel. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLinRegChannel(period int, multiplier float64) (*LinRegChannel, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_lin_reg_channel_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19655,6 +20392,10 @@ type LinRegIntercept struct {
 // NewLinRegIntercept constructs a LinRegIntercept. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLinRegIntercept(period int) (*LinRegIntercept, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_lin_reg_intercept_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19733,6 +20474,10 @@ type LinRegSlope struct {
 // NewLinRegSlope constructs a LinRegSlope. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLinRegSlope(period int) (*LinRegSlope, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_lin_reg_slope_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19811,6 +20556,10 @@ type LinearRegression struct {
 // NewLinearRegression constructs a LinearRegression. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLinearRegression(period int) (*LinearRegression, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_linear_regression_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -19957,6 +20706,10 @@ type LogReturn struct {
 // NewLogReturn constructs a LogReturn. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewLogReturn(period int) (*LogReturn, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_log_return_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20295,6 +21048,10 @@ type M2Measure struct {
 // NewM2Measure constructs a M2Measure. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewM2Measure(period int, riskFree float64, benchmarkStddev float64) (*M2Measure, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_m2_measure_new(C.uintptr_t(period), C.double(riskFree), C.double(benchmarkStddev))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20373,6 +21130,10 @@ type MaEnvelope struct {
 // NewMaEnvelope constructs a MaEnvelope. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMaEnvelope(period int, percent float64) (*MaEnvelope, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ma_envelope_new(C.uintptr_t(period), C.double(percent))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20441,6 +21202,18 @@ type MacdExt struct {
 // NewMacdExt constructs a MacdExt. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMacdExt(fast int, fastType uint8, slow int, slowType uint8, signal int, signalType uint8) (*MacdExt, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_macd_ext_new(C.uintptr_t(fast), C.uint8_t(fastType), C.uintptr_t(slow), C.uint8_t(slowType), C.uintptr_t(signal), C.uint8_t(signalType))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20509,6 +21282,10 @@ type MacdFix struct {
 // NewMacdFix constructs a MacdFix. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMacdFix(signal int) (*MacdFix, error) {
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_macd_fix_new(C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20577,6 +21354,18 @@ type MacdHistogram struct {
 // NewMacdHistogram constructs a MacdHistogram. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMacdHistogram(fast int, slow int, signal int) (*MacdHistogram, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_macd_histogram_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20655,6 +21444,18 @@ type MacdIndicator struct {
 // NewMacdIndicator constructs a MacdIndicator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMacdIndicator(fast int, slow int, signal int) (*MacdIndicator, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_macd_indicator_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -20889,6 +21690,10 @@ type MartinRatio struct {
 // NewMartinRatio constructs a MartinRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMartinRatio(period int) (*MartinRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_martin_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -21065,6 +21870,14 @@ type MassIndex struct {
 // NewMassIndex constructs a MassIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMassIndex(emaPeriod int, sumPeriod int) (*MassIndex, error) {
+	if emaPeriod < 0 {
+		return nil, fmt.Errorf("%w: emaPeriod must not be negative, got %d",
+			ErrInvalidParams, emaPeriod)
+	}
+	if sumPeriod < 0 {
+		return nil, fmt.Errorf("%w: sumPeriod must not be negative, got %d",
+			ErrInvalidParams, sumPeriod)
+	}
 	ptr := C.wickra_mass_index_new(C.uintptr_t(emaPeriod), C.uintptr_t(sumPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -21359,6 +22172,10 @@ type MaxDrawdown struct {
 // NewMaxDrawdown constructs a MaxDrawdown. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMaxDrawdown(period int) (*MaxDrawdown, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_max_drawdown_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -21607,6 +22424,10 @@ type McGinleyDynamic struct {
 // NewMcGinleyDynamic constructs a McGinleyDynamic. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMcGinleyDynamic(period int) (*McGinleyDynamic, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_mc_ginley_dynamic_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -21685,6 +22506,10 @@ type MedianAbsoluteDeviation struct {
 // NewMedianAbsoluteDeviation constructs a MedianAbsoluteDeviation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMedianAbsoluteDeviation(period int) (*MedianAbsoluteDeviation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_median_absolute_deviation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -21763,6 +22588,10 @@ type MedianChannel struct {
 // NewMedianChannel constructs a MedianChannel. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMedianChannel(period int, multiplier float64) (*MedianChannel, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_median_channel_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -21831,6 +22660,10 @@ type MedianMa struct {
 // NewMedianMa constructs a MedianMa. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMedianMa(period int) (*MedianMa, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_median_ma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22007,6 +22840,10 @@ type Mfi struct {
 // NewMfi constructs a Mfi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMfi(period int) (*Mfi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_mfi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22179,6 +23016,10 @@ type MidPoint struct {
 // NewMidPoint constructs a MidPoint. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMidPoint(period int) (*MidPoint, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_mid_point_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22257,6 +23098,10 @@ type MidPrice struct {
 // NewMidPrice constructs a MidPrice. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMidPrice(period int) (*MidPrice, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_mid_price_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22355,6 +23200,10 @@ type MinusDi struct {
 // NewMinusDi constructs a MinusDi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMinusDi(period int) (*MinusDi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_minus_di_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22453,6 +23302,10 @@ type MinusDm struct {
 // NewMinusDm constructs a MinusDm. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMinusDm(period int) (*MinusDm, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_minus_dm_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22551,6 +23404,10 @@ type ModifiedMaStop struct {
 // NewModifiedMaStop constructs a ModifiedMaStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewModifiedMaStop(period int) (*ModifiedMaStop, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_modified_ma_stop_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22619,6 +23476,10 @@ type Mom struct {
 // NewMom constructs a Mom. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMom(period int) (*Mom, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_mom_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22893,6 +23754,10 @@ type MurreyMathLines struct {
 // NewMurreyMathLines constructs a MurreyMathLines. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewMurreyMathLines(period int) (*MurreyMathLines, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_murrey_math_lines_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -22961,6 +23826,14 @@ type NakedPoc struct {
 // NewNakedPoc constructs a NakedPoc. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewNakedPoc(sessionLen int, bins int) (*NakedPoc, error) {
+	if sessionLen < 0 {
+		return nil, fmt.Errorf("%w: sessionLen must not be negative, got %d",
+			ErrInvalidParams, sessionLen)
+	}
+	if bins < 0 {
+		return nil, fmt.Errorf("%w: bins must not be negative, got %d",
+			ErrInvalidParams, bins)
+	}
 	ptr := C.wickra_naked_poc_new(C.uintptr_t(sessionLen), C.uintptr_t(bins))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -23059,6 +23932,10 @@ type Natr struct {
 // NewNatr constructs a Natr. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewNatr(period int) (*Natr, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_natr_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -23242,6 +24119,10 @@ type NewPriceLines struct {
 // NewNewPriceLines constructs a NewPriceLines. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewNewPriceLines(count int) (*NewPriceLines, error) {
+	if count < 0 {
+		return nil, fmt.Errorf("%w: count must not be negative, got %d",
+			ErrInvalidParams, count)
+	}
 	ptr := C.wickra_new_price_lines_new(C.uintptr_t(count))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -23604,6 +24485,10 @@ type OIPriceDivergence struct {
 // NewOIPriceDivergence constructs a OIPriceDivergence. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOIPriceDivergence(window int) (*OIPriceDivergence, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
 	ptr := C.wickra_oi_price_divergence_new(C.uintptr_t(window))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -23796,6 +24681,10 @@ type OmegaRatio struct {
 // NewOmegaRatio constructs a OmegaRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOmegaRatio(period int, threshold float64) (*OmegaRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_omega_ratio_new(C.uintptr_t(period), C.double(threshold))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24036,6 +24925,10 @@ type OpenInterestMomentum struct {
 // NewOpenInterestMomentum constructs a OpenInterestMomentum. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOpenInterestMomentum(period int) (*OpenInterestMomentum, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_open_interest_momentum_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24198,6 +25091,10 @@ type OpeningRange struct {
 // NewOpeningRange constructs a OpeningRange. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOpeningRange(period int) (*OpeningRange, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_opening_range_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24414,6 +25311,10 @@ type OrderBookImbalanceTopN struct {
 // NewOrderBookImbalanceTopN constructs a OrderBookImbalanceTopN. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOrderBookImbalanceTopN(levels int) (*OrderBookImbalanceTopN, error) {
+	if levels < 0 {
+		return nil, fmt.Errorf("%w: levels must not be negative, got %d",
+			ErrInvalidParams, levels)
+	}
 	ptr := C.wickra_order_book_imbalance_top_n_new(C.uintptr_t(levels))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24488,6 +25389,10 @@ type OrderFlowImbalance struct {
 // NewOrderFlowImbalance constructs a OrderFlowImbalance. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOrderFlowImbalance(period int) (*OrderFlowImbalance, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_order_flow_imbalance_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24562,6 +25467,10 @@ type OuHalfLife struct {
 // NewOuHalfLife constructs a OuHalfLife. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewOuHalfLife(period int) (*OuHalfLife, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ou_half_life_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24810,6 +25719,10 @@ type PainIndex struct {
 // NewPainIndex constructs a PainIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPainIndex(period int) (*PainIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_pain_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24888,6 +25801,14 @@ type PairSpreadZScore struct {
 // NewPairSpreadZScore constructs a PairSpreadZScore. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPairSpreadZScore(betaPeriod int, zPeriod int) (*PairSpreadZScore, error) {
+	if betaPeriod < 0 {
+		return nil, fmt.Errorf("%w: betaPeriod must not be negative, got %d",
+			ErrInvalidParams, betaPeriod)
+	}
+	if zPeriod < 0 {
+		return nil, fmt.Errorf("%w: zPeriod must not be negative, got %d",
+			ErrInvalidParams, zPeriod)
+	}
 	ptr := C.wickra_pair_spread_z_score_new(C.uintptr_t(betaPeriod), C.uintptr_t(zPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -24970,6 +25891,10 @@ type PairwiseBeta struct {
 // NewPairwiseBeta constructs a PairwiseBeta. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPairwiseBeta(period int) (*PairwiseBeta, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_pairwise_beta_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25052,6 +25977,14 @@ type ParkinsonVolatility struct {
 // NewParkinsonVolatility constructs a ParkinsonVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewParkinsonVolatility(period int, tradingPeriods int) (*ParkinsonVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if tradingPeriods < 0 {
+		return nil, fmt.Errorf("%w: tradingPeriods must not be negative, got %d",
+			ErrInvalidParams, tradingPeriods)
+	}
 	ptr := C.wickra_parkinson_volatility_new(C.uintptr_t(period), C.uintptr_t(tradingPeriods))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25150,6 +26083,10 @@ type PearsonCorrelation struct {
 // NewPearsonCorrelation constructs a PearsonCorrelation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPearsonCorrelation(period int) (*PearsonCorrelation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_pearson_correlation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25317,6 +26254,10 @@ type PercentB struct {
 // NewPercentB constructs a PercentB. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPercentB(period int, multiplier float64) (*PercentB, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_percent_b_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25537,6 +26478,10 @@ type Pgo struct {
 // NewPgo constructs a Pgo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPgo(period int) (*Pgo, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_pgo_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25733,6 +26678,10 @@ type Pin struct {
 // NewPin constructs a Pin. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPin(window int) (*Pin, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
 	ptr := C.wickra_pin_new(C.uintptr_t(window))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25797,6 +26746,14 @@ type PivotReversal struct {
 // NewPivotReversal constructs a PivotReversal. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPivotReversal(left int, right int) (*PivotReversal, error) {
+	if left < 0 {
+		return nil, fmt.Errorf("%w: left must not be negative, got %d",
+			ErrInvalidParams, left)
+	}
+	if right < 0 {
+		return nil, fmt.Errorf("%w: right must not be negative, got %d",
+			ErrInvalidParams, right)
+	}
 	ptr := C.wickra_pivot_reversal_new(C.uintptr_t(left), C.uintptr_t(right))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25895,6 +26852,10 @@ type PlusDi struct {
 // NewPlusDi constructs a PlusDi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPlusDi(period int) (*PlusDi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_plus_di_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -25993,6 +26954,10 @@ type PlusDm struct {
 // NewPlusDm constructs a PlusDm. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPlusDm(period int) (*PlusDm, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_plus_dm_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26091,6 +27056,14 @@ type Pmo struct {
 // NewPmo constructs a Pmo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPmo(smoothing1 int, smoothing2 int) (*Pmo, error) {
+	if smoothing1 < 0 {
+		return nil, fmt.Errorf("%w: smoothing1 must not be negative, got %d",
+			ErrInvalidParams, smoothing1)
+	}
+	if smoothing2 < 0 {
+		return nil, fmt.Errorf("%w: smoothing2 must not be negative, got %d",
+			ErrInvalidParams, smoothing2)
+	}
 	ptr := C.wickra_pmo_new(C.uintptr_t(smoothing1), C.uintptr_t(smoothing2))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26169,6 +27142,10 @@ type PointAndFigureBars struct {
 // NewPointAndFigureBars constructs a PointAndFigureBars. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPointAndFigureBars(boxSize float64, reversal int) (*PointAndFigureBars, error) {
+	if reversal < 0 {
+		return nil, fmt.Errorf("%w: reversal must not be negative, got %d",
+			ErrInvalidParams, reversal)
+	}
 	ptr := C.wickra_point_and_figure_bars_new(C.double(boxSize), C.uintptr_t(reversal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26226,6 +27203,14 @@ type PolarizedFractalEfficiency struct {
 // NewPolarizedFractalEfficiency constructs a PolarizedFractalEfficiency. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPolarizedFractalEfficiency(period int, smoothing int) (*PolarizedFractalEfficiency, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if smoothing < 0 {
+		return nil, fmt.Errorf("%w: smoothing must not be negative, got %d",
+			ErrInvalidParams, smoothing)
+	}
 	ptr := C.wickra_polarized_fractal_efficiency_new(C.uintptr_t(period), C.uintptr_t(smoothing))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26304,6 +27289,14 @@ type Ppo struct {
 // NewPpo constructs a Ppo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPpo(fast int, slow int) (*Ppo, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_ppo_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26382,6 +27375,18 @@ type PpoHistogram struct {
 // NewPpoHistogram constructs a PpoHistogram. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewPpoHistogram(fast int, slow int, signal int) (*PpoHistogram, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_ppo_histogram_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26460,6 +27465,14 @@ type ProfileShape struct {
 // NewProfileShape constructs a ProfileShape. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewProfileShape(period int, bins int) (*ProfileShape, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if bins < 0 {
+		return nil, fmt.Errorf("%w: bins must not be negative, got %d",
+			ErrInvalidParams, bins)
+	}
 	ptr := C.wickra_profile_shape_new(C.uintptr_t(period), C.uintptr_t(bins))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26558,6 +27571,10 @@ type ProfitFactor struct {
 // NewProfitFactor constructs a ProfitFactor. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewProfitFactor(period int) (*ProfitFactor, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_profit_factor_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26636,6 +27653,10 @@ type ProjectionBands struct {
 // NewProjectionBands constructs a ProjectionBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewProjectionBands(period int) (*ProjectionBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_projection_bands_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26704,6 +27725,10 @@ type ProjectionOscillator struct {
 // NewProjectionOscillator constructs a ProjectionOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewProjectionOscillator(period int) (*ProjectionOscillator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_projection_oscillator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -26998,6 +28023,14 @@ type Qqe struct {
 // NewQqe constructs a Qqe. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewQqe(rsiPeriod int, smoothing int, factor float64) (*Qqe, error) {
+	if rsiPeriod < 0 {
+		return nil, fmt.Errorf("%w: rsiPeriod must not be negative, got %d",
+			ErrInvalidParams, rsiPeriod)
+	}
+	if smoothing < 0 {
+		return nil, fmt.Errorf("%w: smoothing must not be negative, got %d",
+			ErrInvalidParams, smoothing)
+	}
 	ptr := C.wickra_qqe_new(C.uintptr_t(rsiPeriod), C.uintptr_t(smoothing), C.double(factor))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27066,6 +28099,10 @@ type Qstick struct {
 // NewQstick constructs a Qstick. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewQstick(period int) (*Qstick, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_qstick_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27164,6 +28201,10 @@ type QuartileBands struct {
 // NewQuartileBands constructs a QuartileBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewQuartileBands(period int) (*QuartileBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_quartile_bands_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27306,6 +28347,10 @@ type RSquared struct {
 // NewRSquared constructs a RSquared. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRSquared(period int) (*RSquared, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_r_squared_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27441,6 +28486,10 @@ type RealizedSpread struct {
 // NewRealizedSpread constructs a RealizedSpread. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRealizedSpread(horizon int) (*RealizedSpread, error) {
+	if horizon < 0 {
+		return nil, fmt.Errorf("%w: horizon must not be negative, got %d",
+			ErrInvalidParams, horizon)
+	}
 	ptr := C.wickra_realized_spread_new(C.uintptr_t(horizon))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27505,6 +28554,10 @@ type RealizedVolatility struct {
 // NewRealizedVolatility constructs a RealizedVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRealizedVolatility(period int) (*RealizedVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_realized_volatility_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27759,6 +28812,10 @@ type Reflex struct {
 // NewReflex constructs a Reflex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewReflex(period int) (*Reflex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_reflex_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27837,6 +28894,14 @@ type RegimeLabel struct {
 // NewRegimeLabel constructs a RegimeLabel. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRegimeLabel(volPeriod int, lookback int) (*RegimeLabel, error) {
+	if volPeriod < 0 {
+		return nil, fmt.Errorf("%w: volPeriod must not be negative, got %d",
+			ErrInvalidParams, volPeriod)
+	}
+	if lookback < 0 {
+		return nil, fmt.Errorf("%w: lookback must not be negative, got %d",
+			ErrInvalidParams, lookback)
+	}
 	ptr := C.wickra_regime_label_new(C.uintptr_t(volPeriod), C.uintptr_t(lookback))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -27915,6 +28980,14 @@ type RelativeStrengthAB struct {
 // NewRelativeStrengthAB constructs a RelativeStrengthAB. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRelativeStrengthAB(maPeriod int, rsiPeriod int) (*RelativeStrengthAB, error) {
+	if maPeriod < 0 {
+		return nil, fmt.Errorf("%w: maPeriod must not be negative, got %d",
+			ErrInvalidParams, maPeriod)
+	}
+	if rsiPeriod < 0 {
+		return nil, fmt.Errorf("%w: rsiPeriod must not be negative, got %d",
+			ErrInvalidParams, rsiPeriod)
+	}
 	ptr := C.wickra_relative_strength_ab_new(C.uintptr_t(maPeriod), C.uintptr_t(rsiPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28127,8 +29200,7 @@ func NewResampler(timeframe int64, gapFill bool) (*Resampler, error) {
 	return obj, nil
 }
 
-
-// Push feeds one trade tick and returns the candles it closed (none while
+// Push feeds one candle and returns the candles it closed (none while
 // the open bar grows, one per closed bucket, plus gap-fill placeholders).
 func (ind *Resampler) Push(open float64, high float64, low float64, close float64, volume float64, timestamp int64) []Candle {
 	n := int(C.wickra_resampler_push(ind.handle, C.double(open), C.double(high), C.double(low), C.double(close), C.double(volume), C.int64_t(timestamp)))
@@ -28371,6 +29443,14 @@ type Rmi struct {
 // NewRmi constructs a Rmi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRmi(period int, momentum int) (*Rmi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if momentum < 0 {
+		return nil, fmt.Errorf("%w: momentum must not be negative, got %d",
+			ErrInvalidParams, momentum)
+	}
 	ptr := C.wickra_rmi_new(C.uintptr_t(period), C.uintptr_t(momentum))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28449,6 +29529,10 @@ type Roc struct {
 // NewRoc constructs a Roc. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRoc(period int) (*Roc, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_roc_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28527,6 +29611,10 @@ type Rocp struct {
 // NewRocp constructs a Rocp. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRocp(period int) (*Rocp, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rocp_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28605,6 +29693,10 @@ type Rocr struct {
 // NewRocr constructs a Rocr. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRocr(period int) (*Rocr, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rocr_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28683,6 +29775,10 @@ type Rocr100 struct {
 // NewRocr100 constructs a Rocr100. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRocr100(period int) (*Rocr100, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rocr100_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28761,6 +29857,14 @@ type RogersSatchellVolatility struct {
 // NewRogersSatchellVolatility constructs a RogersSatchellVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRogersSatchellVolatility(period int, tradingPeriods int) (*RogersSatchellVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if tradingPeriods < 0 {
+		return nil, fmt.Errorf("%w: tradingPeriods must not be negative, got %d",
+			ErrInvalidParams, tradingPeriods)
+	}
 	ptr := C.wickra_rogers_satchell_volatility_new(C.uintptr_t(period), C.uintptr_t(tradingPeriods))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28859,6 +29963,10 @@ type RollMeasure struct {
 // NewRollMeasure constructs a RollMeasure. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollMeasure(period int) (*RollMeasure, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_roll_measure_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -28923,6 +30031,10 @@ type RollingCorrelation struct {
 // NewRollingCorrelation constructs a RollingCorrelation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingCorrelation(period int) (*RollingCorrelation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_correlation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29005,6 +30117,10 @@ type RollingCovariance struct {
 // NewRollingCovariance constructs a RollingCovariance. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingCovariance(period int) (*RollingCovariance, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_covariance_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29087,6 +30203,10 @@ type RollingIqr struct {
 // NewRollingIqr constructs a RollingIqr. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingIqr(period int) (*RollingIqr, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_iqr_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29165,6 +30285,10 @@ type RollingMinMaxScaler struct {
 // NewRollingMinMaxScaler constructs a RollingMinMaxScaler. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingMinMaxScaler(period int) (*RollingMinMaxScaler, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_min_max_scaler_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29243,6 +30367,10 @@ type RollingPercentileRank struct {
 // NewRollingPercentileRank constructs a RollingPercentileRank. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingPercentileRank(period int) (*RollingPercentileRank, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_percentile_rank_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29321,6 +30449,10 @@ type RollingQuantile struct {
 // NewRollingQuantile constructs a RollingQuantile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingQuantile(period int, quantile float64) (*RollingQuantile, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_quantile_new(C.uintptr_t(period), C.double(quantile))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29399,6 +30531,10 @@ type RollingVwap struct {
 // NewRollingVwap constructs a RollingVwap. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRollingVwap(period int) (*RollingVwap, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rolling_vwap_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29497,6 +30633,14 @@ type RoofingFilter struct {
 // NewRoofingFilter constructs a RoofingFilter. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRoofingFilter(lpPeriod int, hpPeriod int) (*RoofingFilter, error) {
+	if lpPeriod < 0 {
+		return nil, fmt.Errorf("%w: lpPeriod must not be negative, got %d",
+			ErrInvalidParams, lpPeriod)
+	}
+	if hpPeriod < 0 {
+		return nil, fmt.Errorf("%w: hpPeriod must not be negative, got %d",
+			ErrInvalidParams, hpPeriod)
+	}
 	ptr := C.wickra_roofing_filter_new(C.uintptr_t(lpPeriod), C.uintptr_t(hpPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29575,6 +30719,10 @@ type Rsi struct {
 // NewRsi constructs a Rsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRsi(period int) (*Rsi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rsi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29653,6 +30801,10 @@ type Rsx struct {
 // NewRsx constructs a Rsx. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRsx(length int) (*Rsx, error) {
+	if length < 0 {
+		return nil, fmt.Errorf("%w: length must not be negative, got %d",
+			ErrInvalidParams, length)
+	}
 	ptr := C.wickra_rsx_new(C.uintptr_t(length))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29731,6 +30883,10 @@ type RunBars struct {
 // NewRunBars constructs a RunBars. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRunBars(runLength int) (*RunBars, error) {
+	if runLength < 0 {
+		return nil, fmt.Errorf("%w: runLength must not be negative, got %d",
+			ErrInvalidParams, runLength)
+	}
 	ptr := C.wickra_run_bars_new(C.uintptr_t(runLength))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29788,6 +30944,10 @@ type Rvi struct {
 // NewRvi constructs a Rvi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRvi(period int) (*Rvi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rvi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29886,6 +31046,10 @@ type RviVolatility struct {
 // NewRviVolatility constructs a RviVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRviVolatility(period int) (*RviVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rvi_volatility_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -29964,6 +31128,10 @@ type Rwi struct {
 // NewRwi constructs a Rwi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewRwi(period int) (*Rwi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_rwi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -30032,6 +31200,14 @@ type SampleEntropy struct {
 // NewSampleEntropy constructs a SampleEntropy. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSampleEntropy(period int, m int, rFactor float64) (*SampleEntropy, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if m < 0 {
+		return nil, fmt.Errorf("%w: m must not be negative, got %d",
+			ErrInvalidParams, m)
+	}
 	ptr := C.wickra_sample_entropy_new(C.uintptr_t(period), C.uintptr_t(m), C.double(rFactor))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -30638,6 +31814,14 @@ type ShannonEntropy struct {
 // NewShannonEntropy constructs a ShannonEntropy. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewShannonEntropy(period int, bins int) (*ShannonEntropy, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if bins < 0 {
+		return nil, fmt.Errorf("%w: bins must not be negative, got %d",
+			ErrInvalidParams, bins)
+	}
 	ptr := C.wickra_shannon_entropy_new(C.uintptr_t(period), C.uintptr_t(bins))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -30814,6 +31998,10 @@ type SharpeRatio struct {
 // NewSharpeRatio constructs a SharpeRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSharpeRatio(period int, riskFree float64) (*SharpeRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_sharpe_ratio_new(C.uintptr_t(period), C.double(riskFree))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31230,6 +32418,10 @@ type SineWeightedMa struct {
 // NewSineWeightedMa constructs a SineWeightedMa. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSineWeightedMa(period int) (*SineWeightedMa, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_sine_weighted_ma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31308,6 +32500,14 @@ type SinglePrints struct {
 // NewSinglePrints constructs a SinglePrints. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSinglePrints(period int, bins int) (*SinglePrints, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if bins < 0 {
+		return nil, fmt.Errorf("%w: bins must not be negative, got %d",
+			ErrInvalidParams, bins)
+	}
 	ptr := C.wickra_single_prints_new(C.uintptr_t(period), C.uintptr_t(bins))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31406,6 +32606,10 @@ type Skewness struct {
 // NewSkewness constructs a Skewness. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSkewness(period int) (*Skewness, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_skewness_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31484,6 +32688,10 @@ type Sma struct {
 // NewSma constructs a Sma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSma(period int) (*Sma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_sma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31562,6 +32770,18 @@ type Smi struct {
 // NewSmi constructs a Smi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSmi(period int, dPeriod int, d2Period int) (*Smi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if dPeriod < 0 {
+		return nil, fmt.Errorf("%w: dPeriod must not be negative, got %d",
+			ErrInvalidParams, dPeriod)
+	}
+	if d2Period < 0 {
+		return nil, fmt.Errorf("%w: d2Period must not be negative, got %d",
+			ErrInvalidParams, d2Period)
+	}
 	ptr := C.wickra_smi_new(C.uintptr_t(period), C.uintptr_t(dPeriod), C.uintptr_t(d2Period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31660,6 +32880,10 @@ type Smma struct {
 // NewSmma constructs a Smma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSmma(period int) (*Smma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_smma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31738,6 +32962,10 @@ type SmoothedHeikinAshi struct {
 // NewSmoothedHeikinAshi constructs a SmoothedHeikinAshi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSmoothedHeikinAshi(period int) (*SmoothedHeikinAshi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_smoothed_heikin_ashi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31806,6 +33034,10 @@ type SortinoRatio struct {
 // NewSortinoRatio constructs a SortinoRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSortinoRatio(period int, mar float64) (*SortinoRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_sortino_ratio_new(C.uintptr_t(period), C.double(mar))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -31884,6 +33116,10 @@ type SpearmanCorrelation struct {
 // NewSpearmanCorrelation constructs a SpearmanCorrelation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSpearmanCorrelation(period int) (*SpearmanCorrelation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_spearman_correlation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32064,6 +33300,10 @@ type SpreadAr1Coefficient struct {
 // NewSpreadAr1Coefficient constructs a SpreadAr1Coefficient. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSpreadAr1Coefficient(period int) (*SpreadAr1Coefficient, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_spread_ar1_coefficient_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32146,6 +33386,10 @@ type SpreadBollingerBands struct {
 // NewSpreadBollingerBands constructs a SpreadBollingerBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSpreadBollingerBands(period int, numStd float64) (*SpreadBollingerBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_spread_bollinger_bands_new(C.uintptr_t(period), C.double(numStd))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32214,6 +33458,10 @@ type SpreadHurst struct {
 // NewSpreadHurst constructs a SpreadHurst. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSpreadHurst(period int) (*SpreadHurst, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_spread_hurst_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32394,6 +33642,10 @@ type StandardError struct {
 // NewStandardError constructs a StandardError. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStandardError(period int) (*StandardError, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_standard_error_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32472,6 +33724,10 @@ type StandardErrorBands struct {
 // NewStandardErrorBands constructs a StandardErrorBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStandardErrorBands(period int, multiplier float64) (*StandardErrorBands, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_standard_error_bands_new(C.uintptr_t(period), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32540,6 +33796,14 @@ type StarcBands struct {
 // NewStarcBands constructs a StarcBands. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStarcBands(smaPeriod int, atrPeriod int, multiplier float64) (*StarcBands, error) {
+	if smaPeriod < 0 {
+		return nil, fmt.Errorf("%w: smaPeriod must not be negative, got %d",
+			ErrInvalidParams, smaPeriod)
+	}
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_starc_bands_new(C.uintptr_t(smaPeriod), C.uintptr_t(atrPeriod), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32608,6 +33872,18 @@ type Stc struct {
 // NewStc constructs a Stc. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStc(fast int, slow int, schaffPeriod int, factor float64) (*Stc, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if schaffPeriod < 0 {
+		return nil, fmt.Errorf("%w: schaffPeriod must not be negative, got %d",
+			ErrInvalidParams, schaffPeriod)
+	}
 	ptr := C.wickra_stc_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(schaffPeriod), C.double(factor))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32686,6 +33962,10 @@ type StdDev struct {
 // NewStdDev constructs a StdDev. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStdDev(period int) (*StdDev, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_std_dev_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -32842,6 +34122,10 @@ type SterlingRatio struct {
 // NewSterlingRatio constructs a SterlingRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSterlingRatio(period int) (*SterlingRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_sterling_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33018,6 +34302,14 @@ type StochRsi struct {
 // NewStochRsi constructs a StochRsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStochRsi(rsiPeriod int, stochPeriod int) (*StochRsi, error) {
+	if rsiPeriod < 0 {
+		return nil, fmt.Errorf("%w: rsiPeriod must not be negative, got %d",
+			ErrInvalidParams, rsiPeriod)
+	}
+	if stochPeriod < 0 {
+		return nil, fmt.Errorf("%w: stochPeriod must not be negative, got %d",
+			ErrInvalidParams, stochPeriod)
+	}
 	ptr := C.wickra_stoch_rsi_new(C.uintptr_t(rsiPeriod), C.uintptr_t(stochPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33096,6 +34388,14 @@ type Stochastic struct {
 // NewStochastic constructs a Stochastic. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStochastic(kPeriod int, dPeriod int) (*Stochastic, error) {
+	if kPeriod < 0 {
+		return nil, fmt.Errorf("%w: kPeriod must not be negative, got %d",
+			ErrInvalidParams, kPeriod)
+	}
+	if dPeriod < 0 {
+		return nil, fmt.Errorf("%w: dPeriod must not be negative, got %d",
+			ErrInvalidParams, dPeriod)
+	}
 	ptr := C.wickra_stochastic_new(C.uintptr_t(kPeriod), C.uintptr_t(dPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33164,6 +34464,10 @@ type StochasticCci struct {
 // NewStochasticCci constructs a StochasticCci. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewStochasticCci(period int) (*StochasticCci, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_stochastic_cci_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33262,6 +34566,10 @@ type SuperSmoother struct {
 // NewSuperSmoother constructs a SuperSmoother. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSuperSmoother(period int) (*SuperSmoother, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_super_smoother_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33340,6 +34648,10 @@ type SuperTrend struct {
 // NewSuperTrend constructs a SuperTrend. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewSuperTrend(atrPeriod int, multiplier float64) (*SuperTrend, error) {
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_super_trend_new(C.uintptr_t(atrPeriod), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33408,6 +34720,10 @@ type T3 struct {
 // NewT3 constructs a T3. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewT3(period int, v float64) (*T3, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_t3_new(C.uintptr_t(period), C.double(v))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -33486,6 +34802,10 @@ type TailRatio struct {
 // NewTailRatio constructs a TailRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTailRatio(period int) (*TailRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_tail_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34118,6 +35438,22 @@ type TdCombo struct {
 // NewTdCombo constructs a TdCombo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdCombo(setupLookback int, setupTarget int, countdownLookback int, countdownTarget int) (*TdCombo, error) {
+	if setupLookback < 0 {
+		return nil, fmt.Errorf("%w: setupLookback must not be negative, got %d",
+			ErrInvalidParams, setupLookback)
+	}
+	if setupTarget < 0 {
+		return nil, fmt.Errorf("%w: setupTarget must not be negative, got %d",
+			ErrInvalidParams, setupTarget)
+	}
+	if countdownLookback < 0 {
+		return nil, fmt.Errorf("%w: countdownLookback must not be negative, got %d",
+			ErrInvalidParams, countdownLookback)
+	}
+	if countdownTarget < 0 {
+		return nil, fmt.Errorf("%w: countdownTarget must not be negative, got %d",
+			ErrInvalidParams, countdownTarget)
+	}
 	ptr := C.wickra_td_combo_new(C.uintptr_t(setupLookback), C.uintptr_t(setupTarget), C.uintptr_t(countdownLookback), C.uintptr_t(countdownTarget))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34216,6 +35552,22 @@ type TdCountdown struct {
 // NewTdCountdown constructs a TdCountdown. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdCountdown(setupLookback int, setupTarget int, countdownLookback int, countdownTarget int) (*TdCountdown, error) {
+	if setupLookback < 0 {
+		return nil, fmt.Errorf("%w: setupLookback must not be negative, got %d",
+			ErrInvalidParams, setupLookback)
+	}
+	if setupTarget < 0 {
+		return nil, fmt.Errorf("%w: setupTarget must not be negative, got %d",
+			ErrInvalidParams, setupTarget)
+	}
+	if countdownLookback < 0 {
+		return nil, fmt.Errorf("%w: countdownLookback must not be negative, got %d",
+			ErrInvalidParams, countdownLookback)
+	}
+	if countdownTarget < 0 {
+		return nil, fmt.Errorf("%w: countdownTarget must not be negative, got %d",
+			ErrInvalidParams, countdownTarget)
+	}
 	ptr := C.wickra_td_countdown_new(C.uintptr_t(setupLookback), C.uintptr_t(setupTarget), C.uintptr_t(countdownLookback), C.uintptr_t(countdownTarget))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34314,6 +35666,10 @@ type TdDWave struct {
 // NewTdDWave constructs a TdDWave. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdDWave(strength int) (*TdDWave, error) {
+	if strength < 0 {
+		return nil, fmt.Errorf("%w: strength must not be negative, got %d",
+			ErrInvalidParams, strength)
+	}
 	ptr := C.wickra_td_d_wave_new(C.uintptr_t(strength))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34412,6 +35768,10 @@ type TdDeMarker struct {
 // NewTdDeMarker constructs a TdDeMarker. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdDeMarker(period int) (*TdDeMarker, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_td_de_marker_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34608,6 +35968,14 @@ type TdLines struct {
 // NewTdLines constructs a TdLines. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdLines(lookback int, target int) (*TdLines, error) {
+	if lookback < 0 {
+		return nil, fmt.Errorf("%w: lookback must not be negative, got %d",
+			ErrInvalidParams, lookback)
+	}
+	if target < 0 {
+		return nil, fmt.Errorf("%w: target must not be negative, got %d",
+			ErrInvalidParams, target)
+	}
 	ptr := C.wickra_td_lines_new(C.uintptr_t(lookback), C.uintptr_t(target))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34676,6 +36044,14 @@ type TdMovingAverage struct {
 // NewTdMovingAverage constructs a TdMovingAverage. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdMovingAverage(periodSt1 int, periodSt2 int) (*TdMovingAverage, error) {
+	if periodSt1 < 0 {
+		return nil, fmt.Errorf("%w: periodSt1 must not be negative, got %d",
+			ErrInvalidParams, periodSt1)
+	}
+	if periodSt2 < 0 {
+		return nil, fmt.Errorf("%w: periodSt2 must not be negative, got %d",
+			ErrInvalidParams, periodSt2)
+	}
 	ptr := C.wickra_td_moving_average_new(C.uintptr_t(periodSt1), C.uintptr_t(periodSt2))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -34842,6 +36218,10 @@ type TdPressure struct {
 // NewTdPressure constructs a TdPressure. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdPressure(period int) (*TdPressure, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_td_pressure_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35106,6 +36486,10 @@ type TdRei struct {
 // NewTdRei constructs a TdRei. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdRei(period int) (*TdRei, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_td_rei_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35204,6 +36588,14 @@ type TdRiskLevel struct {
 // NewTdRiskLevel constructs a TdRiskLevel. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdRiskLevel(lookback int, target int) (*TdRiskLevel, error) {
+	if lookback < 0 {
+		return nil, fmt.Errorf("%w: lookback must not be negative, got %d",
+			ErrInvalidParams, lookback)
+	}
+	if target < 0 {
+		return nil, fmt.Errorf("%w: target must not be negative, got %d",
+			ErrInvalidParams, target)
+	}
 	ptr := C.wickra_td_risk_level_new(C.uintptr_t(lookback), C.uintptr_t(target))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35272,6 +36664,22 @@ type TdSequential struct {
 // NewTdSequential constructs a TdSequential. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdSequential(setupLookback int, setupTarget int, countdownLookback int, countdownTarget int) (*TdSequential, error) {
+	if setupLookback < 0 {
+		return nil, fmt.Errorf("%w: setupLookback must not be negative, got %d",
+			ErrInvalidParams, setupLookback)
+	}
+	if setupTarget < 0 {
+		return nil, fmt.Errorf("%w: setupTarget must not be negative, got %d",
+			ErrInvalidParams, setupTarget)
+	}
+	if countdownLookback < 0 {
+		return nil, fmt.Errorf("%w: countdownLookback must not be negative, got %d",
+			ErrInvalidParams, countdownLookback)
+	}
+	if countdownTarget < 0 {
+		return nil, fmt.Errorf("%w: countdownTarget must not be negative, got %d",
+			ErrInvalidParams, countdownTarget)
+	}
 	ptr := C.wickra_td_sequential_new(C.uintptr_t(setupLookback), C.uintptr_t(setupTarget), C.uintptr_t(countdownLookback), C.uintptr_t(countdownTarget))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35340,6 +36748,14 @@ type TdSetup struct {
 // NewTdSetup constructs a TdSetup. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTdSetup(lookback int, target int) (*TdSetup, error) {
+	if lookback < 0 {
+		return nil, fmt.Errorf("%w: lookback must not be negative, got %d",
+			ErrInvalidParams, lookback)
+	}
+	if target < 0 {
+		return nil, fmt.Errorf("%w: target must not be negative, got %d",
+			ErrInvalidParams, target)
+	}
 	ptr := C.wickra_td_setup_new(C.uintptr_t(lookback), C.uintptr_t(target))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35536,6 +36952,10 @@ type Tema struct {
 // NewTema constructs a Tema. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTema(period int) (*Tema, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_tema_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35874,6 +37294,10 @@ type ThreeLineBreak struct {
 // NewThreeLineBreak constructs a ThreeLineBreak. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewThreeLineBreak(lines int) (*ThreeLineBreak, error) {
+	if lines < 0 {
+		return nil, fmt.Errorf("%w: lines must not be negative, got %d",
+			ErrInvalidParams, lines)
+	}
 	ptr := C.wickra_three_line_break_new(C.uintptr_t(lines))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -35972,6 +37396,10 @@ type ThreeLineBreakBars struct {
 // NewThreeLineBreakBars constructs a ThreeLineBreakBars. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewThreeLineBreakBars(lines int) (*ThreeLineBreakBars, error) {
+	if lines < 0 {
+		return nil, fmt.Errorf("%w: lines must not be negative, got %d",
+			ErrInvalidParams, lines)
+	}
 	ptr := C.wickra_three_line_break_bars_new(C.uintptr_t(lines))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -36528,7 +37956,6 @@ func NewTickAggregator(bucket int64, gapFill bool) (*TickAggregator, error) {
 	return obj, nil
 }
 
-
 // Push feeds one trade tick and returns the candles it closed (none while
 // the open bar grows, one per closed bucket, plus gap-fill placeholders).
 func (ind *TickAggregator) Push(price float64, size float64, timestamp int64) []Candle {
@@ -36565,6 +37992,10 @@ type TickBars struct {
 // NewTickBars constructs a TickBars. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTickBars(ticks int) (*TickBars, error) {
+	if ticks < 0 {
+		return nil, fmt.Errorf("%w: ticks must not be negative, got %d",
+			ErrInvalidParams, ticks)
+	}
 	ptr := C.wickra_tick_bars_new(C.uintptr_t(ticks))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -36707,6 +38138,14 @@ type Tii struct {
 // NewTii constructs a Tii. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTii(smaPeriod int, devPeriod int) (*Tii, error) {
+	if smaPeriod < 0 {
+		return nil, fmt.Errorf("%w: smaPeriod must not be negative, got %d",
+			ErrInvalidParams, smaPeriod)
+	}
+	if devPeriod < 0 {
+		return nil, fmt.Errorf("%w: devPeriod must not be negative, got %d",
+			ErrInvalidParams, devPeriod)
+	}
 	ptr := C.wickra_tii_new(C.uintptr_t(smaPeriod), C.uintptr_t(devPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -36785,6 +38224,10 @@ type TimeBasedStop struct {
 // NewTimeBasedStop constructs a TimeBasedStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTimeBasedStop(maxBars int) (*TimeBasedStop, error) {
+	if maxBars < 0 {
+		return nil, fmt.Errorf("%w: maxBars must not be negative, got %d",
+			ErrInvalidParams, maxBars)
+	}
 	ptr := C.wickra_time_based_stop_new(C.uintptr_t(maxBars))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -36877,13 +38320,17 @@ func (ind *TimeBasedStop) Close() {
 
 // TimeOfDayReturnProfile wraps the TimeOfDayReturnProfile indicator over the Wickra C ABI.
 type TimeOfDayReturnProfile struct {
-	handle *C.struct_TimeOfDayReturnProfile
+	handle    *C.struct_TimeOfDayReturnProfile
 	valuesCap int
 }
 
 // NewTimeOfDayReturnProfile constructs a TimeOfDayReturnProfile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTimeOfDayReturnProfile(buckets int, utcOffsetMinutes int32) (*TimeOfDayReturnProfile, error) {
+	if buckets < 0 {
+		return nil, fmt.Errorf("%w: buckets must not be negative, got %d",
+			ErrInvalidParams, buckets)
+	}
 	ptr := C.wickra_time_of_day_return_profile_new(C.uintptr_t(buckets), C.int32_t(utcOffsetMinutes))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37045,13 +38492,21 @@ func (ind *TowerTopBottom) Close() {
 
 // TpoProfile wraps the TpoProfile indicator over the Wickra C ABI.
 type TpoProfile struct {
-	handle *C.struct_TpoProfile
+	handle    *C.struct_TpoProfile
 	valuesCap int
 }
 
 // NewTpoProfile constructs a TpoProfile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTpoProfile(period int, binCount int) (*TpoProfile, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if binCount < 0 {
+		return nil, fmt.Errorf("%w: binCount must not be negative, got %d",
+			ErrInvalidParams, binCount)
+	}
 	ptr := C.wickra_tpo_profile_new(C.uintptr_t(period), C.uintptr_t(binCount))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37122,6 +38577,10 @@ type TradeImbalance struct {
 // NewTradeImbalance constructs a TradeImbalance. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTradeImbalance(window int) (*TradeImbalance, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
 	ptr := C.wickra_trade_imbalance_new(C.uintptr_t(window))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37186,6 +38645,10 @@ type TradeSignAutocorrelation struct {
 // NewTradeSignAutocorrelation constructs a TradeSignAutocorrelation. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTradeSignAutocorrelation(period int) (*TradeSignAutocorrelation, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_trade_sign_autocorrelation_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37348,6 +38811,10 @@ type TrendLabel struct {
 // NewTrendLabel constructs a TrendLabel. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTrendLabel(period int) (*TrendLabel, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_trend_label_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37426,6 +38893,10 @@ type TrendStrengthIndex struct {
 // NewTrendStrengthIndex constructs a TrendStrengthIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTrendStrengthIndex(period int) (*TrendStrengthIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_trend_strength_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37504,6 +38975,10 @@ type Trendflex struct {
 // NewTrendflex constructs a Trendflex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTrendflex(period int) (*Trendflex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_trendflex_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37582,6 +39057,10 @@ type TreynorRatio struct {
 // NewTreynorRatio constructs a TreynorRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTreynorRatio(period int, riskFree float64) (*TreynorRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_treynor_ratio_new(C.uintptr_t(period), C.double(riskFree))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -37762,6 +39241,10 @@ type Trima struct {
 // NewTrima constructs a Trima. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTrima(period int) (*Trima, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_trima_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38121,6 +39604,10 @@ type Trix struct {
 // NewTrix constructs a Trix. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTrix(period int) (*Trix, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_trix_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38297,6 +39784,10 @@ type Tsf struct {
 // NewTsf constructs a Tsf. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTsf(period int) (*Tsf, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_tsf_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38375,6 +39866,10 @@ type TsfOscillator struct {
 // NewTsfOscillator constructs a TsfOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTsfOscillator(period int) (*TsfOscillator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_tsf_oscillator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38453,6 +39948,14 @@ type Tsi struct {
 // NewTsi constructs a Tsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTsi(long int, short int) (*Tsi, error) {
+	if long < 0 {
+		return nil, fmt.Errorf("%w: long must not be negative, got %d",
+			ErrInvalidParams, long)
+	}
+	if short < 0 {
+		return nil, fmt.Errorf("%w: short must not be negative, got %d",
+			ErrInvalidParams, short)
+	}
 	ptr := C.wickra_tsi_new(C.uintptr_t(long), C.uintptr_t(short))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38531,6 +40034,10 @@ type Tsv struct {
 // NewTsv constructs a Tsv. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTsv(period int) (*Tsv, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_tsv_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38629,6 +40136,10 @@ type TtmSqueeze struct {
 // NewTtmSqueeze constructs a TtmSqueeze. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTtmSqueeze(period int, bbMult float64, kcMult float64) (*TtmSqueeze, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ttm_squeeze_new(C.uintptr_t(period), C.double(bbMult), C.double(kcMult))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38697,6 +40208,10 @@ type TtmTrend struct {
 // NewTtmTrend constructs a TtmTrend. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTtmTrend(period int) (*TtmTrend, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ttm_trend_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -38991,6 +40506,10 @@ type TwiggsMoneyFlow struct {
 // NewTwiggsMoneyFlow constructs a TwiggsMoneyFlow. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewTwiggsMoneyFlow(period int) (*TwiggsMoneyFlow, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_twiggs_money_flow_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -39285,6 +40804,10 @@ type UlcerIndex struct {
 // NewUlcerIndex constructs a UlcerIndex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewUlcerIndex(period int) (*UlcerIndex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_ulcer_index_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -39363,6 +40886,18 @@ type UltimateOscillator struct {
 // NewUltimateOscillator constructs a UltimateOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewUltimateOscillator(short int, mid int, long int) (*UltimateOscillator, error) {
+	if short < 0 {
+		return nil, fmt.Errorf("%w: short must not be negative, got %d",
+			ErrInvalidParams, short)
+	}
+	if mid < 0 {
+		return nil, fmt.Errorf("%w: mid must not be negative, got %d",
+			ErrInvalidParams, mid)
+	}
+	if long < 0 {
+		return nil, fmt.Errorf("%w: long must not be negative, got %d",
+			ErrInvalidParams, long)
+	}
 	ptr := C.wickra_ultimate_oscillator_new(C.uintptr_t(short), C.uintptr_t(mid), C.uintptr_t(long))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -39559,6 +41094,10 @@ type UniversalOscillator struct {
 // NewUniversalOscillator constructs a UniversalOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewUniversalOscillator(period int) (*UniversalOscillator, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_universal_oscillator_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -39918,6 +41457,10 @@ type UpsidePotentialRatio struct {
 // NewUpsidePotentialRatio constructs a UpsidePotentialRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewUpsidePotentialRatio(period int, mar float64) (*UpsidePotentialRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_upside_potential_ratio_new(C.uintptr_t(period), C.double(mar))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -39996,6 +41539,14 @@ type ValueArea struct {
 // NewValueArea constructs a ValueArea. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewValueArea(period int, binCount int, valueAreaPct float64) (*ValueArea, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if binCount < 0 {
+		return nil, fmt.Errorf("%w: binCount must not be negative, got %d",
+			ErrInvalidParams, binCount)
+	}
 	ptr := C.wickra_value_area_new(C.uintptr_t(period), C.uintptr_t(binCount), C.double(valueAreaPct))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40064,6 +41615,10 @@ type ValueAtRisk struct {
 // NewValueAtRisk constructs a ValueAtRisk. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewValueAtRisk(period int, confidence float64) (*ValueAtRisk, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_value_at_risk_new(C.uintptr_t(period), C.double(confidence))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40142,6 +41697,10 @@ type Variance struct {
 // NewVariance constructs a Variance. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVariance(period int) (*Variance, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_variance_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40220,6 +41779,14 @@ type VarianceRatio struct {
 // NewVarianceRatio constructs a VarianceRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVarianceRatio(period int, q int) (*VarianceRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if q < 0 {
+		return nil, fmt.Errorf("%w: q must not be negative, got %d",
+			ErrInvalidParams, q)
+	}
 	ptr := C.wickra_variance_ratio_new(C.uintptr_t(period), C.uintptr_t(q))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40302,6 +41869,10 @@ type VerticalHorizontalFilter struct {
 // NewVerticalHorizontalFilter constructs a VerticalHorizontalFilter. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVerticalHorizontalFilter(period int) (*VerticalHorizontalFilter, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_vertical_horizontal_filter_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40380,6 +41951,14 @@ type Vidya struct {
 // NewVidya constructs a Vidya. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVidya(period int, cmoPeriod int) (*Vidya, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if cmoPeriod < 0 {
+		return nil, fmt.Errorf("%w: cmoPeriod must not be negative, got %d",
+			ErrInvalidParams, cmoPeriod)
+	}
 	ptr := C.wickra_vidya_new(C.uintptr_t(period), C.uintptr_t(cmoPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40458,6 +42037,14 @@ type VolatilityCone struct {
 // NewVolatilityCone constructs a VolatilityCone. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolatilityCone(window int, lookback int) (*VolatilityCone, error) {
+	if window < 0 {
+		return nil, fmt.Errorf("%w: window must not be negative, got %d",
+			ErrInvalidParams, window)
+	}
+	if lookback < 0 {
+		return nil, fmt.Errorf("%w: lookback must not be negative, got %d",
+			ErrInvalidParams, lookback)
+	}
 	ptr := C.wickra_volatility_cone_new(C.uintptr_t(window), C.uintptr_t(lookback))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40526,6 +42113,14 @@ type VolatilityOfVolatility struct {
 // NewVolatilityOfVolatility constructs a VolatilityOfVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolatilityOfVolatility(volWindow int, vovWindow int) (*VolatilityOfVolatility, error) {
+	if volWindow < 0 {
+		return nil, fmt.Errorf("%w: volWindow must not be negative, got %d",
+			ErrInvalidParams, volWindow)
+	}
+	if vovWindow < 0 {
+		return nil, fmt.Errorf("%w: vovWindow must not be negative, got %d",
+			ErrInvalidParams, vovWindow)
+	}
 	ptr := C.wickra_volatility_of_volatility_new(C.uintptr_t(volWindow), C.uintptr_t(vovWindow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40604,6 +42199,10 @@ type VolatilityRatio struct {
 // NewVolatilityRatio constructs a VolatilityRatio. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolatilityRatio(period int) (*VolatilityRatio, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_volatility_ratio_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40702,6 +42301,10 @@ type VoltyStop struct {
 // NewVoltyStop constructs a VoltyStop. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVoltyStop(atrPeriod int, multiplier float64) (*VoltyStop, error) {
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_volty_stop_new(C.uintptr_t(atrPeriod), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40851,13 +42454,17 @@ func (ind *VolumeBars) Close() {
 
 // VolumeByTimeProfile wraps the VolumeByTimeProfile indicator over the Wickra C ABI.
 type VolumeByTimeProfile struct {
-	handle *C.struct_VolumeByTimeProfile
+	handle    *C.struct_VolumeByTimeProfile
 	valuesCap int
 }
 
 // NewVolumeByTimeProfile constructs a VolumeByTimeProfile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolumeByTimeProfile(buckets int, utcOffsetMinutes int32) (*VolumeByTimeProfile, error) {
+	if buckets < 0 {
+		return nil, fmt.Errorf("%w: buckets must not be negative, got %d",
+			ErrInvalidParams, buckets)
+	}
 	ptr := C.wickra_volume_by_time_profile_new(C.uintptr_t(buckets), C.int32_t(utcOffsetMinutes))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -40927,6 +42534,14 @@ type VolumeOscillator struct {
 // NewVolumeOscillator constructs a VolumeOscillator. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolumeOscillator(fast int, slow int) (*VolumeOscillator, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
 	ptr := C.wickra_volume_oscillator_new(C.uintptr_t(fast), C.uintptr_t(slow))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41117,13 +42732,21 @@ func (ind *VolumePriceTrend) Close() {
 
 // VolumeProfile wraps the VolumeProfile indicator over the Wickra C ABI.
 type VolumeProfile struct {
-	handle *C.struct_VolumeProfile
+	handle    *C.struct_VolumeProfile
 	valuesCap int
 }
 
 // NewVolumeProfile constructs a VolumeProfile. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolumeProfile(period int, binCount int) (*VolumeProfile, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if binCount < 0 {
+		return nil, fmt.Errorf("%w: binCount must not be negative, got %d",
+			ErrInvalidParams, binCount)
+	}
 	ptr := C.wickra_volume_profile_new(C.uintptr_t(period), C.uintptr_t(binCount))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41194,6 +42817,10 @@ type VolumeRsi struct {
 // NewVolumeRsi constructs a VolumeRsi. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolumeRsi(period int) (*VolumeRsi, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_volume_rsi_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41292,6 +42919,18 @@ type VolumeWeightedMacd struct {
 // NewVolumeWeightedMacd constructs a VolumeWeightedMacd. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolumeWeightedMacd(fast int, slow int, signal int) (*VolumeWeightedMacd, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_volume_weighted_macd_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41360,6 +42999,10 @@ type VolumeWeightedSr struct {
 // NewVolumeWeightedSr constructs a VolumeWeightedSr. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVolumeWeightedSr(period int) (*VolumeWeightedSr, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_volume_weighted_sr_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41428,6 +43071,10 @@ type Vortex struct {
 // NewVortex constructs a Vortex. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVortex(period int) (*Vortex, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_vortex_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41496,6 +43143,10 @@ type Vpin struct {
 // NewVpin constructs a Vpin. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVpin(bucketVolume float64, numBuckets int) (*Vpin, error) {
+	if numBuckets < 0 {
+		return nil, fmt.Errorf("%w: numBuckets must not be negative, got %d",
+			ErrInvalidParams, numBuckets)
+	}
 	ptr := C.wickra_vpin_new(C.double(bucketVolume), C.uintptr_t(numBuckets))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41726,6 +43377,10 @@ type Vwma struct {
 // NewVwma constructs a Vwma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVwma(period int) (*Vwma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_vwma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -41824,6 +43479,10 @@ type Vzo struct {
 // NewVzo constructs a Vzo. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewVzo(period int) (*Vzo, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_vzo_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42020,6 +43679,14 @@ type WavePm struct {
 // NewWavePm constructs a WavePm. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewWavePm(length int, smoothing int) (*WavePm, error) {
+	if length < 0 {
+		return nil, fmt.Errorf("%w: length must not be negative, got %d",
+			ErrInvalidParams, length)
+	}
+	if smoothing < 0 {
+		return nil, fmt.Errorf("%w: smoothing must not be negative, got %d",
+			ErrInvalidParams, smoothing)
+	}
 	ptr := C.wickra_wave_pm_new(C.uintptr_t(length), C.uintptr_t(smoothing))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42098,6 +43765,18 @@ type WaveTrend struct {
 // NewWaveTrend constructs a WaveTrend. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewWaveTrend(channelPeriod int, averagePeriod int, signalPeriod int) (*WaveTrend, error) {
+	if channelPeriod < 0 {
+		return nil, fmt.Errorf("%w: channelPeriod must not be negative, got %d",
+			ErrInvalidParams, channelPeriod)
+	}
+	if averagePeriod < 0 {
+		return nil, fmt.Errorf("%w: averagePeriod must not be negative, got %d",
+			ErrInvalidParams, averagePeriod)
+	}
+	if signalPeriod < 0 {
+		return nil, fmt.Errorf("%w: signalPeriod must not be negative, got %d",
+			ErrInvalidParams, signalPeriod)
+	}
 	ptr := C.wickra_wave_trend_new(C.uintptr_t(channelPeriod), C.uintptr_t(averagePeriod), C.uintptr_t(signalPeriod))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42528,6 +44207,10 @@ type WilliamsR struct {
 // NewWilliamsR constructs a WilliamsR. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewWilliamsR(period int) (*WilliamsR, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_williams_r_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42626,6 +44309,10 @@ type WinRate struct {
 // NewWinRate constructs a WinRate. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewWinRate(period int) (*WinRate, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_win_rate_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42704,6 +44391,10 @@ type Wma struct {
 // NewWma constructs a Wma. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewWma(period int) (*Wma, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_wma_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42850,6 +44541,14 @@ type YangZhangVolatility struct {
 // NewYangZhangVolatility constructs a YangZhangVolatility. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewYangZhangVolatility(period int, tradingPeriods int) (*YangZhangVolatility, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
+	if tradingPeriods < 0 {
+		return nil, fmt.Errorf("%w: tradingPeriods must not be negative, got %d",
+			ErrInvalidParams, tradingPeriods)
+	}
 	ptr := C.wickra_yang_zhang_volatility_new(C.uintptr_t(period), C.uintptr_t(tradingPeriods))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -42948,6 +44647,10 @@ type YoyoExit struct {
 // NewYoyoExit constructs a YoyoExit. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewYoyoExit(atrPeriod int, multiplier float64) (*YoyoExit, error) {
+	if atrPeriod < 0 {
+		return nil, fmt.Errorf("%w: atrPeriod must not be negative, got %d",
+			ErrInvalidParams, atrPeriod)
+	}
 	ptr := C.wickra_yoyo_exit_new(C.uintptr_t(atrPeriod), C.double(multiplier))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -43046,6 +44749,10 @@ type ZScore struct {
 // NewZScore constructs a ZScore. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewZScore(period int) (*ZScore, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_z_score_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -43124,6 +44831,18 @@ type ZeroLagMacd struct {
 // NewZeroLagMacd constructs a ZeroLagMacd. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewZeroLagMacd(fast int, slow int, signal int) (*ZeroLagMacd, error) {
+	if fast < 0 {
+		return nil, fmt.Errorf("%w: fast must not be negative, got %d",
+			ErrInvalidParams, fast)
+	}
+	if slow < 0 {
+		return nil, fmt.Errorf("%w: slow must not be negative, got %d",
+			ErrInvalidParams, slow)
+	}
+	if signal < 0 {
+		return nil, fmt.Errorf("%w: signal must not be negative, got %d",
+			ErrInvalidParams, signal)
+	}
 	ptr := C.wickra_zero_lag_macd_new(C.uintptr_t(fast), C.uintptr_t(slow), C.uintptr_t(signal))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -43260,6 +44979,10 @@ type Zlema struct {
 // NewZlema constructs a Zlema. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
 func NewZlema(period int) (*Zlema, error) {
+	if period < 0 {
+		return nil, fmt.Errorf("%w: period must not be negative, got %d",
+			ErrInvalidParams, period)
+	}
 	ptr := C.wickra_zlema_new(C.uintptr_t(period))
 	if ptr == nil {
 		return nil, ErrInvalidParams
@@ -43468,4 +45191,3 @@ func FetchBinanceKlines(symbol string, interval BinanceInterval, limit uint32, s
 	}
 	return out, nil
 }
-

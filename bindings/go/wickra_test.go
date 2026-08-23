@@ -1,7 +1,9 @@
 package wickra
 
 import (
+	"errors"
 	"math"
+	"strings"
 	"testing"
 )
 
@@ -169,6 +171,53 @@ func TestResetReturnsToWarmup(t *testing.T) {
 func TestInvalidParams(t *testing.T) {
 	if _, err := NewSma(0); err == nil {
 		t.Fatal("NewSma(0) should return ErrInvalidParams")
+	}
+}
+
+// A Go int reaching a uintptr_t parameter wraps: -1 becomes 2^64-1. That value
+// happens to be refused downstream for exceeding the maximum window length, but
+// only because those two magnitudes sit that way round -- nothing stated the
+// relationship, and the caller got "invalid indicator parameters" rather than
+// being told they passed a negative number.
+func TestNegativePeriodIsRejectedByName(t *testing.T) {
+	for _, period := range []int{-1, -1 << 20, math.MinInt} {
+		ind, err := NewSma(period)
+		if ind != nil {
+			ind.Close()
+			t.Fatalf("NewSma(%d) returned an indicator", period)
+		}
+		if !errors.Is(err, ErrInvalidParams) {
+			t.Fatalf("NewSma(%d) error = %v, want ErrInvalidParams", period, err)
+		}
+		if !strings.Contains(err.Error(), "must not be negative") {
+			t.Fatalf("NewSma(%d) error = %q, want it to name the problem", period, err)
+		}
+	}
+}
+
+// The guard applies to every unsigned parameter, not just the first.
+func TestNegativeSecondParameterIsRejected(t *testing.T) {
+	ind, err := NewMacdIndicator(12, -1, 9)
+	if ind != nil {
+		ind.Close()
+		t.Fatal("NewMacdIndicator with a negative slow period returned an indicator")
+	}
+	if err == nil || !strings.Contains(err.Error(), "must not be negative") {
+		t.Fatalf("error = %v, want it to name the negative parameter", err)
+	}
+}
+
+// A valid period is unaffected.
+func TestValidPeriodStillConstructs(t *testing.T) {
+	ind, err := NewSma(3)
+	if err != nil {
+		t.Fatalf("NewSma(3) = %v", err)
+	}
+	defer ind.Close()
+	ind.Update(1)
+	ind.Update(2)
+	if got := ind.Update(3); got != 2 {
+		t.Fatalf("Update(3) = %v, want 2", got)
 	}
 }
 

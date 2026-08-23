@@ -548,6 +548,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `warmupPeriod()` are values on the way out, where nothing wraps. Where a core
   constructor genuinely takes a `u32` — `Jma`'s power, `TurnOfMonth`'s bounds —
   the narrowing is checked rather than cast.
+- **Go: a negative count is refused by name.** A Go `int` reaching a
+  `uintptr_t` parameter wraps, so `NewSma(-1)` passed 2^64-1 to the C ABI. That
+  value is rejected downstream — but only because it exceeds `MAX_PERIOD`
+  (2^24), two magnitudes that happen to sit that way round with nothing stating
+  the relationship, and the caller got "invalid indicator parameters" with no
+  hint that their number was negative. Constructors now check each unsigned
+  parameter and say which one it was.
+
+  The audit recorded this as "aborts the process", which measurement no longer
+  supports: the `capacity overflow` panic it referred to became a clean `Err`
+  when `MAX_PERIOD` was added earlier in this cycle. What was left is the
+  wrapping itself and the unhelpful error.
+- **The Go generator now emits gofmt-clean output.** `indicators_gen.go` had
+  been formatted after generation, so a regeneration produced a file CI's gofmt
+  check would reject — which is exactly what happened when the resampler change
+  regenerated it. Struct fields, the wrapper's `handle` field, the import order
+  and the trailing newline are all emitted the way gofmt wants them, so
+  regenerating is idempotent.
+- **The Go binding's copy of the C header was stale.** `bindings/go/include/`
+  carries a committed copy that CI diffs against `bindings/c/include/`, and the
+  resampler change updated only the latter. Both are in sync again.
+
 
 
 
