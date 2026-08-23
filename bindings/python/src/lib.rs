@@ -40,11 +40,9 @@ impl<'py> FromPyObject<'_, 'py> for Buf1 {
 }
 
 impl Buf1 {
-    /// Borrow the values as a slice. The `PyResult` wrapper keeps the ~800 batch call
-    /// sites uniform with the historical `NumPy` code path; extraction already succeeded.
-    #[allow(clippy::unnecessary_wraps)]
-    fn as_slice(&self) -> PyResult<&[f64]> {
-        Ok(&self.data)
+    /// Borrow the values as a slice.
+    fn as_slice(&self) -> &[f64] {
+        &self.data
     }
 }
 
@@ -65,9 +63,9 @@ impl<'py> FromPyObject<'_, 'py> for BufI64 {
 }
 
 impl BufI64 {
-    #[allow(clippy::unnecessary_wraps)]
-    fn as_slice(&self) -> PyResult<&[i64]> {
-        Ok(&self.data)
+    /// Borrow the values as a slice.
+    fn as_slice(&self) -> &[i64] {
+        &self.data
     }
 }
 
@@ -178,9 +176,6 @@ fn map_err(e: wc::Error) -> PyErr {
     PyValueError::new_err(e.to_string())
 }
 
-/// Raised instead of panicking when a `NumPy` input is not C-contiguous.
-const NON_CONTIGUOUS: &str = "array must be C-contiguous; pass np.ascontiguousarray(arr)";
-
 /// Borrowed `(open, high, low, close)` columns for candle-driven bar builders.
 type OhlcCols<'a> = (&'a [f64], &'a [f64], &'a [f64], &'a [f64]);
 /// Borrowed `(open, high, low, close, volume)` columns for candle-driven bar builders.
@@ -195,25 +190,17 @@ type ImbalanceBarRows = Vec<(f64, f64, f64, f64, f64, i64)>;
 /// `(open, high, low, close, length, direction)` rows from the Run bar builder.
 type RunBarRows = Vec<(f64, f64, f64, f64, i64, i64)>;
 
-/// Extract four equal-length OHLC slices, erroring on non-contiguous or mismatched input.
+/// Extract four OHLC slices, erroring if their lengths differ.
 fn ohlc_slices<'a>(
     open: &'a Buf1,
     high: &'a Buf1,
     low: &'a Buf1,
     close: &'a Buf1,
 ) -> PyResult<OhlcCols<'a>> {
-    let o = open
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let h = high
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let l = low
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let c = close
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let o = open.as_slice();
+    let h = high.as_slice();
+    let l = low.as_slice();
+    let c = close.as_slice();
     if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
         return Err(PyValueError::new_err(
             "open, high, low, close must be equal length",
@@ -222,7 +209,7 @@ fn ohlc_slices<'a>(
     Ok((o, h, l, c))
 }
 
-/// Extract five equal-length OHLCV slices, erroring on non-contiguous or mismatched input.
+/// Extract five OHLCV slices, erroring if their lengths differ.
 fn ohlcv_slices<'a>(
     open: &'a Buf1,
     high: &'a Buf1,
@@ -231,9 +218,7 @@ fn ohlcv_slices<'a>(
     volume: &'a Buf1,
 ) -> PyResult<OhlcvCols<'a>> {
     let (o, h, l, c) = ohlc_slices(open, high, low, close)?;
-    let v = volume
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let v = volume.as_slice();
     if v.len() != o.len() {
         return Err(PyValueError::new_err(
             "open, high, low, close, volume must be equal length",
@@ -279,9 +264,7 @@ impl PySma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -330,9 +313,7 @@ impl PyEma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -385,9 +366,7 @@ impl PyWma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -437,9 +416,7 @@ impl PyRsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -494,9 +471,7 @@ impl PyMacd {
     /// Batch over a series of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let out = self.inner.batch_macd(slice);
         matrix(py, out, n, 3)
@@ -553,9 +528,7 @@ impl PyBb {
     }
     /// Batch returns shape `(n, 4)` columns `[upper, middle, lower, stddev]`.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let out = self.inner.batch_bands(slice);
         matrix(py, out, n, 4)
@@ -651,15 +624,9 @@ impl PyAtr {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -731,15 +698,9 @@ impl PyPlusDm {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -803,15 +764,9 @@ impl PyMinusDm {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -875,15 +830,9 @@ impl PyPlusDi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -947,15 +896,9 @@ impl PyMinusDi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1019,15 +962,9 @@ impl PyDx {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1091,15 +1028,9 @@ impl PyMidPrice {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1155,9 +1086,7 @@ impl PyMidPoint {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1211,18 +1140,10 @@ impl PyAvgPrice {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if !(o.len() == h.len() && h.len() == l.len() && l.len() == c.len()) {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -1274,9 +1195,7 @@ impl PyRocp {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1322,9 +1241,7 @@ impl PyRocr {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1370,9 +1287,7 @@ impl PyRocr100 {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1422,9 +1337,7 @@ impl PyLinRegIntercept {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1470,9 +1383,7 @@ impl PyTsf {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1523,9 +1434,7 @@ impl PyMacdFix {
     /// Batch over a series of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -1617,15 +1526,9 @@ impl PySarExt {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1706,9 +1609,7 @@ impl PyMacdExt {
     /// Batch over a series of closes. Returns a 2D array of shape `(n, 3)`
     /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -1761,9 +1662,7 @@ impl PyHtPhasor {
     /// Batch over a series of closes. Returns a 2D array of shape `(n, 2)`
     /// with columns `[inphase, quadrature]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 2];
         for (i, p) in slice.iter().enumerate() {
@@ -1813,9 +1712,7 @@ impl PyLogReturn {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1865,9 +1762,7 @@ impl PyRealizedVolatility {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1913,9 +1808,7 @@ impl PyRollingIqr {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -1965,9 +1858,7 @@ impl PyRollingPercentileRank {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2017,9 +1908,7 @@ impl PyRollingQuantile {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2081,18 +1970,10 @@ impl PyCloseVsOpen {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -2152,18 +2033,10 @@ impl PyBodySizePct {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -2223,18 +2096,10 @@ impl PyWickRatio {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -2294,18 +2159,10 @@ impl PyHighLowRange {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -2357,9 +2214,7 @@ impl PyTrendLabel {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2405,9 +2260,7 @@ impl PyJumpIndicator {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2458,9 +2311,7 @@ impl PyRegimeLabel {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2511,9 +2362,7 @@ impl PyWinRate {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2559,9 +2408,7 @@ impl PyExpectancy {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2607,9 +2454,7 @@ impl PySineWeightedMa {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2655,9 +2500,7 @@ impl PyGeometricMa {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2703,9 +2546,7 @@ impl PyEhma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2751,9 +2592,7 @@ impl PyMedianMa {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2803,9 +2642,7 @@ impl PyAdaptiveLaguerreFilter {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2855,9 +2692,7 @@ impl PyDisparityIndex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2903,9 +2738,7 @@ impl PyFisherRsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -2951,9 +2784,7 @@ impl PyRsx {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3003,9 +2834,7 @@ impl PyDynamicMomentumIndex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3059,15 +2888,9 @@ impl PyStochasticCci {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3131,15 +2954,9 @@ impl PyTtmTrend {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3199,9 +3016,7 @@ impl PyTrendStrengthIndex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3254,12 +3069,8 @@ impl PyQstick {
         open: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let c = close.as_slice();
         if o.len() != c.len() {
             return Err(PyValueError::new_err("open, close must be equal length"));
         }
@@ -3317,9 +3128,7 @@ impl PyPolarizedFractalEfficiency {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3366,9 +3175,7 @@ impl PyWavePm {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3429,15 +3236,9 @@ impl PyGatorOscillator {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3503,15 +3304,9 @@ impl PyKasePermissionStochastic {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3564,9 +3359,7 @@ impl PyTsfOscillator {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3612,9 +3405,7 @@ impl PyMacdHistogram {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -3657,9 +3448,7 @@ impl PyPpoHistogram {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -3706,9 +3495,7 @@ impl PyBipowerVariation {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -3766,15 +3553,9 @@ impl PyVolatilityRatio {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3842,15 +3623,9 @@ impl PyProjectionOscillator {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3915,15 +3690,9 @@ impl PyTimeBasedStop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -3979,9 +3748,7 @@ impl PyJarqueBera {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4027,9 +3794,7 @@ impl PyRollingMinMaxScaler {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4075,9 +3840,7 @@ impl PyHighpassFilter {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4123,9 +3886,7 @@ impl PyReflex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4171,9 +3932,7 @@ impl PyTrendflex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4219,9 +3978,7 @@ impl PyCorrelationTrendIndicator {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4267,9 +4024,7 @@ impl PyAdaptiveRsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4315,9 +4070,7 @@ impl PyUniversalOscillator {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4371,15 +4124,9 @@ impl PyAdaptiveCci {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -4435,9 +4182,7 @@ impl PySterlingRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4483,9 +4228,7 @@ impl PyBurkeRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4531,9 +4274,7 @@ impl PyMartinRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4579,9 +4320,7 @@ impl PyTailRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4627,9 +4366,7 @@ impl PyKRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4679,9 +4416,7 @@ impl PyCommonSenseRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4731,9 +4466,7 @@ impl PyGainToPainRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -4787,18 +4520,10 @@ impl PyImi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -4855,9 +4580,7 @@ impl PyQqe {
     /// Batch over a series of closes. Returns shape `(n, 2)` with columns
     /// `[rsi_ma, trailing_line]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 2];
         for (i, p) in slice.iter().enumerate() {
@@ -4915,15 +4638,9 @@ impl PyElderRay {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -4986,15 +4703,9 @@ impl PyStoch {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -5061,12 +4772,8 @@ impl PyObv {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -5121,9 +4828,7 @@ impl PyDema {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -5168,9 +4873,7 @@ impl PyTema {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -5215,9 +4918,7 @@ impl PyHma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -5263,9 +4964,7 @@ impl PyKama {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -5315,18 +5014,10 @@ impl PyInertia {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if !(o.len() == h.len() && h.len() == l.len() && l.len() == c.len()) {
             return Err(PyValueError::new_err(
                 "open, high, low and close must be equal length",
@@ -5379,9 +5070,7 @@ impl PyConnorsRsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -5424,9 +5113,7 @@ impl PyLaguerreRsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -5479,15 +5166,9 @@ impl PySmi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if !(h.len() == l.len() && l.len() == c.len()) {
             return Err(PyValueError::new_err(
                 "high, low and close must be equal length",
@@ -5558,9 +5239,7 @@ impl PyKst {
         self.inner.update(value).map(|o| (o.kst, o.signal))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 2];
         for (i, p) in slice.iter().enumerate() {
@@ -5617,15 +5296,9 @@ impl PyPgo {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if !(h.len() == l.len() && l.len() == c.len()) {
             return Err(PyValueError::new_err(
                 "high, low and close must be equal length",
@@ -5689,18 +5362,10 @@ impl PyRvi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if !(o.len() == h.len() && h.len() == l.len() && l.len() == c.len()) {
             return Err(PyValueError::new_err(
                 "open, high, low and close must be equal length",
@@ -5756,9 +5421,7 @@ impl PyFrama {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -5810,12 +5473,8 @@ impl PyEvwma {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -5877,12 +5536,8 @@ impl PyAlligator {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -5938,9 +5593,7 @@ impl PyJma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -5983,9 +5636,7 @@ impl PyVidya {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -6032,9 +5683,7 @@ impl PyMcGinleyDynamic {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -6080,9 +5729,7 @@ impl PyAlma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -6151,12 +5798,8 @@ impl PyAoHist {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -6207,9 +5850,7 @@ impl PyStc {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -6258,9 +5899,7 @@ impl PyElderImpulse {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -6305,9 +5944,7 @@ impl PyZeroLagMacd {
             .map(|o| (o.macd, o.signal, o.histogram))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -6359,9 +5996,7 @@ impl PyCfo {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -6407,9 +6042,7 @@ impl PyApo {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -6459,15 +6092,9 @@ impl PyCci {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -6523,9 +6150,7 @@ impl PyRoc {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -6578,15 +6203,9 @@ impl PyWilliamsR {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -6644,15 +6263,9 @@ impl PyAdx {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -6713,15 +6326,9 @@ impl PyAdxr {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -6792,18 +6399,10 @@ impl PyMfi {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -6852,9 +6451,7 @@ impl PyTrix {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -6900,15 +6497,9 @@ impl PyPsar {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -6966,15 +6557,9 @@ impl PyKeltner {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -7034,12 +6619,8 @@ impl PyDonchian {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -7098,18 +6679,10 @@ impl PyVwap {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -7165,18 +6738,10 @@ impl PyRollingVwap {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -7242,12 +6807,8 @@ impl PyAo {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -7300,12 +6861,8 @@ impl PyAroon {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -7364,18 +6921,10 @@ impl PyAdl {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -7441,12 +6990,8 @@ impl PyVolumePriceTrend {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -7506,9 +7051,7 @@ impl PyBollingerBandwidth {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -7566,9 +7109,7 @@ impl PyPercentB {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -7634,15 +7175,9 @@ impl PyNatr {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -7702,9 +7237,7 @@ impl PyStdDev {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -7754,9 +7287,7 @@ impl PyUlcerIndex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -7810,9 +7341,7 @@ impl PyHistoricalVolatility {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -7874,12 +7403,8 @@ impl PyAroonOscillator {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -7946,15 +7471,9 @@ impl PyVortex {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -8023,15 +7542,9 @@ impl PyRwi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -8105,15 +7618,9 @@ impl PyWaveTrend {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -8181,12 +7688,8 @@ impl PyMassIndex {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -8245,9 +7748,7 @@ impl PyPpo {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8298,9 +7799,7 @@ impl PyDpo {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8354,9 +7853,7 @@ impl PyCoppock {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8407,9 +7904,7 @@ impl PyStochRsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8472,15 +7967,9 @@ impl PyUltimateOscillator {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -8541,9 +8030,7 @@ impl PyMom {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8593,9 +8080,7 @@ impl PyCmo {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8645,9 +8130,7 @@ impl PyTsi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8698,9 +8181,7 @@ impl PyPmo {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8751,9 +8232,7 @@ impl PyTii {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8803,9 +8282,7 @@ impl PyZlema {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8859,9 +8336,7 @@ impl PyT3 {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8919,9 +8394,7 @@ impl PyGeneralizedDema {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -8975,9 +8448,7 @@ impl PyHoltWinters {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -9043,9 +8514,7 @@ impl PyRmi {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -9109,9 +8578,7 @@ impl PyDerivativeOscillator {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -9156,12 +8623,8 @@ impl PyVwma {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -9220,9 +8683,7 @@ impl PySmma {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -9271,9 +8732,7 @@ impl PyTrima {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -9336,18 +8795,10 @@ impl PyChaikinMoneyFlow {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -9416,18 +8867,10 @@ impl PyChaikinOscillator {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -9491,12 +8934,8 @@ impl PyForceIndex {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -9559,12 +8998,8 @@ impl PyNvi {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -9622,12 +9057,8 @@ impl PyPvi {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -9685,9 +9116,7 @@ impl PyVolumeOscillator {
     }
     /// Batch over a 1-D volume series.
     fn batch<'py>(&mut self, py: Python<'py>, volume: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume.as_slice();
         let mut out = Vec::with_capacity(v.len());
         for &vol in v {
             let candle = wc::Candle::new(10.0, 10.0, 10.0, 10.0, vol, 0).map_err(map_err)?;
@@ -9748,18 +9177,10 @@ impl PyKvo {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -9823,15 +9244,9 @@ impl PyAdOscillator {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -9887,9 +9302,7 @@ impl PyAnchoredRsi {
     }
     /// Batch over a close-price column.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -9947,18 +9360,10 @@ impl PyAnchoredVwap {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -10019,18 +9424,10 @@ impl PyDemandIndex {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -10093,12 +9490,8 @@ impl PyTsv {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -10161,12 +9554,8 @@ impl PyVzo {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -10233,15 +9622,9 @@ impl PyMarketFacilitationIndex {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -10305,15 +9688,9 @@ impl PyEaseOfMovement {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -10386,15 +9763,9 @@ impl PySuperTrend {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10468,15 +9839,9 @@ impl PyChandelierExit {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10551,15 +9916,9 @@ impl PyChandeKrollStop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10634,15 +9993,9 @@ impl PyAtrTrailingStop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10706,15 +10059,9 @@ impl PyHiLoActivator {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10777,15 +10124,9 @@ impl PyVoltyStop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10849,15 +10190,9 @@ impl PyYoyoExit {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -10924,12 +10259,8 @@ impl PyDonchianStop {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -10991,9 +10322,7 @@ impl PyPercentageTrailingStop {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -11043,9 +10372,7 @@ impl PyStepTrailingStop {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -11095,9 +10422,7 @@ impl PyRenkoTrailingStop {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -11152,15 +10477,9 @@ impl PyKaseDevStop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11230,15 +10549,9 @@ impl PyElderSafeZone {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11308,15 +10621,9 @@ impl PyAtrRatchet {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11388,15 +10695,9 @@ impl PyNrtr {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11469,15 +10770,9 @@ impl PyModifiedMaStop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11544,15 +10839,9 @@ impl PyTypicalPrice {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11610,12 +10899,8 @@ impl PyMedianPrice {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -11672,15 +10957,9 @@ impl PyWeightedClose {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -11736,9 +11015,7 @@ impl PyLinearRegression {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -11784,9 +11061,7 @@ impl PyLinRegSlope {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -11844,12 +11119,8 @@ impl PyAcceleratorOscillator {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -11916,18 +11187,10 @@ impl PyBalanceOfPower {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -11991,15 +11254,9 @@ impl PyChoppinessIndex {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -12059,9 +11316,7 @@ impl PyVerticalHorizontalFilter {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -12114,15 +11369,9 @@ impl PyTrueRange {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -12185,12 +11434,8 @@ impl PyChaikinVolatility {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -12245,9 +11490,7 @@ impl PyZScore {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -12293,9 +11536,7 @@ impl PyLinRegAngle {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -12352,18 +11593,10 @@ impl PyYangZhangVolatility {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let cl = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let cl = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != cl.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -12437,18 +11670,10 @@ impl PyRogersSatchellVolatility {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let cl = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let cl = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != cl.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -12518,18 +11743,10 @@ impl PyGarmanKlassVolatility {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let cl = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let cl = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != cl.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -12597,12 +11814,8 @@ impl PyParkinsonVolatility {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -12661,9 +11874,7 @@ impl PyRviVolatility {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -12717,9 +11928,7 @@ impl PyMaEnvelope {
     }
     /// Batch returns shape `(n, 3)` columns `[upper, middle, lower]`.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -12778,15 +11987,9 @@ impl PyAccelerationBands {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -12847,15 +12050,9 @@ impl PyStarcBands {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -12916,15 +12113,9 @@ impl PyAtrBands {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -12985,15 +12176,9 @@ impl PyHurstChannel {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -13049,9 +12234,7 @@ impl PyLinRegChannel {
             .map(|o| (o.upper, o.middle, o.lower))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -13105,9 +12288,7 @@ impl PyStandardErrorBands {
             .map(|o| (o.upper, o.middle, o.lower))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -13157,9 +12338,7 @@ impl PyQuartileBands {
             .map(|o| (o.upper, o.middle, o.lower))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -13209,9 +12388,7 @@ impl PyBomarBands {
             .map(|o| (o.upper, o.middle, o.lower))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -13261,9 +12438,7 @@ impl PyMedianChannel {
             .map(|o| (o.upper, o.middle, o.lower))
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -13321,12 +12496,8 @@ impl PyProjectionBands {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -13389,15 +12560,9 @@ impl PyCentralPivotRange {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -13470,12 +12635,8 @@ impl PyMurreyMathLines {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -13544,12 +12705,8 @@ impl PyAndrewsPitchfork {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -13613,15 +12770,9 @@ impl PyVolumeWeightedSr {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -13682,15 +12833,9 @@ impl PyPivotReversal {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -13754,9 +12899,7 @@ impl PyDoubleBollinger {
     /// Returns shape `(n, 5)` columns
     /// `[upper_outer, upper_inner, middle, lower_inner, lower_outer]`.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 5];
         for (i, p) in slice.iter().enumerate() {
@@ -13816,15 +12959,9 @@ impl PyTtmSqueeze {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -13889,12 +13026,8 @@ impl PyFractalChaosBands {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -13963,18 +13096,10 @@ impl PyVwapStdDevBands {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -14041,15 +13166,9 @@ impl PyClassicPivots {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -14120,15 +13239,9 @@ impl PyFibonacciPivots {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -14202,15 +13315,9 @@ impl PyCamarilla {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -14279,15 +13386,9 @@ impl PyWoodiePivots {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -14353,18 +13454,10 @@ impl PyDemarkPivots {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -14436,12 +13529,8 @@ impl PyWilliamsFractals {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -14506,12 +13595,8 @@ impl PyZigZag {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -14572,15 +13657,9 @@ impl PyTdSetup {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -14660,15 +13739,9 @@ impl PyTdSequential {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -14728,12 +13801,8 @@ impl PyTdDeMarker {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -14797,12 +13866,8 @@ impl PyTdRei {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -14870,21 +13935,11 @@ impl PyTdPressure {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close, volume must be equal length",
@@ -14962,15 +14017,9 @@ impl PyTdCombo {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -15026,15 +14075,9 @@ impl PyTdDWave {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -15094,12 +14137,8 @@ impl PyTdMovingAverage {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high, low must be equal length"));
         }
@@ -15168,15 +14207,9 @@ impl PyTdCountdown {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -15235,15 +14268,9 @@ impl PyTdLines {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -15309,18 +14336,10 @@ impl PyTdRangeProjection {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -15383,15 +14402,9 @@ impl PyTdDifferential {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -15447,18 +14460,10 @@ impl PyTdOpen {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -15517,15 +14522,9 @@ impl PyTdRiskLevel {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -15579,9 +14578,7 @@ macro_rules! py_scalar_one_period {
                 self.inner.update(value)
             }
             fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-                let slice = prices
-                    .as_slice()
-                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                let slice = prices.as_slice();
                 self.inner.batch_nan(slice).into_pydata(py)
             }
             #[getter]
@@ -15649,9 +14646,7 @@ impl PyInverseFisherTransform {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -15704,9 +14699,7 @@ impl PyDecyclerOscillator {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -15753,9 +14746,7 @@ impl PyRoofingFilter {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -15806,9 +14797,7 @@ impl PyEmd {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -15863,9 +14852,7 @@ macro_rules! py_no_params_scalar {
                 self.inner.update(value)
             }
             fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-                let slice = prices
-                    .as_slice()
-                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                let slice = prices.as_slice();
                 self.inner.batch_nan(slice).into_pydata(py)
             }
             #[getter]
@@ -15921,9 +14908,7 @@ impl PySineWave {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -15975,9 +14960,7 @@ impl PyMama {
     }
     /// Batch returns shape `(n, 2)` columns `[mama, fama]`. Warmup rows NaN.
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 2];
         for (i, p) in slice.iter().enumerate() {
@@ -16032,9 +15015,7 @@ impl PyFama {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -16106,15 +15087,9 @@ impl PyIchimoku {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -16201,18 +15176,10 @@ impl PyHeikinAshi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -16268,9 +15235,7 @@ impl PyVariance {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -16328,18 +15293,10 @@ impl PyHeikinAshiOscillator {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -16399,15 +15356,9 @@ impl PyThreeLineBreak {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -16472,18 +15423,10 @@ impl PySmoothedHeikinAshi {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -16546,15 +15489,9 @@ impl PyEquivolume {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let vol = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let vol = volume.as_slice();
         if h.len() != l.len() || l.len() != vol.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -16615,15 +15552,9 @@ impl PyCandleVolume {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let vol = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let c = close.as_slice();
+        let vol = volume.as_slice();
         if o.len() != c.len() || c.len() != vol.len() {
             return Err(PyValueError::new_err(
                 "open, close, volume must be equal length",
@@ -16685,15 +15616,9 @@ impl PyFryPanBottom {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -16749,15 +15674,9 @@ impl PyDumplingTop {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -16813,15 +15732,9 @@ impl PyNewPriceLines {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -16874,9 +15787,7 @@ impl PyCoefficientOfVariation {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -16922,9 +15833,7 @@ impl PySkewness {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -16970,9 +15879,7 @@ impl PyKurtosis {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17018,9 +15925,7 @@ impl PyStandardError {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17070,9 +15975,7 @@ impl PyDetrendedStdDev {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17118,9 +16021,7 @@ impl PyRSquared {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17170,9 +16071,7 @@ impl PyAutocorrelation {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17230,9 +16129,7 @@ impl PyMedianAbsoluteDeviation {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17278,9 +16175,7 @@ impl PyHurstExponent {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let s = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let s = prices.as_slice();
         self.inner.batch_nan(s).into_pydata(py)
     }
     #[getter]
@@ -17339,12 +16234,8 @@ impl PyPearsonCorrelation {
     }
     /// Batch over two equally-sized series.
     fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = x
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = y
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = x.as_slice();
+        let ys = y.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("x and y must be equal length"));
         }
@@ -17403,12 +16294,8 @@ impl PyBeta {
         asset: Buf1,
         benchmark: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let a = asset
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let b = benchmark
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let a = asset.as_slice();
+        let b = benchmark.as_slice();
         if a.len() != b.len() {
             return Err(PyValueError::new_err(
                 "asset and benchmark must be equal length",
@@ -17464,12 +16351,8 @@ impl PyPairwiseBeta {
     }
     /// Batch over two equally-sized series of prices: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17527,12 +16410,8 @@ impl PySpreadAr1Coefficient {
     }
     /// Batch over two equally-sized series of prices: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17590,12 +16469,8 @@ impl PyPairSpreadZScore {
     }
     /// Batch over two equally-sized series of prices: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17664,12 +16539,8 @@ impl PyLeadLagCrossCorrelation {
     /// Batch over two equally-sized series. Returns a 2D array of shape
     /// `(n, 2)` with columns `[lag, correlation]`. Warmup rows are NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17740,12 +16611,8 @@ impl PyCointegration {
     /// `(n, 3)` with columns `[hedge_ratio, spread, adf_stat]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17821,12 +16688,8 @@ impl PyRelativeStrengthAB {
     /// `(n, 3)` with columns `[ratio, ratio_ma, ratio_rsi]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17897,12 +16760,8 @@ impl PyRollingCorrelation {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -17960,12 +16819,8 @@ impl PyHasbrouckInformationShare {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18023,12 +16878,8 @@ impl PyRollingCovariance {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18082,12 +16933,8 @@ impl PyOuHalfLife {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18141,12 +16988,8 @@ impl PySpreadHurst {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18200,12 +17043,8 @@ impl PyDistanceSsd {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18263,12 +17102,8 @@ impl PyBetaNeutralSpread {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18322,12 +17157,8 @@ impl PyVarianceRatio {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18393,12 +17224,8 @@ impl PyGrangerCausality {
     }
     /// Batch over two equally-sized series: `a` and `b`.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18469,12 +17296,8 @@ impl PyKalmanHedgeRatio {
     /// `(n, 3)` with columns `[hedge_ratio, intercept, spread]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18550,12 +17373,8 @@ impl PySpreadBollingerBands {
     /// `(n, 4)` with columns `[middle, upper, lower, percent_b]`. Warmup rows are
     /// NaN.
     fn batch<'py>(&mut self, py: Python<'py>, a: Buf1, b: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = a
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = b
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = a.as_slice();
+        let ys = b.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("a and b must be equal length"));
         }
@@ -18627,12 +17446,8 @@ impl PySpearmanCorrelation {
     }
     /// Batch over two equally-sized series.
     fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = x
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = y
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = x.as_slice();
+        let ys = y.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("x and y must be equal length"));
         }
@@ -18694,15 +17509,9 @@ impl PyValueArea {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -18788,15 +17597,9 @@ impl PyVolumeProfile {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -18878,12 +17681,8 @@ impl PyTpoProfile {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high, low must be equal length"));
         }
@@ -18959,12 +17758,8 @@ impl PyInitialBalance {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -19038,15 +17833,9 @@ impl PyOpeningRange {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -19118,18 +17907,10 @@ impl PyNakedPoc {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -19188,12 +17969,8 @@ impl PySinglePrints {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -19252,15 +18029,9 @@ impl PyProfileShape {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -19325,15 +18096,9 @@ impl PyHighLowVolumeNodes {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -19402,15 +18167,9 @@ impl PyCompositeProfile {
         low: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let v = volume.as_slice();
         if h.len() != l.len() || l.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, volume must be equal length",
@@ -19483,18 +18242,10 @@ macro_rules! candle_pattern_no_param {
                 low: Buf1,
                 close: Buf1,
             ) -> PyResult<Bound<'py, PyAny>> {
-                let o = open
-                    .as_slice()
-                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                let h = high
-                    .as_slice()
-                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                let l = low
-                    .as_slice()
-                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                let c = close
-                    .as_slice()
-                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                let o = open.as_slice();
+                let h = high.as_slice();
+                let l = low.as_slice();
+                let c = close.as_slice();
                 if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
                     return Err(PyValueError::new_err(
                         "open, high, low, close must be equal length",
@@ -19560,18 +18311,10 @@ impl PyDoji {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let o = open
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let o = open.as_slice();
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "open, high, low, close must be equal length",
@@ -23084,9 +21827,7 @@ impl PyUpsidePotentialRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23138,9 +21879,7 @@ impl PyM2Measure {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23197,9 +21936,7 @@ impl PySharpeRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23251,9 +21988,7 @@ impl PySortinoRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23304,9 +22039,7 @@ impl PyCalmarRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23350,9 +22083,7 @@ impl PyOmegaRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23403,9 +22134,7 @@ impl PyMaxDrawdown {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23452,9 +22181,7 @@ impl PyAverageDrawdown {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23501,9 +22228,7 @@ impl PyDrawdownDuration {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         let out: Vec<f64> = self
             .inner
             .batch(slice)
@@ -23548,9 +22273,7 @@ impl PyPainIndex {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23594,9 +22317,7 @@ impl PyValueAtRisk {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23652,9 +22373,7 @@ impl PyConditionalValueAtRisk {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23705,9 +22424,7 @@ impl PyProfitFactor {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23750,9 +22467,7 @@ impl PyGainLossRatio {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23799,9 +22514,7 @@ impl PyRecoveryFactor {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     fn reset(&mut self) {
@@ -23844,9 +22557,7 @@ impl PyKellyCriterion {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -23897,12 +22608,8 @@ impl PyTreynorRatio {
         asset: Buf1,
         benchmark: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let a = asset
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let b = benchmark
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let a = asset.as_slice();
+        let b = benchmark.as_slice();
         if a.len() != b.len() {
             return Err(PyValueError::new_err(
                 "asset and benchmark must have equal length",
@@ -23971,12 +22678,8 @@ impl PyInformationRatio {
         asset: Buf1,
         benchmark: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let a = asset
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let b = benchmark
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let a = asset.as_slice();
+        let b = benchmark.as_slice();
         if a.len() != b.len() {
             return Err(PyValueError::new_err(
                 "asset and benchmark must have equal length",
@@ -24034,12 +22737,8 @@ impl PyAlpha {
         asset: Buf1,
         benchmark: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let a = asset
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let b = benchmark
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let a = asset.as_slice();
+        let b = benchmark.as_slice();
         if a.len() != b.len() {
             return Err(PyValueError::new_err(
                 "asset and benchmark must have equal length",
@@ -24113,9 +22812,7 @@ impl PyRenkoBars {
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
     fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let prices = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let prices = close.as_slice();
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
         for &price in prices {
@@ -24171,9 +22868,7 @@ impl PyKagiBars {
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[start, end, direction]`.
     fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let prices = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let prices = close.as_slice();
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
         for &price in prices {
@@ -24234,9 +22929,7 @@ impl PyPointAndFigureBars {
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[direction, high, low]`.
     fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let prices = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let prices = close.as_slice();
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
         for &price in prices {
@@ -24300,9 +22993,7 @@ impl PyRangeBars {
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
     fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let prices = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let prices = close.as_slice();
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
         for &price in prices {
@@ -24728,9 +23419,7 @@ impl PyThreeLineBreakBars {
     }
     /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
     fn batch<'py>(&mut self, py: Python<'py>, close: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let prices = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let prices = close.as_slice();
         let mut rows: Vec<f64> = Vec::new();
         let mut k = 0usize;
         for &price in prices {
@@ -24776,24 +23465,12 @@ fn build_seasonality_candles(
     volume: &Buf1,
     timestamp: &BufI64,
 ) -> PyResult<Vec<wc::Candle>> {
-    let o = open
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let h = high
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let l = low
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let c = close
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let v = volume
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-    let t = timestamp
-        .as_slice()
-        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let o = open.as_slice();
+    let h = high.as_slice();
+    let l = low.as_slice();
+    let c = close.as_slice();
+    let v = volume.as_slice();
+    let t = timestamp.as_slice();
     let n = o.len();
     if [h.len(), l.len(), c.len(), v.len(), t.len()]
         .iter()
@@ -25427,12 +24104,8 @@ impl PyFibRetracement {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25506,12 +24179,8 @@ impl PyFibExtension {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25578,12 +24247,8 @@ impl PyFibProjection {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25656,12 +24321,8 @@ impl PyAutoFib {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25727,12 +24388,8 @@ impl PyGoldenPocket {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25794,12 +24451,8 @@ impl PyFibConfluence {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25863,12 +24516,8 @@ impl PyFibFan {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -25933,12 +24582,8 @@ impl PyFibArcs {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -26003,12 +24648,8 @@ impl PyFibChannel {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -26071,12 +24712,8 @@ impl PyFibTimeZones {
         high: Buf1,
         low: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -26136,9 +24773,7 @@ impl PyEwmaVolatility {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -26185,9 +24820,7 @@ impl PyGarch11 {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -26242,9 +24875,7 @@ impl PyVolatilityOfVolatility {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -26305,15 +24936,9 @@ impl PyVolatilityCone {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -26380,12 +25005,8 @@ impl PyVolumeRsi {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -26448,15 +25069,9 @@ impl PyWad {
         low: Buf1,
         close: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -26521,18 +25136,10 @@ impl PyTwiggsMoneyFlow {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let vol = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let vol = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != vol.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -26599,12 +25206,8 @@ impl PyTradeVolumeIndex {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -26672,18 +25275,10 @@ impl PyIntradayIntensity {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let vol = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let vol = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != vol.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -26744,18 +25339,10 @@ impl PyBetterVolume {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let h = high
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let l = low
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let vol = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high.as_slice();
+        let l = low.as_slice();
+        let c = close.as_slice();
+        let vol = volume.as_slice();
         if h.len() != l.len() || l.len() != c.len() || c.len() != vol.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -26826,12 +25413,8 @@ impl PyVolumeWeightedMacd {
         close: Buf1,
         volume: Buf1,
     ) -> PyResult<Bound<'py, PyAny>> {
-        let c = close
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let v = volume
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close.as_slice();
+        let v = volume.as_slice();
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -26893,9 +25476,7 @@ impl PyShannonEntropy {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -26946,9 +25527,7 @@ impl PySampleEntropy {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -27000,12 +25579,8 @@ impl PyKendallTau {
     }
     /// Batch over two equally-sized series.
     fn batch<'py>(&mut self, py: Python<'py>, x: Buf1, y: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let xs = x
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        let ys = y
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let xs = x.as_slice();
+        let ys = y.as_slice();
         if xs.len() != ys.len() {
             return Err(PyValueError::new_err("x and y must be equal length"));
         }
@@ -27062,9 +25637,7 @@ impl PyBandpassFilter {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -27119,9 +25692,7 @@ impl PyEvenBetterSinewave {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]
@@ -27172,9 +25743,7 @@ impl PyAutocorrelationPeriodogram {
         self.inner.update(value)
     }
     fn batch<'py>(&mut self, py: Python<'py>, prices: Buf1) -> PyResult<Bound<'py, PyAny>> {
-        let slice = prices
-            .as_slice()
-            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let slice = prices.as_slice();
         self.inner.batch_nan(slice).into_pydata(py)
     }
     #[getter]

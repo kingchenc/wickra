@@ -606,6 +606,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   described in the package docstring but never registered on the module, so it
   could not be imported, annotated, or used in an `isinstance` check.
 - **`KST` was listed twice** in `__all__` and in the import block.
+- **713 unreachable error branches removed from the Python binding.** Every
+  batch method opened with
+  `.as_slice().map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?`, raising
+  "array must be C-contiguous; pass np.ascontiguousarray(arr)". The input is
+  copied through the sequence protocol on the way in, so layout never reaches
+  Rust and `as_slice` cannot fail — the suite already had a test feeding it a
+  strided view and getting the right answer. The advice was stale too, naming a
+  dependency the package no longer has. `as_slice` returns a plain slice now,
+  which removes 1431 lines.
 
 
 
