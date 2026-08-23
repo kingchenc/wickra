@@ -14797,6 +14797,17 @@ intptr_t wickra_day_of_week_profile_update(struct DayOfWeekProfile *handle,
                                            double *values,
                                            uintptr_t cap);
 
+void wickra_day_of_week_profile_batch(struct DayOfWeekProfile *handle,
+                                      const double *open,
+                                      const double *high,
+                                      const double *low,
+                                      const double *close,
+                                      const double *volume,
+                                      const int64_t *timestamp,
+                                      double *values,
+                                      uintptr_t width,
+                                      uintptr_t n);
+
 uintptr_t wickra_day_of_week_profile_warmup_period(struct DayOfWeekProfile *handle);
 
 bool wickra_day_of_week_profile_is_ready(struct DayOfWeekProfile *handle);
@@ -14819,6 +14830,17 @@ intptr_t wickra_intraday_volatility_profile_update(struct IntradayVolatilityProf
                                                    int64_t timestamp,
                                                    double *values,
                                                    uintptr_t cap);
+
+void wickra_intraday_volatility_profile_batch(struct IntradayVolatilityProfile *handle,
+                                              const double *open,
+                                              const double *high,
+                                              const double *low,
+                                              const double *close,
+                                              const double *volume,
+                                              const int64_t *timestamp,
+                                              double *values,
+                                              uintptr_t width,
+                                              uintptr_t n);
 
 uintptr_t wickra_intraday_volatility_profile_warmup_period(struct IntradayVolatilityProfile *handle);
 
@@ -14843,6 +14865,17 @@ intptr_t wickra_time_of_day_return_profile_update(struct TimeOfDayReturnProfile 
                                                   double *values,
                                                   uintptr_t cap);
 
+void wickra_time_of_day_return_profile_batch(struct TimeOfDayReturnProfile *handle,
+                                             const double *open,
+                                             const double *high,
+                                             const double *low,
+                                             const double *close,
+                                             const double *volume,
+                                             const int64_t *timestamp,
+                                             double *values,
+                                             uintptr_t width,
+                                             uintptr_t n);
+
 uintptr_t wickra_time_of_day_return_profile_warmup_period(struct TimeOfDayReturnProfile *handle);
 
 bool wickra_time_of_day_return_profile_is_ready(struct TimeOfDayReturnProfile *handle);
@@ -14865,6 +14898,18 @@ intptr_t wickra_tpo_profile_update(struct TpoProfile *handle,
                                    struct WickraTpoProfileOutputScalars *scalars,
                                    double *values,
                                    uintptr_t cap);
+
+void wickra_tpo_profile_batch(struct TpoProfile *handle,
+                              const double *open,
+                              const double *high,
+                              const double *low,
+                              const double *close,
+                              const double *volume,
+                              const int64_t *timestamp,
+                              struct WickraTpoProfileOutputScalars *scalars,
+                              double *values,
+                              uintptr_t width,
+                              uintptr_t n);
 
 uintptr_t wickra_tpo_profile_warmup_period(struct TpoProfile *handle);
 
@@ -14889,6 +14934,17 @@ intptr_t wickra_volume_by_time_profile_update(struct VolumeByTimeProfile *handle
                                               double *values,
                                               uintptr_t cap);
 
+void wickra_volume_by_time_profile_batch(struct VolumeByTimeProfile *handle,
+                                         const double *open,
+                                         const double *high,
+                                         const double *low,
+                                         const double *close,
+                                         const double *volume,
+                                         const int64_t *timestamp,
+                                         double *values,
+                                         uintptr_t width,
+                                         uintptr_t n);
+
 uintptr_t wickra_volume_by_time_profile_warmup_period(struct VolumeByTimeProfile *handle);
 
 bool wickra_volume_by_time_profile_is_ready(struct VolumeByTimeProfile *handle);
@@ -14911,6 +14967,18 @@ intptr_t wickra_volume_profile_update(struct VolumeProfile *handle,
                                       struct WickraVolumeProfileOutputScalars *scalars,
                                       double *values,
                                       uintptr_t cap);
+
+void wickra_volume_profile_batch(struct VolumeProfile *handle,
+                                 const double *open,
+                                 const double *high,
+                                 const double *low,
+                                 const double *close,
+                                 const double *volume,
+                                 const int64_t *timestamp,
+                                 struct WickraVolumeProfileOutputScalars *scalars,
+                                 double *values,
+                                 uintptr_t width,
+                                 uintptr_t n);
 
 uintptr_t wickra_volume_profile_warmup_period(struct VolumeProfile *handle);
 
@@ -14938,6 +15006,15 @@ uintptr_t wickra_dollar_bars_drain(struct DollarBars *handle,
                                    struct WickraDollarBar *out,
                                    uintptr_t cap);
 
+uintptr_t wickra_dollar_bars_batch(struct DollarBars *handle,
+                                   const double *open,
+                                   const double *high,
+                                   const double *low,
+                                   const double *close,
+                                   const double *volume,
+                                   const int64_t *timestamp,
+                                   uintptr_t n);
+
 const char *wickra_dollar_bars_name(struct DollarBars *handle);
 
 void wickra_dollar_bars_reset(struct DollarBars *handle);
@@ -14960,6 +15037,15 @@ uintptr_t wickra_imbalance_bars_drain(struct ImbalanceBars *handle,
                                       struct WickraImbalanceBar *out,
                                       uintptr_t cap);
 
+uintptr_t wickra_imbalance_bars_batch(struct ImbalanceBars *handle,
+                                      const double *open,
+                                      const double *high,
+                                      const double *low,
+                                      const double *close,
+                                      const double *volume,
+                                      const int64_t *timestamp,
+                                      uintptr_t n);
+
 const char *wickra_imbalance_bars_name(struct ImbalanceBars *handle);
 
 void wickra_imbalance_bars_reset(struct ImbalanceBars *handle);
@@ -14979,6 +15065,15 @@ uintptr_t wickra_kagi_bars_update(struct KagiBars *handle,
                                   uintptr_t cap);
 
 uintptr_t wickra_kagi_bars_drain(struct KagiBars *handle, struct WickraKagiBar *out, uintptr_t cap);
+
+uintptr_t wickra_kagi_bars_batch(struct KagiBars *handle,
+                                 const double *open,
+                                 const double *high,
+                                 const double *low,
+                                 const double *close,
+                                 const double *volume,
+                                 const int64_t *timestamp,
+                                 uintptr_t n);
 
 const char *wickra_kagi_bars_name(struct KagiBars *handle);
 
@@ -15002,6 +15097,15 @@ uintptr_t wickra_point_and_figure_bars_drain(struct PointAndFigureBars *handle,
                                              struct WickraPnfColumn *out,
                                              uintptr_t cap);
 
+uintptr_t wickra_point_and_figure_bars_batch(struct PointAndFigureBars *handle,
+                                             const double *open,
+                                             const double *high,
+                                             const double *low,
+                                             const double *close,
+                                             const double *volume,
+                                             const int64_t *timestamp,
+                                             uintptr_t n);
+
 const char *wickra_point_and_figure_bars_name(struct PointAndFigureBars *handle);
 
 void wickra_point_and_figure_bars_reset(struct PointAndFigureBars *handle);
@@ -15023,6 +15127,15 @@ uintptr_t wickra_range_bars_update(struct RangeBars *handle,
 uintptr_t wickra_range_bars_drain(struct RangeBars *handle,
                                   struct WickraRangeBar *out,
                                   uintptr_t cap);
+
+uintptr_t wickra_range_bars_batch(struct RangeBars *handle,
+                                  const double *open,
+                                  const double *high,
+                                  const double *low,
+                                  const double *close,
+                                  const double *volume,
+                                  const int64_t *timestamp,
+                                  uintptr_t n);
 
 const char *wickra_range_bars_name(struct RangeBars *handle);
 
@@ -15046,6 +15159,15 @@ uintptr_t wickra_renko_bars_drain(struct RenkoBars *handle,
                                   struct WickraRenkoBrick *out,
                                   uintptr_t cap);
 
+uintptr_t wickra_renko_bars_batch(struct RenkoBars *handle,
+                                  const double *open,
+                                  const double *high,
+                                  const double *low,
+                                  const double *close,
+                                  const double *volume,
+                                  const int64_t *timestamp,
+                                  uintptr_t n);
+
 const char *wickra_renko_bars_name(struct RenkoBars *handle);
 
 void wickra_renko_bars_reset(struct RenkoBars *handle);
@@ -15065,6 +15187,15 @@ uintptr_t wickra_run_bars_update(struct RunBars *handle,
                                  uintptr_t cap);
 
 uintptr_t wickra_run_bars_drain(struct RunBars *handle, struct WickraRunBar *out, uintptr_t cap);
+
+uintptr_t wickra_run_bars_batch(struct RunBars *handle,
+                                const double *open,
+                                const double *high,
+                                const double *low,
+                                const double *close,
+                                const double *volume,
+                                const int64_t *timestamp,
+                                uintptr_t n);
 
 const char *wickra_run_bars_name(struct RunBars *handle);
 
@@ -15088,6 +15219,15 @@ uintptr_t wickra_three_line_break_bars_drain(struct ThreeLineBreakBars *handle,
                                              struct WickraLineBreakBar *out,
                                              uintptr_t cap);
 
+uintptr_t wickra_three_line_break_bars_batch(struct ThreeLineBreakBars *handle,
+                                             const double *open,
+                                             const double *high,
+                                             const double *low,
+                                             const double *close,
+                                             const double *volume,
+                                             const int64_t *timestamp,
+                                             uintptr_t n);
+
 const char *wickra_three_line_break_bars_name(struct ThreeLineBreakBars *handle);
 
 void wickra_three_line_break_bars_reset(struct ThreeLineBreakBars *handle);
@@ -15107,6 +15247,15 @@ uintptr_t wickra_tick_bars_update(struct TickBars *handle,
                                   uintptr_t cap);
 
 uintptr_t wickra_tick_bars_drain(struct TickBars *handle, struct WickraTickBar *out, uintptr_t cap);
+
+uintptr_t wickra_tick_bars_batch(struct TickBars *handle,
+                                 const double *open,
+                                 const double *high,
+                                 const double *low,
+                                 const double *close,
+                                 const double *volume,
+                                 const int64_t *timestamp,
+                                 uintptr_t n);
 
 const char *wickra_tick_bars_name(struct TickBars *handle);
 
@@ -15129,6 +15278,15 @@ uintptr_t wickra_volume_bars_update(struct VolumeBars *handle,
 uintptr_t wickra_volume_bars_drain(struct VolumeBars *handle,
                                    struct WickraVolumeBar *out,
                                    uintptr_t cap);
+
+uintptr_t wickra_volume_bars_batch(struct VolumeBars *handle,
+                                   const double *open,
+                                   const double *high,
+                                   const double *low,
+                                   const double *close,
+                                   const double *volume,
+                                   const int64_t *timestamp,
+                                   uintptr_t n);
 
 const char *wickra_volume_bars_name(struct VolumeBars *handle);
 
@@ -15169,6 +15327,17 @@ intptr_t wickra_footprint_update(struct Footprint *handle,
                                  int64_t timestamp,
                                  struct WickraFootprintLevel *out,
                                  uintptr_t cap);
+
+uintptr_t wickra_footprint_drain(struct Footprint *handle,
+                                 struct WickraFootprintLevel *out,
+                                 uintptr_t cap);
+
+uintptr_t wickra_footprint_batch(struct Footprint *handle,
+                                 const double *price,
+                                 const double *size,
+                                 const bool *is_buy,
+                                 const int64_t *timestamp,
+                                 uintptr_t n);
 
 uintptr_t wickra_footprint_warmup_period(struct Footprint *handle);
 

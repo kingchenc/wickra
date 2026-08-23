@@ -9101,7 +9101,7 @@ public sealed class DollarBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraDollarBar[count - cap];
             long drained;
@@ -12969,6 +12969,26 @@ public sealed class Footprint : IDisposable
         for (var i = 0; i < written; i++)
         {
             result[i] = new FootprintLevel(buffer[i].price, buffer[i].bid_vol, buffer[i].ask_vol);
+        }
+
+        if (count > cap)
+        {
+            // One input produced more elements than the buffer holds;
+            // the surplus waits on the handle rather than being dropped.
+            var rest = new WickraFootprintLevel[count - cap];
+            long drained;
+            unsafe
+            {
+                fixed (WickraFootprintLevel* restPtr = rest)
+                {
+                    drained = (long)NativeMethods.wickra_footprint_drain(_handle, restPtr, (nuint)rest.Length);
+                }
+            }
+
+            for (var i = 0; i < drained; i++)
+            {
+                result[cap + i] = new FootprintLevel(rest[i].price, rest[i].bid_vol, rest[i].ask_vol);
+            }
         }
 
         return result;
@@ -17450,7 +17470,7 @@ public sealed class ImbalanceBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraImbalanceBar[count - cap];
             long drained;
@@ -18653,7 +18673,7 @@ public sealed class KagiBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraKagiBar[count - cap];
             long drained;
@@ -27233,7 +27253,7 @@ public sealed class PointAndFigureBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraPnfColumn[count - cap];
             long drained;
@@ -28470,7 +28490,7 @@ public sealed class RangeBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraRangeBar[count - cap];
             long drained;
@@ -29091,7 +29111,7 @@ public sealed class RenkoBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraRenkoBrick[count - cap];
             long drained;
@@ -30710,7 +30730,7 @@ public sealed class RunBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraRunBar[count - cap];
             long drained;
@@ -37255,7 +37275,7 @@ public sealed class ThreeLineBreakBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraLineBreakBar[count - cap];
             long drained;
@@ -37837,7 +37857,7 @@ public sealed class TickBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraTickBar[count - cap];
             long drained;
@@ -41967,7 +41987,7 @@ public sealed class VolumeBars : IDisposable
 
         if (count > cap)
         {
-            // One candle completed more bars than the buffer holds;
+            // One input produced more elements than the buffer holds;
             // the surplus waits on the handle rather than being dropped.
             var rest = new WickraVolumeBar[count - cap];
             long drained;

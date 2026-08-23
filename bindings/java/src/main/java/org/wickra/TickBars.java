@@ -53,7 +53,7 @@ public final class TickBars implements AutoCloseable {
                     out.get(JAVA_DOUBLE, b + 32L));
             }
             if (n > cap) {
-                // One candle completed more bars than the buffer holds;
+                // One input produced more elements than the buffer holds;
                 // the surplus waits on the handle rather than being dropped.
                 MemorySegment more = a.allocate(40L * (n - cap));
                 long drained = (long) NativeMethods.WICKRA_TICK_BARS_DRAIN.invokeExact(handle(), more, n - cap);

@@ -47,6 +47,19 @@ public final class Footprint implements AutoCloseable {
                     out.get(JAVA_DOUBLE, b + 8L),
                     out.get(JAVA_DOUBLE, b + 16L));
             }
+            if (n > cap) {
+                // One input produced more elements than the buffer holds;
+                // the surplus waits on the handle rather than being dropped.
+                MemorySegment more = a.allocate(24L * (n - cap));
+                long drained = (long) NativeMethods.WICKRA_FOOTPRINT_DRAIN.invokeExact(handle(), more, n - cap);
+                for (int i = 0; i < drained; i++) {
+                    long b = (long) i * 24L;
+                    result[(int) cap + i] = new FootprintLevel(
+                    more.get(JAVA_DOUBLE, b + 0L),
+                    more.get(JAVA_DOUBLE, b + 8L),
+                    more.get(JAVA_DOUBLE, b + 16L));
+                }
+            }
             return result;
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);

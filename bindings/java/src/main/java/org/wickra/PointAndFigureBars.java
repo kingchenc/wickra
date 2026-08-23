@@ -51,7 +51,7 @@ public final class PointAndFigureBars implements AutoCloseable {
                     out.get(JAVA_DOUBLE, b + 16L));
             }
             if (n > cap) {
-                // One candle completed more bars than the buffer holds;
+                // One input produced more elements than the buffer holds;
                 // the surplus waits on the handle rather than being dropped.
                 MemorySegment more = a.allocate(24L * (n - cap));
                 long drained = (long) NativeMethods.WICKRA_POINT_AND_FIGURE_BARS_DRAIN.invokeExact(handle(), more, n - cap);

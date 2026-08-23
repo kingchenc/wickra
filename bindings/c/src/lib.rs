@@ -53,8 +53,8 @@ use wickra_core::{
     Engulfing, Equivolume, EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma,
     EwmaVolatility, Expectancy, FallingThreeMethods, Fama, FibArcs, FibChannel, FibConfluence,
     FibExtension, FibFan, FibProjection, FibRetracement, FibTimeZones, FibonacciPivots, FisherRsi,
-    FisherTransform, FlagPennant, Footprint, ForceIndex, FractalChaosBands, Frama, FryPanBottom,
-    FundingBasis, FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore,
+    FisherTransform, FlagPennant, FootprintLevel, ForceIndex, FractalChaosBands, Frama,
+    FryPanBottom, FundingBasis, FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore,
     GainLossRatio, GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley,
     GatorOscillator, GeneralizedDema, GeometricMa, GoldenPocket, GrangerCausality, GravestoneDoji,
     Hammer, HangingMan, Harami, HaramiCross, HasbrouckInformationShare, HeadAndShoulders,
@@ -116,6 +116,8 @@ use wickra_core::{
 use wickra_data::aggregator::{TickAggregator as DataTickAggregator, Timeframe};
 
 use wickra_data::resample::Resampler as DataResampler;
+
+use wickra_core::Footprint as CoreFootprint;
 
 use wickra_core::DollarBars as CoreDollarBars;
 use wickra_core::ImbalanceBars as CoreImbalanceBars;
@@ -74226,6 +74228,71 @@ pub unsafe extern "C" fn wickra_day_of_week_profile_update(
     }
 }
 
+/// Run over the input series, writing one profile per input into `values` as a
+/// flat `n * width` block. A row the indicator did not produce -- warmup, or an
+/// input it rejected -- is filled with `NaN`. `width` is the payload length the
+/// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
+///
+/// # Safety
+/// `handle` valid (from `wickra_day_of_week_profile_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements, `values` covers `n * width` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_batch(
+    handle: *mut DayOfWeekProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    values: *mut f64,
+    width: usize,
+    n: usize,
+) {
+    let Some(ind) = handle.as_mut() else {
+        return;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || values.is_null()
+    {
+        return;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let rows = slice::from_raw_parts_mut(values, n * width);
+    for slot in rows.iter_mut() {
+        *slot = f64::NAN;
+    }
+    for i in 0..n {
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        let Some(out_val) = ind.update(input) else {
+            continue;
+        };
+        let row = &mut rows[i * width..(i + 1) * width];
+        for (slot, &v) in row.iter_mut().zip(&out_val.bins) {
+            *slot = v;
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -74350,6 +74417,71 @@ pub unsafe extern "C" fn wickra_intraday_volatility_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Run over the input series, writing one profile per input into `values` as a
+/// flat `n * width` block. A row the indicator did not produce -- warmup, or an
+/// input it rejected -- is filled with `NaN`. `width` is the payload length the
+/// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
+///
+/// # Safety
+/// `handle` valid (from `wickra_intraday_volatility_profile_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements, `values` covers `n * width` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_batch(
+    handle: *mut IntradayVolatilityProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    values: *mut f64,
+    width: usize,
+    n: usize,
+) {
+    let Some(ind) = handle.as_mut() else {
+        return;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || values.is_null()
+    {
+        return;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let rows = slice::from_raw_parts_mut(values, n * width);
+    for slot in rows.iter_mut() {
+        *slot = f64::NAN;
+    }
+    for i in 0..n {
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        let Some(out_val) = ind.update(input) else {
+            continue;
+        };
+        let row = &mut rows[i * width..(i + 1) * width];
+        for (slot, &v) in row.iter_mut().zip(&out_val.bins) {
+            *slot = v;
+        }
     }
 }
 
@@ -74481,6 +74613,71 @@ pub unsafe extern "C" fn wickra_time_of_day_return_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Run over the input series, writing one profile per input into `values` as a
+/// flat `n * width` block. A row the indicator did not produce -- warmup, or an
+/// input it rejected -- is filled with `NaN`. `width` is the payload length the
+/// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
+///
+/// # Safety
+/// `handle` valid (from `wickra_time_of_day_return_profile_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements, `values` covers `n * width` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_batch(
+    handle: *mut TimeOfDayReturnProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    values: *mut f64,
+    width: usize,
+    n: usize,
+) {
+    let Some(ind) = handle.as_mut() else {
+        return;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || values.is_null()
+    {
+        return;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let rows = slice::from_raw_parts_mut(values, n * width);
+    for slot in rows.iter_mut() {
+        *slot = f64::NAN;
+    }
+    for i in 0..n {
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        let Some(out_val) = ind.update(input) else {
+            continue;
+        };
+        let row = &mut rows[i * width..(i + 1) * width];
+        for (slot, &v) in row.iter_mut().zip(&out_val.bins) {
+            *slot = v;
+        }
     }
 }
 
@@ -74619,6 +74816,86 @@ pub unsafe extern "C" fn wickra_tpo_profile_update(
     }
 }
 
+/// Run over the input series, writing one profile per input into `values` as a
+/// flat `n * width` block. A row the indicator did not produce -- warmup, or an
+/// input it rejected -- is filled with `NaN`. `width` is the payload length the
+/// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
+/// The scalar fields of each row are written to `scalars[i]` when `scalars`
+/// is non-`NULL`; a row the indicator did not produce is left untouched.
+///
+/// # Safety
+/// `handle` valid (from `wickra_tpo_profile_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements, `values` covers `n * width` `double`s, and `scalars` covers `n` `WickraTpoProfileOutputScalars`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_batch(
+    handle: *mut TpoProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    scalars: *mut WickraTpoProfileOutputScalars,
+    values: *mut f64,
+    width: usize,
+    n: usize,
+) {
+    let Some(ind) = handle.as_mut() else {
+        return;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || values.is_null()
+    {
+        return;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let rows = slice::from_raw_parts_mut(values, n * width);
+    for slot in rows.iter_mut() {
+        *slot = f64::NAN;
+    }
+    let scalar_rows = if scalars.is_null() {
+        None
+    } else {
+        Some(slice::from_raw_parts_mut(scalars, n))
+    };
+    let mut scalar_rows = scalar_rows;
+    for i in 0..n {
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        let Some(out_val) = ind.update(input) else {
+            continue;
+        };
+        if let Some(rows) = scalar_rows.as_mut() {
+            rows[i] = WickraTpoProfileOutputScalars {
+                price_low: out_val.price_low,
+                price_high: out_val.price_high,
+            };
+        }
+        let row = &mut rows[i * width..(i + 1) * width];
+        for (slot, &v) in row.iter_mut().zip(&out_val.counts) {
+            *slot = v;
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -74737,6 +75014,71 @@ pub unsafe extern "C" fn wickra_volume_by_time_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Run over the input series, writing one profile per input into `values` as a
+/// flat `n * width` block. A row the indicator did not produce -- warmup, or an
+/// input it rejected -- is filled with `NaN`. `width` is the payload length the
+/// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
+///
+/// # Safety
+/// `handle` valid (from `wickra_volume_by_time_profile_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements, `values` covers `n * width` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_batch(
+    handle: *mut VolumeByTimeProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    values: *mut f64,
+    width: usize,
+    n: usize,
+) {
+    let Some(ind) = handle.as_mut() else {
+        return;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || values.is_null()
+    {
+        return;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let rows = slice::from_raw_parts_mut(values, n * width);
+    for slot in rows.iter_mut() {
+        *slot = f64::NAN;
+    }
+    for i in 0..n {
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        let Some(out_val) = ind.update(input) else {
+            continue;
+        };
+        let row = &mut rows[i * width..(i + 1) * width];
+        for (slot, &v) in row.iter_mut().zip(&out_val.bins) {
+            *slot = v;
+        }
     }
 }
 
@@ -74868,6 +75210,86 @@ pub unsafe extern "C" fn wickra_volume_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Run over the input series, writing one profile per input into `values` as a
+/// flat `n * width` block. A row the indicator did not produce -- warmup, or an
+/// input it rejected -- is filled with `NaN`. `width` is the payload length the
+/// constructor fixes; a shorter payload leaves the rest of its row `NaN`.
+/// The scalar fields of each row are written to `scalars[i]` when `scalars`
+/// is non-`NULL`; a row the indicator did not produce is left untouched.
+///
+/// # Safety
+/// `handle` valid (from `wickra_volume_profile_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements, `values` covers `n * width` `double`s, and `scalars` covers `n` `WickraVolumeProfileOutputScalars`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_batch(
+    handle: *mut VolumeProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    scalars: *mut WickraVolumeProfileOutputScalars,
+    values: *mut f64,
+    width: usize,
+    n: usize,
+) {
+    let Some(ind) = handle.as_mut() else {
+        return;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || values.is_null()
+    {
+        return;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let rows = slice::from_raw_parts_mut(values, n * width);
+    for slot in rows.iter_mut() {
+        *slot = f64::NAN;
+    }
+    let scalar_rows = if scalars.is_null() {
+        None
+    } else {
+        Some(slice::from_raw_parts_mut(scalars, n))
+    };
+    let mut scalar_rows = scalar_rows;
+    for i in 0..n {
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        let Some(out_val) = ind.update(input) else {
+            continue;
+        };
+        if let Some(rows) = scalar_rows.as_mut() {
+            rows[i] = WickraVolumeProfileOutputScalars {
+                price_low: out_val.price_low,
+                price_high: out_val.price_high,
+            };
+        }
+        let row = &mut rows[i * width..(i + 1) * width];
+        for (slot, &v) in row.iter_mut().zip(&out_val.bins) {
+            *slot = v;
+        }
     }
 }
 
@@ -75151,6 +75573,55 @@ pub unsafe extern "C" fn wickra_dollar_bars_drain(
     count
 }
 
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_dollar_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_dollar_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dollar_bars_batch(
+    handle: *mut DollarBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
+}
+
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
 /// (cached on first call). Returns `NULL` if `handle` is `NULL`.
 ///
@@ -75300,6 +75771,55 @@ pub unsafe extern "C" fn wickra_imbalance_bars_drain(
     count
 }
 
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_imbalance_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_imbalance_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_imbalance_bars_batch(
+    handle: *mut ImbalanceBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
+}
+
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
 /// (cached on first call). Returns `NULL` if `handle` is `NULL`.
 ///
@@ -75441,6 +75961,55 @@ pub unsafe extern "C" fn wickra_kagi_bars_drain(
         };
     }
     count
+}
+
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_kagi_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_kagi_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kagi_bars_batch(
+    handle: *mut KagiBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -75589,6 +76158,55 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_drain(
     count
 }
 
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_point_and_figure_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_point_and_figure_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_point_and_figure_bars_batch(
+    handle: *mut PointAndFigureBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
+}
+
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
 /// (cached on first call). Returns `NULL` if `handle` is `NULL`.
 ///
@@ -75734,6 +76352,55 @@ pub unsafe extern "C" fn wickra_range_bars_drain(
     count
 }
 
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_range_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_range_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_range_bars_batch(
+    handle: *mut RangeBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
+}
+
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
 /// (cached on first call). Returns `NULL` if `handle` is `NULL`.
 ///
@@ -75875,6 +76542,55 @@ pub unsafe extern "C" fn wickra_renko_bars_drain(
         };
     }
     count
+}
+
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_renko_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_renko_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_bars_batch(
+    handle: *mut RenkoBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -76026,6 +76742,55 @@ pub unsafe extern "C" fn wickra_run_bars_drain(
     count
 }
 
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_run_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_run_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_run_bars_batch(
+    handle: *mut RunBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
+}
+
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
 /// (cached on first call). Returns `NULL` if `handle` is `NULL`.
 ///
@@ -76167,6 +76932,55 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_drain(
         };
     }
     count
+}
+
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_three_line_break_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_three_line_break_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_bars_batch(
+    handle: *mut ThreeLineBreakBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -76318,6 +77132,55 @@ pub unsafe extern "C" fn wickra_tick_bars_drain(
     count
 }
 
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_tick_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_tick_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_bars_batch(
+    handle: *mut TickBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
+}
+
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
 /// (cached on first call). Returns `NULL` if `handle` is `NULL`.
 ///
@@ -76463,6 +77326,55 @@ pub unsafe extern "C" fn wickra_volume_bars_drain(
         };
     }
     count
+}
+
+/// Feed `n` OHLCV candles and buffer every bar they complete. Returns the total,
+/// or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve the bars with
+/// `wickra_volume_bars_drain`, which is the only way to get them; an invalid candle
+/// is skipped rather than aborting the run.
+///
+/// # Safety
+/// `handle` valid (from `wickra_volume_bars_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_bars_batch(
+    handle: *mut VolumeBars,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    if open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+    {
+        return 0;
+    }
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    builder.pending.clear();
+    for i in 0..n {
+        let Ok(candle) = Candle::new(
+            opens[i], highs[i], lows[i], closes[i], volumes[i], stamps[i],
+        ) else {
+            continue;
+        };
+        builder.pending.extend(builder.inner.update(candle));
+    }
+    builder.pending.len()
 }
 
 /// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
@@ -76693,15 +77605,32 @@ pub struct WickraFootprintLevel {
 /// release with `wickra_footprint_free`.
 #[no_mangle]
 pub extern "C" fn wickra_footprint_new(tick_size: f64) -> *mut Footprint {
-    match Footprint::new(tick_size) {
-        Ok(ind) => Box::into_raw(Box::new(ind)),
+    match CoreFootprint::new(tick_size) {
+        Ok(inner) => Box::into_raw(Box::new(Footprint {
+            inner,
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
+/// Opaque `Footprint` handle plus the levels the last update could not fit.
+///
+/// The level count grows with the distinct prices seen, so no fixed buffer is
+/// large enough for a long session. The surplus stays here and comes out through
+/// `wickra_footprint_drain`, the same shape the bar builders and the resampler
+/// use. Named `Footprint` because the generated bindings take their public class
+/// name from this struct; the core indicator is aliased.
+#[derive(Debug)]
+pub struct Footprint {
+    inner: CoreFootprint,
+    pending: Vec<FootprintLevel>,
+}
+
 /// Feed one trade. Returns `-1` during warmup / on a `NULL` handle / invalid trade,
 /// otherwise the number of price levels in the completed footprint; up to `cap` levels
-/// are written to `out` (enlarge `cap` if the return exceeds it).
+/// are written to `out` and any that did not fit are buffered -- retrieve them with
+/// `wickra_footprint_drain` before the next `update`.
 ///
 /// # Safety
 /// `handle` (from `wickra_footprint_new`, not freed) and `out` must be valid or `NULL`;
@@ -76716,18 +77645,20 @@ pub unsafe extern "C" fn wickra_footprint_update(
     out: *mut WickraFootprintLevel,
     cap: usize,
 ) -> isize {
-    let Some(ind) = handle.as_mut() else {
+    let Some(footprint) = handle.as_mut() else {
         return -1;
     };
     let side = if is_buy { Side::Buy } else { Side::Sell };
     let Ok(trade) = Trade::new(price, size, side, timestamp) else {
         return -1;
     };
-    match ind.update(trade) {
+    match footprint.inner.update(trade) {
         Some(out_val) => {
+            let total = out_val.levels.len();
+            let mut rest = out_val.levels.into_iter();
             if !out.is_null() {
                 let slots = slice::from_raw_parts_mut(out, cap);
-                for (slot, level) in slots.iter_mut().zip(&out_val.levels) {
+                for (slot, level) in slots.iter_mut().zip(rest.by_ref()) {
                     *slot = WickraFootprintLevel {
                         price: level.price,
                         bid_vol: level.bid_vol,
@@ -76735,10 +77666,81 @@ pub unsafe extern "C" fn wickra_footprint_update(
                     };
                 }
             }
-            isize::try_from(out_val.levels.len()).unwrap_or(isize::MAX)
+            footprint.pending = rest.collect();
+            isize::try_from(total).unwrap_or(isize::MAX)
         }
         None => -1,
     }
+}
+
+/// Copy up to `cap` levels the last `update` could not fit into `out`, remove
+/// them from the buffer, and return the number written. Returns 0 on a `NULL`
+/// handle / `out`, or when nothing is buffered.
+///
+/// # Safety
+/// `handle` (from `wickra_footprint_new`, not freed) and `out` must be valid or
+/// `NULL`; when non-`NULL`, `out` must cover `cap` `WickraFootprintLevel` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_drain(
+    handle: *mut Footprint,
+    out: *mut WickraFootprintLevel,
+    cap: usize,
+) -> usize {
+    let Some(footprint) = handle.as_mut() else {
+        return 0;
+    };
+    if out.is_null() {
+        return 0;
+    }
+    let count = footprint.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, level) in slots.iter_mut().zip(footprint.pending.drain(..count)) {
+        *slot = WickraFootprintLevel {
+            price: level.price,
+            bid_vol: level.bid_vol,
+            ask_vol: level.ask_vol,
+        };
+    }
+    count
+}
+
+/// Feed `n` trades and buffer the levels of the final footprint. Returns the
+/// level count, or 0 on a `NULL` handle or a `NULL` input pointer. Retrieve them
+/// with `wickra_footprint_drain`; an invalid trade is skipped.
+///
+/// # Safety
+/// `handle` valid (from `wickra_footprint_new`, not freed) or `NULL`; every input
+/// pointer covers `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_batch(
+    handle: *mut Footprint,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    n: usize,
+) -> usize {
+    let Some(footprint) = handle.as_mut() else {
+        return 0;
+    };
+    if price.is_null() || size.is_null() || is_buy.is_null() || timestamp.is_null() {
+        return 0;
+    }
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    footprint.pending.clear();
+    for i in 0..n {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        let Ok(trade) = Trade::new(prices[i], sizes[i], side, stamps[i]) else {
+            continue;
+        };
+        if let Some(out_val) = footprint.inner.update(trade) {
+            footprint.pending = out_val.levels;
+        }
+    }
+    footprint.pending.len()
 }
 
 /// Number of updates the indicator needs before it produces a value. Returns `0`
@@ -76749,7 +77751,7 @@ pub unsafe extern "C" fn wickra_footprint_update(
 #[no_mangle]
 pub unsafe extern "C" fn wickra_footprint_warmup_period(handle: *mut Footprint) -> usize {
     match handle.as_ref() {
-        Some(ind) => ind.warmup_period(),
+        Some(ind) => ind.inner.warmup_period(),
         None => 0,
     }
 }
@@ -76762,7 +77764,7 @@ pub unsafe extern "C" fn wickra_footprint_warmup_period(handle: *mut Footprint) 
 #[no_mangle]
 pub unsafe extern "C" fn wickra_footprint_is_ready(handle: *mut Footprint) -> bool {
     match handle.as_ref() {
-        Some(ind) => ind.is_ready(),
+        Some(ind) => ind.inner.is_ready(),
         None => false,
     }
 }
@@ -76778,7 +77780,7 @@ pub unsafe extern "C" fn wickra_footprint_name(handle: *mut Footprint) -> *const
         Some(ind) => {
             static NAME: OnceLock<CString> = OnceLock::new();
             NAME.get_or_init(|| {
-                CString::new(ind.name()).expect("indicator name has no interior NUL")
+                CString::new(ind.inner.name()).expect("indicator name has no interior NUL")
             })
             .as_ptr()
         }
@@ -76793,7 +77795,8 @@ pub unsafe extern "C" fn wickra_footprint_name(handle: *mut Footprint) -> *const
 #[no_mangle]
 pub unsafe extern "C" fn wickra_footprint_reset(handle: *mut Footprint) {
     if let Some(ind) = handle.as_mut() {
-        ind.reset();
+        ind.inner.reset();
+        ind.pending.clear();
     }
 }
 
@@ -77752,6 +78755,150 @@ mod tests {
                 0
             );
             wickra_renko_bars_free(handle);
+        }
+    }
+
+    #[test]
+    fn bar_builder_batch_matches_streaming() {
+        // The batch buffers every bar the whole series completes; `drain` is the
+        // only way out. Checked against feeding the same candles one at a time.
+        const N: usize = 12;
+        let mut closes = [0.0_f64; N];
+        for (i, slot) in closes.iter_mut().enumerate() {
+            #[allow(clippy::cast_precision_loss)]
+            let step = i as f64;
+            // A ramp with one gap, so some candles complete several bricks.
+            *slot = 100.0 + step * 3.0 + if i == 6 { 40.0 } else { 0.0 };
+        }
+        let volumes = [1.0_f64; N];
+        let stamps: [i64; N] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+        let zero = WickraRenkoBrick {
+            open: 0.0,
+            close: 0.0,
+            direction: 0,
+        };
+        let mut batched = vec![zero; 256];
+        let produced = unsafe {
+            let handle = wickra_renko_bars_new(1.0);
+            assert!(!handle.is_null());
+            let total = wickra_renko_bars_batch(
+                handle,
+                closes.as_ptr(),
+                closes.as_ptr(),
+                closes.as_ptr(),
+                closes.as_ptr(),
+                volumes.as_ptr(),
+                stamps.as_ptr(),
+                N,
+            );
+            let drained = wickra_renko_bars_drain(handle, batched.as_mut_ptr(), batched.len());
+            assert_eq!(drained, total, "the drain must yield every buffered bar");
+            wickra_renko_bars_free(handle);
+            total
+        };
+        assert!(produced > 0, "the ramp must complete bricks");
+
+        let mut streamed = Vec::new();
+        unsafe {
+            let handle = wickra_renko_bars_new(1.0);
+            let mut buf = vec![zero; 256];
+            for i in 0..N {
+                let count = wickra_renko_bars_update(
+                    handle,
+                    closes[i],
+                    closes[i],
+                    closes[i],
+                    closes[i],
+                    volumes[i],
+                    stamps[i],
+                    buf.as_mut_ptr(),
+                    buf.len(),
+                );
+                streamed.extend_from_slice(&buf[..count]);
+            }
+            wickra_renko_bars_free(handle);
+        }
+        assert_eq!(streamed.len(), produced);
+        for (i, brick) in streamed.iter().enumerate() {
+            assert!(
+                (batched[i].open - brick.open).abs() < 1e-9,
+                "brick {i} open"
+            );
+            assert!(
+                (batched[i].close - brick.close).abs() < 1e-9,
+                "brick {i} close"
+            );
+            assert_eq!(batched[i].direction, brick.direction, "brick {i} direction");
+        }
+    }
+
+    #[test]
+    fn profile_batch_matches_streaming() {
+        const N: usize = 10;
+        const WIDTH: usize = 7;
+        let mut closes = [0.0_f64; N];
+        for (i, slot) in closes.iter_mut().enumerate() {
+            #[allow(clippy::cast_precision_loss)]
+            let step = i as f64;
+            *slot = 100.0 + step;
+        }
+        let volumes = [10.0_f64; N];
+        // One day apart, so every bar lands in a different weekday bucket.
+        let mut stamps = [0_i64; N];
+        for (i, slot) in stamps.iter_mut().enumerate() {
+            #[allow(clippy::cast_possible_wrap)]
+            let day = i as i64;
+            *slot = day * 86_400_000;
+        }
+
+        let mut flat = [f64::NAN; N * WIDTH];
+        unsafe {
+            let handle = wickra_day_of_week_profile_new(0);
+            assert!(!handle.is_null());
+            wickra_day_of_week_profile_batch(
+                handle,
+                closes.as_ptr(),
+                closes.as_ptr(),
+                closes.as_ptr(),
+                closes.as_ptr(),
+                volumes.as_ptr(),
+                stamps.as_ptr(),
+                flat.as_mut_ptr(),
+                WIDTH,
+                N,
+            );
+            wickra_day_of_week_profile_free(handle);
+
+            let streamed = wickra_day_of_week_profile_new(0);
+            let mut row = [f64::NAN; WIDTH];
+            let mut emitted = 0_usize;
+            for i in 0..N {
+                let len = wickra_day_of_week_profile_update(
+                    streamed,
+                    closes[i],
+                    closes[i],
+                    closes[i],
+                    closes[i],
+                    volumes[i],
+                    stamps[i],
+                    row.as_mut_ptr(),
+                    WIDTH,
+                );
+                if len < 0 {
+                    assert!(flat[i * WIDTH..(i + 1) * WIDTH].iter().all(|v| v.is_nan()));
+                    continue;
+                }
+                emitted += 1;
+                for k in 0..WIDTH {
+                    assert!(
+                        (flat[i * WIDTH + k] - row[k]).abs() < 1e-12,
+                        "row {i} bucket {k}"
+                    );
+                }
+            }
+            wickra_day_of_week_profile_free(streamed);
+            assert!(emitted > 0, "the fixture must clear warmup");
         }
     }
 

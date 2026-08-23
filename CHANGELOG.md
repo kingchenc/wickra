@@ -649,6 +649,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   been missed only because its constructor takes moving-average type codes and
   it therefore sits outside the generated section. 475 of the 517 handles have a
   batch now.
+- **Every indicator in the C ABI has a `batch`.** The bar builders feed the
+  whole series and buffer the bars for the drain; the profiles write a flat
+  `n * width` block with `NaN` rows during warmup. Of the 517 handles, the only
+  three without a vectorized path are the data-layer types, which are not
+  indicators.
+- **Footprint truncated its price levels.** It reports one level per distinct
+  price seen, so any session spanning more than 64 ticks of range overflowed the
+  fixed buffer the bindings pass — returning a list sized to the real count with
+  zero-valued levels in the tail. It buffers and drains the surplus now, like
+  the bar builders.
 - **The bar builders dropped bars, and crashed three bindings doing it.** One
   candle can complete any number of bars — a Renko builder with a box size of 1
   turns a 500-point move into 500 bricks — but `update` writes into a

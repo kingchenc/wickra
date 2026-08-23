@@ -30,3 +30,29 @@ func TestRenkoUpdateReturnsEveryBrickOfALargeMove(t *testing.T) {
 		}
 	}
 }
+
+// Footprint reports one level per distinct price seen, so a session spanning
+// more than 64 ticks of range overflows the same fixed buffer. Before the drain
+// the wrapper returned a slice whose tail was zero-valued -- silently wrong
+// numbers rather than a crash.
+func TestFootprintUpdateReturnsEveryLevel(t *testing.T) {
+	f, err := NewFootprint(1.0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	var levels []FootprintLevel
+	for i := 0; i < 200; i++ {
+		levels = f.Update(100+float64(i), 1, i%2 == 0, int64(i))
+	}
+
+	if len(levels) <= 64 {
+		t.Fatalf("the range must span more levels than the buffer holds, got %d", len(levels))
+	}
+	for i, l := range levels {
+		if l.Price == 0 && l.BidVol == 0 && l.AskVol == 0 {
+			t.Fatalf("level %d of %d is an unwritten zero", i, len(levels))
+		}
+	}
+}
