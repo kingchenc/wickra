@@ -406,6 +406,59 @@ public sealed class AccelerationBands : IDisposable
         return ok ? new AccelerationBandsOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AccelerationBandsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAccelerationBandsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAccelerationBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_acceleration_bands_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AccelerationBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AccelerationBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -1382,6 +1435,59 @@ public sealed class Adx : IDisposable
         return ok ? new AdxOutput(native.plus_di, native.minus_di, native.adx) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AdxOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAdxOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAdxOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_adx_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AdxOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AdxOutput(native[i].plus_di, native[i].minus_di, native[i].adx);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -1532,6 +1638,59 @@ public sealed class Alligator : IDisposable
         }
 
         return ok ? new AlligatorOutput(native.jaw, native.teeth, native.lips) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AlligatorOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAlligatorOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAlligatorOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_alligator_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AlligatorOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AlligatorOutput(native[i].jaw, native[i].teeth, native[i].lips);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -1942,6 +2101,59 @@ public sealed class AndrewsPitchfork : IDisposable
         return ok ? new AndrewsPitchforkOutput(native.median, native.upper, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AndrewsPitchforkOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAndrewsPitchforkOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAndrewsPitchforkOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_andrews_pitchfork_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AndrewsPitchforkOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AndrewsPitchforkOutput(native[i].median, native[i].upper, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -2066,6 +2278,59 @@ public sealed class Aroon : IDisposable
         }
 
         return ok ? new AroonOutput(native.up, native.down) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AroonOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAroonOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAroonOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_aroon_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AroonOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AroonOutput(native[i].up, native[i].down);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -2311,6 +2576,59 @@ public sealed class AtrBands : IDisposable
         return ok ? new AtrBandsOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AtrBandsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAtrBandsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAtrBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_atr_bands_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AtrBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AtrBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -2366,6 +2684,59 @@ public sealed class AtrRatchet : IDisposable
         }
 
         return ok ? new AtrRatchetOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AtrRatchetOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAtrRatchetOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAtrRatchetOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_atr_ratchet_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AtrRatchetOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AtrRatchetOutput(native[i].@value, native[i].direction);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -2515,6 +2886,59 @@ public sealed class AutoFib : IDisposable
         }
 
         return ok ? new AutoFibOutput(native.level_0, native.level_236, native.level_382, native.level_500, native.level_618, native.level_786, native.level_1000) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public AutoFibOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraAutoFibOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraAutoFibOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_auto_fib_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new AutoFibOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new AutoFibOutput(native[i].level_0, native[i].level_236, native[i].level_382, native[i].level_500, native[i].level_618, native[i].level_786, native[i].level_1000);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -3897,6 +4321,34 @@ public sealed class BollingerBands : IDisposable
         return ok ? new BollingerOutput(native.upper, native.middle, native.lower, native.stddev) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public BollingerOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraBollingerOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraBollingerOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_bollinger_bands_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new BollingerOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new BollingerOutput(native[i].upper, native[i].middle, native[i].lower, native[i].stddev);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -4020,6 +4472,34 @@ public sealed class BomarBands : IDisposable
         }
 
         return ok ? new BomarBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public BomarBandsOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraBomarBandsOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraBomarBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_bomar_bands_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new BomarBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new BomarBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -4617,6 +5097,59 @@ public sealed class Camarilla : IDisposable
         return ok ? new CamarillaPivotsOutput(native.pp, native.r1, native.r2, native.r3, native.r4, native.s1, native.s2, native.s3, native.s4) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public CamarillaPivotsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraCamarillaPivotsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraCamarillaPivotsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_camarilla_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new CamarillaPivotsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new CamarillaPivotsOutput(native[i].pp, native[i].r1, native[i].r2, native[i].r3, native[i].r4, native[i].s1, native[i].s2, native[i].s3, native[i].s4);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -4724,6 +5257,59 @@ public sealed class CandleVolume : IDisposable
         }
 
         return ok ? new CandleVolumeOutput(native.body, native.width) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public CandleVolumeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraCandleVolumeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraCandleVolumeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_candle_volume_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new CandleVolumeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new CandleVolumeOutput(native[i].body, native[i].width);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -4941,6 +5527,59 @@ public sealed class CentralPivotRange : IDisposable
         }
 
         return ok ? new CentralPivotRangeOutput(native.pivot, native.tc, native.bc) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public CentralPivotRangeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraCentralPivotRangeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraCentralPivotRangeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_central_pivot_range_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new CentralPivotRangeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new CentralPivotRangeOutput(native[i].pivot, native[i].tc, native[i].bc);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -5350,6 +5989,59 @@ public sealed class ChandeKrollStop : IDisposable
         return ok ? new ChandeKrollStopOutput(native.stop_long, native.stop_short) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ChandeKrollStopOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraChandeKrollStopOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraChandeKrollStopOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_chande_kroll_stop_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ChandeKrollStopOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ChandeKrollStopOutput(native[i].stop_long, native[i].stop_short);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -5405,6 +6097,59 @@ public sealed class ChandelierExit : IDisposable
         }
 
         return ok ? new ChandelierExitOutput(native.long_stop, native.short_stop) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ChandelierExitOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraChandelierExitOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraChandelierExitOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_chandelier_exit_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ChandelierExitOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ChandelierExitOutput(native[i].long_stop, native[i].short_stop);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -5554,6 +6299,59 @@ public sealed class ClassicPivots : IDisposable
         }
 
         return ok ? new ClassicPivotsOutput(native.pp, native.r1, native.r2, native.r3, native.s1, native.s2, native.s3) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ClassicPivotsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraClassicPivotsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraClassicPivotsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_classic_pivots_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ClassicPivotsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ClassicPivotsOutput(native[i].pp, native[i].r1, native[i].r2, native[i].r3, native[i].s1, native[i].s2, native[i].s3);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -5934,6 +6732,39 @@ public sealed class Cointegration : IDisposable
         return ok ? new CointegrationOutput(native.hedge_ratio, native.spread, native.adf_stat) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public CointegrationOutput[] Batch(ReadOnlySpan<double> x, ReadOnlySpan<double> y)
+    {
+        var n = x.Length;
+        if (y.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraCointegrationOutput[n];
+        unsafe
+        {
+            fixed (double* xPtr = x)
+            fixed (double* yPtr = y)
+            fixed (WickraCointegrationOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_cointegration_batch(_handle, xPtr, yPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new CointegrationOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new CointegrationOutput(native[i].hedge_ratio, native[i].spread, native[i].adf_stat);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -6058,6 +6889,59 @@ public sealed class CompositeProfile : IDisposable
         }
 
         return ok ? new CompositeProfileOutput(native.poc, native.vah, native.val) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public CompositeProfileOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraCompositeProfileOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraCompositeProfileOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_composite_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new CompositeProfileOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new CompositeProfileOutput(native[i].poc, native[i].vah, native[i].val);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -7423,6 +8307,59 @@ public sealed class DemarkPivots : IDisposable
         return ok ? new DemarkPivotsOutput(native.pp, native.r1, native.s1) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public DemarkPivotsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraDemarkPivotsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraDemarkPivotsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_demark_pivots_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new DemarkPivotsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new DemarkPivotsOutput(native[i].pp, native[i].r1, native[i].s1);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -8071,6 +9008,59 @@ public sealed class Donchian : IDisposable
         return ok ? new DonchianOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public DonchianOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraDonchianOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraDonchianOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_donchian_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new DonchianOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new DonchianOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -8128,6 +9118,59 @@ public sealed class DonchianStop : IDisposable
         return ok ? new DonchianStopOutput(native.stop_long, native.stop_short) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public DonchianStopOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraDonchianStopOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraDonchianStopOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_donchian_stop_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new DonchianStopOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new DonchianStopOutput(native[i].stop_long, native[i].stop_short);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -8183,6 +9226,34 @@ public sealed class DoubleBollinger : IDisposable
         }
 
         return ok ? new DoubleBollingerOutput(native.upper_outer, native.upper_inner, native.middle, native.lower_inner, native.lower_outer) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public DoubleBollingerOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraDoubleBollingerOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraDoubleBollingerOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_double_bollinger_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new DoubleBollingerOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new DoubleBollingerOutput(native[i].upper_outer, native[i].upper_inner, native[i].middle, native[i].lower_inner, native[i].lower_outer);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -9257,6 +10328,59 @@ public sealed class ElderRay : IDisposable
         return ok ? new ElderRayOutput(native.bull_power, native.bear_power) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ElderRayOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraElderRayOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraElderRayOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_elder_ray_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ElderRayOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ElderRayOutput(native[i].bull_power, native[i].bear_power);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -9312,6 +10436,59 @@ public sealed class ElderSafeZone : IDisposable
         }
 
         return ok ? new ElderSafeZoneOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ElderSafeZoneOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraElderSafeZoneOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraElderSafeZoneOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_elder_safe_zone_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ElderSafeZoneOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ElderSafeZoneOutput(native[i].@value, native[i].direction);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -9597,6 +10774,59 @@ public sealed class Equivolume : IDisposable
         }
 
         return ok ? new EquivolumeOutput(native.height, native.width) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public EquivolumeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraEquivolumeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraEquivolumeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_equivolume_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new EquivolumeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new EquivolumeOutput(native[i].height, native[i].width);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -10253,6 +11483,59 @@ public sealed class FibArcs : IDisposable
         return ok ? new FibArcsOutput(native.arc_382, native.arc_500, native.arc_618) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibArcsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibArcsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibArcsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_arcs_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibArcsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibArcsOutput(native[i].arc_382, native[i].arc_500, native[i].arc_618);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10307,6 +11590,59 @@ public sealed class FibChannel : IDisposable
         }
 
         return ok ? new FibChannelOutput(native.@base, native.level_618, native.level_1000, native.level_1618) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibChannelOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibChannelOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibChannelOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_channel_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibChannelOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibChannelOutput(native[i].@base, native[i].level_618, native[i].level_1000, native[i].level_1618);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -10365,6 +11701,59 @@ public sealed class FibConfluence : IDisposable
         return ok ? new FibConfluenceOutput(native.price, native.strength) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibConfluenceOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibConfluenceOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibConfluenceOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_confluence_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibConfluenceOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibConfluenceOutput(native[i].price, native[i].strength);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10419,6 +11808,59 @@ public sealed class FibExtension : IDisposable
         }
 
         return ok ? new FibExtensionOutput(native.level_1272, native.level_1414, native.level_1618, native.level_2000, native.level_2618) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibExtensionOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibExtensionOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibExtensionOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_extension_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibExtensionOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibExtensionOutput(native[i].level_1272, native[i].level_1414, native[i].level_1618, native[i].level_2000, native[i].level_2618);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -10477,6 +11919,59 @@ public sealed class FibFan : IDisposable
         return ok ? new FibFanOutput(native.fan_382, native.fan_500, native.fan_618) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibFanOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibFanOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibFanOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_fan_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibFanOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibFanOutput(native[i].fan_382, native[i].fan_500, native[i].fan_618);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10531,6 +12026,59 @@ public sealed class FibProjection : IDisposable
         }
 
         return ok ? new FibProjectionOutput(native.level_618, native.level_1000, native.level_1618, native.level_2618) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibProjectionOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibProjectionOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibProjectionOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_projection_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibProjectionOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibProjectionOutput(native[i].level_618, native[i].level_1000, native[i].level_1618, native[i].level_2618);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -10589,6 +12137,59 @@ public sealed class FibRetracement : IDisposable
         return ok ? new FibRetracementOutput(native.level_0, native.level_236, native.level_382, native.level_500, native.level_618, native.level_786, native.level_1000) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibRetracementOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibRetracementOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibRetracementOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_retracement_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibRetracementOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibRetracementOutput(native[i].level_0, native[i].level_236, native[i].level_382, native[i].level_500, native[i].level_618, native[i].level_786, native[i].level_1000);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10645,6 +12246,59 @@ public sealed class FibTimeZones : IDisposable
         return ok ? new FibTimeZonesOutput(native.on_zone, native.bars_to_next) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibTimeZonesOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibTimeZonesOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibTimeZonesOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fib_time_zones_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibTimeZonesOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibTimeZonesOutput(native[i].on_zone, native[i].bars_to_next);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10699,6 +12353,59 @@ public sealed class FibonacciPivots : IDisposable
         }
 
         return ok ? new FibonacciPivotsOutput(native.pp, native.r1, native.r2, native.r3, native.s1, native.s2, native.s3) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FibonacciPivotsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFibonacciPivotsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFibonacciPivotsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fibonacci_pivots_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FibonacciPivotsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FibonacciPivotsOutput(native[i].pp, native[i].r1, native[i].r2, native[i].r3, native[i].s1, native[i].s2, native[i].s3);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -11148,6 +12855,59 @@ public sealed class FractalChaosBands : IDisposable
         }
 
         return ok ? new FractalChaosBandsOutput(native.upper, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public FractalChaosBandsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraFractalChaosBandsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraFractalChaosBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_fractal_chaos_bands_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new FractalChaosBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new FractalChaosBandsOutput(native[i].upper, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -12103,6 +13863,59 @@ public sealed class GatorOscillator : IDisposable
         return ok ? new GatorOscillatorOutput(native.upper, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public GatorOscillatorOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraGatorOscillatorOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraGatorOscillatorOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_gator_oscillator_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new GatorOscillatorOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new GatorOscillatorOutput(native[i].upper, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -12293,6 +14106,59 @@ public sealed class GoldenPocket : IDisposable
         }
 
         return ok ? new GoldenPocketOutput(native.low, native.mid, native.high) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public GoldenPocketOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraGoldenPocketOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraGoldenPocketOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_golden_pocket_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new GoldenPocketOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new GoldenPocketOutput(native[i].low, native[i].mid, native[i].high);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -13050,6 +14916,59 @@ public sealed class HeikinAshi : IDisposable
         return ok ? new HeikinAshiOutput(native.open, native.high, native.low, native.close) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public HeikinAshiOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraHeikinAshiOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraHeikinAshiOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_heikin_ashi_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new HeikinAshiOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new HeikinAshiOutput(native[i].open, native[i].high, native[i].low, native[i].close);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -13469,6 +15388,59 @@ public sealed class HighLowVolumeNodes : IDisposable
         }
 
         return ok ? new HighLowVolumeNodesOutput(native.hvn, native.lvn) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public HighLowVolumeNodesOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraHighLowVolumeNodesOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraHighLowVolumeNodesOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_high_low_volume_nodes_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new HighLowVolumeNodesOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new HighLowVolumeNodesOutput(native[i].hvn, native[i].lvn);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -14301,6 +16273,34 @@ public sealed class HtPhasor : IDisposable
         return ok ? new HtPhasorOutput(native.inphase, native.quadrature) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public HtPhasorOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraHtPhasorOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraHtPhasorOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_ht_phasor_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new HtPhasorOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new HtPhasorOutput(native[i].inphase, native[i].quadrature);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -14423,6 +16423,59 @@ public sealed class HurstChannel : IDisposable
         }
 
         return ok ? new HurstChannelOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public HurstChannelOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraHurstChannelOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraHurstChannelOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_hurst_channel_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new HurstChannelOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new HurstChannelOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -14552,6 +16605,59 @@ public sealed class Ichimoku : IDisposable
         }
 
         return ok ? new IchimokuOutput(native.tenkan, native.kijun, native.senkou_a, native.senkou_b, native.chikou) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public IchimokuOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraIchimokuOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraIchimokuOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_ichimoku_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new IchimokuOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new IchimokuOutput(native[i].tenkan, native[i].kijun, native[i].senkou_a, native[i].senkou_b, native[i].chikou);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -15017,6 +17123,59 @@ public sealed class InitialBalance : IDisposable
         }
 
         return ok ? new InitialBalanceOutput(native.high, native.low) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public InitialBalanceOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraInitialBalanceOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraInitialBalanceOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_initial_balance_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new InitialBalanceOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new InitialBalanceOutput(native[i].high, native[i].low);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -15888,6 +18047,39 @@ public sealed class KalmanHedgeRatio : IDisposable
         return ok ? new KalmanHedgeRatioOutput(native.hedge_ratio, native.intercept, native.spread) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public KalmanHedgeRatioOutput[] Batch(ReadOnlySpan<double> x, ReadOnlySpan<double> y)
+    {
+        var n = x.Length;
+        if (y.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraKalmanHedgeRatioOutput[n];
+        unsafe
+        {
+            fixed (double* xPtr = x)
+            fixed (double* yPtr = y)
+            fixed (WickraKalmanHedgeRatioOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_kalman_hedge_ratio_batch(_handle, xPtr, yPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new KalmanHedgeRatioOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new KalmanHedgeRatioOutput(native[i].hedge_ratio, native[i].intercept, native[i].spread);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -16015,6 +18207,59 @@ public sealed class KaseDevStop : IDisposable
         return ok ? new KaseDevStopOutput(native.@value, native.direction) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public KaseDevStopOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraKaseDevStopOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraKaseDevStopOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_kase_dev_stop_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new KaseDevStopOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new KaseDevStopOutput(native[i].@value, native[i].direction);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -16071,6 +18316,59 @@ public sealed class KasePermissionStochastic : IDisposable
         }
 
         return ok ? new KasePermissionStochasticOutput(native.fast, native.slow) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public KasePermissionStochasticOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraKasePermissionStochasticOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraKasePermissionStochasticOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_kase_permission_stochastic_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new KasePermissionStochasticOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new KasePermissionStochasticOutput(native[i].fast, native[i].slow);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -16197,6 +18495,59 @@ public sealed class Keltner : IDisposable
         }
 
         return ok ? new KeltnerOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public KeltnerOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraKeltnerOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraKeltnerOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_keltner_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new KeltnerOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new KeltnerOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -16519,6 +18870,34 @@ public sealed class Kst : IDisposable
         }
 
         return ok ? new KstOutput(native.kst, native.signal) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public KstOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraKstOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraKstOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_kst_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new KstOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new KstOutput(native[i].kst, native[i].signal);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -16951,6 +19330,39 @@ public sealed class LeadLagCrossCorrelation : IDisposable
         return ok ? new LeadLagCrossCorrelationOutput(native.lag, native.correlation) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public LeadLagCrossCorrelationOutput[] Batch(ReadOnlySpan<double> x, ReadOnlySpan<double> y)
+    {
+        var n = x.Length;
+        if (y.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraLeadLagCrossCorrelationOutput[n];
+        unsafe
+        {
+            fixed (double* xPtr = x)
+            fixed (double* yPtr = y)
+            fixed (WickraLeadLagCrossCorrelationOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_lead_lag_cross_correlation_batch(_handle, xPtr, yPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new LeadLagCrossCorrelationOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new LeadLagCrossCorrelationOutput(native[i].lag, native[i].correlation);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -17074,6 +19486,34 @@ public sealed class LinRegChannel : IDisposable
         }
 
         return ok ? new LinRegChannelOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public LinRegChannelOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraLinRegChannelOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraLinRegChannelOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_lin_reg_channel_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new LinRegChannelOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new LinRegChannelOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -17334,6 +19774,89 @@ public sealed class LiquidationFeatures : IDisposable
         }
 
         return ok ? new LiquidationFeaturesOutput(native.long_, native.short_, native.net, native.total, native.imbalance) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public LiquidationFeaturesOutput[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraLiquidationFeaturesOutput[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraLiquidationFeaturesOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_liquidation_features_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new LiquidationFeaturesOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new LiquidationFeaturesOutput(native[i].long_, native[i].short_, native[i].net, native[i].total, native[i].imbalance);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -17763,6 +20286,34 @@ public sealed class MaEnvelope : IDisposable
         return ok ? new MaEnvelopeOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MaEnvelopeOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraMaEnvelopeOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraMaEnvelopeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_ma_envelope_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MaEnvelopeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MaEnvelopeOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -17877,6 +20428,34 @@ public sealed class MacdFix : IDisposable
         }
 
         return ok ? new MacdOutput(native.macd, native.signal, native.histogram) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MacdOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraMacdOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraMacdOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_macd_fix_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MacdOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MacdOutput(native[i].macd, native[i].signal, native[i].histogram);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -18008,6 +20587,34 @@ public sealed class MacdIndicator : IDisposable
         return ok ? new MacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MacdOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraMacdOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraMacdOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_macd_indicator_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MacdOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MacdOutput(native[i].macd, native[i].signal, native[i].histogram);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -18062,6 +20669,34 @@ public sealed class Mama : IDisposable
         }
 
         return ok ? new MamaOutput(native.mama, native.fama) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MamaOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraMamaOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraMamaOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_mama_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MamaOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MamaOutput(native[i].mama, native[i].fama);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -19023,6 +21658,34 @@ public sealed class MedianChannel : IDisposable
         return ok ? new MedianChannelOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MedianChannelOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraMedianChannelOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraMedianChannelOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_median_channel_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MedianChannelOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MedianChannelOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -19750,6 +22413,59 @@ public sealed class ModifiedMaStop : IDisposable
         return ok ? new ModifiedMaStopOutput(native.@value, native.direction) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ModifiedMaStopOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraModifiedMaStopOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraModifiedMaStopOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_modified_ma_stop_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ModifiedMaStopOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ModifiedMaStopOutput(native[i].@value, native[i].direction);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -20057,6 +22773,59 @@ public sealed class MurreyMathLines : IDisposable
         }
 
         return ok ? new MurreyMathLinesOutput(native.mm8_8, native.mm7_8, native.mm6_8, native.mm5_8, native.mm4_8, native.mm3_8, native.mm2_8, native.mm1_8, native.mm0_8) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MurreyMathLinesOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraMurreyMathLinesOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraMurreyMathLinesOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_murrey_math_lines_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MurreyMathLinesOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MurreyMathLinesOutput(native[i].mm8_8, native[i].mm7_8, native[i].mm6_8, native[i].mm5_8, native[i].mm4_8, native[i].mm3_8, native[i].mm2_8, native[i].mm1_8, native[i].mm0_8);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -20477,6 +23246,59 @@ public sealed class Nrtr : IDisposable
         }
 
         return ok ? new NrtrOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public NrtrOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraNrtrOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraNrtrOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_nrtr_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new NrtrOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new NrtrOutput(native[i].@value, native[i].direction);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -21224,6 +24046,59 @@ public sealed class OpeningRange : IDisposable
         return ok ? new OpeningRangeOutput(native.high, native.low, native.breakout_distance) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public OpeningRangeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraOpeningRangeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraOpeningRangeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_opening_range_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new OpeningRangeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new OpeningRangeOutput(native[i].high, native[i].low, native[i].breakout_distance);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -21725,6 +24600,59 @@ public sealed class OvernightIntradayReturn : IDisposable
         }
 
         return ok ? new OvernightIntradayReturnOutput(native.overnight, native.intraday) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public OvernightIntradayReturnOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraOvernightIntradayReturnOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraOvernightIntradayReturnOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_overnight_intraday_return_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new OvernightIntradayReturnOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new OvernightIntradayReturnOutput(native[i].overnight, native[i].intraday);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -23448,6 +26376,59 @@ public sealed class ProjectionBands : IDisposable
         return ok ? new ProjectionBandsOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ProjectionBandsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraProjectionBandsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraProjectionBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_projection_bands_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ProjectionBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ProjectionBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -23783,6 +26764,34 @@ public sealed class Qqe : IDisposable
         return ok ? new QqeOutput(native.rsi_ma, native.trailing_line) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public QqeOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraQqeOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraQqeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_qqe_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new QqeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new QqeOutput(native[i].rsi_ma, native[i].trailing_line);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -23931,6 +26940,34 @@ public sealed class QuartileBands : IDisposable
         }
 
         return ok ? new QuartileBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public QuartileBandsOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraQuartileBandsOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraQuartileBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_quartile_bands_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new QuartileBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new QuartileBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -24599,6 +27636,39 @@ public sealed class RelativeStrengthAB : IDisposable
         }
 
         return ok ? new RelativeStrengthOutput(native.ratio, native.ratio_ma, native.ratio_rsi) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public RelativeStrengthOutput[] Batch(ReadOnlySpan<double> x, ReadOnlySpan<double> y)
+    {
+        var n = x.Length;
+        if (y.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraRelativeStrengthOutput[n];
+        unsafe
+        {
+            fixed (double* xPtr = x)
+            fixed (double* yPtr = y)
+            fixed (WickraRelativeStrengthOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_relative_strength_ab_batch(_handle, xPtr, yPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new RelativeStrengthOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new RelativeStrengthOutput(native[i].ratio, native[i].ratio_ma, native[i].ratio_rsi);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -26442,6 +29512,59 @@ public sealed class Rwi : IDisposable
         return ok ? new RwiOutput(native.high, native.low) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public RwiOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraRwiOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraRwiOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_rwi_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new RwiOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new RwiOutput(native[i].high, native[i].low);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -26843,6 +29966,59 @@ public sealed class SessionHighLow : IDisposable
         return ok ? new SessionHighLowOutput(native.high, native.low) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public SessionHighLowOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraSessionHighLowOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraSessionHighLowOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_session_high_low_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new SessionHighLowOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new SessionHighLowOutput(native[i].high, native[i].low);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -26897,6 +30073,59 @@ public sealed class SessionRange : IDisposable
         }
 
         return ok ? new SessionRangeOutput(native.asia, native.eu, native.us) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public SessionRangeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraSessionRangeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraSessionRangeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_session_range_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new SessionRangeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new SessionRangeOutput(native[i].asia, native[i].eu, native[i].us);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -28039,6 +31268,59 @@ public sealed class SmoothedHeikinAshi : IDisposable
         return ok ? new SmoothedHeikinAshiOutput(native.open, native.high, native.low, native.close) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public SmoothedHeikinAshiOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraSmoothedHeikinAshiOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraSmoothedHeikinAshiOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_smoothed_heikin_ashi_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new SmoothedHeikinAshiOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new SmoothedHeikinAshiOutput(native[i].open, native[i].high, native[i].low, native[i].close);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -28402,6 +31684,39 @@ public sealed class SpreadBollingerBands : IDisposable
         return ok ? new SpreadBollingerBandsOutput(native.middle, native.upper, native.lower, native.percent_b) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public SpreadBollingerBandsOutput[] Batch(ReadOnlySpan<double> x, ReadOnlySpan<double> y)
+    {
+        var n = x.Length;
+        if (y.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraSpreadBollingerBandsOutput[n];
+        unsafe
+        {
+            fixed (double* xPtr = x)
+            fixed (double* yPtr = y)
+            fixed (WickraSpreadBollingerBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_spread_bollinger_bands_batch(_handle, xPtr, yPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new SpreadBollingerBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new SpreadBollingerBandsOutput(native[i].middle, native[i].upper, native[i].lower, native[i].percent_b);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -28692,6 +32007,34 @@ public sealed class StandardErrorBands : IDisposable
         return ok ? new StandardErrorBandsOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public StandardErrorBandsOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraStandardErrorBandsOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraStandardErrorBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_standard_error_bands_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new StandardErrorBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new StandardErrorBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -28748,6 +32091,59 @@ public sealed class StarcBands : IDisposable
         }
 
         return ok ? new StarcBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public StarcBandsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraStarcBandsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraStarcBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_starc_bands_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new StarcBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new StarcBandsOutput(native[i].upper, native[i].middle, native[i].lower);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -29242,6 +32638,59 @@ public sealed class Stochastic : IDisposable
         return ok ? new StochasticOutput(native.k, native.d) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public StochasticOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraStochasticOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraStochasticOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_stochastic_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new StochasticOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new StochasticOutput(native[i].k, native[i].d);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -29458,6 +32907,59 @@ public sealed class SuperTrend : IDisposable
         }
 
         return ok ? new SuperTrendOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public SuperTrendOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraSuperTrendOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraSuperTrendOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_super_trend_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new SuperTrendOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new SuperTrendOutput(native[i].@value, native[i].direction);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -30634,6 +34136,59 @@ public sealed class TdLines : IDisposable
         return ok ? new TdLinesOutput(native.resistance, native.support) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public TdLinesOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraTdLinesOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraTdLinesOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_td_lines_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new TdLinesOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new TdLinesOutput(native[i].resistance, native[i].support);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -30690,6 +34245,59 @@ public sealed class TdMovingAverage : IDisposable
         }
 
         return ok ? new TdMovingAverageOutput(native.st1, native.st2) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public TdMovingAverageOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraTdMovingAverageOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraTdMovingAverageOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_td_moving_average_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new TdMovingAverageOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new TdMovingAverageOutput(native[i].st1, native[i].st2);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -31025,6 +34633,59 @@ public sealed class TdRangeProjection : IDisposable
         return ok ? new TdRangeProjectionOutput(native.high, native.low) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public TdRangeProjectionOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraTdRangeProjectionOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraTdRangeProjectionOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_td_range_projection_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new TdRangeProjectionOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new TdRangeProjectionOutput(native[i].high, native[i].low);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -31176,6 +34837,59 @@ public sealed class TdRiskLevel : IDisposable
         return ok ? new TdRiskLevelOutput(native.buy_risk, native.sell_risk) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public TdRiskLevelOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraTdRiskLevelOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraTdRiskLevelOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_td_risk_level_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new TdRiskLevelOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new TdRiskLevelOutput(native[i].buy_risk, native[i].sell_risk);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -31234,6 +34948,59 @@ public sealed class TdSequential : IDisposable
         }
 
         return ok ? new TdSequentialOutput(native.setup, native.countdown, native.direction) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public TdSequentialOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraTdSequentialOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraTdSequentialOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_td_sequential_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new TdSequentialOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new TdSequentialOutput(native[i].setup, native[i].countdown, native[i].direction);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -34334,6 +38101,59 @@ public sealed class TtmSqueeze : IDisposable
         return ok ? new TtmSqueezeOutput(native.squeeze, native.momentum) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public TtmSqueezeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraTtmSqueezeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraTtmSqueezeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_ttm_squeeze_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new TtmSqueezeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new TtmSqueezeOutput(native[i].squeeze, native[i].momentum);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -35605,6 +39425,59 @@ public sealed class ValueArea : IDisposable
         return ok ? new ValueAreaOutput(native.poc, native.vah, native.val) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ValueAreaOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraValueAreaOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraValueAreaOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_value_area_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ValueAreaOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ValueAreaOutput(native[i].poc, native[i].vah, native[i].val);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -36008,6 +39881,59 @@ public sealed class VolatilityCone : IDisposable
         }
 
         return ok ? new VolatilityConeOutput(native.current, native.min, native.median, native.max, native.percentile) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public VolatilityConeOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraVolatilityConeOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraVolatilityConeOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_volatility_cone_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new VolatilityConeOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new VolatilityConeOutput(native[i].current, native[i].min, native[i].median, native[i].max, native[i].percentile);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -36806,6 +40732,59 @@ public sealed class VolumeWeightedMacd : IDisposable
         return ok ? new VolumeWeightedMacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public VolumeWeightedMacdOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraVolumeWeightedMacdOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraVolumeWeightedMacdOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_volume_weighted_macd_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new VolumeWeightedMacdOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new VolumeWeightedMacdOutput(native[i].macd, native[i].signal, native[i].histogram);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -36863,6 +40842,59 @@ public sealed class VolumeWeightedSr : IDisposable
         return ok ? new VolumeWeightedSrOutput(native.support, native.resistance) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public VolumeWeightedSrOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraVolumeWeightedSrOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraVolumeWeightedSrOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_volume_weighted_sr_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new VolumeWeightedSrOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new VolumeWeightedSrOutput(native[i].support, native[i].resistance);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -36918,6 +40950,59 @@ public sealed class Vortex : IDisposable
         }
 
         return ok ? new VortexOutput(native.plus, native.minus) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public VortexOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraVortexOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraVortexOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_vortex_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new VortexOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new VortexOutput(native[i].plus, native[i].minus);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -37117,6 +41202,59 @@ public sealed class VwapStdDevBands : IDisposable
         }
 
         return ok ? new VwapStdDevBandsOutput(native.upper, native.middle, native.lower, native.stddev) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public VwapStdDevBandsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraVwapStdDevBandsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraVwapStdDevBandsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_vwap_std_dev_bands_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new VwapStdDevBandsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new VwapStdDevBandsOutput(native[i].upper, native[i].middle, native[i].lower, native[i].stddev);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -37525,6 +41663,59 @@ public sealed class WaveTrend : IDisposable
         return ok ? new WaveTrendOutput(native.wt1, native.wt2) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public WaveTrendOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraWaveTrendOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraWaveTrendOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_wave_trend_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new WaveTrendOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new WaveTrendOutput(native[i].wt1, native[i].wt2);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -37857,6 +42048,59 @@ public sealed class WilliamsFractals : IDisposable
         return ok ? new WilliamsFractalsOutput(native.up, native.down) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public WilliamsFractalsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraWilliamsFractalsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraWilliamsFractalsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_williams_fractals_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new WilliamsFractalsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new WilliamsFractalsOutput(native[i].up, native[i].down);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -38140,6 +42384,59 @@ public sealed class WoodiePivots : IDisposable
         }
 
         return ok ? new WoodiePivotsOutput(native.pp, native.r1, native.r2, native.s1, native.s2) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public WoodiePivotsOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraWoodiePivotsOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraWoodiePivotsOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_woodie_pivots_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new WoodiePivotsOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new WoodiePivotsOutput(native[i].pp, native[i].r1, native[i].r2, native[i].s1, native[i].s2);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -38456,6 +42753,34 @@ public sealed class ZeroLagMacd : IDisposable
         return ok ? new ZeroLagMacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ZeroLagMacdOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraZeroLagMacdOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraZeroLagMacdOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_zero_lag_macd_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ZeroLagMacdOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ZeroLagMacdOutput(native[i].macd, native[i].signal, native[i].histogram);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -38510,6 +42835,59 @@ public sealed class ZigZag : IDisposable
         }
 
         return ok ? new ZigZagOutput(native.swing, native.direction) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public ZigZagOutput[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var native = new WickraZigZagOutput[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (WickraZigZagOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_zig_zag_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new ZigZagOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new ZigZagOutput(native[i].swing, native[i].direction);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>

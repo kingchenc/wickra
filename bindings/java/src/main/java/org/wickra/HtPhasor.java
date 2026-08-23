@@ -47,6 +47,31 @@ public final class HtPhasor implements AutoCloseable {
         }
     }
 
+    /**
+     * Vectorized update over whole series, one output per input. A row the
+     * indicator did not produce -- warmup, or an input it rejected -- carries
+     * NaN in every floating-point field.
+     */
+    public HtPhasorOutput[] batch(double[] input) {
+        int n = input.length;
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment inputSeg = a.allocateFrom(JAVA_DOUBLE, input);
+            MemorySegment outSeg = a.allocate(16L * n);
+            NativeMethods.WICKRA_HT_PHASOR_BATCH.invokeExact(handle(), inputSeg, outSeg, (long) n);
+            HtPhasorOutput[] out = new HtPhasorOutput[n];
+            for (int i = 0; i < n; i++) {
+                out[i] = new HtPhasorOutput(
+                        outSeg.get(JAVA_DOUBLE, i * 16L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 16L + 8L));
+            }
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

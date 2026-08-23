@@ -53,6 +53,35 @@ public final class LeadLagCrossCorrelation implements AutoCloseable {
         }
     }
 
+    /**
+     * Vectorized update over whole series, one output per input. A row the
+     * indicator did not produce -- warmup, or an input it rejected -- carries
+     * NaN in every floating-point field.
+     */
+    public LeadLagCrossCorrelationOutput[] batch(double[] x, double[] y) {
+        int n = x.length;
+        if (y.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment xSeg = a.allocateFrom(JAVA_DOUBLE, x);
+            MemorySegment ySeg = a.allocateFrom(JAVA_DOUBLE, y);
+            MemorySegment outSeg = a.allocate(16L * n);
+            NativeMethods.WICKRA_LEAD_LAG_CROSS_CORRELATION_BATCH.invokeExact(handle(), xSeg, ySeg, outSeg, (long) n);
+            LeadLagCrossCorrelationOutput[] out = new LeadLagCrossCorrelationOutput[n];
+            for (int i = 0; i < n; i++) {
+                out[i] = new LeadLagCrossCorrelationOutput(
+                        (double) outSeg.get(JAVA_LONG, i * 16L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 16L + 8L));
+            }
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

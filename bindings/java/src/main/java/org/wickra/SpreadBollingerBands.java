@@ -52,6 +52,37 @@ public final class SpreadBollingerBands implements AutoCloseable {
         }
     }
 
+    /**
+     * Vectorized update over whole series, one output per input. A row the
+     * indicator did not produce -- warmup, or an input it rejected -- carries
+     * NaN in every floating-point field.
+     */
+    public SpreadBollingerBandsOutput[] batch(double[] x, double[] y) {
+        int n = x.length;
+        if (y.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment xSeg = a.allocateFrom(JAVA_DOUBLE, x);
+            MemorySegment ySeg = a.allocateFrom(JAVA_DOUBLE, y);
+            MemorySegment outSeg = a.allocate(32L * n);
+            NativeMethods.WICKRA_SPREAD_BOLLINGER_BANDS_BATCH.invokeExact(handle(), xSeg, ySeg, outSeg, (long) n);
+            SpreadBollingerBandsOutput[] out = new SpreadBollingerBandsOutput[n];
+            for (int i = 0; i < n; i++) {
+                out[i] = new SpreadBollingerBandsOutput(
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 8L),
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 16L),
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 24L));
+            }
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

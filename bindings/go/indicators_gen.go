@@ -1108,6 +1108,45 @@ func (ind *AccelerationBands) Update(open float64, high float64, low float64, cl
 	return AccelerationBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *AccelerationBands) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AccelerationBandsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AccelerationBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAccelerationBandsOutput, n)
+	C.wickra_acceleration_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AccelerationBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *AccelerationBands) Reset() {
 	C.wickra_acceleration_bands_reset(ind.handle)
@@ -2183,6 +2222,45 @@ func (ind *Adx) Update(open float64, high float64, low float64, close float64, v
 	return AdxOutput{float64(out.plus_di), float64(out.minus_di), float64(out.adx)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Adx) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AdxOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AdxOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAdxOutput, n)
+	C.wickra_adx_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AdxOutput{float64(buf[i].plus_di), float64(buf[i].minus_di), float64(buf[i].adx)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Adx) Reset() {
 	C.wickra_adx_reset(ind.handle)
@@ -2363,6 +2441,45 @@ func (ind *Alligator) Update(open float64, high float64, low float64, close floa
 		return AlligatorOutput{}, false
 	}
 	return AlligatorOutput{float64(out.jaw), float64(out.teeth), float64(out.lips)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Alligator) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AlligatorOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AlligatorOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAlligatorOutput, n)
+	C.wickra_alligator_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AlligatorOutput{float64(buf[i].jaw), float64(buf[i].teeth), float64(buf[i].lips)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -2849,6 +2966,45 @@ func (ind *AndrewsPitchfork) Update(open float64, high float64, low float64, clo
 	return AndrewsPitchforkOutput{float64(out.median), float64(out.upper), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *AndrewsPitchfork) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AndrewsPitchforkOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AndrewsPitchforkOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAndrewsPitchforkOutput, n)
+	C.wickra_andrews_pitchfork_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AndrewsPitchforkOutput{float64(buf[i].median), float64(buf[i].upper), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *AndrewsPitchfork) Reset() {
 	C.wickra_andrews_pitchfork_reset(ind.handle)
@@ -3005,6 +3161,45 @@ func (ind *Aroon) Update(open float64, high float64, low float64, close float64,
 		return AroonOutput{}, false
 	}
 	return AroonOutput{float64(out.up), float64(out.down)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Aroon) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AroonOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AroonOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAroonOutput, n)
+	C.wickra_aroon_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AroonOutput{float64(buf[i].up), float64(buf[i].down)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -3283,6 +3478,45 @@ func (ind *AtrBands) Update(open float64, high float64, low float64, close float
 	return AtrBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *AtrBands) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AtrBandsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AtrBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAtrBandsOutput, n)
+	C.wickra_atr_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AtrBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *AtrBands) Reset() {
 	C.wickra_atr_bands_reset(ind.handle)
@@ -3353,6 +3587,45 @@ func (ind *AtrRatchet) Update(open float64, high float64, low float64, close flo
 		return AtrRatchetOutput{}, false
 	}
 	return AtrRatchetOutput{float64(out.value), float64(out.direction)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *AtrRatchet) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AtrRatchetOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AtrRatchetOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAtrRatchetOutput, n)
+	C.wickra_atr_ratchet_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AtrRatchetOutput{float64(buf[i].value), float64(buf[i].direction)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -3523,6 +3796,45 @@ func (ind *AutoFib) Update(open float64, high float64, low float64, close float6
 		return AutoFibOutput{}, false
 	}
 	return AutoFibOutput{float64(out.level_0), float64(out.level_236), float64(out.level_382), float64(out.level_500), float64(out.level_618), float64(out.level_786), float64(out.level_1000)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *AutoFib) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []AutoFibOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]AutoFibOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraAutoFibOutput, n)
+	C.wickra_auto_fib_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = AutoFibOutput{float64(buf[i].level_0), float64(buf[i].level_236), float64(buf[i].level_382), float64(buf[i].level_500), float64(buf[i].level_618), float64(buf[i].level_786), float64(buf[i].level_1000)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -5097,6 +5409,25 @@ func (ind *BollingerBands) Update(value float64) (BollingerOutput, bool) {
 	return BollingerOutput{float64(out.upper), float64(out.middle), float64(out.lower), float64(out.stddev)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *BollingerBands) Batch(input []float64) []BollingerOutput {
+	n := len(input)
+	out := make([]BollingerOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraBollingerOutput, n)
+	C.wickra_bollinger_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = BollingerOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower), float64(buf[i].stddev)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *BollingerBands) Reset() {
 	C.wickra_bollinger_bands_reset(ind.handle)
@@ -5249,6 +5580,25 @@ func (ind *BomarBands) Update(value float64) (BomarBandsOutput, bool) {
 		return BomarBandsOutput{}, false
 	}
 	return BomarBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *BomarBands) Batch(input []float64) []BomarBandsOutput {
+	n := len(input)
+	out := make([]BomarBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraBomarBandsOutput, n)
+	C.wickra_bomar_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = BomarBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -5917,6 +6267,45 @@ func (ind *Camarilla) Update(open float64, high float64, low float64, close floa
 	return CamarillaPivotsOutput{float64(out.pp), float64(out.r1), float64(out.r2), float64(out.r3), float64(out.r4), float64(out.s1), float64(out.s2), float64(out.s3), float64(out.s4)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Camarilla) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []CamarillaPivotsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]CamarillaPivotsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraCamarillaPivotsOutput, n)
+	C.wickra_camarilla_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = CamarillaPivotsOutput{float64(buf[i].pp), float64(buf[i].r1), float64(buf[i].r2), float64(buf[i].r3), float64(buf[i].r4), float64(buf[i].s1), float64(buf[i].s2), float64(buf[i].s3), float64(buf[i].s4)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Camarilla) Reset() {
 	C.wickra_camarilla_reset(ind.handle)
@@ -6038,6 +6427,45 @@ func (ind *CandleVolume) Update(open float64, high float64, low float64, close f
 		return CandleVolumeOutput{}, false
 	}
 	return CandleVolumeOutput{float64(out.body), float64(out.width)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *CandleVolume) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []CandleVolumeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]CandleVolumeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraCandleVolumeOutput, n)
+	C.wickra_candle_volume_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = CandleVolumeOutput{float64(buf[i].body), float64(buf[i].width)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -6290,6 +6718,45 @@ func (ind *CentralPivotRange) Update(open float64, high float64, low float64, cl
 		return CentralPivotRangeOutput{}, false
 	}
 	return CentralPivotRangeOutput{float64(out.pivot), float64(out.tc), float64(out.bc)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *CentralPivotRange) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []CentralPivotRangeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]CentralPivotRangeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraCentralPivotRangeOutput, n)
+	C.wickra_central_pivot_range_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = CentralPivotRangeOutput{float64(buf[i].pivot), float64(buf[i].tc), float64(buf[i].bc)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -6764,6 +7231,45 @@ func (ind *ChandeKrollStop) Update(open float64, high float64, low float64, clos
 	return ChandeKrollStopOutput{float64(out.stop_long), float64(out.stop_short)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ChandeKrollStop) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ChandeKrollStopOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ChandeKrollStopOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraChandeKrollStopOutput, n)
+	C.wickra_chande_kroll_stop_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ChandeKrollStopOutput{float64(buf[i].stop_long), float64(buf[i].stop_short)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ChandeKrollStop) Reset() {
 	C.wickra_chande_kroll_stop_reset(ind.handle)
@@ -6834,6 +7340,45 @@ func (ind *ChandelierExit) Update(open float64, high float64, low float64, close
 		return ChandelierExitOutput{}, false
 	}
 	return ChandelierExitOutput{float64(out.long_stop), float64(out.short_stop)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ChandelierExit) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ChandelierExitOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ChandelierExitOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraChandelierExitOutput, n)
+	C.wickra_chandelier_exit_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ChandelierExitOutput{float64(buf[i].long_stop), float64(buf[i].short_stop)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -7004,6 +7549,45 @@ func (ind *ClassicPivots) Update(open float64, high float64, low float64, close 
 		return ClassicPivotsOutput{}, false
 	}
 	return ClassicPivotsOutput{float64(out.pp), float64(out.r1), float64(out.r2), float64(out.r3), float64(out.s1), float64(out.s2), float64(out.s3)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ClassicPivots) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ClassicPivotsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ClassicPivotsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraClassicPivotsOutput, n)
+	C.wickra_classic_pivots_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ClassicPivotsOutput{float64(buf[i].pp), float64(buf[i].r1), float64(buf[i].r2), float64(buf[i].r3), float64(buf[i].s1), float64(buf[i].s2), float64(buf[i].s3)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -7442,6 +8026,29 @@ func (ind *Cointegration) Update(x float64, y float64) (CointegrationOutput, boo
 	return CointegrationOutput{float64(out.hedge_ratio), float64(out.spread), float64(out.adf_stat)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Cointegration) Batch(x []float64, y []float64) []CointegrationOutput {
+	n := len(x)
+	if len(y) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]CointegrationOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraCointegrationOutput, n)
+	C.wickra_cointegration_batch(ind.handle, (*C.double)(unsafe.Pointer(&x[0])), (*C.double)(unsafe.Pointer(&y[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(x)
+	runtime.KeepAlive(y)
+	for i := range buf {
+		out[i] = CointegrationOutput{float64(buf[i].hedge_ratio), float64(buf[i].spread), float64(buf[i].adf_stat)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Cointegration) Reset() {
 	C.wickra_cointegration_reset(ind.handle)
@@ -7598,6 +8205,45 @@ func (ind *CompositeProfile) Update(open float64, high float64, low float64, clo
 		return CompositeProfileOutput{}, false
 	}
 	return CompositeProfileOutput{float64(out.poc), float64(out.vah), float64(out.val)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *CompositeProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []CompositeProfileOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]CompositeProfileOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraCompositeProfileOutput, n)
+	C.wickra_composite_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = CompositeProfileOutput{float64(buf[i].poc), float64(buf[i].vah), float64(buf[i].val)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -9155,6 +9801,45 @@ func (ind *DemarkPivots) Update(open float64, high float64, low float64, close f
 	return DemarkPivotsOutput{float64(out.pp), float64(out.r1), float64(out.s1)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *DemarkPivots) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []DemarkPivotsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]DemarkPivotsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraDemarkPivotsOutput, n)
+	C.wickra_demark_pivots_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = DemarkPivotsOutput{float64(buf[i].pp), float64(buf[i].r1), float64(buf[i].s1)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *DemarkPivots) Reset() {
 	C.wickra_demark_pivots_reset(ind.handle)
@@ -9898,6 +10583,45 @@ func (ind *Donchian) Update(open float64, high float64, low float64, close float
 	return DonchianOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Donchian) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []DonchianOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]DonchianOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraDonchianOutput, n)
+	C.wickra_donchian_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = DonchianOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Donchian) Reset() {
 	C.wickra_donchian_reset(ind.handle)
@@ -9970,6 +10694,45 @@ func (ind *DonchianStop) Update(open float64, high float64, low float64, close f
 	return DonchianStopOutput{float64(out.stop_long), float64(out.stop_short)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *DonchianStop) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []DonchianStopOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]DonchianStopOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraDonchianStopOutput, n)
+	C.wickra_donchian_stop_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = DonchianStopOutput{float64(buf[i].stop_long), float64(buf[i].stop_short)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *DonchianStop) Reset() {
 	C.wickra_donchian_stop_reset(ind.handle)
@@ -10040,6 +10803,25 @@ func (ind *DoubleBollinger) Update(value float64) (DoubleBollingerOutput, bool) 
 		return DoubleBollingerOutput{}, false
 	}
 	return DoubleBollingerOutput{float64(out.upper_outer), float64(out.upper_inner), float64(out.middle), float64(out.lower_inner), float64(out.lower_outer)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *DoubleBollinger) Batch(input []float64) []DoubleBollingerOutput {
+	n := len(input)
+	out := make([]DoubleBollingerOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraDoubleBollingerOutput, n)
+	C.wickra_double_bollinger_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = DoubleBollingerOutput{float64(buf[i].upper_outer), float64(buf[i].upper_inner), float64(buf[i].middle), float64(buf[i].lower_inner), float64(buf[i].lower_outer)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -11278,6 +12060,45 @@ func (ind *ElderRay) Update(open float64, high float64, low float64, close float
 	return ElderRayOutput{float64(out.bull_power), float64(out.bear_power)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ElderRay) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ElderRayOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ElderRayOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraElderRayOutput, n)
+	C.wickra_elder_ray_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ElderRayOutput{float64(buf[i].bull_power), float64(buf[i].bear_power)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ElderRay) Reset() {
 	C.wickra_elder_ray_reset(ind.handle)
@@ -11348,6 +12169,45 @@ func (ind *ElderSafeZone) Update(open float64, high float64, low float64, close 
 		return ElderSafeZoneOutput{}, false
 	}
 	return ElderSafeZoneOutput{float64(out.value), float64(out.direction)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ElderSafeZone) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ElderSafeZoneOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ElderSafeZoneOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraElderSafeZoneOutput, n)
+	C.wickra_elder_safe_zone_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ElderSafeZoneOutput{float64(buf[i].value), float64(buf[i].direction)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -11682,6 +12542,45 @@ func (ind *Equivolume) Update(open float64, high float64, low float64, close flo
 		return EquivolumeOutput{}, false
 	}
 	return EquivolumeOutput{float64(out.height), float64(out.width)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Equivolume) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []EquivolumeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]EquivolumeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraEquivolumeOutput, n)
+	C.wickra_equivolume_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = EquivolumeOutput{float64(buf[i].height), float64(buf[i].width)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -12438,6 +13337,45 @@ func (ind *FibArcs) Update(open float64, high float64, low float64, close float6
 	return FibArcsOutput{float64(out.arc_382), float64(out.arc_500), float64(out.arc_618)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibArcs) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibArcsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibArcsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibArcsOutput, n)
+	C.wickra_fib_arcs_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibArcsOutput{float64(buf[i].arc_382), float64(buf[i].arc_500), float64(buf[i].arc_618)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FibArcs) Reset() {
 	C.wickra_fib_arcs_reset(ind.handle)
@@ -12504,6 +13442,45 @@ func (ind *FibChannel) Update(open float64, high float64, low float64, close flo
 		return FibChannelOutput{}, false
 	}
 	return FibChannelOutput{float64(out.base), float64(out.level_618), float64(out.level_1000), float64(out.level_1618)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibChannel) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibChannelOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibChannelOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibChannelOutput, n)
+	C.wickra_fib_channel_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibChannelOutput{float64(buf[i].base), float64(buf[i].level_618), float64(buf[i].level_1000), float64(buf[i].level_1618)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -12574,6 +13551,45 @@ func (ind *FibConfluence) Update(open float64, high float64, low float64, close 
 	return FibConfluenceOutput{float64(out.price), float64(out.strength)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibConfluence) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibConfluenceOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibConfluenceOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibConfluenceOutput, n)
+	C.wickra_fib_confluence_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibConfluenceOutput{float64(buf[i].price), float64(buf[i].strength)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FibConfluence) Reset() {
 	C.wickra_fib_confluence_reset(ind.handle)
@@ -12640,6 +13656,45 @@ func (ind *FibExtension) Update(open float64, high float64, low float64, close f
 		return FibExtensionOutput{}, false
 	}
 	return FibExtensionOutput{float64(out.level_1272), float64(out.level_1414), float64(out.level_1618), float64(out.level_2000), float64(out.level_2618)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibExtension) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibExtensionOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibExtensionOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibExtensionOutput, n)
+	C.wickra_fib_extension_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibExtensionOutput{float64(buf[i].level_1272), float64(buf[i].level_1414), float64(buf[i].level_1618), float64(buf[i].level_2000), float64(buf[i].level_2618)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -12710,6 +13765,45 @@ func (ind *FibFan) Update(open float64, high float64, low float64, close float64
 	return FibFanOutput{float64(out.fan_382), float64(out.fan_500), float64(out.fan_618)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibFan) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibFanOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibFanOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibFanOutput, n)
+	C.wickra_fib_fan_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibFanOutput{float64(buf[i].fan_382), float64(buf[i].fan_500), float64(buf[i].fan_618)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FibFan) Reset() {
 	C.wickra_fib_fan_reset(ind.handle)
@@ -12776,6 +13870,45 @@ func (ind *FibProjection) Update(open float64, high float64, low float64, close 
 		return FibProjectionOutput{}, false
 	}
 	return FibProjectionOutput{float64(out.level_618), float64(out.level_1000), float64(out.level_1618), float64(out.level_2618)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibProjection) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibProjectionOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibProjectionOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibProjectionOutput, n)
+	C.wickra_fib_projection_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibProjectionOutput{float64(buf[i].level_618), float64(buf[i].level_1000), float64(buf[i].level_1618), float64(buf[i].level_2618)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -12846,6 +13979,45 @@ func (ind *FibRetracement) Update(open float64, high float64, low float64, close
 	return FibRetracementOutput{float64(out.level_0), float64(out.level_236), float64(out.level_382), float64(out.level_500), float64(out.level_618), float64(out.level_786), float64(out.level_1000)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibRetracement) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibRetracementOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibRetracementOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibRetracementOutput, n)
+	C.wickra_fib_retracement_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibRetracementOutput{float64(buf[i].level_0), float64(buf[i].level_236), float64(buf[i].level_382), float64(buf[i].level_500), float64(buf[i].level_618), float64(buf[i].level_786), float64(buf[i].level_1000)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FibRetracement) Reset() {
 	C.wickra_fib_retracement_reset(ind.handle)
@@ -12914,6 +14086,45 @@ func (ind *FibTimeZones) Update(open float64, high float64, low float64, close f
 	return FibTimeZonesOutput{float64(out.on_zone), float64(out.bars_to_next)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibTimeZones) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibTimeZonesOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibTimeZonesOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibTimeZonesOutput, n)
+	C.wickra_fib_time_zones_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibTimeZonesOutput{float64(buf[i].on_zone), float64(buf[i].bars_to_next)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FibTimeZones) Reset() {
 	C.wickra_fib_time_zones_reset(ind.handle)
@@ -12980,6 +14191,45 @@ func (ind *FibonacciPivots) Update(open float64, high float64, low float64, clos
 		return FibonacciPivotsOutput{}, false
 	}
 	return FibonacciPivotsOutput{float64(out.pp), float64(out.r1), float64(out.r2), float64(out.r3), float64(out.s1), float64(out.s2), float64(out.s3)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FibonacciPivots) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FibonacciPivotsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FibonacciPivotsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFibonacciPivotsOutput, n)
+	C.wickra_fibonacci_pivots_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FibonacciPivotsOutput{float64(buf[i].pp), float64(buf[i].r1), float64(buf[i].r2), float64(buf[i].r3), float64(buf[i].s1), float64(buf[i].s2), float64(buf[i].s3)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -13489,6 +14739,45 @@ func (ind *FractalChaosBands) Update(open float64, high float64, low float64, cl
 		return FractalChaosBandsOutput{}, false
 	}
 	return FractalChaosBandsOutput{float64(out.upper), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *FractalChaosBands) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []FractalChaosBandsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]FractalChaosBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraFractalChaosBandsOutput, n)
+	C.wickra_fractal_chaos_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = FractalChaosBandsOutput{float64(buf[i].upper), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -14627,6 +15916,45 @@ func (ind *GatorOscillator) Update(open float64, high float64, low float64, clos
 	return GatorOscillatorOutput{float64(out.upper), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *GatorOscillator) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []GatorOscillatorOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]GatorOscillatorOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraGatorOscillatorOutput, n)
+	C.wickra_gator_oscillator_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = GatorOscillatorOutput{float64(buf[i].upper), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *GatorOscillator) Reset() {
 	C.wickra_gator_oscillator_reset(ind.handle)
@@ -14857,6 +16185,45 @@ func (ind *GoldenPocket) Update(open float64, high float64, low float64, close f
 		return GoldenPocketOutput{}, false
 	}
 	return GoldenPocketOutput{float64(out.low), float64(out.mid), float64(out.high)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *GoldenPocket) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []GoldenPocketOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]GoldenPocketOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraGoldenPocketOutput, n)
+	C.wickra_golden_pocket_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = GoldenPocketOutput{float64(buf[i].low), float64(buf[i].mid), float64(buf[i].high)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -15691,6 +17058,45 @@ func (ind *HeikinAshi) Update(open float64, high float64, low float64, close flo
 	return HeikinAshiOutput{float64(out.open), float64(out.high), float64(out.low), float64(out.close)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *HeikinAshi) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []HeikinAshiOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]HeikinAshiOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraHeikinAshiOutput, n)
+	C.wickra_heikin_ashi_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = HeikinAshiOutput{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *HeikinAshi) Reset() {
 	C.wickra_heikin_ashi_reset(ind.handle)
@@ -16156,6 +17562,45 @@ func (ind *HighLowVolumeNodes) Update(open float64, high float64, low float64, c
 		return HighLowVolumeNodesOutput{}, false
 	}
 	return HighLowVolumeNodesOutput{float64(out.hvn), float64(out.lvn)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *HighLowVolumeNodes) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []HighLowVolumeNodesOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]HighLowVolumeNodesOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraHighLowVolumeNodesOutput, n)
+	C.wickra_high_low_volume_nodes_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = HighLowVolumeNodesOutput{float64(buf[i].hvn), float64(buf[i].lvn)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -17102,6 +18547,25 @@ func (ind *HtPhasor) Update(value float64) (HtPhasorOutput, bool) {
 	return HtPhasorOutput{float64(out.inphase), float64(out.quadrature)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *HtPhasor) Batch(input []float64) []HtPhasorOutput {
+	n := len(input)
+	out := make([]HtPhasorOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraHtPhasorOutput, n)
+	C.wickra_ht_phasor_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = HtPhasorOutput{float64(buf[i].inphase), float64(buf[i].quadrature)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *HtPhasor) Reset() {
 	C.wickra_ht_phasor_reset(ind.handle)
@@ -17250,6 +18714,45 @@ func (ind *HurstChannel) Update(open float64, high float64, low float64, close f
 		return HurstChannelOutput{}, false
 	}
 	return HurstChannelOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *HurstChannel) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []HurstChannelOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]HurstChannelOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraHurstChannelOutput, n)
+	C.wickra_hurst_channel_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = HurstChannelOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -17420,6 +18923,45 @@ func (ind *Ichimoku) Update(open float64, high float64, low float64, close float
 		return IchimokuOutput{}, false
 	}
 	return IchimokuOutput{float64(out.tenkan), float64(out.kijun), float64(out.senkou_a), float64(out.senkou_b), float64(out.chikou)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Ichimoku) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []IchimokuOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]IchimokuOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraIchimokuOutput, n)
+	C.wickra_ichimoku_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = IchimokuOutput{float64(buf[i].tenkan), float64(buf[i].kijun), float64(buf[i].senkou_a), float64(buf[i].senkou_b), float64(buf[i].chikou)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -17937,6 +19479,45 @@ func (ind *InitialBalance) Update(open float64, high float64, low float64, close
 		return InitialBalanceOutput{}, false
 	}
 	return InitialBalanceOutput{float64(out.high), float64(out.low)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *InitialBalance) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []InitialBalanceOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]InitialBalanceOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraInitialBalanceOutput, n)
+	C.wickra_initial_balance_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = InitialBalanceOutput{float64(buf[i].high), float64(buf[i].low)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -18924,6 +20505,29 @@ func (ind *KalmanHedgeRatio) Update(x float64, y float64) (KalmanHedgeRatioOutpu
 	return KalmanHedgeRatioOutput{float64(out.hedge_ratio), float64(out.intercept), float64(out.spread)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *KalmanHedgeRatio) Batch(x []float64, y []float64) []KalmanHedgeRatioOutput {
+	n := len(x)
+	if len(y) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]KalmanHedgeRatioOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraKalmanHedgeRatioOutput, n)
+	C.wickra_kalman_hedge_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&x[0])), (*C.double)(unsafe.Pointer(&y[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(x)
+	runtime.KeepAlive(y)
+	for i := range buf {
+		out[i] = KalmanHedgeRatioOutput{float64(buf[i].hedge_ratio), float64(buf[i].intercept), float64(buf[i].spread)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *KalmanHedgeRatio) Reset() {
 	C.wickra_kalman_hedge_ratio_reset(ind.handle)
@@ -19086,6 +20690,45 @@ func (ind *KaseDevStop) Update(open float64, high float64, low float64, close fl
 	return KaseDevStopOutput{float64(out.value), float64(out.direction)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *KaseDevStop) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []KaseDevStopOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]KaseDevStopOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraKaseDevStopOutput, n)
+	C.wickra_kase_dev_stop_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = KaseDevStopOutput{float64(buf[i].value), float64(buf[i].direction)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *KaseDevStop) Reset() {
 	C.wickra_kase_dev_stop_reset(ind.handle)
@@ -19160,6 +20803,45 @@ func (ind *KasePermissionStochastic) Update(open float64, high float64, low floa
 		return KasePermissionStochasticOutput{}, false
 	}
 	return KasePermissionStochasticOutput{float64(out.fast), float64(out.slow)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *KasePermissionStochastic) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []KasePermissionStochasticOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]KasePermissionStochasticOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraKasePermissionStochasticOutput, n)
+	C.wickra_kase_permission_stochastic_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = KasePermissionStochasticOutput{float64(buf[i].fast), float64(buf[i].slow)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -19318,6 +21000,45 @@ func (ind *Keltner) Update(open float64, high float64, low float64, close float6
 		return KeltnerOutput{}, false
 	}
 	return KeltnerOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Keltner) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []KeltnerOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]KeltnerOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraKeltnerOutput, n)
+	C.wickra_keltner_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = KeltnerOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -19704,6 +21425,25 @@ func (ind *Kst) Update(value float64) (KstOutput, bool) {
 		return KstOutput{}, false
 	}
 	return KstOutput{float64(out.kst), float64(out.signal)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Kst) Batch(input []float64) []KstOutput {
+	n := len(input)
+	out := make([]KstOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraKstOutput, n)
+	C.wickra_kst_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = KstOutput{float64(buf[i].kst), float64(buf[i].signal)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -20214,6 +21954,29 @@ func (ind *LeadLagCrossCorrelation) Update(x float64, y float64) (LeadLagCrossCo
 	return LeadLagCrossCorrelationOutput{int64(out.lag), float64(out.correlation)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *LeadLagCrossCorrelation) Batch(x []float64, y []float64) []LeadLagCrossCorrelationOutput {
+	n := len(x)
+	if len(y) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]LeadLagCrossCorrelationOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraLeadLagCrossCorrelationOutput, n)
+	C.wickra_lead_lag_cross_correlation_batch(ind.handle, (*C.double)(unsafe.Pointer(&x[0])), (*C.double)(unsafe.Pointer(&y[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(x)
+	runtime.KeepAlive(y)
+	for i := range buf {
+		out[i] = LeadLagCrossCorrelationOutput{int64(buf[i].lag), float64(buf[i].correlation)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *LeadLagCrossCorrelation) Reset() {
 	C.wickra_lead_lag_cross_correlation_reset(ind.handle)
@@ -20366,6 +22129,25 @@ func (ind *LinRegChannel) Update(value float64) (LinRegChannelOutput, bool) {
 		return LinRegChannelOutput{}, false
 	}
 	return LinRegChannelOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *LinRegChannel) Batch(input []float64) []LinRegChannelOutput {
+	n := len(input)
+	out := make([]LinRegChannelOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraLinRegChannelOutput, n)
+	C.wickra_lin_reg_channel_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = LinRegChannelOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -20680,6 +22462,69 @@ func (ind *LiquidationFeatures) Update(fundingRate float64, markPrice float64, i
 		return LiquidationFeaturesOutput{}, false
 	}
 	return LiquidationFeaturesOutput{float64(out.long_), float64(out.short_), float64(out.net), float64(out.total), float64(out.imbalance)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *LiquidationFeatures) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []LiquidationFeaturesOutput {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]LiquidationFeaturesOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraLiquidationFeaturesOutput, n)
+	C.wickra_liquidation_features_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = LiquidationFeaturesOutput{float64(buf[i].long_), float64(buf[i].short_), float64(buf[i].net), float64(buf[i].total), float64(buf[i].imbalance)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -21178,6 +23023,25 @@ func (ind *MaEnvelope) Update(value float64) (MaEnvelopeOutput, bool) {
 	return MaEnvelopeOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *MaEnvelope) Batch(input []float64) []MaEnvelopeOutput {
+	n := len(input)
+	out := make([]MaEnvelopeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMaEnvelopeOutput, n)
+	C.wickra_ma_envelope_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = MaEnvelopeOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *MaEnvelope) Reset() {
 	C.wickra_ma_envelope_reset(ind.handle)
@@ -21328,6 +23192,25 @@ func (ind *MacdFix) Update(value float64) (MacdOutput, bool) {
 		return MacdOutput{}, false
 	}
 	return MacdOutput{float64(out.macd), float64(out.signal), float64(out.histogram)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *MacdFix) Batch(input []float64) []MacdOutput {
+	n := len(input)
+	out := make([]MacdOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMacdOutput, n)
+	C.wickra_macd_fix_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = MacdOutput{float64(buf[i].macd), float64(buf[i].signal), float64(buf[i].histogram)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -21500,6 +23383,25 @@ func (ind *MacdIndicator) Update(value float64) (MacdOutput, bool) {
 	return MacdOutput{float64(out.macd), float64(out.signal), float64(out.histogram)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *MacdIndicator) Batch(input []float64) []MacdOutput {
+	n := len(input)
+	out := make([]MacdOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMacdOutput, n)
+	C.wickra_macd_indicator_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = MacdOutput{float64(buf[i].macd), float64(buf[i].signal), float64(buf[i].histogram)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *MacdIndicator) Reset() {
 	C.wickra_macd_indicator_reset(ind.handle)
@@ -21566,6 +23468,25 @@ func (ind *Mama) Update(value float64) (MamaOutput, bool) {
 		return MamaOutput{}, false
 	}
 	return MamaOutput{float64(out.mama), float64(out.fama)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Mama) Batch(input []float64) []MamaOutput {
+	n := len(input)
+	out := make([]MamaOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMamaOutput, n)
+	C.wickra_mama_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = MamaOutput{float64(buf[i].mama), float64(buf[i].fama)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -22636,6 +24557,25 @@ func (ind *MedianChannel) Update(value float64) (MedianChannelOutput, bool) {
 	return MedianChannelOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *MedianChannel) Batch(input []float64) []MedianChannelOutput {
+	n := len(input)
+	out := make([]MedianChannelOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMedianChannelOutput, n)
+	C.wickra_median_channel_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = MedianChannelOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *MedianChannel) Reset() {
 	C.wickra_median_channel_reset(ind.handle)
@@ -23452,6 +25392,45 @@ func (ind *ModifiedMaStop) Update(open float64, high float64, low float64, close
 	return ModifiedMaStopOutput{float64(out.value), float64(out.direction)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ModifiedMaStop) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ModifiedMaStopOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ModifiedMaStopOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraModifiedMaStopOutput, n)
+	C.wickra_modified_ma_stop_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ModifiedMaStopOutput{float64(buf[i].value), float64(buf[i].direction)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ModifiedMaStop) Reset() {
 	C.wickra_modified_ma_stop_reset(ind.handle)
@@ -23800,6 +25779,45 @@ func (ind *MurreyMathLines) Update(open float64, high float64, low float64, clos
 		return MurreyMathLinesOutput{}, false
 	}
 	return MurreyMathLinesOutput{float64(out.mm8_8), float64(out.mm7_8), float64(out.mm6_8), float64(out.mm5_8), float64(out.mm4_8), float64(out.mm3_8), float64(out.mm2_8), float64(out.mm1_8), float64(out.mm0_8)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *MurreyMathLines) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []MurreyMathLinesOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]MurreyMathLinesOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMurreyMathLinesOutput, n)
+	C.wickra_murrey_math_lines_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = MurreyMathLinesOutput{float64(buf[i].mm8_8), float64(buf[i].mm7_8), float64(buf[i].mm6_8), float64(buf[i].mm5_8), float64(buf[i].mm4_8), float64(buf[i].mm3_8), float64(buf[i].mm2_8), float64(buf[i].mm1_8), float64(buf[i].mm0_8)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -24263,6 +26281,45 @@ func (ind *Nrtr) Update(open float64, high float64, low float64, close float64, 
 		return NrtrOutput{}, false
 	}
 	return NrtrOutput{float64(out.value), float64(out.direction)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Nrtr) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []NrtrOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]NrtrOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraNrtrOutput, n)
+	C.wickra_nrtr_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = NrtrOutput{float64(buf[i].value), float64(buf[i].direction)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -25139,6 +27196,45 @@ func (ind *OpeningRange) Update(open float64, high float64, low float64, close f
 	return OpeningRangeOutput{float64(out.high), float64(out.low), float64(out.breakout_distance)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *OpeningRange) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []OpeningRangeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]OpeningRangeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraOpeningRangeOutput, n)
+	C.wickra_opening_range_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = OpeningRangeOutput{float64(buf[i].high), float64(buf[i].low), float64(buf[i].breakout_distance)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *OpeningRange) Reset() {
 	C.wickra_opening_range_reset(ind.handle)
@@ -25693,6 +27789,45 @@ func (ind *OvernightIntradayReturn) Update(open float64, high float64, low float
 		return OvernightIntradayReturnOutput{}, false
 	}
 	return OvernightIntradayReturnOutput{float64(out.overnight), float64(out.intraday)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *OvernightIntradayReturn) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []OvernightIntradayReturnOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]OvernightIntradayReturnOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraOvernightIntradayReturnOutput, n)
+	C.wickra_overnight_intraday_return_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = OvernightIntradayReturnOutput{float64(buf[i].overnight), float64(buf[i].intraday)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -27701,6 +29836,45 @@ func (ind *ProjectionBands) Update(open float64, high float64, low float64, clos
 	return ProjectionBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ProjectionBands) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ProjectionBandsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ProjectionBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraProjectionBandsOutput, n)
+	C.wickra_projection_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ProjectionBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ProjectionBands) Reset() {
 	C.wickra_projection_bands_reset(ind.handle)
@@ -28075,6 +30249,25 @@ func (ind *Qqe) Update(value float64) (QqeOutput, bool) {
 	return QqeOutput{float64(out.rsi_ma), float64(out.trailing_line)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Qqe) Batch(input []float64) []QqeOutput {
+	n := len(input)
+	out := make([]QqeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraQqeOutput, n)
+	C.wickra_qqe_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = QqeOutput{float64(buf[i].rsi_ma), float64(buf[i].trailing_line)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Qqe) Reset() {
 	C.wickra_qqe_reset(ind.handle)
@@ -28247,6 +30440,25 @@ func (ind *QuartileBands) Update(value float64) (QuartileBandsOutput, bool) {
 		return QuartileBandsOutput{}, false
 	}
 	return QuartileBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *QuartileBands) Batch(input []float64) []QuartileBandsOutput {
+	n := len(input)
+	out := make([]QuartileBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraQuartileBandsOutput, n)
+	C.wickra_quartile_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = QuartileBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -29030,6 +31242,29 @@ func (ind *RelativeStrengthAB) Update(x float64, y float64) (RelativeStrengthOut
 		return RelativeStrengthOutput{}, false
 	}
 	return RelativeStrengthOutput{float64(out.ratio), float64(out.ratio_ma), float64(out.ratio_rsi)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *RelativeStrengthAB) Batch(x []float64, y []float64) []RelativeStrengthOutput {
+	n := len(x)
+	if len(y) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]RelativeStrengthOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraRelativeStrengthOutput, n)
+	C.wickra_relative_strength_ab_batch(ind.handle, (*C.double)(unsafe.Pointer(&x[0])), (*C.double)(unsafe.Pointer(&y[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(x)
+	runtime.KeepAlive(y)
+	for i := range buf {
+		out[i] = RelativeStrengthOutput{float64(buf[i].ratio), float64(buf[i].ratio_ma), float64(buf[i].ratio_rsi)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -31176,6 +33411,45 @@ func (ind *Rwi) Update(open float64, high float64, low float64, close float64, v
 	return RwiOutput{float64(out.high), float64(out.low)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Rwi) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []RwiOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]RwiOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraRwiOutput, n)
+	C.wickra_rwi_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = RwiOutput{float64(buf[i].high), float64(buf[i].low)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Rwi) Reset() {
 	C.wickra_rwi_reset(ind.handle)
@@ -31624,6 +33898,45 @@ func (ind *SessionHighLow) Update(open float64, high float64, low float64, close
 	return SessionHighLowOutput{float64(out.high), float64(out.low)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *SessionHighLow) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []SessionHighLowOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]SessionHighLowOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraSessionHighLowOutput, n)
+	C.wickra_session_high_low_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = SessionHighLowOutput{float64(buf[i].high), float64(buf[i].low)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *SessionHighLow) Reset() {
 	C.wickra_session_high_low_reset(ind.handle)
@@ -31690,6 +34003,45 @@ func (ind *SessionRange) Update(open float64, high float64, low float64, close f
 		return SessionRangeOutput{}, false
 	}
 	return SessionRangeOutput{float64(out.asia), float64(out.eu), float64(out.us)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *SessionRange) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []SessionRangeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]SessionRangeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraSessionRangeOutput, n)
+	C.wickra_session_range_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = SessionRangeOutput{float64(buf[i].asia), float64(buf[i].eu), float64(buf[i].us)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -33010,6 +35362,45 @@ func (ind *SmoothedHeikinAshi) Update(open float64, high float64, low float64, c
 	return SmoothedHeikinAshiOutput{float64(out.open), float64(out.high), float64(out.low), float64(out.close)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *SmoothedHeikinAshi) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []SmoothedHeikinAshiOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]SmoothedHeikinAshiOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraSmoothedHeikinAshiOutput, n)
+	C.wickra_smoothed_heikin_ashi_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = SmoothedHeikinAshiOutput{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *SmoothedHeikinAshi) Reset() {
 	C.wickra_smoothed_heikin_ashi_reset(ind.handle)
@@ -33434,6 +35825,29 @@ func (ind *SpreadBollingerBands) Update(x float64, y float64) (SpreadBollingerBa
 	return SpreadBollingerBandsOutput{float64(out.middle), float64(out.upper), float64(out.lower), float64(out.percent_b)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *SpreadBollingerBands) Batch(x []float64, y []float64) []SpreadBollingerBandsOutput {
+	n := len(x)
+	if len(y) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]SpreadBollingerBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraSpreadBollingerBandsOutput, n)
+	C.wickra_spread_bollinger_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&x[0])), (*C.double)(unsafe.Pointer(&y[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(x)
+	runtime.KeepAlive(y)
+	for i := range buf {
+		out[i] = SpreadBollingerBandsOutput{float64(buf[i].middle), float64(buf[i].upper), float64(buf[i].lower), float64(buf[i].percent_b)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *SpreadBollingerBands) Reset() {
 	C.wickra_spread_bollinger_bands_reset(ind.handle)
@@ -33772,6 +36186,25 @@ func (ind *StandardErrorBands) Update(value float64) (StandardErrorBandsOutput, 
 	return StandardErrorBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *StandardErrorBands) Batch(input []float64) []StandardErrorBandsOutput {
+	n := len(input)
+	out := make([]StandardErrorBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraStandardErrorBandsOutput, n)
+	C.wickra_standard_error_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = StandardErrorBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *StandardErrorBands) Reset() {
 	C.wickra_standard_error_bands_reset(ind.handle)
@@ -33846,6 +36279,45 @@ func (ind *StarcBands) Update(open float64, high float64, low float64, close flo
 		return StarcBandsOutput{}, false
 	}
 	return StarcBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *StarcBands) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []StarcBandsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]StarcBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraStarcBandsOutput, n)
+	C.wickra_starc_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = StarcBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -34440,6 +36912,45 @@ func (ind *Stochastic) Update(open float64, high float64, low float64, close flo
 	return StochasticOutput{float64(out.k), float64(out.d)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Stochastic) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []StochasticOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]StochasticOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraStochasticOutput, n)
+	C.wickra_stochastic_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = StochasticOutput{float64(buf[i].k), float64(buf[i].d)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Stochastic) Reset() {
 	C.wickra_stochastic_reset(ind.handle)
@@ -34694,6 +37205,45 @@ func (ind *SuperTrend) Update(open float64, high float64, low float64, close flo
 		return SuperTrendOutput{}, false
 	}
 	return SuperTrendOutput{float64(out.value), float64(out.direction)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *SuperTrend) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []SuperTrendOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]SuperTrendOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraSuperTrendOutput, n)
+	C.wickra_super_trend_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = SuperTrendOutput{float64(buf[i].value), float64(buf[i].direction)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -36020,6 +38570,45 @@ func (ind *TdLines) Update(open float64, high float64, low float64, close float6
 	return TdLinesOutput{float64(out.resistance), float64(out.support)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *TdLines) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TdLinesOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]TdLinesOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraTdLinesOutput, n)
+	C.wickra_td_lines_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = TdLinesOutput{float64(buf[i].resistance), float64(buf[i].support)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TdLines) Reset() {
 	C.wickra_td_lines_reset(ind.handle)
@@ -36094,6 +38683,45 @@ func (ind *TdMovingAverage) Update(open float64, high float64, low float64, clos
 		return TdMovingAverageOutput{}, false
 	}
 	return TdMovingAverageOutput{float64(out.st1), float64(out.st2)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *TdMovingAverage) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TdMovingAverageOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]TdMovingAverageOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraTdMovingAverageOutput, n)
+	C.wickra_td_moving_average_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = TdMovingAverageOutput{float64(buf[i].st1), float64(buf[i].st2)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -36462,6 +39090,45 @@ func (ind *TdRangeProjection) Update(open float64, high float64, low float64, cl
 	return TdRangeProjectionOutput{float64(out.high), float64(out.low)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *TdRangeProjection) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TdRangeProjectionOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]TdRangeProjectionOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraTdRangeProjectionOutput, n)
+	C.wickra_td_range_projection_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = TdRangeProjectionOutput{float64(buf[i].high), float64(buf[i].low)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TdRangeProjection) Reset() {
 	C.wickra_td_range_projection_reset(ind.handle)
@@ -36640,6 +39307,45 @@ func (ind *TdRiskLevel) Update(open float64, high float64, low float64, close fl
 	return TdRiskLevelOutput{float64(out.buy_risk), float64(out.sell_risk)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *TdRiskLevel) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TdRiskLevelOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]TdRiskLevelOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraTdRiskLevelOutput, n)
+	C.wickra_td_risk_level_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = TdRiskLevelOutput{float64(buf[i].buy_risk), float64(buf[i].sell_risk)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TdRiskLevel) Reset() {
 	C.wickra_td_risk_level_reset(ind.handle)
@@ -36722,6 +39428,45 @@ func (ind *TdSequential) Update(open float64, high float64, low float64, close f
 		return TdSequentialOutput{}, false
 	}
 	return TdSequentialOutput{float64(out.setup), float64(out.countdown), float64(out.direction)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *TdSequential) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TdSequentialOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]TdSequentialOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraTdSequentialOutput, n)
+	C.wickra_td_sequential_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = TdSequentialOutput{float64(buf[i].setup), float64(buf[i].countdown), float64(buf[i].direction)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -40184,6 +42929,45 @@ func (ind *TtmSqueeze) Update(open float64, high float64, low float64, close flo
 	return TtmSqueezeOutput{float64(out.squeeze), float64(out.momentum)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *TtmSqueeze) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TtmSqueezeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]TtmSqueezeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraTtmSqueezeOutput, n)
+	C.wickra_ttm_squeeze_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = TtmSqueezeOutput{float64(buf[i].squeeze), float64(buf[i].momentum)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TtmSqueeze) Reset() {
 	C.wickra_ttm_squeeze_reset(ind.handle)
@@ -41591,6 +44375,45 @@ func (ind *ValueArea) Update(open float64, high float64, low float64, close floa
 	return ValueAreaOutput{float64(out.poc), float64(out.vah), float64(out.val)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ValueArea) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ValueAreaOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ValueAreaOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraValueAreaOutput, n)
+	C.wickra_value_area_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ValueAreaOutput{float64(buf[i].poc), float64(buf[i].vah), float64(buf[i].val)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ValueArea) Reset() {
 	C.wickra_value_area_reset(ind.handle)
@@ -42087,6 +44910,45 @@ func (ind *VolatilityCone) Update(open float64, high float64, low float64, close
 		return VolatilityConeOutput{}, false
 	}
 	return VolatilityConeOutput{float64(out.current), float64(out.min), float64(out.median), float64(out.max), float64(out.percentile)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *VolatilityCone) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VolatilityConeOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]VolatilityConeOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraVolatilityConeOutput, n)
+	C.wickra_volatility_cone_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = VolatilityConeOutput{float64(buf[i].current), float64(buf[i].min), float64(buf[i].median), float64(buf[i].max), float64(buf[i].percentile)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -42975,6 +45837,45 @@ func (ind *VolumeWeightedMacd) Update(open float64, high float64, low float64, c
 	return VolumeWeightedMacdOutput{float64(out.macd), float64(out.signal), float64(out.histogram)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *VolumeWeightedMacd) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VolumeWeightedMacdOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]VolumeWeightedMacdOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraVolumeWeightedMacdOutput, n)
+	C.wickra_volume_weighted_macd_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = VolumeWeightedMacdOutput{float64(buf[i].macd), float64(buf[i].signal), float64(buf[i].histogram)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *VolumeWeightedMacd) Reset() {
 	C.wickra_volume_weighted_macd_reset(ind.handle)
@@ -43047,6 +45948,45 @@ func (ind *VolumeWeightedSr) Update(open float64, high float64, low float64, clo
 	return VolumeWeightedSrOutput{float64(out.support), float64(out.resistance)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *VolumeWeightedSr) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VolumeWeightedSrOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]VolumeWeightedSrOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraVolumeWeightedSrOutput, n)
+	C.wickra_volume_weighted_sr_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = VolumeWeightedSrOutput{float64(buf[i].support), float64(buf[i].resistance)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *VolumeWeightedSr) Reset() {
 	C.wickra_volume_weighted_sr_reset(ind.handle)
@@ -43117,6 +46057,45 @@ func (ind *Vortex) Update(open float64, high float64, low float64, close float64
 		return VortexOutput{}, false
 	}
 	return VortexOutput{float64(out.plus), float64(out.minus)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *Vortex) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VortexOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]VortexOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraVortexOutput, n)
+	C.wickra_vortex_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = VortexOutput{float64(buf[i].plus), float64(buf[i].minus)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -43351,6 +46330,45 @@ func (ind *VwapStdDevBands) Update(open float64, high float64, low float64, clos
 		return VwapStdDevBandsOutput{}, false
 	}
 	return VwapStdDevBandsOutput{float64(out.upper), float64(out.middle), float64(out.lower), float64(out.stddev)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *VwapStdDevBands) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VwapStdDevBandsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]VwapStdDevBandsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraVwapStdDevBandsOutput, n)
+	C.wickra_vwap_std_dev_bands_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = VwapStdDevBandsOutput{float64(buf[i].upper), float64(buf[i].middle), float64(buf[i].lower), float64(buf[i].stddev)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -43821,6 +46839,45 @@ func (ind *WaveTrend) Update(open float64, high float64, low float64, close floa
 	return WaveTrendOutput{float64(out.wt1), float64(out.wt2)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *WaveTrend) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []WaveTrendOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]WaveTrendOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraWaveTrendOutput, n)
+	C.wickra_wave_trend_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = WaveTrendOutput{float64(buf[i].wt1), float64(buf[i].wt2)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *WaveTrend) Reset() {
 	C.wickra_wave_trend_reset(ind.handle)
@@ -44183,6 +47240,45 @@ func (ind *WilliamsFractals) Update(open float64, high float64, low float64, clo
 	return WilliamsFractalsOutput{float64(out.up), float64(out.down)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *WilliamsFractals) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []WilliamsFractalsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]WilliamsFractalsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraWilliamsFractalsOutput, n)
+	C.wickra_williams_fractals_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = WilliamsFractalsOutput{float64(buf[i].up), float64(buf[i].down)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *WilliamsFractals) Reset() {
 	C.wickra_williams_fractals_reset(ind.handle)
@@ -44515,6 +47611,45 @@ func (ind *WoodiePivots) Update(open float64, high float64, low float64, close f
 		return WoodiePivotsOutput{}, false
 	}
 	return WoodiePivotsOutput{float64(out.pp), float64(out.r1), float64(out.r2), float64(out.s1), float64(out.s2)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *WoodiePivots) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []WoodiePivotsOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]WoodiePivotsOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraWoodiePivotsOutput, n)
+	C.wickra_woodie_pivots_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = WoodiePivotsOutput{float64(buf[i].pp), float64(buf[i].r1), float64(buf[i].r2), float64(buf[i].s1), float64(buf[i].s2)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -44887,6 +48022,25 @@ func (ind *ZeroLagMacd) Update(value float64) (ZeroLagMacdOutput, bool) {
 	return ZeroLagMacdOutput{float64(out.macd), float64(out.signal), float64(out.histogram)}, true
 }
 
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ZeroLagMacd) Batch(input []float64) []ZeroLagMacdOutput {
+	n := len(input)
+	out := make([]ZeroLagMacdOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraZeroLagMacdOutput, n)
+	C.wickra_zero_lag_macd_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = ZeroLagMacdOutput{float64(buf[i].macd), float64(buf[i].signal), float64(buf[i].histogram)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ZeroLagMacd) Reset() {
 	C.wickra_zero_lag_macd_reset(ind.handle)
@@ -44953,6 +48107,45 @@ func (ind *ZigZag) Update(open float64, high float64, low float64, close float64
 		return ZigZagOutput{}, false
 	}
 	return ZigZagOutput{float64(out.swing), float64(out.direction)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *ZigZag) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ZigZagOutput {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]ZigZagOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraZigZagOutput, n)
+	C.wickra_zig_zag_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	for i := range buf {
+		out[i] = ZigZagOutput{float64(buf[i].swing), float64(buf[i].direction)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.

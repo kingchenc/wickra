@@ -53,6 +53,34 @@ public final class DoubleBollinger implements AutoCloseable {
         }
     }
 
+    /**
+     * Vectorized update over whole series, one output per input. A row the
+     * indicator did not produce -- warmup, or an input it rejected -- carries
+     * NaN in every floating-point field.
+     */
+    public DoubleBollingerOutput[] batch(double[] input) {
+        int n = input.length;
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment inputSeg = a.allocateFrom(JAVA_DOUBLE, input);
+            MemorySegment outSeg = a.allocate(40L * n);
+            NativeMethods.WICKRA_DOUBLE_BOLLINGER_BATCH.invokeExact(handle(), inputSeg, outSeg, (long) n);
+            DoubleBollingerOutput[] out = new DoubleBollingerOutput[n];
+            for (int i = 0; i < n; i++) {
+                out[i] = new DoubleBollingerOutput(
+                        outSeg.get(JAVA_DOUBLE, i * 40L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 40L + 8L),
+                        outSeg.get(JAVA_DOUBLE, i * 40L + 16L),
+                        outSeg.get(JAVA_DOUBLE, i * 40L + 24L),
+                        outSeg.get(JAVA_DOUBLE, i * 40L + 32L));
+            }
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

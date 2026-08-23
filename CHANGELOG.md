@@ -615,6 +615,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **The C ABI gained `batch` for 91 multi-output indicators.** Every scalar
+  indicator had a vectorized path and no multi-output one did, so C, C++, Go, C#
+  and Java crossed the FFI boundary once per bar for a fifth of the catalogue.
+  `out` is an array of the output struct the ABI already defines, one entry per
+  input; a row the indicator did not produce — warmup, or an input it rejected —
+  has every floating-point field set to `NaN`. Go, C# and Java expose it.
 - **`dotnet publish` failed for every Windows app using the NuGet package.**
   The managed assembly is `Wickra.dll` and the native library shipped as
   `wickra.dll`; Windows file names are case-insensitive and a RID-specific

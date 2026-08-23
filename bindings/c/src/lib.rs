@@ -55398,6 +55398,71 @@ pub unsafe extern "C" fn wickra_acceleration_bands_update(
     }
 }
 
+/// Run over the input series, writing one `WickraAccelerationBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_acceleration_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAccelerationBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_batch(
+    handle: *mut AccelerationBands,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAccelerationBandsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAccelerationBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAccelerationBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -55517,6 +55582,71 @@ pub unsafe extern "C" fn wickra_adx_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraAdxOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_adx_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAdxOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_batch(
+    handle: *mut Adx,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAdxOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAdxOutput {
+            plus_di: f64::NAN,
+            minus_di: f64::NAN,
+            adx: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAdxOutput {
+                plus_di: out_val.plus_di,
+                minus_di: out_val.minus_di,
+                adx: out_val.adx,
+            };
+        }
     }
 }
 
@@ -55640,6 +55770,71 @@ pub unsafe extern "C" fn wickra_alligator_update(
     }
 }
 
+/// Run over the input series, writing one `WickraAlligatorOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_alligator_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAlligatorOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_batch(
+    handle: *mut Alligator,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAlligatorOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAlligatorOutput {
+            jaw: f64::NAN,
+            teeth: f64::NAN,
+            lips: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAlligatorOutput {
+                jaw: out_val.jaw,
+                teeth: out_val.teeth,
+                lips: out_val.lips,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -55753,6 +55948,71 @@ pub unsafe extern "C" fn wickra_andrews_pitchfork_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraAndrewsPitchforkOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_andrews_pitchfork_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAndrewsPitchforkOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_batch(
+    handle: *mut AndrewsPitchfork,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAndrewsPitchforkOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAndrewsPitchforkOutput {
+            median: f64::NAN,
+            upper: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAndrewsPitchforkOutput {
+                median: out_val.median,
+                upper: out_val.upper,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -55875,6 +56135,69 @@ pub unsafe extern "C" fn wickra_aroon_update(
     }
 }
 
+/// Run over the input series, writing one `WickraAroonOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_aroon_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAroonOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_batch(
+    handle: *mut Aroon,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAroonOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAroonOutput {
+            up: f64::NAN,
+            down: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAroonOutput {
+                up: out_val.up,
+                down: out_val.down,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -55988,6 +56311,71 @@ pub unsafe extern "C" fn wickra_atr_bands_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraAtrBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_atr_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAtrBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_batch(
+    handle: *mut AtrBands,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAtrBandsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAtrBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAtrBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -56110,6 +56498,69 @@ pub unsafe extern "C" fn wickra_atr_ratchet_update(
     }
 }
 
+/// Run over the input series, writing one `WickraAtrRatchetOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_atr_ratchet_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAtrRatchetOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_batch(
+    handle: *mut AtrRatchet,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAtrRatchetOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAtrRatchetOutput {
+            value: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAtrRatchetOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56227,6 +56678,79 @@ pub unsafe extern "C" fn wickra_auto_fib_update(
     }
 }
 
+/// Run over the input series, writing one `WickraAutoFibOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_auto_fib_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraAutoFibOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_batch(
+    handle: *mut AutoFib,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraAutoFibOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraAutoFibOutput {
+            level_0: f64::NAN,
+            level_236: f64::NAN,
+            level_382: f64::NAN,
+            level_500: f64::NAN,
+            level_618: f64::NAN,
+            level_786: f64::NAN,
+            level_1000: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraAutoFibOutput {
+                level_0: out_val.level_0,
+                level_236: out_val.level_236,
+                level_382: out_val.level_382,
+                level_500: out_val.level_500,
+                level_618: out_val.level_618,
+                level_786: out_val.level_786,
+                level_1000: out_val.level_1000,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56339,6 +56863,45 @@ pub unsafe extern "C" fn wickra_bollinger_bands_update(
     }
 }
 
+/// Run over the input series, writing one `WickraBollingerOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_bollinger_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraBollingerOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_batch(
+    handle: *mut BollingerBands,
+    input: *const f64,
+    out: *mut WickraBollingerOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraBollingerOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+            stddev: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraBollingerOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+                stddev: out_val.stddev,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56446,6 +57009,43 @@ pub unsafe extern "C" fn wickra_bomar_bands_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraBomarBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_bomar_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraBomarBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_batch(
+    handle: *mut BomarBands,
+    input: *const f64,
+    out: *mut WickraBomarBandsOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraBomarBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraBomarBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -56568,6 +57168,83 @@ pub unsafe extern "C" fn wickra_camarilla_update(
     }
 }
 
+/// Run over the input series, writing one `WickraCamarillaPivotsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_camarilla_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraCamarillaPivotsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_batch(
+    handle: *mut Camarilla,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraCamarillaPivotsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraCamarillaPivotsOutput {
+            pp: f64::NAN,
+            r1: f64::NAN,
+            r2: f64::NAN,
+            r3: f64::NAN,
+            r4: f64::NAN,
+            s1: f64::NAN,
+            s2: f64::NAN,
+            s3: f64::NAN,
+            s4: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraCamarillaPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                r3: out_val.r3,
+                r4: out_val.r4,
+                s1: out_val.s1,
+                s2: out_val.s2,
+                s3: out_val.s3,
+                s4: out_val.s4,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56683,6 +57360,69 @@ pub unsafe extern "C" fn wickra_candle_volume_update(
     }
 }
 
+/// Run over the input series, writing one `WickraCandleVolumeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_candle_volume_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraCandleVolumeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_batch(
+    handle: *mut CandleVolume,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraCandleVolumeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraCandleVolumeOutput {
+            body: f64::NAN,
+            width: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraCandleVolumeOutput {
+                body: out_val.body,
+                width: out_val.width,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -56793,6 +57533,71 @@ pub unsafe extern "C" fn wickra_central_pivot_range_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraCentralPivotRangeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_central_pivot_range_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraCentralPivotRangeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_batch(
+    handle: *mut CentralPivotRange,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraCentralPivotRangeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraCentralPivotRangeOutput {
+            pivot: f64::NAN,
+            tc: f64::NAN,
+            bc: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraCentralPivotRangeOutput {
+                pivot: out_val.pivot,
+                tc: out_val.tc,
+                bc: out_val.bc,
+            };
+        }
     }
 }
 
@@ -56921,6 +57726,69 @@ pub unsafe extern "C" fn wickra_chande_kroll_stop_update(
     }
 }
 
+/// Run over the input series, writing one `WickraChandeKrollStopOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_chande_kroll_stop_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraChandeKrollStopOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_batch(
+    handle: *mut ChandeKrollStop,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraChandeKrollStopOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraChandeKrollStopOutput {
+            stop_long: f64::NAN,
+            stop_short: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraChandeKrollStopOutput {
+                stop_long: out_val.stop_long,
+                stop_short: out_val.stop_short,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -57043,6 +57911,69 @@ pub unsafe extern "C" fn wickra_chandelier_exit_update(
     }
 }
 
+/// Run over the input series, writing one `WickraChandelierExitOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_chandelier_exit_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraChandelierExitOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_batch(
+    handle: *mut ChandelierExit,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraChandelierExitOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraChandelierExitOutput {
+            long_stop: f64::NAN,
+            short_stop: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraChandelierExitOutput {
+                long_stop: out_val.long_stop,
+                short_stop: out_val.short_stop,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -57162,6 +58093,79 @@ pub unsafe extern "C" fn wickra_classic_pivots_update(
     }
 }
 
+/// Run over the input series, writing one `WickraClassicPivotsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_classic_pivots_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraClassicPivotsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_batch(
+    handle: *mut ClassicPivots,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraClassicPivotsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraClassicPivotsOutput {
+            pp: f64::NAN,
+            r1: f64::NAN,
+            r2: f64::NAN,
+            r3: f64::NAN,
+            s1: f64::NAN,
+            s2: f64::NAN,
+            s3: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraClassicPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                r3: out_val.r3,
+                s1: out_val.s1,
+                s2: out_val.s2,
+                s3: out_val.s3,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -57268,6 +58272,45 @@ pub unsafe extern "C" fn wickra_cointegration_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraCointegrationOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_cointegration_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraCointegrationOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_batch(
+    handle: *mut Cointegration,
+    x: *const f64,
+    y: *const f64,
+    out: *mut WickraCointegrationOutput,
+    n: usize,
+) {
+    if handle.is_null() || x.is_null() || y.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let xs = slice::from_raw_parts(x, n);
+    let ys = slice::from_raw_parts(y, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraCointegrationOutput {
+            hedge_ratio: f64::NAN,
+            spread: f64::NAN,
+            adf_stat: f64::NAN,
+        };
+        if let Some(out_val) = ind.update((xs[i], ys[i])) {
+            *slot = WickraCointegrationOutput {
+                hedge_ratio: out_val.hedge_ratio,
+                spread: out_val.spread,
+                adf_stat: out_val.adf_stat,
+            };
+        }
     }
 }
 
@@ -57391,6 +58434,71 @@ pub unsafe extern "C" fn wickra_composite_profile_update(
     }
 }
 
+/// Run over the input series, writing one `WickraCompositeProfileOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_composite_profile_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraCompositeProfileOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_batch(
+    handle: *mut CompositeProfile,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraCompositeProfileOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraCompositeProfileOutput {
+            poc: f64::NAN,
+            vah: f64::NAN,
+            val: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraCompositeProfileOutput {
+                poc: out_val.poc,
+                vah: out_val.vah,
+                val: out_val.val,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -57505,6 +58613,71 @@ pub unsafe extern "C" fn wickra_demark_pivots_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraDemarkPivotsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_demark_pivots_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraDemarkPivotsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_batch(
+    handle: *mut DemarkPivots,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraDemarkPivotsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraDemarkPivotsOutput {
+            pp: f64::NAN,
+            r1: f64::NAN,
+            s1: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraDemarkPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                s1: out_val.s1,
+            };
+        }
     }
 }
 
@@ -57624,6 +58797,71 @@ pub unsafe extern "C" fn wickra_donchian_update(
     }
 }
 
+/// Run over the input series, writing one `WickraDonchianOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_donchian_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraDonchianOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_batch(
+    handle: *mut Donchian,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraDonchianOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraDonchianOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraDonchianOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -57739,6 +58977,69 @@ pub unsafe extern "C" fn wickra_donchian_stop_update(
     }
 }
 
+/// Run over the input series, writing one `WickraDonchianStopOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_donchian_stop_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraDonchianStopOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_batch(
+    handle: *mut DonchianStop,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraDonchianStopOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraDonchianStopOutput {
+            stop_long: f64::NAN,
+            stop_short: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraDonchianStopOutput {
+                stop_long: out_val.stop_long,
+                stop_short: out_val.stop_short,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -57850,6 +59151,47 @@ pub unsafe extern "C" fn wickra_double_bollinger_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraDoubleBollingerOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_double_bollinger_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraDoubleBollingerOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_batch(
+    handle: *mut DoubleBollinger,
+    input: *const f64,
+    out: *mut WickraDoubleBollingerOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraDoubleBollingerOutput {
+            upper_outer: f64::NAN,
+            upper_inner: f64::NAN,
+            middle: f64::NAN,
+            lower_inner: f64::NAN,
+            lower_outer: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraDoubleBollingerOutput {
+                upper_outer: out_val.upper_outer,
+                upper_inner: out_val.upper_inner,
+                middle: out_val.middle,
+                lower_inner: out_val.lower_inner,
+                lower_outer: out_val.lower_outer,
+            };
+        }
     }
 }
 
@@ -57972,6 +59314,69 @@ pub unsafe extern "C" fn wickra_elder_ray_update(
     }
 }
 
+/// Run over the input series, writing one `WickraElderRayOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_elder_ray_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraElderRayOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_batch(
+    handle: *mut ElderRay,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraElderRayOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraElderRayOutput {
+            bull_power: f64::NAN,
+            bear_power: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraElderRayOutput {
+                bull_power: out_val.bull_power,
+                bear_power: out_val.bear_power,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -58084,6 +59489,69 @@ pub unsafe extern "C" fn wickra_elder_safe_zone_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraElderSafeZoneOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_elder_safe_zone_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraElderSafeZoneOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_batch(
+    handle: *mut ElderSafeZone,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraElderSafeZoneOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraElderSafeZoneOutput {
+            value: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraElderSafeZoneOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+        }
     }
 }
 
@@ -58202,6 +59670,69 @@ pub unsafe extern "C" fn wickra_equivolume_update(
     }
 }
 
+/// Run over the input series, writing one `WickraEquivolumeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_equivolume_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraEquivolumeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_batch(
+    handle: *mut Equivolume,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraEquivolumeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraEquivolumeOutput {
+            height: f64::NAN,
+            width: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraEquivolumeOutput {
+                height: out_val.height,
+                width: out_val.width,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -58312,6 +59843,71 @@ pub unsafe extern "C" fn wickra_fib_arcs_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraFibArcsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_arcs_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibArcsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_batch(
+    handle: *mut FibArcs,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibArcsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibArcsOutput {
+            arc_382: f64::NAN,
+            arc_500: f64::NAN,
+            arc_618: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibArcsOutput {
+                arc_382: out_val.arc_382,
+                arc_500: out_val.arc_500,
+                arc_618: out_val.arc_618,
+            };
+        }
     }
 }
 
@@ -58429,6 +60025,73 @@ pub unsafe extern "C" fn wickra_fib_channel_update(
     }
 }
 
+/// Run over the input series, writing one `WickraFibChannelOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_channel_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibChannelOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_batch(
+    handle: *mut FibChannel,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibChannelOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibChannelOutput {
+            base: f64::NAN,
+            level_618: f64::NAN,
+            level_1000: f64::NAN,
+            level_1618: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibChannelOutput {
+                base: out_val.base,
+                level_618: out_val.level_618,
+                level_1000: out_val.level_1000,
+                level_1618: out_val.level_1618,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -58538,6 +60201,69 @@ pub unsafe extern "C" fn wickra_fib_confluence_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraFibConfluenceOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_confluence_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibConfluenceOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_batch(
+    handle: *mut FibConfluence,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibConfluenceOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibConfluenceOutput {
+            price: f64::NAN,
+            strength: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibConfluenceOutput {
+                price: out_val.price,
+                strength: out_val.strength,
+            };
+        }
     }
 }
 
@@ -58656,6 +60382,75 @@ pub unsafe extern "C" fn wickra_fib_extension_update(
     }
 }
 
+/// Run over the input series, writing one `WickraFibExtensionOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_extension_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibExtensionOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_batch(
+    handle: *mut FibExtension,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibExtensionOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibExtensionOutput {
+            level_1272: f64::NAN,
+            level_1414: f64::NAN,
+            level_1618: f64::NAN,
+            level_2000: f64::NAN,
+            level_2618: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibExtensionOutput {
+                level_1272: out_val.level_1272,
+                level_1414: out_val.level_1414,
+                level_1618: out_val.level_1618,
+                level_2000: out_val.level_2000,
+                level_2618: out_val.level_2618,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -58766,6 +60561,71 @@ pub unsafe extern "C" fn wickra_fib_fan_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraFibFanOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_fan_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibFanOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_batch(
+    handle: *mut FibFan,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibFanOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibFanOutput {
+            fan_382: f64::NAN,
+            fan_500: f64::NAN,
+            fan_618: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibFanOutput {
+                fan_382: out_val.fan_382,
+                fan_500: out_val.fan_500,
+                fan_618: out_val.fan_618,
+            };
+        }
     }
 }
 
@@ -58880,6 +60740,73 @@ pub unsafe extern "C" fn wickra_fib_projection_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraFibProjectionOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_projection_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibProjectionOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_batch(
+    handle: *mut FibProjection,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibProjectionOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibProjectionOutput {
+            level_618: f64::NAN,
+            level_1000: f64::NAN,
+            level_1618: f64::NAN,
+            level_2618: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibProjectionOutput {
+                level_618: out_val.level_618,
+                level_1000: out_val.level_1000,
+                level_1618: out_val.level_1618,
+                level_2618: out_val.level_2618,
+            };
+        }
     }
 }
 
@@ -59000,6 +60927,79 @@ pub unsafe extern "C" fn wickra_fib_retracement_update(
     }
 }
 
+/// Run over the input series, writing one `WickraFibRetracementOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_retracement_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibRetracementOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_batch(
+    handle: *mut FibRetracement,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibRetracementOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibRetracementOutput {
+            level_0: f64::NAN,
+            level_236: f64::NAN,
+            level_382: f64::NAN,
+            level_500: f64::NAN,
+            level_618: f64::NAN,
+            level_786: f64::NAN,
+            level_1000: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibRetracementOutput {
+                level_0: out_val.level_0,
+                level_236: out_val.level_236,
+                level_382: out_val.level_382,
+                level_500: out_val.level_500,
+                level_618: out_val.level_618,
+                level_786: out_val.level_786,
+                level_1000: out_val.level_1000,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -59111,6 +61111,69 @@ pub unsafe extern "C" fn wickra_fib_time_zones_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraFibTimeZonesOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fib_time_zones_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibTimeZonesOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_batch(
+    handle: *mut FibTimeZones,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibTimeZonesOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibTimeZonesOutput {
+            on_zone: f64::NAN,
+            bars_to_next: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibTimeZonesOutput {
+                on_zone: out_val.on_zone,
+                bars_to_next: out_val.bars_to_next,
+            };
+        }
     }
 }
 
@@ -59231,6 +61294,79 @@ pub unsafe extern "C" fn wickra_fibonacci_pivots_update(
     }
 }
 
+/// Run over the input series, writing one `WickraFibonacciPivotsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fibonacci_pivots_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFibonacciPivotsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_batch(
+    handle: *mut FibonacciPivots,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFibonacciPivotsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFibonacciPivotsOutput {
+            pp: f64::NAN,
+            r1: f64::NAN,
+            r2: f64::NAN,
+            r3: f64::NAN,
+            s1: f64::NAN,
+            s2: f64::NAN,
+            s3: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFibonacciPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                r3: out_val.r3,
+                s1: out_val.s1,
+                s2: out_val.s2,
+                s3: out_val.s3,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -59347,6 +61483,69 @@ pub unsafe extern "C" fn wickra_fractal_chaos_bands_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraFractalChaosBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_fractal_chaos_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraFractalChaosBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_batch(
+    handle: *mut FractalChaosBands,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraFractalChaosBandsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraFractalChaosBandsOutput {
+            upper: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraFractalChaosBandsOutput {
+                upper: out_val.upper,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -59475,6 +61674,69 @@ pub unsafe extern "C" fn wickra_gator_oscillator_update(
     }
 }
 
+/// Run over the input series, writing one `WickraGatorOscillatorOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_gator_oscillator_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraGatorOscillatorOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_batch(
+    handle: *mut GatorOscillator,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraGatorOscillatorOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraGatorOscillatorOutput {
+            upper: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraGatorOscillatorOutput {
+                upper: out_val.upper,
+                lower: out_val.lower,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -59592,6 +61854,71 @@ pub unsafe extern "C" fn wickra_golden_pocket_update(
     }
 }
 
+/// Run over the input series, writing one `WickraGoldenPocketOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_golden_pocket_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraGoldenPocketOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_batch(
+    handle: *mut GoldenPocket,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraGoldenPocketOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraGoldenPocketOutput {
+            low: f64::NAN,
+            mid: f64::NAN,
+            high: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraGoldenPocketOutput {
+                low: out_val.low,
+                mid: out_val.mid,
+                high: out_val.high,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -59703,6 +62030,73 @@ pub unsafe extern "C" fn wickra_heikin_ashi_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraHeikinAshiOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_heikin_ashi_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraHeikinAshiOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_batch(
+    handle: *mut HeikinAshi,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraHeikinAshiOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraHeikinAshiOutput {
+            open: f64::NAN,
+            high: f64::NAN,
+            low: f64::NAN,
+            close: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraHeikinAshiOutput {
+                open: out_val.open,
+                high: out_val.high,
+                low: out_val.low,
+                close: out_val.close,
+            };
+        }
     }
 }
 
@@ -59824,6 +62218,69 @@ pub unsafe extern "C" fn wickra_high_low_volume_nodes_update(
     }
 }
 
+/// Run over the input series, writing one `WickraHighLowVolumeNodesOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_high_low_volume_nodes_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraHighLowVolumeNodesOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_batch(
+    handle: *mut HighLowVolumeNodes,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraHighLowVolumeNodesOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraHighLowVolumeNodesOutput {
+            hvn: f64::NAN,
+            lvn: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraHighLowVolumeNodesOutput {
+                hvn: out_val.hvn,
+                lvn: out_val.lvn,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -59931,6 +62388,41 @@ pub unsafe extern "C" fn wickra_ht_phasor_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraHtPhasorOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_ht_phasor_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraHtPhasorOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_batch(
+    handle: *mut HtPhasor,
+    input: *const f64,
+    out: *mut WickraHtPhasorOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraHtPhasorOutput {
+            inphase: f64::NAN,
+            quadrature: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraHtPhasorOutput {
+                inphase: out_val.inphase,
+                quadrature: out_val.quadrature,
+            };
+        }
     }
 }
 
@@ -60047,6 +62539,71 @@ pub unsafe extern "C" fn wickra_hurst_channel_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraHurstChannelOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_hurst_channel_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraHurstChannelOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_batch(
+    handle: *mut HurstChannel,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraHurstChannelOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraHurstChannelOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraHurstChannelOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -60173,6 +62730,75 @@ pub unsafe extern "C" fn wickra_ichimoku_update(
     }
 }
 
+/// Run over the input series, writing one `WickraIchimokuOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_ichimoku_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraIchimokuOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_batch(
+    handle: *mut Ichimoku,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraIchimokuOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraIchimokuOutput {
+            tenkan: f64::NAN,
+            kijun: f64::NAN,
+            senkou_a: f64::NAN,
+            senkou_b: f64::NAN,
+            chikou: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraIchimokuOutput {
+                tenkan: out_val.tenkan.unwrap_or(f64::NAN),
+                kijun: out_val.kijun.unwrap_or(f64::NAN),
+                senkou_a: out_val.senkou_a.unwrap_or(f64::NAN),
+                senkou_b: out_val.senkou_b.unwrap_or(f64::NAN),
+                chikou: out_val.chikou.unwrap_or(f64::NAN),
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -60288,6 +62914,69 @@ pub unsafe extern "C" fn wickra_initial_balance_update(
     }
 }
 
+/// Run over the input series, writing one `WickraInitialBalanceOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_initial_balance_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraInitialBalanceOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_batch(
+    handle: *mut InitialBalance,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraInitialBalanceOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraInitialBalanceOutput {
+            high: f64::NAN,
+            low: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraInitialBalanceOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -60399,6 +63088,45 @@ pub unsafe extern "C" fn wickra_kalman_hedge_ratio_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraKalmanHedgeRatioOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_kalman_hedge_ratio_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraKalmanHedgeRatioOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_batch(
+    handle: *mut KalmanHedgeRatio,
+    x: *const f64,
+    y: *const f64,
+    out: *mut WickraKalmanHedgeRatioOutput,
+    n: usize,
+) {
+    if handle.is_null() || x.is_null() || y.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let xs = slice::from_raw_parts(x, n);
+    let ys = slice::from_raw_parts(y, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraKalmanHedgeRatioOutput {
+            hedge_ratio: f64::NAN,
+            intercept: f64::NAN,
+            spread: f64::NAN,
+        };
+        if let Some(out_val) = ind.update((xs[i], ys[i])) {
+            *slot = WickraKalmanHedgeRatioOutput {
+                hedge_ratio: out_val.hedge_ratio,
+                intercept: out_val.intercept,
+                spread: out_val.spread,
+            };
+        }
     }
 }
 
@@ -60521,6 +63249,69 @@ pub unsafe extern "C" fn wickra_kase_dev_stop_update(
     }
 }
 
+/// Run over the input series, writing one `WickraKaseDevStopOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_kase_dev_stop_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraKaseDevStopOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_batch(
+    handle: *mut KaseDevStop,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraKaseDevStopOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraKaseDevStopOutput {
+            value: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraKaseDevStopOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -60636,6 +63427,69 @@ pub unsafe extern "C" fn wickra_kase_permission_stochastic_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraKasePermissionStochasticOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_kase_permission_stochastic_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraKasePermissionStochasticOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_batch(
+    handle: *mut KasePermissionStochastic,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraKasePermissionStochasticOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraKasePermissionStochasticOutput {
+            fast: f64::NAN,
+            slow: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraKasePermissionStochasticOutput {
+                fast: out_val.fast,
+                slow: out_val.slow,
+            };
+        }
     }
 }
 
@@ -60769,6 +63623,71 @@ pub unsafe extern "C" fn wickra_keltner_update(
     }
 }
 
+/// Run over the input series, writing one `WickraKeltnerOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_keltner_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraKeltnerOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_batch(
+    handle: *mut Keltner,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraKeltnerOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraKeltnerOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraKeltnerOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -60886,6 +63805,41 @@ pub unsafe extern "C" fn wickra_kst_update(
     }
 }
 
+/// Run over the input series, writing one `WickraKstOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_kst_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraKstOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_batch(
+    handle: *mut Kst,
+    input: *const f64,
+    out: *mut WickraKstOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraKstOutput {
+            kst: f64::NAN,
+            signal: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraKstOutput {
+                kst: out_val.kst,
+                signal: out_val.signal,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -60994,6 +63948,43 @@ pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraLeadLagCrossCorrelationOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_lead_lag_cross_correlation_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraLeadLagCrossCorrelationOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_batch(
+    handle: *mut LeadLagCrossCorrelation,
+    x: *const f64,
+    y: *const f64,
+    out: *mut WickraLeadLagCrossCorrelationOutput,
+    n: usize,
+) {
+    if handle.is_null() || x.is_null() || y.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let xs = slice::from_raw_parts(x, n);
+    let ys = slice::from_raw_parts(y, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraLeadLagCrossCorrelationOutput {
+            lag: 0,
+            correlation: f64::NAN,
+        };
+        if let Some(out_val) = ind.update((xs[i], ys[i])) {
+            *slot = WickraLeadLagCrossCorrelationOutput {
+                lag: out_val.lag,
+                correlation: out_val.correlation,
+            };
+        }
     }
 }
 
@@ -61112,6 +64103,43 @@ pub unsafe extern "C" fn wickra_lin_reg_channel_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraLinRegChannelOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_lin_reg_channel_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraLinRegChannelOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_batch(
+    handle: *mut LinRegChannel,
+    input: *const f64,
+    out: *mut WickraLinRegChannelOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraLinRegChannelOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraLinRegChannelOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -61249,6 +64277,99 @@ pub unsafe extern "C" fn wickra_liquidation_features_update(
     }
 }
 
+/// Run over the input series, writing one `WickraLiquidationFeaturesOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_liquidation_features_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraLiquidationFeaturesOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_batch(
+    handle: *mut LiquidationFeatures,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraLiquidationFeaturesOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraLiquidationFeaturesOutput {
+            long: f64::NAN,
+            short: f64::NAN,
+            net: f64::NAN,
+            total: f64::NAN,
+            imbalance: f64::NAN,
+        };
+        let Ok(input) = DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraLiquidationFeaturesOutput {
+                long: out_val.long,
+                short: out_val.short,
+                net: out_val.net,
+                total: out_val.total,
+                imbalance: out_val.imbalance,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -61360,6 +64481,43 @@ pub unsafe extern "C" fn wickra_ma_envelope_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraMaEnvelopeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_ma_envelope_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraMaEnvelopeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_batch(
+    handle: *mut MaEnvelope,
+    input: *const f64,
+    out: *mut WickraMaEnvelopeOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMaEnvelopeOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraMaEnvelopeOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -61475,6 +64633,43 @@ pub unsafe extern "C" fn wickra_macd_indicator_update(
     }
 }
 
+/// Run over the input series, writing one `WickraMacdOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_macd_indicator_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraMacdOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_batch(
+    handle: *mut MacdIndicator,
+    input: *const f64,
+    out: *mut WickraMacdOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMacdOutput {
+            macd: f64::NAN,
+            signal: f64::NAN,
+            histogram: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -61580,6 +64775,43 @@ pub unsafe extern "C" fn wickra_macd_fix_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraMacdOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_macd_fix_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraMacdOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_batch(
+    handle: *mut MacdFix,
+    input: *const f64,
+    out: *mut WickraMacdOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMacdOutput {
+            macd: f64::NAN,
+            signal: f64::NAN,
+            histogram: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+        }
     }
 }
 
@@ -61690,6 +64922,41 @@ pub unsafe extern "C" fn wickra_mama_update(
     }
 }
 
+/// Run over the input series, writing one `WickraMamaOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_mama_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraMamaOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_batch(
+    handle: *mut Mama,
+    input: *const f64,
+    out: *mut WickraMamaOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMamaOutput {
+            mama: f64::NAN,
+            fama: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraMamaOutput {
+                mama: out_val.mama,
+                fama: out_val.fama,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -61795,6 +65062,43 @@ pub unsafe extern "C" fn wickra_median_channel_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraMedianChannelOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_median_channel_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraMedianChannelOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_batch(
+    handle: *mut MedianChannel,
+    input: *const f64,
+    out: *mut WickraMedianChannelOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMedianChannelOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraMedianChannelOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -61910,6 +65214,69 @@ pub unsafe extern "C" fn wickra_modified_ma_stop_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraModifiedMaStopOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_modified_ma_stop_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraModifiedMaStopOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_batch(
+    handle: *mut ModifiedMaStop,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraModifiedMaStopOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraModifiedMaStopOutput {
+            value: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraModifiedMaStopOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+        }
     }
 }
 
@@ -62039,6 +65406,83 @@ pub unsafe extern "C" fn wickra_murrey_math_lines_update(
     }
 }
 
+/// Run over the input series, writing one `WickraMurreyMathLinesOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_murrey_math_lines_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraMurreyMathLinesOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_batch(
+    handle: *mut MurreyMathLines,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraMurreyMathLinesOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMurreyMathLinesOutput {
+            mm8_8: f64::NAN,
+            mm7_8: f64::NAN,
+            mm6_8: f64::NAN,
+            mm5_8: f64::NAN,
+            mm4_8: f64::NAN,
+            mm3_8: f64::NAN,
+            mm2_8: f64::NAN,
+            mm1_8: f64::NAN,
+            mm0_8: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraMurreyMathLinesOutput {
+                mm8_8: out_val.mm8_8,
+                mm7_8: out_val.mm7_8,
+                mm6_8: out_val.mm6_8,
+                mm5_8: out_val.mm5_8,
+                mm4_8: out_val.mm4_8,
+                mm3_8: out_val.mm3_8,
+                mm2_8: out_val.mm2_8,
+                mm1_8: out_val.mm1_8,
+                mm0_8: out_val.mm0_8,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -62158,6 +65602,69 @@ pub unsafe extern "C" fn wickra_nrtr_update(
     }
 }
 
+/// Run over the input series, writing one `WickraNrtrOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_nrtr_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraNrtrOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_batch(
+    handle: *mut Nrtr,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraNrtrOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraNrtrOutput {
+            value: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraNrtrOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -62274,6 +65781,71 @@ pub unsafe extern "C" fn wickra_opening_range_update(
     }
 }
 
+/// Run over the input series, writing one `WickraOpeningRangeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_opening_range_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraOpeningRangeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_batch(
+    handle: *mut OpeningRange,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraOpeningRangeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraOpeningRangeOutput {
+            high: f64::NAN,
+            low: f64::NAN,
+            breakout_distance: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraOpeningRangeOutput {
+                high: out_val.high,
+                low: out_val.low,
+                breakout_distance: out_val.breakout_distance,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -62385,6 +65957,69 @@ pub unsafe extern "C" fn wickra_overnight_intraday_return_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraOvernightIntradayReturnOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_overnight_intraday_return_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraOvernightIntradayReturnOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_batch(
+    handle: *mut OvernightIntradayReturn,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraOvernightIntradayReturnOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraOvernightIntradayReturnOutput {
+            overnight: f64::NAN,
+            intraday: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraOvernightIntradayReturnOutput {
+                overnight: out_val.overnight,
+                intraday: out_val.intraday,
+            };
+        }
     }
 }
 
@@ -62514,6 +66149,71 @@ pub unsafe extern "C" fn wickra_projection_bands_update(
     }
 }
 
+/// Run over the input series, writing one `WickraProjectionBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_projection_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraProjectionBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_batch(
+    handle: *mut ProjectionBands,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraProjectionBandsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraProjectionBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraProjectionBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -62625,6 +66325,41 @@ pub unsafe extern "C" fn wickra_qqe_update(
     }
 }
 
+/// Run over the input series, writing one `WickraQqeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_qqe_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraQqeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_batch(
+    handle: *mut Qqe,
+    input: *const f64,
+    out: *mut WickraQqeOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraQqeOutput {
+            rsi_ma: f64::NAN,
+            trailing_line: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraQqeOutput {
+                rsi_ma: out_val.rsi_ma,
+                trailing_line: out_val.trailing_line,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -62730,6 +66465,43 @@ pub unsafe extern "C" fn wickra_quartile_bands_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraQuartileBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_quartile_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraQuartileBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_batch(
+    handle: *mut QuartileBands,
+    input: *const f64,
+    out: *mut WickraQuartileBandsOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraQuartileBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraQuartileBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -62842,6 +66614,45 @@ pub unsafe extern "C" fn wickra_relative_strength_ab_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraRelativeStrengthOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_relative_strength_ab_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraRelativeStrengthOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_batch(
+    handle: *mut RelativeStrengthAB,
+    x: *const f64,
+    y: *const f64,
+    out: *mut WickraRelativeStrengthOutput,
+    n: usize,
+) {
+    if handle.is_null() || x.is_null() || y.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let xs = slice::from_raw_parts(x, n);
+    let ys = slice::from_raw_parts(y, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraRelativeStrengthOutput {
+            ratio: f64::NAN,
+            ratio_ma: f64::NAN,
+            ratio_rsi: f64::NAN,
+        };
+        if let Some(out_val) = ind.update((xs[i], ys[i])) {
+            *slot = WickraRelativeStrengthOutput {
+                ratio: out_val.ratio,
+                ratio_ma: out_val.ratio_ma,
+                ratio_rsi: out_val.ratio_rsi,
+            };
+        }
     }
 }
 
@@ -62966,6 +66777,69 @@ pub unsafe extern "C" fn wickra_rwi_update(
     }
 }
 
+/// Run over the input series, writing one `WickraRwiOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_rwi_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraRwiOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_batch(
+    handle: *mut Rwi,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraRwiOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraRwiOutput {
+            high: f64::NAN,
+            low: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraRwiOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -63075,6 +66949,69 @@ pub unsafe extern "C" fn wickra_session_high_low_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraSessionHighLowOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_session_high_low_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraSessionHighLowOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_batch(
+    handle: *mut SessionHighLow,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraSessionHighLowOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraSessionHighLowOutput {
+            high: f64::NAN,
+            low: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraSessionHighLowOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+        }
     }
 }
 
@@ -63195,6 +67132,71 @@ pub unsafe extern "C" fn wickra_session_range_update(
     }
 }
 
+/// Run over the input series, writing one `WickraSessionRangeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_session_range_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraSessionRangeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_batch(
+    handle: *mut SessionRange,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraSessionRangeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraSessionRangeOutput {
+            asia: f64::NAN,
+            eu: f64::NAN,
+            us: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraSessionRangeOutput {
+                asia: out_val.asia,
+                eu: out_val.eu,
+                us: out_val.us,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -63309,6 +67311,73 @@ pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraSmoothedHeikinAshiOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_smoothed_heikin_ashi_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraSmoothedHeikinAshiOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_batch(
+    handle: *mut SmoothedHeikinAshi,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraSmoothedHeikinAshiOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraSmoothedHeikinAshiOutput {
+            open: f64::NAN,
+            high: f64::NAN,
+            low: f64::NAN,
+            close: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraSmoothedHeikinAshiOutput {
+                open: out_val.open,
+                high: out_val.high,
+                low: out_val.low,
+                close: out_val.close,
+            };
+        }
     }
 }
 
@@ -63431,6 +67500,47 @@ pub unsafe extern "C" fn wickra_spread_bollinger_bands_update(
     }
 }
 
+/// Run over the input series, writing one `WickraSpreadBollingerBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_spread_bollinger_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraSpreadBollingerBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_batch(
+    handle: *mut SpreadBollingerBands,
+    x: *const f64,
+    y: *const f64,
+    out: *mut WickraSpreadBollingerBandsOutput,
+    n: usize,
+) {
+    if handle.is_null() || x.is_null() || y.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let xs = slice::from_raw_parts(x, n);
+    let ys = slice::from_raw_parts(y, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraSpreadBollingerBandsOutput {
+            middle: f64::NAN,
+            upper: f64::NAN,
+            lower: f64::NAN,
+            percent_b: f64::NAN,
+        };
+        if let Some(out_val) = ind.update((xs[i], ys[i])) {
+            *slot = WickraSpreadBollingerBandsOutput {
+                middle: out_val.middle,
+                upper: out_val.upper,
+                lower: out_val.lower,
+                percent_b: out_val.percent_b,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -63545,6 +67655,43 @@ pub unsafe extern "C" fn wickra_standard_error_bands_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraStandardErrorBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_standard_error_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraStandardErrorBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_batch(
+    handle: *mut StandardErrorBands,
+    input: *const f64,
+    out: *mut WickraStandardErrorBandsOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraStandardErrorBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraStandardErrorBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
     }
 }
 
@@ -63674,6 +67821,71 @@ pub unsafe extern "C" fn wickra_starc_bands_update(
     }
 }
 
+/// Run over the input series, writing one `WickraStarcBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_starc_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraStarcBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_batch(
+    handle: *mut StarcBands,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraStarcBandsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraStarcBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraStarcBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -63786,6 +67998,69 @@ pub unsafe extern "C" fn wickra_stochastic_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraStochasticOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_stochastic_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraStochasticOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_batch(
+    handle: *mut Stochastic,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraStochasticOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraStochasticOutput {
+            k: f64::NAN,
+            d: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraStochasticOutput {
+                k: out_val.k,
+                d: out_val.d,
+            };
+        }
     }
 }
 
@@ -63904,6 +68179,69 @@ pub unsafe extern "C" fn wickra_super_trend_update(
     }
 }
 
+/// Run over the input series, writing one `WickraSuperTrendOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_super_trend_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraSuperTrendOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_batch(
+    handle: *mut SuperTrend,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraSuperTrendOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraSuperTrendOutput {
+            value: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraSuperTrendOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -64016,6 +68354,69 @@ pub unsafe extern "C" fn wickra_td_lines_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraTdLinesOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_td_lines_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraTdLinesOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_batch(
+    handle: *mut TdLines,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraTdLinesOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraTdLinesOutput {
+            resistance: f64::NAN,
+            support: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraTdLinesOutput {
+                resistance: out_val.resistance,
+                support: out_val.support,
+            };
+        }
     }
 }
 
@@ -64137,6 +68538,69 @@ pub unsafe extern "C" fn wickra_td_moving_average_update(
     }
 }
 
+/// Run over the input series, writing one `WickraTdMovingAverageOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_td_moving_average_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraTdMovingAverageOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_batch(
+    handle: *mut TdMovingAverage,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraTdMovingAverageOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraTdMovingAverageOutput {
+            st1: f64::NAN,
+            st2: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraTdMovingAverageOutput {
+                st1: out_val.st1,
+                st2: out_val.st2,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -64250,6 +68714,69 @@ pub unsafe extern "C" fn wickra_td_range_projection_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraTdRangeProjectionOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_td_range_projection_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraTdRangeProjectionOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_batch(
+    handle: *mut TdRangeProjection,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraTdRangeProjectionOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraTdRangeProjectionOutput {
+            high: f64::NAN,
+            low: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraTdRangeProjectionOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+        }
     }
 }
 
@@ -64371,6 +68898,69 @@ pub unsafe extern "C" fn wickra_td_risk_level_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraTdRiskLevelOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_td_risk_level_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraTdRiskLevelOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_batch(
+    handle: *mut TdRiskLevel,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraTdRiskLevelOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraTdRiskLevelOutput {
+            buy_risk: f64::NAN,
+            sell_risk: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraTdRiskLevelOutput {
+                buy_risk: out_val.buy_risk,
+                sell_risk: out_val.sell_risk,
+            };
+        }
     }
 }
 
@@ -64500,6 +69090,71 @@ pub unsafe extern "C" fn wickra_td_sequential_update(
     }
 }
 
+/// Run over the input series, writing one `WickraTdSequentialOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_td_sequential_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraTdSequentialOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_batch(
+    handle: *mut TdSequential,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraTdSequentialOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraTdSequentialOutput {
+            setup: f64::NAN,
+            countdown: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraTdSequentialOutput {
+                setup: out_val.setup,
+                countdown: out_val.countdown,
+                direction: out_val.direction,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -64616,6 +69271,69 @@ pub unsafe extern "C" fn wickra_ttm_squeeze_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraTtmSqueezeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_ttm_squeeze_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraTtmSqueezeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_batch(
+    handle: *mut TtmSqueeze,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraTtmSqueezeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraTtmSqueezeOutput {
+            squeeze: f64::NAN,
+            momentum: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraTtmSqueezeOutput {
+                squeeze: out_val.squeeze,
+                momentum: out_val.momentum,
+            };
+        }
     }
 }
 
@@ -64739,6 +69457,71 @@ pub unsafe extern "C" fn wickra_value_area_update(
     }
 }
 
+/// Run over the input series, writing one `WickraValueAreaOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_value_area_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraValueAreaOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_batch(
+    handle: *mut ValueArea,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraValueAreaOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraValueAreaOutput {
+            poc: f64::NAN,
+            vah: f64::NAN,
+            val: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraValueAreaOutput {
+                poc: out_val.poc,
+                vah: out_val.vah,
+                val: out_val.val,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -64857,6 +69640,75 @@ pub unsafe extern "C" fn wickra_volatility_cone_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraVolatilityConeOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_volatility_cone_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraVolatilityConeOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_batch(
+    handle: *mut VolatilityCone,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraVolatilityConeOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraVolatilityConeOutput {
+            current: f64::NAN,
+            min: f64::NAN,
+            median: f64::NAN,
+            max: f64::NAN,
+            percentile: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraVolatilityConeOutput {
+                current: out_val.current,
+                min: out_val.min,
+                median: out_val.median,
+                max: out_val.max,
+                percentile: out_val.percentile,
+            };
+        }
     }
 }
 
@@ -64982,6 +69834,71 @@ pub unsafe extern "C" fn wickra_volume_weighted_macd_update(
     }
 }
 
+/// Run over the input series, writing one `WickraVolumeWeightedMacdOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_volume_weighted_macd_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraVolumeWeightedMacdOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_batch(
+    handle: *mut VolumeWeightedMacd,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraVolumeWeightedMacdOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraVolumeWeightedMacdOutput {
+            macd: f64::NAN,
+            signal: f64::NAN,
+            histogram: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraVolumeWeightedMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -65100,6 +70017,69 @@ pub unsafe extern "C" fn wickra_volume_weighted_sr_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraVolumeWeightedSrOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_volume_weighted_sr_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraVolumeWeightedSrOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_batch(
+    handle: *mut VolumeWeightedSr,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraVolumeWeightedSrOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraVolumeWeightedSrOutput {
+            support: f64::NAN,
+            resistance: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraVolumeWeightedSrOutput {
+                support: out_val.support,
+                resistance: out_val.resistance,
+            };
+        }
     }
 }
 
@@ -65222,6 +70202,69 @@ pub unsafe extern "C" fn wickra_vortex_update(
     }
 }
 
+/// Run over the input series, writing one `WickraVortexOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_vortex_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraVortexOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_batch(
+    handle: *mut Vortex,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraVortexOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraVortexOutput {
+            plus: f64::NAN,
+            minus: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraVortexOutput {
+                plus: out_val.plus,
+                minus: out_val.minus,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -65336,6 +70379,73 @@ pub unsafe extern "C" fn wickra_vwap_std_dev_bands_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraVwapStdDevBandsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_vwap_std_dev_bands_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraVwapStdDevBandsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_batch(
+    handle: *mut VwapStdDevBands,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraVwapStdDevBandsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraVwapStdDevBandsOutput {
+            upper: f64::NAN,
+            middle: f64::NAN,
+            lower: f64::NAN,
+            stddev: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraVwapStdDevBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+                stddev: out_val.stddev,
+            };
+        }
     }
 }
 
@@ -65462,6 +70572,69 @@ pub unsafe extern "C" fn wickra_wave_trend_update(
     }
 }
 
+/// Run over the input series, writing one `WickraWaveTrendOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_wave_trend_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraWaveTrendOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_batch(
+    handle: *mut WaveTrend,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraWaveTrendOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraWaveTrendOutput {
+            wt1: f64::NAN,
+            wt2: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraWaveTrendOutput {
+                wt1: out_val.wt1,
+                wt2: out_val.wt2,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -65571,6 +70744,69 @@ pub unsafe extern "C" fn wickra_williams_fractals_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraWilliamsFractalsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_williams_fractals_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraWilliamsFractalsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_batch(
+    handle: *mut WilliamsFractals,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraWilliamsFractalsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraWilliamsFractalsOutput {
+            up: f64::NAN,
+            down: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraWilliamsFractalsOutput {
+                up: out_val.up.unwrap_or(f64::NAN),
+                down: out_val.down.unwrap_or(f64::NAN),
+            };
+        }
     }
 }
 
@@ -65693,6 +70929,75 @@ pub unsafe extern "C" fn wickra_woodie_pivots_update(
     }
 }
 
+/// Run over the input series, writing one `WickraWoodiePivotsOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_woodie_pivots_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraWoodiePivotsOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_batch(
+    handle: *mut WoodiePivots,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraWoodiePivotsOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraWoodiePivotsOutput {
+            pp: f64::NAN,
+            r1: f64::NAN,
+            r2: f64::NAN,
+            s1: f64::NAN,
+            s2: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraWoodiePivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                s1: out_val.s1,
+                s2: out_val.s2,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -65802,6 +71107,43 @@ pub unsafe extern "C" fn wickra_zero_lag_macd_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraZeroLagMacdOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_zero_lag_macd_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraZeroLagMacdOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_batch(
+    handle: *mut ZeroLagMacd,
+    input: *const f64,
+    out: *mut WickraZeroLagMacdOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraZeroLagMacdOutput {
+            macd: f64::NAN,
+            signal: f64::NAN,
+            histogram: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraZeroLagMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+        }
     }
 }
 
@@ -65917,6 +71259,69 @@ pub unsafe extern "C" fn wickra_zig_zag_update(
             true
         }
         None => false,
+    }
+}
+
+/// Run over the input series, writing one `WickraZigZagOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce -- warmup, or an input it
+/// rejected -- is written with every floating-point field set to `NaN`, which is
+/// how a caller tells the two apart from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_zig_zag_new`, not freed); every input pointer covers
+/// `n` elements and `out` covers `n` `WickraZigZagOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_batch(
+    handle: *mut ZigZag,
+    open: *const f64,
+    high: *const f64,
+    low: *const f64,
+    close: *const f64,
+    volume: *const f64,
+    timestamp: *const i64,
+    out: *mut WickraZigZagOutput,
+    n: usize,
+) {
+    if handle.is_null()
+        || open.is_null()
+        || high.is_null()
+        || low.is_null()
+        || close.is_null()
+        || volume.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let opens = slice::from_raw_parts(open, n);
+    let highs = slice::from_raw_parts(high, n);
+    let lows = slice::from_raw_parts(low, n);
+    let closes = slice::from_raw_parts(close, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let timestamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraZigZagOutput {
+            swing: f64::NAN,
+            direction: f64::NAN,
+        };
+        let Ok(input) = Candle::new(
+            opens[i],
+            highs[i],
+            lows[i],
+            closes[i],
+            volumes[i],
+            timestamps[i],
+        ) else {
+            continue;
+        };
+        if let Some(out_val) = ind.update(input) {
+            *slot = WickraZigZagOutput {
+                swing: out_val.swing,
+                direction: out_val.direction,
+            };
+        }
     }
 }
 
@@ -68712,6 +74117,91 @@ mod tests {
 
             wickra_sma_free(handle);
         }
+    }
+
+    #[test]
+    fn multi_output_batch_matches_streaming() {
+        // The multi-output batch writes one struct per input, all-NaN for a row
+        // the indicator did not produce. Checked against the streaming path on
+        // the same series rather than against constants.
+        let opens = [10.0_f64, 11.0, 12.0, 11.5, 13.0, 12.5, 14.0, 13.5];
+        let highs = [11.0_f64, 12.0, 13.0, 12.5, 14.0, 13.5, 15.0, 14.5];
+        let lows = [9.0_f64, 10.0, 11.0, 10.5, 12.0, 11.5, 13.0, 12.5];
+        let closes = [10.5_f64, 11.5, 12.5, 12.0, 13.5, 13.0, 14.5, 14.0];
+        let volumes = [100.0_f64; 8];
+        let stamps = [0_i64, 1, 2, 3, 4, 5, 6, 7];
+
+        let n = opens.len();
+        let zero = WickraAdxOutput {
+            plus_di: 0.0,
+            minus_di: 0.0,
+            adx: 0.0,
+        };
+        let mut batched = [zero; 8];
+        unsafe {
+            let handle = wickra_adx_new(2);
+            assert!(!handle.is_null());
+            wickra_adx_batch(
+                handle,
+                opens.as_ptr(),
+                highs.as_ptr(),
+                lows.as_ptr(),
+                closes.as_ptr(),
+                volumes.as_ptr(),
+                stamps.as_ptr(),
+                batched.as_mut_ptr(),
+                n,
+            );
+            wickra_adx_free(handle);
+
+            let streamed = wickra_adx_new(2);
+            let mut emitted = 0_usize;
+            for i in 0..n {
+                let mut row = zero;
+                let ok = wickra_adx_update(
+                    streamed,
+                    opens[i],
+                    highs[i],
+                    lows[i],
+                    closes[i],
+                    volumes[i],
+                    stamps[i],
+                    &raw mut row,
+                );
+                if ok {
+                    emitted += 1;
+                    assert!((batched[i].plus_di - row.plus_di).abs() < 1e-12);
+                    assert!((batched[i].minus_di - row.minus_di).abs() < 1e-12);
+                    assert!((batched[i].adx - row.adx).abs() < 1e-12);
+                } else {
+                    assert!(batched[i].plus_di.is_nan());
+                    assert!(batched[i].minus_di.is_nan());
+                    assert!(batched[i].adx.is_nan());
+                }
+            }
+            wickra_adx_free(streamed);
+            assert!(emitted > 0, "the fixture must clear warmup");
+        }
+    }
+
+    #[test]
+    fn multi_output_batch_rejects_null_pointers() {
+        let values = [1.0_f64; 4];
+        let mut out = [WickraBollingerOutput {
+            upper: 0.0,
+            middle: 0.0,
+            lower: 0.0,
+            stddev: 0.0,
+        }; 4];
+        unsafe {
+            // A null handle, a null input and a null out are all defined no-ops.
+            wickra_bollinger_bands_batch(ptr::null_mut(), values.as_ptr(), out.as_mut_ptr(), 4);
+            let handle = wickra_bollinger_bands_new(2, 2.0);
+            wickra_bollinger_bands_batch(handle, ptr::null(), out.as_mut_ptr(), 4);
+            wickra_bollinger_bands_batch(handle, values.as_ptr(), ptr::null_mut(), 4);
+            wickra_bollinger_bands_free(handle);
+        }
+        assert_eq!(out[0].upper, 0.0, "no pointer was written through");
     }
 
     #[test]

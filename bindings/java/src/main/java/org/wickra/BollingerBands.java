@@ -52,6 +52,33 @@ public final class BollingerBands implements AutoCloseable {
         }
     }
 
+    /**
+     * Vectorized update over whole series, one output per input. A row the
+     * indicator did not produce -- warmup, or an input it rejected -- carries
+     * NaN in every floating-point field.
+     */
+    public BollingerOutput[] batch(double[] input) {
+        int n = input.length;
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment inputSeg = a.allocateFrom(JAVA_DOUBLE, input);
+            MemorySegment outSeg = a.allocate(32L * n);
+            NativeMethods.WICKRA_BOLLINGER_BANDS_BATCH.invokeExact(handle(), inputSeg, outSeg, (long) n);
+            BollingerOutput[] out = new BollingerOutput[n];
+            for (int i = 0; i < n; i++) {
+                out[i] = new BollingerOutput(
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 8L),
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 16L),
+                        outSeg.get(JAVA_DOUBLE, i * 32L + 24L));
+            }
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

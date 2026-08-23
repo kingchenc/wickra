@@ -51,6 +51,32 @@ public final class BomarBands implements AutoCloseable {
         }
     }
 
+    /**
+     * Vectorized update over whole series, one output per input. A row the
+     * indicator did not produce -- warmup, or an input it rejected -- carries
+     * NaN in every floating-point field.
+     */
+    public BomarBandsOutput[] batch(double[] input) {
+        int n = input.length;
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment inputSeg = a.allocateFrom(JAVA_DOUBLE, input);
+            MemorySegment outSeg = a.allocate(24L * n);
+            NativeMethods.WICKRA_BOMAR_BANDS_BATCH.invokeExact(handle(), inputSeg, outSeg, (long) n);
+            BomarBandsOutput[] out = new BomarBandsOutput[n];
+            for (int i = 0; i < n; i++) {
+                out[i] = new BomarBandsOutput(
+                        outSeg.get(JAVA_DOUBLE, i * 24L + 0L),
+                        outSeg.get(JAVA_DOUBLE, i * 24L + 8L),
+                        outSeg.get(JAVA_DOUBLE, i * 24L + 16L));
+            }
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {
