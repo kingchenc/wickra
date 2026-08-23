@@ -7,7 +7,22 @@ use crate::error::{Error, Result};
 /// Timestamps are unitless `i64` values so callers can use whatever epoch resolution
 /// they prefer (milliseconds, microseconds, seconds…). Wickra never inspects them
 /// numerically beyond passing them through.
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates, or [`new_unchecked`](Self::new_unchecked), which is an explicit
+/// opt-out for values already known to be sound.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the indicators that consume this type rely on the constructor's
+/// guarantee rather than re-checking every bar. Treat a mutation the way you
+/// would treat `new_unchecked` — you are asserting the invariants still hold.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct Candle {
     /// Bar open price.
     pub open: f64,
@@ -142,7 +157,21 @@ impl Candle {
 }
 
 /// A single trade tick.
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates. A tick has no unchecked constructor.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the code that consumes this type relies on the constructor's guarantee
+/// rather than re-checking. A mutation is an assertion that the invariants
+/// still hold.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct Tick {
     /// Trade price.
     pub price: f64,

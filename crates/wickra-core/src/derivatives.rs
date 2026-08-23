@@ -25,7 +25,22 @@ use crate::error::{Error, Result};
 ///   and non-negative.
 ///
 /// `timestamp` is a caller-defined epoch / resolution and is not validated.
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates, or [`new_unchecked`](Self::new_unchecked), which is an explicit
+/// opt-out for values already known to be sound.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the indicators that consume this type rely on the constructor's
+/// guarantee rather than re-checking every bar. Treat a mutation the way you
+/// would treat `new_unchecked` — you are asserting the invariants still hold.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct DerivativesTick {
     /// Current funding rate for the interval (finite; may be negative).
     pub funding_rate: f64,

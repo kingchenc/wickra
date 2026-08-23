@@ -9,7 +9,22 @@
 use crate::error::{Error, Result};
 
 /// A single order-book price level: a resting quantity at a price.
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates, or [`new_unchecked`](Self::new_unchecked), which is an explicit
+/// opt-out for values already known to be sound.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the indicators that consume this type rely on the constructor's
+/// guarantee rather than re-checking every bar. Treat a mutation the way you
+/// would treat `new_unchecked` — you are asserting the invariants still hold.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct Level {
     /// Price of the level (strictly positive).
     pub price: f64,
@@ -51,7 +66,22 @@ impl Level {
 /// Bids are stored best-first (strictly descending price); asks are stored
 /// best-first (strictly ascending price). A valid book is non-empty on both
 /// sides and uncrossed (`best_bid < best_ask`).
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates, or [`new_unchecked`](Self::new_unchecked), which is an explicit
+/// opt-out for values already known to be sound.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the indicators that consume this type rely on the constructor's
+/// guarantee rather than re-checking every bar. Treat a mutation the way you
+/// would treat `new_unchecked` — you are asserting the invariants still hold.
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub struct OrderBook {
     /// Bid levels, best (highest price) first.
     pub bids: Vec<Level>,
@@ -156,7 +186,22 @@ impl Side {
 }
 
 /// A single executed trade with an aggressor side.
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates, or [`new_unchecked`](Self::new_unchecked), which is an explicit
+/// opt-out for values already known to be sound.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the indicators that consume this type rely on the constructor's
+/// guarantee rather than re-checking every bar. Treat a mutation the way you
+/// would treat `new_unchecked` — you are asserting the invariants still hold.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct Trade {
     /// Execution price (strictly positive).
     pub price: f64,
@@ -212,7 +257,22 @@ impl Trade {
 /// This is the input for spread- and price-impact measures (effective spread,
 /// realized spread, Kyle's lambda), which relate an executed trade to the
 /// quote it traded against.
+///
+/// # Construction and the limits of its guarantee
+///
+/// The struct is `#[non_exhaustive]`, so code outside this crate cannot build
+/// one from a field literal and must go through [`new`](Self::new), which
+/// validates, or [`new_unchecked`](Self::new_unchecked), which is an explicit
+/// opt-out for values already known to be sound.
+///
+/// The fields stay public because reading them is by far the common operation
+/// and an accessor on each would buy nothing. That does mean a validated value
+/// can still be *written* into an invalid state afterwards, and nothing detects
+/// it: the indicators that consume this type rely on the constructor's
+/// guarantee rather than re-checking every bar. Treat a mutation the way you
+/// would treat `new_unchecked` — you are asserting the invariants still hold.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[non_exhaustive]
 pub struct TradeQuote {
     /// The executed trade.
     pub trade: Trade,

@@ -498,6 +498,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   glue called `wickra_resampler_push` with four arguments instead of seven and
   registered the wrong arity with R. The parameters now come from the parsed
   header, as the C#, Go and Java generators already did.
+- **The validated types are `#[non_exhaustive]`, and now say what their
+  guarantee is worth.** `Candle`, `Tick`, `Trade`, `TradeQuote`, `Level`,
+  `OrderBook` and `DerivativesTick` could be built from a field literal, which
+  skips the validation in `new` entirely — and 259 of the 261 candle-consuming
+  indicators rely on that validation instead of re-checking each bar. Code
+  outside the crate must now go through `new`, or through `new_unchecked` as an
+  explicit opt-out.
+
+  The fields stay public. Private fields with accessors would close the
+  remaining hole — a validated value can still be *written* into an invalid
+  state — but at the cost of turning roughly 2200 field reads in this repository
+  alone into method calls, across every binding, to prevent a failure the caller
+  has to construct deliberately. The documentation says plainly what is
+  guaranteed and where the guarantee stops, rather than implying an invariant
+  the type does not enforce.
+
 
 
 
