@@ -1036,6 +1036,51 @@ func (ind *AbsoluteBreadthIndex) Update(change []float64, volume []float64, newH
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *AbsoluteBreadthIndex) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_absolute_breadth_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *AbsoluteBreadthIndex) Reset() {
 	C.wickra_absolute_breadth_index_reset(ind.handle)
@@ -1438,6 +1483,51 @@ func (ind *AdVolumeLine) Update(change []float64, volume []float64, newHigh []bo
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *AdVolumeLine) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_ad_volume_line_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -2065,6 +2155,51 @@ func (ind *AdvanceDecline) Update(change []float64, volume []float64, newHigh []
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *AdvanceDecline) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_advance_decline_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *AdvanceDecline) Reset() {
 	C.wickra_advance_decline_reset(ind.handle)
@@ -2148,6 +2283,51 @@ func (ind *AdvanceDeclineRatio) Update(change []float64, volume []float64, newHi
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *AdvanceDeclineRatio) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_advance_decline_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -5716,6 +5896,51 @@ func (ind *BreadthThrust) Update(change []float64, volume []float64, newHigh []b
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *BreadthThrust) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_breadth_thrust_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *BreadthThrust) Reset() {
 	C.wickra_breadth_thrust_reset(ind.handle)
@@ -5897,6 +6122,51 @@ func (ind *BullishPercentIndex) Update(change []float64, volume []float64, newHi
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *BullishPercentIndex) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_bullish_percent_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -9143,6 +9413,51 @@ func (ind *CumulativeVolumeIndex) Update(change []float64, volume []float64, new
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *CumulativeVolumeIndex) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_cumulative_volume_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *CumulativeVolumeIndex) Reset() {
 	C.wickra_cumulative_volume_index_reset(ind.handle)
@@ -9489,6 +9804,45 @@ func (ind *DayOfWeekProfile) Update(open float64, high float64, low float64, clo
 		return nil, false
 	}
 	return values[:n], true
+}
+
+// Batch feeds a whole series in one FFI call and returns one profile per
+// input. A row the indicator did not produce carries NaN.
+func (ind *DayOfWeekProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) [][]float64 {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	width := ind.valuesCap
+	flat := make([]float64, n*width)
+	C.wickra_day_of_week_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&flat[0])), C.uintptr_t(width), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	out := make([][]float64, n)
+	for i := 0; i < n; i++ {
+		out[i] = flat[i*width : (i+1)*width]
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -10022,6 +10376,42 @@ func (ind *DepthSlope) Update(bidPrice []float64, bidSize []float64, askPrice []
 	runtime.KeepAlive(askPrice)
 	runtime.KeepAlive(askSize)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *DepthSlope) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_depth_slope_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -10631,6 +11021,49 @@ func (ind *DollarBars) Update(open float64, high float64, low float64, close flo
 		for i := 0; i < got; i++ {
 			out[capacity+i] = DollarBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), float64(rest[i].volume), float64(rest[i].dollar)}
 		}
+	}
+	return out
+}
+
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *DollarBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []DollarBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_dollar_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraDollarBar, total)
+	got := int(C.wickra_dollar_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]DollarBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = DollarBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume), float64(buf[i].dollar)}
 	}
 	return out
 }
@@ -14793,6 +15226,41 @@ func (ind *Footprint) Update(price float64, size float64, isBuy bool, timestamp 
 	return out
 }
 
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *Footprint) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []FootprintLevel {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_footprint_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraFootprintLevel, total)
+	got := int(C.wickra_footprint_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]FootprintLevel, got)
+	for i := 0; i < got; i++ {
+		out[i] = FootprintLevel{float64(buf[i].price), float64(buf[i].bid_vol), float64(buf[i].ask_vol)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *Footprint) Reset() {
 	C.wickra_footprint_reset(ind.handle)
@@ -17906,6 +18374,51 @@ func (ind *HighLowIndex) Update(change []float64, volume []float64, newHigh []bo
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *HighLowIndex) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_high_low_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *HighLowIndex) Reset() {
 	C.wickra_high_low_index_reset(ind.handle)
@@ -19649,6 +20162,49 @@ func (ind *ImbalanceBars) Update(open float64, high float64, low float64, close 
 	return out
 }
 
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *ImbalanceBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []ImbalanceBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_imbalance_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraImbalanceBar, total)
+	got := int(C.wickra_imbalance_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]ImbalanceBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = ImbalanceBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].imbalance), int8(buf[i].direction)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ImbalanceBars) Reset() {
 	C.wickra_imbalance_bars_reset(ind.handle)
@@ -20406,6 +20962,45 @@ func (ind *IntradayVolatilityProfile) Update(open float64, high float64, low flo
 	return values[:n], true
 }
 
+// Batch feeds a whole series in one FFI call and returns one profile per
+// input. A row the indicator did not produce carries NaN.
+func (ind *IntradayVolatilityProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) [][]float64 {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	width := ind.valuesCap
+	flat := make([]float64, n*width)
+	C.wickra_intraday_volatility_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&flat[0])), C.uintptr_t(width), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	out := make([][]float64, n)
+	for i := 0; i < n; i++ {
+		out[i] = flat[i*width : (i+1)*width]
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *IntradayVolatilityProfile) Reset() {
 	C.wickra_intraday_volatility_profile_reset(ind.handle)
@@ -20977,6 +21572,49 @@ func (ind *KagiBars) Update(open float64, high float64, low float64, close float
 		for i := 0; i < got; i++ {
 			out[capacity+i] = KagiBar{float64(rest[i].start), float64(rest[i].end), int8(rest[i].direction)}
 		}
+	}
+	return out
+}
+
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *KagiBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []KagiBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_kagi_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraKagiBar, total)
+	got := int(C.wickra_kagi_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]KagiBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = KagiBar{float64(buf[i].start), float64(buf[i].end), int8(buf[i].direction)}
 	}
 	return out
 }
@@ -24887,6 +25525,51 @@ func (ind *McClellanOscillator) Update(change []float64, volume []float64, newHi
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *McClellanOscillator) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_mc_clellan_oscillator_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *McClellanOscillator) Reset() {
 	C.wickra_mc_clellan_oscillator_reset(ind.handle)
@@ -24970,6 +25653,51 @@ func (ind *McClellanSummationIndex) Update(change []float64, volume []float64, n
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *McClellanSummationIndex) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_mc_clellan_summation_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -25581,6 +26309,42 @@ func (ind *Microprice) Update(bidPrice []float64, bidSize []float64, askPrice []
 	runtime.KeepAlive(askPrice)
 	runtime.KeepAlive(askSize)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *Microprice) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_microprice_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -26762,6 +27526,51 @@ func (ind *NewHighsNewLows) Update(change []float64, volume []float64, newHigh [
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *NewHighsNewLows) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_new_highs_new_lows_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -28250,6 +29059,42 @@ func (ind *OrderBookImbalanceFull) Update(bidPrice []float64, bidSize []float64,
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *OrderBookImbalanceFull) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_order_book_imbalance_full_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *OrderBookImbalanceFull) Reset() {
 	C.wickra_order_book_imbalance_full_reset(ind.handle)
@@ -28322,6 +29167,42 @@ func (ind *OrderBookImbalanceTop1) Update(bidPrice []float64, bidSize []float64,
 	runtime.KeepAlive(askPrice)
 	runtime.KeepAlive(askSize)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *OrderBookImbalanceTop1) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_order_book_imbalance_top1_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -28402,6 +29283,42 @@ func (ind *OrderBookImbalanceTopN) Update(bidPrice []float64, bidSize []float64,
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *OrderBookImbalanceTopN) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_order_book_imbalance_top_n_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *OrderBookImbalanceTopN) Reset() {
 	C.wickra_order_book_imbalance_top_n_reset(ind.handle)
@@ -28478,6 +29395,42 @@ func (ind *OrderFlowImbalance) Update(bidPrice []float64, bidSize []float64, ask
 	runtime.KeepAlive(askPrice)
 	runtime.KeepAlive(askSize)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *OrderFlowImbalance) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_order_flow_imbalance_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -29304,6 +30257,51 @@ func (ind *PercentAboveMa) Update(change []float64, volume []float64, newHigh []
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *PercentAboveMa) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_percent_above_ma_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -30349,6 +31347,49 @@ func (ind *PointAndFigureBars) Update(open float64, high float64, low float64, c
 		for i := 0; i < got; i++ {
 			out[capacity+i] = PnfColumn{int8(rest[i].direction), float64(rest[i].high), float64(rest[i].low)}
 		}
+	}
+	return out
+}
+
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *PointAndFigureBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []PnfColumn {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_point_and_figure_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraPnfColumn, total)
+	got := int(C.wickra_point_and_figure_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]PnfColumn, got)
+	for i := 0; i < got; i++ {
+		out[i] = PnfColumn{int8(buf[i].direction), float64(buf[i].high), float64(buf[i].low)}
 	}
 	return out
 }
@@ -31574,6 +32615,42 @@ func (ind *QuotedSpread) Update(bidPrice []float64, bidSize []float64, askPrice 
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *QuotedSpread) Batch(bidPrice []float64, bidSize []float64, nBids int, askPrice []float64, askSize []float64, nAsks int) []float64 {
+	if nBids <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	if nAsks <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(bidPrice) / nBids
+	if len(bidPrice) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(bidSize) != n*nBids {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askPrice) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(askSize) != n*nAsks {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_quoted_spread_batch(ind.handle, (*C.double)(unsafe.Pointer(&bidPrice[0])), (*C.double)(unsafe.Pointer(&bidSize[0])), C.uintptr_t(nBids), (*C.double)(unsafe.Pointer(&askPrice[0])), (*C.double)(unsafe.Pointer(&askSize[0])), C.uintptr_t(nAsks), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(bidPrice)
+	runtime.KeepAlive(bidSize)
+	runtime.KeepAlive(askPrice)
+	runtime.KeepAlive(askSize)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *QuotedSpread) Reset() {
 	C.wickra_quoted_spread_reset(ind.handle)
@@ -31723,6 +32800,49 @@ func (ind *RangeBars) Update(open float64, high float64, low float64, close floa
 		for i := 0; i < got; i++ {
 			out[capacity+i] = RangeBar{float64(rest[i].open), float64(rest[i].close), int8(rest[i].direction)}
 		}
+	}
+	return out
+}
+
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *RangeBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []RangeBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_range_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraRangeBar, total)
+	got := int(C.wickra_range_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]RangeBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = RangeBar{float64(buf[i].open), float64(buf[i].close), int8(buf[i].direction)}
 	}
 	return out
 }
@@ -32417,6 +33537,49 @@ func (ind *RenkoBars) Update(open float64, high float64, low float64, close floa
 		for i := 0; i < got; i++ {
 			out[capacity+i] = RenkoBrick{float64(rest[i].open), float64(rest[i].close), int8(rest[i].direction)}
 		}
+	}
+	return out
+}
+
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *RenkoBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []RenkoBrick {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_renko_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraRenkoBrick, total)
+	got := int(C.wickra_renko_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]RenkoBrick, got)
+	for i := 0; i < got; i++ {
+		out[i] = RenkoBrick{float64(buf[i].open), float64(buf[i].close), int8(buf[i].direction)}
 	}
 	return out
 }
@@ -34288,6 +35451,49 @@ func (ind *RunBars) Update(open float64, high float64, low float64, close float6
 		for i := 0; i < got; i++ {
 			out[capacity+i] = RunBar{float64(rest[i].open), float64(rest[i].high), float64(rest[i].low), float64(rest[i].close), int(rest[i].length), int8(rest[i].direction)}
 		}
+	}
+	return out
+}
+
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *RunBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []RunBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_run_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraRunBar, total)
+	got := int(C.wickra_run_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]RunBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = RunBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), int(buf[i].length), int8(buf[i].direction)}
 	}
 	return out
 }
@@ -41471,6 +42677,49 @@ func (ind *ThreeLineBreakBars) Update(open float64, high float64, low float64, c
 	return out
 }
 
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *ThreeLineBreakBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []LineBreakBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_three_line_break_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraLineBreakBar, total)
+	got := int(C.wickra_three_line_break_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]LineBreakBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = LineBreakBar{float64(buf[i].open), float64(buf[i].close), int8(buf[i].direction)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *ThreeLineBreakBars) Reset() {
 	C.wickra_three_line_break_bars_reset(ind.handle)
@@ -42081,6 +43330,49 @@ func (ind *TickBars) Update(open float64, high float64, low float64, close float
 	return out
 }
 
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *TickBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TickBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_tick_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraTickBar, total)
+	got := int(C.wickra_tick_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]TickBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = TickBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TickBars) Reset() {
 	C.wickra_tick_bars_reset(ind.handle)
@@ -42164,6 +43456,51 @@ func (ind *TickIndex) Update(change []float64, volume []float64, newHigh []bool,
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *TickIndex) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_tick_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -42428,6 +43765,45 @@ func (ind *TimeOfDayReturnProfile) Update(open float64, high float64, low float6
 	return values[:n], true
 }
 
+// Batch feeds a whole series in one FFI call and returns one profile per
+// input. A row the indicator did not produce carries NaN.
+func (ind *TimeOfDayReturnProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) [][]float64 {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	width := ind.valuesCap
+	flat := make([]float64, n*width)
+	C.wickra_time_of_day_return_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&flat[0])), C.uintptr_t(width), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	out := make([][]float64, n)
+	for i := 0; i < n; i++ {
+		out[i] = flat[i*width : (i+1)*width]
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TimeOfDayReturnProfile) Reset() {
 	C.wickra_time_of_day_return_profile_reset(ind.handle)
@@ -42603,6 +43979,46 @@ func (ind *TpoProfile) Update(open float64, high float64, low float64, close flo
 		return TpoProfileOutputScalars{}, false
 	}
 	return TpoProfileOutputScalars{PriceLow: float64(sc.price_low), PriceHigh: float64(sc.price_high), Values: values[:n]}, true
+}
+
+// Batch feeds a whole series in one FFI call and returns one profile per
+// input. A row the indicator did not produce carries NaN.
+func (ind *TpoProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []TpoProfileOutputScalars {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	width := ind.valuesCap
+	flat := make([]float64, n*width)
+	sc := make([]C.struct_WickraTpoProfileOutputScalars, n)
+	C.wickra_tpo_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &sc[0], (*C.double)(unsafe.Pointer(&flat[0])), C.uintptr_t(width), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	out := make([]TpoProfileOutputScalars, n)
+	for i := 0; i < n; i++ {
+		out[i] = TpoProfileOutputScalars{PriceLow: float64(sc[i].price_low), PriceHigh: float64(sc[i].price_high), Values: flat[i*width : (i+1)*width]}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -43486,6 +44902,51 @@ func (ind *Trin) Update(change []float64, volume []float64, newHigh []bool, newL
 	runtime.KeepAlive(aboveMa)
 	runtime.KeepAlive(onBuySignal)
 	return r
+}
+
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *Trin) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_trin_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -45380,6 +46841,51 @@ func (ind *UpDownVolumeRatio) Update(change []float64, volume []float64, newHigh
 	return r
 }
 
+// Batch feeds a whole series in one FFI call and returns the per-bar
+// output. Every snapshot carries the same width, so the per-member
+// slices are flat: bar i occupies elements [i*width, (i+1)*width).
+func (ind *UpDownVolumeRatio) Batch(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, members int, timestamp []int64) []float64 {
+	if members <= 0 {
+		panic("wickra: the per-bar width must be positive")
+	}
+	n := len(timestamp)
+	if len(change) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(volume) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newHigh) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(newLow) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(aboveMa) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(onBuySignal) != n*members {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	if len(timestamp) != n {
+		panic("wickra: every input slice must cover the whole series")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_up_down_volume_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&change[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.bool)(unsafe.Pointer(&newHigh[0])), (*C.bool)(unsafe.Pointer(&newLow[0])), (*C.bool)(unsafe.Pointer(&aboveMa[0])), (*C.bool)(unsafe.Pointer(&onBuySignal[0])), C.uintptr_t(members), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(change)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(newHigh)
+	runtime.KeepAlive(newLow)
+	runtime.KeepAlive(aboveMa)
+	runtime.KeepAlive(onBuySignal)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *UpDownVolumeRatio) Reset() {
 	C.wickra_up_down_volume_ratio_reset(ind.handle)
@@ -46671,6 +48177,49 @@ func (ind *VolumeBars) Update(open float64, high float64, low float64, close flo
 	return out
 }
 
+// Batch feeds a whole series in one FFI call and returns every bar it
+// completed. The count depends on the data, not on the input length.
+func (ind *VolumeBars) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VolumeBar {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	total := int(C.wickra_volume_bars_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), C.uintptr_t(n)))
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	if total <= 0 {
+		runtime.KeepAlive(ind)
+		return nil
+	}
+	buf := make([]C.struct_WickraVolumeBar, total)
+	got := int(C.wickra_volume_bars_drain(ind.handle, &buf[0], C.uintptr_t(total)))
+	runtime.KeepAlive(ind)
+	out := make([]VolumeBar, got)
+	for i := 0; i < got; i++ {
+		out[i] = VolumeBar{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume)}
+	}
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *VolumeBars) Reset() {
 	C.wickra_volume_bars_reset(ind.handle)
@@ -46743,6 +48292,45 @@ func (ind *VolumeByTimeProfile) Update(open float64, high float64, low float64, 
 		return nil, false
 	}
 	return values[:n], true
+}
+
+// Batch feeds a whole series in one FFI call and returns one profile per
+// input. A row the indicator did not produce carries NaN.
+func (ind *VolumeByTimeProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) [][]float64 {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	width := ind.valuesCap
+	flat := make([]float64, n*width)
+	C.wickra_volume_by_time_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&flat[0])), C.uintptr_t(width), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	out := make([][]float64, n)
+	for i := 0; i < n; i++ {
+		out[i] = flat[i*width : (i+1)*width]
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -47026,6 +48614,46 @@ func (ind *VolumeProfile) Update(open float64, high float64, low float64, close 
 		return VolumeProfileOutputScalars{}, false
 	}
 	return VolumeProfileOutputScalars{PriceLow: float64(sc.price_low), PriceHigh: float64(sc.price_high), Values: values[:n]}, true
+}
+
+// Batch feeds a whole series in one FFI call and returns one profile per
+// input. A row the indicator did not produce carries NaN.
+func (ind *VolumeProfile) Batch(open []float64, high []float64, low []float64, close []float64, volume []float64, timestamp []int64) []VolumeProfileOutputScalars {
+	n := len(open)
+	if len(high) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(low) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(close) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(volume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if n == 0 {
+		return nil
+	}
+	width := ind.valuesCap
+	flat := make([]float64, n*width)
+	sc := make([]C.struct_WickraVolumeProfileOutputScalars, n)
+	C.wickra_volume_profile_batch(ind.handle, (*C.double)(unsafe.Pointer(&open[0])), (*C.double)(unsafe.Pointer(&high[0])), (*C.double)(unsafe.Pointer(&low[0])), (*C.double)(unsafe.Pointer(&close[0])), (*C.double)(unsafe.Pointer(&volume[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), &sc[0], (*C.double)(unsafe.Pointer(&flat[0])), C.uintptr_t(width), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(open)
+	runtime.KeepAlive(high)
+	runtime.KeepAlive(low)
+	runtime.KeepAlive(close)
+	runtime.KeepAlive(volume)
+	runtime.KeepAlive(timestamp)
+	out := make([]VolumeProfileOutputScalars, n)
+	for i := 0; i < n; i++ {
+		out[i] = VolumeProfileOutputScalars{PriceLow: float64(sc[i].price_low), PriceHigh: float64(sc[i].price_high), Values: flat[i*width : (i+1)*width]}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
