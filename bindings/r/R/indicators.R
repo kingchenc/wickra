@@ -2697,15 +2697,20 @@ RenkoTrailingStop <- function(block_size) {
 #' Resample candles to a higher timeframe
 #'
 #' Aggregates a stream of candles into higher-timeframe bars. Feed candles with
-#' [update()] (it returns a completed higher-timeframe bar, or `NULL` while the
-#' current bar is still open) and emit the final, still-open bar with [flush()].
+#' [update()] (it returns every bar that closed as a result, which is none while
+#' the current bar is still open) and emit the final, still-open bar with
+#' [flush()].
 #'
 #' @param timeframe Integer number of input candles per higher-timeframe bar.
+#' @param gap_fill Logical. When `TRUE`, a flat placeholder bar
+#'   (`open == high == low == close`, zero volume, carrying the close before the
+#'   gap) is emitted for every output bucket no input candle fell into, so the
+#'   series stays evenly spaced. Defaults to `FALSE`, which leaves holes.
 #' @return A `wickra_indicator` resampler.
 #' @keywords internal
 #' @export
-Resampler <- function(timeframe) {
-  ptr <- .Call("wk_resampler_new", timeframe, PACKAGE = "wickra")
+Resampler <- function(timeframe, gap_fill = FALSE) {
+  ptr <- .Call("wk_resampler_new", timeframe, gap_fill, PACKAGE = "wickra")
   .wk_obj("resampler", ptr, "Resampler")
 }
 

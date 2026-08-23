@@ -97,9 +97,7 @@ fn bench_resample(c: &mut Criterion) {
             let mut resampler = Resampler::new(Timeframe::millis(5 * ONE_MINUTE_MS).unwrap());
             let mut emitted = 0usize;
             for candle in &candles {
-                if resampler.push(black_box(*candle)).unwrap().is_some() {
-                    emitted += 1;
-                }
+                emitted += resampler.push(black_box(*candle)).unwrap().len();
             }
             if resampler.flush().unwrap().is_some() {
                 emitted += 1;

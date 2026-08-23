@@ -160,33 +160,43 @@ name.wickra_indicator <- function(object) {
   .Call(paste0("wk_", object$prefix, "_name"), object$ptr, PACKAGE = "wickra")
 }
 
-#' Push a trade tick into a tick aggregator
+#' Push one input into a streaming aggregator
 #'
-#' Feeds one trade tick to a [TickAggregator()] and returns the candles it
-#' closed as a numeric matrix with columns `open`, `high`, `low`, `close`,
-#' `volume`, `timestamp` (zero rows while the open bar merely grows).
+#' Feeds a [TickAggregator()] one trade tick (`price`, `size`, `timestamp`) or a
+#' [Resampler()] one candle (`open`, `high`, `low`, `close`, `volume`,
+#' `timestamp`), and returns the candles it closed as a numeric matrix with
+#' columns `open`, `high`, `low`, `close`, `volume`, `timestamp`. The matrix has
+#' zero rows while the open bar merely grows, and more than one row when gap
+#' filling emits placeholders for skipped buckets.
 #'
-#' @param object A `wickra_indicator` created by [TickAggregator()].
-#' @param price Trade price.
-#' @param size Trade size (volume).
-#' @param timestamp Trade timestamp, in the same unit as the aggregator bucket.
+#' @param object A `wickra_indicator` created by [TickAggregator()] or
+#'   [Resampler()].
+#' @param ... The input fields, in the order that object takes them: a tick is
+#'   `price, size, timestamp`; a candle is `open, high, low, close, volume,
+#'   timestamp`.
 #' @return A numeric matrix with six named columns (possibly zero rows).
 #' @examples
 #' agg <- TickAggregator(1000, FALSE)
 #' push(agg, 100, 1, 0)
 #' push(agg, 102, 1, 1000) # closes the first bucket
+#'
+#' r <- Resampler(5, TRUE)
+#' push(r, 100, 101, 99, 100, 10, 0)
 #' @export
-push <- function(object, price, size, timestamp) {
+push <- function(object, ...) {
   UseMethod("push")
 }
 
 #' @rdname push
 #' @export
-push.wickra_indicator <- function(object, price, size, timestamp) {
-  out <- .Call(
-    paste0("wk_", object$prefix, "_push"),
-    object$ptr, price, size, timestamp,
-    PACKAGE = "wickra"
+push.wickra_indicator <- function(object, ...) {
+  out <- do.call(
+    ".Call",
+    c(
+      list(paste0("wk_", object$prefix, "_push"), object$ptr),
+      list(...),
+      list(PACKAGE = "wickra")
+    )
   )
   colnames(out) <- c("open", "high", "low", "close", "volume", "timestamp")
   out

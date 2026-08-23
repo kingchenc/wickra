@@ -116,7 +116,7 @@ use wickra_core::{
 
 use wickra_data::aggregator::{TickAggregator as DataTickAggregator, Timeframe};
 
-use wickra_data::resample::Resampler;
+use wickra_data::resample::Resampler as DataResampler;
 
 // ===== Scalar indicators (f64 -> f64) =====
 
@@ -68202,25 +68202,42 @@ fn candle_to_c(candle: Candle) -> WickraCandle {
     }
 }
 
+/// Opaque resampler handle plus the candles buffered by the last push.
+///
+/// Gap filling can close a bar and emit several flat placeholders from one
+/// input candle, so a single out-parameter is not enough; the buffer mirrors
+/// `TickAggregator` above. Named `Resampler` because the generated bindings
+/// take their public class name from this struct; the inner `wickra-data` type
+/// is aliased to avoid the clash.
+#[derive(Debug)]
+pub struct Resampler {
+    inner: DataResampler,
+    pending: Vec<Candle>,
+}
+
 /// Create a resampler aggregating input candles into `timeframe`-sized candles
-/// (the same unit as the candle timestamps). Returns `NULL` on a non-positive
-/// timeframe; release with `wickra_resampler_free`.
+/// (the same unit as the candle timestamps). `gap_fill` emits a flat
+/// placeholder candle for every skipped bucket. Returns `NULL` on a
+/// non-positive timeframe; release with `wickra_resampler_free`.
 #[no_mangle]
-pub extern "C" fn wickra_resampler_new(timeframe: i64) -> *mut Resampler {
+pub extern "C" fn wickra_resampler_new(timeframe: i64, gap_fill: bool) -> *mut Resampler {
     match Timeframe::new(timeframe) {
-        Ok(tf) => Box::into_raw(Box::new(Resampler::new(tf))),
+        Ok(tf) => Box::into_raw(Box::new(Resampler {
+            inner: DataResampler::new(tf).with_gap_fill(gap_fill),
+            pending: Vec::new(),
+        })),
         Err(_) => ptr::null_mut(),
     }
 }
 
-/// Push one candle. On `true` the completed higher-timeframe candle is written to
-/// `*out`; `false` means none closed yet (still aggregating), a `NULL` handle /
-/// `out`, or an invalid input candle.
+/// Push one candle and buffer every candle that closed as a result. Returns the
+/// number buffered, or `-1` on a `NULL` handle or an invalid input candle.
+/// Retrieve them with `wickra_resampler_drain`.
 ///
 /// # Safety
-/// `handle` (from `wickra_resampler_new`, not freed) and `out` must be valid or `NULL`.
+/// `handle` (from `wickra_resampler_new`, not freed) must be valid or `NULL`.
 #[no_mangle]
-pub unsafe extern "C" fn wickra_resampler_update(
+pub unsafe extern "C" fn wickra_resampler_push(
     handle: *mut Resampler,
     open: f64,
     high: f64,
@@ -68228,24 +68245,46 @@ pub unsafe extern "C" fn wickra_resampler_update(
     close: f64,
     volume: f64,
     timestamp: i64,
-    out: *mut WickraCandle,
-) -> bool {
+) -> isize {
     let Some(resampler) = handle.as_mut() else {
-        return false;
+        return -1;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    let Ok(candles) = resampler.inner.push(candle) else {
+        return -1;
+    };
+    resampler.pending = candles;
+    isize::try_from(resampler.pending.len()).unwrap_or(isize::MAX)
+}
+
+/// Copy up to `cap` buffered candles (from the last `push`) into `out`, remove
+/// them from the buffer, and return the number written. Returns `0` on a `NULL`
+/// handle / `out`. Call with `cap` equal to the last `push` return to drain the
+/// whole batch losslessly.
+///
+/// # Safety
+/// `handle` (from `wickra_resampler_new`, not freed) and `out` must be valid or
+/// `NULL`; when non-`NULL`, `out` must cover `cap` `WickraCandle` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_resampler_drain(
+    handle: *mut Resampler,
+    out: *mut WickraCandle,
+    cap: usize,
+) -> isize {
+    let Some(resampler) = handle.as_mut() else {
+        return 0;
     };
     if out.is_null() {
-        return false;
+        return 0;
     }
-    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
-        return false;
-    };
-    match resampler.push(candle) {
-        Ok(Some(emitted)) => {
-            *out = candle_to_c(emitted);
-            true
-        }
-        _ => false,
+    let count = resampler.pending.len().min(cap);
+    let slots = slice::from_raw_parts_mut(out, count);
+    for (slot, candle) in slots.iter_mut().zip(resampler.pending.drain(..count)) {
+        *slot = candle_to_c(candle);
     }
+    isize::try_from(count).unwrap_or(isize::MAX)
 }
 
 /// Flush the final, still-open candle. On `true` it is written to `*out`; `false`
@@ -68264,7 +68303,7 @@ pub unsafe extern "C" fn wickra_resampler_flush(
     if out.is_null() {
         return false;
     }
-    match resampler.flush() {
+    match resampler.inner.flush() {
         Ok(Some(emitted)) => {
             *out = candle_to_c(emitted);
             true

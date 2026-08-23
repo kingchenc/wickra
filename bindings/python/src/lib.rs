@@ -27979,13 +27979,15 @@ impl PyResampler {
         close: f64,
         volume: f64,
         timestamp: i64,
-    ) -> PyResult<Option<CandleTuple>> {
+    ) -> PyResult<Vec<CandleTuple>> {
         let candle = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
         Ok(self
             .inner
             .push(candle)
             .map_err(map_data_err)?
-            .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp)))
+            .into_iter()
+            .map(|c| (c.open, c.high, c.low, c.close, c.volume, c.timestamp))
+            .collect())
     }
 
     /// Emit the final, still-open candle (or `None` if none is pending).

@@ -65,8 +65,7 @@ function runResample() {
   const r = new Resampler(5);
   const out = [];
   INPUT.forEach(([o, h, l, c, v], i) => {
-    const candle = r.update(o, h, l, c, v, i);
-    if (candle) {
+    for (const candle of r.update(o, h, l, c, v, i)) {
       out.push([candle.open, candle.high, candle.low, candle.close, candle.volume, candle.timestamp]);
     }
   });

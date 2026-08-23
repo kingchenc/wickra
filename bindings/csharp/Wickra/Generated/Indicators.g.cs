@@ -24758,9 +24758,9 @@ public sealed class Resampler : IDisposable
 {
     private readonly WickraHandle _handle;
 
-    public Resampler(long timeframe)
+    public Resampler(long timeframe, bool gapFill)
     {
-        var ptr = NativeMethods.wickra_resampler_new(timeframe);
+        var ptr = NativeMethods.wickra_resampler_new(timeframe, gapFill);
         if (ptr == nint.Zero)
         {
             throw new ArgumentException("invalid Resampler parameters");
@@ -24769,16 +24769,29 @@ public sealed class Resampler : IDisposable
         _handle = new WickraHandle(ptr, NativeMethods.wickra_resampler_free);
     }
 
-    public Candle? Update(double open, double high, double low, double close, double volume, long timestamp)
+
+    /// <summary>Feed one trade tick; returns the candles it closed.</summary>
+    public Candle[] Push(double open, double high, double low, double close, double volume, long timestamp)
     {
-        WickraCandle native;
-        bool ok;
+        var count = (long)NativeMethods.wickra_resampler_push(_handle, open, high, low, close, volume, timestamp);
+        if (count <= 0)
+        {
+            return Array.Empty<Candle>();
+        }
+        var buffer = new WickraCandle[count];
         unsafe
         {
-            ok = NativeMethods.wickra_resampler_update(_handle, open, high, low, close, volume, timestamp, &native);
+            fixed (WickraCandle* ptr = buffer)
+            {
+                NativeMethods.wickra_resampler_drain(_handle, ptr, (nuint)count);
+            }
         }
-
-        return ok ? new Candle(native.open, native.high, native.low, native.close, native.volume, native.timestamp) : null;
+        var result = new Candle[count];
+        for (var i = 0; i < count; i++)
+        {
+            result[i] = new Candle(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume, buffer[i].timestamp);
+        }
+        return result;
     }
 
     /// <summary>Emit the final, still-open candle (null if none is pending).</summary>

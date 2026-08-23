@@ -63,9 +63,7 @@ def test_resampler_matches_golden():
     r = ta.Resampler(5)
     got = []
     for i, (o, h, l, c, v) in enumerate(INPUT):
-        candle = r.update(o, h, l, c, v, i)
-        if candle is not None:
-            got.append(candle)
+        got.extend(r.update(o, h, l, c, v, i))
     f = r.flush()
     if f is not None:
         got.append(f)

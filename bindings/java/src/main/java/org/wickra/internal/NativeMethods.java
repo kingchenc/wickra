@@ -3952,7 +3952,8 @@ public final class NativeMethods {
     public static MethodHandle WICKRA_TICK_AGGREGATOR_DRAIN;
     public static MethodHandle WICKRA_TICK_AGGREGATOR_FREE;
     public static MethodHandle WICKRA_RESAMPLER_NEW;
-    public static MethodHandle WICKRA_RESAMPLER_UPDATE;
+    public static MethodHandle WICKRA_RESAMPLER_PUSH;
+    public static MethodHandle WICKRA_RESAMPLER_DRAIN;
     public static MethodHandle WICKRA_RESAMPLER_FLUSH;
     public static MethodHandle WICKRA_RESAMPLER_FREE;
     public static MethodHandle WICKRA_CANDLE_READER_NEW;
@@ -8036,8 +8037,9 @@ public final class NativeMethods {
         WICKRA_TICK_AGGREGATOR_PUSH = h("wickra_tick_aggregator_push", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG));
         WICKRA_TICK_AGGREGATOR_DRAIN = h("wickra_tick_aggregator_drain", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_TICK_AGGREGATOR_FREE = h("wickra_tick_aggregator_free", FunctionDescriptor.ofVoid(ADDRESS));
-        WICKRA_RESAMPLER_NEW = h("wickra_resampler_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG));
-        WICKRA_RESAMPLER_UPDATE = h("wickra_resampler_update", FunctionDescriptor.of(JAVA_BYTE, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG, ADDRESS));
+        WICKRA_RESAMPLER_NEW = h("wickra_resampler_new", FunctionDescriptor.of(ADDRESS, JAVA_LONG, JAVA_BYTE));
+        WICKRA_RESAMPLER_PUSH = h("wickra_resampler_push", FunctionDescriptor.of(JAVA_LONG, ADDRESS, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_DOUBLE, JAVA_LONG));
+        WICKRA_RESAMPLER_DRAIN = h("wickra_resampler_drain", FunctionDescriptor.of(JAVA_LONG, ADDRESS, ADDRESS, JAVA_LONG));
         WICKRA_RESAMPLER_FLUSH = h("wickra_resampler_flush", FunctionDescriptor.of(JAVA_BYTE, ADDRESS, ADDRESS));
         WICKRA_RESAMPLER_FREE = h("wickra_resampler_free", FunctionDescriptor.ofVoid(ADDRESS));
         WICKRA_CANDLE_READER_NEW = h("wickra_candle_reader_new", FunctionDescriptor.of(ADDRESS, ADDRESS, JAVA_LONG));

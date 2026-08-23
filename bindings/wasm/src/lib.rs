@@ -16084,13 +16084,14 @@ impl WasmResampler {
         close: f64,
         volume: f64,
         timestamp: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Array, JsError> {
         let candle =
             wc::Candle::new(open, high, low, close, volume, timestamp as i64).map_err(map_err)?;
-        match self.inner.push(candle).map_err(map_data_err)? {
-            Some(c) => Ok(candle_object(c).into()),
-            None => Ok(JsValue::NULL),
+        let arr = Array::new();
+        for c in self.inner.push(candle).map_err(map_data_err)? {
+            arr.push(&candle_object(c).into());
         }
+        Ok(arr)
     }
 
     /// Emit the final, still-open candle (or `null` if none is pending).

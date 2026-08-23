@@ -22150,14 +22150,16 @@ impl ResamplerNode {
         close: f64,
         volume: f64,
         timestamp: f64,
-    ) -> napi::Result<Option<CandleValue>> {
+    ) -> napi::Result<Vec<CandleValue>> {
         let candle =
             wc::Candle::new(open, high, low, close, volume, timestamp as i64).map_err(map_err)?;
         Ok(self
             .inner
             .push(candle)
             .map_err(map_data_err)?
-            .map(candle_to_value))
+            .into_iter()
+            .map(candle_to_value)
+            .collect())
     }
 
     /// Emit the final, still-open candle (or `null` if none is pending).

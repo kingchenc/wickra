@@ -32,14 +32,13 @@ public class DataLayerTests
     public void ResamplerMatchesGolden()
     {
         var input = Read("input"); // open,high,low,close,volume (timestamp = row index)
-        using var r = new Resampler(5);
+        using var r = new Resampler(5, false);
         var got = new List<double[]>();
         for (var i = 0; i < input.Length; i++)
         {
-            var c = r.Update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], i);
-            if (c.HasValue)
+            foreach (var c in r.Push(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], i))
             {
-                got.Add(new[] { c.Value.Open, c.Value.High, c.Value.Low, c.Value.Close, c.Value.Volume, (double)c.Value.Timestamp });
+                got.Add(new[] { c.Open, c.High, c.Low, c.Close, c.Volume, (double)c.Timestamp });
             }
         }
         var f = r.Flush();

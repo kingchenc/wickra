@@ -473,6 +473,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   without linking; the rest referenced types under names they no longer have —
   `Cmf` is `ChaikinMoneyFlow`, `OIDelta` is `OpenInterestDelta` — or needed a
   path, as `Hma` and the two `Error` variants in `MacdHistogram` did.
+- **BREAKING: `Resampler` gained gap filling, and `push` now returns every
+  candle that closed.** `TickAggregator` could emit a flat placeholder for each
+  skipped bucket; its sibling could not, so the same hole in the same feed
+  produced an evenly spaced series one way and a series with time holes the
+  other. `Resampler::with_gap_fill` and `fills_gaps` now mirror it exactly —
+  same placeholder price, same zero volume, same cap on a runaway timestamp
+  jump — because the filling itself was lifted out of `TickAggregator` into one
+  shared function rather than copied.
+
+  With filling on, one input candle can close a bar *and* emit several
+  placeholders, so `push` returns `Vec<Candle>` where it returned
+  `Option<Candle>`. That is also what `TickAggregator::push` already returned.
+  Every binding follows: the C ABI grows `wickra_resampler_push` /
+  `wickra_resampler_drain` in place of `wickra_resampler_update`, and
+  `wickra_resampler_new` takes the `gap_fill` flag, exactly as the aggregator's
+  entry points do.
+
+  A test pins that the two agree on the same gap rather than merely looking
+  alike.
+- **The R generator emitted a miscalled push.** `gen_r.py` hardcoded
+  `(price, size, timestamp)` for any push/drain pair, which was right while the
+  tick aggregator was the only one. Adding a second exposed it: the generated
+  glue called `wickra_resampler_push` with four arguments instead of seven and
+  registered the wrong arity with R. The parameters now come from the parsed
+  header, as the C#, Go and Java generators already did.
+
 
 
 

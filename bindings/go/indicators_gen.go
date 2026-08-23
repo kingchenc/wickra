@@ -9,8 +9,8 @@ package wickra
 import "C"
 
 import (
-	"runtime"
 	"time"
+	"runtime"
 	"unsafe"
 )
 
@@ -20,75 +20,75 @@ var _ = unsafe.Pointer(nil)
 
 // AccelerationBandsOutput is the output of the AccelerationBands indicator.
 type AccelerationBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // AdxOutput is the output of the Adx indicator.
 type AdxOutput struct {
-	PlusDi  float64
+	PlusDi float64
 	MinusDi float64
-	Adx     float64
+	Adx float64
 }
 
 // AlligatorOutput is the output of the Alligator indicator.
 type AlligatorOutput struct {
-	Jaw   float64
+	Jaw float64
 	Teeth float64
-	Lips  float64
+	Lips float64
 }
 
 // AndrewsPitchforkOutput is the output of the AndrewsPitchfork indicator.
 type AndrewsPitchforkOutput struct {
 	Median float64
-	Upper  float64
-	Lower  float64
+	Upper float64
+	Lower float64
 }
 
 // AroonOutput is the output of the Aroon indicator.
 type AroonOutput struct {
-	Up   float64
+	Up float64
 	Down float64
 }
 
 // AtrBandsOutput is the output of the AtrBands indicator.
 type AtrBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // AtrRatchetOutput is the output of the AtrRatchet indicator.
 type AtrRatchetOutput struct {
-	Value     float64
+	Value float64
 	Direction float64
 }
 
 // AutoFibOutput is the output of the AutoFib indicator.
 type AutoFibOutput struct {
-	Level0    float64
-	Level236  float64
-	Level382  float64
-	Level500  float64
-	Level618  float64
-	Level786  float64
+	Level0 float64
+	Level236 float64
+	Level382 float64
+	Level500 float64
+	Level618 float64
+	Level786 float64
 	Level1000 float64
 }
 
 // BollingerOutput is the output of the Bollinger indicator.
 type BollingerOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 	Stddev float64
 }
 
 // BomarBandsOutput is the output of the BomarBands indicator.
 type BomarBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // CamarillaPivotsOutput is the output of the CamarillaPivots indicator.
@@ -106,36 +106,36 @@ type CamarillaPivotsOutput struct {
 
 // Candle is the output of the Candle indicator.
 type Candle struct {
-	Open      float64
-	High      float64
-	Low       float64
-	Close     float64
-	Volume    float64
+	Open float64
+	High float64
+	Low float64
+	Close float64
+	Volume float64
 	Timestamp int64
 }
 
 // CandleVolumeOutput is the output of the CandleVolume indicator.
 type CandleVolumeOutput struct {
-	Body  float64
+	Body float64
 	Width float64
 }
 
 // CentralPivotRangeOutput is the output of the CentralPivotRange indicator.
 type CentralPivotRangeOutput struct {
 	Pivot float64
-	Tc    float64
-	Bc    float64
+	Tc float64
+	Bc float64
 }
 
 // ChandeKrollStopOutput is the output of the ChandeKrollStop indicator.
 type ChandeKrollStopOutput struct {
-	StopLong  float64
+	StopLong float64
 	StopShort float64
 }
 
 // ChandelierExitOutput is the output of the ChandelierExit indicator.
 type ChandelierExitOutput struct {
-	LongStop  float64
+	LongStop float64
 	ShortStop float64
 }
 
@@ -153,8 +153,8 @@ type ClassicPivotsOutput struct {
 // CointegrationOutput is the output of the Cointegration indicator.
 type CointegrationOutput struct {
 	HedgeRatio float64
-	Spread     float64
-	AdfStat    float64
+	Spread float64
+	AdfStat float64
 }
 
 // CompositeProfileOutput is the output of the CompositeProfile indicator.
@@ -173,24 +173,24 @@ type DemarkPivotsOutput struct {
 
 // DollarBar is the output of the DollarBar indicator.
 type DollarBar struct {
-	Open   float64
-	High   float64
-	Low    float64
-	Close  float64
+	Open float64
+	High float64
+	Low float64
+	Close float64
 	Volume float64
 	Dollar float64
 }
 
 // DonchianOutput is the output of the Donchian indicator.
 type DonchianOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // DonchianStopOutput is the output of the DonchianStop indicator.
 type DonchianStopOutput struct {
-	StopLong  float64
+	StopLong float64
 	StopShort float64
 }
 
@@ -198,7 +198,7 @@ type DonchianStopOutput struct {
 type DoubleBollingerOutput struct {
 	UpperOuter float64
 	UpperInner float64
-	Middle     float64
+	Middle float64
 	LowerInner float64
 	LowerOuter float64
 }
@@ -211,14 +211,14 @@ type ElderRayOutput struct {
 
 // ElderSafeZoneOutput is the output of the ElderSafeZone indicator.
 type ElderSafeZoneOutput struct {
-	Value     float64
+	Value float64
 	Direction float64
 }
 
 // EquivolumeOutput is the output of the Equivolume indicator.
 type EquivolumeOutput struct {
 	Height float64
-	Width  float64
+	Width float64
 }
 
 // FibArcsOutput is the output of the FibArcs indicator.
@@ -230,15 +230,15 @@ type FibArcsOutput struct {
 
 // FibChannelOutput is the output of the FibChannel indicator.
 type FibChannelOutput struct {
-	Base      float64
-	Level618  float64
+	Base float64
+	Level618 float64
 	Level1000 float64
 	Level1618 float64
 }
 
 // FibConfluenceOutput is the output of the FibConfluence indicator.
 type FibConfluenceOutput struct {
-	Price    float64
+	Price float64
 	Strength float64
 }
 
@@ -260,7 +260,7 @@ type FibFanOutput struct {
 
 // FibProjectionOutput is the output of the FibProjection indicator.
 type FibProjectionOutput struct {
-	Level618  float64
+	Level618 float64
 	Level1000 float64
 	Level1618 float64
 	Level2618 float64
@@ -268,18 +268,18 @@ type FibProjectionOutput struct {
 
 // FibRetracementOutput is the output of the FibRetracement indicator.
 type FibRetracementOutput struct {
-	Level0    float64
-	Level236  float64
-	Level382  float64
-	Level500  float64
-	Level618  float64
-	Level786  float64
+	Level0 float64
+	Level236 float64
+	Level382 float64
+	Level500 float64
+	Level618 float64
+	Level786 float64
 	Level1000 float64
 }
 
 // FibTimeZonesOutput is the output of the FibTimeZones indicator.
 type FibTimeZonesOutput struct {
-	OnZone     float64
+	OnZone float64
 	BarsToNext float64
 }
 
@@ -296,7 +296,7 @@ type FibonacciPivotsOutput struct {
 
 // FootprintLevel is the output of the FootprintLevel indicator.
 type FootprintLevel struct {
-	Price  float64
+	Price float64
 	BidVol float64
 	AskVol float64
 }
@@ -315,16 +315,16 @@ type GatorOscillatorOutput struct {
 
 // GoldenPocketOutput is the output of the GoldenPocket indicator.
 type GoldenPocketOutput struct {
-	Low  float64
-	Mid  float64
+	Low float64
+	Mid float64
 	High float64
 }
 
 // HeikinAshiOutput is the output of the HeikinAshi indicator.
 type HeikinAshiOutput struct {
-	Open  float64
-	High  float64
-	Low   float64
+	Open float64
+	High float64
+	Low float64
 	Close float64
 }
 
@@ -336,32 +336,32 @@ type HighLowVolumeNodesOutput struct {
 
 // HtPhasorOutput is the output of the HtPhasor indicator.
 type HtPhasorOutput struct {
-	Inphase    float64
+	Inphase float64
 	Quadrature float64
 }
 
 // HurstChannelOutput is the output of the HurstChannel indicator.
 type HurstChannelOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // IchimokuOutput is the output of the Ichimoku indicator.
 type IchimokuOutput struct {
-	Tenkan  float64
-	Kijun   float64
+	Tenkan float64
+	Kijun float64
 	SenkouA float64
 	SenkouB float64
-	Chikou  float64
+	Chikou float64
 }
 
 // ImbalanceBar is the output of the ImbalanceBar indicator.
 type ImbalanceBar struct {
-	Open      float64
-	High      float64
-	Low       float64
-	Close     float64
+	Open float64
+	High float64
+	Low float64
+	Close float64
 	Imbalance float64
 	Direction int8
 }
@@ -369,26 +369,26 @@ type ImbalanceBar struct {
 // InitialBalanceOutput is the output of the InitialBalance indicator.
 type InitialBalanceOutput struct {
 	High float64
-	Low  float64
+	Low float64
 }
 
 // KagiBar is the output of the KagiBar indicator.
 type KagiBar struct {
-	Start     float64
-	End       float64
+	Start float64
+	End float64
 	Direction int8
 }
 
 // KalmanHedgeRatioOutput is the output of the KalmanHedgeRatio indicator.
 type KalmanHedgeRatioOutput struct {
 	HedgeRatio float64
-	Intercept  float64
-	Spread     float64
+	Intercept float64
+	Spread float64
 }
 
 // KaseDevStopOutput is the output of the KaseDevStop indicator.
 type KaseDevStopOutput struct {
-	Value     float64
+	Value float64
 	Direction float64
 }
 
@@ -400,57 +400,57 @@ type KasePermissionStochasticOutput struct {
 
 // KeltnerOutput is the output of the Keltner indicator.
 type KeltnerOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // KstOutput is the output of the Kst indicator.
 type KstOutput struct {
-	Kst    float64
+	Kst float64
 	Signal float64
 }
 
 // LeadLagCrossCorrelationOutput is the output of the LeadLagCrossCorrelation indicator.
 type LeadLagCrossCorrelationOutput struct {
-	Lag         int64
+	Lag int64
 	Correlation float64
 }
 
 // LinRegChannelOutput is the output of the LinRegChannel indicator.
 type LinRegChannelOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // LineBreakBar is the output of the LineBreakBar indicator.
 type LineBreakBar struct {
-	Open      float64
-	Close     float64
+	Open float64
+	Close float64
 	Direction int8
 }
 
 // LiquidationFeaturesOutput is the output of the LiquidationFeatures indicator.
 type LiquidationFeaturesOutput struct {
-	Long      float64
-	Short     float64
-	Net       float64
-	Total     float64
+	Long float64
+	Short float64
+	Net float64
+	Total float64
 	Imbalance float64
 }
 
 // MaEnvelopeOutput is the output of the MaEnvelope indicator.
 type MaEnvelopeOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // MacdOutput is the output of the Macd indicator.
 type MacdOutput struct {
-	Macd      float64
-	Signal    float64
+	Macd float64
+	Signal float64
 	Histogram float64
 }
 
@@ -462,14 +462,14 @@ type MamaOutput struct {
 
 // MedianChannelOutput is the output of the MedianChannel indicator.
 type MedianChannelOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // ModifiedMaStopOutput is the output of the ModifiedMaStop indicator.
 type ModifiedMaStopOutput struct {
-	Value     float64
+	Value float64
 	Direction float64
 }
 
@@ -488,128 +488,128 @@ type MurreyMathLinesOutput struct {
 
 // NrtrOutput is the output of the Nrtr indicator.
 type NrtrOutput struct {
-	Value     float64
+	Value float64
 	Direction float64
 }
 
 // OpeningRangeOutput is the output of the OpeningRange indicator.
 type OpeningRangeOutput struct {
-	High             float64
-	Low              float64
+	High float64
+	Low float64
 	BreakoutDistance float64
 }
 
 // OvernightIntradayReturnOutput is the output of the OvernightIntradayReturn indicator.
 type OvernightIntradayReturnOutput struct {
 	Overnight float64
-	Intraday  float64
+	Intraday float64
 }
 
 // PnfColumn is the output of the PnfColumn indicator.
 type PnfColumn struct {
 	Direction int8
-	High      float64
-	Low       float64
+	High float64
+	Low float64
 }
 
 // ProjectionBandsOutput is the output of the ProjectionBands indicator.
 type ProjectionBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // QqeOutput is the output of the Qqe indicator.
 type QqeOutput struct {
-	RsiMa        float64
+	RsiMa float64
 	TrailingLine float64
 }
 
 // QuartileBandsOutput is the output of the QuartileBands indicator.
 type QuartileBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // RangeBar is the output of the RangeBar indicator.
 type RangeBar struct {
-	Open      float64
-	Close     float64
+	Open float64
+	Close float64
 	Direction int8
 }
 
 // RelativeStrengthOutput is the output of the RelativeStrength indicator.
 type RelativeStrengthOutput struct {
-	Ratio    float64
-	RatioMa  float64
+	Ratio float64
+	RatioMa float64
 	RatioRsi float64
 }
 
 // RenkoBrick is the output of the RenkoBrick indicator.
 type RenkoBrick struct {
-	Open      float64
-	Close     float64
+	Open float64
+	Close float64
 	Direction int8
 }
 
 // RunBar is the output of the RunBar indicator.
 type RunBar struct {
-	Open      float64
-	High      float64
-	Low       float64
-	Close     float64
-	Length    int
+	Open float64
+	High float64
+	Low float64
+	Close float64
+	Length int
 	Direction int8
 }
 
 // RwiOutput is the output of the Rwi indicator.
 type RwiOutput struct {
 	High float64
-	Low  float64
+	Low float64
 }
 
 // SessionHighLowOutput is the output of the SessionHighLow indicator.
 type SessionHighLowOutput struct {
 	High float64
-	Low  float64
+	Low float64
 }
 
 // SessionRangeOutput is the output of the SessionRange indicator.
 type SessionRangeOutput struct {
 	Asia float64
-	Eu   float64
-	Us   float64
+	Eu float64
+	Us float64
 }
 
 // SmoothedHeikinAshiOutput is the output of the SmoothedHeikinAshi indicator.
 type SmoothedHeikinAshiOutput struct {
-	Open  float64
-	High  float64
-	Low   float64
+	Open float64
+	High float64
+	Low float64
 	Close float64
 }
 
 // SpreadBollingerBandsOutput is the output of the SpreadBollingerBands indicator.
 type SpreadBollingerBandsOutput struct {
-	Middle   float64
-	Upper    float64
-	Lower    float64
+	Middle float64
+	Upper float64
+	Lower float64
 	PercentB float64
 }
 
 // StandardErrorBandsOutput is the output of the StandardErrorBands indicator.
 type StandardErrorBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // StarcBandsOutput is the output of the StarcBands indicator.
 type StarcBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 }
 
 // StochasticOutput is the output of the Stochastic indicator.
@@ -620,14 +620,14 @@ type StochasticOutput struct {
 
 // SuperTrendOutput is the output of the SuperTrend indicator.
 type SuperTrendOutput struct {
-	Value     float64
+	Value float64
 	Direction float64
 }
 
 // TdLinesOutput is the output of the TdLines indicator.
 type TdLinesOutput struct {
 	Resistance float64
-	Support    float64
+	Support float64
 }
 
 // TdMovingAverageOutput is the output of the TdMovingAverage indicator.
@@ -639,41 +639,41 @@ type TdMovingAverageOutput struct {
 // TdRangeProjectionOutput is the output of the TdRangeProjection indicator.
 type TdRangeProjectionOutput struct {
 	High float64
-	Low  float64
+	Low float64
 }
 
 // TdRiskLevelOutput is the output of the TdRiskLevel indicator.
 type TdRiskLevelOutput struct {
-	BuyRisk  float64
+	BuyRisk float64
 	SellRisk float64
 }
 
 // TdSequentialOutput is the output of the TdSequential indicator.
 type TdSequentialOutput struct {
-	Setup     float64
+	Setup float64
 	Countdown float64
 	Direction float64
 }
 
 // TickBar is the output of the TickBar indicator.
 type TickBar struct {
-	Open   float64
-	High   float64
-	Low    float64
-	Close  float64
+	Open float64
+	High float64
+	Low float64
+	Close float64
 	Volume float64
 }
 
 // TpoProfileOutputScalars is the output of the TpoProfileOutputScalars indicator.
 type TpoProfileOutputScalars struct {
-	PriceLow  float64
+	PriceLow float64
 	PriceHigh float64
-	Values    []float64
+	Values []float64
 }
 
 // TtmSqueezeOutput is the output of the TtmSqueeze indicator.
 type TtmSqueezeOutput struct {
-	Squeeze  float64
+	Squeeze float64
 	Momentum float64
 }
 
@@ -686,53 +686,53 @@ type ValueAreaOutput struct {
 
 // VolatilityConeOutput is the output of the VolatilityCone indicator.
 type VolatilityConeOutput struct {
-	Current    float64
-	Min        float64
-	Median     float64
-	Max        float64
+	Current float64
+	Min float64
+	Median float64
+	Max float64
 	Percentile float64
 }
 
 // VolumeBar is the output of the VolumeBar indicator.
 type VolumeBar struct {
-	Open   float64
-	High   float64
-	Low    float64
-	Close  float64
+	Open float64
+	High float64
+	Low float64
+	Close float64
 	Volume float64
 }
 
 // VolumeProfileOutputScalars is the output of the VolumeProfileOutputScalars indicator.
 type VolumeProfileOutputScalars struct {
-	PriceLow  float64
+	PriceLow float64
 	PriceHigh float64
-	Values    []float64
+	Values []float64
 }
 
 // VolumeWeightedMacdOutput is the output of the VolumeWeightedMacd indicator.
 type VolumeWeightedMacdOutput struct {
-	Macd      float64
-	Signal    float64
+	Macd float64
+	Signal float64
 	Histogram float64
 }
 
 // VolumeWeightedSrOutput is the output of the VolumeWeightedSr indicator.
 type VolumeWeightedSrOutput struct {
-	Support    float64
+	Support float64
 	Resistance float64
 }
 
 // VortexOutput is the output of the Vortex indicator.
 type VortexOutput struct {
-	Plus  float64
+	Plus float64
 	Minus float64
 }
 
 // VwapStdDevBandsOutput is the output of the VwapStdDevBands indicator.
 type VwapStdDevBandsOutput struct {
-	Upper  float64
+	Upper float64
 	Middle float64
-	Lower  float64
+	Lower float64
 	Stddev float64
 }
 
@@ -744,7 +744,7 @@ type WaveTrendOutput struct {
 
 // WilliamsFractalsOutput is the output of the WilliamsFractals indicator.
 type WilliamsFractalsOutput struct {
-	Up   float64
+	Up float64
 	Down float64
 }
 
@@ -759,14 +759,14 @@ type WoodiePivotsOutput struct {
 
 // ZeroLagMacdOutput is the output of the ZeroLagMacd indicator.
 type ZeroLagMacdOutput struct {
-	Macd      float64
-	Signal    float64
+	Macd float64
+	Signal float64
 	Histogram float64
 }
 
 // ZigZagOutput is the output of the ZigZag indicator.
 type ZigZagOutput struct {
-	Swing     float64
+	Swing float64
 	Direction float64
 }
 
@@ -8382,7 +8382,7 @@ func (ind *Cypher) Close() {
 
 // DayOfWeekProfile wraps the DayOfWeekProfile indicator over the Wickra C ABI.
 type DayOfWeekProfile struct {
-	handle    *C.struct_DayOfWeekProfile
+	handle *C.struct_DayOfWeekProfile
 	valuesCap int
 }
 
@@ -17630,7 +17630,7 @@ func (ind *IntradayMomentumIndex) Close() {
 
 // IntradayVolatilityProfile wraps the IntradayVolatilityProfile indicator over the Wickra C ABI.
 type IntradayVolatilityProfile struct {
-	handle    *C.struct_IntradayVolatilityProfile
+	handle *C.struct_IntradayVolatilityProfile
 	valuesCap int
 }
 
@@ -28117,8 +28117,8 @@ type Resampler struct {
 
 // NewResampler constructs a Resampler. It returns ErrInvalidParams when the
 // native constructor rejects the arguments.
-func NewResampler(timeframe int64) (*Resampler, error) {
-	ptr := C.wickra_resampler_new(C.int64_t(timeframe))
+func NewResampler(timeframe int64, gapFill bool) (*Resampler, error) {
+	ptr := C.wickra_resampler_new(C.int64_t(timeframe), C.bool(gapFill))
 	if ptr == nil {
 		return nil, ErrInvalidParams
 	}
@@ -28127,16 +28127,23 @@ func NewResampler(timeframe int64) (*Resampler, error) {
 	return obj, nil
 }
 
-// Update feeds one observation. The bool reports whether a value is
-// available yet (false during warmup).
-func (ind *Resampler) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (Candle, bool) {
-	var out C.struct_WickraCandle
-	ok := bool(C.wickra_resampler_update(ind.handle, C.double(open), C.double(high), C.double(low), C.double(close), C.double(volume), C.int64_t(timestamp), &out))
+
+// Push feeds one trade tick and returns the candles it closed (none while
+// the open bar grows, one per closed bucket, plus gap-fill placeholders).
+func (ind *Resampler) Push(open float64, high float64, low float64, close float64, volume float64, timestamp int64) []Candle {
+	n := int(C.wickra_resampler_push(ind.handle, C.double(open), C.double(high), C.double(low), C.double(close), C.double(volume), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
-	if !ok {
-		return Candle{}, false
+	if n <= 0 {
+		return nil
 	}
-	return Candle{float64(out.open), float64(out.high), float64(out.low), float64(out.close), float64(out.volume), int64(out.timestamp)}, true
+	buf := make([]C.struct_WickraCandle, n)
+	C.wickra_resampler_drain(ind.handle, &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	out := make([]Candle, n)
+	for i := 0; i < n; i++ {
+		out[i] = Candle{float64(buf[i].open), float64(buf[i].high), float64(buf[i].low), float64(buf[i].close), float64(buf[i].volume), int64(buf[i].timestamp)}
+	}
+	return out
 }
 
 // Flush emits the final, still-open candle (ok is false if none is pending).
@@ -36521,6 +36528,7 @@ func NewTickAggregator(bucket int64, gapFill bool) (*TickAggregator, error) {
 	return obj, nil
 }
 
+
 // Push feeds one trade tick and returns the candles it closed (none while
 // the open bar grows, one per closed bucket, plus gap-fill placeholders).
 func (ind *TickAggregator) Push(price float64, size float64, timestamp int64) []Candle {
@@ -36869,7 +36877,7 @@ func (ind *TimeBasedStop) Close() {
 
 // TimeOfDayReturnProfile wraps the TimeOfDayReturnProfile indicator over the Wickra C ABI.
 type TimeOfDayReturnProfile struct {
-	handle    *C.struct_TimeOfDayReturnProfile
+	handle *C.struct_TimeOfDayReturnProfile
 	valuesCap int
 }
 
@@ -37037,7 +37045,7 @@ func (ind *TowerTopBottom) Close() {
 
 // TpoProfile wraps the TpoProfile indicator over the Wickra C ABI.
 type TpoProfile struct {
-	handle    *C.struct_TpoProfile
+	handle *C.struct_TpoProfile
 	valuesCap int
 }
 
@@ -40843,7 +40851,7 @@ func (ind *VolumeBars) Close() {
 
 // VolumeByTimeProfile wraps the VolumeByTimeProfile indicator over the Wickra C ABI.
 type VolumeByTimeProfile struct {
-	handle    *C.struct_VolumeByTimeProfile
+	handle *C.struct_VolumeByTimeProfile
 	valuesCap int
 }
 
@@ -41109,7 +41117,7 @@ func (ind *VolumePriceTrend) Close() {
 
 // VolumeProfile wraps the VolumeProfile indicator over the Wickra C ABI.
 type VolumeProfile struct {
-	handle    *C.struct_VolumeProfile
+	handle *C.struct_VolumeProfile
 	valuesCap int
 }
 
@@ -43460,3 +43468,4 @@ func FetchBinanceKlines(symbol string, interval BinanceInterval, limit uint32, s
 	}
 	return out, nil
 }
+

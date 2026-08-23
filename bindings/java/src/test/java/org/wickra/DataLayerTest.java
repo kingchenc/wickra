@@ -49,11 +49,10 @@ class DataLayerTest {
     @Test
     void resamplerMatchesGolden() throws IOException {
         double[][] input = read("input"); // open,high,low,close,volume (timestamp = row index)
-        try (Resampler r = new Resampler(5)) {
+        try (Resampler r = new Resampler(5, false)) {
             List<double[]> got = new ArrayList<>();
             for (int i = 0; i < input.length; i++) {
-                Candle c = r.update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], i);
-                if (c != null) {
+                for (Candle c : r.push(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], i)) {
                     got.add(new double[]{c.open(), c.high(), c.low(), c.close(), c.volume(), (double) c.timestamp()});
                 }
             }

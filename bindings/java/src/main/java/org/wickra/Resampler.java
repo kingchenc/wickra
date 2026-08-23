@@ -15,10 +15,10 @@ public final class Resampler implements AutoCloseable {
     private final Cleaner.Cleanable cleanable;
     private boolean closed;
 
-    public Resampler(long timeframe) {
+    public Resampler(long timeframe, boolean gapFill) {
         MemorySegment h;
         try {
-            h = (MemorySegment) NativeMethods.WICKRA_RESAMPLER_NEW.invokeExact(timeframe);
+            h = (MemorySegment) NativeMethods.WICKRA_RESAMPLER_NEW.invokeExact(timeframe, (byte) (gapFill ? 1 : 0));
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
         }
@@ -29,21 +29,30 @@ public final class Resampler implements AutoCloseable {
         this.cleanable = WickraNative.register(this, h, NativeMethods.WICKRA_RESAMPLER_FREE);
     }
 
-    /** Push one observation; returns the result, or null during warmup. */
-    public Candle update(double open, double high, double low, double close, double volume, long timestamp) {
-        try (Arena a = Arena.ofConfined()) {
-            MemorySegment out = a.allocate(48L);
-            byte ok = (byte) NativeMethods.WICKRA_RESAMPLER_UPDATE.invokeExact(handle(), open, high, low, close, volume, timestamp, out);
-            if (ok == 0) {
-                return null;
+
+    /** Feed one trade tick; returns the candles it closed (possibly empty). */
+    public Candle[] push(double open, double high, double low, double close, double volume, long timestamp) {
+        try {
+            long n = (long) NativeMethods.WICKRA_RESAMPLER_PUSH.invokeExact(handle(), open, high, low, close, volume, timestamp);
+            if (n <= 0) {
+                return new Candle[0];
             }
-            return new Candle(
-                out.get(JAVA_DOUBLE, 0L),
-                out.get(JAVA_DOUBLE, 8L),
-                out.get(JAVA_DOUBLE, 16L),
-                out.get(JAVA_DOUBLE, 24L),
-                out.get(JAVA_DOUBLE, 32L),
-                (double) out.get(JAVA_LONG, 40L));
+            try (Arena a = Arena.ofConfined()) {
+                MemorySegment out = a.allocate(48L * n);
+                long w = (long) NativeMethods.WICKRA_RESAMPLER_DRAIN.invokeExact(handle(), out, n);
+                Candle[] result = new Candle[(int) w];
+                for (int i = 0; i < w; i++) {
+                    long b = (long) i * 48L;
+                    result[i] = new Candle(
+                        out.get(JAVA_DOUBLE, b + 0L),
+                        out.get(JAVA_DOUBLE, b + 8L),
+                        out.get(JAVA_DOUBLE, b + 16L),
+                        out.get(JAVA_DOUBLE, b + 24L),
+                        out.get(JAVA_DOUBLE, b + 32L),
+                        (double) out.get(JAVA_LONG, b + 40L));
+                }
+                return result;
+            }
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
         } finally {

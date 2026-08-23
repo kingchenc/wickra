@@ -23,14 +23,14 @@ func dataParseF(t *testing.T, s string) float64 {
 
 func TestResamplerGolden(t *testing.T) {
 	input := readGolden(t, "input") // open,high,low,close,volume (timestamp = row index)
-	r, err := NewResampler(5)
+	r, err := NewResampler(5, false)
 	if err != nil {
 		t.Fatalf("new: %v", err)
 	}
 	var got [][6]float64
 	for i, row := range input {
 		o, h, l, c, v := dataParseF(t, row[0]), dataParseF(t, row[1]), dataParseF(t, row[2]), dataParseF(t, row[3]), dataParseF(t, row[4])
-		if k, ok := r.Update(o, h, l, c, v, int64(i)); ok {
+		for _, k := range r.Push(o, h, l, c, v, int64(i)) {
 			got = append(got, [6]float64{k.Open, k.High, k.Low, k.Close, k.Volume, float64(k.Timestamp)})
 		}
 	}

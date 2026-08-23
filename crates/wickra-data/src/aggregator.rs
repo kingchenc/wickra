@@ -290,55 +290,13 @@ impl TickAggregator {
         Ok(Vec::new())
     }
 
-    /// Append a flat placeholder candle for every empty bucket strictly between
-    /// the just-closed bar and the next bucket that received a tick.
+    /// Emit one flat candle per bucket skipped between `prev` and the bucket
+    /// starting at `next_bucket`.
     ///
-    /// Returns `Error::Malformed` when the gap would exceed
-    /// [`MAX_GAP_FILL_CANDLES`] — an adversarial timestamp jump (a clock-glitch
-    /// tick years in the future) must surface as a defined error, not as an
-    /// out-of-memory panic from allocating millions of placeholder candles.
+    /// # Errors
+    /// Propagates the cap and overflow errors of [`fill_flat_candles`].
     fn fill_between(&self, prev: Candle, next_bucket: i64, out: &mut Vec<Candle>) -> Result<()> {
-        let step = self.timeframe.bucket();
-        let start = prev
-            .timestamp
-            .checked_add(step)
-            .ok_or_else(|| Error::Malformed("timestamp overflow while gap-filling".to_string()))?;
-        if start >= next_bucket {
-            return Ok(());
-        }
-
-        // Compute the gap size up-front so an adversarial timestamp delta
-        // is refused before we allocate. `step > 0` by `Timeframe::new`'s
-        // invariant, so the divisor is safe. Saturating the subtraction
-        // makes the arithmetic infallible; an overflowed-saturated span is
-        // still far above the cap so the limit check below catches it.
-        let span = next_bucket.saturating_sub(start);
-        let gap_count = span / step + i64::from(span % step != 0);
-
-        if gap_count > MAX_GAP_FILL_CANDLES {
-            return Err(Error::Malformed(format!(
-                "gap-fill between bucket {} and {next_bucket} would emit {gap_count} \
-                 flat candles at step {step}, exceeding the {MAX_GAP_FILL_CANDLES} \
-                 cap; reject the discontinuity instead of allocating",
-                prev.timestamp
-            )));
-        }
-
-        out.reserve(gap_count as usize);
-        // Bucket alignment guarantees start + (gap_count - 1) * step ≤
-        // next_bucket - step < i64::MAX, so iterating `gap_count` times
-        // with `saturating_add(step)` cannot reach i64::MAX inside the
-        // loop body. `prev.close` is finite (it came from a validated
-        // bar) and volume is exactly 0.0, so the OHLCV invariants hold
-        // by construction — skip re-validation via Candle::new_unchecked.
-        let mut t = start;
-        for _ in 0..gap_count {
-            out.push(Candle::new_unchecked(
-                prev.close, prev.close, prev.close, prev.close, 0.0, t,
-            ));
-            t = t.saturating_add(step);
-        }
-        Ok(())
+        fill_flat_candles(prev, next_bucket, self.timeframe.bucket(), out)
     }
 
     /// Drain the currently open bar (if any) and return it. Useful at the end of
@@ -355,6 +313,67 @@ impl TickAggregator {
     pub const fn timeframe(&self) -> Timeframe {
         self.timeframe
     }
+}
+
+/// Emit one flat candle per bucket skipped between `prev` and `next_bucket`.
+///
+/// Shared by [`TickAggregator`] and [`crate::resample::Resampler`] so the two
+/// cannot drift apart: the placeholder price, the zero volume and the cap are
+/// one implementation rather than two that happen to agree today.
+///
+/// Each filler carries `prev.close` in all four OHLC fields and a volume of
+/// zero, so the series stays continuous and evenly spaced without inventing
+/// price action.
+///
+/// Returns `Error::Malformed` when the gap would exceed
+/// [`MAX_GAP_FILL_CANDLES`] — an adversarial timestamp jump (a clock-glitch
+/// out-of-memory panic from allocating millions of placeholder candles.
+pub(crate) fn fill_flat_candles(
+    prev: Candle,
+    next_bucket: i64,
+    step: i64,
+    out: &mut Vec<Candle>,
+) -> Result<()> {
+    let start = prev
+        .timestamp
+        .checked_add(step)
+        .ok_or_else(|| Error::Malformed("timestamp overflow while gap-filling".to_string()))?;
+    if start >= next_bucket {
+        return Ok(());
+    }
+
+    // Compute the gap size up-front so an adversarial timestamp delta
+    // is refused before we allocate. `step > 0` by `Timeframe::new`'s
+    // invariant, so the divisor is safe. Saturating the subtraction
+    // makes the arithmetic infallible; an overflowed-saturated span is
+    // still far above the cap so the limit check below catches it.
+    let span = next_bucket.saturating_sub(start);
+    let gap_count = span / step + i64::from(span % step != 0);
+
+    if gap_count > MAX_GAP_FILL_CANDLES {
+        return Err(Error::Malformed(format!(
+            "gap-fill between bucket {} and {next_bucket} would emit {gap_count} \
+             flat candles at step {step}, exceeding the {MAX_GAP_FILL_CANDLES} \
+             cap; reject the discontinuity instead of allocating",
+            prev.timestamp
+        )));
+    }
+
+    out.reserve(gap_count as usize);
+    // Bucket alignment guarantees start + (gap_count - 1) * step ≤
+    // next_bucket - step < i64::MAX, so iterating `gap_count` times
+    // with `saturating_add(step)` cannot reach i64::MAX inside the
+    // loop body. `prev.close` is finite (it came from a validated
+    // bar) and volume is exactly 0.0, so the OHLCV invariants hold
+    // by construction — skip re-validation via Candle::new_unchecked.
+    let mut t = start;
+    for _ in 0..gap_count {
+        out.push(Candle::new_unchecked(
+            prev.close, prev.close, prev.close, prev.close, 0.0, t,
+        ));
+        t = t.saturating_add(step);
+    }
+    Ok(())
 }
 
 #[cfg(test)]

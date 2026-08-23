@@ -244,7 +244,7 @@ fn emit_resampler(dir: &Path, candles: &[Candle]) {
     let mut resampler = Resampler::new(Timeframe::new(5).unwrap());
     let mut rows = Vec::new();
     for &candle in candles {
-        if let Some(out) = resampler.push(candle).expect("valid resample push") {
+        for out in resampler.push(candle).expect("valid resample push") {
             rows.push(format!(
                 "{},{},{},{},{},{}",
                 out.open, out.high, out.low, out.close, out.volume, out.timestamp

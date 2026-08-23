@@ -83,9 +83,9 @@ test_that("resampler matches the golden candles", {
   r <- Resampler(5)
   got <- matrix(numeric(0), 0, 6)
   for (i in seq_len(nrow(input))) {
-    c <- update(r, input[i, 1], input[i, 2], input[i, 3], input[i, 4], input[i, 5], i - 1)
-    if (!is.na(c[1])) {
-      got <- rbind(got, unname(c))
+    closed <- push(r, input[i, 1], input[i, 2], input[i, 3], input[i, 4], input[i, 5], i - 1)
+    if (nrow(closed) > 0) {
+      got <- rbind(got, unname(closed))
     }
   }
   f <- flush(r)
