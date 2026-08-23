@@ -29,7 +29,10 @@ use crate::traits::Indicator;
 /// `NaN`, so a caller feeding this into further arithmetic should test for it.
 /// `f64::is_finite` is the guard.
 ///
-/// A window with neither winners nor losers returns `0.0`.
+/// A window with neither winners nor losers is break-even and returns `1.0`,
+/// the same value a window whose typical win matches its typical loss returns.
+/// It used to return `0.0`, which is also what a window that lost on every
+/// single bar returns -- the two are opposite states and were indistinguishable.
 ///
 /// Each `update` is O(period).
 #[derive(Debug, Clone)]
@@ -94,7 +97,10 @@ impl Indicator for GainLossRatio {
             }
         }
         if n_loss == 0 {
-            return Some(if n_win == 0 { 0.0 } else { f64::INFINITY });
+            // Neither gains nor losses: the window is break-even, which is
+            // what 1.0 means here. Returning 0.0 made a flat window
+            // indistinguishable from one that lost on every bar.
+            return Some(if n_win == 0 { 1.0 } else { f64::INFINITY });
         }
         let avg_win = if n_win == 0 {
             0.0
@@ -161,10 +167,10 @@ mod tests {
     }
 
     #[test]
-    fn flat_window_yields_zero() {
+    fn flat_window_is_break_even() {
         let mut g = GainLossRatio::new(3).unwrap();
         let out = g.batch(&[0.0_f64; 3]);
-        assert_eq!(out[2], Some(0.0));
+        assert_eq!(out[2], Some(1.0));
     }
 
     #[test]
@@ -199,5 +205,26 @@ mod tests {
         let mut s = GainLossRatio::new(10).unwrap();
         let streamed: Vec<_> = returns.iter().map(|r| s.update(*r)).collect();
         assert_eq!(batch, streamed);
+    }
+    /// A flat window and a window that lost on every single bar are opposite
+    /// states, and both used to report `0.0`. Asserting each value on its own
+    /// could never catch that; asserting they differ is the property that
+    /// matters.
+    #[test]
+    fn a_flat_window_is_not_confused_with_an_all_losing_one() {
+        let flat = [0.0_f64; 20];
+        let losing = [-0.01_f64; 20];
+
+        let mut a = GainLossRatio::new(14).unwrap();
+        let mut b = GainLossRatio::new(14).unwrap();
+        let (mut flat_value, mut losing_value) = (None, None);
+        for i in 0..flat.len() {
+            flat_value = a.update(flat[i]).or(flat_value);
+            losing_value = b.update(losing[i]).or(losing_value);
+        }
+
+        assert_eq!(flat_value, Some(1.0), "a flat window is break-even");
+        assert_eq!(losing_value, Some(0.0), "an all-losing window has no gains");
+        assert_ne!(flat_value, losing_value);
     }
 }

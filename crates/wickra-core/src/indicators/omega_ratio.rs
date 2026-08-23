@@ -32,8 +32,9 @@ use crate::traits::Indicator;
 ///
 /// The threshold decides what "flat" means here, and the two ends differ:
 /// with `threshold = 0.0` a window of zero returns has neither gains nor
-/// shortfall and yields `0.0`, while with a *negative* threshold every zero
-/// return clears it, so the same flat window yields `f64::INFINITY`.
+/// shortfall, which is break-even and yields `1.0`, while with a *negative*
+/// threshold every zero return clears it, so the same flat window yields
+/// `f64::INFINITY`.
 ///
 /// Each `update` is O(period) because the partial sums are recomputed across
 /// the window — adequate for typical backtest windows (`period ≤ 252`).
@@ -116,7 +117,10 @@ impl Indicator for OmegaRatio {
             }
         }
         if losses == 0.0 {
-            return Some(if gains == 0.0 { 0.0 } else { f64::INFINITY });
+            // Neither gains nor losses: the window is break-even, which is
+            // what 1.0 means here. Returning 0.0 made a flat window
+            // indistinguishable from one that lost on every bar.
+            return Some(if gains == 0.0 { 1.0 } else { f64::INFINITY });
         }
         Some(gains / losses)
     }
@@ -169,12 +173,12 @@ mod tests {
     }
 
     #[test]
-    fn flat_at_threshold_yields_zero() {
+    fn flat_at_threshold_is_break_even() {
         // Every return equals threshold -> gains = losses = 0 -> 0 by
         // convention.
         let mut o = OmegaRatio::new(4, 0.01).unwrap();
         let out = o.batch(&[0.01; 4]);
-        assert_eq!(out[3], Some(0.0));
+        assert_eq!(out[3], Some(1.0));
     }
 
     #[test]
@@ -215,8 +219,8 @@ mod tests {
     }
     /// With a negative threshold every flat return counts as clearing it, so a
     /// window that did not move at all reports an unbounded ratio rather than
-    /// the `0.0` the same window gives at a threshold of zero. Worth pinning
-    /// because it is the opposite answer to the obvious one.
+    /// the break-even `1.0` the same window gives at a threshold of zero.
+    /// Worth pinning because it is the opposite answer to the obvious one.
     #[test]
     fn a_negative_threshold_makes_a_flat_window_unbounded() {
         let flat = [0.0_f64; 20];
@@ -229,7 +233,28 @@ mod tests {
             last_below = below.update(r).or(last_below);
         }
 
-        assert_eq!(last_at_zero, Some(0.0));
+        assert_eq!(last_at_zero, Some(1.0));
         assert_eq!(last_below, Some(f64::INFINITY));
+    }
+    /// A flat window and a window that lost on every single bar are opposite
+    /// states, and both used to report `0.0`. Asserting each value on its own
+    /// could never catch that; asserting they differ is the property that
+    /// matters.
+    #[test]
+    fn a_flat_window_is_not_confused_with_an_all_losing_one() {
+        let flat = [0.0_f64; 20];
+        let losing = [-0.01_f64; 20];
+
+        let mut a = OmegaRatio::new(14, 0.0).unwrap();
+        let mut b = OmegaRatio::new(14, 0.0).unwrap();
+        let (mut flat_value, mut losing_value) = (None, None);
+        for i in 0..flat.len() {
+            flat_value = a.update(flat[i]).or(flat_value);
+            losing_value = b.update(losing[i]).or(losing_value);
+        }
+
+        assert_eq!(flat_value, Some(1.0), "a flat window is break-even");
+        assert_eq!(losing_value, Some(0.0), "an all-losing window has no gains");
+        assert_ne!(flat_value, losing_value);
     }
 }

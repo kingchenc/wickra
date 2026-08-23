@@ -431,6 +431,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   exception, and only with a negative threshold, where every flat return clears
   the threshold and the same window becomes unbounded — the opposite answer to
   the obvious one. That was undocumented and untested, and is now both.
+- **BREAKING: a window with neither gains nor losses now reports `1.0`, not
+  `0.0`.** `GainLossRatio`, `ProfitFactor` and `OmegaRatio` answered `0.0` for a
+  0/0 window — and `0.0` is also what they return for a window that lost on
+  every single bar. Measured, both cases came back identical from all three, so
+  a caller could not tell a market that did not move from one that only fell.
+  Those are opposite states.
+
+  `1.0` is the value these indicators already give for break-even, and a window
+  that neither gained nor lost is break-even. The collision that remains is
+  with a state of the same meaning rather than with its opposite. `NaN` was the
+  other candidate and was rejected: it is honest about being undefined but
+  poisons every arithmetic operation downstream, which the non-finite policy
+  settled one commit earlier.
+
+  The old tests asserted the flat-window value on its own, which is why they
+  could never see the collision. Each indicator now also has a test asserting
+  that the flat and all-losing windows *differ*, which is the property that
+  actually matters.
+
+  No golden fixture moves — the golden candles never produce a flat window,
+  which is precisely why this survived as long as it did.
+
 
 
 
