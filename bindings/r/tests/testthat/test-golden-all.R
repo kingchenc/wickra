@@ -33,80 +33,105 @@ golden_tol <- function(canonical) {
   if (canonical %in% GOLDEN_LIBM_DEPENDENT) 1e-6 else 1e-12
 }
 
-test_that("all 514 indicators match the Rust golden fixtures", {
-  skip_if(is.null(golden_dir_all), "golden fixtures not bundled with the package")
-  source(test_path("golden_specs.R"), local = TRUE)
+golden_cell <- function(s) {
+  if (s == "nan") NA_real_ else if (s == "inf") Inf else if (s == "-inf") -Inf else as.numeric(s)
+}
 
-  gcell <- function(s) {
-    if (s == "nan") NA_real_ else if (s == "inf") Inf else if (s == "-inf") -Inf else as.numeric(s)
-  }
-  read_rows <- function(name) {
-    lines <- readLines(file.path(golden_dir_all, paste0(name, ".csv")))[-1]
-    lapply(lines, function(l) {
-      if (nchar(l) == 0) return(numeric(0))
-      vapply(strsplit(l, ",", fixed = TRUE)[[1]], gcell, numeric(1), USE.NAMES = FALSE)
-    })
-  }
-  input_rows <- lapply(
+# Keeps blank lines, which is how a bar fixture records a candle that closed no
+# bar; a non-bar fixture contains none.
+golden_read_rows <- function(name) {
+  lines <- readLines(file.path(golden_dir_all, paste0(name, ".csv")))[-1]
+  lapply(lines, function(l) {
+    if (nchar(l) == 0) return(numeric(0))
+    vapply(strsplit(l, ",", fixed = TRUE)[[1]], golden_cell, numeric(1), USE.NAMES = FALSE)
+  })
+}
+
+golden_input_rows <- function() {
+  lapply(
     readLines(file.path(golden_dir_all, "input.csv"))[-1],
     function(l) as.numeric(strsplit(l, ",", fixed = TRUE)[[1]])
   )
+}
 
-  deriv_fields <- function(r) {
-    o <- r[1]; h <- r[2]; l <- r[3]; c <- r[4]; v <- r[5]
-    c((c - o) / c * 0.01, c, c - 0.5, c + 1.0, v * 10, v * 0.6, v * 0.4,
-      v * 0.55, v * 0.45, h - c, c - l)
+# The reflective runner below is shared by the value pass and the lifecycle
+# pass, so the two cannot end up feeding the indicators different streams.
+deriv_fields <- function(r) {
+  o <- r[1]; h <- r[2]; l <- r[3]; c <- r[4]; v <- r[5]
+  c((c - o) / c * 0.01, c, c - 0.5, c + 1.0, v * 10, v * 0.6, v * 0.4,
+    v * 0.55, v * 0.45, h - c, c - l)
+}
+cross_lists <- function(r) {
+  o <- r[1]; c <- r[4]; v <- r[5]; j <- 0:4
+  list(change = (c - o) + j, volume = v + j * 10,
+       newHigh = as.numeric(j %% 2 == 0), newLow = as.numeric(j %% 3 == 0),
+       aboveMa = as.numeric(j %% 2 == 0), onBuy = as.numeric(j %% 3 == 0))
+}
+ob_lists <- function(r) {
+  c <- r[4]; v <- r[5]; k <- 1:5
+  list(bp = c - 0.1 * k, bs = v / k, ap = c + 0.1 * k, asz = v * 0.9 / k)
+}
+flatten <- function(o, arch, width) {
+  if (arch %in% c("profile_bins")) {
+    if (is.null(o) || length(o) == 0 || all(is.na(o))) return(rep(NA_real_, width))
+    return(as.numeric(o))
   }
-  cross_lists <- function(r) {
-    o <- r[1]; c <- r[4]; v <- r[5]; j <- 0:4
-    list(change = (c - o) + j, volume = v + j * 10,
-         newHigh = as.numeric(j %% 2 == 0), newLow = as.numeric(j %% 3 == 0),
-         aboveMa = as.numeric(j %% 2 == 0), onBuy = as.numeric(j %% 3 == 0))
+  if (arch == "profile_pricebins") {
+    if (is.list(o)) return(c(o$price_low, o$price_high, as.numeric(o$values)))
+    return(rep(NA_real_, width))
   }
-  ob_lists <- function(r) {
-    c <- r[4]; v <- r[5]; k <- 1:5
-    list(bp = c - 0.1 * k, bs = v / k, ap = c + 0.1 * k, asz = v * 0.9 / k)
+  if (arch %in% c("bars_close", "bars_candle4", "bars_candle5", "footprint")) {
+    if (is.null(o) || length(o) == 0) return(numeric(0))
+    if (is.matrix(o)) return(as.numeric(t(o)))
+    return(as.numeric(o))
   }
-  flatten <- function(o, arch, width) {
-    if (arch %in% c("profile_bins")) {
-      if (is.null(o) || length(o) == 0 || all(is.na(o))) return(rep(NA_real_, width))
-      return(as.numeric(o))
-    }
-    if (arch == "profile_pricebins") {
-      if (is.list(o)) return(c(o$price_low, o$price_high, as.numeric(o$values)))
-      return(rep(NA_real_, width))
-    }
-    if (arch %in% c("bars_close", "bars_candle4", "bars_candle5", "footprint")) {
-      if (is.null(o) || length(o) == 0) return(numeric(0))
-      if (is.matrix(o)) return(as.numeric(t(o)))
-      return(as.numeric(o))
-    }
-    as.numeric(o)
-  }
+  as.numeric(o)
+}
 
-  compute <- function(spec, ind, r, i) {
-    o <- r[1]; h <- r[2]; l <- r[3]; cl <- r[4]; v <- r[5]; ts <- as.integer(i - 1)
-    out <- switch(spec$arch,
-      scalar_f64 = update(ind, cl),
-      multi_f64  = update(ind, cl),
-      pairwise = , multi_pairwise = update(ind, cl, o),
-      scalar_candle = , multi_candle = , profile_bins = , profile_pricebins =
-        update(ind, o, h, l, cl, v, ts),
-      trade = update(ind, cl, v, cl >= o, ts),
-      trademid = update(ind, cl, v, cl >= o, ts, (h + l) / 2),
-      ob = { L <- ob_lists(r); update(ind, L$bp, L$bs, L$ap, L$asz) },
-      cross = { L <- cross_lists(r)
-        update(ind, L$change, L$volume, L$newHigh, L$newLow, L$aboveMa, L$onBuy, ts) },
-      deriv = , deriv_multi = { d <- deriv_fields(r)
-        do.call(update, c(list(ind), as.list(d), list(ts))) },
-      bars_close = update(ind, cl, cl, cl, cl, 1, 0L),
-      bars_candle4 = update(ind, o, h, l, cl, 1, 0L),
-      bars_candle5 = update(ind, o, h, l, cl, v, 0L),
-      footprint = update(ind, cl, v, cl >= o, ts),
-      stop("arch ", spec$arch)
-    )
-    flatten(out, spec$arch, spec$width)
-  }
+golden_compute <- function(spec, ind, r, i) {
+  o <- r[1]; h <- r[2]; l <- r[3]; cl <- r[4]; v <- r[5]; ts <- as.integer(i - 1)
+  out <- switch(spec$arch,
+    scalar_f64 = update(ind, cl),
+    multi_f64  = update(ind, cl),
+    pairwise = , multi_pairwise = update(ind, cl, o),
+    scalar_candle = , multi_candle = , profile_bins = , profile_pricebins =
+      update(ind, o, h, l, cl, v, ts),
+    trade = update(ind, cl, v, cl >= o, ts),
+    trademid = update(ind, cl, v, cl >= o, ts, (h + l) / 2),
+    ob = { L <- ob_lists(r); update(ind, L$bp, L$bs, L$ap, L$asz) },
+    cross = { L <- cross_lists(r)
+      update(ind, L$change, L$volume, L$newHigh, L$newLow, L$aboveMa, L$onBuy, ts) },
+    deriv = , deriv_multi = { d <- deriv_fields(r)
+      do.call(update, c(list(ind), as.list(d), list(ts))) },
+    bars_close = update(ind, cl, cl, cl, cl, 1, 0L),
+    bars_candle4 = update(ind, o, h, l, cl, 1, 0L),
+    bars_candle5 = update(ind, o, h, l, cl, v, 0L),
+    footprint = update(ind, cl, v, cl >= o, ts),
+    stop("arch ", spec$arch)
+  )
+  flatten(out, spec$arch, spec$width)
+}
+
+# Drive one indicator over the whole golden input, rows flattened as the fixture
+# stores them.
+golden_drive <- function(spec, ind, input_rows) {
+  lapply(seq_along(input_rows), function(i) golden_compute(spec, ind, input_rows[[i]], i))
+}
+
+# Whether the reference fixture holds a single finite value. A few indicators
+# never emit over this input, and for those "ready once the series is done"
+# would be the wrong assertion. Reading it off the fixture beats inferring it at
+# runtime from a row that might legitimately be NA.
+golden_fixture_emits <- function(canon) {
+  any(vapply(golden_read_rows(paste0("g_", canon)), function(r) any(is.finite(r)), logical(1)))
+}
+
+test_that("all 514 indicators match the Rust golden fixtures", {
+  skip_if(is.null(golden_dir_all), "golden fixtures not bundled with the package")
+  source(test_path("golden_specs.R"), local = TRUE)
+  read_rows <- golden_read_rows
+  compute <- golden_compute
+  input_rows <- golden_input_rows()
 
   for (spec in GOLDEN_SPECS) {
     ind <- do.call(get(spec$canon), as.list(spec$params))
@@ -130,6 +155,47 @@ test_that("all 514 indicators match the Rust golden fixtures", {
             label = sprintf("%s row %d col %d (got %s want %g)", spec$canon, i, k, as.character(g), w))
         }
       }
+    }
+  }
+})
+
+# The contract around the values. The pass above checks only what an indicator
+# computes, so a reset that forgot a field, or an is_ready wired to a value that
+# happens to move at the right time, replays perfectly clean through it.
+test_that("all 514 indicators honour reset, is_ready and warmup_period", {
+  skip_if(is.null(golden_dir_all), "golden fixtures not bundled with the package")
+  source(test_path("golden_specs.R"), local = TRUE)
+  input_rows <- golden_input_rows()
+
+  for (spec in GOLDEN_SPECS) {
+    ind <- do.call(get(spec$canon), as.list(spec$params))
+    # The ten bar builders have no warmup or ready state: one candle can
+    # complete any number of bars, so there is nothing for them to be ready for.
+    stateful <- !startsWith(spec$arch, "bars_")
+    if (stateful) {
+      expect_false(is_ready(ind), info = sprintf("%s: ready before any input", spec$canon))
+      expect_gte(warmup_period(ind), 1L, label = sprintf("%s warmup_period", spec$canon))
+    }
+    first <- golden_drive(spec, ind, input_rows)
+    if (stateful && golden_fixture_emits(spec$canon)) {
+      expect_true(is_ready(ind),
+        info = sprintf("%s: not ready after the whole series, but the fixture has values", spec$canon))
+    }
+    reset(ind)
+    if (stateful) {
+      expect_false(is_ready(ind), info = sprintf("%s: still ready after reset", spec$canon))
+    }
+    # Equality, not tolerance: the same code over the same input in the same
+    # session has no reason to differ in a single bit, and a tolerance here
+    # would hide exactly the leftover state this is looking for.
+    second <- golden_drive(spec, ind, input_rows)
+    for (i in seq_along(first)) {
+      before <- first[[i]]
+      after <- second[[i]]
+      expect_equal(length(after), length(before),
+        info = sprintf("%s row %d: arity changed after reset", spec$canon, i))
+      differing <- which(!((is.na(before) & is.na(after)) | (!is.na(before) & !is.na(after) & before == after)))
+      expect_length(differing, 0L)
     }
   }
 })

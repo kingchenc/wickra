@@ -87,16 +87,15 @@ def ctor_call(canon):
     return f"new Wickra.{canon}({args})"
 
 
-def block(canon):
+def row_lines(canon):
+    """The loop body that appends one row for this archetype.
+
+    Emitted once, into a `Drive_<Canonical>` helper both passes call, so the
+    value pass and the lifecycle pass cannot drift apart.
+    """
     s = spec[canon]
     a = s["arch"]
-    L = [f"    [Fact]", f"    public void Golden_{canon}()", "    {"]
-    L.append(f"        using var ind = {ctor_call(canon)};")
-    L.append(f"        Assert.Equal({json.dumps(NAMES[canon])}, ind.Name());")
-    L.append("        var got = new List<double[]>();")
-    L.append("        for (var i = 0; i < Rows.Length; i++)")
-    L.append("        {")
-    L.append("            var r = Rows[i];")
+    L = []
     if a == "scalar_f64":
         L.append("            got.Add(new[] { ind.Update(r[3]) });")
     elif a == "pairwise":
@@ -140,8 +139,72 @@ def block(canon):
         L.append("            got.Add(FlattenBars(ind.Update(r[3], r[4], r[3] >= r[0], i)));")
     else:
         raise SystemExit("arch " + a)
+    return L
+
+
+def drive_helper(canon):
+    """One `Drive_<Canonical>` per indicator: the whole golden input through
+    `Update`, rows flattened the way the fixture stores them."""
+    L = [f"    private static List<double[]> Drive_{canon}(Wickra.{canon} ind)", "    {"]
+    L.append("        var got = new List<double[]>();")
+    L.append("        for (var i = 0; i < Rows.Length; i++)")
+    L.append("        {")
+    L.append("            var r = Rows[i];")
+    L.extend(row_lines(canon))
     L.append("        }")
-    L.append(f'        Compare("{canon}", got);')
+    L.append("        return got;")
+    L.append("    }")
+    return "\n".join(L)
+
+
+def block(canon):
+    L = ["    [Fact]", f"    public void Golden_{canon}()", "    {"]
+    L.append(f"        using var ind = {ctor_call(canon)};")
+    L.append(f"        Assert.Equal({json.dumps(NAMES[canon])}, ind.Name());")
+    L.append(f'        Compare("{canon}", Drive_{canon}(ind));')
+    L.append("    }")
+    return "\n".join(L)
+
+
+def emits(canon):
+    """Whether the reference fixture holds a single finite value.
+
+    A few indicators never emit over this input, so asserting "ready once the
+    series is done" would be wrong for them. Deciding it here, from the fixture,
+    beats guessing at runtime from a row that might legitimately be NaN.
+    """
+    with open(os.path.join(G, f"g_{canon}.csv"), encoding="utf-8") as f:
+        next(f, None)
+        for line in f:
+            for cell in line.strip().split(","):
+                try:
+                    value = float(cell)
+                except ValueError:
+                    continue
+                if value == value and abs(value) != float("inf"):
+                    return True
+    return False
+
+
+def lifecycle_block(canon):
+    """The contract around the values: a fresh indicator is not ready, a driven
+    one is, and `Reset` really does return it to the start."""
+    a = spec[canon]["arch"]
+    # The ten bar builders implement BarBuilder, not Indicator: one candle can
+    # complete any number of bars, so they carry no warmup or ready state.
+    stateful = not a.startswith("bars_")
+    L = ["    [Fact]", f"    public void Lifecycle_{canon}()", "    {"]
+    L.append(f"        using var ind = {ctor_call(canon)};")
+    if stateful:
+        L.append(f'        Assert.False(ind.IsReady(), "{canon}: ready before any input");')
+        L.append(f'        Assert.True(ind.WarmupPeriod() >= 1, "{canon}: warmup period must be >= 1");')
+    L.append(f"        var first = Drive_{canon}(ind);")
+    if stateful and emits(canon):
+        L.append(f'        Assert.True(ind.IsReady(), "{canon}: not ready after the whole series, but the fixture has values");')
+    L.append("        ind.Reset();")
+    if stateful:
+        L.append(f'        Assert.False(ind.IsReady(), "{canon}: still ready after Reset");')
+    L.append(f'        CompareRuns("{canon}", first, Drive_{canon}(ind));')
     L.append("    }")
     return "\n".join(L)
 
@@ -298,6 +361,25 @@ public class GoldenAllTests
         return (bp, bs, ap, asz);
     }
 
+    // Equality, not tolerance: the same code over the same input in the same
+    // process has no reason to differ in a single bit, and a tolerance here
+    // would hide exactly the leftover state this is looking for.
+    private static void CompareRuns(string name, List<double[]> first, List<double[]> second)
+    {
+        Assert.True(first.Count == second.Count, $"{name}: {first.Count} rows before Reset, {second.Count} after");
+        for (var i = 0; i < first.Count; i++)
+        {
+            var before = first[i];
+            var after = second[i];
+            Assert.True(before.Length == after.Length, $"{name} row {i}: {before.Length} values before Reset, {after.Length} after");
+            for (var k = 0; k < before.Length; k++)
+            {
+                if (double.IsNaN(before[k]) && double.IsNaN(after[k])) { continue; }
+                Assert.True(before[k] == after[k], $"{name} row {i} col {k}: {before[k]} before Reset, {after[k]} after");
+            }
+        }
+    }
+
     private static void Compare(string name, List<double[]> got)
     {
         var exp = ReadFixture(name);
@@ -321,7 +403,9 @@ public class GoldenAllTests
 
 out = [HEADER]
 for canon in canons:
+    out.append(drive_helper(canon))
     out.append(block(canon))
+    out.append(lifecycle_block(canon))
 out.append("}")
 open(os.path.join(ROOT, "bindings", "csharp", "Wickra.Tests", "GoldenAllTests.g.cs"), "w", encoding="utf-8").write("\n".join(out) + "\n")
 print("generated GoldenAllTests.g.cs with", len(canons), "indicators")

@@ -83,20 +83,14 @@ def ctor_call(canon):
 
 
 # Update-call expression + output handling per archetype.
-def block(canon):
+def row_lines(canon, pad):
+    """The loop body that fills `got[i]` for one archetype, indented by `pad`.
+
+    Shared by the value pass and the lifecycle pass so the two cannot drift.
+    """
     s = spec[canon]
     a = s["arch"]
-    ctor = ctor_call(canon)
-    lines = [f'\tt.Run("{canon}", func(t *testing.T) {{']
-    lines.append(f"\t\tind, err := {ctor}")
-    lines.append('\t\tif err != nil {')
-    lines.append(f'\t\t\tt.Fatalf("new {canon}: %v", err)')
-    lines.append("\t\t}")
-    lines.append(f'\t\tif n := ind.Name(); n != {json.dumps(NAMES[canon])} {{')
-    lines.append(f'\t\t\tt.Errorf("name: got %q want %q", n, {json.dumps(NAMES[canon])})')
-    lines.append("\t\t}")
-    lines.append("\t\tgot := make([][]float64, len(rows))")
-    lines.append("\t\tfor i, r := range rows {")
+    lines = []
     if a == "scalar_f64":
         upd = "ind.Update(r[3])"
         lines.append(f"\t\t\tgot[i] = []float64{{{upd}}}")
@@ -152,8 +146,85 @@ def block(canon):
         lines.append("\t\t\tgot[i] = flattenBars(ind.Update(r[3], r[4], r[3] >= r[0], int64(i)))")
     else:
         raise SystemExit("unknown arch " + a)
+    return [pad + line[3:] for line in lines]
+
+
+def block(canon):
+    ctor = ctor_call(canon)
+    lines = [f'\tt.Run("{canon}", func(t *testing.T) {{']
+    lines.append(f"\t\tind, err := {ctor}")
+    lines.append('\t\tif err != nil {')
+    lines.append(f'\t\t\tt.Fatalf("new {canon}: %v", err)')
+    lines.append("\t\t}")
+    lines.append(f'\t\tif n := ind.Name(); n != {json.dumps(NAMES[canon])} {{')
+    lines.append(f'\t\t\tt.Errorf("name: got %q want %q", n, {json.dumps(NAMES[canon])})')
+    lines.append("\t\t}")
+    lines.append("\t\tgot := make([][]float64, len(rows))")
+    lines.append("\t\tfor i, r := range rows {")
+    lines.extend(row_lines(canon, "\t\t\t"))
     lines.append("\t\t}")
     lines.append(f'\t\tcompareGolden(t, "{canon}", got)')
+    lines.append("\t})")
+    return "\n".join(lines)
+
+
+def emits(canon):
+    """Whether the reference fixture holds a single finite value.
+
+    A few indicators never emit over this input, so asserting "ready once the
+    series is done" would be wrong for them. Deciding it here, from the fixture,
+    beats guessing at runtime from a row that might legitimately be NaN.
+    """
+    with open(os.path.join(G, f"g_{canon}.csv"), encoding="utf-8") as f:
+        next(f, None)
+        for line in f:
+            for cell in line.strip().split(","):
+                try:
+                    value = float(cell)
+                except ValueError:
+                    continue
+                if value == value and abs(value) != float("inf"):
+                    return True
+    return False
+
+
+def lifecycle_block(canon):
+    """One subtest for the contract around the values: a fresh indicator is not
+    ready, a driven one is, and `Reset` really does return it to the start."""
+    a = spec[canon]["arch"]
+    # The ten bar builders implement BarBuilder, not Indicator: one candle can
+    # complete any number of bars, so they carry no warmup or ready state.
+    stateful = not a.startswith("bars_")
+    lines = [f'\tt.Run("{canon}", func(t *testing.T) {{']
+    lines.append(f"\t\tind, err := {ctor_call(canon)}")
+    lines.append('\t\tif err != nil {')
+    lines.append(f'\t\t\tt.Fatalf("new {canon}: %v", err)')
+    lines.append("\t\t}")
+    lines.append("\t\tdrive := func() [][]float64 {")
+    lines.append("\t\t\tgot := make([][]float64, len(rows))")
+    lines.append("\t\t\tfor i, r := range rows {")
+    lines.extend(row_lines(canon, "\t\t\t\t"))
+    lines.append("\t\t\t}")
+    lines.append("\t\t\treturn got")
+    lines.append("\t\t}")
+    if stateful:
+        lines.append("\t\tif ind.IsReady() {")
+        lines.append(f'\t\t\tt.Errorf("{canon}: ready before any input")')
+        lines.append("\t\t}")
+        lines.append("\t\tif w := ind.WarmupPeriod(); w < 1 {")
+        lines.append(f'\t\t\tt.Errorf("{canon}: warmup period %d, want >= 1", w)')
+        lines.append("\t\t}")
+    lines.append("\t\tfirst := drive()")
+    if stateful and emits(canon):
+        lines.append("\t\tif !ind.IsReady() {")
+        lines.append(f'\t\t\tt.Errorf("{canon}: not ready after the whole series, but the fixture has values")')
+        lines.append("\t\t}")
+    lines.append("\t\tind.Reset()")
+    if stateful:
+        lines.append("\t\tif ind.IsReady() {")
+        lines.append(f'\t\t\tt.Errorf("{canon}: still ready after Reset")')
+        lines.append("\t\t}")
+    lines.append(f'\t\tcompareRuns(t, "{canon}", first, drive())')
     lines.append("\t})")
     return "\n".join(lines)
 
@@ -608,6 +679,32 @@ func compareGolden(t *testing.T, name string, got [][]float64) {
 \t}
 }
 
+// compareRuns asserts that Reset really put the indicator back where it started:
+// the second pass over the same input has to reproduce the first. Equality, not
+// tolerance — the same code over the same input on the same machine has no
+// reason to differ in a single bit, and a tolerance here would hide exactly the
+// leftover state this is looking for.
+func compareRuns(t *testing.T, name string, first, second [][]float64) {
+\tt.Helper()
+\tif len(first) != len(second) {
+\t\tt.Fatalf("%s: %d rows before Reset, %d after", name, len(first), len(second))
+\t}
+\tfor i := range first {
+\t\tif len(first[i]) != len(second[i]) {
+\t\t\tt.Fatalf("%s row %d: %d values before Reset, %d after", name, i, len(first[i]), len(second[i]))
+\t\t}
+\t\tfor k := range first[i] {
+\t\t\tbefore, after := first[i][k], second[i][k]
+\t\t\tif math.IsNaN(before) && math.IsNaN(after) {
+\t\t\t\tcontinue
+\t\t\t}
+\t\t\tif before != after {
+\t\t\t\tt.Fatalf("%s row %d col %d: %v before Reset, %v after", name, i, k, before, after)
+\t\t\t}
+\t\t}
+\t}
+}
+
 func TestGoldenAll(t *testing.T) {
 \trows := goldenInput(t)
 '''
@@ -626,6 +723,15 @@ out.append("func TestGoldenAllBatch(t *testing.T) {")
 out.append("\trows := goldenInput(t)")
 for canon in canons:
     out.append(batch_block(canon))
+out.append("}")
+out.append("")
+out.append("// TestGoldenAllLifecycle covers what the value passes do not: that a fresh")
+out.append("// indicator is not ready, that a driven one is, and that Reset returns it to")
+out.append("// the start rather than to something that merely looks like it.")
+out.append("func TestGoldenAllLifecycle(t *testing.T) {")
+out.append("\trows := goldenInput(t)")
+for canon in canons:
+    out.append(lifecycle_block(canon))
 out.append("}")
 open(os.path.join(ROOT, "bindings", "go", "golden_all_test.go"), "w", encoding="utf-8").write("\n".join(out) + "\n")
 print("generated golden_all_test.go with", len(canons), "indicators")

@@ -150,6 +150,25 @@ public class GoldenAllTests
         return (bp, bs, ap, asz);
     }
 
+    // Equality, not tolerance: the same code over the same input in the same
+    // process has no reason to differ in a single bit, and a tolerance here
+    // would hide exactly the leftover state this is looking for.
+    private static void CompareRuns(string name, List<double[]> first, List<double[]> second)
+    {
+        Assert.True(first.Count == second.Count, $"{name}: {first.Count} rows before Reset, {second.Count} after");
+        for (var i = 0; i < first.Count; i++)
+        {
+            var before = first[i];
+            var after = second[i];
+            Assert.True(before.Length == after.Length, $"{name} row {i}: {before.Length} values before Reset, {after.Length} after");
+            for (var k = 0; k < before.Length; k++)
+            {
+                if (double.IsNaN(before[k]) && double.IsNaN(after[k])) { continue; }
+                Assert.True(before[k] == after[k], $"{name} row {i} col {k}: {before[k]} before Reset, {after[k]} after");
+            }
+        }
+    }
+
     private static void Compare(string name, List<double[]> got)
     {
         var exp = ReadFixture(name);
@@ -170,182 +189,417 @@ public class GoldenAllTests
         }
     }
 
-    [Fact]
-    public void Golden_AbandonedBaby()
+    private static List<double[]> Drive_AbandonedBaby(Wickra.AbandonedBaby ind)
     {
-        using var ind = new Wickra.AbandonedBaby();
-        Assert.Equal("AbandonedBaby", ind.Name());
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AbandonedBaby", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_AbandonedBaby()
+    {
+        using var ind = new Wickra.AbandonedBaby();
+        Assert.Equal("AbandonedBaby", ind.Name());
+        Compare("AbandonedBaby", Drive_AbandonedBaby(ind));
+    }
+    [Fact]
+    public void Lifecycle_AbandonedBaby()
+    {
+        using var ind = new Wickra.AbandonedBaby();
+        Assert.False(ind.IsReady(), "AbandonedBaby: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AbandonedBaby: warmup period must be >= 1");
+        var first = Drive_AbandonedBaby(ind);
+        Assert.True(ind.IsReady(), "AbandonedBaby: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AbandonedBaby: still ready after Reset");
+        CompareRuns("AbandonedBaby", first, Drive_AbandonedBaby(ind));
+    }
+    private static List<double[]> Drive_Abcd(Wickra.Abcd ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Abcd()
     {
         using var ind = new Wickra.Abcd();
         Assert.Equal("Abcd", ind.Name());
+        Compare("Abcd", Drive_Abcd(ind));
+    }
+    [Fact]
+    public void Lifecycle_Abcd()
+    {
+        using var ind = new Wickra.Abcd();
+        Assert.False(ind.IsReady(), "Abcd: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Abcd: warmup period must be >= 1");
+        var first = Drive_Abcd(ind);
+        Assert.True(ind.IsReady(), "Abcd: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Abcd: still ready after Reset");
+        CompareRuns("Abcd", first, Drive_Abcd(ind));
+    }
+    private static List<double[]> Drive_AbsoluteBreadthIndex(Wickra.AbsoluteBreadthIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("Abcd", got);
+        return got;
     }
     [Fact]
     public void Golden_AbsoluteBreadthIndex()
     {
         using var ind = new Wickra.AbsoluteBreadthIndex();
         Assert.Equal("AbsoluteBreadthIndex", ind.Name());
+        Compare("AbsoluteBreadthIndex", Drive_AbsoluteBreadthIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_AbsoluteBreadthIndex()
+    {
+        using var ind = new Wickra.AbsoluteBreadthIndex();
+        Assert.False(ind.IsReady(), "AbsoluteBreadthIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AbsoluteBreadthIndex: warmup period must be >= 1");
+        var first = Drive_AbsoluteBreadthIndex(ind);
+        Assert.True(ind.IsReady(), "AbsoluteBreadthIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AbsoluteBreadthIndex: still ready after Reset");
+        CompareRuns("AbsoluteBreadthIndex", first, Drive_AbsoluteBreadthIndex(ind));
+    }
+    private static List<double[]> Drive_AccelerationBands(Wickra.AccelerationBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("AbsoluteBreadthIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_AccelerationBands()
     {
         using var ind = new Wickra.AccelerationBands(14, 2.0);
         Assert.Equal("AccelerationBands", ind.Name());
+        Compare("AccelerationBands", Drive_AccelerationBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_AccelerationBands()
+    {
+        using var ind = new Wickra.AccelerationBands(14, 2.0);
+        Assert.False(ind.IsReady(), "AccelerationBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AccelerationBands: warmup period must be >= 1");
+        var first = Drive_AccelerationBands(ind);
+        Assert.True(ind.IsReady(), "AccelerationBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AccelerationBands: still ready after Reset");
+        CompareRuns("AccelerationBands", first, Drive_AccelerationBands(ind));
+    }
+    private static List<double[]> Drive_AcceleratorOscillator(Wickra.AcceleratorOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AccelerationBands", got);
+        return got;
     }
     [Fact]
     public void Golden_AcceleratorOscillator()
     {
         using var ind = new Wickra.AcceleratorOscillator(3, 7, 14);
         Assert.Equal("AcceleratorOscillator", ind.Name());
+        Compare("AcceleratorOscillator", Drive_AcceleratorOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_AcceleratorOscillator()
+    {
+        using var ind = new Wickra.AcceleratorOscillator(3, 7, 14);
+        Assert.False(ind.IsReady(), "AcceleratorOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AcceleratorOscillator: warmup period must be >= 1");
+        var first = Drive_AcceleratorOscillator(ind);
+        Assert.True(ind.IsReady(), "AcceleratorOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AcceleratorOscillator: still ready after Reset");
+        CompareRuns("AcceleratorOscillator", first, Drive_AcceleratorOscillator(ind));
+    }
+    private static List<double[]> Drive_AdOscillator(Wickra.AdOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AcceleratorOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_AdOscillator()
     {
         using var ind = new Wickra.AdOscillator();
         Assert.Equal("ADOSC", ind.Name());
+        Compare("AdOscillator", Drive_AdOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdOscillator()
+    {
+        using var ind = new Wickra.AdOscillator();
+        Assert.False(ind.IsReady(), "AdOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdOscillator: warmup period must be >= 1");
+        var first = Drive_AdOscillator(ind);
+        Assert.True(ind.IsReady(), "AdOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdOscillator: still ready after Reset");
+        CompareRuns("AdOscillator", first, Drive_AdOscillator(ind));
+    }
+    private static List<double[]> Drive_AdVolumeLine(Wickra.AdVolumeLine ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("AdOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_AdVolumeLine()
     {
         using var ind = new Wickra.AdVolumeLine();
         Assert.Equal("AdVolumeLine", ind.Name());
+        Compare("AdVolumeLine", Drive_AdVolumeLine(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdVolumeLine()
+    {
+        using var ind = new Wickra.AdVolumeLine();
+        Assert.False(ind.IsReady(), "AdVolumeLine: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdVolumeLine: warmup period must be >= 1");
+        var first = Drive_AdVolumeLine(ind);
+        Assert.True(ind.IsReady(), "AdVolumeLine: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdVolumeLine: still ready after Reset");
+        CompareRuns("AdVolumeLine", first, Drive_AdVolumeLine(ind));
+    }
+    private static List<double[]> Drive_AdaptiveCci(Wickra.AdaptiveCci ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AdVolumeLine", got);
+        return got;
     }
     [Fact]
     public void Golden_AdaptiveCci()
     {
         using var ind = new Wickra.AdaptiveCci(14);
         Assert.Equal("AdaptiveCci", ind.Name());
+        Compare("AdaptiveCci", Drive_AdaptiveCci(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdaptiveCci()
+    {
+        using var ind = new Wickra.AdaptiveCci(14);
+        Assert.False(ind.IsReady(), "AdaptiveCci: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdaptiveCci: warmup period must be >= 1");
+        var first = Drive_AdaptiveCci(ind);
+        Assert.True(ind.IsReady(), "AdaptiveCci: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdaptiveCci: still ready after Reset");
+        CompareRuns("AdaptiveCci", first, Drive_AdaptiveCci(ind));
+    }
+    private static List<double[]> Drive_AdaptiveCycle(Wickra.AdaptiveCycle ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("AdaptiveCci", got);
+        return got;
     }
     [Fact]
     public void Golden_AdaptiveCycle()
     {
         using var ind = new Wickra.AdaptiveCycle();
         Assert.Equal("AdaptiveCycle", ind.Name());
+        Compare("AdaptiveCycle", Drive_AdaptiveCycle(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdaptiveCycle()
+    {
+        using var ind = new Wickra.AdaptiveCycle();
+        Assert.False(ind.IsReady(), "AdaptiveCycle: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdaptiveCycle: warmup period must be >= 1");
+        var first = Drive_AdaptiveCycle(ind);
+        Assert.True(ind.IsReady(), "AdaptiveCycle: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdaptiveCycle: still ready after Reset");
+        CompareRuns("AdaptiveCycle", first, Drive_AdaptiveCycle(ind));
+    }
+    private static List<double[]> Drive_AdaptiveLaguerreFilter(Wickra.AdaptiveLaguerreFilter ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("AdaptiveCycle", got);
+        return got;
     }
     [Fact]
     public void Golden_AdaptiveLaguerreFilter()
     {
         using var ind = new Wickra.AdaptiveLaguerreFilter(20);
         Assert.Equal("AdaptiveLaguerre", ind.Name());
+        Compare("AdaptiveLaguerreFilter", Drive_AdaptiveLaguerreFilter(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdaptiveLaguerreFilter()
+    {
+        using var ind = new Wickra.AdaptiveLaguerreFilter(20);
+        Assert.False(ind.IsReady(), "AdaptiveLaguerreFilter: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdaptiveLaguerreFilter: warmup period must be >= 1");
+        var first = Drive_AdaptiveLaguerreFilter(ind);
+        Assert.True(ind.IsReady(), "AdaptiveLaguerreFilter: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdaptiveLaguerreFilter: still ready after Reset");
+        CompareRuns("AdaptiveLaguerreFilter", first, Drive_AdaptiveLaguerreFilter(ind));
+    }
+    private static List<double[]> Drive_AdaptiveRsi(Wickra.AdaptiveRsi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("AdaptiveLaguerreFilter", got);
+        return got;
     }
     [Fact]
     public void Golden_AdaptiveRsi()
     {
         using var ind = new Wickra.AdaptiveRsi(14);
         Assert.Equal("AdaptiveRsi", ind.Name());
+        Compare("AdaptiveRsi", Drive_AdaptiveRsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdaptiveRsi()
+    {
+        using var ind = new Wickra.AdaptiveRsi(14);
+        Assert.False(ind.IsReady(), "AdaptiveRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdaptiveRsi: warmup period must be >= 1");
+        var first = Drive_AdaptiveRsi(ind);
+        Assert.True(ind.IsReady(), "AdaptiveRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdaptiveRsi: still ready after Reset");
+        CompareRuns("AdaptiveRsi", first, Drive_AdaptiveRsi(ind));
+    }
+    private static List<double[]> Drive_Adl(Wickra.Adl ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AdaptiveRsi", got);
+        return got;
     }
     [Fact]
     public void Golden_Adl()
     {
         using var ind = new Wickra.Adl();
         Assert.Equal("ADL", ind.Name());
+        Compare("Adl", Drive_Adl(ind));
+    }
+    [Fact]
+    public void Lifecycle_Adl()
+    {
+        using var ind = new Wickra.Adl();
+        Assert.False(ind.IsReady(), "Adl: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Adl: warmup period must be >= 1");
+        var first = Drive_Adl(ind);
+        Assert.True(ind.IsReady(), "Adl: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Adl: still ready after Reset");
+        CompareRuns("Adl", first, Drive_Adl(ind));
+    }
+    private static List<double[]> Drive_AdvanceBlock(Wickra.AdvanceBlock ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Adl", got);
+        return got;
     }
     [Fact]
     public void Golden_AdvanceBlock()
     {
         using var ind = new Wickra.AdvanceBlock();
         Assert.Equal("AdvanceBlock", ind.Name());
+        Compare("AdvanceBlock", Drive_AdvanceBlock(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdvanceBlock()
+    {
+        using var ind = new Wickra.AdvanceBlock();
+        Assert.False(ind.IsReady(), "AdvanceBlock: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdvanceBlock: warmup period must be >= 1");
+        var first = Drive_AdvanceBlock(ind);
+        Assert.True(ind.IsReady(), "AdvanceBlock: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdvanceBlock: still ready after Reset");
+        CompareRuns("AdvanceBlock", first, Drive_AdvanceBlock(ind));
+    }
+    private static List<double[]> Drive_AdvanceDecline(Wickra.AdvanceDecline ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("AdvanceBlock", got);
+        return got;
     }
     [Fact]
     public void Golden_AdvanceDecline()
     {
         using var ind = new Wickra.AdvanceDecline();
         Assert.Equal("AdvanceDecline", ind.Name());
+        Compare("AdvanceDecline", Drive_AdvanceDecline(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdvanceDecline()
+    {
+        using var ind = new Wickra.AdvanceDecline();
+        Assert.False(ind.IsReady(), "AdvanceDecline: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdvanceDecline: warmup period must be >= 1");
+        var first = Drive_AdvanceDecline(ind);
+        Assert.True(ind.IsReady(), "AdvanceDecline: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdvanceDecline: still ready after Reset");
+        CompareRuns("AdvanceDecline", first, Drive_AdvanceDecline(ind));
+    }
+    private static List<double[]> Drive_AdvanceDeclineRatio(Wickra.AdvanceDeclineRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -353,522 +607,1131 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("AdvanceDecline", got);
+        return got;
     }
     [Fact]
     public void Golden_AdvanceDeclineRatio()
     {
         using var ind = new Wickra.AdvanceDeclineRatio();
         Assert.Equal("AdvanceDeclineRatio", ind.Name());
+        Compare("AdvanceDeclineRatio", Drive_AdvanceDeclineRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_AdvanceDeclineRatio()
+    {
+        using var ind = new Wickra.AdvanceDeclineRatio();
+        Assert.False(ind.IsReady(), "AdvanceDeclineRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AdvanceDeclineRatio: warmup period must be >= 1");
+        var first = Drive_AdvanceDeclineRatio(ind);
+        Assert.True(ind.IsReady(), "AdvanceDeclineRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AdvanceDeclineRatio: still ready after Reset");
+        CompareRuns("AdvanceDeclineRatio", first, Drive_AdvanceDeclineRatio(ind));
+    }
+    private static List<double[]> Drive_Adx(Wickra.Adx ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("AdvanceDeclineRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_Adx()
     {
         using var ind = new Wickra.Adx(14);
         Assert.Equal("ADX", ind.Name());
+        Compare("Adx", Drive_Adx(ind));
+    }
+    [Fact]
+    public void Lifecycle_Adx()
+    {
+        using var ind = new Wickra.Adx(14);
+        Assert.False(ind.IsReady(), "Adx: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Adx: warmup period must be >= 1");
+        var first = Drive_Adx(ind);
+        Assert.True(ind.IsReady(), "Adx: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Adx: still ready after Reset");
+        CompareRuns("Adx", first, Drive_Adx(ind));
+    }
+    private static List<double[]> Drive_Adxr(Wickra.Adxr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Adx", got);
+        return got;
     }
     [Fact]
     public void Golden_Adxr()
     {
         using var ind = new Wickra.Adxr(14);
         Assert.Equal("ADXR", ind.Name());
+        Compare("Adxr", Drive_Adxr(ind));
+    }
+    [Fact]
+    public void Lifecycle_Adxr()
+    {
+        using var ind = new Wickra.Adxr(14);
+        Assert.False(ind.IsReady(), "Adxr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Adxr: warmup period must be >= 1");
+        var first = Drive_Adxr(ind);
+        Assert.True(ind.IsReady(), "Adxr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Adxr: still ready after Reset");
+        CompareRuns("Adxr", first, Drive_Adxr(ind));
+    }
+    private static List<double[]> Drive_Alligator(Wickra.Alligator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("Adxr", got);
+        return got;
     }
     [Fact]
     public void Golden_Alligator()
     {
         using var ind = new Wickra.Alligator(3, 7, 14);
         Assert.Equal("Alligator", ind.Name());
+        Compare("Alligator", Drive_Alligator(ind));
+    }
+    [Fact]
+    public void Lifecycle_Alligator()
+    {
+        using var ind = new Wickra.Alligator(3, 7, 14);
+        Assert.False(ind.IsReady(), "Alligator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Alligator: warmup period must be >= 1");
+        var first = Drive_Alligator(ind);
+        Assert.True(ind.IsReady(), "Alligator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Alligator: still ready after Reset");
+        CompareRuns("Alligator", first, Drive_Alligator(ind));
+    }
+    private static List<double[]> Drive_Alma(Wickra.Alma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Alligator", got);
+        return got;
     }
     [Fact]
     public void Golden_Alma()
     {
         using var ind = new Wickra.Alma(9, 0.85, 6.0);
         Assert.Equal("ALMA", ind.Name());
+        Compare("Alma", Drive_Alma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Alma()
+    {
+        using var ind = new Wickra.Alma(9, 0.85, 6.0);
+        Assert.False(ind.IsReady(), "Alma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Alma: warmup period must be >= 1");
+        var first = Drive_Alma(ind);
+        Assert.True(ind.IsReady(), "Alma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Alma: still ready after Reset");
+        CompareRuns("Alma", first, Drive_Alma(ind));
+    }
+    private static List<double[]> Drive_Alpha(Wickra.Alpha ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("Alma", got);
+        return got;
     }
     [Fact]
     public void Golden_Alpha()
     {
         using var ind = new Wickra.Alpha(14, 2.0);
         Assert.Equal("Alpha", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
-        }
-        Compare("Alpha", got);
+        Compare("Alpha", Drive_Alpha(ind));
     }
     [Fact]
-    public void Golden_AmihudIlliquidity()
+    public void Lifecycle_Alpha()
     {
-        using var ind = new Wickra.AmihudIlliquidity(20);
-        Assert.Equal("AmihudIlliquidity", ind.Name());
+        using var ind = new Wickra.Alpha(14, 2.0);
+        Assert.False(ind.IsReady(), "Alpha: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Alpha: warmup period must be >= 1");
+        var first = Drive_Alpha(ind);
+        Assert.True(ind.IsReady(), "Alpha: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Alpha: still ready after Reset");
+        CompareRuns("Alpha", first, Drive_Alpha(ind));
+    }
+    private static List<double[]> Drive_AmihudIlliquidity(Wickra.AmihudIlliquidity ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("AmihudIlliquidity", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_AmihudIlliquidity()
+    {
+        using var ind = new Wickra.AmihudIlliquidity(20);
+        Assert.Equal("AmihudIlliquidity", ind.Name());
+        Compare("AmihudIlliquidity", Drive_AmihudIlliquidity(ind));
+    }
+    [Fact]
+    public void Lifecycle_AmihudIlliquidity()
+    {
+        using var ind = new Wickra.AmihudIlliquidity(20);
+        Assert.False(ind.IsReady(), "AmihudIlliquidity: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AmihudIlliquidity: warmup period must be >= 1");
+        var first = Drive_AmihudIlliquidity(ind);
+        Assert.True(ind.IsReady(), "AmihudIlliquidity: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AmihudIlliquidity: still ready after Reset");
+        CompareRuns("AmihudIlliquidity", first, Drive_AmihudIlliquidity(ind));
+    }
+    private static List<double[]> Drive_AnchoredRsi(Wickra.AnchoredRsi ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_AnchoredRsi()
     {
         using var ind = new Wickra.AnchoredRsi();
         Assert.Equal("AnchoredRSI", ind.Name());
+        Compare("AnchoredRsi", Drive_AnchoredRsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_AnchoredRsi()
+    {
+        using var ind = new Wickra.AnchoredRsi();
+        Assert.False(ind.IsReady(), "AnchoredRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AnchoredRsi: warmup period must be >= 1");
+        var first = Drive_AnchoredRsi(ind);
+        Assert.True(ind.IsReady(), "AnchoredRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AnchoredRsi: still ready after Reset");
+        CompareRuns("AnchoredRsi", first, Drive_AnchoredRsi(ind));
+    }
+    private static List<double[]> Drive_AnchoredVwap(Wickra.AnchoredVwap ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AnchoredRsi", got);
+        return got;
     }
     [Fact]
     public void Golden_AnchoredVwap()
     {
         using var ind = new Wickra.AnchoredVwap();
         Assert.Equal("AnchoredVWAP", ind.Name());
+        Compare("AnchoredVwap", Drive_AnchoredVwap(ind));
+    }
+    [Fact]
+    public void Lifecycle_AnchoredVwap()
+    {
+        using var ind = new Wickra.AnchoredVwap();
+        Assert.False(ind.IsReady(), "AnchoredVwap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AnchoredVwap: warmup period must be >= 1");
+        var first = Drive_AnchoredVwap(ind);
+        Assert.True(ind.IsReady(), "AnchoredVwap: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AnchoredVwap: still ready after Reset");
+        CompareRuns("AnchoredVwap", first, Drive_AnchoredVwap(ind));
+    }
+    private static List<double[]> Drive_AndrewsPitchfork(Wickra.AndrewsPitchfork ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("AnchoredVwap", got);
+        return got;
     }
     [Fact]
     public void Golden_AndrewsPitchfork()
     {
         using var ind = new Wickra.AndrewsPitchfork(14);
         Assert.Equal("AndrewsPitchfork", ind.Name());
+        Compare("AndrewsPitchfork", Drive_AndrewsPitchfork(ind));
+    }
+    [Fact]
+    public void Lifecycle_AndrewsPitchfork()
+    {
+        using var ind = new Wickra.AndrewsPitchfork(14);
+        Assert.False(ind.IsReady(), "AndrewsPitchfork: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AndrewsPitchfork: warmup period must be >= 1");
+        var first = Drive_AndrewsPitchfork(ind);
+        Assert.True(ind.IsReady(), "AndrewsPitchfork: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AndrewsPitchfork: still ready after Reset");
+        CompareRuns("AndrewsPitchfork", first, Drive_AndrewsPitchfork(ind));
+    }
+    private static List<double[]> Drive_Apo(Wickra.Apo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("AndrewsPitchfork", got);
+        return got;
     }
     [Fact]
     public void Golden_Apo()
     {
         using var ind = new Wickra.Apo(3, 7);
         Assert.Equal("APO", ind.Name());
+        Compare("Apo", Drive_Apo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Apo()
+    {
+        using var ind = new Wickra.Apo(3, 7);
+        Assert.False(ind.IsReady(), "Apo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Apo: warmup period must be >= 1");
+        var first = Drive_Apo(ind);
+        Assert.True(ind.IsReady(), "Apo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Apo: still ready after Reset");
+        CompareRuns("Apo", first, Drive_Apo(ind));
+    }
+    private static List<double[]> Drive_Aroon(Wickra.Aroon ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("Apo", got);
+        return got;
     }
     [Fact]
     public void Golden_Aroon()
     {
         using var ind = new Wickra.Aroon(14);
         Assert.Equal("Aroon", ind.Name());
+        Compare("Aroon", Drive_Aroon(ind));
+    }
+    [Fact]
+    public void Lifecycle_Aroon()
+    {
+        using var ind = new Wickra.Aroon(14);
+        Assert.False(ind.IsReady(), "Aroon: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Aroon: warmup period must be >= 1");
+        var first = Drive_Aroon(ind);
+        Assert.True(ind.IsReady(), "Aroon: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Aroon: still ready after Reset");
+        CompareRuns("Aroon", first, Drive_Aroon(ind));
+    }
+    private static List<double[]> Drive_AroonOscillator(Wickra.AroonOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Aroon", got);
+        return got;
     }
     [Fact]
     public void Golden_AroonOscillator()
     {
         using var ind = new Wickra.AroonOscillator(14);
         Assert.Equal("AroonOscillator", ind.Name());
+        Compare("AroonOscillator", Drive_AroonOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_AroonOscillator()
+    {
+        using var ind = new Wickra.AroonOscillator(14);
+        Assert.False(ind.IsReady(), "AroonOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AroonOscillator: warmup period must be >= 1");
+        var first = Drive_AroonOscillator(ind);
+        Assert.True(ind.IsReady(), "AroonOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AroonOscillator: still ready after Reset");
+        CompareRuns("AroonOscillator", first, Drive_AroonOscillator(ind));
+    }
+    private static List<double[]> Drive_Atr(Wickra.Atr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AroonOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_Atr()
     {
         using var ind = new Wickra.Atr(14);
         Assert.Equal("ATR", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Atr", got);
+        Compare("Atr", Drive_Atr(ind));
     }
     [Fact]
-    public void Golden_AtrBands()
+    public void Lifecycle_Atr()
     {
-        using var ind = new Wickra.AtrBands(14, 2.0);
-        Assert.Equal("AtrBands", ind.Name());
+        using var ind = new Wickra.Atr(14);
+        Assert.False(ind.IsReady(), "Atr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Atr: warmup period must be >= 1");
+        var first = Drive_Atr(ind);
+        Assert.True(ind.IsReady(), "Atr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Atr: still ready after Reset");
+        CompareRuns("Atr", first, Drive_Atr(ind));
+    }
+    private static List<double[]> Drive_AtrBands(Wickra.AtrBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("AtrBands", got);
+        return got;
     }
     [Fact]
-    public void Golden_AtrRatchet()
+    public void Golden_AtrBands()
     {
-        using var ind = new Wickra.AtrRatchet(14, 2.0, 0.5);
-        Assert.Equal("AtrRatchet", ind.Name());
+        using var ind = new Wickra.AtrBands(14, 2.0);
+        Assert.Equal("AtrBands", ind.Name());
+        Compare("AtrBands", Drive_AtrBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_AtrBands()
+    {
+        using var ind = new Wickra.AtrBands(14, 2.0);
+        Assert.False(ind.IsReady(), "AtrBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AtrBands: warmup period must be >= 1");
+        var first = Drive_AtrBands(ind);
+        Assert.True(ind.IsReady(), "AtrBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AtrBands: still ready after Reset");
+        CompareRuns("AtrBands", first, Drive_AtrBands(ind));
+    }
+    private static List<double[]> Drive_AtrRatchet(Wickra.AtrRatchet ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("AtrRatchet", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_AtrRatchet()
+    {
+        using var ind = new Wickra.AtrRatchet(14, 2.0, 0.5);
+        Assert.Equal("AtrRatchet", ind.Name());
+        Compare("AtrRatchet", Drive_AtrRatchet(ind));
+    }
+    [Fact]
+    public void Lifecycle_AtrRatchet()
+    {
+        using var ind = new Wickra.AtrRatchet(14, 2.0, 0.5);
+        Assert.False(ind.IsReady(), "AtrRatchet: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AtrRatchet: warmup period must be >= 1");
+        var first = Drive_AtrRatchet(ind);
+        Assert.True(ind.IsReady(), "AtrRatchet: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AtrRatchet: still ready after Reset");
+        CompareRuns("AtrRatchet", first, Drive_AtrRatchet(ind));
+    }
+    private static List<double[]> Drive_AtrTrailingStop(Wickra.AtrTrailingStop ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_AtrTrailingStop()
     {
         using var ind = new Wickra.AtrTrailingStop(14, 2.0);
         Assert.Equal("AtrTrailingStop", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("AtrTrailingStop", got);
+        Compare("AtrTrailingStop", Drive_AtrTrailingStop(ind));
     }
     [Fact]
-    public void Golden_AutoFib()
+    public void Lifecycle_AtrTrailingStop()
     {
-        using var ind = new Wickra.AutoFib();
-        Assert.Equal("AutoFib", ind.Name());
+        using var ind = new Wickra.AtrTrailingStop(14, 2.0);
+        Assert.False(ind.IsReady(), "AtrTrailingStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AtrTrailingStop: warmup period must be >= 1");
+        var first = Drive_AtrTrailingStop(ind);
+        Assert.True(ind.IsReady(), "AtrTrailingStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AtrTrailingStop: still ready after Reset");
+        CompareRuns("AtrTrailingStop", first, Drive_AtrTrailingStop(ind));
+    }
+    private static List<double[]> Drive_AutoFib(Wickra.AutoFib ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 7));
         }
-        Compare("AutoFib", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_AutoFib()
+    {
+        using var ind = new Wickra.AutoFib();
+        Assert.Equal("AutoFib", ind.Name());
+        Compare("AutoFib", Drive_AutoFib(ind));
+    }
+    [Fact]
+    public void Lifecycle_AutoFib()
+    {
+        using var ind = new Wickra.AutoFib();
+        Assert.False(ind.IsReady(), "AutoFib: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AutoFib: warmup period must be >= 1");
+        var first = Drive_AutoFib(ind);
+        Assert.True(ind.IsReady(), "AutoFib: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AutoFib: still ready after Reset");
+        CompareRuns("AutoFib", first, Drive_AutoFib(ind));
+    }
+    private static List<double[]> Drive_Autocorrelation(Wickra.Autocorrelation ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Autocorrelation()
     {
         using var ind = new Wickra.Autocorrelation(10, 1);
         Assert.Equal("Autocorrelation", ind.Name());
+        Compare("Autocorrelation", Drive_Autocorrelation(ind));
+    }
+    [Fact]
+    public void Lifecycle_Autocorrelation()
+    {
+        using var ind = new Wickra.Autocorrelation(10, 1);
+        Assert.False(ind.IsReady(), "Autocorrelation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Autocorrelation: warmup period must be >= 1");
+        var first = Drive_Autocorrelation(ind);
+        Assert.True(ind.IsReady(), "Autocorrelation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Autocorrelation: still ready after Reset");
+        CompareRuns("Autocorrelation", first, Drive_Autocorrelation(ind));
+    }
+    private static List<double[]> Drive_AutocorrelationPeriodogram(Wickra.AutocorrelationPeriodogram ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Autocorrelation", got);
+        return got;
     }
     [Fact]
     public void Golden_AutocorrelationPeriodogram()
     {
         using var ind = new Wickra.AutocorrelationPeriodogram(10, 48);
         Assert.Equal("AutocorrelationPeriodogram", ind.Name());
+        Compare("AutocorrelationPeriodogram", Drive_AutocorrelationPeriodogram(ind));
+    }
+    [Fact]
+    public void Lifecycle_AutocorrelationPeriodogram()
+    {
+        using var ind = new Wickra.AutocorrelationPeriodogram(10, 48);
+        Assert.False(ind.IsReady(), "AutocorrelationPeriodogram: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AutocorrelationPeriodogram: warmup period must be >= 1");
+        var first = Drive_AutocorrelationPeriodogram(ind);
+        Assert.True(ind.IsReady(), "AutocorrelationPeriodogram: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AutocorrelationPeriodogram: still ready after Reset");
+        CompareRuns("AutocorrelationPeriodogram", first, Drive_AutocorrelationPeriodogram(ind));
+    }
+    private static List<double[]> Drive_AverageDailyRange(Wickra.AverageDailyRange ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AutocorrelationPeriodogram", got);
+        return got;
     }
     [Fact]
     public void Golden_AverageDailyRange()
     {
         using var ind = new Wickra.AverageDailyRange(14, 0);
         Assert.Equal("AverageDailyRange", ind.Name());
+        Compare("AverageDailyRange", Drive_AverageDailyRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_AverageDailyRange()
+    {
+        using var ind = new Wickra.AverageDailyRange(14, 0);
+        Assert.False(ind.IsReady(), "AverageDailyRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AverageDailyRange: warmup period must be >= 1");
+        var first = Drive_AverageDailyRange(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AverageDailyRange: still ready after Reset");
+        CompareRuns("AverageDailyRange", first, Drive_AverageDailyRange(ind));
+    }
+    private static List<double[]> Drive_AverageDrawdown(Wickra.AverageDrawdown ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("AverageDailyRange", got);
+        return got;
     }
     [Fact]
     public void Golden_AverageDrawdown()
     {
         using var ind = new Wickra.AverageDrawdown(14);
         Assert.Equal("AverageDrawdown", ind.Name());
+        Compare("AverageDrawdown", Drive_AverageDrawdown(ind));
+    }
+    [Fact]
+    public void Lifecycle_AverageDrawdown()
+    {
+        using var ind = new Wickra.AverageDrawdown(14);
+        Assert.False(ind.IsReady(), "AverageDrawdown: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AverageDrawdown: warmup period must be >= 1");
+        var first = Drive_AverageDrawdown(ind);
+        Assert.True(ind.IsReady(), "AverageDrawdown: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AverageDrawdown: still ready after Reset");
+        CompareRuns("AverageDrawdown", first, Drive_AverageDrawdown(ind));
+    }
+    private static List<double[]> Drive_AvgPrice(Wickra.AvgPrice ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AverageDrawdown", got);
+        return got;
     }
     [Fact]
     public void Golden_AvgPrice()
     {
         using var ind = new Wickra.AvgPrice();
         Assert.Equal("AVGPRICE", ind.Name());
+        Compare("AvgPrice", Drive_AvgPrice(ind));
+    }
+    [Fact]
+    public void Lifecycle_AvgPrice()
+    {
+        using var ind = new Wickra.AvgPrice();
+        Assert.False(ind.IsReady(), "AvgPrice: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AvgPrice: warmup period must be >= 1");
+        var first = Drive_AvgPrice(ind);
+        Assert.True(ind.IsReady(), "AvgPrice: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AvgPrice: still ready after Reset");
+        CompareRuns("AvgPrice", first, Drive_AvgPrice(ind));
+    }
+    private static List<double[]> Drive_AwesomeOscillator(Wickra.AwesomeOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AvgPrice", got);
+        return got;
     }
     [Fact]
     public void Golden_AwesomeOscillator()
     {
         using var ind = new Wickra.AwesomeOscillator(3, 7);
         Assert.Equal("AwesomeOscillator", ind.Name());
+        Compare("AwesomeOscillator", Drive_AwesomeOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_AwesomeOscillator()
+    {
+        using var ind = new Wickra.AwesomeOscillator(3, 7);
+        Assert.False(ind.IsReady(), "AwesomeOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AwesomeOscillator: warmup period must be >= 1");
+        var first = Drive_AwesomeOscillator(ind);
+        Assert.True(ind.IsReady(), "AwesomeOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AwesomeOscillator: still ready after Reset");
+        CompareRuns("AwesomeOscillator", first, Drive_AwesomeOscillator(ind));
+    }
+    private static List<double[]> Drive_AwesomeOscillatorHistogram(Wickra.AwesomeOscillatorHistogram ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AwesomeOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_AwesomeOscillatorHistogram()
     {
         using var ind = new Wickra.AwesomeOscillatorHistogram(3, 7, 14);
         Assert.Equal("AwesomeOscillatorHistogram", ind.Name());
+        Compare("AwesomeOscillatorHistogram", Drive_AwesomeOscillatorHistogram(ind));
+    }
+    [Fact]
+    public void Lifecycle_AwesomeOscillatorHistogram()
+    {
+        using var ind = new Wickra.AwesomeOscillatorHistogram(3, 7, 14);
+        Assert.False(ind.IsReady(), "AwesomeOscillatorHistogram: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "AwesomeOscillatorHistogram: warmup period must be >= 1");
+        var first = Drive_AwesomeOscillatorHistogram(ind);
+        Assert.True(ind.IsReady(), "AwesomeOscillatorHistogram: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "AwesomeOscillatorHistogram: still ready after Reset");
+        CompareRuns("AwesomeOscillatorHistogram", first, Drive_AwesomeOscillatorHistogram(ind));
+    }
+    private static List<double[]> Drive_BalanceOfPower(Wickra.BalanceOfPower ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("AwesomeOscillatorHistogram", got);
+        return got;
     }
     [Fact]
     public void Golden_BalanceOfPower()
     {
         using var ind = new Wickra.BalanceOfPower();
         Assert.Equal("BalanceOfPower", ind.Name());
+        Compare("BalanceOfPower", Drive_BalanceOfPower(ind));
+    }
+    [Fact]
+    public void Lifecycle_BalanceOfPower()
+    {
+        using var ind = new Wickra.BalanceOfPower();
+        Assert.False(ind.IsReady(), "BalanceOfPower: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BalanceOfPower: warmup period must be >= 1");
+        var first = Drive_BalanceOfPower(ind);
+        Assert.True(ind.IsReady(), "BalanceOfPower: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BalanceOfPower: still ready after Reset");
+        CompareRuns("BalanceOfPower", first, Drive_BalanceOfPower(ind));
+    }
+    private static List<double[]> Drive_BandpassFilter(Wickra.BandpassFilter ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("BalanceOfPower", got);
+        return got;
     }
     [Fact]
     public void Golden_BandpassFilter()
     {
         using var ind = new Wickra.BandpassFilter(20, 0.3);
         Assert.Equal("BandpassFilter", ind.Name());
+        Compare("BandpassFilter", Drive_BandpassFilter(ind));
+    }
+    [Fact]
+    public void Lifecycle_BandpassFilter()
+    {
+        using var ind = new Wickra.BandpassFilter(20, 0.3);
+        Assert.False(ind.IsReady(), "BandpassFilter: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BandpassFilter: warmup period must be >= 1");
+        var first = Drive_BandpassFilter(ind);
+        Assert.True(ind.IsReady(), "BandpassFilter: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BandpassFilter: still ready after Reset");
+        CompareRuns("BandpassFilter", first, Drive_BandpassFilter(ind));
+    }
+    private static List<double[]> Drive_Bat(Wickra.Bat ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("BandpassFilter", got);
+        return got;
     }
     [Fact]
     public void Golden_Bat()
     {
         using var ind = new Wickra.Bat();
         Assert.Equal("Bat", ind.Name());
+        Compare("Bat", Drive_Bat(ind));
+    }
+    [Fact]
+    public void Lifecycle_Bat()
+    {
+        using var ind = new Wickra.Bat();
+        Assert.False(ind.IsReady(), "Bat: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Bat: warmup period must be >= 1");
+        var first = Drive_Bat(ind);
+        Assert.True(ind.IsReady(), "Bat: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Bat: still ready after Reset");
+        CompareRuns("Bat", first, Drive_Bat(ind));
+    }
+    private static List<double[]> Drive_BeltHold(Wickra.BeltHold ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Bat", got);
+        return got;
     }
     [Fact]
     public void Golden_BeltHold()
     {
         using var ind = new Wickra.BeltHold();
         Assert.Equal("BeltHold", ind.Name());
+        Compare("BeltHold", Drive_BeltHold(ind));
+    }
+    [Fact]
+    public void Lifecycle_BeltHold()
+    {
+        using var ind = new Wickra.BeltHold();
+        Assert.False(ind.IsReady(), "BeltHold: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BeltHold: warmup period must be >= 1");
+        var first = Drive_BeltHold(ind);
+        Assert.True(ind.IsReady(), "BeltHold: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BeltHold: still ready after Reset");
+        CompareRuns("BeltHold", first, Drive_BeltHold(ind));
+    }
+    private static List<double[]> Drive_Beta(Wickra.Beta ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("BeltHold", got);
+        return got;
     }
     [Fact]
     public void Golden_Beta()
     {
         using var ind = new Wickra.Beta(14);
         Assert.Equal("Beta", ind.Name());
+        Compare("Beta", Drive_Beta(ind));
+    }
+    [Fact]
+    public void Lifecycle_Beta()
+    {
+        using var ind = new Wickra.Beta(14);
+        Assert.False(ind.IsReady(), "Beta: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Beta: warmup period must be >= 1");
+        var first = Drive_Beta(ind);
+        Assert.True(ind.IsReady(), "Beta: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Beta: still ready after Reset");
+        CompareRuns("Beta", first, Drive_Beta(ind));
+    }
+    private static List<double[]> Drive_BetaNeutralSpread(Wickra.BetaNeutralSpread ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("Beta", got);
+        return got;
     }
     [Fact]
     public void Golden_BetaNeutralSpread()
     {
         using var ind = new Wickra.BetaNeutralSpread(14);
         Assert.Equal("BetaNeutralSpread", ind.Name());
+        Compare("BetaNeutralSpread", Drive_BetaNeutralSpread(ind));
+    }
+    [Fact]
+    public void Lifecycle_BetaNeutralSpread()
+    {
+        using var ind = new Wickra.BetaNeutralSpread(14);
+        Assert.False(ind.IsReady(), "BetaNeutralSpread: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BetaNeutralSpread: warmup period must be >= 1");
+        var first = Drive_BetaNeutralSpread(ind);
+        Assert.True(ind.IsReady(), "BetaNeutralSpread: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BetaNeutralSpread: still ready after Reset");
+        CompareRuns("BetaNeutralSpread", first, Drive_BetaNeutralSpread(ind));
+    }
+    private static List<double[]> Drive_BetterVolume(Wickra.BetterVolume ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("BetaNeutralSpread", got);
+        return got;
     }
     [Fact]
     public void Golden_BetterVolume()
     {
         using var ind = new Wickra.BetterVolume(14);
         Assert.Equal("BetterVolume", ind.Name());
+        Compare("BetterVolume", Drive_BetterVolume(ind));
+    }
+    [Fact]
+    public void Lifecycle_BetterVolume()
+    {
+        using var ind = new Wickra.BetterVolume(14);
+        Assert.False(ind.IsReady(), "BetterVolume: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BetterVolume: warmup period must be >= 1");
+        var first = Drive_BetterVolume(ind);
+        Assert.True(ind.IsReady(), "BetterVolume: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BetterVolume: still ready after Reset");
+        CompareRuns("BetterVolume", first, Drive_BetterVolume(ind));
+    }
+    private static List<double[]> Drive_BipowerVariation(Wickra.BipowerVariation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("BetterVolume", got);
+        return got;
     }
     [Fact]
     public void Golden_BipowerVariation()
     {
         using var ind = new Wickra.BipowerVariation(14);
         Assert.Equal("BipowerVariation", ind.Name());
+        Compare("BipowerVariation", Drive_BipowerVariation(ind));
+    }
+    [Fact]
+    public void Lifecycle_BipowerVariation()
+    {
+        using var ind = new Wickra.BipowerVariation(14);
+        Assert.False(ind.IsReady(), "BipowerVariation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BipowerVariation: warmup period must be >= 1");
+        var first = Drive_BipowerVariation(ind);
+        Assert.True(ind.IsReady(), "BipowerVariation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BipowerVariation: still ready after Reset");
+        CompareRuns("BipowerVariation", first, Drive_BipowerVariation(ind));
+    }
+    private static List<double[]> Drive_BodySizePct(Wickra.BodySizePct ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("BipowerVariation", got);
+        return got;
     }
     [Fact]
     public void Golden_BodySizePct()
     {
         using var ind = new Wickra.BodySizePct();
         Assert.Equal("BodySizePct", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("BodySizePct", got);
+        Compare("BodySizePct", Drive_BodySizePct(ind));
     }
     [Fact]
-    public void Golden_BollingerBands()
+    public void Lifecycle_BodySizePct()
     {
-        using var ind = new Wickra.BollingerBands(20, 2.0);
-        Assert.Equal("BollingerBands", ind.Name());
+        using var ind = new Wickra.BodySizePct();
+        Assert.False(ind.IsReady(), "BodySizePct: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BodySizePct: warmup period must be >= 1");
+        var first = Drive_BodySizePct(ind);
+        Assert.True(ind.IsReady(), "BodySizePct: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BodySizePct: still ready after Reset");
+        CompareRuns("BodySizePct", first, Drive_BodySizePct(ind));
+    }
+    private static List<double[]> Drive_BollingerBands(Wickra.BollingerBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 4));
         }
-        Compare("BollingerBands", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_BollingerBands()
+    {
+        using var ind = new Wickra.BollingerBands(20, 2.0);
+        Assert.Equal("BollingerBands", ind.Name());
+        Compare("BollingerBands", Drive_BollingerBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_BollingerBands()
+    {
+        using var ind = new Wickra.BollingerBands(20, 2.0);
+        Assert.False(ind.IsReady(), "BollingerBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BollingerBands: warmup period must be >= 1");
+        var first = Drive_BollingerBands(ind);
+        Assert.True(ind.IsReady(), "BollingerBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BollingerBands: still ready after Reset");
+        CompareRuns("BollingerBands", first, Drive_BollingerBands(ind));
+    }
+    private static List<double[]> Drive_BollingerBandwidth(Wickra.BollingerBandwidth ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_BollingerBandwidth()
     {
         using var ind = new Wickra.BollingerBandwidth(14, 2.0);
         Assert.Equal("BollingerBandwidth", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("BollingerBandwidth", got);
+        Compare("BollingerBandwidth", Drive_BollingerBandwidth(ind));
     }
     [Fact]
-    public void Golden_BomarBands()
+    public void Lifecycle_BollingerBandwidth()
     {
-        using var ind = new Wickra.BomarBands(4, 0.85);
-        Assert.Equal("BomarBands", ind.Name());
+        using var ind = new Wickra.BollingerBandwidth(14, 2.0);
+        Assert.False(ind.IsReady(), "BollingerBandwidth: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BollingerBandwidth: warmup period must be >= 1");
+        var first = Drive_BollingerBandwidth(ind);
+        Assert.True(ind.IsReady(), "BollingerBandwidth: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BollingerBandwidth: still ready after Reset");
+        CompareRuns("BollingerBandwidth", first, Drive_BollingerBandwidth(ind));
+    }
+    private static List<double[]> Drive_BomarBands(Wickra.BomarBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("BomarBands", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_BomarBands()
+    {
+        using var ind = new Wickra.BomarBands(4, 0.85);
+        Assert.Equal("BomarBands", ind.Name());
+        Compare("BomarBands", Drive_BomarBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_BomarBands()
+    {
+        using var ind = new Wickra.BomarBands(4, 0.85);
+        Assert.False(ind.IsReady(), "BomarBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BomarBands: warmup period must be >= 1");
+        var first = Drive_BomarBands(ind);
+        Assert.True(ind.IsReady(), "BomarBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BomarBands: still ready after Reset");
+        CompareRuns("BomarBands", first, Drive_BomarBands(ind));
+    }
+    private static List<double[]> Drive_BreadthThrust(Wickra.BreadthThrust ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_BreadthThrust()
     {
         using var ind = new Wickra.BreadthThrust(10);
         Assert.Equal("BreadthThrust", ind.Name());
+        Compare("BreadthThrust", Drive_BreadthThrust(ind));
+    }
+    [Fact]
+    public void Lifecycle_BreadthThrust()
+    {
+        using var ind = new Wickra.BreadthThrust(10);
+        Assert.False(ind.IsReady(), "BreadthThrust: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BreadthThrust: warmup period must be >= 1");
+        var first = Drive_BreadthThrust(ind);
+        Assert.True(ind.IsReady(), "BreadthThrust: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BreadthThrust: still ready after Reset");
+        CompareRuns("BreadthThrust", first, Drive_BreadthThrust(ind));
+    }
+    private static List<double[]> Drive_Breakaway(Wickra.Breakaway ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("BreadthThrust", got);
+        return got;
     }
     [Fact]
     public void Golden_Breakaway()
     {
         using var ind = new Wickra.Breakaway();
         Assert.Equal("Breakaway", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Breakaway", got);
+        Compare("Breakaway", Drive_Breakaway(ind));
     }
     [Fact]
-    public void Golden_BullishPercentIndex()
+    public void Lifecycle_Breakaway()
     {
-        using var ind = new Wickra.BullishPercentIndex();
-        Assert.Equal("BullishPercentIndex", ind.Name());
+        using var ind = new Wickra.Breakaway();
+        Assert.False(ind.IsReady(), "Breakaway: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Breakaway: warmup period must be >= 1");
+        var first = Drive_Breakaway(ind);
+        Assert.True(ind.IsReady(), "Breakaway: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Breakaway: still ready after Reset");
+        CompareRuns("Breakaway", first, Drive_Breakaway(ind));
+    }
+    private static List<double[]> Drive_BullishPercentIndex(Wickra.BullishPercentIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -876,39 +1739,87 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("BullishPercentIndex", got);
+        return got;
     }
     [Fact]
-    public void Golden_BurkeRatio()
+    public void Golden_BullishPercentIndex()
     {
-        using var ind = new Wickra.BurkeRatio(14);
-        Assert.Equal("BurkeRatio", ind.Name());
+        using var ind = new Wickra.BullishPercentIndex();
+        Assert.Equal("BullishPercentIndex", ind.Name());
+        Compare("BullishPercentIndex", Drive_BullishPercentIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_BullishPercentIndex()
+    {
+        using var ind = new Wickra.BullishPercentIndex();
+        Assert.False(ind.IsReady(), "BullishPercentIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BullishPercentIndex: warmup period must be >= 1");
+        var first = Drive_BullishPercentIndex(ind);
+        Assert.True(ind.IsReady(), "BullishPercentIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BullishPercentIndex: still ready after Reset");
+        CompareRuns("BullishPercentIndex", first, Drive_BullishPercentIndex(ind));
+    }
+    private static List<double[]> Drive_BurkeRatio(Wickra.BurkeRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("BurkeRatio", got);
+        return got;
     }
     [Fact]
-    public void Golden_Butterfly()
+    public void Golden_BurkeRatio()
     {
-        using var ind = new Wickra.Butterfly();
-        Assert.Equal("Butterfly", ind.Name());
+        using var ind = new Wickra.BurkeRatio(14);
+        Assert.Equal("BurkeRatio", ind.Name());
+        Compare("BurkeRatio", Drive_BurkeRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_BurkeRatio()
+    {
+        using var ind = new Wickra.BurkeRatio(14);
+        Assert.False(ind.IsReady(), "BurkeRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "BurkeRatio: warmup period must be >= 1");
+        var first = Drive_BurkeRatio(ind);
+        Assert.True(ind.IsReady(), "BurkeRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "BurkeRatio: still ready after Reset");
+        CompareRuns("BurkeRatio", first, Drive_BurkeRatio(ind));
+    }
+    private static List<double[]> Drive_Butterfly(Wickra.Butterfly ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Butterfly", got);
+        return got;
     }
     [Fact]
-    public void Golden_CalendarSpread()
+    public void Golden_Butterfly()
     {
-        using var ind = new Wickra.CalendarSpread();
-        Assert.Equal("CalendarSpread", ind.Name());
+        using var ind = new Wickra.Butterfly();
+        Assert.Equal("Butterfly", ind.Name());
+        Compare("Butterfly", Drive_Butterfly(ind));
+    }
+    [Fact]
+    public void Lifecycle_Butterfly()
+    {
+        using var ind = new Wickra.Butterfly();
+        Assert.False(ind.IsReady(), "Butterfly: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Butterfly: warmup period must be >= 1");
+        var first = Drive_Butterfly(ind);
+        Assert.True(ind.IsReady(), "Butterfly: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Butterfly: still ready after Reset");
+        CompareRuns("Butterfly", first, Drive_Butterfly(ind));
+    }
+    private static List<double[]> Drive_CalendarSpread(Wickra.CalendarSpread ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -916,390 +1827,870 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("CalendarSpread", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_CalendarSpread()
+    {
+        using var ind = new Wickra.CalendarSpread();
+        Assert.Equal("CalendarSpread", ind.Name());
+        Compare("CalendarSpread", Drive_CalendarSpread(ind));
+    }
+    [Fact]
+    public void Lifecycle_CalendarSpread()
+    {
+        using var ind = new Wickra.CalendarSpread();
+        Assert.False(ind.IsReady(), "CalendarSpread: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CalendarSpread: warmup period must be >= 1");
+        var first = Drive_CalendarSpread(ind);
+        Assert.True(ind.IsReady(), "CalendarSpread: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CalendarSpread: still ready after Reset");
+        CompareRuns("CalendarSpread", first, Drive_CalendarSpread(ind));
+    }
+    private static List<double[]> Drive_CalmarRatio(Wickra.CalmarRatio ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_CalmarRatio()
     {
         using var ind = new Wickra.CalmarRatio(14);
         Assert.Equal("CalmarRatio", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("CalmarRatio", got);
+        Compare("CalmarRatio", Drive_CalmarRatio(ind));
     }
     [Fact]
-    public void Golden_Camarilla()
+    public void Lifecycle_CalmarRatio()
     {
-        using var ind = new Wickra.Camarilla();
-        Assert.Equal("Camarilla", ind.Name());
+        using var ind = new Wickra.CalmarRatio(14);
+        Assert.False(ind.IsReady(), "CalmarRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CalmarRatio: warmup period must be >= 1");
+        var first = Drive_CalmarRatio(ind);
+        Assert.True(ind.IsReady(), "CalmarRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CalmarRatio: still ready after Reset");
+        CompareRuns("CalmarRatio", first, Drive_CalmarRatio(ind));
+    }
+    private static List<double[]> Drive_Camarilla(Wickra.Camarilla ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 9));
         }
-        Compare("Camarilla", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Camarilla()
+    {
+        using var ind = new Wickra.Camarilla();
+        Assert.Equal("Camarilla", ind.Name());
+        Compare("Camarilla", Drive_Camarilla(ind));
+    }
+    [Fact]
+    public void Lifecycle_Camarilla()
+    {
+        using var ind = new Wickra.Camarilla();
+        Assert.False(ind.IsReady(), "Camarilla: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Camarilla: warmup period must be >= 1");
+        var first = Drive_Camarilla(ind);
+        Assert.True(ind.IsReady(), "Camarilla: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Camarilla: still ready after Reset");
+        CompareRuns("Camarilla", first, Drive_Camarilla(ind));
+    }
+    private static List<double[]> Drive_CandleVolume(Wickra.CandleVolume ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+        }
+        return got;
     }
     [Fact]
     public void Golden_CandleVolume()
     {
         using var ind = new Wickra.CandleVolume(14);
         Assert.Equal("CandleVolume", ind.Name());
+        Compare("CandleVolume", Drive_CandleVolume(ind));
+    }
+    [Fact]
+    public void Lifecycle_CandleVolume()
+    {
+        using var ind = new Wickra.CandleVolume(14);
+        Assert.False(ind.IsReady(), "CandleVolume: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CandleVolume: warmup period must be >= 1");
+        var first = Drive_CandleVolume(ind);
+        Assert.True(ind.IsReady(), "CandleVolume: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CandleVolume: still ready after Reset");
+        CompareRuns("CandleVolume", first, Drive_CandleVolume(ind));
+    }
+    private static List<double[]> Drive_Cci(Wickra.Cci ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("CandleVolume", got);
+        return got;
     }
     [Fact]
     public void Golden_Cci()
     {
         using var ind = new Wickra.Cci(14);
         Assert.Equal("CCI", ind.Name());
+        Compare("Cci", Drive_Cci(ind));
+    }
+    [Fact]
+    public void Lifecycle_Cci()
+    {
+        using var ind = new Wickra.Cci(14);
+        Assert.False(ind.IsReady(), "Cci: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Cci: warmup period must be >= 1");
+        var first = Drive_Cci(ind);
+        Assert.True(ind.IsReady(), "Cci: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Cci: still ready after Reset");
+        CompareRuns("Cci", first, Drive_Cci(ind));
+    }
+    private static List<double[]> Drive_CenterOfGravity(Wickra.CenterOfGravity ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Cci", got);
+        return got;
     }
     [Fact]
     public void Golden_CenterOfGravity()
     {
         using var ind = new Wickra.CenterOfGravity(14);
         Assert.Equal("CenterOfGravity", ind.Name());
+        Compare("CenterOfGravity", Drive_CenterOfGravity(ind));
+    }
+    [Fact]
+    public void Lifecycle_CenterOfGravity()
+    {
+        using var ind = new Wickra.CenterOfGravity(14);
+        Assert.False(ind.IsReady(), "CenterOfGravity: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CenterOfGravity: warmup period must be >= 1");
+        var first = Drive_CenterOfGravity(ind);
+        Assert.True(ind.IsReady(), "CenterOfGravity: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CenterOfGravity: still ready after Reset");
+        CompareRuns("CenterOfGravity", first, Drive_CenterOfGravity(ind));
+    }
+    private static List<double[]> Drive_CentralPivotRange(Wickra.CentralPivotRange ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("CenterOfGravity", got);
+        return got;
     }
     [Fact]
     public void Golden_CentralPivotRange()
     {
         using var ind = new Wickra.CentralPivotRange();
         Assert.Equal("CentralPivotRange", ind.Name());
+        Compare("CentralPivotRange", Drive_CentralPivotRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_CentralPivotRange()
+    {
+        using var ind = new Wickra.CentralPivotRange();
+        Assert.False(ind.IsReady(), "CentralPivotRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CentralPivotRange: warmup period must be >= 1");
+        var first = Drive_CentralPivotRange(ind);
+        Assert.True(ind.IsReady(), "CentralPivotRange: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CentralPivotRange: still ready after Reset");
+        CompareRuns("CentralPivotRange", first, Drive_CentralPivotRange(ind));
+    }
+    private static List<double[]> Drive_Cfo(Wickra.Cfo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("CentralPivotRange", got);
+        return got;
     }
     [Fact]
     public void Golden_Cfo()
     {
         using var ind = new Wickra.Cfo(14);
         Assert.Equal("CFO", ind.Name());
+        Compare("Cfo", Drive_Cfo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Cfo()
+    {
+        using var ind = new Wickra.Cfo(14);
+        Assert.False(ind.IsReady(), "Cfo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Cfo: warmup period must be >= 1");
+        var first = Drive_Cfo(ind);
+        Assert.True(ind.IsReady(), "Cfo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Cfo: still ready after Reset");
+        CompareRuns("Cfo", first, Drive_Cfo(ind));
+    }
+    private static List<double[]> Drive_ChaikinMoneyFlow(Wickra.ChaikinMoneyFlow ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Cfo", got);
+        return got;
     }
     [Fact]
     public void Golden_ChaikinMoneyFlow()
     {
         using var ind = new Wickra.ChaikinMoneyFlow(20);
         Assert.Equal("CMF", ind.Name());
+        Compare("ChaikinMoneyFlow", Drive_ChaikinMoneyFlow(ind));
+    }
+    [Fact]
+    public void Lifecycle_ChaikinMoneyFlow()
+    {
+        using var ind = new Wickra.ChaikinMoneyFlow(20);
+        Assert.False(ind.IsReady(), "ChaikinMoneyFlow: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ChaikinMoneyFlow: warmup period must be >= 1");
+        var first = Drive_ChaikinMoneyFlow(ind);
+        Assert.True(ind.IsReady(), "ChaikinMoneyFlow: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ChaikinMoneyFlow: still ready after Reset");
+        CompareRuns("ChaikinMoneyFlow", first, Drive_ChaikinMoneyFlow(ind));
+    }
+    private static List<double[]> Drive_ChaikinOscillator(Wickra.ChaikinOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ChaikinMoneyFlow", got);
+        return got;
     }
     [Fact]
     public void Golden_ChaikinOscillator()
     {
         using var ind = new Wickra.ChaikinOscillator(3, 7);
         Assert.Equal("ChaikinOscillator", ind.Name());
+        Compare("ChaikinOscillator", Drive_ChaikinOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_ChaikinOscillator()
+    {
+        using var ind = new Wickra.ChaikinOscillator(3, 7);
+        Assert.False(ind.IsReady(), "ChaikinOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ChaikinOscillator: warmup period must be >= 1");
+        var first = Drive_ChaikinOscillator(ind);
+        Assert.True(ind.IsReady(), "ChaikinOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ChaikinOscillator: still ready after Reset");
+        CompareRuns("ChaikinOscillator", first, Drive_ChaikinOscillator(ind));
+    }
+    private static List<double[]> Drive_ChaikinVolatility(Wickra.ChaikinVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ChaikinOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_ChaikinVolatility()
     {
         using var ind = new Wickra.ChaikinVolatility(3, 7);
         Assert.Equal("ChaikinVolatility", ind.Name());
+        Compare("ChaikinVolatility", Drive_ChaikinVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_ChaikinVolatility()
+    {
+        using var ind = new Wickra.ChaikinVolatility(3, 7);
+        Assert.False(ind.IsReady(), "ChaikinVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ChaikinVolatility: warmup period must be >= 1");
+        var first = Drive_ChaikinVolatility(ind);
+        Assert.True(ind.IsReady(), "ChaikinVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ChaikinVolatility: still ready after Reset");
+        CompareRuns("ChaikinVolatility", first, Drive_ChaikinVolatility(ind));
+    }
+    private static List<double[]> Drive_ChandeKrollStop(Wickra.ChandeKrollStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("ChaikinVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_ChandeKrollStop()
     {
         using var ind = new Wickra.ChandeKrollStop(3, 2.0, 7);
         Assert.Equal("ChandeKrollStop", ind.Name());
+        Compare("ChandeKrollStop", Drive_ChandeKrollStop(ind));
+    }
+    [Fact]
+    public void Lifecycle_ChandeKrollStop()
+    {
+        using var ind = new Wickra.ChandeKrollStop(3, 2.0, 7);
+        Assert.False(ind.IsReady(), "ChandeKrollStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ChandeKrollStop: warmup period must be >= 1");
+        var first = Drive_ChandeKrollStop(ind);
+        Assert.True(ind.IsReady(), "ChandeKrollStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ChandeKrollStop: still ready after Reset");
+        CompareRuns("ChandeKrollStop", first, Drive_ChandeKrollStop(ind));
+    }
+    private static List<double[]> Drive_ChandelierExit(Wickra.ChandelierExit ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("ChandeKrollStop", got);
+        return got;
     }
     [Fact]
     public void Golden_ChandelierExit()
     {
         using var ind = new Wickra.ChandelierExit(14, 2.0);
         Assert.Equal("ChandelierExit", ind.Name());
+        Compare("ChandelierExit", Drive_ChandelierExit(ind));
+    }
+    [Fact]
+    public void Lifecycle_ChandelierExit()
+    {
+        using var ind = new Wickra.ChandelierExit(14, 2.0);
+        Assert.False(ind.IsReady(), "ChandelierExit: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ChandelierExit: warmup period must be >= 1");
+        var first = Drive_ChandelierExit(ind);
+        Assert.True(ind.IsReady(), "ChandelierExit: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ChandelierExit: still ready after Reset");
+        CompareRuns("ChandelierExit", first, Drive_ChandelierExit(ind));
+    }
+    private static List<double[]> Drive_ChoppinessIndex(Wickra.ChoppinessIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ChandelierExit", got);
+        return got;
     }
     [Fact]
     public void Golden_ChoppinessIndex()
     {
         using var ind = new Wickra.ChoppinessIndex(14);
         Assert.Equal("ChoppinessIndex", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("ChoppinessIndex", got);
+        Compare("ChoppinessIndex", Drive_ChoppinessIndex(ind));
     }
     [Fact]
-    public void Golden_ClassicPivots()
+    public void Lifecycle_ChoppinessIndex()
     {
-        using var ind = new Wickra.ClassicPivots();
-        Assert.Equal("ClassicPivots", ind.Name());
+        using var ind = new Wickra.ChoppinessIndex(14);
+        Assert.False(ind.IsReady(), "ChoppinessIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ChoppinessIndex: warmup period must be >= 1");
+        var first = Drive_ChoppinessIndex(ind);
+        Assert.True(ind.IsReady(), "ChoppinessIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ChoppinessIndex: still ready after Reset");
+        CompareRuns("ChoppinessIndex", first, Drive_ChoppinessIndex(ind));
+    }
+    private static List<double[]> Drive_ClassicPivots(Wickra.ClassicPivots ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 7));
         }
-        Compare("ClassicPivots", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_ClassicPivots()
+    {
+        using var ind = new Wickra.ClassicPivots();
+        Assert.Equal("ClassicPivots", ind.Name());
+        Compare("ClassicPivots", Drive_ClassicPivots(ind));
+    }
+    [Fact]
+    public void Lifecycle_ClassicPivots()
+    {
+        using var ind = new Wickra.ClassicPivots();
+        Assert.False(ind.IsReady(), "ClassicPivots: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ClassicPivots: warmup period must be >= 1");
+        var first = Drive_ClassicPivots(ind);
+        Assert.True(ind.IsReady(), "ClassicPivots: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ClassicPivots: still ready after Reset");
+        CompareRuns("ClassicPivots", first, Drive_ClassicPivots(ind));
+    }
+    private static List<double[]> Drive_CloseVsOpen(Wickra.CloseVsOpen ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_CloseVsOpen()
     {
         using var ind = new Wickra.CloseVsOpen();
         Assert.Equal("CloseVsOpen", ind.Name());
+        Compare("CloseVsOpen", Drive_CloseVsOpen(ind));
+    }
+    [Fact]
+    public void Lifecycle_CloseVsOpen()
+    {
+        using var ind = new Wickra.CloseVsOpen();
+        Assert.False(ind.IsReady(), "CloseVsOpen: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CloseVsOpen: warmup period must be >= 1");
+        var first = Drive_CloseVsOpen(ind);
+        Assert.True(ind.IsReady(), "CloseVsOpen: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CloseVsOpen: still ready after Reset");
+        CompareRuns("CloseVsOpen", first, Drive_CloseVsOpen(ind));
+    }
+    private static List<double[]> Drive_ClosingMarubozu(Wickra.ClosingMarubozu ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("CloseVsOpen", got);
+        return got;
     }
     [Fact]
     public void Golden_ClosingMarubozu()
     {
         using var ind = new Wickra.ClosingMarubozu();
         Assert.Equal("ClosingMarubozu", ind.Name());
+        Compare("ClosingMarubozu", Drive_ClosingMarubozu(ind));
+    }
+    [Fact]
+    public void Lifecycle_ClosingMarubozu()
+    {
+        using var ind = new Wickra.ClosingMarubozu();
+        Assert.False(ind.IsReady(), "ClosingMarubozu: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ClosingMarubozu: warmup period must be >= 1");
+        var first = Drive_ClosingMarubozu(ind);
+        Assert.True(ind.IsReady(), "ClosingMarubozu: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ClosingMarubozu: still ready after Reset");
+        CompareRuns("ClosingMarubozu", first, Drive_ClosingMarubozu(ind));
+    }
+    private static List<double[]> Drive_Cmo(Wickra.Cmo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ClosingMarubozu", got);
+        return got;
     }
     [Fact]
     public void Golden_Cmo()
     {
         using var ind = new Wickra.Cmo(14);
         Assert.Equal("CMO", ind.Name());
+        Compare("Cmo", Drive_Cmo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Cmo()
+    {
+        using var ind = new Wickra.Cmo(14);
+        Assert.False(ind.IsReady(), "Cmo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Cmo: warmup period must be >= 1");
+        var first = Drive_Cmo(ind);
+        Assert.True(ind.IsReady(), "Cmo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Cmo: still ready after Reset");
+        CompareRuns("Cmo", first, Drive_Cmo(ind));
+    }
+    private static List<double[]> Drive_CoefficientOfVariation(Wickra.CoefficientOfVariation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Cmo", got);
+        return got;
     }
     [Fact]
     public void Golden_CoefficientOfVariation()
     {
         using var ind = new Wickra.CoefficientOfVariation(14);
         Assert.Equal("CoefficientOfVariation", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("CoefficientOfVariation", got);
+        Compare("CoefficientOfVariation", Drive_CoefficientOfVariation(ind));
     }
     [Fact]
-    public void Golden_Cointegration()
+    public void Lifecycle_CoefficientOfVariation()
     {
-        using var ind = new Wickra.Cointegration(40, 1);
-        Assert.Equal("Cointegration", ind.Name());
+        using var ind = new Wickra.CoefficientOfVariation(14);
+        Assert.False(ind.IsReady(), "CoefficientOfVariation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CoefficientOfVariation: warmup period must be >= 1");
+        var first = Drive_CoefficientOfVariation(ind);
+        Assert.True(ind.IsReady(), "CoefficientOfVariation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CoefficientOfVariation: still ready after Reset");
+        CompareRuns("CoefficientOfVariation", first, Drive_CoefficientOfVariation(ind));
+    }
+    private static List<double[]> Drive_Cointegration(Wickra.Cointegration ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3], r[0]), 3));
         }
-        Compare("Cointegration", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Cointegration()
+    {
+        using var ind = new Wickra.Cointegration(40, 1);
+        Assert.Equal("Cointegration", ind.Name());
+        Compare("Cointegration", Drive_Cointegration(ind));
+    }
+    [Fact]
+    public void Lifecycle_Cointegration()
+    {
+        using var ind = new Wickra.Cointegration(40, 1);
+        Assert.False(ind.IsReady(), "Cointegration: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Cointegration: warmup period must be >= 1");
+        var first = Drive_Cointegration(ind);
+        Assert.True(ind.IsReady(), "Cointegration: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Cointegration: still ready after Reset");
+        CompareRuns("Cointegration", first, Drive_Cointegration(ind));
+    }
+    private static List<double[]> Drive_CommonSenseRatio(Wickra.CommonSenseRatio ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_CommonSenseRatio()
     {
         using var ind = new Wickra.CommonSenseRatio(14);
         Assert.Equal("CommonSenseRatio", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("CommonSenseRatio", got);
+        Compare("CommonSenseRatio", Drive_CommonSenseRatio(ind));
     }
     [Fact]
-    public void Golden_CompositeProfile()
+    public void Lifecycle_CommonSenseRatio()
     {
-        using var ind = new Wickra.CompositeProfile(20, 24, 0.7);
-        Assert.Equal("CompositeProfile", ind.Name());
+        using var ind = new Wickra.CommonSenseRatio(14);
+        Assert.False(ind.IsReady(), "CommonSenseRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CommonSenseRatio: warmup period must be >= 1");
+        var first = Drive_CommonSenseRatio(ind);
+        Assert.True(ind.IsReady(), "CommonSenseRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CommonSenseRatio: still ready after Reset");
+        CompareRuns("CommonSenseRatio", first, Drive_CommonSenseRatio(ind));
+    }
+    private static List<double[]> Drive_CompositeProfile(Wickra.CompositeProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("CompositeProfile", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_CompositeProfile()
+    {
+        using var ind = new Wickra.CompositeProfile(20, 24, 0.7);
+        Assert.Equal("CompositeProfile", ind.Name());
+        Compare("CompositeProfile", Drive_CompositeProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_CompositeProfile()
+    {
+        using var ind = new Wickra.CompositeProfile(20, 24, 0.7);
+        Assert.False(ind.IsReady(), "CompositeProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CompositeProfile: warmup period must be >= 1");
+        var first = Drive_CompositeProfile(ind);
+        Assert.True(ind.IsReady(), "CompositeProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CompositeProfile: still ready after Reset");
+        CompareRuns("CompositeProfile", first, Drive_CompositeProfile(ind));
+    }
+    private static List<double[]> Drive_ConcealingBabySwallow(Wickra.ConcealingBabySwallow ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_ConcealingBabySwallow()
     {
         using var ind = new Wickra.ConcealingBabySwallow();
         Assert.Equal("ConcealingBabySwallow", ind.Name());
+        Compare("ConcealingBabySwallow", Drive_ConcealingBabySwallow(ind));
+    }
+    [Fact]
+    public void Lifecycle_ConcealingBabySwallow()
+    {
+        using var ind = new Wickra.ConcealingBabySwallow();
+        Assert.False(ind.IsReady(), "ConcealingBabySwallow: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ConcealingBabySwallow: warmup period must be >= 1");
+        var first = Drive_ConcealingBabySwallow(ind);
+        Assert.True(ind.IsReady(), "ConcealingBabySwallow: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ConcealingBabySwallow: still ready after Reset");
+        CompareRuns("ConcealingBabySwallow", first, Drive_ConcealingBabySwallow(ind));
+    }
+    private static List<double[]> Drive_ConditionalValueAtRisk(Wickra.ConditionalValueAtRisk ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ConcealingBabySwallow", got);
+        return got;
     }
     [Fact]
     public void Golden_ConditionalValueAtRisk()
     {
         using var ind = new Wickra.ConditionalValueAtRisk(20, 0.95);
         Assert.Equal("ConditionalValueAtRisk", ind.Name());
+        Compare("ConditionalValueAtRisk", Drive_ConditionalValueAtRisk(ind));
+    }
+    [Fact]
+    public void Lifecycle_ConditionalValueAtRisk()
+    {
+        using var ind = new Wickra.ConditionalValueAtRisk(20, 0.95);
+        Assert.False(ind.IsReady(), "ConditionalValueAtRisk: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ConditionalValueAtRisk: warmup period must be >= 1");
+        var first = Drive_ConditionalValueAtRisk(ind);
+        Assert.True(ind.IsReady(), "ConditionalValueAtRisk: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ConditionalValueAtRisk: still ready after Reset");
+        CompareRuns("ConditionalValueAtRisk", first, Drive_ConditionalValueAtRisk(ind));
+    }
+    private static List<double[]> Drive_ConnorsRsi(Wickra.ConnorsRsi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ConditionalValueAtRisk", got);
+        return got;
     }
     [Fact]
     public void Golden_ConnorsRsi()
     {
         using var ind = new Wickra.ConnorsRsi(3, 7, 14);
         Assert.Equal("ConnorsRSI", ind.Name());
+        Compare("ConnorsRsi", Drive_ConnorsRsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_ConnorsRsi()
+    {
+        using var ind = new Wickra.ConnorsRsi(3, 7, 14);
+        Assert.False(ind.IsReady(), "ConnorsRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ConnorsRsi: warmup period must be >= 1");
+        var first = Drive_ConnorsRsi(ind);
+        Assert.True(ind.IsReady(), "ConnorsRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ConnorsRsi: still ready after Reset");
+        CompareRuns("ConnorsRsi", first, Drive_ConnorsRsi(ind));
+    }
+    private static List<double[]> Drive_Coppock(Wickra.Coppock ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ConnorsRsi", got);
+        return got;
     }
     [Fact]
     public void Golden_Coppock()
     {
         using var ind = new Wickra.Coppock(3, 7, 14);
         Assert.Equal("Coppock", ind.Name());
+        Compare("Coppock", Drive_Coppock(ind));
+    }
+    [Fact]
+    public void Lifecycle_Coppock()
+    {
+        using var ind = new Wickra.Coppock(3, 7, 14);
+        Assert.False(ind.IsReady(), "Coppock: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Coppock: warmup period must be >= 1");
+        var first = Drive_Coppock(ind);
+        Assert.True(ind.IsReady(), "Coppock: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Coppock: still ready after Reset");
+        CompareRuns("Coppock", first, Drive_Coppock(ind));
+    }
+    private static List<double[]> Drive_CorrelationTrendIndicator(Wickra.CorrelationTrendIndicator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Coppock", got);
+        return got;
     }
     [Fact]
     public void Golden_CorrelationTrendIndicator()
     {
         using var ind = new Wickra.CorrelationTrendIndicator(14);
         Assert.Equal("CorrelationTrendIndicator", ind.Name());
+        Compare("CorrelationTrendIndicator", Drive_CorrelationTrendIndicator(ind));
+    }
+    [Fact]
+    public void Lifecycle_CorrelationTrendIndicator()
+    {
+        using var ind = new Wickra.CorrelationTrendIndicator(14);
+        Assert.False(ind.IsReady(), "CorrelationTrendIndicator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CorrelationTrendIndicator: warmup period must be >= 1");
+        var first = Drive_CorrelationTrendIndicator(ind);
+        Assert.True(ind.IsReady(), "CorrelationTrendIndicator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CorrelationTrendIndicator: still ready after Reset");
+        CompareRuns("CorrelationTrendIndicator", first, Drive_CorrelationTrendIndicator(ind));
+    }
+    private static List<double[]> Drive_Counterattack(Wickra.Counterattack ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("CorrelationTrendIndicator", got);
+        return got;
     }
     [Fact]
     public void Golden_Counterattack()
     {
         using var ind = new Wickra.Counterattack();
         Assert.Equal("Counterattack", ind.Name());
+        Compare("Counterattack", Drive_Counterattack(ind));
+    }
+    [Fact]
+    public void Lifecycle_Counterattack()
+    {
+        using var ind = new Wickra.Counterattack();
+        Assert.False(ind.IsReady(), "Counterattack: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Counterattack: warmup period must be >= 1");
+        var first = Drive_Counterattack(ind);
+        Assert.True(ind.IsReady(), "Counterattack: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Counterattack: still ready after Reset");
+        CompareRuns("Counterattack", first, Drive_Counterattack(ind));
+    }
+    private static List<double[]> Drive_Crab(Wickra.Crab ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Counterattack", got);
+        return got;
     }
     [Fact]
     public void Golden_Crab()
     {
         using var ind = new Wickra.Crab();
         Assert.Equal("Crab", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Crab", got);
+        Compare("Crab", Drive_Crab(ind));
     }
     [Fact]
-    public void Golden_CumulativeVolumeDelta()
+    public void Lifecycle_Crab()
     {
-        using var ind = new Wickra.CumulativeVolumeDelta();
-        Assert.Equal("CumulativeVolumeDelta", ind.Name());
+        using var ind = new Wickra.Crab();
+        Assert.False(ind.IsReady(), "Crab: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Crab: warmup period must be >= 1");
+        var first = Drive_Crab(ind);
+        Assert.True(ind.IsReady(), "Crab: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Crab: still ready after Reset");
+        CompareRuns("Crab", first, Drive_Crab(ind));
+    }
+    private static List<double[]> Drive_CumulativeVolumeDelta(Wickra.CumulativeVolumeDelta ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("CumulativeVolumeDelta", got);
+        return got;
     }
     [Fact]
-    public void Golden_CumulativeVolumeIndex()
+    public void Golden_CumulativeVolumeDelta()
     {
-        using var ind = new Wickra.CumulativeVolumeIndex();
-        Assert.Equal("CumulativeVolumeIndex", ind.Name());
+        using var ind = new Wickra.CumulativeVolumeDelta();
+        Assert.Equal("CumulativeVolumeDelta", ind.Name());
+        Compare("CumulativeVolumeDelta", Drive_CumulativeVolumeDelta(ind));
+    }
+    [Fact]
+    public void Lifecycle_CumulativeVolumeDelta()
+    {
+        using var ind = new Wickra.CumulativeVolumeDelta();
+        Assert.False(ind.IsReady(), "CumulativeVolumeDelta: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CumulativeVolumeDelta: warmup period must be >= 1");
+        var first = Drive_CumulativeVolumeDelta(ind);
+        Assert.True(ind.IsReady(), "CumulativeVolumeDelta: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CumulativeVolumeDelta: still ready after Reset");
+        CompareRuns("CumulativeVolumeDelta", first, Drive_CumulativeVolumeDelta(ind));
+    }
+    private static List<double[]> Drive_CumulativeVolumeIndex(Wickra.CumulativeVolumeIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1307,52 +2698,116 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("CumulativeVolumeIndex", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_CumulativeVolumeIndex()
+    {
+        using var ind = new Wickra.CumulativeVolumeIndex();
+        Assert.Equal("CumulativeVolumeIndex", ind.Name());
+        Compare("CumulativeVolumeIndex", Drive_CumulativeVolumeIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_CumulativeVolumeIndex()
+    {
+        using var ind = new Wickra.CumulativeVolumeIndex();
+        Assert.False(ind.IsReady(), "CumulativeVolumeIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CumulativeVolumeIndex: warmup period must be >= 1");
+        var first = Drive_CumulativeVolumeIndex(ind);
+        Assert.True(ind.IsReady(), "CumulativeVolumeIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CumulativeVolumeIndex: still ready after Reset");
+        CompareRuns("CumulativeVolumeIndex", first, Drive_CumulativeVolumeIndex(ind));
+    }
+    private static List<double[]> Drive_CupAndHandle(Wickra.CupAndHandle ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_CupAndHandle()
     {
         using var ind = new Wickra.CupAndHandle();
         Assert.Equal("CupAndHandle", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("CupAndHandle", got);
+        Compare("CupAndHandle", Drive_CupAndHandle(ind));
     }
     [Fact]
-    public void Golden_CyberneticCycle()
+    public void Lifecycle_CupAndHandle()
     {
-        using var ind = new Wickra.CyberneticCycle(14);
-        Assert.Equal("CyberneticCycle", ind.Name());
+        using var ind = new Wickra.CupAndHandle();
+        Assert.False(ind.IsReady(), "CupAndHandle: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CupAndHandle: warmup period must be >= 1");
+        var first = Drive_CupAndHandle(ind);
+        Assert.True(ind.IsReady(), "CupAndHandle: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CupAndHandle: still ready after Reset");
+        CompareRuns("CupAndHandle", first, Drive_CupAndHandle(ind));
+    }
+    private static List<double[]> Drive_CyberneticCycle(Wickra.CyberneticCycle ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("CyberneticCycle", got);
+        return got;
     }
     [Fact]
-    public void Golden_Cypher()
+    public void Golden_CyberneticCycle()
     {
-        using var ind = new Wickra.Cypher();
-        Assert.Equal("Cypher", ind.Name());
+        using var ind = new Wickra.CyberneticCycle(14);
+        Assert.Equal("CyberneticCycle", ind.Name());
+        Compare("CyberneticCycle", Drive_CyberneticCycle(ind));
+    }
+    [Fact]
+    public void Lifecycle_CyberneticCycle()
+    {
+        using var ind = new Wickra.CyberneticCycle(14);
+        Assert.False(ind.IsReady(), "CyberneticCycle: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "CyberneticCycle: warmup period must be >= 1");
+        var first = Drive_CyberneticCycle(ind);
+        Assert.True(ind.IsReady(), "CyberneticCycle: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "CyberneticCycle: still ready after Reset");
+        CompareRuns("CyberneticCycle", first, Drive_CyberneticCycle(ind));
+    }
+    private static List<double[]> Drive_Cypher(Wickra.Cypher ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Cypher", got);
+        return got;
     }
     [Fact]
-    public void Golden_DayOfWeekProfile()
+    public void Golden_Cypher()
     {
-        using var ind = new Wickra.DayOfWeekProfile(0);
-        Assert.Equal("DayOfWeekProfile", ind.Name());
+        using var ind = new Wickra.Cypher();
+        Assert.Equal("Cypher", ind.Name());
+        Compare("Cypher", Drive_Cypher(ind));
+    }
+    [Fact]
+    public void Lifecycle_Cypher()
+    {
+        using var ind = new Wickra.Cypher();
+        Assert.False(ind.IsReady(), "Cypher: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Cypher: warmup period must be >= 1");
+        var first = Drive_Cypher(ind);
+        Assert.True(ind.IsReady(), "Cypher: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Cypher: still ready after Reset");
+        CompareRuns("Cypher", first, Drive_Cypher(ind));
+    }
+    private static List<double[]> Drive_DayOfWeekProfile(Wickra.DayOfWeekProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1360,78 +2815,174 @@ public class GoldenAllTests
             var bins = ind.Update(r[0], r[1], r[2], r[3], r[4], i);
             got.Add(bins ?? NanRow(7));
         }
-        Compare("DayOfWeekProfile", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_DayOfWeekProfile()
+    {
+        using var ind = new Wickra.DayOfWeekProfile(0);
+        Assert.Equal("DayOfWeekProfile", ind.Name());
+        Compare("DayOfWeekProfile", Drive_DayOfWeekProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_DayOfWeekProfile()
+    {
+        using var ind = new Wickra.DayOfWeekProfile(0);
+        Assert.False(ind.IsReady(), "DayOfWeekProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DayOfWeekProfile: warmup period must be >= 1");
+        var first = Drive_DayOfWeekProfile(ind);
+        Assert.True(ind.IsReady(), "DayOfWeekProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DayOfWeekProfile: still ready after Reset");
+        CompareRuns("DayOfWeekProfile", first, Drive_DayOfWeekProfile(ind));
+    }
+    private static List<double[]> Drive_Decycler(Wickra.Decycler ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Decycler()
     {
         using var ind = new Wickra.Decycler(14);
         Assert.Equal("Decycler", ind.Name());
+        Compare("Decycler", Drive_Decycler(ind));
+    }
+    [Fact]
+    public void Lifecycle_Decycler()
+    {
+        using var ind = new Wickra.Decycler(14);
+        Assert.False(ind.IsReady(), "Decycler: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Decycler: warmup period must be >= 1");
+        var first = Drive_Decycler(ind);
+        Assert.True(ind.IsReady(), "Decycler: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Decycler: still ready after Reset");
+        CompareRuns("Decycler", first, Drive_Decycler(ind));
+    }
+    private static List<double[]> Drive_DecyclerOscillator(Wickra.DecyclerOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Decycler", got);
+        return got;
     }
     [Fact]
     public void Golden_DecyclerOscillator()
     {
         using var ind = new Wickra.DecyclerOscillator(3, 7);
         Assert.Equal("DecyclerOscillator", ind.Name());
+        Compare("DecyclerOscillator", Drive_DecyclerOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_DecyclerOscillator()
+    {
+        using var ind = new Wickra.DecyclerOscillator(3, 7);
+        Assert.False(ind.IsReady(), "DecyclerOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DecyclerOscillator: warmup period must be >= 1");
+        var first = Drive_DecyclerOscillator(ind);
+        Assert.True(ind.IsReady(), "DecyclerOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DecyclerOscillator: still ready after Reset");
+        CompareRuns("DecyclerOscillator", first, Drive_DecyclerOscillator(ind));
+    }
+    private static List<double[]> Drive_Dema(Wickra.Dema ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("DecyclerOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_Dema()
     {
         using var ind = new Wickra.Dema(14);
         Assert.Equal("DEMA", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("Dema", got);
+        Compare("Dema", Drive_Dema(ind));
     }
     [Fact]
-    public void Golden_DemandIndex()
+    public void Lifecycle_Dema()
     {
-        using var ind = new Wickra.DemandIndex(14);
-        Assert.Equal("DemandIndex", ind.Name());
+        using var ind = new Wickra.Dema(14);
+        Assert.False(ind.IsReady(), "Dema: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Dema: warmup period must be >= 1");
+        var first = Drive_Dema(ind);
+        Assert.True(ind.IsReady(), "Dema: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Dema: still ready after Reset");
+        CompareRuns("Dema", first, Drive_Dema(ind));
+    }
+    private static List<double[]> Drive_DemandIndex(Wickra.DemandIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("DemandIndex", got);
+        return got;
     }
     [Fact]
-    public void Golden_DemarkPivots()
+    public void Golden_DemandIndex()
     {
-        using var ind = new Wickra.DemarkPivots();
-        Assert.Equal("DemarkPivots", ind.Name());
+        using var ind = new Wickra.DemandIndex(14);
+        Assert.Equal("DemandIndex", ind.Name());
+        Compare("DemandIndex", Drive_DemandIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_DemandIndex()
+    {
+        using var ind = new Wickra.DemandIndex(14);
+        Assert.False(ind.IsReady(), "DemandIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DemandIndex: warmup period must be >= 1");
+        var first = Drive_DemandIndex(ind);
+        Assert.True(ind.IsReady(), "DemandIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DemandIndex: still ready after Reset");
+        CompareRuns("DemandIndex", first, Drive_DemandIndex(ind));
+    }
+    private static List<double[]> Drive_DemarkPivots(Wickra.DemarkPivots ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("DemarkPivots", got);
+        return got;
     }
     [Fact]
-    public void Golden_DepthSlope()
+    public void Golden_DemarkPivots()
     {
-        using var ind = new Wickra.DepthSlope();
-        Assert.Equal("DepthSlope", ind.Name());
+        using var ind = new Wickra.DemarkPivots();
+        Assert.Equal("DemarkPivots", ind.Name());
+        Compare("DemarkPivots", Drive_DemarkPivots(ind));
+    }
+    [Fact]
+    public void Lifecycle_DemarkPivots()
+    {
+        using var ind = new Wickra.DemarkPivots();
+        Assert.False(ind.IsReady(), "DemarkPivots: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DemarkPivots: warmup period must be >= 1");
+        var first = Drive_DemarkPivots(ind);
+        Assert.True(ind.IsReady(), "DemarkPivots: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DemarkPivots: still ready after Reset");
+        CompareRuns("DemarkPivots", first, Drive_DemarkPivots(ind));
+    }
+    private static List<double[]> Drive_DepthSlope(Wickra.DepthSlope ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -1439,716 +2990,1622 @@ public class GoldenAllTests
             var (bp, bs, ap, asz) = ObLists(r);
             got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("DepthSlope", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_DepthSlope()
+    {
+        using var ind = new Wickra.DepthSlope();
+        Assert.Equal("DepthSlope", ind.Name());
+        Compare("DepthSlope", Drive_DepthSlope(ind));
+    }
+    [Fact]
+    public void Lifecycle_DepthSlope()
+    {
+        using var ind = new Wickra.DepthSlope();
+        Assert.False(ind.IsReady(), "DepthSlope: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DepthSlope: warmup period must be >= 1");
+        var first = Drive_DepthSlope(ind);
+        Assert.True(ind.IsReady(), "DepthSlope: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DepthSlope: still ready after Reset");
+        CompareRuns("DepthSlope", first, Drive_DepthSlope(ind));
+    }
+    private static List<double[]> Drive_DerivativeOscillator(Wickra.DerivativeOscillator ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_DerivativeOscillator()
     {
         using var ind = new Wickra.DerivativeOscillator(3, 7, 14, 28);
         Assert.Equal("DerivativeOscillator", ind.Name());
+        Compare("DerivativeOscillator", Drive_DerivativeOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_DerivativeOscillator()
+    {
+        using var ind = new Wickra.DerivativeOscillator(3, 7, 14, 28);
+        Assert.False(ind.IsReady(), "DerivativeOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DerivativeOscillator: warmup period must be >= 1");
+        var first = Drive_DerivativeOscillator(ind);
+        Assert.True(ind.IsReady(), "DerivativeOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DerivativeOscillator: still ready after Reset");
+        CompareRuns("DerivativeOscillator", first, Drive_DerivativeOscillator(ind));
+    }
+    private static List<double[]> Drive_DetrendedStdDev(Wickra.DetrendedStdDev ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("DerivativeOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_DetrendedStdDev()
     {
         using var ind = new Wickra.DetrendedStdDev(14);
         Assert.Equal("DetrendedStdDev", ind.Name());
+        Compare("DetrendedStdDev", Drive_DetrendedStdDev(ind));
+    }
+    [Fact]
+    public void Lifecycle_DetrendedStdDev()
+    {
+        using var ind = new Wickra.DetrendedStdDev(14);
+        Assert.False(ind.IsReady(), "DetrendedStdDev: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DetrendedStdDev: warmup period must be >= 1");
+        var first = Drive_DetrendedStdDev(ind);
+        Assert.True(ind.IsReady(), "DetrendedStdDev: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DetrendedStdDev: still ready after Reset");
+        CompareRuns("DetrendedStdDev", first, Drive_DetrendedStdDev(ind));
+    }
+    private static List<double[]> Drive_DisparityIndex(Wickra.DisparityIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("DetrendedStdDev", got);
+        return got;
     }
     [Fact]
     public void Golden_DisparityIndex()
     {
         using var ind = new Wickra.DisparityIndex(14);
         Assert.Equal("DisparityIndex", ind.Name());
+        Compare("DisparityIndex", Drive_DisparityIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_DisparityIndex()
+    {
+        using var ind = new Wickra.DisparityIndex(14);
+        Assert.False(ind.IsReady(), "DisparityIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DisparityIndex: warmup period must be >= 1");
+        var first = Drive_DisparityIndex(ind);
+        Assert.True(ind.IsReady(), "DisparityIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DisparityIndex: still ready after Reset");
+        CompareRuns("DisparityIndex", first, Drive_DisparityIndex(ind));
+    }
+    private static List<double[]> Drive_DistanceSsd(Wickra.DistanceSsd ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("DisparityIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_DistanceSsd()
     {
         using var ind = new Wickra.DistanceSsd(14);
         Assert.Equal("DistanceSsd", ind.Name());
+        Compare("DistanceSsd", Drive_DistanceSsd(ind));
+    }
+    [Fact]
+    public void Lifecycle_DistanceSsd()
+    {
+        using var ind = new Wickra.DistanceSsd(14);
+        Assert.False(ind.IsReady(), "DistanceSsd: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DistanceSsd: warmup period must be >= 1");
+        var first = Drive_DistanceSsd(ind);
+        Assert.True(ind.IsReady(), "DistanceSsd: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DistanceSsd: still ready after Reset");
+        CompareRuns("DistanceSsd", first, Drive_DistanceSsd(ind));
+    }
+    private static List<double[]> Drive_Doji(Wickra.Doji ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("DistanceSsd", got);
+        return got;
     }
     [Fact]
     public void Golden_Doji()
     {
         using var ind = new Wickra.Doji();
         Assert.Equal("Doji", ind.Name());
+        Compare("Doji", Drive_Doji(ind));
+    }
+    [Fact]
+    public void Lifecycle_Doji()
+    {
+        using var ind = new Wickra.Doji();
+        Assert.False(ind.IsReady(), "Doji: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Doji: warmup period must be >= 1");
+        var first = Drive_Doji(ind);
+        Assert.True(ind.IsReady(), "Doji: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Doji: still ready after Reset");
+        CompareRuns("Doji", first, Drive_Doji(ind));
+    }
+    private static List<double[]> Drive_DojiStar(Wickra.DojiStar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Doji", got);
+        return got;
     }
     [Fact]
     public void Golden_DojiStar()
     {
         using var ind = new Wickra.DojiStar();
         Assert.Equal("DojiStar", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("DojiStar", got);
+        Compare("DojiStar", Drive_DojiStar(ind));
     }
     [Fact]
-    public void Golden_DollarBars()
+    public void Lifecycle_DojiStar()
     {
-        using var ind = new Wickra.DollarBars(50000.0);
-        Assert.Equal("DollarBars", ind.Name());
+        using var ind = new Wickra.DojiStar();
+        Assert.False(ind.IsReady(), "DojiStar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DojiStar: warmup period must be >= 1");
+        var first = Drive_DojiStar(ind);
+        Assert.True(ind.IsReady(), "DojiStar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DojiStar: still ready after Reset");
+        CompareRuns("DojiStar", first, Drive_DojiStar(ind));
+    }
+    private static List<double[]> Drive_DollarBars(Wickra.DollarBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0)));
         }
-        Compare("DollarBars", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_DollarBars()
+    {
+        using var ind = new Wickra.DollarBars(50000.0);
+        Assert.Equal("DollarBars", ind.Name());
+        Compare("DollarBars", Drive_DollarBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_DollarBars()
+    {
+        using var ind = new Wickra.DollarBars(50000.0);
+        var first = Drive_DollarBars(ind);
+        ind.Reset();
+        CompareRuns("DollarBars", first, Drive_DollarBars(ind));
+    }
+    private static List<double[]> Drive_Donchian(Wickra.Donchian ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+        }
+        return got;
     }
     [Fact]
     public void Golden_Donchian()
     {
         using var ind = new Wickra.Donchian(14);
         Assert.Equal("DonchianChannels", ind.Name());
+        Compare("Donchian", Drive_Donchian(ind));
+    }
+    [Fact]
+    public void Lifecycle_Donchian()
+    {
+        using var ind = new Wickra.Donchian(14);
+        Assert.False(ind.IsReady(), "Donchian: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Donchian: warmup period must be >= 1");
+        var first = Drive_Donchian(ind);
+        Assert.True(ind.IsReady(), "Donchian: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Donchian: still ready after Reset");
+        CompareRuns("Donchian", first, Drive_Donchian(ind));
+    }
+    private static List<double[]> Drive_DonchianStop(Wickra.DonchianStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("Donchian", got);
+        return got;
     }
     [Fact]
     public void Golden_DonchianStop()
     {
         using var ind = new Wickra.DonchianStop(14);
         Assert.Equal("DonchianStop", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
-        }
-        Compare("DonchianStop", got);
+        Compare("DonchianStop", Drive_DonchianStop(ind));
     }
     [Fact]
-    public void Golden_DoubleBollinger()
+    public void Lifecycle_DonchianStop()
     {
-        using var ind = new Wickra.DoubleBollinger(20, 1.0, 2.0);
-        Assert.Equal("DoubleBollinger", ind.Name());
+        using var ind = new Wickra.DonchianStop(14);
+        Assert.False(ind.IsReady(), "DonchianStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DonchianStop: warmup period must be >= 1");
+        var first = Drive_DonchianStop(ind);
+        Assert.True(ind.IsReady(), "DonchianStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DonchianStop: still ready after Reset");
+        CompareRuns("DonchianStop", first, Drive_DonchianStop(ind));
+    }
+    private static List<double[]> Drive_DoubleBollinger(Wickra.DoubleBollinger ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 5));
         }
-        Compare("DoubleBollinger", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_DoubleBollinger()
+    {
+        using var ind = new Wickra.DoubleBollinger(20, 1.0, 2.0);
+        Assert.Equal("DoubleBollinger", ind.Name());
+        Compare("DoubleBollinger", Drive_DoubleBollinger(ind));
+    }
+    [Fact]
+    public void Lifecycle_DoubleBollinger()
+    {
+        using var ind = new Wickra.DoubleBollinger(20, 1.0, 2.0);
+        Assert.False(ind.IsReady(), "DoubleBollinger: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DoubleBollinger: warmup period must be >= 1");
+        var first = Drive_DoubleBollinger(ind);
+        Assert.True(ind.IsReady(), "DoubleBollinger: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DoubleBollinger: still ready after Reset");
+        CompareRuns("DoubleBollinger", first, Drive_DoubleBollinger(ind));
+    }
+    private static List<double[]> Drive_DoubleTopBottom(Wickra.DoubleTopBottom ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_DoubleTopBottom()
     {
         using var ind = new Wickra.DoubleTopBottom();
         Assert.Equal("DoubleTopBottom", ind.Name());
+        Compare("DoubleTopBottom", Drive_DoubleTopBottom(ind));
+    }
+    [Fact]
+    public void Lifecycle_DoubleTopBottom()
+    {
+        using var ind = new Wickra.DoubleTopBottom();
+        Assert.False(ind.IsReady(), "DoubleTopBottom: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DoubleTopBottom: warmup period must be >= 1");
+        var first = Drive_DoubleTopBottom(ind);
+        Assert.True(ind.IsReady(), "DoubleTopBottom: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DoubleTopBottom: still ready after Reset");
+        CompareRuns("DoubleTopBottom", first, Drive_DoubleTopBottom(ind));
+    }
+    private static List<double[]> Drive_DownsideGapThreeMethods(Wickra.DownsideGapThreeMethods ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("DoubleTopBottom", got);
+        return got;
     }
     [Fact]
     public void Golden_DownsideGapThreeMethods()
     {
         using var ind = new Wickra.DownsideGapThreeMethods();
         Assert.Equal("DownsideGapThreeMethods", ind.Name());
+        Compare("DownsideGapThreeMethods", Drive_DownsideGapThreeMethods(ind));
+    }
+    [Fact]
+    public void Lifecycle_DownsideGapThreeMethods()
+    {
+        using var ind = new Wickra.DownsideGapThreeMethods();
+        Assert.False(ind.IsReady(), "DownsideGapThreeMethods: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DownsideGapThreeMethods: warmup period must be >= 1");
+        var first = Drive_DownsideGapThreeMethods(ind);
+        Assert.True(ind.IsReady(), "DownsideGapThreeMethods: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DownsideGapThreeMethods: still ready after Reset");
+        CompareRuns("DownsideGapThreeMethods", first, Drive_DownsideGapThreeMethods(ind));
+    }
+    private static List<double[]> Drive_Dpo(Wickra.Dpo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("DownsideGapThreeMethods", got);
+        return got;
     }
     [Fact]
     public void Golden_Dpo()
     {
         using var ind = new Wickra.Dpo(14);
         Assert.Equal("DPO", ind.Name());
+        Compare("Dpo", Drive_Dpo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Dpo()
+    {
+        using var ind = new Wickra.Dpo(14);
+        Assert.False(ind.IsReady(), "Dpo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Dpo: warmup period must be >= 1");
+        var first = Drive_Dpo(ind);
+        Assert.True(ind.IsReady(), "Dpo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Dpo: still ready after Reset");
+        CompareRuns("Dpo", first, Drive_Dpo(ind));
+    }
+    private static List<double[]> Drive_DragonflyDoji(Wickra.DragonflyDoji ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Dpo", got);
+        return got;
     }
     [Fact]
     public void Golden_DragonflyDoji()
     {
         using var ind = new Wickra.DragonflyDoji();
         Assert.Equal("DragonflyDoji", ind.Name());
+        Compare("DragonflyDoji", Drive_DragonflyDoji(ind));
+    }
+    [Fact]
+    public void Lifecycle_DragonflyDoji()
+    {
+        using var ind = new Wickra.DragonflyDoji();
+        Assert.False(ind.IsReady(), "DragonflyDoji: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DragonflyDoji: warmup period must be >= 1");
+        var first = Drive_DragonflyDoji(ind);
+        Assert.True(ind.IsReady(), "DragonflyDoji: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DragonflyDoji: still ready after Reset");
+        CompareRuns("DragonflyDoji", first, Drive_DragonflyDoji(ind));
+    }
+    private static List<double[]> Drive_DrawdownDuration(Wickra.DrawdownDuration ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("DragonflyDoji", got);
+        return got;
     }
     [Fact]
     public void Golden_DrawdownDuration()
     {
         using var ind = new Wickra.DrawdownDuration();
         Assert.Equal("DrawdownDuration", ind.Name());
+        Compare("DrawdownDuration", Drive_DrawdownDuration(ind));
+    }
+    [Fact]
+    public void Lifecycle_DrawdownDuration()
+    {
+        using var ind = new Wickra.DrawdownDuration();
+        Assert.False(ind.IsReady(), "DrawdownDuration: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DrawdownDuration: warmup period must be >= 1");
+        var first = Drive_DrawdownDuration(ind);
+        Assert.True(ind.IsReady(), "DrawdownDuration: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DrawdownDuration: still ready after Reset");
+        CompareRuns("DrawdownDuration", first, Drive_DrawdownDuration(ind));
+    }
+    private static List<double[]> Drive_DumplingTop(Wickra.DumplingTop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("DrawdownDuration", got);
+        return got;
     }
     [Fact]
     public void Golden_DumplingTop()
     {
         using var ind = new Wickra.DumplingTop(14);
         Assert.Equal("DumplingTop", ind.Name());
+        Compare("DumplingTop", Drive_DumplingTop(ind));
+    }
+    [Fact]
+    public void Lifecycle_DumplingTop()
+    {
+        using var ind = new Wickra.DumplingTop(14);
+        Assert.False(ind.IsReady(), "DumplingTop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DumplingTop: warmup period must be >= 1");
+        var first = Drive_DumplingTop(ind);
+        Assert.True(ind.IsReady(), "DumplingTop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DumplingTop: still ready after Reset");
+        CompareRuns("DumplingTop", first, Drive_DumplingTop(ind));
+    }
+    private static List<double[]> Drive_Dx(Wickra.Dx ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("DumplingTop", got);
+        return got;
     }
     [Fact]
     public void Golden_Dx()
     {
         using var ind = new Wickra.Dx(14);
         Assert.Equal("DX", ind.Name());
+        Compare("Dx", Drive_Dx(ind));
+    }
+    [Fact]
+    public void Lifecycle_Dx()
+    {
+        using var ind = new Wickra.Dx(14);
+        Assert.False(ind.IsReady(), "Dx: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Dx: warmup period must be >= 1");
+        var first = Drive_Dx(ind);
+        Assert.True(ind.IsReady(), "Dx: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Dx: still ready after Reset");
+        CompareRuns("Dx", first, Drive_Dx(ind));
+    }
+    private static List<double[]> Drive_DynamicMomentumIndex(Wickra.DynamicMomentumIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Dx", got);
+        return got;
     }
     [Fact]
     public void Golden_DynamicMomentumIndex()
     {
         using var ind = new Wickra.DynamicMomentumIndex(14);
         Assert.Equal("DynamicMomentumIndex", ind.Name());
+        Compare("DynamicMomentumIndex", Drive_DynamicMomentumIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_DynamicMomentumIndex()
+    {
+        using var ind = new Wickra.DynamicMomentumIndex(14);
+        Assert.False(ind.IsReady(), "DynamicMomentumIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "DynamicMomentumIndex: warmup period must be >= 1");
+        var first = Drive_DynamicMomentumIndex(ind);
+        Assert.True(ind.IsReady(), "DynamicMomentumIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "DynamicMomentumIndex: still ready after Reset");
+        CompareRuns("DynamicMomentumIndex", first, Drive_DynamicMomentumIndex(ind));
+    }
+    private static List<double[]> Drive_EaseOfMovement(Wickra.EaseOfMovement ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("DynamicMomentumIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_EaseOfMovement()
     {
         using var ind = new Wickra.EaseOfMovement(14);
         Assert.Equal("EaseOfMovement", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("EaseOfMovement", got);
+        Compare("EaseOfMovement", Drive_EaseOfMovement(ind));
     }
     [Fact]
-    public void Golden_EffectiveSpread()
+    public void Lifecycle_EaseOfMovement()
     {
-        using var ind = new Wickra.EffectiveSpread();
-        Assert.Equal("EffectiveSpread", ind.Name());
+        using var ind = new Wickra.EaseOfMovement(14);
+        Assert.False(ind.IsReady(), "EaseOfMovement: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EaseOfMovement: warmup period must be >= 1");
+        var first = Drive_EaseOfMovement(ind);
+        Assert.True(ind.IsReady(), "EaseOfMovement: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EaseOfMovement: still ready after Reset");
+        CompareRuns("EaseOfMovement", first, Drive_EaseOfMovement(ind));
+    }
+    private static List<double[]> Drive_EffectiveSpread(Wickra.EffectiveSpread ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i, (r[1] + r[2]) / 2) });
         }
-        Compare("EffectiveSpread", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_EffectiveSpread()
+    {
+        using var ind = new Wickra.EffectiveSpread();
+        Assert.Equal("EffectiveSpread", ind.Name());
+        Compare("EffectiveSpread", Drive_EffectiveSpread(ind));
+    }
+    [Fact]
+    public void Lifecycle_EffectiveSpread()
+    {
+        using var ind = new Wickra.EffectiveSpread();
+        Assert.False(ind.IsReady(), "EffectiveSpread: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EffectiveSpread: warmup period must be >= 1");
+        var first = Drive_EffectiveSpread(ind);
+        Assert.True(ind.IsReady(), "EffectiveSpread: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EffectiveSpread: still ready after Reset");
+        CompareRuns("EffectiveSpread", first, Drive_EffectiveSpread(ind));
+    }
+    private static List<double[]> Drive_EhlersStochastic(Wickra.EhlersStochastic ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_EhlersStochastic()
     {
         using var ind = new Wickra.EhlersStochastic(14);
         Assert.Equal("EhlersStochastic", ind.Name());
+        Compare("EhlersStochastic", Drive_EhlersStochastic(ind));
+    }
+    [Fact]
+    public void Lifecycle_EhlersStochastic()
+    {
+        using var ind = new Wickra.EhlersStochastic(14);
+        Assert.False(ind.IsReady(), "EhlersStochastic: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EhlersStochastic: warmup period must be >= 1");
+        var first = Drive_EhlersStochastic(ind);
+        Assert.True(ind.IsReady(), "EhlersStochastic: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EhlersStochastic: still ready after Reset");
+        CompareRuns("EhlersStochastic", first, Drive_EhlersStochastic(ind));
+    }
+    private static List<double[]> Drive_Ehma(Wickra.Ehma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("EhlersStochastic", got);
+        return got;
     }
     [Fact]
     public void Golden_Ehma()
     {
         using var ind = new Wickra.Ehma(14);
         Assert.Equal("EHMA", ind.Name());
+        Compare("Ehma", Drive_Ehma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Ehma()
+    {
+        using var ind = new Wickra.Ehma(14);
+        Assert.False(ind.IsReady(), "Ehma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Ehma: warmup period must be >= 1");
+        var first = Drive_Ehma(ind);
+        Assert.True(ind.IsReady(), "Ehma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Ehma: still ready after Reset");
+        CompareRuns("Ehma", first, Drive_Ehma(ind));
+    }
+    private static List<double[]> Drive_ElderImpulse(Wickra.ElderImpulse ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Ehma", got);
+        return got;
     }
     [Fact]
     public void Golden_ElderImpulse()
     {
         using var ind = new Wickra.ElderImpulse(3, 7, 14, 28);
         Assert.Equal("ElderImpulse", ind.Name());
+        Compare("ElderImpulse", Drive_ElderImpulse(ind));
+    }
+    [Fact]
+    public void Lifecycle_ElderImpulse()
+    {
+        using var ind = new Wickra.ElderImpulse(3, 7, 14, 28);
+        Assert.False(ind.IsReady(), "ElderImpulse: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ElderImpulse: warmup period must be >= 1");
+        var first = Drive_ElderImpulse(ind);
+        Assert.True(ind.IsReady(), "ElderImpulse: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ElderImpulse: still ready after Reset");
+        CompareRuns("ElderImpulse", first, Drive_ElderImpulse(ind));
+    }
+    private static List<double[]> Drive_ElderRay(Wickra.ElderRay ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("ElderImpulse", got);
+        return got;
     }
     [Fact]
     public void Golden_ElderRay()
     {
         using var ind = new Wickra.ElderRay(14);
         Assert.Equal("ElderRay", ind.Name());
+        Compare("ElderRay", Drive_ElderRay(ind));
+    }
+    [Fact]
+    public void Lifecycle_ElderRay()
+    {
+        using var ind = new Wickra.ElderRay(14);
+        Assert.False(ind.IsReady(), "ElderRay: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ElderRay: warmup period must be >= 1");
+        var first = Drive_ElderRay(ind);
+        Assert.True(ind.IsReady(), "ElderRay: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ElderRay: still ready after Reset");
+        CompareRuns("ElderRay", first, Drive_ElderRay(ind));
+    }
+    private static List<double[]> Drive_ElderSafeZone(Wickra.ElderSafeZone ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("ElderRay", got);
+        return got;
     }
     [Fact]
     public void Golden_ElderSafeZone()
     {
         using var ind = new Wickra.ElderSafeZone(10, 2.0);
         Assert.Equal("ElderSafeZone", ind.Name());
+        Compare("ElderSafeZone", Drive_ElderSafeZone(ind));
+    }
+    [Fact]
+    public void Lifecycle_ElderSafeZone()
+    {
+        using var ind = new Wickra.ElderSafeZone(10, 2.0);
+        Assert.False(ind.IsReady(), "ElderSafeZone: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ElderSafeZone: warmup period must be >= 1");
+        var first = Drive_ElderSafeZone(ind);
+        Assert.True(ind.IsReady(), "ElderSafeZone: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ElderSafeZone: still ready after Reset");
+        CompareRuns("ElderSafeZone", first, Drive_ElderSafeZone(ind));
+    }
+    private static List<double[]> Drive_Ema(Wickra.Ema ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ElderSafeZone", got);
+        return got;
     }
     [Fact]
     public void Golden_Ema()
     {
         using var ind = new Wickra.Ema(14);
         Assert.Equal("EMA", ind.Name());
+        Compare("Ema", Drive_Ema(ind));
+    }
+    [Fact]
+    public void Lifecycle_Ema()
+    {
+        using var ind = new Wickra.Ema(14);
+        Assert.False(ind.IsReady(), "Ema: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Ema: warmup period must be >= 1");
+        var first = Drive_Ema(ind);
+        Assert.True(ind.IsReady(), "Ema: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Ema: still ready after Reset");
+        CompareRuns("Ema", first, Drive_Ema(ind));
+    }
+    private static List<double[]> Drive_EmpiricalModeDecomposition(Wickra.EmpiricalModeDecomposition ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Ema", got);
+        return got;
     }
     [Fact]
     public void Golden_EmpiricalModeDecomposition()
     {
         using var ind = new Wickra.EmpiricalModeDecomposition(20, 0.1);
         Assert.Equal("EmpiricalModeDecomposition", ind.Name());
+        Compare("EmpiricalModeDecomposition", Drive_EmpiricalModeDecomposition(ind));
+    }
+    [Fact]
+    public void Lifecycle_EmpiricalModeDecomposition()
+    {
+        using var ind = new Wickra.EmpiricalModeDecomposition(20, 0.1);
+        Assert.False(ind.IsReady(), "EmpiricalModeDecomposition: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EmpiricalModeDecomposition: warmup period must be >= 1");
+        var first = Drive_EmpiricalModeDecomposition(ind);
+        Assert.True(ind.IsReady(), "EmpiricalModeDecomposition: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EmpiricalModeDecomposition: still ready after Reset");
+        CompareRuns("EmpiricalModeDecomposition", first, Drive_EmpiricalModeDecomposition(ind));
+    }
+    private static List<double[]> Drive_Engulfing(Wickra.Engulfing ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("EmpiricalModeDecomposition", got);
+        return got;
     }
     [Fact]
     public void Golden_Engulfing()
     {
         using var ind = new Wickra.Engulfing();
         Assert.Equal("Engulfing", ind.Name());
+        Compare("Engulfing", Drive_Engulfing(ind));
+    }
+    [Fact]
+    public void Lifecycle_Engulfing()
+    {
+        using var ind = new Wickra.Engulfing();
+        Assert.False(ind.IsReady(), "Engulfing: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Engulfing: warmup period must be >= 1");
+        var first = Drive_Engulfing(ind);
+        Assert.True(ind.IsReady(), "Engulfing: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Engulfing: still ready after Reset");
+        CompareRuns("Engulfing", first, Drive_Engulfing(ind));
+    }
+    private static List<double[]> Drive_Equivolume(Wickra.Equivolume ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("Engulfing", got);
+        return got;
     }
     [Fact]
     public void Golden_Equivolume()
     {
         using var ind = new Wickra.Equivolume(14);
         Assert.Equal("Equivolume", ind.Name());
+        Compare("Equivolume", Drive_Equivolume(ind));
+    }
+    [Fact]
+    public void Lifecycle_Equivolume()
+    {
+        using var ind = new Wickra.Equivolume(14);
+        Assert.False(ind.IsReady(), "Equivolume: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Equivolume: warmup period must be >= 1");
+        var first = Drive_Equivolume(ind);
+        Assert.True(ind.IsReady(), "Equivolume: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Equivolume: still ready after Reset");
+        CompareRuns("Equivolume", first, Drive_Equivolume(ind));
+    }
+    private static List<double[]> Drive_EstimatedLeverageRatio(Wickra.EstimatedLeverageRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("Equivolume", got);
+        return got;
     }
     [Fact]
     public void Golden_EstimatedLeverageRatio()
     {
         using var ind = new Wickra.EstimatedLeverageRatio();
         Assert.Equal("EstimatedLeverageRatio", ind.Name());
+        Compare("EstimatedLeverageRatio", Drive_EstimatedLeverageRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_EstimatedLeverageRatio()
+    {
+        using var ind = new Wickra.EstimatedLeverageRatio();
+        Assert.False(ind.IsReady(), "EstimatedLeverageRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EstimatedLeverageRatio: warmup period must be >= 1");
+        var first = Drive_EstimatedLeverageRatio(ind);
+        Assert.True(ind.IsReady(), "EstimatedLeverageRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EstimatedLeverageRatio: still ready after Reset");
+        CompareRuns("EstimatedLeverageRatio", first, Drive_EstimatedLeverageRatio(ind));
+    }
+    private static List<double[]> Drive_EvenBetterSinewave(Wickra.EvenBetterSinewave ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("EstimatedLeverageRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_EvenBetterSinewave()
     {
         using var ind = new Wickra.EvenBetterSinewave(40, 10);
         Assert.Equal("EvenBetterSinewave", ind.Name());
+        Compare("EvenBetterSinewave", Drive_EvenBetterSinewave(ind));
+    }
+    [Fact]
+    public void Lifecycle_EvenBetterSinewave()
+    {
+        using var ind = new Wickra.EvenBetterSinewave(40, 10);
+        Assert.False(ind.IsReady(), "EvenBetterSinewave: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EvenBetterSinewave: warmup period must be >= 1");
+        var first = Drive_EvenBetterSinewave(ind);
+        Assert.True(ind.IsReady(), "EvenBetterSinewave: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EvenBetterSinewave: still ready after Reset");
+        CompareRuns("EvenBetterSinewave", first, Drive_EvenBetterSinewave(ind));
+    }
+    private static List<double[]> Drive_EveningDojiStar(Wickra.EveningDojiStar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("EvenBetterSinewave", got);
+        return got;
     }
     [Fact]
     public void Golden_EveningDojiStar()
     {
         using var ind = new Wickra.EveningDojiStar();
         Assert.Equal("EveningDojiStar", ind.Name());
+        Compare("EveningDojiStar", Drive_EveningDojiStar(ind));
+    }
+    [Fact]
+    public void Lifecycle_EveningDojiStar()
+    {
+        using var ind = new Wickra.EveningDojiStar();
+        Assert.False(ind.IsReady(), "EveningDojiStar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EveningDojiStar: warmup period must be >= 1");
+        var first = Drive_EveningDojiStar(ind);
+        Assert.True(ind.IsReady(), "EveningDojiStar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EveningDojiStar: still ready after Reset");
+        CompareRuns("EveningDojiStar", first, Drive_EveningDojiStar(ind));
+    }
+    private static List<double[]> Drive_Evwma(Wickra.Evwma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("EveningDojiStar", got);
+        return got;
     }
     [Fact]
     public void Golden_Evwma()
     {
         using var ind = new Wickra.Evwma(14);
         Assert.Equal("EVWMA", ind.Name());
+        Compare("Evwma", Drive_Evwma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Evwma()
+    {
+        using var ind = new Wickra.Evwma(14);
+        Assert.False(ind.IsReady(), "Evwma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Evwma: warmup period must be >= 1");
+        var first = Drive_Evwma(ind);
+        Assert.True(ind.IsReady(), "Evwma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Evwma: still ready after Reset");
+        CompareRuns("Evwma", first, Drive_Evwma(ind));
+    }
+    private static List<double[]> Drive_EwmaVolatility(Wickra.EwmaVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Evwma", got);
+        return got;
     }
     [Fact]
     public void Golden_EwmaVolatility()
     {
         using var ind = new Wickra.EwmaVolatility(0.94);
         Assert.Equal("EwmaVolatility", ind.Name());
+        Compare("EwmaVolatility", Drive_EwmaVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_EwmaVolatility()
+    {
+        using var ind = new Wickra.EwmaVolatility(0.94);
+        Assert.False(ind.IsReady(), "EwmaVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "EwmaVolatility: warmup period must be >= 1");
+        var first = Drive_EwmaVolatility(ind);
+        Assert.True(ind.IsReady(), "EwmaVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "EwmaVolatility: still ready after Reset");
+        CompareRuns("EwmaVolatility", first, Drive_EwmaVolatility(ind));
+    }
+    private static List<double[]> Drive_Expectancy(Wickra.Expectancy ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("EwmaVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_Expectancy()
     {
         using var ind = new Wickra.Expectancy(14);
         Assert.Equal("Expectancy", ind.Name());
+        Compare("Expectancy", Drive_Expectancy(ind));
+    }
+    [Fact]
+    public void Lifecycle_Expectancy()
+    {
+        using var ind = new Wickra.Expectancy(14);
+        Assert.False(ind.IsReady(), "Expectancy: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Expectancy: warmup period must be >= 1");
+        var first = Drive_Expectancy(ind);
+        Assert.True(ind.IsReady(), "Expectancy: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Expectancy: still ready after Reset");
+        CompareRuns("Expectancy", first, Drive_Expectancy(ind));
+    }
+    private static List<double[]> Drive_FallingThreeMethods(Wickra.FallingThreeMethods ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Expectancy", got);
+        return got;
     }
     [Fact]
     public void Golden_FallingThreeMethods()
     {
         using var ind = new Wickra.FallingThreeMethods();
         Assert.Equal("FallingThreeMethods", ind.Name());
+        Compare("FallingThreeMethods", Drive_FallingThreeMethods(ind));
+    }
+    [Fact]
+    public void Lifecycle_FallingThreeMethods()
+    {
+        using var ind = new Wickra.FallingThreeMethods();
+        Assert.False(ind.IsReady(), "FallingThreeMethods: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FallingThreeMethods: warmup period must be >= 1");
+        var first = Drive_FallingThreeMethods(ind);
+        Assert.True(ind.IsReady(), "FallingThreeMethods: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FallingThreeMethods: still ready after Reset");
+        CompareRuns("FallingThreeMethods", first, Drive_FallingThreeMethods(ind));
+    }
+    private static List<double[]> Drive_Fama(Wickra.Fama ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("FallingThreeMethods", got);
+        return got;
     }
     [Fact]
     public void Golden_Fama()
     {
         using var ind = new Wickra.Fama(0.5, 0.05);
         Assert.Equal("FAMA", ind.Name());
+        Compare("Fama", Drive_Fama(ind));
+    }
+    [Fact]
+    public void Lifecycle_Fama()
+    {
+        using var ind = new Wickra.Fama(0.5, 0.05);
+        Assert.False(ind.IsReady(), "Fama: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Fama: warmup period must be >= 1");
+        var first = Drive_Fama(ind);
+        Assert.True(ind.IsReady(), "Fama: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Fama: still ready after Reset");
+        CompareRuns("Fama", first, Drive_Fama(ind));
+    }
+    private static List<double[]> Drive_FibArcs(Wickra.FibArcs ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("Fama", got);
+        return got;
     }
     [Fact]
     public void Golden_FibArcs()
     {
         using var ind = new Wickra.FibArcs();
         Assert.Equal("FibArcs", ind.Name());
+        Compare("FibArcs", Drive_FibArcs(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibArcs()
+    {
+        using var ind = new Wickra.FibArcs();
+        Assert.False(ind.IsReady(), "FibArcs: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibArcs: warmup period must be >= 1");
+        var first = Drive_FibArcs(ind);
+        Assert.True(ind.IsReady(), "FibArcs: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibArcs: still ready after Reset");
+        CompareRuns("FibArcs", first, Drive_FibArcs(ind));
+    }
+    private static List<double[]> Drive_FibChannel(Wickra.FibChannel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
         }
-        Compare("FibArcs", got);
+        return got;
     }
     [Fact]
     public void Golden_FibChannel()
     {
         using var ind = new Wickra.FibChannel();
         Assert.Equal("FibChannel", ind.Name());
+        Compare("FibChannel", Drive_FibChannel(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibChannel()
+    {
+        using var ind = new Wickra.FibChannel();
+        Assert.False(ind.IsReady(), "FibChannel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibChannel: warmup period must be >= 1");
+        var first = Drive_FibChannel(ind);
+        Assert.True(ind.IsReady(), "FibChannel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibChannel: still ready after Reset");
+        CompareRuns("FibChannel", first, Drive_FibChannel(ind));
+    }
+    private static List<double[]> Drive_FibConfluence(Wickra.FibConfluence ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("FibChannel", got);
+        return got;
     }
     [Fact]
     public void Golden_FibConfluence()
     {
         using var ind = new Wickra.FibConfluence();
         Assert.Equal("FibConfluence", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
-        }
-        Compare("FibConfluence", got);
+        Compare("FibConfluence", Drive_FibConfluence(ind));
     }
     [Fact]
-    public void Golden_FibExtension()
+    public void Lifecycle_FibConfluence()
     {
-        using var ind = new Wickra.FibExtension();
-        Assert.Equal("FibExtension", ind.Name());
+        using var ind = new Wickra.FibConfluence();
+        Assert.False(ind.IsReady(), "FibConfluence: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibConfluence: warmup period must be >= 1");
+        var first = Drive_FibConfluence(ind);
+        Assert.True(ind.IsReady(), "FibConfluence: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibConfluence: still ready after Reset");
+        CompareRuns("FibConfluence", first, Drive_FibConfluence(ind));
+    }
+    private static List<double[]> Drive_FibExtension(Wickra.FibExtension ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 5));
         }
-        Compare("FibExtension", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_FibExtension()
+    {
+        using var ind = new Wickra.FibExtension();
+        Assert.Equal("FibExtension", ind.Name());
+        Compare("FibExtension", Drive_FibExtension(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibExtension()
+    {
+        using var ind = new Wickra.FibExtension();
+        Assert.False(ind.IsReady(), "FibExtension: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibExtension: warmup period must be >= 1");
+        var first = Drive_FibExtension(ind);
+        Assert.True(ind.IsReady(), "FibExtension: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibExtension: still ready after Reset");
+        CompareRuns("FibExtension", first, Drive_FibExtension(ind));
+    }
+    private static List<double[]> Drive_FibFan(Wickra.FibFan ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+        }
+        return got;
     }
     [Fact]
     public void Golden_FibFan()
     {
         using var ind = new Wickra.FibFan();
         Assert.Equal("FibFan", ind.Name());
+        Compare("FibFan", Drive_FibFan(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibFan()
+    {
+        using var ind = new Wickra.FibFan();
+        Assert.False(ind.IsReady(), "FibFan: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibFan: warmup period must be >= 1");
+        var first = Drive_FibFan(ind);
+        Assert.True(ind.IsReady(), "FibFan: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibFan: still ready after Reset");
+        CompareRuns("FibFan", first, Drive_FibFan(ind));
+    }
+    private static List<double[]> Drive_FibProjection(Wickra.FibProjection ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
         }
-        Compare("FibFan", got);
+        return got;
     }
     [Fact]
     public void Golden_FibProjection()
     {
         using var ind = new Wickra.FibProjection();
         Assert.Equal("FibProjection", ind.Name());
+        Compare("FibProjection", Drive_FibProjection(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibProjection()
+    {
+        using var ind = new Wickra.FibProjection();
+        Assert.False(ind.IsReady(), "FibProjection: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibProjection: warmup period must be >= 1");
+        var first = Drive_FibProjection(ind);
+        Assert.True(ind.IsReady(), "FibProjection: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibProjection: still ready after Reset");
+        CompareRuns("FibProjection", first, Drive_FibProjection(ind));
+    }
+    private static List<double[]> Drive_FibRetracement(Wickra.FibRetracement ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 7));
         }
-        Compare("FibProjection", got);
+        return got;
     }
     [Fact]
     public void Golden_FibRetracement()
     {
         using var ind = new Wickra.FibRetracement();
         Assert.Equal("FibRetracement", ind.Name());
+        Compare("FibRetracement", Drive_FibRetracement(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibRetracement()
+    {
+        using var ind = new Wickra.FibRetracement();
+        Assert.False(ind.IsReady(), "FibRetracement: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibRetracement: warmup period must be >= 1");
+        var first = Drive_FibRetracement(ind);
+        Assert.True(ind.IsReady(), "FibRetracement: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibRetracement: still ready after Reset");
+        CompareRuns("FibRetracement", first, Drive_FibRetracement(ind));
+    }
+    private static List<double[]> Drive_FibTimeZones(Wickra.FibTimeZones ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 7));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("FibRetracement", got);
+        return got;
     }
     [Fact]
     public void Golden_FibTimeZones()
     {
         using var ind = new Wickra.FibTimeZones();
         Assert.Equal("FibTimeZones", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
-        }
-        Compare("FibTimeZones", got);
+        Compare("FibTimeZones", Drive_FibTimeZones(ind));
     }
     [Fact]
-    public void Golden_FibonacciPivots()
+    public void Lifecycle_FibTimeZones()
     {
-        using var ind = new Wickra.FibonacciPivots();
-        Assert.Equal("FibonacciPivots", ind.Name());
+        using var ind = new Wickra.FibTimeZones();
+        Assert.False(ind.IsReady(), "FibTimeZones: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibTimeZones: warmup period must be >= 1");
+        var first = Drive_FibTimeZones(ind);
+        Assert.True(ind.IsReady(), "FibTimeZones: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibTimeZones: still ready after Reset");
+        CompareRuns("FibTimeZones", first, Drive_FibTimeZones(ind));
+    }
+    private static List<double[]> Drive_FibonacciPivots(Wickra.FibonacciPivots ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 7));
         }
-        Compare("FibonacciPivots", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_FibonacciPivots()
+    {
+        using var ind = new Wickra.FibonacciPivots();
+        Assert.Equal("FibonacciPivots", ind.Name());
+        Compare("FibonacciPivots", Drive_FibonacciPivots(ind));
+    }
+    [Fact]
+    public void Lifecycle_FibonacciPivots()
+    {
+        using var ind = new Wickra.FibonacciPivots();
+        Assert.False(ind.IsReady(), "FibonacciPivots: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FibonacciPivots: warmup period must be >= 1");
+        var first = Drive_FibonacciPivots(ind);
+        Assert.True(ind.IsReady(), "FibonacciPivots: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FibonacciPivots: still ready after Reset");
+        CompareRuns("FibonacciPivots", first, Drive_FibonacciPivots(ind));
+    }
+    private static List<double[]> Drive_FisherRsi(Wickra.FisherRsi ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_FisherRsi()
     {
         using var ind = new Wickra.FisherRsi(14);
         Assert.Equal("FisherRSI", ind.Name());
+        Compare("FisherRsi", Drive_FisherRsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_FisherRsi()
+    {
+        using var ind = new Wickra.FisherRsi(14);
+        Assert.False(ind.IsReady(), "FisherRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FisherRsi: warmup period must be >= 1");
+        var first = Drive_FisherRsi(ind);
+        Assert.True(ind.IsReady(), "FisherRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FisherRsi: still ready after Reset");
+        CompareRuns("FisherRsi", first, Drive_FisherRsi(ind));
+    }
+    private static List<double[]> Drive_FisherTransform(Wickra.FisherTransform ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("FisherRsi", got);
+        return got;
     }
     [Fact]
     public void Golden_FisherTransform()
     {
         using var ind = new Wickra.FisherTransform(14);
         Assert.Equal("FisherTransform", ind.Name());
+        Compare("FisherTransform", Drive_FisherTransform(ind));
+    }
+    [Fact]
+    public void Lifecycle_FisherTransform()
+    {
+        using var ind = new Wickra.FisherTransform(14);
+        Assert.False(ind.IsReady(), "FisherTransform: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FisherTransform: warmup period must be >= 1");
+        var first = Drive_FisherTransform(ind);
+        Assert.True(ind.IsReady(), "FisherTransform: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FisherTransform: still ready after Reset");
+        CompareRuns("FisherTransform", first, Drive_FisherTransform(ind));
+    }
+    private static List<double[]> Drive_FlagPennant(Wickra.FlagPennant ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("FisherTransform", got);
+        return got;
     }
     [Fact]
     public void Golden_FlagPennant()
     {
         using var ind = new Wickra.FlagPennant();
         Assert.Equal("FlagPennant", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("FlagPennant", got);
+        Compare("FlagPennant", Drive_FlagPennant(ind));
     }
     [Fact]
-    public void Golden_Footprint()
+    public void Lifecycle_FlagPennant()
     {
-        using var ind = new Wickra.Footprint(1.0);
-        Assert.Equal("Footprint", ind.Name());
+        using var ind = new Wickra.FlagPennant();
+        Assert.False(ind.IsReady(), "FlagPennant: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FlagPennant: warmup period must be >= 1");
+        var first = Drive_FlagPennant(ind);
+        Assert.True(ind.IsReady(), "FlagPennant: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FlagPennant: still ready after Reset");
+        CompareRuns("FlagPennant", first, Drive_FlagPennant(ind));
+    }
+    private static List<double[]> Drive_Footprint(Wickra.Footprint ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[3], r[4], r[3] >= r[0], i)));
         }
-        Compare("Footprint", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Footprint()
+    {
+        using var ind = new Wickra.Footprint(1.0);
+        Assert.Equal("Footprint", ind.Name());
+        Compare("Footprint", Drive_Footprint(ind));
+    }
+    [Fact]
+    public void Lifecycle_Footprint()
+    {
+        using var ind = new Wickra.Footprint(1.0);
+        Assert.False(ind.IsReady(), "Footprint: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Footprint: warmup period must be >= 1");
+        var first = Drive_Footprint(ind);
+        Assert.True(ind.IsReady(), "Footprint: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Footprint: still ready after Reset");
+        CompareRuns("Footprint", first, Drive_Footprint(ind));
+    }
+    private static List<double[]> Drive_ForceIndex(Wickra.ForceIndex ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_ForceIndex()
     {
         using var ind = new Wickra.ForceIndex(14);
         Assert.Equal("ForceIndex", ind.Name());
+        Compare("ForceIndex", Drive_ForceIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_ForceIndex()
+    {
+        using var ind = new Wickra.ForceIndex(14);
+        Assert.False(ind.IsReady(), "ForceIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ForceIndex: warmup period must be >= 1");
+        var first = Drive_ForceIndex(ind);
+        Assert.True(ind.IsReady(), "ForceIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ForceIndex: still ready after Reset");
+        CompareRuns("ForceIndex", first, Drive_ForceIndex(ind));
+    }
+    private static List<double[]> Drive_FractalChaosBands(Wickra.FractalChaosBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("ForceIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_FractalChaosBands()
     {
         using var ind = new Wickra.FractalChaosBands(14);
         Assert.Equal("FractalChaosBands", ind.Name());
+        Compare("FractalChaosBands", Drive_FractalChaosBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_FractalChaosBands()
+    {
+        using var ind = new Wickra.FractalChaosBands(14);
+        Assert.False(ind.IsReady(), "FractalChaosBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FractalChaosBands: warmup period must be >= 1");
+        var first = Drive_FractalChaosBands(ind);
+        Assert.True(ind.IsReady(), "FractalChaosBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FractalChaosBands: still ready after Reset");
+        CompareRuns("FractalChaosBands", first, Drive_FractalChaosBands(ind));
+    }
+    private static List<double[]> Drive_Frama(Wickra.Frama ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("FractalChaosBands", got);
+        return got;
     }
     [Fact]
     public void Golden_Frama()
     {
         using var ind = new Wickra.Frama(14);
         Assert.Equal("FRAMA", ind.Name());
+        Compare("Frama", Drive_Frama(ind));
+    }
+    [Fact]
+    public void Lifecycle_Frama()
+    {
+        using var ind = new Wickra.Frama(14);
+        Assert.False(ind.IsReady(), "Frama: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Frama: warmup period must be >= 1");
+        var first = Drive_Frama(ind);
+        Assert.True(ind.IsReady(), "Frama: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Frama: still ready after Reset");
+        CompareRuns("Frama", first, Drive_Frama(ind));
+    }
+    private static List<double[]> Drive_FryPanBottom(Wickra.FryPanBottom ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Frama", got);
+        return got;
     }
     [Fact]
     public void Golden_FryPanBottom()
     {
         using var ind = new Wickra.FryPanBottom(14);
         Assert.Equal("FryPanBottom", ind.Name());
+        Compare("FryPanBottom", Drive_FryPanBottom(ind));
+    }
+    [Fact]
+    public void Lifecycle_FryPanBottom()
+    {
+        using var ind = new Wickra.FryPanBottom(14);
+        Assert.False(ind.IsReady(), "FryPanBottom: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FryPanBottom: warmup period must be >= 1");
+        var first = Drive_FryPanBottom(ind);
+        Assert.True(ind.IsReady(), "FryPanBottom: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FryPanBottom: still ready after Reset");
+        CompareRuns("FryPanBottom", first, Drive_FryPanBottom(ind));
+    }
+    private static List<double[]> Drive_FundingBasis(Wickra.FundingBasis ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("FryPanBottom", got);
+        return got;
     }
     [Fact]
     public void Golden_FundingBasis()
     {
         using var ind = new Wickra.FundingBasis();
         Assert.Equal("FundingBasis", ind.Name());
+        Compare("FundingBasis", Drive_FundingBasis(ind));
+    }
+    [Fact]
+    public void Lifecycle_FundingBasis()
+    {
+        using var ind = new Wickra.FundingBasis();
+        Assert.False(ind.IsReady(), "FundingBasis: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FundingBasis: warmup period must be >= 1");
+        var first = Drive_FundingBasis(ind);
+        Assert.True(ind.IsReady(), "FundingBasis: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FundingBasis: still ready after Reset");
+        CompareRuns("FundingBasis", first, Drive_FundingBasis(ind));
+    }
+    private static List<double[]> Drive_FundingImpliedApr(Wickra.FundingImpliedApr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2156,13 +4613,29 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("FundingBasis", got);
+        return got;
     }
     [Fact]
     public void Golden_FundingImpliedApr()
     {
         using var ind = new Wickra.FundingImpliedApr(1095.0);
         Assert.Equal("FundingImpliedApr", ind.Name());
+        Compare("FundingImpliedApr", Drive_FundingImpliedApr(ind));
+    }
+    [Fact]
+    public void Lifecycle_FundingImpliedApr()
+    {
+        using var ind = new Wickra.FundingImpliedApr(1095.0);
+        Assert.False(ind.IsReady(), "FundingImpliedApr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FundingImpliedApr: warmup period must be >= 1");
+        var first = Drive_FundingImpliedApr(ind);
+        Assert.True(ind.IsReady(), "FundingImpliedApr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FundingImpliedApr: still ready after Reset");
+        CompareRuns("FundingImpliedApr", first, Drive_FundingImpliedApr(ind));
+    }
+    private static List<double[]> Drive_FundingRate(Wickra.FundingRate ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2170,13 +4643,29 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("FundingImpliedApr", got);
+        return got;
     }
     [Fact]
     public void Golden_FundingRate()
     {
         using var ind = new Wickra.FundingRate();
         Assert.Equal("FundingRate", ind.Name());
+        Compare("FundingRate", Drive_FundingRate(ind));
+    }
+    [Fact]
+    public void Lifecycle_FundingRate()
+    {
+        using var ind = new Wickra.FundingRate();
+        Assert.False(ind.IsReady(), "FundingRate: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FundingRate: warmup period must be >= 1");
+        var first = Drive_FundingRate(ind);
+        Assert.True(ind.IsReady(), "FundingRate: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FundingRate: still ready after Reset");
+        CompareRuns("FundingRate", first, Drive_FundingRate(ind));
+    }
+    private static List<double[]> Drive_FundingRateMean(Wickra.FundingRateMean ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2184,13 +4673,29 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("FundingRate", got);
+        return got;
     }
     [Fact]
     public void Golden_FundingRateMean()
     {
         using var ind = new Wickra.FundingRateMean(20);
         Assert.Equal("FundingRateMean", ind.Name());
+        Compare("FundingRateMean", Drive_FundingRateMean(ind));
+    }
+    [Fact]
+    public void Lifecycle_FundingRateMean()
+    {
+        using var ind = new Wickra.FundingRateMean(20);
+        Assert.False(ind.IsReady(), "FundingRateMean: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FundingRateMean: warmup period must be >= 1");
+        var first = Drive_FundingRateMean(ind);
+        Assert.True(ind.IsReady(), "FundingRateMean: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FundingRateMean: still ready after Reset");
+        CompareRuns("FundingRateMean", first, Drive_FundingRateMean(ind));
+    }
+    private static List<double[]> Drive_FundingRateZScore(Wickra.FundingRateZScore ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2198,300 +4703,637 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("FundingRateMean", got);
+        return got;
     }
     [Fact]
     public void Golden_FundingRateZScore()
     {
         using var ind = new Wickra.FundingRateZScore(20);
         Assert.Equal("FundingRateZScore", ind.Name());
+        Compare("FundingRateZScore", Drive_FundingRateZScore(ind));
+    }
+    [Fact]
+    public void Lifecycle_FundingRateZScore()
+    {
+        using var ind = new Wickra.FundingRateZScore(20);
+        Assert.False(ind.IsReady(), "FundingRateZScore: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "FundingRateZScore: warmup period must be >= 1");
+        var first = Drive_FundingRateZScore(ind);
+        Assert.True(ind.IsReady(), "FundingRateZScore: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "FundingRateZScore: still ready after Reset");
+        CompareRuns("FundingRateZScore", first, Drive_FundingRateZScore(ind));
+    }
+    private static List<double[]> Drive_GainLossRatio(Wickra.GainLossRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("FundingRateZScore", got);
+        return got;
     }
     [Fact]
     public void Golden_GainLossRatio()
     {
         using var ind = new Wickra.GainLossRatio(14);
         Assert.Equal("GainLossRatio", ind.Name());
+        Compare("GainLossRatio", Drive_GainLossRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_GainLossRatio()
+    {
+        using var ind = new Wickra.GainLossRatio(14);
+        Assert.False(ind.IsReady(), "GainLossRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GainLossRatio: warmup period must be >= 1");
+        var first = Drive_GainLossRatio(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GainLossRatio: still ready after Reset");
+        CompareRuns("GainLossRatio", first, Drive_GainLossRatio(ind));
+    }
+    private static List<double[]> Drive_GainToPainRatio(Wickra.GainToPainRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("GainLossRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_GainToPainRatio()
     {
         using var ind = new Wickra.GainToPainRatio(14);
         Assert.Equal("GainToPainRatio", ind.Name());
+        Compare("GainToPainRatio", Drive_GainToPainRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_GainToPainRatio()
+    {
+        using var ind = new Wickra.GainToPainRatio(14);
+        Assert.False(ind.IsReady(), "GainToPainRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GainToPainRatio: warmup period must be >= 1");
+        var first = Drive_GainToPainRatio(ind);
+        Assert.True(ind.IsReady(), "GainToPainRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GainToPainRatio: still ready after Reset");
+        CompareRuns("GainToPainRatio", first, Drive_GainToPainRatio(ind));
+    }
+    private static List<double[]> Drive_GapSideBySideWhite(Wickra.GapSideBySideWhite ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("GainToPainRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_GapSideBySideWhite()
     {
         using var ind = new Wickra.GapSideBySideWhite();
         Assert.Equal("GapSideBySideWhite", ind.Name());
+        Compare("GapSideBySideWhite", Drive_GapSideBySideWhite(ind));
+    }
+    [Fact]
+    public void Lifecycle_GapSideBySideWhite()
+    {
+        using var ind = new Wickra.GapSideBySideWhite();
+        Assert.False(ind.IsReady(), "GapSideBySideWhite: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GapSideBySideWhite: warmup period must be >= 1");
+        var first = Drive_GapSideBySideWhite(ind);
+        Assert.True(ind.IsReady(), "GapSideBySideWhite: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GapSideBySideWhite: still ready after Reset");
+        CompareRuns("GapSideBySideWhite", first, Drive_GapSideBySideWhite(ind));
+    }
+    private static List<double[]> Drive_Garch11(Wickra.Garch11 ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("GapSideBySideWhite", got);
+        return got;
     }
     [Fact]
     public void Golden_Garch11()
     {
         using var ind = new Wickra.Garch11(2e-06, 0.1, 0.88);
         Assert.Equal("Garch11", ind.Name());
+        Compare("Garch11", Drive_Garch11(ind));
+    }
+    [Fact]
+    public void Lifecycle_Garch11()
+    {
+        using var ind = new Wickra.Garch11(2e-06, 0.1, 0.88);
+        Assert.False(ind.IsReady(), "Garch11: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Garch11: warmup period must be >= 1");
+        var first = Drive_Garch11(ind);
+        Assert.True(ind.IsReady(), "Garch11: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Garch11: still ready after Reset");
+        CompareRuns("Garch11", first, Drive_Garch11(ind));
+    }
+    private static List<double[]> Drive_GarmanKlassVolatility(Wickra.GarmanKlassVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Garch11", got);
+        return got;
     }
     [Fact]
     public void Golden_GarmanKlassVolatility()
     {
         using var ind = new Wickra.GarmanKlassVolatility(20, 252);
         Assert.Equal("GarmanKlassVolatility", ind.Name());
+        Compare("GarmanKlassVolatility", Drive_GarmanKlassVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_GarmanKlassVolatility()
+    {
+        using var ind = new Wickra.GarmanKlassVolatility(20, 252);
+        Assert.False(ind.IsReady(), "GarmanKlassVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GarmanKlassVolatility: warmup period must be >= 1");
+        var first = Drive_GarmanKlassVolatility(ind);
+        Assert.True(ind.IsReady(), "GarmanKlassVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GarmanKlassVolatility: still ready after Reset");
+        CompareRuns("GarmanKlassVolatility", first, Drive_GarmanKlassVolatility(ind));
+    }
+    private static List<double[]> Drive_Gartley(Wickra.Gartley ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("GarmanKlassVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_Gartley()
     {
         using var ind = new Wickra.Gartley();
         Assert.Equal("Gartley", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Gartley", got);
+        Compare("Gartley", Drive_Gartley(ind));
     }
     [Fact]
-    public void Golden_GatorOscillator()
+    public void Lifecycle_Gartley()
     {
-        using var ind = new Wickra.GatorOscillator(3, 7, 14);
-        Assert.Equal("GatorOscillator", ind.Name());
+        using var ind = new Wickra.Gartley();
+        Assert.False(ind.IsReady(), "Gartley: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Gartley: warmup period must be >= 1");
+        var first = Drive_Gartley(ind);
+        Assert.True(ind.IsReady(), "Gartley: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Gartley: still ready after Reset");
+        CompareRuns("Gartley", first, Drive_Gartley(ind));
+    }
+    private static List<double[]> Drive_GatorOscillator(Wickra.GatorOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("GatorOscillator", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_GatorOscillator()
+    {
+        using var ind = new Wickra.GatorOscillator(3, 7, 14);
+        Assert.Equal("GatorOscillator", ind.Name());
+        Compare("GatorOscillator", Drive_GatorOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_GatorOscillator()
+    {
+        using var ind = new Wickra.GatorOscillator(3, 7, 14);
+        Assert.False(ind.IsReady(), "GatorOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GatorOscillator: warmup period must be >= 1");
+        var first = Drive_GatorOscillator(ind);
+        Assert.True(ind.IsReady(), "GatorOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GatorOscillator: still ready after Reset");
+        CompareRuns("GatorOscillator", first, Drive_GatorOscillator(ind));
+    }
+    private static List<double[]> Drive_GeneralizedDema(Wickra.GeneralizedDema ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_GeneralizedDema()
     {
         using var ind = new Wickra.GeneralizedDema(5, 0.7);
         Assert.Equal("GD", ind.Name());
+        Compare("GeneralizedDema", Drive_GeneralizedDema(ind));
+    }
+    [Fact]
+    public void Lifecycle_GeneralizedDema()
+    {
+        using var ind = new Wickra.GeneralizedDema(5, 0.7);
+        Assert.False(ind.IsReady(), "GeneralizedDema: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GeneralizedDema: warmup period must be >= 1");
+        var first = Drive_GeneralizedDema(ind);
+        Assert.True(ind.IsReady(), "GeneralizedDema: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GeneralizedDema: still ready after Reset");
+        CompareRuns("GeneralizedDema", first, Drive_GeneralizedDema(ind));
+    }
+    private static List<double[]> Drive_GeometricMa(Wickra.GeometricMa ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("GeneralizedDema", got);
+        return got;
     }
     [Fact]
     public void Golden_GeometricMa()
     {
         using var ind = new Wickra.GeometricMa(14);
         Assert.Equal("GMA", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("GeometricMa", got);
+        Compare("GeometricMa", Drive_GeometricMa(ind));
     }
     [Fact]
-    public void Golden_GoldenPocket()
+    public void Lifecycle_GeometricMa()
     {
-        using var ind = new Wickra.GoldenPocket();
-        Assert.Equal("GoldenPocket", ind.Name());
+        using var ind = new Wickra.GeometricMa(14);
+        Assert.False(ind.IsReady(), "GeometricMa: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GeometricMa: warmup period must be >= 1");
+        var first = Drive_GeometricMa(ind);
+        Assert.True(ind.IsReady(), "GeometricMa: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GeometricMa: still ready after Reset");
+        CompareRuns("GeometricMa", first, Drive_GeometricMa(ind));
+    }
+    private static List<double[]> Drive_GoldenPocket(Wickra.GoldenPocket ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("GoldenPocket", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_GoldenPocket()
+    {
+        using var ind = new Wickra.GoldenPocket();
+        Assert.Equal("GoldenPocket", ind.Name());
+        Compare("GoldenPocket", Drive_GoldenPocket(ind));
+    }
+    [Fact]
+    public void Lifecycle_GoldenPocket()
+    {
+        using var ind = new Wickra.GoldenPocket();
+        Assert.False(ind.IsReady(), "GoldenPocket: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GoldenPocket: warmup period must be >= 1");
+        var first = Drive_GoldenPocket(ind);
+        Assert.True(ind.IsReady(), "GoldenPocket: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GoldenPocket: still ready after Reset");
+        CompareRuns("GoldenPocket", first, Drive_GoldenPocket(ind));
+    }
+    private static List<double[]> Drive_GrangerCausality(Wickra.GrangerCausality ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3], r[0]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_GrangerCausality()
     {
         using var ind = new Wickra.GrangerCausality(60, 1);
         Assert.Equal("GrangerCausality", ind.Name());
+        Compare("GrangerCausality", Drive_GrangerCausality(ind));
+    }
+    [Fact]
+    public void Lifecycle_GrangerCausality()
+    {
+        using var ind = new Wickra.GrangerCausality(60, 1);
+        Assert.False(ind.IsReady(), "GrangerCausality: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GrangerCausality: warmup period must be >= 1");
+        var first = Drive_GrangerCausality(ind);
+        Assert.True(ind.IsReady(), "GrangerCausality: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GrangerCausality: still ready after Reset");
+        CompareRuns("GrangerCausality", first, Drive_GrangerCausality(ind));
+    }
+    private static List<double[]> Drive_GravestoneDoji(Wickra.GravestoneDoji ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("GrangerCausality", got);
+        return got;
     }
     [Fact]
     public void Golden_GravestoneDoji()
     {
         using var ind = new Wickra.GravestoneDoji();
         Assert.Equal("GravestoneDoji", ind.Name());
+        Compare("GravestoneDoji", Drive_GravestoneDoji(ind));
+    }
+    [Fact]
+    public void Lifecycle_GravestoneDoji()
+    {
+        using var ind = new Wickra.GravestoneDoji();
+        Assert.False(ind.IsReady(), "GravestoneDoji: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "GravestoneDoji: warmup period must be >= 1");
+        var first = Drive_GravestoneDoji(ind);
+        Assert.True(ind.IsReady(), "GravestoneDoji: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "GravestoneDoji: still ready after Reset");
+        CompareRuns("GravestoneDoji", first, Drive_GravestoneDoji(ind));
+    }
+    private static List<double[]> Drive_Hammer(Wickra.Hammer ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("GravestoneDoji", got);
+        return got;
     }
     [Fact]
     public void Golden_Hammer()
     {
         using var ind = new Wickra.Hammer();
         Assert.Equal("Hammer", ind.Name());
+        Compare("Hammer", Drive_Hammer(ind));
+    }
+    [Fact]
+    public void Lifecycle_Hammer()
+    {
+        using var ind = new Wickra.Hammer();
+        Assert.False(ind.IsReady(), "Hammer: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Hammer: warmup period must be >= 1");
+        var first = Drive_Hammer(ind);
+        Assert.True(ind.IsReady(), "Hammer: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Hammer: still ready after Reset");
+        CompareRuns("Hammer", first, Drive_Hammer(ind));
+    }
+    private static List<double[]> Drive_HangingMan(Wickra.HangingMan ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Hammer", got);
+        return got;
     }
     [Fact]
     public void Golden_HangingMan()
     {
         using var ind = new Wickra.HangingMan();
         Assert.Equal("HangingMan", ind.Name());
+        Compare("HangingMan", Drive_HangingMan(ind));
+    }
+    [Fact]
+    public void Lifecycle_HangingMan()
+    {
+        using var ind = new Wickra.HangingMan();
+        Assert.False(ind.IsReady(), "HangingMan: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HangingMan: warmup period must be >= 1");
+        var first = Drive_HangingMan(ind);
+        Assert.True(ind.IsReady(), "HangingMan: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HangingMan: still ready after Reset");
+        CompareRuns("HangingMan", first, Drive_HangingMan(ind));
+    }
+    private static List<double[]> Drive_Harami(Wickra.Harami ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("HangingMan", got);
+        return got;
     }
     [Fact]
     public void Golden_Harami()
     {
         using var ind = new Wickra.Harami();
         Assert.Equal("Harami", ind.Name());
+        Compare("Harami", Drive_Harami(ind));
+    }
+    [Fact]
+    public void Lifecycle_Harami()
+    {
+        using var ind = new Wickra.Harami();
+        Assert.False(ind.IsReady(), "Harami: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Harami: warmup period must be >= 1");
+        var first = Drive_Harami(ind);
+        Assert.True(ind.IsReady(), "Harami: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Harami: still ready after Reset");
+        CompareRuns("Harami", first, Drive_Harami(ind));
+    }
+    private static List<double[]> Drive_HaramiCross(Wickra.HaramiCross ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Harami", got);
+        return got;
     }
     [Fact]
     public void Golden_HaramiCross()
     {
         using var ind = new Wickra.HaramiCross();
         Assert.Equal("HaramiCross", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("HaramiCross", got);
+        Compare("HaramiCross", Drive_HaramiCross(ind));
     }
     [Fact]
-    public void Golden_HasbrouckInformationShare()
+    public void Lifecycle_HaramiCross()
     {
-        using var ind = new Wickra.HasbrouckInformationShare(14);
-        Assert.Equal("HasbrouckInformationShare", ind.Name());
+        using var ind = new Wickra.HaramiCross();
+        Assert.False(ind.IsReady(), "HaramiCross: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HaramiCross: warmup period must be >= 1");
+        var first = Drive_HaramiCross(ind);
+        Assert.True(ind.IsReady(), "HaramiCross: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HaramiCross: still ready after Reset");
+        CompareRuns("HaramiCross", first, Drive_HaramiCross(ind));
+    }
+    private static List<double[]> Drive_HasbrouckInformationShare(Wickra.HasbrouckInformationShare ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("HasbrouckInformationShare", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_HasbrouckInformationShare()
+    {
+        using var ind = new Wickra.HasbrouckInformationShare(14);
+        Assert.Equal("HasbrouckInformationShare", ind.Name());
+        Compare("HasbrouckInformationShare", Drive_HasbrouckInformationShare(ind));
+    }
+    [Fact]
+    public void Lifecycle_HasbrouckInformationShare()
+    {
+        using var ind = new Wickra.HasbrouckInformationShare(14);
+        Assert.False(ind.IsReady(), "HasbrouckInformationShare: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HasbrouckInformationShare: warmup period must be >= 1");
+        var first = Drive_HasbrouckInformationShare(ind);
+        Assert.True(ind.IsReady(), "HasbrouckInformationShare: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HasbrouckInformationShare: still ready after Reset");
+        CompareRuns("HasbrouckInformationShare", first, Drive_HasbrouckInformationShare(ind));
+    }
+    private static List<double[]> Drive_HeadAndShoulders(Wickra.HeadAndShoulders ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_HeadAndShoulders()
     {
         using var ind = new Wickra.HeadAndShoulders();
         Assert.Equal("HeadAndShoulders", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("HeadAndShoulders", got);
+        Compare("HeadAndShoulders", Drive_HeadAndShoulders(ind));
     }
     [Fact]
-    public void Golden_HeikinAshi()
+    public void Lifecycle_HeadAndShoulders()
     {
-        using var ind = new Wickra.HeikinAshi();
-        Assert.Equal("HeikinAshi", ind.Name());
+        using var ind = new Wickra.HeadAndShoulders();
+        Assert.False(ind.IsReady(), "HeadAndShoulders: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HeadAndShoulders: warmup period must be >= 1");
+        var first = Drive_HeadAndShoulders(ind);
+        Assert.True(ind.IsReady(), "HeadAndShoulders: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HeadAndShoulders: still ready after Reset");
+        CompareRuns("HeadAndShoulders", first, Drive_HeadAndShoulders(ind));
+    }
+    private static List<double[]> Drive_HeikinAshi(Wickra.HeikinAshi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
         }
-        Compare("HeikinAshi", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_HeikinAshi()
+    {
+        using var ind = new Wickra.HeikinAshi();
+        Assert.Equal("HeikinAshi", ind.Name());
+        Compare("HeikinAshi", Drive_HeikinAshi(ind));
+    }
+    [Fact]
+    public void Lifecycle_HeikinAshi()
+    {
+        using var ind = new Wickra.HeikinAshi();
+        Assert.False(ind.IsReady(), "HeikinAshi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HeikinAshi: warmup period must be >= 1");
+        var first = Drive_HeikinAshi(ind);
+        Assert.True(ind.IsReady(), "HeikinAshi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HeikinAshi: still ready after Reset");
+        CompareRuns("HeikinAshi", first, Drive_HeikinAshi(ind));
+    }
+    private static List<double[]> Drive_HeikinAshiOscillator(Wickra.HeikinAshiOscillator ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_HeikinAshiOscillator()
     {
         using var ind = new Wickra.HeikinAshiOscillator(14);
         Assert.Equal("HeikinAshiOscillator", ind.Name());
+        Compare("HeikinAshiOscillator", Drive_HeikinAshiOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_HeikinAshiOscillator()
+    {
+        using var ind = new Wickra.HeikinAshiOscillator(14);
+        Assert.False(ind.IsReady(), "HeikinAshiOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HeikinAshiOscillator: warmup period must be >= 1");
+        var first = Drive_HeikinAshiOscillator(ind);
+        Assert.True(ind.IsReady(), "HeikinAshiOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HeikinAshiOscillator: still ready after Reset");
+        CompareRuns("HeikinAshiOscillator", first, Drive_HeikinAshiOscillator(ind));
+    }
+    private static List<double[]> Drive_HiLoActivator(Wickra.HiLoActivator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("HeikinAshiOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_HiLoActivator()
     {
         using var ind = new Wickra.HiLoActivator(14);
         Assert.Equal("HiLoActivator", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("HiLoActivator", got);
+        Compare("HiLoActivator", Drive_HiLoActivator(ind));
     }
     [Fact]
-    public void Golden_HighLowIndex()
+    public void Lifecycle_HiLoActivator()
     {
-        using var ind = new Wickra.HighLowIndex(10);
-        Assert.Equal("HighLowIndex", ind.Name());
+        using var ind = new Wickra.HiLoActivator(14);
+        Assert.False(ind.IsReady(), "HiLoActivator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HiLoActivator: warmup period must be >= 1");
+        var first = Drive_HiLoActivator(ind);
+        Assert.True(ind.IsReady(), "HiLoActivator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HiLoActivator: still ready after Reset");
+        CompareRuns("HiLoActivator", first, Drive_HiLoActivator(ind));
+    }
+    private static List<double[]> Drive_HighLowIndex(Wickra.HighLowIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2499,351 +5341,778 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("HighLowIndex", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_HighLowIndex()
+    {
+        using var ind = new Wickra.HighLowIndex(10);
+        Assert.Equal("HighLowIndex", ind.Name());
+        Compare("HighLowIndex", Drive_HighLowIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_HighLowIndex()
+    {
+        using var ind = new Wickra.HighLowIndex(10);
+        Assert.False(ind.IsReady(), "HighLowIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HighLowIndex: warmup period must be >= 1");
+        var first = Drive_HighLowIndex(ind);
+        Assert.True(ind.IsReady(), "HighLowIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HighLowIndex: still ready after Reset");
+        CompareRuns("HighLowIndex", first, Drive_HighLowIndex(ind));
+    }
+    private static List<double[]> Drive_HighLowRange(Wickra.HighLowRange ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_HighLowRange()
     {
         using var ind = new Wickra.HighLowRange();
         Assert.Equal("HighLowRange", ind.Name());
+        Compare("HighLowRange", Drive_HighLowRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_HighLowRange()
+    {
+        using var ind = new Wickra.HighLowRange();
+        Assert.False(ind.IsReady(), "HighLowRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HighLowRange: warmup period must be >= 1");
+        var first = Drive_HighLowRange(ind);
+        Assert.True(ind.IsReady(), "HighLowRange: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HighLowRange: still ready after Reset");
+        CompareRuns("HighLowRange", first, Drive_HighLowRange(ind));
+    }
+    private static List<double[]> Drive_HighLowVolumeNodes(Wickra.HighLowVolumeNodes ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("HighLowRange", got);
+        return got;
     }
     [Fact]
     public void Golden_HighLowVolumeNodes()
     {
         using var ind = new Wickra.HighLowVolumeNodes(3, 7);
         Assert.Equal("HighLowVolumeNodes", ind.Name());
+        Compare("HighLowVolumeNodes", Drive_HighLowVolumeNodes(ind));
+    }
+    [Fact]
+    public void Lifecycle_HighLowVolumeNodes()
+    {
+        using var ind = new Wickra.HighLowVolumeNodes(3, 7);
+        Assert.False(ind.IsReady(), "HighLowVolumeNodes: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HighLowVolumeNodes: warmup period must be >= 1");
+        var first = Drive_HighLowVolumeNodes(ind);
+        Assert.True(ind.IsReady(), "HighLowVolumeNodes: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HighLowVolumeNodes: still ready after Reset");
+        CompareRuns("HighLowVolumeNodes", first, Drive_HighLowVolumeNodes(ind));
+    }
+    private static List<double[]> Drive_HighWave(Wickra.HighWave ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("HighLowVolumeNodes", got);
+        return got;
     }
     [Fact]
     public void Golden_HighWave()
     {
         using var ind = new Wickra.HighWave();
         Assert.Equal("HighWave", ind.Name());
+        Compare("HighWave", Drive_HighWave(ind));
+    }
+    [Fact]
+    public void Lifecycle_HighWave()
+    {
+        using var ind = new Wickra.HighWave();
+        Assert.False(ind.IsReady(), "HighWave: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HighWave: warmup period must be >= 1");
+        var first = Drive_HighWave(ind);
+        Assert.True(ind.IsReady(), "HighWave: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HighWave: still ready after Reset");
+        CompareRuns("HighWave", first, Drive_HighWave(ind));
+    }
+    private static List<double[]> Drive_HighpassFilter(Wickra.HighpassFilter ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("HighWave", got);
+        return got;
     }
     [Fact]
     public void Golden_HighpassFilter()
     {
         using var ind = new Wickra.HighpassFilter(14);
         Assert.Equal("HighpassFilter", ind.Name());
+        Compare("HighpassFilter", Drive_HighpassFilter(ind));
+    }
+    [Fact]
+    public void Lifecycle_HighpassFilter()
+    {
+        using var ind = new Wickra.HighpassFilter(14);
+        Assert.False(ind.IsReady(), "HighpassFilter: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HighpassFilter: warmup period must be >= 1");
+        var first = Drive_HighpassFilter(ind);
+        Assert.True(ind.IsReady(), "HighpassFilter: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HighpassFilter: still ready after Reset");
+        CompareRuns("HighpassFilter", first, Drive_HighpassFilter(ind));
+    }
+    private static List<double[]> Drive_Hikkake(Wickra.Hikkake ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("HighpassFilter", got);
+        return got;
     }
     [Fact]
     public void Golden_Hikkake()
     {
         using var ind = new Wickra.Hikkake();
         Assert.Equal("Hikkake", ind.Name());
+        Compare("Hikkake", Drive_Hikkake(ind));
+    }
+    [Fact]
+    public void Lifecycle_Hikkake()
+    {
+        using var ind = new Wickra.Hikkake();
+        Assert.False(ind.IsReady(), "Hikkake: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Hikkake: warmup period must be >= 1");
+        var first = Drive_Hikkake(ind);
+        Assert.True(ind.IsReady(), "Hikkake: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Hikkake: still ready after Reset");
+        CompareRuns("Hikkake", first, Drive_Hikkake(ind));
+    }
+    private static List<double[]> Drive_HikkakeModified(Wickra.HikkakeModified ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Hikkake", got);
+        return got;
     }
     [Fact]
     public void Golden_HikkakeModified()
     {
         using var ind = new Wickra.HikkakeModified();
         Assert.Equal("HikkakeModified", ind.Name());
+        Compare("HikkakeModified", Drive_HikkakeModified(ind));
+    }
+    [Fact]
+    public void Lifecycle_HikkakeModified()
+    {
+        using var ind = new Wickra.HikkakeModified();
+        Assert.False(ind.IsReady(), "HikkakeModified: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HikkakeModified: warmup period must be >= 1");
+        var first = Drive_HikkakeModified(ind);
+        Assert.True(ind.IsReady(), "HikkakeModified: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HikkakeModified: still ready after Reset");
+        CompareRuns("HikkakeModified", first, Drive_HikkakeModified(ind));
+    }
+    private static List<double[]> Drive_HilbertDominantCycle(Wickra.HilbertDominantCycle ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("HikkakeModified", got);
+        return got;
     }
     [Fact]
     public void Golden_HilbertDominantCycle()
     {
         using var ind = new Wickra.HilbertDominantCycle();
         Assert.Equal("HilbertDominantCycle", ind.Name());
+        Compare("HilbertDominantCycle", Drive_HilbertDominantCycle(ind));
+    }
+    [Fact]
+    public void Lifecycle_HilbertDominantCycle()
+    {
+        using var ind = new Wickra.HilbertDominantCycle();
+        Assert.False(ind.IsReady(), "HilbertDominantCycle: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HilbertDominantCycle: warmup period must be >= 1");
+        var first = Drive_HilbertDominantCycle(ind);
+        Assert.True(ind.IsReady(), "HilbertDominantCycle: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HilbertDominantCycle: still ready after Reset");
+        CompareRuns("HilbertDominantCycle", first, Drive_HilbertDominantCycle(ind));
+    }
+    private static List<double[]> Drive_HistoricalVolatility(Wickra.HistoricalVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("HilbertDominantCycle", got);
+        return got;
     }
     [Fact]
     public void Golden_HistoricalVolatility()
     {
         using var ind = new Wickra.HistoricalVolatility(3, 7);
         Assert.Equal("HistoricalVolatility", ind.Name());
+        Compare("HistoricalVolatility", Drive_HistoricalVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_HistoricalVolatility()
+    {
+        using var ind = new Wickra.HistoricalVolatility(3, 7);
+        Assert.False(ind.IsReady(), "HistoricalVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HistoricalVolatility: warmup period must be >= 1");
+        var first = Drive_HistoricalVolatility(ind);
+        Assert.True(ind.IsReady(), "HistoricalVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HistoricalVolatility: still ready after Reset");
+        CompareRuns("HistoricalVolatility", first, Drive_HistoricalVolatility(ind));
+    }
+    private static List<double[]> Drive_Hma(Wickra.Hma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("HistoricalVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_Hma()
     {
         using var ind = new Wickra.Hma(14);
         Assert.Equal("HMA", ind.Name());
+        Compare("Hma", Drive_Hma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Hma()
+    {
+        using var ind = new Wickra.Hma(14);
+        Assert.False(ind.IsReady(), "Hma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Hma: warmup period must be >= 1");
+        var first = Drive_Hma(ind);
+        Assert.True(ind.IsReady(), "Hma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Hma: still ready after Reset");
+        CompareRuns("Hma", first, Drive_Hma(ind));
+    }
+    private static List<double[]> Drive_HoltWinters(Wickra.HoltWinters ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Hma", got);
+        return got;
     }
     [Fact]
     public void Golden_HoltWinters()
     {
         using var ind = new Wickra.HoltWinters(0.5, 0.1);
         Assert.Equal("HoltWinters", ind.Name());
+        Compare("HoltWinters", Drive_HoltWinters(ind));
+    }
+    [Fact]
+    public void Lifecycle_HoltWinters()
+    {
+        using var ind = new Wickra.HoltWinters(0.5, 0.1);
+        Assert.False(ind.IsReady(), "HoltWinters: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HoltWinters: warmup period must be >= 1");
+        var first = Drive_HoltWinters(ind);
+        Assert.True(ind.IsReady(), "HoltWinters: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HoltWinters: still ready after Reset");
+        CompareRuns("HoltWinters", first, Drive_HoltWinters(ind));
+    }
+    private static List<double[]> Drive_HomingPigeon(Wickra.HomingPigeon ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("HoltWinters", got);
+        return got;
     }
     [Fact]
     public void Golden_HomingPigeon()
     {
         using var ind = new Wickra.HomingPigeon();
         Assert.Equal("HomingPigeon", ind.Name());
+        Compare("HomingPigeon", Drive_HomingPigeon(ind));
+    }
+    [Fact]
+    public void Lifecycle_HomingPigeon()
+    {
+        using var ind = new Wickra.HomingPigeon();
+        Assert.False(ind.IsReady(), "HomingPigeon: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HomingPigeon: warmup period must be >= 1");
+        var first = Drive_HomingPigeon(ind);
+        Assert.True(ind.IsReady(), "HomingPigeon: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HomingPigeon: still ready after Reset");
+        CompareRuns("HomingPigeon", first, Drive_HomingPigeon(ind));
+    }
+    private static List<double[]> Drive_HtDcPhase(Wickra.HtDcPhase ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("HomingPigeon", got);
+        return got;
     }
     [Fact]
     public void Golden_HtDcPhase()
     {
         using var ind = new Wickra.HtDcPhase();
         Assert.Equal("HT_DCPHASE", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("HtDcPhase", got);
+        Compare("HtDcPhase", Drive_HtDcPhase(ind));
     }
     [Fact]
-    public void Golden_HtPhasor()
+    public void Lifecycle_HtDcPhase()
     {
-        using var ind = new Wickra.HtPhasor();
-        Assert.Equal("HT_PHASOR", ind.Name());
+        using var ind = new Wickra.HtDcPhase();
+        Assert.False(ind.IsReady(), "HtDcPhase: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HtDcPhase: warmup period must be >= 1");
+        var first = Drive_HtDcPhase(ind);
+        Assert.True(ind.IsReady(), "HtDcPhase: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HtDcPhase: still ready after Reset");
+        CompareRuns("HtDcPhase", first, Drive_HtDcPhase(ind));
+    }
+    private static List<double[]> Drive_HtPhasor(Wickra.HtPhasor ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 2));
         }
-        Compare("HtPhasor", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_HtPhasor()
+    {
+        using var ind = new Wickra.HtPhasor();
+        Assert.Equal("HT_PHASOR", ind.Name());
+        Compare("HtPhasor", Drive_HtPhasor(ind));
+    }
+    [Fact]
+    public void Lifecycle_HtPhasor()
+    {
+        using var ind = new Wickra.HtPhasor();
+        Assert.False(ind.IsReady(), "HtPhasor: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HtPhasor: warmup period must be >= 1");
+        var first = Drive_HtPhasor(ind);
+        Assert.True(ind.IsReady(), "HtPhasor: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HtPhasor: still ready after Reset");
+        CompareRuns("HtPhasor", first, Drive_HtPhasor(ind));
+    }
+    private static List<double[]> Drive_HtTrendMode(Wickra.HtTrendMode ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_HtTrendMode()
     {
         using var ind = new Wickra.HtTrendMode();
         Assert.Equal("HT_TRENDMODE", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("HtTrendMode", got);
+        Compare("HtTrendMode", Drive_HtTrendMode(ind));
     }
     [Fact]
-    public void Golden_HurstChannel()
+    public void Lifecycle_HtTrendMode()
     {
-        using var ind = new Wickra.HurstChannel(14, 2.0);
-        Assert.Equal("HurstChannel", ind.Name());
+        using var ind = new Wickra.HtTrendMode();
+        Assert.False(ind.IsReady(), "HtTrendMode: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HtTrendMode: warmup period must be >= 1");
+        var first = Drive_HtTrendMode(ind);
+        Assert.True(ind.IsReady(), "HtTrendMode: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HtTrendMode: still ready after Reset");
+        CompareRuns("HtTrendMode", first, Drive_HtTrendMode(ind));
+    }
+    private static List<double[]> Drive_HurstChannel(Wickra.HurstChannel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("HurstChannel", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_HurstChannel()
+    {
+        using var ind = new Wickra.HurstChannel(14, 2.0);
+        Assert.Equal("HurstChannel", ind.Name());
+        Compare("HurstChannel", Drive_HurstChannel(ind));
+    }
+    [Fact]
+    public void Lifecycle_HurstChannel()
+    {
+        using var ind = new Wickra.HurstChannel(14, 2.0);
+        Assert.False(ind.IsReady(), "HurstChannel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HurstChannel: warmup period must be >= 1");
+        var first = Drive_HurstChannel(ind);
+        Assert.True(ind.IsReady(), "HurstChannel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HurstChannel: still ready after Reset");
+        CompareRuns("HurstChannel", first, Drive_HurstChannel(ind));
+    }
+    private static List<double[]> Drive_HurstExponent(Wickra.HurstExponent ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_HurstExponent()
     {
         using var ind = new Wickra.HurstExponent(100, 4);
         Assert.Equal("HurstExponent", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("HurstExponent", got);
+        Compare("HurstExponent", Drive_HurstExponent(ind));
     }
     [Fact]
-    public void Golden_Ichimoku()
+    public void Lifecycle_HurstExponent()
     {
-        using var ind = new Wickra.Ichimoku(9, 26, 52, 26);
-        Assert.Equal("Ichimoku", ind.Name());
+        using var ind = new Wickra.HurstExponent(100, 4);
+        Assert.False(ind.IsReady(), "HurstExponent: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "HurstExponent: warmup period must be >= 1");
+        var first = Drive_HurstExponent(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "HurstExponent: still ready after Reset");
+        CompareRuns("HurstExponent", first, Drive_HurstExponent(ind));
+    }
+    private static List<double[]> Drive_Ichimoku(Wickra.Ichimoku ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 5));
         }
-        Compare("Ichimoku", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Ichimoku()
+    {
+        using var ind = new Wickra.Ichimoku(9, 26, 52, 26);
+        Assert.Equal("Ichimoku", ind.Name());
+        Compare("Ichimoku", Drive_Ichimoku(ind));
+    }
+    [Fact]
+    public void Lifecycle_Ichimoku()
+    {
+        using var ind = new Wickra.Ichimoku(9, 26, 52, 26);
+        Assert.False(ind.IsReady(), "Ichimoku: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Ichimoku: warmup period must be >= 1");
+        var first = Drive_Ichimoku(ind);
+        Assert.True(ind.IsReady(), "Ichimoku: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Ichimoku: still ready after Reset");
+        CompareRuns("Ichimoku", first, Drive_Ichimoku(ind));
+    }
+    private static List<double[]> Drive_IdenticalThreeCrows(Wickra.IdenticalThreeCrows ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_IdenticalThreeCrows()
     {
         using var ind = new Wickra.IdenticalThreeCrows();
         Assert.Equal("IdenticalThreeCrows", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("IdenticalThreeCrows", got);
+        Compare("IdenticalThreeCrows", Drive_IdenticalThreeCrows(ind));
     }
     [Fact]
-    public void Golden_ImbalanceBars()
+    public void Lifecycle_IdenticalThreeCrows()
     {
-        using var ind = new Wickra.ImbalanceBars(5.0);
-        Assert.Equal("ImbalanceBars", ind.Name());
+        using var ind = new Wickra.IdenticalThreeCrows();
+        Assert.False(ind.IsReady(), "IdenticalThreeCrows: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "IdenticalThreeCrows: warmup period must be >= 1");
+        var first = Drive_IdenticalThreeCrows(ind);
+        Assert.True(ind.IsReady(), "IdenticalThreeCrows: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "IdenticalThreeCrows: still ready after Reset");
+        CompareRuns("IdenticalThreeCrows", first, Drive_IdenticalThreeCrows(ind));
+    }
+    private static List<double[]> Drive_ImbalanceBars(Wickra.ImbalanceBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[0], r[1], r[2], r[3], 1.0, 0)));
         }
-        Compare("ImbalanceBars", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_ImbalanceBars()
+    {
+        using var ind = new Wickra.ImbalanceBars(5.0);
+        Assert.Equal("ImbalanceBars", ind.Name());
+        Compare("ImbalanceBars", Drive_ImbalanceBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_ImbalanceBars()
+    {
+        using var ind = new Wickra.ImbalanceBars(5.0);
+        var first = Drive_ImbalanceBars(ind);
+        ind.Reset();
+        CompareRuns("ImbalanceBars", first, Drive_ImbalanceBars(ind));
+    }
+    private static List<double[]> Drive_InNeck(Wickra.InNeck ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_InNeck()
     {
         using var ind = new Wickra.InNeck();
         Assert.Equal("InNeck", ind.Name());
+        Compare("InNeck", Drive_InNeck(ind));
+    }
+    [Fact]
+    public void Lifecycle_InNeck()
+    {
+        using var ind = new Wickra.InNeck();
+        Assert.False(ind.IsReady(), "InNeck: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "InNeck: warmup period must be >= 1");
+        var first = Drive_InNeck(ind);
+        Assert.True(ind.IsReady(), "InNeck: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "InNeck: still ready after Reset");
+        CompareRuns("InNeck", first, Drive_InNeck(ind));
+    }
+    private static List<double[]> Drive_Inertia(Wickra.Inertia ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("InNeck", got);
+        return got;
     }
     [Fact]
     public void Golden_Inertia()
     {
         using var ind = new Wickra.Inertia(3, 7);
         Assert.Equal("Inertia", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Inertia", got);
+        Compare("Inertia", Drive_Inertia(ind));
     }
     [Fact]
-    public void Golden_InformationRatio()
+    public void Lifecycle_Inertia()
     {
-        using var ind = new Wickra.InformationRatio(14);
-        Assert.Equal("InformationRatio", ind.Name());
+        using var ind = new Wickra.Inertia(3, 7);
+        Assert.False(ind.IsReady(), "Inertia: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Inertia: warmup period must be >= 1");
+        var first = Drive_Inertia(ind);
+        Assert.True(ind.IsReady(), "Inertia: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Inertia: still ready after Reset");
+        CompareRuns("Inertia", first, Drive_Inertia(ind));
+    }
+    private static List<double[]> Drive_InformationRatio(Wickra.InformationRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("InformationRatio", got);
+        return got;
     }
     [Fact]
-    public void Golden_InitialBalance()
+    public void Golden_InformationRatio()
     {
-        using var ind = new Wickra.InitialBalance(14);
-        Assert.Equal("InitialBalance", ind.Name());
+        using var ind = new Wickra.InformationRatio(14);
+        Assert.Equal("InformationRatio", ind.Name());
+        Compare("InformationRatio", Drive_InformationRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_InformationRatio()
+    {
+        using var ind = new Wickra.InformationRatio(14);
+        Assert.False(ind.IsReady(), "InformationRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "InformationRatio: warmup period must be >= 1");
+        var first = Drive_InformationRatio(ind);
+        Assert.True(ind.IsReady(), "InformationRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "InformationRatio: still ready after Reset");
+        CompareRuns("InformationRatio", first, Drive_InformationRatio(ind));
+    }
+    private static List<double[]> Drive_InitialBalance(Wickra.InitialBalance ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("InitialBalance", got);
+        return got;
     }
     [Fact]
-    public void Golden_InstantaneousTrendline()
+    public void Golden_InitialBalance()
     {
-        using var ind = new Wickra.InstantaneousTrendline(14);
-        Assert.Equal("InstantaneousTrendline", ind.Name());
+        using var ind = new Wickra.InitialBalance(14);
+        Assert.Equal("InitialBalance", ind.Name());
+        Compare("InitialBalance", Drive_InitialBalance(ind));
+    }
+    [Fact]
+    public void Lifecycle_InitialBalance()
+    {
+        using var ind = new Wickra.InitialBalance(14);
+        Assert.False(ind.IsReady(), "InitialBalance: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "InitialBalance: warmup period must be >= 1");
+        var first = Drive_InitialBalance(ind);
+        Assert.True(ind.IsReady(), "InitialBalance: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "InitialBalance: still ready after Reset");
+        CompareRuns("InitialBalance", first, Drive_InitialBalance(ind));
+    }
+    private static List<double[]> Drive_InstantaneousTrendline(Wickra.InstantaneousTrendline ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("InstantaneousTrendline", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_InstantaneousTrendline()
+    {
+        using var ind = new Wickra.InstantaneousTrendline(14);
+        Assert.Equal("InstantaneousTrendline", ind.Name());
+        Compare("InstantaneousTrendline", Drive_InstantaneousTrendline(ind));
+    }
+    [Fact]
+    public void Lifecycle_InstantaneousTrendline()
+    {
+        using var ind = new Wickra.InstantaneousTrendline(14);
+        Assert.False(ind.IsReady(), "InstantaneousTrendline: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "InstantaneousTrendline: warmup period must be >= 1");
+        var first = Drive_InstantaneousTrendline(ind);
+        Assert.True(ind.IsReady(), "InstantaneousTrendline: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "InstantaneousTrendline: still ready after Reset");
+        CompareRuns("InstantaneousTrendline", first, Drive_InstantaneousTrendline(ind));
+    }
+    private static List<double[]> Drive_IntradayIntensity(Wickra.IntradayIntensity ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_IntradayIntensity()
     {
         using var ind = new Wickra.IntradayIntensity();
         Assert.Equal("IntradayIntensity", ind.Name());
+        Compare("IntradayIntensity", Drive_IntradayIntensity(ind));
+    }
+    [Fact]
+    public void Lifecycle_IntradayIntensity()
+    {
+        using var ind = new Wickra.IntradayIntensity();
+        Assert.False(ind.IsReady(), "IntradayIntensity: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "IntradayIntensity: warmup period must be >= 1");
+        var first = Drive_IntradayIntensity(ind);
+        Assert.True(ind.IsReady(), "IntradayIntensity: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "IntradayIntensity: still ready after Reset");
+        CompareRuns("IntradayIntensity", first, Drive_IntradayIntensity(ind));
+    }
+    private static List<double[]> Drive_IntradayMomentumIndex(Wickra.IntradayMomentumIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("IntradayIntensity", got);
+        return got;
     }
     [Fact]
     public void Golden_IntradayMomentumIndex()
     {
         using var ind = new Wickra.IntradayMomentumIndex(14);
         Assert.Equal("IMI", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("IntradayMomentumIndex", got);
+        Compare("IntradayMomentumIndex", Drive_IntradayMomentumIndex(ind));
     }
     [Fact]
-    public void Golden_IntradayVolatilityProfile()
+    public void Lifecycle_IntradayMomentumIndex()
     {
-        using var ind = new Wickra.IntradayVolatilityProfile(24, 0);
-        Assert.Equal("IntradayVolatilityProfile", ind.Name());
+        using var ind = new Wickra.IntradayMomentumIndex(14);
+        Assert.False(ind.IsReady(), "IntradayMomentumIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "IntradayMomentumIndex: warmup period must be >= 1");
+        var first = Drive_IntradayMomentumIndex(ind);
+        Assert.True(ind.IsReady(), "IntradayMomentumIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "IntradayMomentumIndex: still ready after Reset");
+        CompareRuns("IntradayMomentumIndex", first, Drive_IntradayMomentumIndex(ind));
+    }
+    private static List<double[]> Drive_IntradayVolatilityProfile(Wickra.IntradayVolatilityProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -2851,377 +6120,836 @@ public class GoldenAllTests
             var bins = ind.Update(r[0], r[1], r[2], r[3], r[4], i);
             got.Add(bins ?? NanRow(24));
         }
-        Compare("IntradayVolatilityProfile", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_IntradayVolatilityProfile()
+    {
+        using var ind = new Wickra.IntradayVolatilityProfile(24, 0);
+        Assert.Equal("IntradayVolatilityProfile", ind.Name());
+        Compare("IntradayVolatilityProfile", Drive_IntradayVolatilityProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_IntradayVolatilityProfile()
+    {
+        using var ind = new Wickra.IntradayVolatilityProfile(24, 0);
+        Assert.False(ind.IsReady(), "IntradayVolatilityProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "IntradayVolatilityProfile: warmup period must be >= 1");
+        var first = Drive_IntradayVolatilityProfile(ind);
+        Assert.True(ind.IsReady(), "IntradayVolatilityProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "IntradayVolatilityProfile: still ready after Reset");
+        CompareRuns("IntradayVolatilityProfile", first, Drive_IntradayVolatilityProfile(ind));
+    }
+    private static List<double[]> Drive_InverseFisherTransform(Wickra.InverseFisherTransform ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_InverseFisherTransform()
     {
         using var ind = new Wickra.InverseFisherTransform(2.0);
         Assert.Equal("InverseFisherTransform", ind.Name());
+        Compare("InverseFisherTransform", Drive_InverseFisherTransform(ind));
+    }
+    [Fact]
+    public void Lifecycle_InverseFisherTransform()
+    {
+        using var ind = new Wickra.InverseFisherTransform(2.0);
+        Assert.False(ind.IsReady(), "InverseFisherTransform: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "InverseFisherTransform: warmup period must be >= 1");
+        var first = Drive_InverseFisherTransform(ind);
+        Assert.True(ind.IsReady(), "InverseFisherTransform: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "InverseFisherTransform: still ready after Reset");
+        CompareRuns("InverseFisherTransform", first, Drive_InverseFisherTransform(ind));
+    }
+    private static List<double[]> Drive_InvertedHammer(Wickra.InvertedHammer ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("InverseFisherTransform", got);
+        return got;
     }
     [Fact]
     public void Golden_InvertedHammer()
     {
         using var ind = new Wickra.InvertedHammer();
         Assert.Equal("InvertedHammer", ind.Name());
+        Compare("InvertedHammer", Drive_InvertedHammer(ind));
+    }
+    [Fact]
+    public void Lifecycle_InvertedHammer()
+    {
+        using var ind = new Wickra.InvertedHammer();
+        Assert.False(ind.IsReady(), "InvertedHammer: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "InvertedHammer: warmup period must be >= 1");
+        var first = Drive_InvertedHammer(ind);
+        Assert.True(ind.IsReady(), "InvertedHammer: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "InvertedHammer: still ready after Reset");
+        CompareRuns("InvertedHammer", first, Drive_InvertedHammer(ind));
+    }
+    private static List<double[]> Drive_JarqueBera(Wickra.JarqueBera ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("InvertedHammer", got);
+        return got;
     }
     [Fact]
     public void Golden_JarqueBera()
     {
         using var ind = new Wickra.JarqueBera(14);
         Assert.Equal("JarqueBera", ind.Name());
+        Compare("JarqueBera", Drive_JarqueBera(ind));
+    }
+    [Fact]
+    public void Lifecycle_JarqueBera()
+    {
+        using var ind = new Wickra.JarqueBera(14);
+        Assert.False(ind.IsReady(), "JarqueBera: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "JarqueBera: warmup period must be >= 1");
+        var first = Drive_JarqueBera(ind);
+        Assert.True(ind.IsReady(), "JarqueBera: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "JarqueBera: still ready after Reset");
+        CompareRuns("JarqueBera", first, Drive_JarqueBera(ind));
+    }
+    private static List<double[]> Drive_Jma(Wickra.Jma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("JarqueBera", got);
+        return got;
     }
     [Fact]
     public void Golden_Jma()
     {
         using var ind = new Wickra.Jma(7, 0.0, 2u);
         Assert.Equal("JMA", ind.Name());
+        Compare("Jma", Drive_Jma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Jma()
+    {
+        using var ind = new Wickra.Jma(7, 0.0, 2u);
+        Assert.False(ind.IsReady(), "Jma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Jma: warmup period must be >= 1");
+        var first = Drive_Jma(ind);
+        Assert.True(ind.IsReady(), "Jma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Jma: still ready after Reset");
+        CompareRuns("Jma", first, Drive_Jma(ind));
+    }
+    private static List<double[]> Drive_JumpIndicator(Wickra.JumpIndicator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Jma", got);
+        return got;
     }
     [Fact]
     public void Golden_JumpIndicator()
     {
         using var ind = new Wickra.JumpIndicator(14, 2.0);
         Assert.Equal("JumpIndicator", ind.Name());
+        Compare("JumpIndicator", Drive_JumpIndicator(ind));
+    }
+    [Fact]
+    public void Lifecycle_JumpIndicator()
+    {
+        using var ind = new Wickra.JumpIndicator(14, 2.0);
+        Assert.False(ind.IsReady(), "JumpIndicator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "JumpIndicator: warmup period must be >= 1");
+        var first = Drive_JumpIndicator(ind);
+        Assert.True(ind.IsReady(), "JumpIndicator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "JumpIndicator: still ready after Reset");
+        CompareRuns("JumpIndicator", first, Drive_JumpIndicator(ind));
+    }
+    private static List<double[]> Drive_KRatio(Wickra.KRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("JumpIndicator", got);
+        return got;
     }
     [Fact]
     public void Golden_KRatio()
     {
         using var ind = new Wickra.KRatio(14);
         Assert.Equal("KRatio", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("KRatio", got);
+        Compare("KRatio", Drive_KRatio(ind));
     }
     [Fact]
-    public void Golden_KagiBars()
+    public void Lifecycle_KRatio()
     {
-        using var ind = new Wickra.KagiBars(2.0);
-        Assert.Equal("KagiBars", ind.Name());
+        using var ind = new Wickra.KRatio(14);
+        Assert.False(ind.IsReady(), "KRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KRatio: warmup period must be >= 1");
+        var first = Drive_KRatio(ind);
+        Assert.True(ind.IsReady(), "KRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KRatio: still ready after Reset");
+        CompareRuns("KRatio", first, Drive_KRatio(ind));
+    }
+    private static List<double[]> Drive_KagiBars(Wickra.KagiBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
         }
-        Compare("KagiBars", got);
+        return got;
     }
     [Fact]
-    public void Golden_KalmanHedgeRatio()
+    public void Golden_KagiBars()
     {
-        using var ind = new Wickra.KalmanHedgeRatio(0.01, 0.001);
-        Assert.Equal("KalmanHedgeRatio", ind.Name());
+        using var ind = new Wickra.KagiBars(2.0);
+        Assert.Equal("KagiBars", ind.Name());
+        Compare("KagiBars", Drive_KagiBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_KagiBars()
+    {
+        using var ind = new Wickra.KagiBars(2.0);
+        var first = Drive_KagiBars(ind);
+        ind.Reset();
+        CompareRuns("KagiBars", first, Drive_KagiBars(ind));
+    }
+    private static List<double[]> Drive_KalmanHedgeRatio(Wickra.KalmanHedgeRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3], r[0]), 3));
         }
-        Compare("KalmanHedgeRatio", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_KalmanHedgeRatio()
+    {
+        using var ind = new Wickra.KalmanHedgeRatio(0.01, 0.001);
+        Assert.Equal("KalmanHedgeRatio", ind.Name());
+        Compare("KalmanHedgeRatio", Drive_KalmanHedgeRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_KalmanHedgeRatio()
+    {
+        using var ind = new Wickra.KalmanHedgeRatio(0.01, 0.001);
+        Assert.False(ind.IsReady(), "KalmanHedgeRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KalmanHedgeRatio: warmup period must be >= 1");
+        var first = Drive_KalmanHedgeRatio(ind);
+        Assert.True(ind.IsReady(), "KalmanHedgeRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KalmanHedgeRatio: still ready after Reset");
+        CompareRuns("KalmanHedgeRatio", first, Drive_KalmanHedgeRatio(ind));
+    }
+    private static List<double[]> Drive_Kama(Wickra.Kama ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Kama()
     {
         using var ind = new Wickra.Kama(3, 7, 14);
         Assert.Equal("KAMA", ind.Name());
+        Compare("Kama", Drive_Kama(ind));
+    }
+    [Fact]
+    public void Lifecycle_Kama()
+    {
+        using var ind = new Wickra.Kama(3, 7, 14);
+        Assert.False(ind.IsReady(), "Kama: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Kama: warmup period must be >= 1");
+        var first = Drive_Kama(ind);
+        Assert.True(ind.IsReady(), "Kama: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Kama: still ready after Reset");
+        CompareRuns("Kama", first, Drive_Kama(ind));
+    }
+    private static List<double[]> Drive_KaseDevStop(Wickra.KaseDevStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("Kama", got);
+        return got;
     }
     [Fact]
     public void Golden_KaseDevStop()
     {
         using var ind = new Wickra.KaseDevStop(14, 2.0);
         Assert.Equal("KaseDevStop", ind.Name());
+        Compare("KaseDevStop", Drive_KaseDevStop(ind));
+    }
+    [Fact]
+    public void Lifecycle_KaseDevStop()
+    {
+        using var ind = new Wickra.KaseDevStop(14, 2.0);
+        Assert.False(ind.IsReady(), "KaseDevStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KaseDevStop: warmup period must be >= 1");
+        var first = Drive_KaseDevStop(ind);
+        Assert.True(ind.IsReady(), "KaseDevStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KaseDevStop: still ready after Reset");
+        CompareRuns("KaseDevStop", first, Drive_KaseDevStop(ind));
+    }
+    private static List<double[]> Drive_KasePermissionStochastic(Wickra.KasePermissionStochastic ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("KaseDevStop", got);
+        return got;
     }
     [Fact]
     public void Golden_KasePermissionStochastic()
     {
         using var ind = new Wickra.KasePermissionStochastic(3, 7);
         Assert.Equal("KasePermissionStochastic", ind.Name());
+        Compare("KasePermissionStochastic", Drive_KasePermissionStochastic(ind));
+    }
+    [Fact]
+    public void Lifecycle_KasePermissionStochastic()
+    {
+        using var ind = new Wickra.KasePermissionStochastic(3, 7);
+        Assert.False(ind.IsReady(), "KasePermissionStochastic: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KasePermissionStochastic: warmup period must be >= 1");
+        var first = Drive_KasePermissionStochastic(ind);
+        Assert.True(ind.IsReady(), "KasePermissionStochastic: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KasePermissionStochastic: still ready after Reset");
+        CompareRuns("KasePermissionStochastic", first, Drive_KasePermissionStochastic(ind));
+    }
+    private static List<double[]> Drive_KellyCriterion(Wickra.KellyCriterion ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("KasePermissionStochastic", got);
+        return got;
     }
     [Fact]
     public void Golden_KellyCriterion()
     {
         using var ind = new Wickra.KellyCriterion(14);
         Assert.Equal("KellyCriterion", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("KellyCriterion", got);
+        Compare("KellyCriterion", Drive_KellyCriterion(ind));
     }
     [Fact]
-    public void Golden_Keltner()
+    public void Lifecycle_KellyCriterion()
     {
-        using var ind = new Wickra.Keltner(3, 7, 2.0);
-        Assert.Equal("KeltnerChannels", ind.Name());
+        using var ind = new Wickra.KellyCriterion(14);
+        Assert.False(ind.IsReady(), "KellyCriterion: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KellyCriterion: warmup period must be >= 1");
+        var first = Drive_KellyCriterion(ind);
+        Assert.True(ind.IsReady(), "KellyCriterion: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KellyCriterion: still ready after Reset");
+        CompareRuns("KellyCriterion", first, Drive_KellyCriterion(ind));
+    }
+    private static List<double[]> Drive_Keltner(Wickra.Keltner ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("Keltner", got);
+        return got;
     }
     [Fact]
-    public void Golden_KendallTau()
+    public void Golden_Keltner()
     {
-        using var ind = new Wickra.KendallTau(14);
-        Assert.Equal("KendallTau", ind.Name());
+        using var ind = new Wickra.Keltner(3, 7, 2.0);
+        Assert.Equal("KeltnerChannels", ind.Name());
+        Compare("Keltner", Drive_Keltner(ind));
+    }
+    [Fact]
+    public void Lifecycle_Keltner()
+    {
+        using var ind = new Wickra.Keltner(3, 7, 2.0);
+        Assert.False(ind.IsReady(), "Keltner: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Keltner: warmup period must be >= 1");
+        var first = Drive_Keltner(ind);
+        Assert.True(ind.IsReady(), "Keltner: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Keltner: still ready after Reset");
+        CompareRuns("Keltner", first, Drive_Keltner(ind));
+    }
+    private static List<double[]> Drive_KendallTau(Wickra.KendallTau ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("KendallTau", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_KendallTau()
+    {
+        using var ind = new Wickra.KendallTau(14);
+        Assert.Equal("KendallTau", ind.Name());
+        Compare("KendallTau", Drive_KendallTau(ind));
+    }
+    [Fact]
+    public void Lifecycle_KendallTau()
+    {
+        using var ind = new Wickra.KendallTau(14);
+        Assert.False(ind.IsReady(), "KendallTau: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KendallTau: warmup period must be >= 1");
+        var first = Drive_KendallTau(ind);
+        Assert.True(ind.IsReady(), "KendallTau: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KendallTau: still ready after Reset");
+        CompareRuns("KendallTau", first, Drive_KendallTau(ind));
+    }
+    private static List<double[]> Drive_Kicking(Wickra.Kicking ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Kicking()
     {
         using var ind = new Wickra.Kicking();
         Assert.Equal("Kicking", ind.Name());
+        Compare("Kicking", Drive_Kicking(ind));
+    }
+    [Fact]
+    public void Lifecycle_Kicking()
+    {
+        using var ind = new Wickra.Kicking();
+        Assert.False(ind.IsReady(), "Kicking: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Kicking: warmup period must be >= 1");
+        var first = Drive_Kicking(ind);
+        Assert.True(ind.IsReady(), "Kicking: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Kicking: still ready after Reset");
+        CompareRuns("Kicking", first, Drive_Kicking(ind));
+    }
+    private static List<double[]> Drive_KickingByLength(Wickra.KickingByLength ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Kicking", got);
+        return got;
     }
     [Fact]
     public void Golden_KickingByLength()
     {
         using var ind = new Wickra.KickingByLength();
         Assert.Equal("KickingByLength", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("KickingByLength", got);
+        Compare("KickingByLength", Drive_KickingByLength(ind));
     }
     [Fact]
-    public void Golden_Kst()
+    public void Lifecycle_KickingByLength()
     {
-        using var ind = new Wickra.Kst(3, 7, 14, 28, 35, 42, 56, 63, 70);
-        Assert.Equal("KST", ind.Name());
+        using var ind = new Wickra.KickingByLength();
+        Assert.False(ind.IsReady(), "KickingByLength: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KickingByLength: warmup period must be >= 1");
+        var first = Drive_KickingByLength(ind);
+        Assert.True(ind.IsReady(), "KickingByLength: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KickingByLength: still ready after Reset");
+        CompareRuns("KickingByLength", first, Drive_KickingByLength(ind));
+    }
+    private static List<double[]> Drive_Kst(Wickra.Kst ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 2));
         }
-        Compare("Kst", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Kst()
+    {
+        using var ind = new Wickra.Kst(3, 7, 14, 28, 35, 42, 56, 63, 70);
+        Assert.Equal("KST", ind.Name());
+        Compare("Kst", Drive_Kst(ind));
+    }
+    [Fact]
+    public void Lifecycle_Kst()
+    {
+        using var ind = new Wickra.Kst(3, 7, 14, 28, 35, 42, 56, 63, 70);
+        Assert.False(ind.IsReady(), "Kst: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Kst: warmup period must be >= 1");
+        var first = Drive_Kst(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Kst: still ready after Reset");
+        CompareRuns("Kst", first, Drive_Kst(ind));
+    }
+    private static List<double[]> Drive_Kurtosis(Wickra.Kurtosis ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Kurtosis()
     {
         using var ind = new Wickra.Kurtosis(14);
         Assert.Equal("Kurtosis", ind.Name());
+        Compare("Kurtosis", Drive_Kurtosis(ind));
+    }
+    [Fact]
+    public void Lifecycle_Kurtosis()
+    {
+        using var ind = new Wickra.Kurtosis(14);
+        Assert.False(ind.IsReady(), "Kurtosis: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Kurtosis: warmup period must be >= 1");
+        var first = Drive_Kurtosis(ind);
+        Assert.True(ind.IsReady(), "Kurtosis: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Kurtosis: still ready after Reset");
+        CompareRuns("Kurtosis", first, Drive_Kurtosis(ind));
+    }
+    private static List<double[]> Drive_Kvo(Wickra.Kvo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Kurtosis", got);
+        return got;
     }
     [Fact]
     public void Golden_Kvo()
     {
         using var ind = new Wickra.Kvo(3, 7);
         Assert.Equal("KVO", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Kvo", got);
+        Compare("Kvo", Drive_Kvo(ind));
     }
     [Fact]
-    public void Golden_KylesLambda()
+    public void Lifecycle_Kvo()
     {
-        using var ind = new Wickra.KylesLambda(20);
-        Assert.Equal("KylesLambda", ind.Name());
+        using var ind = new Wickra.Kvo(3, 7);
+        Assert.False(ind.IsReady(), "Kvo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Kvo: warmup period must be >= 1");
+        var first = Drive_Kvo(ind);
+        Assert.True(ind.IsReady(), "Kvo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Kvo: still ready after Reset");
+        CompareRuns("Kvo", first, Drive_Kvo(ind));
+    }
+    private static List<double[]> Drive_KylesLambda(Wickra.KylesLambda ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i, (r[1] + r[2]) / 2) });
         }
-        Compare("KylesLambda", got);
+        return got;
     }
     [Fact]
-    public void Golden_LadderBottom()
+    public void Golden_KylesLambda()
     {
-        using var ind = new Wickra.LadderBottom();
-        Assert.Equal("LadderBottom", ind.Name());
+        using var ind = new Wickra.KylesLambda(20);
+        Assert.Equal("KylesLambda", ind.Name());
+        Compare("KylesLambda", Drive_KylesLambda(ind));
+    }
+    [Fact]
+    public void Lifecycle_KylesLambda()
+    {
+        using var ind = new Wickra.KylesLambda(20);
+        Assert.False(ind.IsReady(), "KylesLambda: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "KylesLambda: warmup period must be >= 1");
+        var first = Drive_KylesLambda(ind);
+        Assert.True(ind.IsReady(), "KylesLambda: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "KylesLambda: still ready after Reset");
+        CompareRuns("KylesLambda", first, Drive_KylesLambda(ind));
+    }
+    private static List<double[]> Drive_LadderBottom(Wickra.LadderBottom ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("LadderBottom", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_LadderBottom()
+    {
+        using var ind = new Wickra.LadderBottom();
+        Assert.Equal("LadderBottom", ind.Name());
+        Compare("LadderBottom", Drive_LadderBottom(ind));
+    }
+    [Fact]
+    public void Lifecycle_LadderBottom()
+    {
+        using var ind = new Wickra.LadderBottom();
+        Assert.False(ind.IsReady(), "LadderBottom: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LadderBottom: warmup period must be >= 1");
+        var first = Drive_LadderBottom(ind);
+        Assert.True(ind.IsReady(), "LadderBottom: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LadderBottom: still ready after Reset");
+        CompareRuns("LadderBottom", first, Drive_LadderBottom(ind));
+    }
+    private static List<double[]> Drive_LaguerreRsi(Wickra.LaguerreRsi ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_LaguerreRsi()
     {
         using var ind = new Wickra.LaguerreRsi(0.5);
         Assert.Equal("LaguerreRSI", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("LaguerreRsi", got);
+        Compare("LaguerreRsi", Drive_LaguerreRsi(ind));
     }
     [Fact]
-    public void Golden_LeadLagCrossCorrelation()
+    public void Lifecycle_LaguerreRsi()
     {
-        using var ind = new Wickra.LeadLagCrossCorrelation(20, 10);
-        Assert.Equal("LeadLagCrossCorrelation", ind.Name());
+        using var ind = new Wickra.LaguerreRsi(0.5);
+        Assert.False(ind.IsReady(), "LaguerreRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LaguerreRsi: warmup period must be >= 1");
+        var first = Drive_LaguerreRsi(ind);
+        Assert.True(ind.IsReady(), "LaguerreRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LaguerreRsi: still ready after Reset");
+        CompareRuns("LaguerreRsi", first, Drive_LaguerreRsi(ind));
+    }
+    private static List<double[]> Drive_LeadLagCrossCorrelation(Wickra.LeadLagCrossCorrelation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3], r[0]), 2));
         }
-        Compare("LeadLagCrossCorrelation", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_LeadLagCrossCorrelation()
+    {
+        using var ind = new Wickra.LeadLagCrossCorrelation(20, 10);
+        Assert.Equal("LeadLagCrossCorrelation", ind.Name());
+        Compare("LeadLagCrossCorrelation", Drive_LeadLagCrossCorrelation(ind));
+    }
+    [Fact]
+    public void Lifecycle_LeadLagCrossCorrelation()
+    {
+        using var ind = new Wickra.LeadLagCrossCorrelation(20, 10);
+        Assert.False(ind.IsReady(), "LeadLagCrossCorrelation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LeadLagCrossCorrelation: warmup period must be >= 1");
+        var first = Drive_LeadLagCrossCorrelation(ind);
+        Assert.True(ind.IsReady(), "LeadLagCrossCorrelation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LeadLagCrossCorrelation: still ready after Reset");
+        CompareRuns("LeadLagCrossCorrelation", first, Drive_LeadLagCrossCorrelation(ind));
+    }
+    private static List<double[]> Drive_LinRegAngle(Wickra.LinRegAngle ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_LinRegAngle()
     {
         using var ind = new Wickra.LinRegAngle(14);
         Assert.Equal("LinRegAngle", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("LinRegAngle", got);
+        Compare("LinRegAngle", Drive_LinRegAngle(ind));
     }
     [Fact]
-    public void Golden_LinRegChannel()
+    public void Lifecycle_LinRegAngle()
     {
-        using var ind = new Wickra.LinRegChannel(14, 2.0);
-        Assert.Equal("LinRegChannel", ind.Name());
+        using var ind = new Wickra.LinRegAngle(14);
+        Assert.False(ind.IsReady(), "LinRegAngle: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LinRegAngle: warmup period must be >= 1");
+        var first = Drive_LinRegAngle(ind);
+        Assert.True(ind.IsReady(), "LinRegAngle: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LinRegAngle: still ready after Reset");
+        CompareRuns("LinRegAngle", first, Drive_LinRegAngle(ind));
+    }
+    private static List<double[]> Drive_LinRegChannel(Wickra.LinRegChannel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("LinRegChannel", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_LinRegChannel()
+    {
+        using var ind = new Wickra.LinRegChannel(14, 2.0);
+        Assert.Equal("LinRegChannel", ind.Name());
+        Compare("LinRegChannel", Drive_LinRegChannel(ind));
+    }
+    [Fact]
+    public void Lifecycle_LinRegChannel()
+    {
+        using var ind = new Wickra.LinRegChannel(14, 2.0);
+        Assert.False(ind.IsReady(), "LinRegChannel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LinRegChannel: warmup period must be >= 1");
+        var first = Drive_LinRegChannel(ind);
+        Assert.True(ind.IsReady(), "LinRegChannel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LinRegChannel: still ready after Reset");
+        CompareRuns("LinRegChannel", first, Drive_LinRegChannel(ind));
+    }
+    private static List<double[]> Drive_LinRegIntercept(Wickra.LinRegIntercept ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_LinRegIntercept()
     {
         using var ind = new Wickra.LinRegIntercept(14);
         Assert.Equal("LINEARREG_INTERCEPT", ind.Name());
+        Compare("LinRegIntercept", Drive_LinRegIntercept(ind));
+    }
+    [Fact]
+    public void Lifecycle_LinRegIntercept()
+    {
+        using var ind = new Wickra.LinRegIntercept(14);
+        Assert.False(ind.IsReady(), "LinRegIntercept: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LinRegIntercept: warmup period must be >= 1");
+        var first = Drive_LinRegIntercept(ind);
+        Assert.True(ind.IsReady(), "LinRegIntercept: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LinRegIntercept: still ready after Reset");
+        CompareRuns("LinRegIntercept", first, Drive_LinRegIntercept(ind));
+    }
+    private static List<double[]> Drive_LinRegSlope(Wickra.LinRegSlope ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("LinRegIntercept", got);
+        return got;
     }
     [Fact]
     public void Golden_LinRegSlope()
     {
         using var ind = new Wickra.LinRegSlope(14);
         Assert.Equal("LinRegSlope", ind.Name());
+        Compare("LinRegSlope", Drive_LinRegSlope(ind));
+    }
+    [Fact]
+    public void Lifecycle_LinRegSlope()
+    {
+        using var ind = new Wickra.LinRegSlope(14);
+        Assert.False(ind.IsReady(), "LinRegSlope: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LinRegSlope: warmup period must be >= 1");
+        var first = Drive_LinRegSlope(ind);
+        Assert.True(ind.IsReady(), "LinRegSlope: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LinRegSlope: still ready after Reset");
+        CompareRuns("LinRegSlope", first, Drive_LinRegSlope(ind));
+    }
+    private static List<double[]> Drive_LinearRegression(Wickra.LinearRegression ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("LinRegSlope", got);
+        return got;
     }
     [Fact]
     public void Golden_LinearRegression()
     {
         using var ind = new Wickra.LinearRegression(14);
         Assert.Equal("LinearRegression", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("LinearRegression", got);
+        Compare("LinearRegression", Drive_LinearRegression(ind));
     }
     [Fact]
-    public void Golden_LiquidationFeatures()
+    public void Lifecycle_LinearRegression()
     {
-        using var ind = new Wickra.LiquidationFeatures();
-        Assert.Equal("LiquidationFeatures", ind.Name());
+        using var ind = new Wickra.LinearRegression(14);
+        Assert.False(ind.IsReady(), "LinearRegression: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LinearRegression: warmup period must be >= 1");
+        var first = Drive_LinearRegression(ind);
+        Assert.True(ind.IsReady(), "LinearRegression: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LinearRegression: still ready after Reset");
+        CompareRuns("LinearRegression", first, Drive_LinearRegression(ind));
+    }
+    private static List<double[]> Drive_LiquidationFeatures(Wickra.LiquidationFeatures ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3229,248 +6957,582 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(FlattenNullable(ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i), 5));
         }
-        Compare("LiquidationFeatures", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_LiquidationFeatures()
+    {
+        using var ind = new Wickra.LiquidationFeatures();
+        Assert.Equal("LiquidationFeatures", ind.Name());
+        Compare("LiquidationFeatures", Drive_LiquidationFeatures(ind));
+    }
+    [Fact]
+    public void Lifecycle_LiquidationFeatures()
+    {
+        using var ind = new Wickra.LiquidationFeatures();
+        Assert.False(ind.IsReady(), "LiquidationFeatures: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LiquidationFeatures: warmup period must be >= 1");
+        var first = Drive_LiquidationFeatures(ind);
+        Assert.True(ind.IsReady(), "LiquidationFeatures: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LiquidationFeatures: still ready after Reset");
+        CompareRuns("LiquidationFeatures", first, Drive_LiquidationFeatures(ind));
+    }
+    private static List<double[]> Drive_LogReturn(Wickra.LogReturn ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_LogReturn()
     {
         using var ind = new Wickra.LogReturn(14);
         Assert.Equal("LogReturn", ind.Name());
+        Compare("LogReturn", Drive_LogReturn(ind));
+    }
+    [Fact]
+    public void Lifecycle_LogReturn()
+    {
+        using var ind = new Wickra.LogReturn(14);
+        Assert.False(ind.IsReady(), "LogReturn: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LogReturn: warmup period must be >= 1");
+        var first = Drive_LogReturn(ind);
+        Assert.True(ind.IsReady(), "LogReturn: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LogReturn: still ready after Reset");
+        CompareRuns("LogReturn", first, Drive_LogReturn(ind));
+    }
+    private static List<double[]> Drive_LongLeggedDoji(Wickra.LongLeggedDoji ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("LogReturn", got);
+        return got;
     }
     [Fact]
     public void Golden_LongLeggedDoji()
     {
         using var ind = new Wickra.LongLeggedDoji();
         Assert.Equal("LongLeggedDoji", ind.Name());
+        Compare("LongLeggedDoji", Drive_LongLeggedDoji(ind));
+    }
+    [Fact]
+    public void Lifecycle_LongLeggedDoji()
+    {
+        using var ind = new Wickra.LongLeggedDoji();
+        Assert.False(ind.IsReady(), "LongLeggedDoji: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LongLeggedDoji: warmup period must be >= 1");
+        var first = Drive_LongLeggedDoji(ind);
+        Assert.True(ind.IsReady(), "LongLeggedDoji: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LongLeggedDoji: still ready after Reset");
+        CompareRuns("LongLeggedDoji", first, Drive_LongLeggedDoji(ind));
+    }
+    private static List<double[]> Drive_LongLine(Wickra.LongLine ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("LongLeggedDoji", got);
+        return got;
     }
     [Fact]
     public void Golden_LongLine()
     {
         using var ind = new Wickra.LongLine();
         Assert.Equal("LongLine", ind.Name());
+        Compare("LongLine", Drive_LongLine(ind));
+    }
+    [Fact]
+    public void Lifecycle_LongLine()
+    {
+        using var ind = new Wickra.LongLine();
+        Assert.False(ind.IsReady(), "LongLine: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LongLine: warmup period must be >= 1");
+        var first = Drive_LongLine(ind);
+        Assert.True(ind.IsReady(), "LongLine: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LongLine: still ready after Reset");
+        CompareRuns("LongLine", first, Drive_LongLine(ind));
+    }
+    private static List<double[]> Drive_LongShortRatio(Wickra.LongShortRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("LongLine", got);
+        return got;
     }
     [Fact]
     public void Golden_LongShortRatio()
     {
         using var ind = new Wickra.LongShortRatio();
         Assert.Equal("LongShortRatio", ind.Name());
+        Compare("LongShortRatio", Drive_LongShortRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_LongShortRatio()
+    {
+        using var ind = new Wickra.LongShortRatio();
+        Assert.False(ind.IsReady(), "LongShortRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "LongShortRatio: warmup period must be >= 1");
+        var first = Drive_LongShortRatio(ind);
+        Assert.True(ind.IsReady(), "LongShortRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "LongShortRatio: still ready after Reset");
+        CompareRuns("LongShortRatio", first, Drive_LongShortRatio(ind));
+    }
+    private static List<double[]> Drive_M2Measure(Wickra.M2Measure ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("LongShortRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_M2Measure()
     {
         using var ind = new Wickra.M2Measure(14, 2.0, 0.5);
         Assert.Equal("M2Measure", ind.Name());
+        Compare("M2Measure", Drive_M2Measure(ind));
+    }
+    [Fact]
+    public void Lifecycle_M2Measure()
+    {
+        using var ind = new Wickra.M2Measure(14, 2.0, 0.5);
+        Assert.False(ind.IsReady(), "M2Measure: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "M2Measure: warmup period must be >= 1");
+        var first = Drive_M2Measure(ind);
+        Assert.True(ind.IsReady(), "M2Measure: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "M2Measure: still ready after Reset");
+        CompareRuns("M2Measure", first, Drive_M2Measure(ind));
+    }
+    private static List<double[]> Drive_MaEnvelope(Wickra.MaEnvelope ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("M2Measure", got);
+        return got;
     }
     [Fact]
     public void Golden_MaEnvelope()
     {
         using var ind = new Wickra.MaEnvelope(14, 2.0);
         Assert.Equal("MaEnvelope", ind.Name());
+        Compare("MaEnvelope", Drive_MaEnvelope(ind));
+    }
+    [Fact]
+    public void Lifecycle_MaEnvelope()
+    {
+        using var ind = new Wickra.MaEnvelope(14, 2.0);
+        Assert.False(ind.IsReady(), "MaEnvelope: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MaEnvelope: warmup period must be >= 1");
+        var first = Drive_MaEnvelope(ind);
+        Assert.True(ind.IsReady(), "MaEnvelope: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MaEnvelope: still ready after Reset");
+        CompareRuns("MaEnvelope", first, Drive_MaEnvelope(ind));
+    }
+    private static List<double[]> Drive_MacdExt(Wickra.MacdExt ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("MaEnvelope", got);
+        return got;
     }
     [Fact]
     public void Golden_MacdExt()
     {
         using var ind = new Wickra.MacdExt(12, (byte)0, 26, (byte)0, 9, (byte)0);
         Assert.Equal("MACDEXT", ind.Name());
+        Compare("MacdExt", Drive_MacdExt(ind));
+    }
+    [Fact]
+    public void Lifecycle_MacdExt()
+    {
+        using var ind = new Wickra.MacdExt(12, (byte)0, 26, (byte)0, 9, (byte)0);
+        Assert.False(ind.IsReady(), "MacdExt: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MacdExt: warmup period must be >= 1");
+        var first = Drive_MacdExt(ind);
+        Assert.True(ind.IsReady(), "MacdExt: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MacdExt: still ready after Reset");
+        CompareRuns("MacdExt", first, Drive_MacdExt(ind));
+    }
+    private static List<double[]> Drive_MacdFix(Wickra.MacdFix ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("MacdExt", got);
+        return got;
     }
     [Fact]
     public void Golden_MacdFix()
     {
         using var ind = new Wickra.MacdFix(9);
         Assert.Equal("MACDFIX", ind.Name());
+        Compare("MacdFix", Drive_MacdFix(ind));
+    }
+    [Fact]
+    public void Lifecycle_MacdFix()
+    {
+        using var ind = new Wickra.MacdFix(9);
+        Assert.False(ind.IsReady(), "MacdFix: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MacdFix: warmup period must be >= 1");
+        var first = Drive_MacdFix(ind);
+        Assert.True(ind.IsReady(), "MacdFix: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MacdFix: still ready after Reset");
+        CompareRuns("MacdFix", first, Drive_MacdFix(ind));
+    }
+    private static List<double[]> Drive_MacdHistogram(Wickra.MacdHistogram ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[3]), 3));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("MacdFix", got);
+        return got;
     }
     [Fact]
     public void Golden_MacdHistogram()
     {
         using var ind = new Wickra.MacdHistogram(3, 7, 14);
         Assert.Equal("MacdHistogram", ind.Name());
+        Compare("MacdHistogram", Drive_MacdHistogram(ind));
+    }
+    [Fact]
+    public void Lifecycle_MacdHistogram()
+    {
+        using var ind = new Wickra.MacdHistogram(3, 7, 14);
+        Assert.False(ind.IsReady(), "MacdHistogram: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MacdHistogram: warmup period must be >= 1");
+        var first = Drive_MacdHistogram(ind);
+        Assert.True(ind.IsReady(), "MacdHistogram: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MacdHistogram: still ready after Reset");
+        CompareRuns("MacdHistogram", first, Drive_MacdHistogram(ind));
+    }
+    private static List<double[]> Drive_MacdIndicator(Wickra.MacdIndicator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("MacdHistogram", got);
+        return got;
     }
     [Fact]
     public void Golden_MacdIndicator()
     {
         using var ind = new Wickra.MacdIndicator(12, 26, 9);
         Assert.Equal("MACD", ind.Name());
+        Compare("MacdIndicator", Drive_MacdIndicator(ind));
+    }
+    [Fact]
+    public void Lifecycle_MacdIndicator()
+    {
+        using var ind = new Wickra.MacdIndicator(12, 26, 9);
+        Assert.False(ind.IsReady(), "MacdIndicator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MacdIndicator: warmup period must be >= 1");
+        var first = Drive_MacdIndicator(ind);
+        Assert.True(ind.IsReady(), "MacdIndicator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MacdIndicator: still ready after Reset");
+        CompareRuns("MacdIndicator", first, Drive_MacdIndicator(ind));
+    }
+    private static List<double[]> Drive_Mama(Wickra.Mama ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[3]), 3));
+            got.Add(FlattenNullable(ind.Update(r[3]), 2));
         }
-        Compare("MacdIndicator", got);
+        return got;
     }
     [Fact]
     public void Golden_Mama()
     {
         using var ind = new Wickra.Mama(0.5, 0.05);
         Assert.Equal("MAMA", ind.Name());
+        Compare("Mama", Drive_Mama(ind));
+    }
+    [Fact]
+    public void Lifecycle_Mama()
+    {
+        using var ind = new Wickra.Mama(0.5, 0.05);
+        Assert.False(ind.IsReady(), "Mama: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Mama: warmup period must be >= 1");
+        var first = Drive_Mama(ind);
+        Assert.True(ind.IsReady(), "Mama: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Mama: still ready after Reset");
+        CompareRuns("Mama", first, Drive_Mama(ind));
+    }
+    private static List<double[]> Drive_MarketFacilitationIndex(Wickra.MarketFacilitationIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[3]), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Mama", got);
+        return got;
     }
     [Fact]
     public void Golden_MarketFacilitationIndex()
     {
         using var ind = new Wickra.MarketFacilitationIndex();
         Assert.Equal("MarketFacilitationIndex", ind.Name());
+        Compare("MarketFacilitationIndex", Drive_MarketFacilitationIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_MarketFacilitationIndex()
+    {
+        using var ind = new Wickra.MarketFacilitationIndex();
+        Assert.False(ind.IsReady(), "MarketFacilitationIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MarketFacilitationIndex: warmup period must be >= 1");
+        var first = Drive_MarketFacilitationIndex(ind);
+        Assert.True(ind.IsReady(), "MarketFacilitationIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MarketFacilitationIndex: still ready after Reset");
+        CompareRuns("MarketFacilitationIndex", first, Drive_MarketFacilitationIndex(ind));
+    }
+    private static List<double[]> Drive_MartinRatio(Wickra.MartinRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("MarketFacilitationIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_MartinRatio()
     {
         using var ind = new Wickra.MartinRatio(14);
         Assert.Equal("MartinRatio", ind.Name());
+        Compare("MartinRatio", Drive_MartinRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_MartinRatio()
+    {
+        using var ind = new Wickra.MartinRatio(14);
+        Assert.False(ind.IsReady(), "MartinRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MartinRatio: warmup period must be >= 1");
+        var first = Drive_MartinRatio(ind);
+        Assert.True(ind.IsReady(), "MartinRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MartinRatio: still ready after Reset");
+        CompareRuns("MartinRatio", first, Drive_MartinRatio(ind));
+    }
+    private static List<double[]> Drive_Marubozu(Wickra.Marubozu ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MartinRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_Marubozu()
     {
         using var ind = new Wickra.Marubozu();
         Assert.Equal("Marubozu", ind.Name());
+        Compare("Marubozu", Drive_Marubozu(ind));
+    }
+    [Fact]
+    public void Lifecycle_Marubozu()
+    {
+        using var ind = new Wickra.Marubozu();
+        Assert.False(ind.IsReady(), "Marubozu: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Marubozu: warmup period must be >= 1");
+        var first = Drive_Marubozu(ind);
+        Assert.True(ind.IsReady(), "Marubozu: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Marubozu: still ready after Reset");
+        CompareRuns("Marubozu", first, Drive_Marubozu(ind));
+    }
+    private static List<double[]> Drive_MassIndex(Wickra.MassIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Marubozu", got);
+        return got;
     }
     [Fact]
     public void Golden_MassIndex()
     {
         using var ind = new Wickra.MassIndex(3, 7);
         Assert.Equal("MassIndex", ind.Name());
+        Compare("MassIndex", Drive_MassIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_MassIndex()
+    {
+        using var ind = new Wickra.MassIndex(3, 7);
+        Assert.False(ind.IsReady(), "MassIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MassIndex: warmup period must be >= 1");
+        var first = Drive_MassIndex(ind);
+        Assert.True(ind.IsReady(), "MassIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MassIndex: still ready after Reset");
+        CompareRuns("MassIndex", first, Drive_MassIndex(ind));
+    }
+    private static List<double[]> Drive_MatHold(Wickra.MatHold ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MassIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_MatHold()
     {
         using var ind = new Wickra.MatHold();
         Assert.Equal("MatHold", ind.Name());
+        Compare("MatHold", Drive_MatHold(ind));
+    }
+    [Fact]
+    public void Lifecycle_MatHold()
+    {
+        using var ind = new Wickra.MatHold();
+        Assert.False(ind.IsReady(), "MatHold: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MatHold: warmup period must be >= 1");
+        var first = Drive_MatHold(ind);
+        Assert.True(ind.IsReady(), "MatHold: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MatHold: still ready after Reset");
+        CompareRuns("MatHold", first, Drive_MatHold(ind));
+    }
+    private static List<double[]> Drive_MatchingLow(Wickra.MatchingLow ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MatHold", got);
+        return got;
     }
     [Fact]
     public void Golden_MatchingLow()
     {
         using var ind = new Wickra.MatchingLow();
         Assert.Equal("MatchingLow", ind.Name());
+        Compare("MatchingLow", Drive_MatchingLow(ind));
+    }
+    [Fact]
+    public void Lifecycle_MatchingLow()
+    {
+        using var ind = new Wickra.MatchingLow();
+        Assert.False(ind.IsReady(), "MatchingLow: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MatchingLow: warmup period must be >= 1");
+        var first = Drive_MatchingLow(ind);
+        Assert.True(ind.IsReady(), "MatchingLow: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MatchingLow: still ready after Reset");
+        CompareRuns("MatchingLow", first, Drive_MatchingLow(ind));
+    }
+    private static List<double[]> Drive_MaxDrawdown(Wickra.MaxDrawdown ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("MatchingLow", got);
+        return got;
     }
     [Fact]
     public void Golden_MaxDrawdown()
     {
         using var ind = new Wickra.MaxDrawdown(14);
         Assert.Equal("MaxDrawdown", ind.Name());
+        Compare("MaxDrawdown", Drive_MaxDrawdown(ind));
+    }
+    [Fact]
+    public void Lifecycle_MaxDrawdown()
+    {
+        using var ind = new Wickra.MaxDrawdown(14);
+        Assert.False(ind.IsReady(), "MaxDrawdown: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MaxDrawdown: warmup period must be >= 1");
+        var first = Drive_MaxDrawdown(ind);
+        Assert.True(ind.IsReady(), "MaxDrawdown: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MaxDrawdown: still ready after Reset");
+        CompareRuns("MaxDrawdown", first, Drive_MaxDrawdown(ind));
+    }
+    private static List<double[]> Drive_McClellanOscillator(Wickra.McClellanOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("MaxDrawdown", got);
+        return got;
     }
     [Fact]
     public void Golden_McClellanOscillator()
     {
         using var ind = new Wickra.McClellanOscillator();
         Assert.Equal("McClellanOscillator", ind.Name());
+        Compare("McClellanOscillator", Drive_McClellanOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_McClellanOscillator()
+    {
+        using var ind = new Wickra.McClellanOscillator();
+        Assert.False(ind.IsReady(), "McClellanOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "McClellanOscillator: warmup period must be >= 1");
+        var first = Drive_McClellanOscillator(ind);
+        Assert.True(ind.IsReady(), "McClellanOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "McClellanOscillator: still ready after Reset");
+        CompareRuns("McClellanOscillator", first, Drive_McClellanOscillator(ind));
+    }
+    private static List<double[]> Drive_McClellanSummationIndex(Wickra.McClellanSummationIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3478,315 +7540,699 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("McClellanOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_McClellanSummationIndex()
     {
         using var ind = new Wickra.McClellanSummationIndex();
         Assert.Equal("McClellanSummationIndex", ind.Name());
+        Compare("McClellanSummationIndex", Drive_McClellanSummationIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_McClellanSummationIndex()
+    {
+        using var ind = new Wickra.McClellanSummationIndex();
+        Assert.False(ind.IsReady(), "McClellanSummationIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "McClellanSummationIndex: warmup period must be >= 1");
+        var first = Drive_McClellanSummationIndex(ind);
+        Assert.True(ind.IsReady(), "McClellanSummationIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "McClellanSummationIndex: still ready after Reset");
+        CompareRuns("McClellanSummationIndex", first, Drive_McClellanSummationIndex(ind));
+    }
+    private static List<double[]> Drive_McGinleyDynamic(Wickra.McGinleyDynamic ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("McClellanSummationIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_McGinleyDynamic()
     {
         using var ind = new Wickra.McGinleyDynamic(14);
         Assert.Equal("McGinleyDynamic", ind.Name());
+        Compare("McGinleyDynamic", Drive_McGinleyDynamic(ind));
+    }
+    [Fact]
+    public void Lifecycle_McGinleyDynamic()
+    {
+        using var ind = new Wickra.McGinleyDynamic(14);
+        Assert.False(ind.IsReady(), "McGinleyDynamic: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "McGinleyDynamic: warmup period must be >= 1");
+        var first = Drive_McGinleyDynamic(ind);
+        Assert.True(ind.IsReady(), "McGinleyDynamic: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "McGinleyDynamic: still ready after Reset");
+        CompareRuns("McGinleyDynamic", first, Drive_McGinleyDynamic(ind));
+    }
+    private static List<double[]> Drive_MedianAbsoluteDeviation(Wickra.MedianAbsoluteDeviation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("McGinleyDynamic", got);
+        return got;
     }
     [Fact]
     public void Golden_MedianAbsoluteDeviation()
     {
         using var ind = new Wickra.MedianAbsoluteDeviation(14);
         Assert.Equal("MedianAbsoluteDeviation", ind.Name());
+        Compare("MedianAbsoluteDeviation", Drive_MedianAbsoluteDeviation(ind));
+    }
+    [Fact]
+    public void Lifecycle_MedianAbsoluteDeviation()
+    {
+        using var ind = new Wickra.MedianAbsoluteDeviation(14);
+        Assert.False(ind.IsReady(), "MedianAbsoluteDeviation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MedianAbsoluteDeviation: warmup period must be >= 1");
+        var first = Drive_MedianAbsoluteDeviation(ind);
+        Assert.True(ind.IsReady(), "MedianAbsoluteDeviation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MedianAbsoluteDeviation: still ready after Reset");
+        CompareRuns("MedianAbsoluteDeviation", first, Drive_MedianAbsoluteDeviation(ind));
+    }
+    private static List<double[]> Drive_MedianChannel(Wickra.MedianChannel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("MedianAbsoluteDeviation", got);
+        return got;
     }
     [Fact]
     public void Golden_MedianChannel()
     {
         using var ind = new Wickra.MedianChannel(14, 2.0);
         Assert.Equal("MedianChannel", ind.Name());
+        Compare("MedianChannel", Drive_MedianChannel(ind));
+    }
+    [Fact]
+    public void Lifecycle_MedianChannel()
+    {
+        using var ind = new Wickra.MedianChannel(14, 2.0);
+        Assert.False(ind.IsReady(), "MedianChannel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MedianChannel: warmup period must be >= 1");
+        var first = Drive_MedianChannel(ind);
+        Assert.True(ind.IsReady(), "MedianChannel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MedianChannel: still ready after Reset");
+        CompareRuns("MedianChannel", first, Drive_MedianChannel(ind));
+    }
+    private static List<double[]> Drive_MedianMa(Wickra.MedianMa ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[3]), 3));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("MedianChannel", got);
+        return got;
     }
     [Fact]
     public void Golden_MedianMa()
     {
         using var ind = new Wickra.MedianMa(14);
         Assert.Equal("MedianMA", ind.Name());
+        Compare("MedianMa", Drive_MedianMa(ind));
+    }
+    [Fact]
+    public void Lifecycle_MedianMa()
+    {
+        using var ind = new Wickra.MedianMa(14);
+        Assert.False(ind.IsReady(), "MedianMa: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MedianMa: warmup period must be >= 1");
+        var first = Drive_MedianMa(ind);
+        Assert.True(ind.IsReady(), "MedianMa: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MedianMa: still ready after Reset");
+        CompareRuns("MedianMa", first, Drive_MedianMa(ind));
+    }
+    private static List<double[]> Drive_MedianPrice(Wickra.MedianPrice ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MedianMa", got);
+        return got;
     }
     [Fact]
     public void Golden_MedianPrice()
     {
         using var ind = new Wickra.MedianPrice();
         Assert.Equal("MedianPrice", ind.Name());
+        Compare("MedianPrice", Drive_MedianPrice(ind));
+    }
+    [Fact]
+    public void Lifecycle_MedianPrice()
+    {
+        using var ind = new Wickra.MedianPrice();
+        Assert.False(ind.IsReady(), "MedianPrice: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MedianPrice: warmup period must be >= 1");
+        var first = Drive_MedianPrice(ind);
+        Assert.True(ind.IsReady(), "MedianPrice: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MedianPrice: still ready after Reset");
+        CompareRuns("MedianPrice", first, Drive_MedianPrice(ind));
+    }
+    private static List<double[]> Drive_Mfi(Wickra.Mfi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MedianPrice", got);
+        return got;
     }
     [Fact]
     public void Golden_Mfi()
     {
         using var ind = new Wickra.Mfi(14);
         Assert.Equal("MFI", ind.Name());
+        Compare("Mfi", Drive_Mfi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Mfi()
+    {
+        using var ind = new Wickra.Mfi(14);
+        Assert.False(ind.IsReady(), "Mfi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Mfi: warmup period must be >= 1");
+        var first = Drive_Mfi(ind);
+        Assert.True(ind.IsReady(), "Mfi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Mfi: still ready after Reset");
+        CompareRuns("Mfi", first, Drive_Mfi(ind));
+    }
+    private static List<double[]> Drive_Microprice(Wickra.Microprice ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var (bp, bs, ap, asz) = ObLists(r);
+            got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("Mfi", got);
+        return got;
     }
     [Fact]
     public void Golden_Microprice()
     {
         using var ind = new Wickra.Microprice();
         Assert.Equal("Microprice", ind.Name());
+        Compare("Microprice", Drive_Microprice(ind));
+    }
+    [Fact]
+    public void Lifecycle_Microprice()
+    {
+        using var ind = new Wickra.Microprice();
+        Assert.False(ind.IsReady(), "Microprice: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Microprice: warmup period must be >= 1");
+        var first = Drive_Microprice(ind);
+        Assert.True(ind.IsReady(), "Microprice: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Microprice: still ready after Reset");
+        CompareRuns("Microprice", first, Drive_Microprice(ind));
+    }
+    private static List<double[]> Drive_MidPoint(Wickra.MidPoint ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (bp, bs, ap, asz) = ObLists(r);
-            got.Add(new[] { ind.Update(bp, bs, ap, asz) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Microprice", got);
+        return got;
     }
     [Fact]
     public void Golden_MidPoint()
     {
         using var ind = new Wickra.MidPoint(14);
         Assert.Equal("MIDPOINT", ind.Name());
+        Compare("MidPoint", Drive_MidPoint(ind));
+    }
+    [Fact]
+    public void Lifecycle_MidPoint()
+    {
+        using var ind = new Wickra.MidPoint(14);
+        Assert.False(ind.IsReady(), "MidPoint: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MidPoint: warmup period must be >= 1");
+        var first = Drive_MidPoint(ind);
+        Assert.True(ind.IsReady(), "MidPoint: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MidPoint: still ready after Reset");
+        CompareRuns("MidPoint", first, Drive_MidPoint(ind));
+    }
+    private static List<double[]> Drive_MidPrice(Wickra.MidPrice ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MidPoint", got);
+        return got;
     }
     [Fact]
     public void Golden_MidPrice()
     {
         using var ind = new Wickra.MidPrice(14);
         Assert.Equal("MIDPRICE", ind.Name());
+        Compare("MidPrice", Drive_MidPrice(ind));
+    }
+    [Fact]
+    public void Lifecycle_MidPrice()
+    {
+        using var ind = new Wickra.MidPrice(14);
+        Assert.False(ind.IsReady(), "MidPrice: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MidPrice: warmup period must be >= 1");
+        var first = Drive_MidPrice(ind);
+        Assert.True(ind.IsReady(), "MidPrice: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MidPrice: still ready after Reset");
+        CompareRuns("MidPrice", first, Drive_MidPrice(ind));
+    }
+    private static List<double[]> Drive_MinusDi(Wickra.MinusDi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MidPrice", got);
+        return got;
     }
     [Fact]
     public void Golden_MinusDi()
     {
         using var ind = new Wickra.MinusDi(14);
         Assert.Equal("MINUS_DI", ind.Name());
+        Compare("MinusDi", Drive_MinusDi(ind));
+    }
+    [Fact]
+    public void Lifecycle_MinusDi()
+    {
+        using var ind = new Wickra.MinusDi(14);
+        Assert.False(ind.IsReady(), "MinusDi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MinusDi: warmup period must be >= 1");
+        var first = Drive_MinusDi(ind);
+        Assert.True(ind.IsReady(), "MinusDi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MinusDi: still ready after Reset");
+        CompareRuns("MinusDi", first, Drive_MinusDi(ind));
+    }
+    private static List<double[]> Drive_MinusDm(Wickra.MinusDm ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MinusDi", got);
+        return got;
     }
     [Fact]
     public void Golden_MinusDm()
     {
         using var ind = new Wickra.MinusDm(14);
         Assert.Equal("MINUS_DM", ind.Name());
+        Compare("MinusDm", Drive_MinusDm(ind));
+    }
+    [Fact]
+    public void Lifecycle_MinusDm()
+    {
+        using var ind = new Wickra.MinusDm(14);
+        Assert.False(ind.IsReady(), "MinusDm: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MinusDm: warmup period must be >= 1");
+        var first = Drive_MinusDm(ind);
+        Assert.True(ind.IsReady(), "MinusDm: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MinusDm: still ready after Reset");
+        CompareRuns("MinusDm", first, Drive_MinusDm(ind));
+    }
+    private static List<double[]> Drive_ModifiedMaStop(Wickra.ModifiedMaStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("MinusDm", got);
+        return got;
     }
     [Fact]
     public void Golden_ModifiedMaStop()
     {
         using var ind = new Wickra.ModifiedMaStop(14);
         Assert.Equal("ModifiedMaStop", ind.Name());
+        Compare("ModifiedMaStop", Drive_ModifiedMaStop(ind));
+    }
+    [Fact]
+    public void Lifecycle_ModifiedMaStop()
+    {
+        using var ind = new Wickra.ModifiedMaStop(14);
+        Assert.False(ind.IsReady(), "ModifiedMaStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ModifiedMaStop: warmup period must be >= 1");
+        var first = Drive_ModifiedMaStop(ind);
+        Assert.True(ind.IsReady(), "ModifiedMaStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ModifiedMaStop: still ready after Reset");
+        CompareRuns("ModifiedMaStop", first, Drive_ModifiedMaStop(ind));
+    }
+    private static List<double[]> Drive_Mom(Wickra.Mom ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ModifiedMaStop", got);
+        return got;
     }
     [Fact]
     public void Golden_Mom()
     {
         using var ind = new Wickra.Mom(14);
         Assert.Equal("MOM", ind.Name());
+        Compare("Mom", Drive_Mom(ind));
+    }
+    [Fact]
+    public void Lifecycle_Mom()
+    {
+        using var ind = new Wickra.Mom(14);
+        Assert.False(ind.IsReady(), "Mom: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Mom: warmup period must be >= 1");
+        var first = Drive_Mom(ind);
+        Assert.True(ind.IsReady(), "Mom: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Mom: still ready after Reset");
+        CompareRuns("Mom", first, Drive_Mom(ind));
+    }
+    private static List<double[]> Drive_MorningDojiStar(Wickra.MorningDojiStar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Mom", got);
+        return got;
     }
     [Fact]
     public void Golden_MorningDojiStar()
     {
         using var ind = new Wickra.MorningDojiStar();
         Assert.Equal("MorningDojiStar", ind.Name());
+        Compare("MorningDojiStar", Drive_MorningDojiStar(ind));
+    }
+    [Fact]
+    public void Lifecycle_MorningDojiStar()
+    {
+        using var ind = new Wickra.MorningDojiStar();
+        Assert.False(ind.IsReady(), "MorningDojiStar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MorningDojiStar: warmup period must be >= 1");
+        var first = Drive_MorningDojiStar(ind);
+        Assert.True(ind.IsReady(), "MorningDojiStar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MorningDojiStar: still ready after Reset");
+        CompareRuns("MorningDojiStar", first, Drive_MorningDojiStar(ind));
+    }
+    private static List<double[]> Drive_MorningEveningStar(Wickra.MorningEveningStar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("MorningDojiStar", got);
+        return got;
     }
     [Fact]
     public void Golden_MorningEveningStar()
     {
         using var ind = new Wickra.MorningEveningStar();
         Assert.Equal("MorningEveningStar", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("MorningEveningStar", got);
+        Compare("MorningEveningStar", Drive_MorningEveningStar(ind));
     }
     [Fact]
-    public void Golden_MurreyMathLines()
+    public void Lifecycle_MorningEveningStar()
     {
-        using var ind = new Wickra.MurreyMathLines(14);
-        Assert.Equal("MurreyMathLines", ind.Name());
+        using var ind = new Wickra.MorningEveningStar();
+        Assert.False(ind.IsReady(), "MorningEveningStar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MorningEveningStar: warmup period must be >= 1");
+        var first = Drive_MorningEveningStar(ind);
+        Assert.True(ind.IsReady(), "MorningEveningStar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MorningEveningStar: still ready after Reset");
+        CompareRuns("MorningEveningStar", first, Drive_MorningEveningStar(ind));
+    }
+    private static List<double[]> Drive_MurreyMathLines(Wickra.MurreyMathLines ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 9));
         }
-        Compare("MurreyMathLines", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_MurreyMathLines()
+    {
+        using var ind = new Wickra.MurreyMathLines(14);
+        Assert.Equal("MurreyMathLines", ind.Name());
+        Compare("MurreyMathLines", Drive_MurreyMathLines(ind));
+    }
+    [Fact]
+    public void Lifecycle_MurreyMathLines()
+    {
+        using var ind = new Wickra.MurreyMathLines(14);
+        Assert.False(ind.IsReady(), "MurreyMathLines: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "MurreyMathLines: warmup period must be >= 1");
+        var first = Drive_MurreyMathLines(ind);
+        Assert.True(ind.IsReady(), "MurreyMathLines: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "MurreyMathLines: still ready after Reset");
+        CompareRuns("MurreyMathLines", first, Drive_MurreyMathLines(ind));
+    }
+    private static List<double[]> Drive_NakedPoc(Wickra.NakedPoc ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_NakedPoc()
     {
         using var ind = new Wickra.NakedPoc(3, 7);
         Assert.Equal("NakedPoc", ind.Name());
+        Compare("NakedPoc", Drive_NakedPoc(ind));
+    }
+    [Fact]
+    public void Lifecycle_NakedPoc()
+    {
+        using var ind = new Wickra.NakedPoc(3, 7);
+        Assert.False(ind.IsReady(), "NakedPoc: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "NakedPoc: warmup period must be >= 1");
+        var first = Drive_NakedPoc(ind);
+        Assert.True(ind.IsReady(), "NakedPoc: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "NakedPoc: still ready after Reset");
+        CompareRuns("NakedPoc", first, Drive_NakedPoc(ind));
+    }
+    private static List<double[]> Drive_Natr(Wickra.Natr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("NakedPoc", got);
+        return got;
     }
     [Fact]
     public void Golden_Natr()
     {
         using var ind = new Wickra.Natr(14);
         Assert.Equal("NATR", ind.Name());
+        Compare("Natr", Drive_Natr(ind));
+    }
+    [Fact]
+    public void Lifecycle_Natr()
+    {
+        using var ind = new Wickra.Natr(14);
+        Assert.False(ind.IsReady(), "Natr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Natr: warmup period must be >= 1");
+        var first = Drive_Natr(ind);
+        Assert.True(ind.IsReady(), "Natr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Natr: still ready after Reset");
+        CompareRuns("Natr", first, Drive_Natr(ind));
+    }
+    private static List<double[]> Drive_NewHighsNewLows(Wickra.NewHighsNewLows ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("Natr", got);
+        return got;
     }
     [Fact]
     public void Golden_NewHighsNewLows()
     {
         using var ind = new Wickra.NewHighsNewLows();
         Assert.Equal("NewHighsNewLows", ind.Name());
+        Compare("NewHighsNewLows", Drive_NewHighsNewLows(ind));
+    }
+    [Fact]
+    public void Lifecycle_NewHighsNewLows()
+    {
+        using var ind = new Wickra.NewHighsNewLows();
+        Assert.False(ind.IsReady(), "NewHighsNewLows: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "NewHighsNewLows: warmup period must be >= 1");
+        var first = Drive_NewHighsNewLows(ind);
+        Assert.True(ind.IsReady(), "NewHighsNewLows: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "NewHighsNewLows: still ready after Reset");
+        CompareRuns("NewHighsNewLows", first, Drive_NewHighsNewLows(ind));
+    }
+    private static List<double[]> Drive_NewPriceLines(Wickra.NewPriceLines ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("NewHighsNewLows", got);
+        return got;
     }
     [Fact]
     public void Golden_NewPriceLines()
     {
         using var ind = new Wickra.NewPriceLines(14);
         Assert.Equal("NewPriceLines", ind.Name());
+        Compare("NewPriceLines", Drive_NewPriceLines(ind));
+    }
+    [Fact]
+    public void Lifecycle_NewPriceLines()
+    {
+        using var ind = new Wickra.NewPriceLines(14);
+        Assert.False(ind.IsReady(), "NewPriceLines: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "NewPriceLines: warmup period must be >= 1");
+        var first = Drive_NewPriceLines(ind);
+        Assert.True(ind.IsReady(), "NewPriceLines: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "NewPriceLines: still ready after Reset");
+        CompareRuns("NewPriceLines", first, Drive_NewPriceLines(ind));
+    }
+    private static List<double[]> Drive_Nrtr(Wickra.Nrtr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("NewPriceLines", got);
+        return got;
     }
     [Fact]
     public void Golden_Nrtr()
     {
         using var ind = new Wickra.Nrtr(2.0);
         Assert.Equal("Nrtr", ind.Name());
+        Compare("Nrtr", Drive_Nrtr(ind));
+    }
+    [Fact]
+    public void Lifecycle_Nrtr()
+    {
+        using var ind = new Wickra.Nrtr(2.0);
+        Assert.False(ind.IsReady(), "Nrtr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Nrtr: warmup period must be >= 1");
+        var first = Drive_Nrtr(ind);
+        Assert.True(ind.IsReady(), "Nrtr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Nrtr: still ready after Reset");
+        CompareRuns("Nrtr", first, Drive_Nrtr(ind));
+    }
+    private static List<double[]> Drive_Nvi(Wickra.Nvi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Nrtr", got);
+        return got;
     }
     [Fact]
     public void Golden_Nvi()
     {
         using var ind = new Wickra.Nvi();
         Assert.Equal("NVI", ind.Name());
+        Compare("Nvi", Drive_Nvi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Nvi()
+    {
+        using var ind = new Wickra.Nvi();
+        Assert.False(ind.IsReady(), "Nvi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Nvi: warmup period must be >= 1");
+        var first = Drive_Nvi(ind);
+        Assert.True(ind.IsReady(), "Nvi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Nvi: still ready after Reset");
+        CompareRuns("Nvi", first, Drive_Nvi(ind));
+    }
+    private static List<double[]> Drive_OIPriceDivergence(Wickra.OIPriceDivergence ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("Nvi", got);
+        return got;
     }
     [Fact]
     public void Golden_OIPriceDivergence()
     {
         using var ind = new Wickra.OIPriceDivergence(20);
         Assert.Equal("OIPriceDivergence", ind.Name());
+        Compare("OIPriceDivergence", Drive_OIPriceDivergence(ind));
+    }
+    [Fact]
+    public void Lifecycle_OIPriceDivergence()
+    {
+        using var ind = new Wickra.OIPriceDivergence(20);
+        Assert.False(ind.IsReady(), "OIPriceDivergence: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OIPriceDivergence: warmup period must be >= 1");
+        var first = Drive_OIPriceDivergence(ind);
+        Assert.True(ind.IsReady(), "OIPriceDivergence: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OIPriceDivergence: still ready after Reset");
+        CompareRuns("OIPriceDivergence", first, Drive_OIPriceDivergence(ind));
+    }
+    private static List<double[]> Drive_OIWeighted(Wickra.OIWeighted ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3794,80 +8240,175 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("OIPriceDivergence", got);
+        return got;
     }
     [Fact]
     public void Golden_OIWeighted()
     {
         using var ind = new Wickra.OIWeighted();
         Assert.Equal("OIWeighted", ind.Name());
+        Compare("OIWeighted", Drive_OIWeighted(ind));
+    }
+    [Fact]
+    public void Lifecycle_OIWeighted()
+    {
+        using var ind = new Wickra.OIWeighted();
+        Assert.False(ind.IsReady(), "OIWeighted: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OIWeighted: warmup period must be >= 1");
+        var first = Drive_OIWeighted(ind);
+        Assert.True(ind.IsReady(), "OIWeighted: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OIWeighted: still ready after Reset");
+        CompareRuns("OIWeighted", first, Drive_OIWeighted(ind));
+    }
+    private static List<double[]> Drive_Obv(Wickra.Obv ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("OIWeighted", got);
+        return got;
     }
     [Fact]
     public void Golden_Obv()
     {
         using var ind = new Wickra.Obv();
         Assert.Equal("OBV", ind.Name());
+        Compare("Obv", Drive_Obv(ind));
+    }
+    [Fact]
+    public void Lifecycle_Obv()
+    {
+        using var ind = new Wickra.Obv();
+        Assert.False(ind.IsReady(), "Obv: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Obv: warmup period must be >= 1");
+        var first = Drive_Obv(ind);
+        Assert.True(ind.IsReady(), "Obv: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Obv: still ready after Reset");
+        CompareRuns("Obv", first, Drive_Obv(ind));
+    }
+    private static List<double[]> Drive_OiToVolumeRatio(Wickra.OiToVolumeRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("Obv", got);
+        return got;
     }
     [Fact]
     public void Golden_OiToVolumeRatio()
     {
         using var ind = new Wickra.OiToVolumeRatio();
         Assert.Equal("OiToVolumeRatio", ind.Name());
+        Compare("OiToVolumeRatio", Drive_OiToVolumeRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_OiToVolumeRatio()
+    {
+        using var ind = new Wickra.OiToVolumeRatio();
+        Assert.False(ind.IsReady(), "OiToVolumeRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OiToVolumeRatio: warmup period must be >= 1");
+        var first = Drive_OiToVolumeRatio(ind);
+        Assert.True(ind.IsReady(), "OiToVolumeRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OiToVolumeRatio: still ready after Reset");
+        CompareRuns("OiToVolumeRatio", first, Drive_OiToVolumeRatio(ind));
+    }
+    private static List<double[]> Drive_OmegaRatio(Wickra.OmegaRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("OiToVolumeRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_OmegaRatio()
     {
         using var ind = new Wickra.OmegaRatio(14, 2.0);
         Assert.Equal("OmegaRatio", ind.Name());
+        Compare("OmegaRatio", Drive_OmegaRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_OmegaRatio()
+    {
+        using var ind = new Wickra.OmegaRatio(14, 2.0);
+        Assert.False(ind.IsReady(), "OmegaRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OmegaRatio: warmup period must be >= 1");
+        var first = Drive_OmegaRatio(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OmegaRatio: still ready after Reset");
+        CompareRuns("OmegaRatio", first, Drive_OmegaRatio(ind));
+    }
+    private static List<double[]> Drive_OnNeck(Wickra.OnNeck ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("OmegaRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_OnNeck()
     {
         using var ind = new Wickra.OnNeck();
         Assert.Equal("OnNeck", ind.Name());
+        Compare("OnNeck", Drive_OnNeck(ind));
+    }
+    [Fact]
+    public void Lifecycle_OnNeck()
+    {
+        using var ind = new Wickra.OnNeck();
+        Assert.False(ind.IsReady(), "OnNeck: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OnNeck: warmup period must be >= 1");
+        var first = Drive_OnNeck(ind);
+        Assert.True(ind.IsReady(), "OnNeck: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OnNeck: still ready after Reset");
+        CompareRuns("OnNeck", first, Drive_OnNeck(ind));
+    }
+    private static List<double[]> Drive_OpenInterestDelta(Wickra.OpenInterestDelta ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("OnNeck", got);
+        return got;
     }
     [Fact]
     public void Golden_OpenInterestDelta()
     {
         using var ind = new Wickra.OpenInterestDelta();
         Assert.Equal("OpenInterestDelta", ind.Name());
+        Compare("OpenInterestDelta", Drive_OpenInterestDelta(ind));
+    }
+    [Fact]
+    public void Lifecycle_OpenInterestDelta()
+    {
+        using var ind = new Wickra.OpenInterestDelta();
+        Assert.False(ind.IsReady(), "OpenInterestDelta: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OpenInterestDelta: warmup period must be >= 1");
+        var first = Drive_OpenInterestDelta(ind);
+        Assert.True(ind.IsReady(), "OpenInterestDelta: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OpenInterestDelta: still ready after Reset");
+        CompareRuns("OpenInterestDelta", first, Drive_OpenInterestDelta(ind));
+    }
+    private static List<double[]> Drive_OpenInterestMomentum(Wickra.OpenInterestMomentum ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3875,53 +8416,117 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("OpenInterestDelta", got);
+        return got;
     }
     [Fact]
     public void Golden_OpenInterestMomentum()
     {
         using var ind = new Wickra.OpenInterestMomentum(10);
         Assert.Equal("OpenInterestMomentum", ind.Name());
+        Compare("OpenInterestMomentum", Drive_OpenInterestMomentum(ind));
+    }
+    [Fact]
+    public void Lifecycle_OpenInterestMomentum()
+    {
+        using var ind = new Wickra.OpenInterestMomentum(10);
+        Assert.False(ind.IsReady(), "OpenInterestMomentum: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OpenInterestMomentum: warmup period must be >= 1");
+        var first = Drive_OpenInterestMomentum(ind);
+        Assert.True(ind.IsReady(), "OpenInterestMomentum: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OpenInterestMomentum: still ready after Reset");
+        CompareRuns("OpenInterestMomentum", first, Drive_OpenInterestMomentum(ind));
+    }
+    private static List<double[]> Drive_OpeningMarubozu(Wickra.OpeningMarubozu ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("OpenInterestMomentum", got);
+        return got;
     }
     [Fact]
     public void Golden_OpeningMarubozu()
     {
         using var ind = new Wickra.OpeningMarubozu();
         Assert.Equal("OpeningMarubozu", ind.Name());
+        Compare("OpeningMarubozu", Drive_OpeningMarubozu(ind));
+    }
+    [Fact]
+    public void Lifecycle_OpeningMarubozu()
+    {
+        using var ind = new Wickra.OpeningMarubozu();
+        Assert.False(ind.IsReady(), "OpeningMarubozu: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OpeningMarubozu: warmup period must be >= 1");
+        var first = Drive_OpeningMarubozu(ind);
+        Assert.True(ind.IsReady(), "OpeningMarubozu: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OpeningMarubozu: still ready after Reset");
+        CompareRuns("OpeningMarubozu", first, Drive_OpeningMarubozu(ind));
+    }
+    private static List<double[]> Drive_OpeningRange(Wickra.OpeningRange ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("OpeningMarubozu", got);
+        return got;
     }
     [Fact]
     public void Golden_OpeningRange()
     {
         using var ind = new Wickra.OpeningRange(14);
         Assert.Equal("OpeningRange", ind.Name());
+        Compare("OpeningRange", Drive_OpeningRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_OpeningRange()
+    {
+        using var ind = new Wickra.OpeningRange(14);
+        Assert.False(ind.IsReady(), "OpeningRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OpeningRange: warmup period must be >= 1");
+        var first = Drive_OpeningRange(ind);
+        Assert.True(ind.IsReady(), "OpeningRange: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OpeningRange: still ready after Reset");
+        CompareRuns("OpeningRange", first, Drive_OpeningRange(ind));
+    }
+    private static List<double[]> Drive_OrderBookImbalanceFull(Wickra.OrderBookImbalanceFull ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            var (bp, bs, ap, asz) = ObLists(r);
+            got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("OpeningRange", got);
+        return got;
     }
     [Fact]
     public void Golden_OrderBookImbalanceFull()
     {
         using var ind = new Wickra.OrderBookImbalanceFull();
         Assert.Equal("OrderBookImbalanceFull", ind.Name());
+        Compare("OrderBookImbalanceFull", Drive_OrderBookImbalanceFull(ind));
+    }
+    [Fact]
+    public void Lifecycle_OrderBookImbalanceFull()
+    {
+        using var ind = new Wickra.OrderBookImbalanceFull();
+        Assert.False(ind.IsReady(), "OrderBookImbalanceFull: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OrderBookImbalanceFull: warmup period must be >= 1");
+        var first = Drive_OrderBookImbalanceFull(ind);
+        Assert.True(ind.IsReady(), "OrderBookImbalanceFull: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OrderBookImbalanceFull: still ready after Reset");
+        CompareRuns("OrderBookImbalanceFull", first, Drive_OrderBookImbalanceFull(ind));
+    }
+    private static List<double[]> Drive_OrderBookImbalanceTop1(Wickra.OrderBookImbalanceTop1 ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3929,13 +8534,29 @@ public class GoldenAllTests
             var (bp, bs, ap, asz) = ObLists(r);
             got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("OrderBookImbalanceFull", got);
+        return got;
     }
     [Fact]
     public void Golden_OrderBookImbalanceTop1()
     {
         using var ind = new Wickra.OrderBookImbalanceTop1();
         Assert.Equal("OrderBookImbalanceTop1", ind.Name());
+        Compare("OrderBookImbalanceTop1", Drive_OrderBookImbalanceTop1(ind));
+    }
+    [Fact]
+    public void Lifecycle_OrderBookImbalanceTop1()
+    {
+        using var ind = new Wickra.OrderBookImbalanceTop1();
+        Assert.False(ind.IsReady(), "OrderBookImbalanceTop1: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OrderBookImbalanceTop1: warmup period must be >= 1");
+        var first = Drive_OrderBookImbalanceTop1(ind);
+        Assert.True(ind.IsReady(), "OrderBookImbalanceTop1: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OrderBookImbalanceTop1: still ready after Reset");
+        CompareRuns("OrderBookImbalanceTop1", first, Drive_OrderBookImbalanceTop1(ind));
+    }
+    private static List<double[]> Drive_OrderBookImbalanceTopN(Wickra.OrderBookImbalanceTopN ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3943,13 +8564,29 @@ public class GoldenAllTests
             var (bp, bs, ap, asz) = ObLists(r);
             got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("OrderBookImbalanceTop1", got);
+        return got;
     }
     [Fact]
     public void Golden_OrderBookImbalanceTopN()
     {
         using var ind = new Wickra.OrderBookImbalanceTopN(5);
         Assert.Equal("OrderBookImbalanceTopN", ind.Name());
+        Compare("OrderBookImbalanceTopN", Drive_OrderBookImbalanceTopN(ind));
+    }
+    [Fact]
+    public void Lifecycle_OrderBookImbalanceTopN()
+    {
+        using var ind = new Wickra.OrderBookImbalanceTopN(5);
+        Assert.False(ind.IsReady(), "OrderBookImbalanceTopN: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OrderBookImbalanceTopN: warmup period must be >= 1");
+        var first = Drive_OrderBookImbalanceTopN(ind);
+        Assert.True(ind.IsReady(), "OrderBookImbalanceTopN: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OrderBookImbalanceTopN: still ready after Reset");
+        CompareRuns("OrderBookImbalanceTopN", first, Drive_OrderBookImbalanceTopN(ind));
+    }
+    private static List<double[]> Drive_OrderFlowImbalance(Wickra.OrderFlowImbalance ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -3957,131 +8594,259 @@ public class GoldenAllTests
             var (bp, bs, ap, asz) = ObLists(r);
             got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("OrderBookImbalanceTopN", got);
+        return got;
     }
     [Fact]
     public void Golden_OrderFlowImbalance()
     {
         using var ind = new Wickra.OrderFlowImbalance(20);
         Assert.Equal("OrderFlowImbalance", ind.Name());
+        Compare("OrderFlowImbalance", Drive_OrderFlowImbalance(ind));
+    }
+    [Fact]
+    public void Lifecycle_OrderFlowImbalance()
+    {
+        using var ind = new Wickra.OrderFlowImbalance(20);
+        Assert.False(ind.IsReady(), "OrderFlowImbalance: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OrderFlowImbalance: warmup period must be >= 1");
+        var first = Drive_OrderFlowImbalance(ind);
+        Assert.True(ind.IsReady(), "OrderFlowImbalance: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OrderFlowImbalance: still ready after Reset");
+        CompareRuns("OrderFlowImbalance", first, Drive_OrderFlowImbalance(ind));
+    }
+    private static List<double[]> Drive_OuHalfLife(Wickra.OuHalfLife ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (bp, bs, ap, asz) = ObLists(r);
-            got.Add(new[] { ind.Update(bp, bs, ap, asz) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("OrderFlowImbalance", got);
+        return got;
     }
     [Fact]
     public void Golden_OuHalfLife()
     {
         using var ind = new Wickra.OuHalfLife(14);
         Assert.Equal("OuHalfLife", ind.Name());
+        Compare("OuHalfLife", Drive_OuHalfLife(ind));
+    }
+    [Fact]
+    public void Lifecycle_OuHalfLife()
+    {
+        using var ind = new Wickra.OuHalfLife(14);
+        Assert.False(ind.IsReady(), "OuHalfLife: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OuHalfLife: warmup period must be >= 1");
+        var first = Drive_OuHalfLife(ind);
+        Assert.True(ind.IsReady(), "OuHalfLife: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OuHalfLife: still ready after Reset");
+        CompareRuns("OuHalfLife", first, Drive_OuHalfLife(ind));
+    }
+    private static List<double[]> Drive_OvernightGap(Wickra.OvernightGap ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("OuHalfLife", got);
+        return got;
     }
     [Fact]
     public void Golden_OvernightGap()
     {
         using var ind = new Wickra.OvernightGap(0);
         Assert.Equal("OvernightGap", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("OvernightGap", got);
+        Compare("OvernightGap", Drive_OvernightGap(ind));
     }
     [Fact]
-    public void Golden_OvernightIntradayReturn()
+    public void Lifecycle_OvernightGap()
     {
-        using var ind = new Wickra.OvernightIntradayReturn(14);
-        Assert.Equal("OvernightIntradayReturn", ind.Name());
+        using var ind = new Wickra.OvernightGap(0);
+        Assert.False(ind.IsReady(), "OvernightGap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OvernightGap: warmup period must be >= 1");
+        var first = Drive_OvernightGap(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OvernightGap: still ready after Reset");
+        CompareRuns("OvernightGap", first, Drive_OvernightGap(ind));
+    }
+    private static List<double[]> Drive_OvernightIntradayReturn(Wickra.OvernightIntradayReturn ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("OvernightIntradayReturn", got);
+        return got;
     }
     [Fact]
-    public void Golden_PainIndex()
+    public void Golden_OvernightIntradayReturn()
     {
-        using var ind = new Wickra.PainIndex(14);
-        Assert.Equal("PainIndex", ind.Name());
+        using var ind = new Wickra.OvernightIntradayReturn(14);
+        Assert.Equal("OvernightIntradayReturn", ind.Name());
+        Compare("OvernightIntradayReturn", Drive_OvernightIntradayReturn(ind));
+    }
+    [Fact]
+    public void Lifecycle_OvernightIntradayReturn()
+    {
+        using var ind = new Wickra.OvernightIntradayReturn(14);
+        Assert.False(ind.IsReady(), "OvernightIntradayReturn: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "OvernightIntradayReturn: warmup period must be >= 1");
+        var first = Drive_OvernightIntradayReturn(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "OvernightIntradayReturn: still ready after Reset");
+        CompareRuns("OvernightIntradayReturn", first, Drive_OvernightIntradayReturn(ind));
+    }
+    private static List<double[]> Drive_PainIndex(Wickra.PainIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("PainIndex", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_PainIndex()
+    {
+        using var ind = new Wickra.PainIndex(14);
+        Assert.Equal("PainIndex", ind.Name());
+        Compare("PainIndex", Drive_PainIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_PainIndex()
+    {
+        using var ind = new Wickra.PainIndex(14);
+        Assert.False(ind.IsReady(), "PainIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PainIndex: warmup period must be >= 1");
+        var first = Drive_PainIndex(ind);
+        Assert.True(ind.IsReady(), "PainIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PainIndex: still ready after Reset");
+        CompareRuns("PainIndex", first, Drive_PainIndex(ind));
+    }
+    private static List<double[]> Drive_PairSpreadZScore(Wickra.PairSpreadZScore ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3], r[0]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_PairSpreadZScore()
     {
         using var ind = new Wickra.PairSpreadZScore(20, 20);
         Assert.Equal("PairSpreadZScore", ind.Name());
+        Compare("PairSpreadZScore", Drive_PairSpreadZScore(ind));
+    }
+    [Fact]
+    public void Lifecycle_PairSpreadZScore()
+    {
+        using var ind = new Wickra.PairSpreadZScore(20, 20);
+        Assert.False(ind.IsReady(), "PairSpreadZScore: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PairSpreadZScore: warmup period must be >= 1");
+        var first = Drive_PairSpreadZScore(ind);
+        Assert.True(ind.IsReady(), "PairSpreadZScore: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PairSpreadZScore: still ready after Reset");
+        CompareRuns("PairSpreadZScore", first, Drive_PairSpreadZScore(ind));
+    }
+    private static List<double[]> Drive_PairwiseBeta(Wickra.PairwiseBeta ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("PairSpreadZScore", got);
+        return got;
     }
     [Fact]
     public void Golden_PairwiseBeta()
     {
         using var ind = new Wickra.PairwiseBeta(14);
         Assert.Equal("PairwiseBeta", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
-        }
-        Compare("PairwiseBeta", got);
+        Compare("PairwiseBeta", Drive_PairwiseBeta(ind));
     }
     [Fact]
-    public void Golden_ParkinsonVolatility()
+    public void Lifecycle_PairwiseBeta()
     {
-        using var ind = new Wickra.ParkinsonVolatility(20, 252);
-        Assert.Equal("ParkinsonVolatility", ind.Name());
+        using var ind = new Wickra.PairwiseBeta(14);
+        Assert.False(ind.IsReady(), "PairwiseBeta: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PairwiseBeta: warmup period must be >= 1");
+        var first = Drive_PairwiseBeta(ind);
+        Assert.True(ind.IsReady(), "PairwiseBeta: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PairwiseBeta: still ready after Reset");
+        CompareRuns("PairwiseBeta", first, Drive_PairwiseBeta(ind));
+    }
+    private static List<double[]> Drive_ParkinsonVolatility(Wickra.ParkinsonVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ParkinsonVolatility", got);
+        return got;
     }
     [Fact]
-    public void Golden_PearsonCorrelation()
+    public void Golden_ParkinsonVolatility()
     {
-        using var ind = new Wickra.PearsonCorrelation(14);
-        Assert.Equal("PearsonCorrelation", ind.Name());
+        using var ind = new Wickra.ParkinsonVolatility(20, 252);
+        Assert.Equal("ParkinsonVolatility", ind.Name());
+        Compare("ParkinsonVolatility", Drive_ParkinsonVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_ParkinsonVolatility()
+    {
+        using var ind = new Wickra.ParkinsonVolatility(20, 252);
+        Assert.False(ind.IsReady(), "ParkinsonVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ParkinsonVolatility: warmup period must be >= 1");
+        var first = Drive_ParkinsonVolatility(ind);
+        Assert.True(ind.IsReady(), "ParkinsonVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ParkinsonVolatility: still ready after Reset");
+        CompareRuns("ParkinsonVolatility", first, Drive_ParkinsonVolatility(ind));
+    }
+    private static List<double[]> Drive_PearsonCorrelation(Wickra.PearsonCorrelation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("PearsonCorrelation", got);
+        return got;
     }
     [Fact]
-    public void Golden_PercentAboveMa()
+    public void Golden_PearsonCorrelation()
     {
-        using var ind = new Wickra.PercentAboveMa();
-        Assert.Equal("PercentAboveMa", ind.Name());
+        using var ind = new Wickra.PearsonCorrelation(14);
+        Assert.Equal("PearsonCorrelation", ind.Name());
+        Compare("PearsonCorrelation", Drive_PearsonCorrelation(ind));
+    }
+    [Fact]
+    public void Lifecycle_PearsonCorrelation()
+    {
+        using var ind = new Wickra.PearsonCorrelation(14);
+        Assert.False(ind.IsReady(), "PearsonCorrelation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PearsonCorrelation: warmup period must be >= 1");
+        var first = Drive_PearsonCorrelation(ind);
+        Assert.True(ind.IsReady(), "PearsonCorrelation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PearsonCorrelation: still ready after Reset");
+        CompareRuns("PearsonCorrelation", first, Drive_PearsonCorrelation(ind));
+    }
+    private static List<double[]> Drive_PercentAboveMa(Wickra.PercentAboveMa ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4089,39 +8854,87 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("PercentAboveMa", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_PercentAboveMa()
+    {
+        using var ind = new Wickra.PercentAboveMa();
+        Assert.Equal("PercentAboveMa", ind.Name());
+        Compare("PercentAboveMa", Drive_PercentAboveMa(ind));
+    }
+    [Fact]
+    public void Lifecycle_PercentAboveMa()
+    {
+        using var ind = new Wickra.PercentAboveMa();
+        Assert.False(ind.IsReady(), "PercentAboveMa: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PercentAboveMa: warmup period must be >= 1");
+        var first = Drive_PercentAboveMa(ind);
+        Assert.True(ind.IsReady(), "PercentAboveMa: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PercentAboveMa: still ready after Reset");
+        CompareRuns("PercentAboveMa", first, Drive_PercentAboveMa(ind));
+    }
+    private static List<double[]> Drive_PercentB(Wickra.PercentB ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_PercentB()
     {
         using var ind = new Wickra.PercentB(14, 2.0);
         Assert.Equal("PercentB", ind.Name());
+        Compare("PercentB", Drive_PercentB(ind));
+    }
+    [Fact]
+    public void Lifecycle_PercentB()
+    {
+        using var ind = new Wickra.PercentB(14, 2.0);
+        Assert.False(ind.IsReady(), "PercentB: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PercentB: warmup period must be >= 1");
+        var first = Drive_PercentB(ind);
+        Assert.True(ind.IsReady(), "PercentB: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PercentB: still ready after Reset");
+        CompareRuns("PercentB", first, Drive_PercentB(ind));
+    }
+    private static List<double[]> Drive_PercentageTrailingStop(Wickra.PercentageTrailingStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("PercentB", got);
+        return got;
     }
     [Fact]
     public void Golden_PercentageTrailingStop()
     {
         using var ind = new Wickra.PercentageTrailingStop(2.0);
         Assert.Equal("PercentageTrailingStop", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("PercentageTrailingStop", got);
+        Compare("PercentageTrailingStop", Drive_PercentageTrailingStop(ind));
     }
     [Fact]
-    public void Golden_PerpetualPremiumIndex()
+    public void Lifecycle_PercentageTrailingStop()
     {
-        using var ind = new Wickra.PerpetualPremiumIndex();
-        Assert.Equal("PerpetualPremiumIndex", ind.Name());
+        using var ind = new Wickra.PercentageTrailingStop(2.0);
+        Assert.False(ind.IsReady(), "PercentageTrailingStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PercentageTrailingStop: warmup period must be >= 1");
+        var first = Drive_PercentageTrailingStop(ind);
+        Assert.True(ind.IsReady(), "PercentageTrailingStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PercentageTrailingStop: still ready after Reset");
+        CompareRuns("PercentageTrailingStop", first, Drive_PercentageTrailingStop(ind));
+    }
+    private static List<double[]> Drive_PerpetualPremiumIndex(Wickra.PerpetualPremiumIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4129,273 +8942,604 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("PerpetualPremiumIndex", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_PerpetualPremiumIndex()
+    {
+        using var ind = new Wickra.PerpetualPremiumIndex();
+        Assert.Equal("PerpetualPremiumIndex", ind.Name());
+        Compare("PerpetualPremiumIndex", Drive_PerpetualPremiumIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_PerpetualPremiumIndex()
+    {
+        using var ind = new Wickra.PerpetualPremiumIndex();
+        Assert.False(ind.IsReady(), "PerpetualPremiumIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PerpetualPremiumIndex: warmup period must be >= 1");
+        var first = Drive_PerpetualPremiumIndex(ind);
+        Assert.True(ind.IsReady(), "PerpetualPremiumIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PerpetualPremiumIndex: still ready after Reset");
+        CompareRuns("PerpetualPremiumIndex", first, Drive_PerpetualPremiumIndex(ind));
+    }
+    private static List<double[]> Drive_Pgo(Wickra.Pgo ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Pgo()
     {
         using var ind = new Wickra.Pgo(14);
         Assert.Equal("PGO", ind.Name());
+        Compare("Pgo", Drive_Pgo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Pgo()
+    {
+        using var ind = new Wickra.Pgo(14);
+        Assert.False(ind.IsReady(), "Pgo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Pgo: warmup period must be >= 1");
+        var first = Drive_Pgo(ind);
+        Assert.True(ind.IsReady(), "Pgo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Pgo: still ready after Reset");
+        CompareRuns("Pgo", first, Drive_Pgo(ind));
+    }
+    private static List<double[]> Drive_PiercingDarkCloud(Wickra.PiercingDarkCloud ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Pgo", got);
+        return got;
     }
     [Fact]
     public void Golden_PiercingDarkCloud()
     {
         using var ind = new Wickra.PiercingDarkCloud();
         Assert.Equal("PiercingDarkCloud", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("PiercingDarkCloud", got);
+        Compare("PiercingDarkCloud", Drive_PiercingDarkCloud(ind));
     }
     [Fact]
-    public void Golden_Pin()
+    public void Lifecycle_PiercingDarkCloud()
     {
-        using var ind = new Wickra.Pin(20);
-        Assert.Equal("PIN", ind.Name());
+        using var ind = new Wickra.PiercingDarkCloud();
+        Assert.False(ind.IsReady(), "PiercingDarkCloud: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PiercingDarkCloud: warmup period must be >= 1");
+        var first = Drive_PiercingDarkCloud(ind);
+        Assert.True(ind.IsReady(), "PiercingDarkCloud: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PiercingDarkCloud: still ready after Reset");
+        CompareRuns("PiercingDarkCloud", first, Drive_PiercingDarkCloud(ind));
+    }
+    private static List<double[]> Drive_Pin(Wickra.Pin ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("Pin", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Pin()
+    {
+        using var ind = new Wickra.Pin(20);
+        Assert.Equal("PIN", ind.Name());
+        Compare("Pin", Drive_Pin(ind));
+    }
+    [Fact]
+    public void Lifecycle_Pin()
+    {
+        using var ind = new Wickra.Pin(20);
+        Assert.False(ind.IsReady(), "Pin: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Pin: warmup period must be >= 1");
+        var first = Drive_Pin(ind);
+        Assert.True(ind.IsReady(), "Pin: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Pin: still ready after Reset");
+        CompareRuns("Pin", first, Drive_Pin(ind));
+    }
+    private static List<double[]> Drive_PivotReversal(Wickra.PivotReversal ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_PivotReversal()
     {
         using var ind = new Wickra.PivotReversal(3, 7);
         Assert.Equal("PivotReversal", ind.Name());
+        Compare("PivotReversal", Drive_PivotReversal(ind));
+    }
+    [Fact]
+    public void Lifecycle_PivotReversal()
+    {
+        using var ind = new Wickra.PivotReversal(3, 7);
+        Assert.False(ind.IsReady(), "PivotReversal: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PivotReversal: warmup period must be >= 1");
+        var first = Drive_PivotReversal(ind);
+        Assert.True(ind.IsReady(), "PivotReversal: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PivotReversal: still ready after Reset");
+        CompareRuns("PivotReversal", first, Drive_PivotReversal(ind));
+    }
+    private static List<double[]> Drive_PlusDi(Wickra.PlusDi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("PivotReversal", got);
+        return got;
     }
     [Fact]
     public void Golden_PlusDi()
     {
         using var ind = new Wickra.PlusDi(14);
         Assert.Equal("PLUS_DI", ind.Name());
+        Compare("PlusDi", Drive_PlusDi(ind));
+    }
+    [Fact]
+    public void Lifecycle_PlusDi()
+    {
+        using var ind = new Wickra.PlusDi(14);
+        Assert.False(ind.IsReady(), "PlusDi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PlusDi: warmup period must be >= 1");
+        var first = Drive_PlusDi(ind);
+        Assert.True(ind.IsReady(), "PlusDi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PlusDi: still ready after Reset");
+        CompareRuns("PlusDi", first, Drive_PlusDi(ind));
+    }
+    private static List<double[]> Drive_PlusDm(Wickra.PlusDm ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("PlusDi", got);
+        return got;
     }
     [Fact]
     public void Golden_PlusDm()
     {
         using var ind = new Wickra.PlusDm(14);
         Assert.Equal("PLUS_DM", ind.Name());
+        Compare("PlusDm", Drive_PlusDm(ind));
+    }
+    [Fact]
+    public void Lifecycle_PlusDm()
+    {
+        using var ind = new Wickra.PlusDm(14);
+        Assert.False(ind.IsReady(), "PlusDm: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PlusDm: warmup period must be >= 1");
+        var first = Drive_PlusDm(ind);
+        Assert.True(ind.IsReady(), "PlusDm: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PlusDm: still ready after Reset");
+        CompareRuns("PlusDm", first, Drive_PlusDm(ind));
+    }
+    private static List<double[]> Drive_Pmo(Wickra.Pmo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("PlusDm", got);
+        return got;
     }
     [Fact]
     public void Golden_Pmo()
     {
         using var ind = new Wickra.Pmo(3, 7);
         Assert.Equal("PMO", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("Pmo", got);
+        Compare("Pmo", Drive_Pmo(ind));
     }
     [Fact]
-    public void Golden_PointAndFigureBars()
+    public void Lifecycle_Pmo()
     {
-        using var ind = new Wickra.PointAndFigureBars(2.0, 3);
-        Assert.Equal("PointAndFigureBars", ind.Name());
+        using var ind = new Wickra.Pmo(3, 7);
+        Assert.False(ind.IsReady(), "Pmo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Pmo: warmup period must be >= 1");
+        var first = Drive_Pmo(ind);
+        Assert.True(ind.IsReady(), "Pmo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Pmo: still ready after Reset");
+        CompareRuns("Pmo", first, Drive_Pmo(ind));
+    }
+    private static List<double[]> Drive_PointAndFigureBars(Wickra.PointAndFigureBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
         }
-        Compare("PointAndFigureBars", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_PointAndFigureBars()
+    {
+        using var ind = new Wickra.PointAndFigureBars(2.0, 3);
+        Assert.Equal("PointAndFigureBars", ind.Name());
+        Compare("PointAndFigureBars", Drive_PointAndFigureBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_PointAndFigureBars()
+    {
+        using var ind = new Wickra.PointAndFigureBars(2.0, 3);
+        var first = Drive_PointAndFigureBars(ind);
+        ind.Reset();
+        CompareRuns("PointAndFigureBars", first, Drive_PointAndFigureBars(ind));
+    }
+    private static List<double[]> Drive_PolarizedFractalEfficiency(Wickra.PolarizedFractalEfficiency ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_PolarizedFractalEfficiency()
     {
         using var ind = new Wickra.PolarizedFractalEfficiency(10, 5);
         Assert.Equal("PolarizedFractalEfficiency", ind.Name());
+        Compare("PolarizedFractalEfficiency", Drive_PolarizedFractalEfficiency(ind));
+    }
+    [Fact]
+    public void Lifecycle_PolarizedFractalEfficiency()
+    {
+        using var ind = new Wickra.PolarizedFractalEfficiency(10, 5);
+        Assert.False(ind.IsReady(), "PolarizedFractalEfficiency: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PolarizedFractalEfficiency: warmup period must be >= 1");
+        var first = Drive_PolarizedFractalEfficiency(ind);
+        Assert.True(ind.IsReady(), "PolarizedFractalEfficiency: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PolarizedFractalEfficiency: still ready after Reset");
+        CompareRuns("PolarizedFractalEfficiency", first, Drive_PolarizedFractalEfficiency(ind));
+    }
+    private static List<double[]> Drive_Ppo(Wickra.Ppo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("PolarizedFractalEfficiency", got);
+        return got;
     }
     [Fact]
     public void Golden_Ppo()
     {
         using var ind = new Wickra.Ppo(3, 7);
         Assert.Equal("PPO", ind.Name());
+        Compare("Ppo", Drive_Ppo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Ppo()
+    {
+        using var ind = new Wickra.Ppo(3, 7);
+        Assert.False(ind.IsReady(), "Ppo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Ppo: warmup period must be >= 1");
+        var first = Drive_Ppo(ind);
+        Assert.True(ind.IsReady(), "Ppo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Ppo: still ready after Reset");
+        CompareRuns("Ppo", first, Drive_Ppo(ind));
+    }
+    private static List<double[]> Drive_PpoHistogram(Wickra.PpoHistogram ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Ppo", got);
+        return got;
     }
     [Fact]
     public void Golden_PpoHistogram()
     {
         using var ind = new Wickra.PpoHistogram(3, 7, 14);
         Assert.Equal("PpoHistogram", ind.Name());
+        Compare("PpoHistogram", Drive_PpoHistogram(ind));
+    }
+    [Fact]
+    public void Lifecycle_PpoHistogram()
+    {
+        using var ind = new Wickra.PpoHistogram(3, 7, 14);
+        Assert.False(ind.IsReady(), "PpoHistogram: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "PpoHistogram: warmup period must be >= 1");
+        var first = Drive_PpoHistogram(ind);
+        Assert.True(ind.IsReady(), "PpoHistogram: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "PpoHistogram: still ready after Reset");
+        CompareRuns("PpoHistogram", first, Drive_PpoHistogram(ind));
+    }
+    private static List<double[]> Drive_ProfileShape(Wickra.ProfileShape ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("PpoHistogram", got);
+        return got;
     }
     [Fact]
     public void Golden_ProfileShape()
     {
         using var ind = new Wickra.ProfileShape(3, 7);
         Assert.Equal("ProfileShape", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("ProfileShape", got);
+        Compare("ProfileShape", Drive_ProfileShape(ind));
     }
     [Fact]
-    public void Golden_ProfitFactor()
+    public void Lifecycle_ProfileShape()
     {
-        using var ind = new Wickra.ProfitFactor(14);
-        Assert.Equal("ProfitFactor", ind.Name());
+        using var ind = new Wickra.ProfileShape(3, 7);
+        Assert.False(ind.IsReady(), "ProfileShape: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ProfileShape: warmup period must be >= 1");
+        var first = Drive_ProfileShape(ind);
+        Assert.True(ind.IsReady(), "ProfileShape: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ProfileShape: still ready after Reset");
+        CompareRuns("ProfileShape", first, Drive_ProfileShape(ind));
+    }
+    private static List<double[]> Drive_ProfitFactor(Wickra.ProfitFactor ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ProfitFactor", got);
+        return got;
     }
     [Fact]
-    public void Golden_ProjectionBands()
+    public void Golden_ProfitFactor()
     {
-        using var ind = new Wickra.ProjectionBands(14);
-        Assert.Equal("ProjectionBands", ind.Name());
+        using var ind = new Wickra.ProfitFactor(14);
+        Assert.Equal("ProfitFactor", ind.Name());
+        Compare("ProfitFactor", Drive_ProfitFactor(ind));
+    }
+    [Fact]
+    public void Lifecycle_ProfitFactor()
+    {
+        using var ind = new Wickra.ProfitFactor(14);
+        Assert.False(ind.IsReady(), "ProfitFactor: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ProfitFactor: warmup period must be >= 1");
+        var first = Drive_ProfitFactor(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ProfitFactor: still ready after Reset");
+        CompareRuns("ProfitFactor", first, Drive_ProfitFactor(ind));
+    }
+    private static List<double[]> Drive_ProjectionBands(Wickra.ProjectionBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("ProjectionBands", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_ProjectionBands()
+    {
+        using var ind = new Wickra.ProjectionBands(14);
+        Assert.Equal("ProjectionBands", ind.Name());
+        Compare("ProjectionBands", Drive_ProjectionBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_ProjectionBands()
+    {
+        using var ind = new Wickra.ProjectionBands(14);
+        Assert.False(ind.IsReady(), "ProjectionBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ProjectionBands: warmup period must be >= 1");
+        var first = Drive_ProjectionBands(ind);
+        Assert.True(ind.IsReady(), "ProjectionBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ProjectionBands: still ready after Reset");
+        CompareRuns("ProjectionBands", first, Drive_ProjectionBands(ind));
+    }
+    private static List<double[]> Drive_ProjectionOscillator(Wickra.ProjectionOscillator ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_ProjectionOscillator()
     {
         using var ind = new Wickra.ProjectionOscillator(14);
         Assert.Equal("ProjectionOscillator", ind.Name());
+        Compare("ProjectionOscillator", Drive_ProjectionOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_ProjectionOscillator()
+    {
+        using var ind = new Wickra.ProjectionOscillator(14);
+        Assert.False(ind.IsReady(), "ProjectionOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ProjectionOscillator: warmup period must be >= 1");
+        var first = Drive_ProjectionOscillator(ind);
+        Assert.True(ind.IsReady(), "ProjectionOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ProjectionOscillator: still ready after Reset");
+        CompareRuns("ProjectionOscillator", first, Drive_ProjectionOscillator(ind));
+    }
+    private static List<double[]> Drive_Psar(Wickra.Psar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ProjectionOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_Psar()
     {
         using var ind = new Wickra.Psar(0.02, 0.02, 0.2);
         Assert.Equal("PSAR", ind.Name());
+        Compare("Psar", Drive_Psar(ind));
+    }
+    [Fact]
+    public void Lifecycle_Psar()
+    {
+        using var ind = new Wickra.Psar(0.02, 0.02, 0.2);
+        Assert.False(ind.IsReady(), "Psar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Psar: warmup period must be >= 1");
+        var first = Drive_Psar(ind);
+        Assert.True(ind.IsReady(), "Psar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Psar: still ready after Reset");
+        CompareRuns("Psar", first, Drive_Psar(ind));
+    }
+    private static List<double[]> Drive_Pvi(Wickra.Pvi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Psar", got);
+        return got;
     }
     [Fact]
     public void Golden_Pvi()
     {
         using var ind = new Wickra.Pvi();
         Assert.Equal("PVI", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Pvi", got);
+        Compare("Pvi", Drive_Pvi(ind));
     }
     [Fact]
-    public void Golden_Qqe()
+    public void Lifecycle_Pvi()
     {
-        using var ind = new Wickra.Qqe(3, 7, 2.0);
-        Assert.Equal("QQE", ind.Name());
+        using var ind = new Wickra.Pvi();
+        Assert.False(ind.IsReady(), "Pvi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Pvi: warmup period must be >= 1");
+        var first = Drive_Pvi(ind);
+        Assert.True(ind.IsReady(), "Pvi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Pvi: still ready after Reset");
+        CompareRuns("Pvi", first, Drive_Pvi(ind));
+    }
+    private static List<double[]> Drive_Qqe(Wickra.Qqe ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 2));
         }
-        Compare("Qqe", got);
+        return got;
     }
     [Fact]
-    public void Golden_Qstick()
+    public void Golden_Qqe()
     {
-        using var ind = new Wickra.Qstick(14);
-        Assert.Equal("Qstick", ind.Name());
+        using var ind = new Wickra.Qqe(3, 7, 2.0);
+        Assert.Equal("QQE", ind.Name());
+        Compare("Qqe", Drive_Qqe(ind));
+    }
+    [Fact]
+    public void Lifecycle_Qqe()
+    {
+        using var ind = new Wickra.Qqe(3, 7, 2.0);
+        Assert.False(ind.IsReady(), "Qqe: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Qqe: warmup period must be >= 1");
+        var first = Drive_Qqe(ind);
+        Assert.True(ind.IsReady(), "Qqe: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Qqe: still ready after Reset");
+        CompareRuns("Qqe", first, Drive_Qqe(ind));
+    }
+    private static List<double[]> Drive_Qstick(Wickra.Qstick ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Qstick", got);
+        return got;
     }
     [Fact]
-    public void Golden_QuartileBands()
+    public void Golden_Qstick()
     {
-        using var ind = new Wickra.QuartileBands(14);
-        Assert.Equal("QuartileBands", ind.Name());
+        using var ind = new Wickra.Qstick(14);
+        Assert.Equal("Qstick", ind.Name());
+        Compare("Qstick", Drive_Qstick(ind));
+    }
+    [Fact]
+    public void Lifecycle_Qstick()
+    {
+        using var ind = new Wickra.Qstick(14);
+        Assert.False(ind.IsReady(), "Qstick: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Qstick: warmup period must be >= 1");
+        var first = Drive_Qstick(ind);
+        Assert.True(ind.IsReady(), "Qstick: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Qstick: still ready after Reset");
+        CompareRuns("Qstick", first, Drive_Qstick(ind));
+    }
+    private static List<double[]> Drive_QuartileBands(Wickra.QuartileBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("QuartileBands", got);
+        return got;
     }
     [Fact]
-    public void Golden_QuotedSpread()
+    public void Golden_QuartileBands()
     {
-        using var ind = new Wickra.QuotedSpread();
-        Assert.Equal("QuotedSpread", ind.Name());
+        using var ind = new Wickra.QuartileBands(14);
+        Assert.Equal("QuartileBands", ind.Name());
+        Compare("QuartileBands", Drive_QuartileBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_QuartileBands()
+    {
+        using var ind = new Wickra.QuartileBands(14);
+        Assert.False(ind.IsReady(), "QuartileBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "QuartileBands: warmup period must be >= 1");
+        var first = Drive_QuartileBands(ind);
+        Assert.True(ind.IsReady(), "QuartileBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "QuartileBands: still ready after Reset");
+        CompareRuns("QuartileBands", first, Drive_QuartileBands(ind));
+    }
+    private static List<double[]> Drive_QuotedSpread(Wickra.QuotedSpread ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -4403,1314 +9547,2918 @@ public class GoldenAllTests
             var (bp, bs, ap, asz) = ObLists(r);
             got.Add(new[] { ind.Update(bp, bs, ap, asz) });
         }
-        Compare("QuotedSpread", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_QuotedSpread()
+    {
+        using var ind = new Wickra.QuotedSpread();
+        Assert.Equal("QuotedSpread", ind.Name());
+        Compare("QuotedSpread", Drive_QuotedSpread(ind));
+    }
+    [Fact]
+    public void Lifecycle_QuotedSpread()
+    {
+        using var ind = new Wickra.QuotedSpread();
+        Assert.False(ind.IsReady(), "QuotedSpread: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "QuotedSpread: warmup period must be >= 1");
+        var first = Drive_QuotedSpread(ind);
+        Assert.True(ind.IsReady(), "QuotedSpread: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "QuotedSpread: still ready after Reset");
+        CompareRuns("QuotedSpread", first, Drive_QuotedSpread(ind));
+    }
+    private static List<double[]> Drive_RSquared(Wickra.RSquared ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_RSquared()
     {
         using var ind = new Wickra.RSquared(14);
         Assert.Equal("RSquared", ind.Name());
+        Compare("RSquared", Drive_RSquared(ind));
+    }
+    [Fact]
+    public void Lifecycle_RSquared()
+    {
+        using var ind = new Wickra.RSquared(14);
+        Assert.False(ind.IsReady(), "RSquared: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RSquared: warmup period must be >= 1");
+        var first = Drive_RSquared(ind);
+        Assert.True(ind.IsReady(), "RSquared: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RSquared: still ready after Reset");
+        CompareRuns("RSquared", first, Drive_RSquared(ind));
+    }
+    private static List<double[]> Drive_RangeBars(Wickra.RangeBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
         }
-        Compare("RSquared", got);
+        return got;
     }
     [Fact]
     public void Golden_RangeBars()
     {
         using var ind = new Wickra.RangeBars(2.0);
         Assert.Equal("RangeBars", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
-        }
-        Compare("RangeBars", got);
+        Compare("RangeBars", Drive_RangeBars(ind));
     }
     [Fact]
-    public void Golden_RealizedSpread()
+    public void Lifecycle_RangeBars()
     {
-        using var ind = new Wickra.RealizedSpread(20);
-        Assert.Equal("RealizedSpread", ind.Name());
+        using var ind = new Wickra.RangeBars(2.0);
+        var first = Drive_RangeBars(ind);
+        ind.Reset();
+        CompareRuns("RangeBars", first, Drive_RangeBars(ind));
+    }
+    private static List<double[]> Drive_RealizedSpread(Wickra.RealizedSpread ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i, (r[1] + r[2]) / 2) });
         }
-        Compare("RealizedSpread", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_RealizedSpread()
+    {
+        using var ind = new Wickra.RealizedSpread(20);
+        Assert.Equal("RealizedSpread", ind.Name());
+        Compare("RealizedSpread", Drive_RealizedSpread(ind));
+    }
+    [Fact]
+    public void Lifecycle_RealizedSpread()
+    {
+        using var ind = new Wickra.RealizedSpread(20);
+        Assert.False(ind.IsReady(), "RealizedSpread: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RealizedSpread: warmup period must be >= 1");
+        var first = Drive_RealizedSpread(ind);
+        Assert.True(ind.IsReady(), "RealizedSpread: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RealizedSpread: still ready after Reset");
+        CompareRuns("RealizedSpread", first, Drive_RealizedSpread(ind));
+    }
+    private static List<double[]> Drive_RealizedVolatility(Wickra.RealizedVolatility ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_RealizedVolatility()
     {
         using var ind = new Wickra.RealizedVolatility(14);
         Assert.Equal("RealizedVolatility", ind.Name());
+        Compare("RealizedVolatility", Drive_RealizedVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_RealizedVolatility()
+    {
+        using var ind = new Wickra.RealizedVolatility(14);
+        Assert.False(ind.IsReady(), "RealizedVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RealizedVolatility: warmup period must be >= 1");
+        var first = Drive_RealizedVolatility(ind);
+        Assert.True(ind.IsReady(), "RealizedVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RealizedVolatility: still ready after Reset");
+        CompareRuns("RealizedVolatility", first, Drive_RealizedVolatility(ind));
+    }
+    private static List<double[]> Drive_RecoveryFactor(Wickra.RecoveryFactor ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RealizedVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_RecoveryFactor()
     {
         using var ind = new Wickra.RecoveryFactor();
         Assert.Equal("RecoveryFactor", ind.Name());
+        Compare("RecoveryFactor", Drive_RecoveryFactor(ind));
+    }
+    [Fact]
+    public void Lifecycle_RecoveryFactor()
+    {
+        using var ind = new Wickra.RecoveryFactor();
+        Assert.False(ind.IsReady(), "RecoveryFactor: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RecoveryFactor: warmup period must be >= 1");
+        var first = Drive_RecoveryFactor(ind);
+        Assert.True(ind.IsReady(), "RecoveryFactor: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RecoveryFactor: still ready after Reset");
+        CompareRuns("RecoveryFactor", first, Drive_RecoveryFactor(ind));
+    }
+    private static List<double[]> Drive_RectangleRange(Wickra.RectangleRange ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("RecoveryFactor", got);
+        return got;
     }
     [Fact]
     public void Golden_RectangleRange()
     {
         using var ind = new Wickra.RectangleRange();
         Assert.Equal("RectangleRange", ind.Name());
+        Compare("RectangleRange", Drive_RectangleRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_RectangleRange()
+    {
+        using var ind = new Wickra.RectangleRange();
+        Assert.False(ind.IsReady(), "RectangleRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RectangleRange: warmup period must be >= 1");
+        var first = Drive_RectangleRange(ind);
+        Assert.True(ind.IsReady(), "RectangleRange: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RectangleRange: still ready after Reset");
+        CompareRuns("RectangleRange", first, Drive_RectangleRange(ind));
+    }
+    private static List<double[]> Drive_Reflex(Wickra.Reflex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RectangleRange", got);
+        return got;
     }
     [Fact]
     public void Golden_Reflex()
     {
         using var ind = new Wickra.Reflex(14);
         Assert.Equal("Reflex", ind.Name());
+        Compare("Reflex", Drive_Reflex(ind));
+    }
+    [Fact]
+    public void Lifecycle_Reflex()
+    {
+        using var ind = new Wickra.Reflex(14);
+        Assert.False(ind.IsReady(), "Reflex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Reflex: warmup period must be >= 1");
+        var first = Drive_Reflex(ind);
+        Assert.True(ind.IsReady(), "Reflex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Reflex: still ready after Reset");
+        CompareRuns("Reflex", first, Drive_Reflex(ind));
+    }
+    private static List<double[]> Drive_RegimeLabel(Wickra.RegimeLabel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Reflex", got);
+        return got;
     }
     [Fact]
     public void Golden_RegimeLabel()
     {
         using var ind = new Wickra.RegimeLabel(3, 7);
         Assert.Equal("RegimeLabel", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("RegimeLabel", got);
+        Compare("RegimeLabel", Drive_RegimeLabel(ind));
     }
     [Fact]
-    public void Golden_RelativeStrengthAB()
+    public void Lifecycle_RegimeLabel()
     {
-        using var ind = new Wickra.RelativeStrengthAB(14, 14);
-        Assert.Equal("RelativeStrengthAB", ind.Name());
+        using var ind = new Wickra.RegimeLabel(3, 7);
+        Assert.False(ind.IsReady(), "RegimeLabel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RegimeLabel: warmup period must be >= 1");
+        var first = Drive_RegimeLabel(ind);
+        Assert.True(ind.IsReady(), "RegimeLabel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RegimeLabel: still ready after Reset");
+        CompareRuns("RegimeLabel", first, Drive_RegimeLabel(ind));
+    }
+    private static List<double[]> Drive_RelativeStrengthAB(Wickra.RelativeStrengthAB ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3], r[0]), 3));
         }
-        Compare("RelativeStrengthAB", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_RelativeStrengthAB()
+    {
+        using var ind = new Wickra.RelativeStrengthAB(14, 14);
+        Assert.Equal("RelativeStrengthAB", ind.Name());
+        Compare("RelativeStrengthAB", Drive_RelativeStrengthAB(ind));
+    }
+    [Fact]
+    public void Lifecycle_RelativeStrengthAB()
+    {
+        using var ind = new Wickra.RelativeStrengthAB(14, 14);
+        Assert.False(ind.IsReady(), "RelativeStrengthAB: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RelativeStrengthAB: warmup period must be >= 1");
+        var first = Drive_RelativeStrengthAB(ind);
+        Assert.True(ind.IsReady(), "RelativeStrengthAB: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RelativeStrengthAB: still ready after Reset");
+        CompareRuns("RelativeStrengthAB", first, Drive_RelativeStrengthAB(ind));
+    }
+    private static List<double[]> Drive_RenkoBars(Wickra.RenkoBars ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
+        }
+        return got;
     }
     [Fact]
     public void Golden_RenkoBars()
     {
         using var ind = new Wickra.RenkoBars(2.0);
         Assert.Equal("RenkoBars", ind.Name());
+        Compare("RenkoBars", Drive_RenkoBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_RenkoBars()
+    {
+        using var ind = new Wickra.RenkoBars(2.0);
+        var first = Drive_RenkoBars(ind);
+        ind.Reset();
+        CompareRuns("RenkoBars", first, Drive_RenkoBars(ind));
+    }
+    private static List<double[]> Drive_RenkoTrailingStop(Wickra.RenkoTrailingStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RenkoBars", got);
+        return got;
     }
     [Fact]
     public void Golden_RenkoTrailingStop()
     {
         using var ind = new Wickra.RenkoTrailingStop(2.0);
         Assert.Equal("RenkoTrailingStop", ind.Name());
+        Compare("RenkoTrailingStop", Drive_RenkoTrailingStop(ind));
+    }
+    [Fact]
+    public void Lifecycle_RenkoTrailingStop()
+    {
+        using var ind = new Wickra.RenkoTrailingStop(2.0);
+        Assert.False(ind.IsReady(), "RenkoTrailingStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RenkoTrailingStop: warmup period must be >= 1");
+        var first = Drive_RenkoTrailingStop(ind);
+        Assert.True(ind.IsReady(), "RenkoTrailingStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RenkoTrailingStop: still ready after Reset");
+        CompareRuns("RenkoTrailingStop", first, Drive_RenkoTrailingStop(ind));
+    }
+    private static List<double[]> Drive_RickshawMan(Wickra.RickshawMan ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("RenkoTrailingStop", got);
+        return got;
     }
     [Fact]
     public void Golden_RickshawMan()
     {
         using var ind = new Wickra.RickshawMan();
         Assert.Equal("RickshawMan", ind.Name());
+        Compare("RickshawMan", Drive_RickshawMan(ind));
+    }
+    [Fact]
+    public void Lifecycle_RickshawMan()
+    {
+        using var ind = new Wickra.RickshawMan();
+        Assert.False(ind.IsReady(), "RickshawMan: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RickshawMan: warmup period must be >= 1");
+        var first = Drive_RickshawMan(ind);
+        Assert.True(ind.IsReady(), "RickshawMan: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RickshawMan: still ready after Reset");
+        CompareRuns("RickshawMan", first, Drive_RickshawMan(ind));
+    }
+    private static List<double[]> Drive_RisingThreeMethods(Wickra.RisingThreeMethods ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("RickshawMan", got);
+        return got;
     }
     [Fact]
     public void Golden_RisingThreeMethods()
     {
         using var ind = new Wickra.RisingThreeMethods();
         Assert.Equal("RisingThreeMethods", ind.Name());
+        Compare("RisingThreeMethods", Drive_RisingThreeMethods(ind));
+    }
+    [Fact]
+    public void Lifecycle_RisingThreeMethods()
+    {
+        using var ind = new Wickra.RisingThreeMethods();
+        Assert.False(ind.IsReady(), "RisingThreeMethods: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RisingThreeMethods: warmup period must be >= 1");
+        var first = Drive_RisingThreeMethods(ind);
+        Assert.True(ind.IsReady(), "RisingThreeMethods: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RisingThreeMethods: still ready after Reset");
+        CompareRuns("RisingThreeMethods", first, Drive_RisingThreeMethods(ind));
+    }
+    private static List<double[]> Drive_Rmi(Wickra.Rmi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RisingThreeMethods", got);
+        return got;
     }
     [Fact]
     public void Golden_Rmi()
     {
         using var ind = new Wickra.Rmi(3, 7);
         Assert.Equal("RMI", ind.Name());
+        Compare("Rmi", Drive_Rmi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rmi()
+    {
+        using var ind = new Wickra.Rmi(3, 7);
+        Assert.False(ind.IsReady(), "Rmi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rmi: warmup period must be >= 1");
+        var first = Drive_Rmi(ind);
+        Assert.True(ind.IsReady(), "Rmi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rmi: still ready after Reset");
+        CompareRuns("Rmi", first, Drive_Rmi(ind));
+    }
+    private static List<double[]> Drive_Roc(Wickra.Roc ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Rmi", got);
+        return got;
     }
     [Fact]
     public void Golden_Roc()
     {
         using var ind = new Wickra.Roc(14);
         Assert.Equal("ROC", ind.Name());
+        Compare("Roc", Drive_Roc(ind));
+    }
+    [Fact]
+    public void Lifecycle_Roc()
+    {
+        using var ind = new Wickra.Roc(14);
+        Assert.False(ind.IsReady(), "Roc: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Roc: warmup period must be >= 1");
+        var first = Drive_Roc(ind);
+        Assert.True(ind.IsReady(), "Roc: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Roc: still ready after Reset");
+        CompareRuns("Roc", first, Drive_Roc(ind));
+    }
+    private static List<double[]> Drive_Rocp(Wickra.Rocp ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Roc", got);
+        return got;
     }
     [Fact]
     public void Golden_Rocp()
     {
         using var ind = new Wickra.Rocp(14);
         Assert.Equal("ROCP", ind.Name());
+        Compare("Rocp", Drive_Rocp(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rocp()
+    {
+        using var ind = new Wickra.Rocp(14);
+        Assert.False(ind.IsReady(), "Rocp: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rocp: warmup period must be >= 1");
+        var first = Drive_Rocp(ind);
+        Assert.True(ind.IsReady(), "Rocp: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rocp: still ready after Reset");
+        CompareRuns("Rocp", first, Drive_Rocp(ind));
+    }
+    private static List<double[]> Drive_Rocr(Wickra.Rocr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Rocp", got);
+        return got;
     }
     [Fact]
     public void Golden_Rocr()
     {
         using var ind = new Wickra.Rocr(14);
         Assert.Equal("ROCR", ind.Name());
+        Compare("Rocr", Drive_Rocr(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rocr()
+    {
+        using var ind = new Wickra.Rocr(14);
+        Assert.False(ind.IsReady(), "Rocr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rocr: warmup period must be >= 1");
+        var first = Drive_Rocr(ind);
+        Assert.True(ind.IsReady(), "Rocr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rocr: still ready after Reset");
+        CompareRuns("Rocr", first, Drive_Rocr(ind));
+    }
+    private static List<double[]> Drive_Rocr100(Wickra.Rocr100 ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Rocr", got);
+        return got;
     }
     [Fact]
     public void Golden_Rocr100()
     {
         using var ind = new Wickra.Rocr100(14);
         Assert.Equal("ROCR100", ind.Name());
+        Compare("Rocr100", Drive_Rocr100(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rocr100()
+    {
+        using var ind = new Wickra.Rocr100(14);
+        Assert.False(ind.IsReady(), "Rocr100: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rocr100: warmup period must be >= 1");
+        var first = Drive_Rocr100(ind);
+        Assert.True(ind.IsReady(), "Rocr100: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rocr100: still ready after Reset");
+        CompareRuns("Rocr100", first, Drive_Rocr100(ind));
+    }
+    private static List<double[]> Drive_RogersSatchellVolatility(Wickra.RogersSatchellVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Rocr100", got);
+        return got;
     }
     [Fact]
     public void Golden_RogersSatchellVolatility()
     {
         using var ind = new Wickra.RogersSatchellVolatility(20, 252);
         Assert.Equal("RogersSatchellVolatility", ind.Name());
+        Compare("RogersSatchellVolatility", Drive_RogersSatchellVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_RogersSatchellVolatility()
+    {
+        using var ind = new Wickra.RogersSatchellVolatility(20, 252);
+        Assert.False(ind.IsReady(), "RogersSatchellVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RogersSatchellVolatility: warmup period must be >= 1");
+        var first = Drive_RogersSatchellVolatility(ind);
+        Assert.True(ind.IsReady(), "RogersSatchellVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RogersSatchellVolatility: still ready after Reset");
+        CompareRuns("RogersSatchellVolatility", first, Drive_RogersSatchellVolatility(ind));
+    }
+    private static List<double[]> Drive_RollMeasure(Wickra.RollMeasure ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("RogersSatchellVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_RollMeasure()
     {
         using var ind = new Wickra.RollMeasure(20);
         Assert.Equal("RollMeasure", ind.Name());
+        Compare("RollMeasure", Drive_RollMeasure(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollMeasure()
+    {
+        using var ind = new Wickra.RollMeasure(20);
+        Assert.False(ind.IsReady(), "RollMeasure: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollMeasure: warmup period must be >= 1");
+        var first = Drive_RollMeasure(ind);
+        Assert.True(ind.IsReady(), "RollMeasure: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollMeasure: still ready after Reset");
+        CompareRuns("RollMeasure", first, Drive_RollMeasure(ind));
+    }
+    private static List<double[]> Drive_RollingCorrelation(Wickra.RollingCorrelation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("RollMeasure", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingCorrelation()
     {
         using var ind = new Wickra.RollingCorrelation(14);
         Assert.Equal("RollingCorrelation", ind.Name());
+        Compare("RollingCorrelation", Drive_RollingCorrelation(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingCorrelation()
+    {
+        using var ind = new Wickra.RollingCorrelation(14);
+        Assert.False(ind.IsReady(), "RollingCorrelation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingCorrelation: warmup period must be >= 1");
+        var first = Drive_RollingCorrelation(ind);
+        Assert.True(ind.IsReady(), "RollingCorrelation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingCorrelation: still ready after Reset");
+        CompareRuns("RollingCorrelation", first, Drive_RollingCorrelation(ind));
+    }
+    private static List<double[]> Drive_RollingCovariance(Wickra.RollingCovariance ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("RollingCorrelation", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingCovariance()
     {
         using var ind = new Wickra.RollingCovariance(14);
         Assert.Equal("RollingCovariance", ind.Name());
+        Compare("RollingCovariance", Drive_RollingCovariance(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingCovariance()
+    {
+        using var ind = new Wickra.RollingCovariance(14);
+        Assert.False(ind.IsReady(), "RollingCovariance: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingCovariance: warmup period must be >= 1");
+        var first = Drive_RollingCovariance(ind);
+        Assert.True(ind.IsReady(), "RollingCovariance: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingCovariance: still ready after Reset");
+        CompareRuns("RollingCovariance", first, Drive_RollingCovariance(ind));
+    }
+    private static List<double[]> Drive_RollingIqr(Wickra.RollingIqr ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RollingCovariance", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingIqr()
     {
         using var ind = new Wickra.RollingIqr(14);
         Assert.Equal("RollingIqr", ind.Name());
+        Compare("RollingIqr", Drive_RollingIqr(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingIqr()
+    {
+        using var ind = new Wickra.RollingIqr(14);
+        Assert.False(ind.IsReady(), "RollingIqr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingIqr: warmup period must be >= 1");
+        var first = Drive_RollingIqr(ind);
+        Assert.True(ind.IsReady(), "RollingIqr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingIqr: still ready after Reset");
+        CompareRuns("RollingIqr", first, Drive_RollingIqr(ind));
+    }
+    private static List<double[]> Drive_RollingMinMaxScaler(Wickra.RollingMinMaxScaler ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RollingIqr", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingMinMaxScaler()
     {
         using var ind = new Wickra.RollingMinMaxScaler(14);
         Assert.Equal("RollingMinMaxScaler", ind.Name());
+        Compare("RollingMinMaxScaler", Drive_RollingMinMaxScaler(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingMinMaxScaler()
+    {
+        using var ind = new Wickra.RollingMinMaxScaler(14);
+        Assert.False(ind.IsReady(), "RollingMinMaxScaler: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingMinMaxScaler: warmup period must be >= 1");
+        var first = Drive_RollingMinMaxScaler(ind);
+        Assert.True(ind.IsReady(), "RollingMinMaxScaler: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingMinMaxScaler: still ready after Reset");
+        CompareRuns("RollingMinMaxScaler", first, Drive_RollingMinMaxScaler(ind));
+    }
+    private static List<double[]> Drive_RollingPercentileRank(Wickra.RollingPercentileRank ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RollingMinMaxScaler", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingPercentileRank()
     {
         using var ind = new Wickra.RollingPercentileRank(14);
         Assert.Equal("RollingPercentileRank", ind.Name());
+        Compare("RollingPercentileRank", Drive_RollingPercentileRank(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingPercentileRank()
+    {
+        using var ind = new Wickra.RollingPercentileRank(14);
+        Assert.False(ind.IsReady(), "RollingPercentileRank: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingPercentileRank: warmup period must be >= 1");
+        var first = Drive_RollingPercentileRank(ind);
+        Assert.True(ind.IsReady(), "RollingPercentileRank: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingPercentileRank: still ready after Reset");
+        CompareRuns("RollingPercentileRank", first, Drive_RollingPercentileRank(ind));
+    }
+    private static List<double[]> Drive_RollingQuantile(Wickra.RollingQuantile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RollingPercentileRank", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingQuantile()
     {
         using var ind = new Wickra.RollingQuantile(20, 0.5);
         Assert.Equal("RollingQuantile", ind.Name());
+        Compare("RollingQuantile", Drive_RollingQuantile(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingQuantile()
+    {
+        using var ind = new Wickra.RollingQuantile(20, 0.5);
+        Assert.False(ind.IsReady(), "RollingQuantile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingQuantile: warmup period must be >= 1");
+        var first = Drive_RollingQuantile(ind);
+        Assert.True(ind.IsReady(), "RollingQuantile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingQuantile: still ready after Reset");
+        CompareRuns("RollingQuantile", first, Drive_RollingQuantile(ind));
+    }
+    private static List<double[]> Drive_RollingVwap(Wickra.RollingVwap ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("RollingQuantile", got);
+        return got;
     }
     [Fact]
     public void Golden_RollingVwap()
     {
         using var ind = new Wickra.RollingVwap(14);
         Assert.Equal("RollingVWAP", ind.Name());
+        Compare("RollingVwap", Drive_RollingVwap(ind));
+    }
+    [Fact]
+    public void Lifecycle_RollingVwap()
+    {
+        using var ind = new Wickra.RollingVwap(14);
+        Assert.False(ind.IsReady(), "RollingVwap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RollingVwap: warmup period must be >= 1");
+        var first = Drive_RollingVwap(ind);
+        Assert.True(ind.IsReady(), "RollingVwap: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RollingVwap: still ready after Reset");
+        CompareRuns("RollingVwap", first, Drive_RollingVwap(ind));
+    }
+    private static List<double[]> Drive_RoofingFilter(Wickra.RoofingFilter ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RollingVwap", got);
+        return got;
     }
     [Fact]
     public void Golden_RoofingFilter()
     {
         using var ind = new Wickra.RoofingFilter(3, 7);
         Assert.Equal("RoofingFilter", ind.Name());
+        Compare("RoofingFilter", Drive_RoofingFilter(ind));
+    }
+    [Fact]
+    public void Lifecycle_RoofingFilter()
+    {
+        using var ind = new Wickra.RoofingFilter(3, 7);
+        Assert.False(ind.IsReady(), "RoofingFilter: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RoofingFilter: warmup period must be >= 1");
+        var first = Drive_RoofingFilter(ind);
+        Assert.True(ind.IsReady(), "RoofingFilter: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RoofingFilter: still ready after Reset");
+        CompareRuns("RoofingFilter", first, Drive_RoofingFilter(ind));
+    }
+    private static List<double[]> Drive_Rsi(Wickra.Rsi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("RoofingFilter", got);
+        return got;
     }
     [Fact]
     public void Golden_Rsi()
     {
         using var ind = new Wickra.Rsi(14);
         Assert.Equal("RSI", ind.Name());
+        Compare("Rsi", Drive_Rsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rsi()
+    {
+        using var ind = new Wickra.Rsi(14);
+        Assert.False(ind.IsReady(), "Rsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rsi: warmup period must be >= 1");
+        var first = Drive_Rsi(ind);
+        Assert.True(ind.IsReady(), "Rsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rsi: still ready after Reset");
+        CompareRuns("Rsi", first, Drive_Rsi(ind));
+    }
+    private static List<double[]> Drive_Rsx(Wickra.Rsx ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Rsi", got);
+        return got;
     }
     [Fact]
     public void Golden_Rsx()
     {
         using var ind = new Wickra.Rsx(14);
         Assert.Equal("RSX", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("Rsx", got);
+        Compare("Rsx", Drive_Rsx(ind));
     }
     [Fact]
-    public void Golden_RunBars()
+    public void Lifecycle_Rsx()
     {
-        using var ind = new Wickra.RunBars(3);
-        Assert.Equal("RunBars", ind.Name());
+        using var ind = new Wickra.Rsx(14);
+        Assert.False(ind.IsReady(), "Rsx: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rsx: warmup period must be >= 1");
+        var first = Drive_Rsx(ind);
+        Assert.True(ind.IsReady(), "Rsx: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rsx: still ready after Reset");
+        CompareRuns("Rsx", first, Drive_Rsx(ind));
+    }
+    private static List<double[]> Drive_RunBars(Wickra.RunBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[0], r[1], r[2], r[3], 1.0, 0)));
         }
-        Compare("RunBars", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_RunBars()
+    {
+        using var ind = new Wickra.RunBars(3);
+        Assert.Equal("RunBars", ind.Name());
+        Compare("RunBars", Drive_RunBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_RunBars()
+    {
+        using var ind = new Wickra.RunBars(3);
+        var first = Drive_RunBars(ind);
+        ind.Reset();
+        CompareRuns("RunBars", first, Drive_RunBars(ind));
+    }
+    private static List<double[]> Drive_Rvi(Wickra.Rvi ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Rvi()
     {
         using var ind = new Wickra.Rvi(14);
         Assert.Equal("RVI", ind.Name());
+        Compare("Rvi", Drive_Rvi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rvi()
+    {
+        using var ind = new Wickra.Rvi(14);
+        Assert.False(ind.IsReady(), "Rvi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rvi: warmup period must be >= 1");
+        var first = Drive_Rvi(ind);
+        Assert.True(ind.IsReady(), "Rvi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rvi: still ready after Reset");
+        CompareRuns("Rvi", first, Drive_Rvi(ind));
+    }
+    private static List<double[]> Drive_RviVolatility(Wickra.RviVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Rvi", got);
+        return got;
     }
     [Fact]
     public void Golden_RviVolatility()
     {
         using var ind = new Wickra.RviVolatility(14);
         Assert.Equal("RVIVolatility", ind.Name());
+        Compare("RviVolatility", Drive_RviVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_RviVolatility()
+    {
+        using var ind = new Wickra.RviVolatility(14);
+        Assert.False(ind.IsReady(), "RviVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "RviVolatility: warmup period must be >= 1");
+        var first = Drive_RviVolatility(ind);
+        Assert.True(ind.IsReady(), "RviVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "RviVolatility: still ready after Reset");
+        CompareRuns("RviVolatility", first, Drive_RviVolatility(ind));
+    }
+    private static List<double[]> Drive_Rwi(Wickra.Rwi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("RviVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_Rwi()
     {
         using var ind = new Wickra.Rwi(14);
         Assert.Equal("RWI", ind.Name());
+        Compare("Rwi", Drive_Rwi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Rwi()
+    {
+        using var ind = new Wickra.Rwi(14);
+        Assert.False(ind.IsReady(), "Rwi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Rwi: warmup period must be >= 1");
+        var first = Drive_Rwi(ind);
+        Assert.True(ind.IsReady(), "Rwi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Rwi: still ready after Reset");
+        CompareRuns("Rwi", first, Drive_Rwi(ind));
+    }
+    private static List<double[]> Drive_SampleEntropy(Wickra.SampleEntropy ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Rwi", got);
+        return got;
     }
     [Fact]
     public void Golden_SampleEntropy()
     {
         using var ind = new Wickra.SampleEntropy(20, 2, 0.2);
         Assert.Equal("SampleEntropy", ind.Name());
+        Compare("SampleEntropy", Drive_SampleEntropy(ind));
+    }
+    [Fact]
+    public void Lifecycle_SampleEntropy()
+    {
+        using var ind = new Wickra.SampleEntropy(20, 2, 0.2);
+        Assert.False(ind.IsReady(), "SampleEntropy: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SampleEntropy: warmup period must be >= 1");
+        var first = Drive_SampleEntropy(ind);
+        Assert.True(ind.IsReady(), "SampleEntropy: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SampleEntropy: still ready after Reset");
+        CompareRuns("SampleEntropy", first, Drive_SampleEntropy(ind));
+    }
+    private static List<double[]> Drive_SarExt(Wickra.SarExt ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SampleEntropy", got);
+        return got;
     }
     [Fact]
     public void Golden_SarExt()
     {
         using var ind = new Wickra.SarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5);
         Assert.Equal("SAREXT", ind.Name());
+        Compare("SarExt", Drive_SarExt(ind));
+    }
+    [Fact]
+    public void Lifecycle_SarExt()
+    {
+        using var ind = new Wickra.SarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5);
+        Assert.False(ind.IsReady(), "SarExt: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SarExt: warmup period must be >= 1");
+        var first = Drive_SarExt(ind);
+        Assert.True(ind.IsReady(), "SarExt: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SarExt: still ready after Reset");
+        CompareRuns("SarExt", first, Drive_SarExt(ind));
+    }
+    private static List<double[]> Drive_SeasonalZScore(Wickra.SeasonalZScore ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SarExt", got);
+        return got;
     }
     [Fact]
     public void Golden_SeasonalZScore()
     {
         using var ind = new Wickra.SeasonalZScore(14);
         Assert.Equal("SeasonalZScore", ind.Name());
+        Compare("SeasonalZScore", Drive_SeasonalZScore(ind));
+    }
+    [Fact]
+    public void Lifecycle_SeasonalZScore()
+    {
+        using var ind = new Wickra.SeasonalZScore(14);
+        Assert.False(ind.IsReady(), "SeasonalZScore: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SeasonalZScore: warmup period must be >= 1");
+        var first = Drive_SeasonalZScore(ind);
+        Assert.True(ind.IsReady(), "SeasonalZScore: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SeasonalZScore: still ready after Reset");
+        CompareRuns("SeasonalZScore", first, Drive_SeasonalZScore(ind));
+    }
+    private static List<double[]> Drive_SeparatingLines(Wickra.SeparatingLines ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SeasonalZScore", got);
+        return got;
     }
     [Fact]
     public void Golden_SeparatingLines()
     {
         using var ind = new Wickra.SeparatingLines();
         Assert.Equal("SeparatingLines", ind.Name());
+        Compare("SeparatingLines", Drive_SeparatingLines(ind));
+    }
+    [Fact]
+    public void Lifecycle_SeparatingLines()
+    {
+        using var ind = new Wickra.SeparatingLines();
+        Assert.False(ind.IsReady(), "SeparatingLines: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SeparatingLines: warmup period must be >= 1");
+        var first = Drive_SeparatingLines(ind);
+        Assert.True(ind.IsReady(), "SeparatingLines: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SeparatingLines: still ready after Reset");
+        CompareRuns("SeparatingLines", first, Drive_SeparatingLines(ind));
+    }
+    private static List<double[]> Drive_SessionHighLow(Wickra.SessionHighLow ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("SeparatingLines", got);
+        return got;
     }
     [Fact]
     public void Golden_SessionHighLow()
     {
         using var ind = new Wickra.SessionHighLow(14);
         Assert.Equal("SessionHighLow", ind.Name());
+        Compare("SessionHighLow", Drive_SessionHighLow(ind));
+    }
+    [Fact]
+    public void Lifecycle_SessionHighLow()
+    {
+        using var ind = new Wickra.SessionHighLow(14);
+        Assert.False(ind.IsReady(), "SessionHighLow: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SessionHighLow: warmup period must be >= 1");
+        var first = Drive_SessionHighLow(ind);
+        Assert.True(ind.IsReady(), "SessionHighLow: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SessionHighLow: still ready after Reset");
+        CompareRuns("SessionHighLow", first, Drive_SessionHighLow(ind));
+    }
+    private static List<double[]> Drive_SessionRange(Wickra.SessionRange ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("SessionHighLow", got);
+        return got;
     }
     [Fact]
     public void Golden_SessionRange()
     {
         using var ind = new Wickra.SessionRange(14);
         Assert.Equal("SessionRange", ind.Name());
+        Compare("SessionRange", Drive_SessionRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_SessionRange()
+    {
+        using var ind = new Wickra.SessionRange(14);
+        Assert.False(ind.IsReady(), "SessionRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SessionRange: warmup period must be >= 1");
+        var first = Drive_SessionRange(ind);
+        Assert.True(ind.IsReady(), "SessionRange: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SessionRange: still ready after Reset");
+        CompareRuns("SessionRange", first, Drive_SessionRange(ind));
+    }
+    private static List<double[]> Drive_SessionVwap(Wickra.SessionVwap ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SessionRange", got);
+        return got;
     }
     [Fact]
     public void Golden_SessionVwap()
     {
         using var ind = new Wickra.SessionVwap(14);
         Assert.Equal("SessionVwap", ind.Name());
+        Compare("SessionVwap", Drive_SessionVwap(ind));
+    }
+    [Fact]
+    public void Lifecycle_SessionVwap()
+    {
+        using var ind = new Wickra.SessionVwap(14);
+        Assert.False(ind.IsReady(), "SessionVwap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SessionVwap: warmup period must be >= 1");
+        var first = Drive_SessionVwap(ind);
+        Assert.True(ind.IsReady(), "SessionVwap: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SessionVwap: still ready after Reset");
+        CompareRuns("SessionVwap", first, Drive_SessionVwap(ind));
+    }
+    private static List<double[]> Drive_ShannonEntropy(Wickra.ShannonEntropy ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("SessionVwap", got);
+        return got;
     }
     [Fact]
     public void Golden_ShannonEntropy()
     {
         using var ind = new Wickra.ShannonEntropy(3, 7);
         Assert.Equal("ShannonEntropy", ind.Name());
+        Compare("ShannonEntropy", Drive_ShannonEntropy(ind));
+    }
+    [Fact]
+    public void Lifecycle_ShannonEntropy()
+    {
+        using var ind = new Wickra.ShannonEntropy(3, 7);
+        Assert.False(ind.IsReady(), "ShannonEntropy: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ShannonEntropy: warmup period must be >= 1");
+        var first = Drive_ShannonEntropy(ind);
+        Assert.True(ind.IsReady(), "ShannonEntropy: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ShannonEntropy: still ready after Reset");
+        CompareRuns("ShannonEntropy", first, Drive_ShannonEntropy(ind));
+    }
+    private static List<double[]> Drive_Shark(Wickra.Shark ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ShannonEntropy", got);
+        return got;
     }
     [Fact]
     public void Golden_Shark()
     {
         using var ind = new Wickra.Shark();
         Assert.Equal("Shark", ind.Name());
+        Compare("Shark", Drive_Shark(ind));
+    }
+    [Fact]
+    public void Lifecycle_Shark()
+    {
+        using var ind = new Wickra.Shark();
+        Assert.False(ind.IsReady(), "Shark: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Shark: warmup period must be >= 1");
+        var first = Drive_Shark(ind);
+        Assert.True(ind.IsReady(), "Shark: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Shark: still ready after Reset");
+        CompareRuns("Shark", first, Drive_Shark(ind));
+    }
+    private static List<double[]> Drive_SharpeRatio(Wickra.SharpeRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Shark", got);
+        return got;
     }
     [Fact]
     public void Golden_SharpeRatio()
     {
         using var ind = new Wickra.SharpeRatio(14, 2.0);
         Assert.Equal("SharpeRatio", ind.Name());
+        Compare("SharpeRatio", Drive_SharpeRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_SharpeRatio()
+    {
+        using var ind = new Wickra.SharpeRatio(14, 2.0);
+        Assert.False(ind.IsReady(), "SharpeRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SharpeRatio: warmup period must be >= 1");
+        var first = Drive_SharpeRatio(ind);
+        Assert.True(ind.IsReady(), "SharpeRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SharpeRatio: still ready after Reset");
+        CompareRuns("SharpeRatio", first, Drive_SharpeRatio(ind));
+    }
+    private static List<double[]> Drive_ShootingStar(Wickra.ShootingStar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SharpeRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_ShootingStar()
     {
         using var ind = new Wickra.ShootingStar();
         Assert.Equal("ShootingStar", ind.Name());
+        Compare("ShootingStar", Drive_ShootingStar(ind));
+    }
+    [Fact]
+    public void Lifecycle_ShootingStar()
+    {
+        using var ind = new Wickra.ShootingStar();
+        Assert.False(ind.IsReady(), "ShootingStar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ShootingStar: warmup period must be >= 1");
+        var first = Drive_ShootingStar(ind);
+        Assert.True(ind.IsReady(), "ShootingStar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ShootingStar: still ready after Reset");
+        CompareRuns("ShootingStar", first, Drive_ShootingStar(ind));
+    }
+    private static List<double[]> Drive_ShortLine(Wickra.ShortLine ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ShootingStar", got);
+        return got;
     }
     [Fact]
     public void Golden_ShortLine()
     {
         using var ind = new Wickra.ShortLine();
         Assert.Equal("ShortLine", ind.Name());
+        Compare("ShortLine", Drive_ShortLine(ind));
+    }
+    [Fact]
+    public void Lifecycle_ShortLine()
+    {
+        using var ind = new Wickra.ShortLine();
+        Assert.False(ind.IsReady(), "ShortLine: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ShortLine: warmup period must be >= 1");
+        var first = Drive_ShortLine(ind);
+        Assert.True(ind.IsReady(), "ShortLine: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ShortLine: still ready after Reset");
+        CompareRuns("ShortLine", first, Drive_ShortLine(ind));
+    }
+    private static List<double[]> Drive_SignedVolume(Wickra.SignedVolume ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("ShortLine", got);
+        return got;
     }
     [Fact]
     public void Golden_SignedVolume()
     {
         using var ind = new Wickra.SignedVolume();
         Assert.Equal("SignedVolume", ind.Name());
+        Compare("SignedVolume", Drive_SignedVolume(ind));
+    }
+    [Fact]
+    public void Lifecycle_SignedVolume()
+    {
+        using var ind = new Wickra.SignedVolume();
+        Assert.False(ind.IsReady(), "SignedVolume: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SignedVolume: warmup period must be >= 1");
+        var first = Drive_SignedVolume(ind);
+        Assert.True(ind.IsReady(), "SignedVolume: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SignedVolume: still ready after Reset");
+        CompareRuns("SignedVolume", first, Drive_SignedVolume(ind));
+    }
+    private static List<double[]> Drive_SineWave(Wickra.SineWave ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("SignedVolume", got);
+        return got;
     }
     [Fact]
     public void Golden_SineWave()
     {
         using var ind = new Wickra.SineWave();
         Assert.Equal("SineWave", ind.Name());
+        Compare("SineWave", Drive_SineWave(ind));
+    }
+    [Fact]
+    public void Lifecycle_SineWave()
+    {
+        using var ind = new Wickra.SineWave();
+        Assert.False(ind.IsReady(), "SineWave: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SineWave: warmup period must be >= 1");
+        var first = Drive_SineWave(ind);
+        Assert.True(ind.IsReady(), "SineWave: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SineWave: still ready after Reset");
+        CompareRuns("SineWave", first, Drive_SineWave(ind));
+    }
+    private static List<double[]> Drive_SineWeightedMa(Wickra.SineWeightedMa ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("SineWave", got);
+        return got;
     }
     [Fact]
     public void Golden_SineWeightedMa()
     {
         using var ind = new Wickra.SineWeightedMa(14);
         Assert.Equal("SWMA", ind.Name());
+        Compare("SineWeightedMa", Drive_SineWeightedMa(ind));
+    }
+    [Fact]
+    public void Lifecycle_SineWeightedMa()
+    {
+        using var ind = new Wickra.SineWeightedMa(14);
+        Assert.False(ind.IsReady(), "SineWeightedMa: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SineWeightedMa: warmup period must be >= 1");
+        var first = Drive_SineWeightedMa(ind);
+        Assert.True(ind.IsReady(), "SineWeightedMa: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SineWeightedMa: still ready after Reset");
+        CompareRuns("SineWeightedMa", first, Drive_SineWeightedMa(ind));
+    }
+    private static List<double[]> Drive_SinglePrints(Wickra.SinglePrints ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SineWeightedMa", got);
+        return got;
     }
     [Fact]
     public void Golden_SinglePrints()
     {
         using var ind = new Wickra.SinglePrints(3, 7);
         Assert.Equal("SinglePrints", ind.Name());
+        Compare("SinglePrints", Drive_SinglePrints(ind));
+    }
+    [Fact]
+    public void Lifecycle_SinglePrints()
+    {
+        using var ind = new Wickra.SinglePrints(3, 7);
+        Assert.False(ind.IsReady(), "SinglePrints: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SinglePrints: warmup period must be >= 1");
+        var first = Drive_SinglePrints(ind);
+        Assert.True(ind.IsReady(), "SinglePrints: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SinglePrints: still ready after Reset");
+        CompareRuns("SinglePrints", first, Drive_SinglePrints(ind));
+    }
+    private static List<double[]> Drive_Skewness(Wickra.Skewness ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("SinglePrints", got);
+        return got;
     }
     [Fact]
     public void Golden_Skewness()
     {
         using var ind = new Wickra.Skewness(14);
         Assert.Equal("Skewness", ind.Name());
+        Compare("Skewness", Drive_Skewness(ind));
+    }
+    [Fact]
+    public void Lifecycle_Skewness()
+    {
+        using var ind = new Wickra.Skewness(14);
+        Assert.False(ind.IsReady(), "Skewness: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Skewness: warmup period must be >= 1");
+        var first = Drive_Skewness(ind);
+        Assert.True(ind.IsReady(), "Skewness: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Skewness: still ready after Reset");
+        CompareRuns("Skewness", first, Drive_Skewness(ind));
+    }
+    private static List<double[]> Drive_Sma(Wickra.Sma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Skewness", got);
+        return got;
     }
     [Fact]
     public void Golden_Sma()
     {
         using var ind = new Wickra.Sma(14);
         Assert.Equal("SMA", ind.Name());
+        Compare("Sma", Drive_Sma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Sma()
+    {
+        using var ind = new Wickra.Sma(14);
+        Assert.False(ind.IsReady(), "Sma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Sma: warmup period must be >= 1");
+        var first = Drive_Sma(ind);
+        Assert.True(ind.IsReady(), "Sma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Sma: still ready after Reset");
+        CompareRuns("Sma", first, Drive_Sma(ind));
+    }
+    private static List<double[]> Drive_Smi(Wickra.Smi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Sma", got);
+        return got;
     }
     [Fact]
     public void Golden_Smi()
     {
         using var ind = new Wickra.Smi(3, 7, 14);
         Assert.Equal("SMI", ind.Name());
+        Compare("Smi", Drive_Smi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Smi()
+    {
+        using var ind = new Wickra.Smi(3, 7, 14);
+        Assert.False(ind.IsReady(), "Smi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Smi: warmup period must be >= 1");
+        var first = Drive_Smi(ind);
+        Assert.True(ind.IsReady(), "Smi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Smi: still ready after Reset");
+        CompareRuns("Smi", first, Drive_Smi(ind));
+    }
+    private static List<double[]> Drive_Smma(Wickra.Smma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Smi", got);
+        return got;
     }
     [Fact]
     public void Golden_Smma()
     {
         using var ind = new Wickra.Smma(14);
         Assert.Equal("SMMA", ind.Name());
+        Compare("Smma", Drive_Smma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Smma()
+    {
+        using var ind = new Wickra.Smma(14);
+        Assert.False(ind.IsReady(), "Smma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Smma: warmup period must be >= 1");
+        var first = Drive_Smma(ind);
+        Assert.True(ind.IsReady(), "Smma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Smma: still ready after Reset");
+        CompareRuns("Smma", first, Drive_Smma(ind));
+    }
+    private static List<double[]> Drive_SmoothedHeikinAshi(Wickra.SmoothedHeikinAshi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
         }
-        Compare("Smma", got);
+        return got;
     }
     [Fact]
     public void Golden_SmoothedHeikinAshi()
     {
         using var ind = new Wickra.SmoothedHeikinAshi(14);
         Assert.Equal("SmoothedHeikinAshi", ind.Name());
+        Compare("SmoothedHeikinAshi", Drive_SmoothedHeikinAshi(ind));
+    }
+    [Fact]
+    public void Lifecycle_SmoothedHeikinAshi()
+    {
+        using var ind = new Wickra.SmoothedHeikinAshi(14);
+        Assert.False(ind.IsReady(), "SmoothedHeikinAshi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SmoothedHeikinAshi: warmup period must be >= 1");
+        var first = Drive_SmoothedHeikinAshi(ind);
+        Assert.True(ind.IsReady(), "SmoothedHeikinAshi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SmoothedHeikinAshi: still ready after Reset");
+        CompareRuns("SmoothedHeikinAshi", first, Drive_SmoothedHeikinAshi(ind));
+    }
+    private static List<double[]> Drive_SortinoRatio(Wickra.SortinoRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("SmoothedHeikinAshi", got);
+        return got;
     }
     [Fact]
     public void Golden_SortinoRatio()
     {
         using var ind = new Wickra.SortinoRatio(14, 2.0);
         Assert.Equal("SortinoRatio", ind.Name());
+        Compare("SortinoRatio", Drive_SortinoRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_SortinoRatio()
+    {
+        using var ind = new Wickra.SortinoRatio(14, 2.0);
+        Assert.False(ind.IsReady(), "SortinoRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SortinoRatio: warmup period must be >= 1");
+        var first = Drive_SortinoRatio(ind);
+        Assert.True(ind.IsReady(), "SortinoRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SortinoRatio: still ready after Reset");
+        CompareRuns("SortinoRatio", first, Drive_SortinoRatio(ind));
+    }
+    private static List<double[]> Drive_SpearmanCorrelation(Wickra.SpearmanCorrelation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("SortinoRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_SpearmanCorrelation()
     {
         using var ind = new Wickra.SpearmanCorrelation(14);
         Assert.Equal("SpearmanCorrelation", ind.Name());
+        Compare("SpearmanCorrelation", Drive_SpearmanCorrelation(ind));
+    }
+    [Fact]
+    public void Lifecycle_SpearmanCorrelation()
+    {
+        using var ind = new Wickra.SpearmanCorrelation(14);
+        Assert.False(ind.IsReady(), "SpearmanCorrelation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SpearmanCorrelation: warmup period must be >= 1");
+        var first = Drive_SpearmanCorrelation(ind);
+        Assert.True(ind.IsReady(), "SpearmanCorrelation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SpearmanCorrelation: still ready after Reset");
+        CompareRuns("SpearmanCorrelation", first, Drive_SpearmanCorrelation(ind));
+    }
+    private static List<double[]> Drive_SpinningTop(Wickra.SpinningTop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SpearmanCorrelation", got);
+        return got;
     }
     [Fact]
     public void Golden_SpinningTop()
     {
         using var ind = new Wickra.SpinningTop();
         Assert.Equal("SpinningTop", ind.Name());
+        Compare("SpinningTop", Drive_SpinningTop(ind));
+    }
+    [Fact]
+    public void Lifecycle_SpinningTop()
+    {
+        using var ind = new Wickra.SpinningTop();
+        Assert.False(ind.IsReady(), "SpinningTop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SpinningTop: warmup period must be >= 1");
+        var first = Drive_SpinningTop(ind);
+        Assert.True(ind.IsReady(), "SpinningTop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SpinningTop: still ready after Reset");
+        CompareRuns("SpinningTop", first, Drive_SpinningTop(ind));
+    }
+    private static List<double[]> Drive_SpreadAr1Coefficient(Wickra.SpreadAr1Coefficient ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("SpinningTop", got);
+        return got;
     }
     [Fact]
     public void Golden_SpreadAr1Coefficient()
     {
         using var ind = new Wickra.SpreadAr1Coefficient(14);
         Assert.Equal("SpreadAr1Coefficient", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
-        }
-        Compare("SpreadAr1Coefficient", got);
+        Compare("SpreadAr1Coefficient", Drive_SpreadAr1Coefficient(ind));
     }
     [Fact]
-    public void Golden_SpreadBollingerBands()
+    public void Lifecycle_SpreadAr1Coefficient()
     {
-        using var ind = new Wickra.SpreadBollingerBands(14, 2.0);
-        Assert.Equal("SpreadBollingerBands", ind.Name());
+        using var ind = new Wickra.SpreadAr1Coefficient(14);
+        Assert.False(ind.IsReady(), "SpreadAr1Coefficient: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SpreadAr1Coefficient: warmup period must be >= 1");
+        var first = Drive_SpreadAr1Coefficient(ind);
+        Assert.True(ind.IsReady(), "SpreadAr1Coefficient: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SpreadAr1Coefficient: still ready after Reset");
+        CompareRuns("SpreadAr1Coefficient", first, Drive_SpreadAr1Coefficient(ind));
+    }
+    private static List<double[]> Drive_SpreadBollingerBands(Wickra.SpreadBollingerBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3], r[0]), 4));
         }
-        Compare("SpreadBollingerBands", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_SpreadBollingerBands()
+    {
+        using var ind = new Wickra.SpreadBollingerBands(14, 2.0);
+        Assert.Equal("SpreadBollingerBands", ind.Name());
+        Compare("SpreadBollingerBands", Drive_SpreadBollingerBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_SpreadBollingerBands()
+    {
+        using var ind = new Wickra.SpreadBollingerBands(14, 2.0);
+        Assert.False(ind.IsReady(), "SpreadBollingerBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SpreadBollingerBands: warmup period must be >= 1");
+        var first = Drive_SpreadBollingerBands(ind);
+        Assert.True(ind.IsReady(), "SpreadBollingerBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SpreadBollingerBands: still ready after Reset");
+        CompareRuns("SpreadBollingerBands", first, Drive_SpreadBollingerBands(ind));
+    }
+    private static List<double[]> Drive_SpreadHurst(Wickra.SpreadHurst ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3], r[0]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_SpreadHurst()
     {
         using var ind = new Wickra.SpreadHurst(14);
         Assert.Equal("SpreadHurst", ind.Name());
+        Compare("SpreadHurst", Drive_SpreadHurst(ind));
+    }
+    [Fact]
+    public void Lifecycle_SpreadHurst()
+    {
+        using var ind = new Wickra.SpreadHurst(14);
+        Assert.False(ind.IsReady(), "SpreadHurst: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SpreadHurst: warmup period must be >= 1");
+        var first = Drive_SpreadHurst(ind);
+        Assert.True(ind.IsReady(), "SpreadHurst: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SpreadHurst: still ready after Reset");
+        CompareRuns("SpreadHurst", first, Drive_SpreadHurst(ind));
+    }
+    private static List<double[]> Drive_StalledPattern(Wickra.StalledPattern ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SpreadHurst", got);
+        return got;
     }
     [Fact]
     public void Golden_StalledPattern()
     {
         using var ind = new Wickra.StalledPattern();
         Assert.Equal("StalledPattern", ind.Name());
+        Compare("StalledPattern", Drive_StalledPattern(ind));
+    }
+    [Fact]
+    public void Lifecycle_StalledPattern()
+    {
+        using var ind = new Wickra.StalledPattern();
+        Assert.False(ind.IsReady(), "StalledPattern: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StalledPattern: warmup period must be >= 1");
+        var first = Drive_StalledPattern(ind);
+        Assert.True(ind.IsReady(), "StalledPattern: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StalledPattern: still ready after Reset");
+        CompareRuns("StalledPattern", first, Drive_StalledPattern(ind));
+    }
+    private static List<double[]> Drive_StandardError(Wickra.StandardError ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("StalledPattern", got);
+        return got;
     }
     [Fact]
     public void Golden_StandardError()
     {
         using var ind = new Wickra.StandardError(14);
         Assert.Equal("StandardError", ind.Name());
+        Compare("StandardError", Drive_StandardError(ind));
+    }
+    [Fact]
+    public void Lifecycle_StandardError()
+    {
+        using var ind = new Wickra.StandardError(14);
+        Assert.False(ind.IsReady(), "StandardError: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StandardError: warmup period must be >= 1");
+        var first = Drive_StandardError(ind);
+        Assert.True(ind.IsReady(), "StandardError: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StandardError: still ready after Reset");
+        CompareRuns("StandardError", first, Drive_StandardError(ind));
+    }
+    private static List<double[]> Drive_StandardErrorBands(Wickra.StandardErrorBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("StandardError", got);
+        return got;
     }
     [Fact]
     public void Golden_StandardErrorBands()
     {
         using var ind = new Wickra.StandardErrorBands(14, 2.0);
         Assert.Equal("StandardErrorBands", ind.Name());
+        Compare("StandardErrorBands", Drive_StandardErrorBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_StandardErrorBands()
+    {
+        using var ind = new Wickra.StandardErrorBands(14, 2.0);
+        Assert.False(ind.IsReady(), "StandardErrorBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StandardErrorBands: warmup period must be >= 1");
+        var first = Drive_StandardErrorBands(ind);
+        Assert.True(ind.IsReady(), "StandardErrorBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StandardErrorBands: still ready after Reset");
+        CompareRuns("StandardErrorBands", first, Drive_StandardErrorBands(ind));
+    }
+    private static List<double[]> Drive_StarcBands(Wickra.StarcBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[3]), 3));
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("StandardErrorBands", got);
+        return got;
     }
     [Fact]
     public void Golden_StarcBands()
     {
         using var ind = new Wickra.StarcBands(3, 7, 2.0);
         Assert.Equal("StarcBands", ind.Name());
+        Compare("StarcBands", Drive_StarcBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_StarcBands()
+    {
+        using var ind = new Wickra.StarcBands(3, 7, 2.0);
+        Assert.False(ind.IsReady(), "StarcBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StarcBands: warmup period must be >= 1");
+        var first = Drive_StarcBands(ind);
+        Assert.True(ind.IsReady(), "StarcBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StarcBands: still ready after Reset");
+        CompareRuns("StarcBands", first, Drive_StarcBands(ind));
+    }
+    private static List<double[]> Drive_Stc(Wickra.Stc ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("StarcBands", got);
+        return got;
     }
     [Fact]
     public void Golden_Stc()
     {
         using var ind = new Wickra.Stc(10, 23, 10, 0.5);
         Assert.Equal("STC", ind.Name());
+        Compare("Stc", Drive_Stc(ind));
+    }
+    [Fact]
+    public void Lifecycle_Stc()
+    {
+        using var ind = new Wickra.Stc(10, 23, 10, 0.5);
+        Assert.False(ind.IsReady(), "Stc: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Stc: warmup period must be >= 1");
+        var first = Drive_Stc(ind);
+        Assert.True(ind.IsReady(), "Stc: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Stc: still ready after Reset");
+        CompareRuns("Stc", first, Drive_Stc(ind));
+    }
+    private static List<double[]> Drive_StdDev(Wickra.StdDev ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Stc", got);
+        return got;
     }
     [Fact]
     public void Golden_StdDev()
     {
         using var ind = new Wickra.StdDev(14);
         Assert.Equal("StdDev", ind.Name());
+        Compare("StdDev", Drive_StdDev(ind));
+    }
+    [Fact]
+    public void Lifecycle_StdDev()
+    {
+        using var ind = new Wickra.StdDev(14);
+        Assert.False(ind.IsReady(), "StdDev: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StdDev: warmup period must be >= 1");
+        var first = Drive_StdDev(ind);
+        Assert.True(ind.IsReady(), "StdDev: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StdDev: still ready after Reset");
+        CompareRuns("StdDev", first, Drive_StdDev(ind));
+    }
+    private static List<double[]> Drive_StepTrailingStop(Wickra.StepTrailingStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("StdDev", got);
+        return got;
     }
     [Fact]
     public void Golden_StepTrailingStop()
     {
         using var ind = new Wickra.StepTrailingStop(2.0);
         Assert.Equal("StepTrailingStop", ind.Name());
+        Compare("StepTrailingStop", Drive_StepTrailingStop(ind));
+    }
+    [Fact]
+    public void Lifecycle_StepTrailingStop()
+    {
+        using var ind = new Wickra.StepTrailingStop(2.0);
+        Assert.False(ind.IsReady(), "StepTrailingStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StepTrailingStop: warmup period must be >= 1");
+        var first = Drive_StepTrailingStop(ind);
+        Assert.True(ind.IsReady(), "StepTrailingStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StepTrailingStop: still ready after Reset");
+        CompareRuns("StepTrailingStop", first, Drive_StepTrailingStop(ind));
+    }
+    private static List<double[]> Drive_SterlingRatio(Wickra.SterlingRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("StepTrailingStop", got);
+        return got;
     }
     [Fact]
     public void Golden_SterlingRatio()
     {
         using var ind = new Wickra.SterlingRatio(14);
         Assert.Equal("SterlingRatio", ind.Name());
+        Compare("SterlingRatio", Drive_SterlingRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_SterlingRatio()
+    {
+        using var ind = new Wickra.SterlingRatio(14);
+        Assert.False(ind.IsReady(), "SterlingRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SterlingRatio: warmup period must be >= 1");
+        var first = Drive_SterlingRatio(ind);
+        Assert.True(ind.IsReady(), "SterlingRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SterlingRatio: still ready after Reset");
+        CompareRuns("SterlingRatio", first, Drive_SterlingRatio(ind));
+    }
+    private static List<double[]> Drive_StickSandwich(Wickra.StickSandwich ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("SterlingRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_StickSandwich()
     {
         using var ind = new Wickra.StickSandwich();
         Assert.Equal("StickSandwich", ind.Name());
+        Compare("StickSandwich", Drive_StickSandwich(ind));
+    }
+    [Fact]
+    public void Lifecycle_StickSandwich()
+    {
+        using var ind = new Wickra.StickSandwich();
+        Assert.False(ind.IsReady(), "StickSandwich: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StickSandwich: warmup period must be >= 1");
+        var first = Drive_StickSandwich(ind);
+        Assert.True(ind.IsReady(), "StickSandwich: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StickSandwich: still ready after Reset");
+        CompareRuns("StickSandwich", first, Drive_StickSandwich(ind));
+    }
+    private static List<double[]> Drive_StochRsi(Wickra.StochRsi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("StickSandwich", got);
+        return got;
     }
     [Fact]
     public void Golden_StochRsi()
     {
         using var ind = new Wickra.StochRsi(3, 7);
         Assert.Equal("StochRSI", ind.Name());
+        Compare("StochRsi", Drive_StochRsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_StochRsi()
+    {
+        using var ind = new Wickra.StochRsi(3, 7);
+        Assert.False(ind.IsReady(), "StochRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StochRsi: warmup period must be >= 1");
+        var first = Drive_StochRsi(ind);
+        Assert.True(ind.IsReady(), "StochRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StochRsi: still ready after Reset");
+        CompareRuns("StochRsi", first, Drive_StochRsi(ind));
+    }
+    private static List<double[]> Drive_Stochastic(Wickra.Stochastic ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("StochRsi", got);
+        return got;
     }
     [Fact]
     public void Golden_Stochastic()
     {
         using var ind = new Wickra.Stochastic(3, 7);
         Assert.Equal("Stochastic", ind.Name());
+        Compare("Stochastic", Drive_Stochastic(ind));
+    }
+    [Fact]
+    public void Lifecycle_Stochastic()
+    {
+        using var ind = new Wickra.Stochastic(3, 7);
+        Assert.False(ind.IsReady(), "Stochastic: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Stochastic: warmup period must be >= 1");
+        var first = Drive_Stochastic(ind);
+        Assert.True(ind.IsReady(), "Stochastic: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Stochastic: still ready after Reset");
+        CompareRuns("Stochastic", first, Drive_Stochastic(ind));
+    }
+    private static List<double[]> Drive_StochasticCci(Wickra.StochasticCci ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Stochastic", got);
+        return got;
     }
     [Fact]
     public void Golden_StochasticCci()
     {
         using var ind = new Wickra.StochasticCci(14);
         Assert.Equal("StochasticCCI", ind.Name());
+        Compare("StochasticCci", Drive_StochasticCci(ind));
+    }
+    [Fact]
+    public void Lifecycle_StochasticCci()
+    {
+        using var ind = new Wickra.StochasticCci(14);
+        Assert.False(ind.IsReady(), "StochasticCci: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "StochasticCci: warmup period must be >= 1");
+        var first = Drive_StochasticCci(ind);
+        Assert.True(ind.IsReady(), "StochasticCci: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "StochasticCci: still ready after Reset");
+        CompareRuns("StochasticCci", first, Drive_StochasticCci(ind));
+    }
+    private static List<double[]> Drive_SuperSmoother(Wickra.SuperSmoother ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("StochasticCci", got);
+        return got;
     }
     [Fact]
     public void Golden_SuperSmoother()
     {
         using var ind = new Wickra.SuperSmoother(14);
         Assert.Equal("SuperSmoother", ind.Name());
+        Compare("SuperSmoother", Drive_SuperSmoother(ind));
+    }
+    [Fact]
+    public void Lifecycle_SuperSmoother()
+    {
+        using var ind = new Wickra.SuperSmoother(14);
+        Assert.False(ind.IsReady(), "SuperSmoother: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SuperSmoother: warmup period must be >= 1");
+        var first = Drive_SuperSmoother(ind);
+        Assert.True(ind.IsReady(), "SuperSmoother: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SuperSmoother: still ready after Reset");
+        CompareRuns("SuperSmoother", first, Drive_SuperSmoother(ind));
+    }
+    private static List<double[]> Drive_SuperTrend(Wickra.SuperTrend ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("SuperSmoother", got);
+        return got;
     }
     [Fact]
     public void Golden_SuperTrend()
     {
         using var ind = new Wickra.SuperTrend(14, 2.0);
         Assert.Equal("SuperTrend", ind.Name());
+        Compare("SuperTrend", Drive_SuperTrend(ind));
+    }
+    [Fact]
+    public void Lifecycle_SuperTrend()
+    {
+        using var ind = new Wickra.SuperTrend(14, 2.0);
+        Assert.False(ind.IsReady(), "SuperTrend: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "SuperTrend: warmup period must be >= 1");
+        var first = Drive_SuperTrend(ind);
+        Assert.True(ind.IsReady(), "SuperTrend: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "SuperTrend: still ready after Reset");
+        CompareRuns("SuperTrend", first, Drive_SuperTrend(ind));
+    }
+    private static List<double[]> Drive_T3(Wickra.T3 ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("SuperTrend", got);
+        return got;
     }
     [Fact]
     public void Golden_T3()
     {
         using var ind = new Wickra.T3(5, 0.7);
         Assert.Equal("T3", ind.Name());
+        Compare("T3", Drive_T3(ind));
+    }
+    [Fact]
+    public void Lifecycle_T3()
+    {
+        using var ind = new Wickra.T3(5, 0.7);
+        Assert.False(ind.IsReady(), "T3: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "T3: warmup period must be >= 1");
+        var first = Drive_T3(ind);
+        Assert.True(ind.IsReady(), "T3: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "T3: still ready after Reset");
+        CompareRuns("T3", first, Drive_T3(ind));
+    }
+    private static List<double[]> Drive_TailRatio(Wickra.TailRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("T3", got);
+        return got;
     }
     [Fact]
     public void Golden_TailRatio()
     {
         using var ind = new Wickra.TailRatio(14);
         Assert.Equal("TailRatio", ind.Name());
+        Compare("TailRatio", Drive_TailRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_TailRatio()
+    {
+        using var ind = new Wickra.TailRatio(14);
+        Assert.False(ind.IsReady(), "TailRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TailRatio: warmup period must be >= 1");
+        var first = Drive_TailRatio(ind);
+        Assert.True(ind.IsReady(), "TailRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TailRatio: still ready after Reset");
+        CompareRuns("TailRatio", first, Drive_TailRatio(ind));
+    }
+    private static List<double[]> Drive_TakerBuySellRatio(Wickra.TakerBuySellRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            var d = DerivFields(r);
+            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("TailRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_TakerBuySellRatio()
     {
         using var ind = new Wickra.TakerBuySellRatio();
         Assert.Equal("TakerBuySellRatio", ind.Name());
+        Compare("TakerBuySellRatio", Drive_TakerBuySellRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_TakerBuySellRatio()
+    {
+        using var ind = new Wickra.TakerBuySellRatio();
+        Assert.False(ind.IsReady(), "TakerBuySellRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TakerBuySellRatio: warmup period must be >= 1");
+        var first = Drive_TakerBuySellRatio(ind);
+        Assert.True(ind.IsReady(), "TakerBuySellRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TakerBuySellRatio: still ready after Reset");
+        CompareRuns("TakerBuySellRatio", first, Drive_TakerBuySellRatio(ind));
+    }
+    private static List<double[]> Drive_Takuri(Wickra.Takuri ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var d = DerivFields(r);
-            got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TakerBuySellRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_Takuri()
     {
         using var ind = new Wickra.Takuri();
         Assert.Equal("Takuri", ind.Name());
+        Compare("Takuri", Drive_Takuri(ind));
+    }
+    [Fact]
+    public void Lifecycle_Takuri()
+    {
+        using var ind = new Wickra.Takuri();
+        Assert.False(ind.IsReady(), "Takuri: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Takuri: warmup period must be >= 1");
+        var first = Drive_Takuri(ind);
+        Assert.True(ind.IsReady(), "Takuri: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Takuri: still ready after Reset");
+        CompareRuns("Takuri", first, Drive_Takuri(ind));
+    }
+    private static List<double[]> Drive_TasukiGap(Wickra.TasukiGap ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Takuri", got);
+        return got;
     }
     [Fact]
     public void Golden_TasukiGap()
     {
         using var ind = new Wickra.TasukiGap();
         Assert.Equal("TasukiGap", ind.Name());
+        Compare("TasukiGap", Drive_TasukiGap(ind));
+    }
+    [Fact]
+    public void Lifecycle_TasukiGap()
+    {
+        using var ind = new Wickra.TasukiGap();
+        Assert.False(ind.IsReady(), "TasukiGap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TasukiGap: warmup period must be >= 1");
+        var first = Drive_TasukiGap(ind);
+        Assert.True(ind.IsReady(), "TasukiGap: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TasukiGap: still ready after Reset");
+        CompareRuns("TasukiGap", first, Drive_TasukiGap(ind));
+    }
+    private static List<double[]> Drive_TdCamouflage(Wickra.TdCamouflage ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TasukiGap", got);
+        return got;
     }
     [Fact]
     public void Golden_TdCamouflage()
     {
         using var ind = new Wickra.TdCamouflage();
         Assert.Equal("TDCamouflage", ind.Name());
+        Compare("TdCamouflage", Drive_TdCamouflage(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdCamouflage()
+    {
+        using var ind = new Wickra.TdCamouflage();
+        Assert.False(ind.IsReady(), "TdCamouflage: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdCamouflage: warmup period must be >= 1");
+        var first = Drive_TdCamouflage(ind);
+        Assert.True(ind.IsReady(), "TdCamouflage: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdCamouflage: still ready after Reset");
+        CompareRuns("TdCamouflage", first, Drive_TdCamouflage(ind));
+    }
+    private static List<double[]> Drive_TdClop(Wickra.TdClop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdCamouflage", got);
+        return got;
     }
     [Fact]
     public void Golden_TdClop()
     {
         using var ind = new Wickra.TdClop();
         Assert.Equal("TDClop", ind.Name());
+        Compare("TdClop", Drive_TdClop(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdClop()
+    {
+        using var ind = new Wickra.TdClop();
+        Assert.False(ind.IsReady(), "TdClop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdClop: warmup period must be >= 1");
+        var first = Drive_TdClop(ind);
+        Assert.True(ind.IsReady(), "TdClop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdClop: still ready after Reset");
+        CompareRuns("TdClop", first, Drive_TdClop(ind));
+    }
+    private static List<double[]> Drive_TdClopwin(Wickra.TdClopwin ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdClop", got);
+        return got;
     }
     [Fact]
     public void Golden_TdClopwin()
     {
         using var ind = new Wickra.TdClopwin();
         Assert.Equal("TDClopwin", ind.Name());
+        Compare("TdClopwin", Drive_TdClopwin(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdClopwin()
+    {
+        using var ind = new Wickra.TdClopwin();
+        Assert.False(ind.IsReady(), "TdClopwin: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdClopwin: warmup period must be >= 1");
+        var first = Drive_TdClopwin(ind);
+        Assert.True(ind.IsReady(), "TdClopwin: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdClopwin: still ready after Reset");
+        CompareRuns("TdClopwin", first, Drive_TdClopwin(ind));
+    }
+    private static List<double[]> Drive_TdCombo(Wickra.TdCombo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdClopwin", got);
+        return got;
     }
     [Fact]
     public void Golden_TdCombo()
     {
         using var ind = new Wickra.TdCombo(3, 7, 14, 28);
         Assert.Equal("TDCombo", ind.Name());
+        Compare("TdCombo", Drive_TdCombo(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdCombo()
+    {
+        using var ind = new Wickra.TdCombo(3, 7, 14, 28);
+        Assert.False(ind.IsReady(), "TdCombo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdCombo: warmup period must be >= 1");
+        var first = Drive_TdCombo(ind);
+        Assert.True(ind.IsReady(), "TdCombo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdCombo: still ready after Reset");
+        CompareRuns("TdCombo", first, Drive_TdCombo(ind));
+    }
+    private static List<double[]> Drive_TdCountdown(Wickra.TdCountdown ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdCombo", got);
+        return got;
     }
     [Fact]
     public void Golden_TdCountdown()
     {
         using var ind = new Wickra.TdCountdown(3, 7, 14, 28);
         Assert.Equal("TDCountdown", ind.Name());
+        Compare("TdCountdown", Drive_TdCountdown(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdCountdown()
+    {
+        using var ind = new Wickra.TdCountdown(3, 7, 14, 28);
+        Assert.False(ind.IsReady(), "TdCountdown: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdCountdown: warmup period must be >= 1");
+        var first = Drive_TdCountdown(ind);
+        Assert.True(ind.IsReady(), "TdCountdown: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdCountdown: still ready after Reset");
+        CompareRuns("TdCountdown", first, Drive_TdCountdown(ind));
+    }
+    private static List<double[]> Drive_TdDWave(Wickra.TdDWave ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdCountdown", got);
+        return got;
     }
     [Fact]
     public void Golden_TdDWave()
     {
         using var ind = new Wickra.TdDWave(2);
         Assert.Equal("TDDWave", ind.Name());
+        Compare("TdDWave", Drive_TdDWave(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdDWave()
+    {
+        using var ind = new Wickra.TdDWave(2);
+        Assert.False(ind.IsReady(), "TdDWave: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdDWave: warmup period must be >= 1");
+        var first = Drive_TdDWave(ind);
+        Assert.True(ind.IsReady(), "TdDWave: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdDWave: still ready after Reset");
+        CompareRuns("TdDWave", first, Drive_TdDWave(ind));
+    }
+    private static List<double[]> Drive_TdDeMarker(Wickra.TdDeMarker ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdDWave", got);
+        return got;
     }
     [Fact]
     public void Golden_TdDeMarker()
     {
         using var ind = new Wickra.TdDeMarker(14);
         Assert.Equal("TDDeMarker", ind.Name());
+        Compare("TdDeMarker", Drive_TdDeMarker(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdDeMarker()
+    {
+        using var ind = new Wickra.TdDeMarker(14);
+        Assert.False(ind.IsReady(), "TdDeMarker: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdDeMarker: warmup period must be >= 1");
+        var first = Drive_TdDeMarker(ind);
+        Assert.True(ind.IsReady(), "TdDeMarker: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdDeMarker: still ready after Reset");
+        CompareRuns("TdDeMarker", first, Drive_TdDeMarker(ind));
+    }
+    private static List<double[]> Drive_TdDifferential(Wickra.TdDifferential ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdDeMarker", got);
+        return got;
     }
     [Fact]
     public void Golden_TdDifferential()
     {
         using var ind = new Wickra.TdDifferential();
         Assert.Equal("TDDifferential", ind.Name());
+        Compare("TdDifferential", Drive_TdDifferential(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdDifferential()
+    {
+        using var ind = new Wickra.TdDifferential();
+        Assert.False(ind.IsReady(), "TdDifferential: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdDifferential: warmup period must be >= 1");
+        var first = Drive_TdDifferential(ind);
+        Assert.True(ind.IsReady(), "TdDifferential: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdDifferential: still ready after Reset");
+        CompareRuns("TdDifferential", first, Drive_TdDifferential(ind));
+    }
+    private static List<double[]> Drive_TdLines(Wickra.TdLines ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("TdDifferential", got);
+        return got;
     }
     [Fact]
     public void Golden_TdLines()
     {
         using var ind = new Wickra.TdLines(3, 7);
         Assert.Equal("TDLines", ind.Name());
+        Compare("TdLines", Drive_TdLines(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdLines()
+    {
+        using var ind = new Wickra.TdLines(3, 7);
+        Assert.False(ind.IsReady(), "TdLines: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdLines: warmup period must be >= 1");
+        var first = Drive_TdLines(ind);
+        Assert.True(ind.IsReady(), "TdLines: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdLines: still ready after Reset");
+        CompareRuns("TdLines", first, Drive_TdLines(ind));
+    }
+    private static List<double[]> Drive_TdMovingAverage(Wickra.TdMovingAverage ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("TdLines", got);
+        return got;
     }
     [Fact]
     public void Golden_TdMovingAverage()
     {
         using var ind = new Wickra.TdMovingAverage(3, 7);
         Assert.Equal("TDMovingAverage", ind.Name());
+        Compare("TdMovingAverage", Drive_TdMovingAverage(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdMovingAverage()
+    {
+        using var ind = new Wickra.TdMovingAverage(3, 7);
+        Assert.False(ind.IsReady(), "TdMovingAverage: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdMovingAverage: warmup period must be >= 1");
+        var first = Drive_TdMovingAverage(ind);
+        Assert.True(ind.IsReady(), "TdMovingAverage: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdMovingAverage: still ready after Reset");
+        CompareRuns("TdMovingAverage", first, Drive_TdMovingAverage(ind));
+    }
+    private static List<double[]> Drive_TdOpen(Wickra.TdOpen ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdMovingAverage", got);
+        return got;
     }
     [Fact]
     public void Golden_TdOpen()
     {
         using var ind = new Wickra.TdOpen();
         Assert.Equal("TDOpen", ind.Name());
+        Compare("TdOpen", Drive_TdOpen(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdOpen()
+    {
+        using var ind = new Wickra.TdOpen();
+        Assert.False(ind.IsReady(), "TdOpen: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdOpen: warmup period must be >= 1");
+        var first = Drive_TdOpen(ind);
+        Assert.True(ind.IsReady(), "TdOpen: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdOpen: still ready after Reset");
+        CompareRuns("TdOpen", first, Drive_TdOpen(ind));
+    }
+    private static List<double[]> Drive_TdPressure(Wickra.TdPressure ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdOpen", got);
+        return got;
     }
     [Fact]
     public void Golden_TdPressure()
     {
         using var ind = new Wickra.TdPressure(14);
         Assert.Equal("TDPressure", ind.Name());
+        Compare("TdPressure", Drive_TdPressure(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdPressure()
+    {
+        using var ind = new Wickra.TdPressure(14);
+        Assert.False(ind.IsReady(), "TdPressure: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdPressure: warmup period must be >= 1");
+        var first = Drive_TdPressure(ind);
+        Assert.True(ind.IsReady(), "TdPressure: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdPressure: still ready after Reset");
+        CompareRuns("TdPressure", first, Drive_TdPressure(ind));
+    }
+    private static List<double[]> Drive_TdPropulsion(Wickra.TdPropulsion ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdPressure", got);
+        return got;
     }
     [Fact]
     public void Golden_TdPropulsion()
     {
         using var ind = new Wickra.TdPropulsion();
         Assert.Equal("TDPropulsion", ind.Name());
+        Compare("TdPropulsion", Drive_TdPropulsion(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdPropulsion()
+    {
+        using var ind = new Wickra.TdPropulsion();
+        Assert.False(ind.IsReady(), "TdPropulsion: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdPropulsion: warmup period must be >= 1");
+        var first = Drive_TdPropulsion(ind);
+        Assert.True(ind.IsReady(), "TdPropulsion: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdPropulsion: still ready after Reset");
+        CompareRuns("TdPropulsion", first, Drive_TdPropulsion(ind));
+    }
+    private static List<double[]> Drive_TdRangeProjection(Wickra.TdRangeProjection ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("TdPropulsion", got);
+        return got;
     }
     [Fact]
     public void Golden_TdRangeProjection()
     {
         using var ind = new Wickra.TdRangeProjection();
         Assert.Equal("TDRangeProjection", ind.Name());
+        Compare("TdRangeProjection", Drive_TdRangeProjection(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdRangeProjection()
+    {
+        using var ind = new Wickra.TdRangeProjection();
+        Assert.False(ind.IsReady(), "TdRangeProjection: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdRangeProjection: warmup period must be >= 1");
+        var first = Drive_TdRangeProjection(ind);
+        Assert.True(ind.IsReady(), "TdRangeProjection: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdRangeProjection: still ready after Reset");
+        CompareRuns("TdRangeProjection", first, Drive_TdRangeProjection(ind));
+    }
+    private static List<double[]> Drive_TdRei(Wickra.TdRei ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdRangeProjection", got);
+        return got;
     }
     [Fact]
     public void Golden_TdRei()
     {
         using var ind = new Wickra.TdRei(14);
         Assert.Equal("TDREI", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("TdRei", got);
+        Compare("TdRei", Drive_TdRei(ind));
     }
     [Fact]
-    public void Golden_TdRiskLevel()
+    public void Lifecycle_TdRei()
     {
-        using var ind = new Wickra.TdRiskLevel(3, 7);
-        Assert.Equal("TDRiskLevel", ind.Name());
+        using var ind = new Wickra.TdRei(14);
+        Assert.False(ind.IsReady(), "TdRei: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdRei: warmup period must be >= 1");
+        var first = Drive_TdRei(ind);
+        Assert.True(ind.IsReady(), "TdRei: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdRei: still ready after Reset");
+        CompareRuns("TdRei", first, Drive_TdRei(ind));
+    }
+    private static List<double[]> Drive_TdRiskLevel(Wickra.TdRiskLevel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("TdRiskLevel", got);
+        return got;
     }
     [Fact]
-    public void Golden_TdSequential()
+    public void Golden_TdRiskLevel()
     {
-        using var ind = new Wickra.TdSequential(3, 7, 14, 28);
-        Assert.Equal("TDSequential", ind.Name());
+        using var ind = new Wickra.TdRiskLevel(3, 7);
+        Assert.Equal("TDRiskLevel", ind.Name());
+        Compare("TdRiskLevel", Drive_TdRiskLevel(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdRiskLevel()
+    {
+        using var ind = new Wickra.TdRiskLevel(3, 7);
+        Assert.False(ind.IsReady(), "TdRiskLevel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdRiskLevel: warmup period must be >= 1");
+        var first = Drive_TdRiskLevel(ind);
+        Assert.True(ind.IsReady(), "TdRiskLevel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdRiskLevel: still ready after Reset");
+        CompareRuns("TdRiskLevel", first, Drive_TdRiskLevel(ind));
+    }
+    private static List<double[]> Drive_TdSequential(Wickra.TdSequential ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("TdSequential", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_TdSequential()
+    {
+        using var ind = new Wickra.TdSequential(3, 7, 14, 28);
+        Assert.Equal("TDSequential", ind.Name());
+        Compare("TdSequential", Drive_TdSequential(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdSequential()
+    {
+        using var ind = new Wickra.TdSequential(3, 7, 14, 28);
+        Assert.False(ind.IsReady(), "TdSequential: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdSequential: warmup period must be >= 1");
+        var first = Drive_TdSequential(ind);
+        Assert.True(ind.IsReady(), "TdSequential: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdSequential: still ready after Reset");
+        CompareRuns("TdSequential", first, Drive_TdSequential(ind));
+    }
+    private static List<double[]> Drive_TdSetup(Wickra.TdSetup ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_TdSetup()
     {
         using var ind = new Wickra.TdSetup(3, 7);
         Assert.Equal("TDSetup", ind.Name());
+        Compare("TdSetup", Drive_TdSetup(ind));
+    }
+    [Fact]
+    public void Lifecycle_TdSetup()
+    {
+        using var ind = new Wickra.TdSetup(3, 7);
+        Assert.False(ind.IsReady(), "TdSetup: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdSetup: warmup period must be >= 1");
+        var first = Drive_TdSetup(ind);
+        Assert.True(ind.IsReady(), "TdSetup: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdSetup: still ready after Reset");
+        CompareRuns("TdSetup", first, Drive_TdSetup(ind));
+    }
+    private static List<double[]> Drive_TdTrap(Wickra.TdTrap ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TdSetup", got);
+        return got;
     }
     [Fact]
     public void Golden_TdTrap()
     {
         using var ind = new Wickra.TdTrap();
         Assert.Equal("TDTrap", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("TdTrap", got);
+        Compare("TdTrap", Drive_TdTrap(ind));
     }
     [Fact]
-    public void Golden_Tema()
+    public void Lifecycle_TdTrap()
     {
-        using var ind = new Wickra.Tema(14);
-        Assert.Equal("TEMA", ind.Name());
+        using var ind = new Wickra.TdTrap();
+        Assert.False(ind.IsReady(), "TdTrap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TdTrap: warmup period must be >= 1");
+        var first = Drive_TdTrap(ind);
+        Assert.True(ind.IsReady(), "TdTrap: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TdTrap: still ready after Reset");
+        CompareRuns("TdTrap", first, Drive_TdTrap(ind));
+    }
+    private static List<double[]> Drive_Tema(Wickra.Tema ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Tema", got);
+        return got;
     }
     [Fact]
-    public void Golden_TermStructureBasis()
+    public void Golden_Tema()
     {
-        using var ind = new Wickra.TermStructureBasis();
-        Assert.Equal("TermStructureBasis", ind.Name());
+        using var ind = new Wickra.Tema(14);
+        Assert.Equal("TEMA", ind.Name());
+        Compare("Tema", Drive_Tema(ind));
+    }
+    [Fact]
+    public void Lifecycle_Tema()
+    {
+        using var ind = new Wickra.Tema(14);
+        Assert.False(ind.IsReady(), "Tema: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tema: warmup period must be >= 1");
+        var first = Drive_Tema(ind);
+        Assert.True(ind.IsReady(), "Tema: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tema: still ready after Reset");
+        CompareRuns("Tema", first, Drive_Tema(ind));
+    }
+    private static List<double[]> Drive_TermStructureBasis(Wickra.TermStructureBasis ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -5718,601 +12466,1328 @@ public class GoldenAllTests
             var d = DerivFields(r);
             got.Add(new[] { ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], i) });
         }
-        Compare("TermStructureBasis", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_TermStructureBasis()
+    {
+        using var ind = new Wickra.TermStructureBasis();
+        Assert.Equal("TermStructureBasis", ind.Name());
+        Compare("TermStructureBasis", Drive_TermStructureBasis(ind));
+    }
+    [Fact]
+    public void Lifecycle_TermStructureBasis()
+    {
+        using var ind = new Wickra.TermStructureBasis();
+        Assert.False(ind.IsReady(), "TermStructureBasis: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TermStructureBasis: warmup period must be >= 1");
+        var first = Drive_TermStructureBasis(ind);
+        Assert.True(ind.IsReady(), "TermStructureBasis: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TermStructureBasis: still ready after Reset");
+        CompareRuns("TermStructureBasis", first, Drive_TermStructureBasis(ind));
+    }
+    private static List<double[]> Drive_ThreeDrives(Wickra.ThreeDrives ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_ThreeDrives()
     {
         using var ind = new Wickra.ThreeDrives();
         Assert.Equal("ThreeDrives", ind.Name());
+        Compare("ThreeDrives", Drive_ThreeDrives(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeDrives()
+    {
+        using var ind = new Wickra.ThreeDrives();
+        Assert.False(ind.IsReady(), "ThreeDrives: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeDrives: warmup period must be >= 1");
+        var first = Drive_ThreeDrives(ind);
+        Assert.True(ind.IsReady(), "ThreeDrives: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeDrives: still ready after Reset");
+        CompareRuns("ThreeDrives", first, Drive_ThreeDrives(ind));
+    }
+    private static List<double[]> Drive_ThreeInside(Wickra.ThreeInside ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ThreeDrives", got);
+        return got;
     }
     [Fact]
     public void Golden_ThreeInside()
     {
         using var ind = new Wickra.ThreeInside();
         Assert.Equal("ThreeInside", ind.Name());
+        Compare("ThreeInside", Drive_ThreeInside(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeInside()
+    {
+        using var ind = new Wickra.ThreeInside();
+        Assert.False(ind.IsReady(), "ThreeInside: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeInside: warmup period must be >= 1");
+        var first = Drive_ThreeInside(ind);
+        Assert.True(ind.IsReady(), "ThreeInside: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeInside: still ready after Reset");
+        CompareRuns("ThreeInside", first, Drive_ThreeInside(ind));
+    }
+    private static List<double[]> Drive_ThreeLineBreak(Wickra.ThreeLineBreak ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ThreeInside", got);
+        return got;
     }
     [Fact]
     public void Golden_ThreeLineBreak()
     {
         using var ind = new Wickra.ThreeLineBreak(14);
         Assert.Equal("ThreeLineBreak", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("ThreeLineBreak", got);
+        Compare("ThreeLineBreak", Drive_ThreeLineBreak(ind));
     }
     [Fact]
-    public void Golden_ThreeLineBreakBars()
+    public void Lifecycle_ThreeLineBreak()
     {
-        using var ind = new Wickra.ThreeLineBreakBars(3);
-        Assert.Equal("ThreeLineBreakBars", ind.Name());
+        using var ind = new Wickra.ThreeLineBreak(14);
+        Assert.False(ind.IsReady(), "ThreeLineBreak: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeLineBreak: warmup period must be >= 1");
+        var first = Drive_ThreeLineBreak(ind);
+        Assert.True(ind.IsReady(), "ThreeLineBreak: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeLineBreak: still ready after Reset");
+        CompareRuns("ThreeLineBreak", first, Drive_ThreeLineBreak(ind));
+    }
+    private static List<double[]> Drive_ThreeLineBreakBars(Wickra.ThreeLineBreakBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0)));
         }
-        Compare("ThreeLineBreakBars", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_ThreeLineBreakBars()
+    {
+        using var ind = new Wickra.ThreeLineBreakBars(3);
+        Assert.Equal("ThreeLineBreakBars", ind.Name());
+        Compare("ThreeLineBreakBars", Drive_ThreeLineBreakBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeLineBreakBars()
+    {
+        using var ind = new Wickra.ThreeLineBreakBars(3);
+        var first = Drive_ThreeLineBreakBars(ind);
+        ind.Reset();
+        CompareRuns("ThreeLineBreakBars", first, Drive_ThreeLineBreakBars(ind));
+    }
+    private static List<double[]> Drive_ThreeLineStrike(Wickra.ThreeLineStrike ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_ThreeLineStrike()
     {
         using var ind = new Wickra.ThreeLineStrike();
         Assert.Equal("ThreeLineStrike", ind.Name());
+        Compare("ThreeLineStrike", Drive_ThreeLineStrike(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeLineStrike()
+    {
+        using var ind = new Wickra.ThreeLineStrike();
+        Assert.False(ind.IsReady(), "ThreeLineStrike: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeLineStrike: warmup period must be >= 1");
+        var first = Drive_ThreeLineStrike(ind);
+        Assert.True(ind.IsReady(), "ThreeLineStrike: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeLineStrike: still ready after Reset");
+        CompareRuns("ThreeLineStrike", first, Drive_ThreeLineStrike(ind));
+    }
+    private static List<double[]> Drive_ThreeOutside(Wickra.ThreeOutside ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ThreeLineStrike", got);
+        return got;
     }
     [Fact]
     public void Golden_ThreeOutside()
     {
         using var ind = new Wickra.ThreeOutside();
         Assert.Equal("ThreeOutside", ind.Name());
+        Compare("ThreeOutside", Drive_ThreeOutside(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeOutside()
+    {
+        using var ind = new Wickra.ThreeOutside();
+        Assert.False(ind.IsReady(), "ThreeOutside: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeOutside: warmup period must be >= 1");
+        var first = Drive_ThreeOutside(ind);
+        Assert.True(ind.IsReady(), "ThreeOutside: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeOutside: still ready after Reset");
+        CompareRuns("ThreeOutside", first, Drive_ThreeOutside(ind));
+    }
+    private static List<double[]> Drive_ThreeSoldiersOrCrows(Wickra.ThreeSoldiersOrCrows ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ThreeOutside", got);
+        return got;
     }
     [Fact]
     public void Golden_ThreeSoldiersOrCrows()
     {
         using var ind = new Wickra.ThreeSoldiersOrCrows();
         Assert.Equal("ThreeSoldiersOrCrows", ind.Name());
+        Compare("ThreeSoldiersOrCrows", Drive_ThreeSoldiersOrCrows(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeSoldiersOrCrows()
+    {
+        using var ind = new Wickra.ThreeSoldiersOrCrows();
+        Assert.False(ind.IsReady(), "ThreeSoldiersOrCrows: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeSoldiersOrCrows: warmup period must be >= 1");
+        var first = Drive_ThreeSoldiersOrCrows(ind);
+        Assert.True(ind.IsReady(), "ThreeSoldiersOrCrows: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeSoldiersOrCrows: still ready after Reset");
+        CompareRuns("ThreeSoldiersOrCrows", first, Drive_ThreeSoldiersOrCrows(ind));
+    }
+    private static List<double[]> Drive_ThreeStarsInSouth(Wickra.ThreeStarsInSouth ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ThreeSoldiersOrCrows", got);
+        return got;
     }
     [Fact]
     public void Golden_ThreeStarsInSouth()
     {
         using var ind = new Wickra.ThreeStarsInSouth();
         Assert.Equal("ThreeStarsInSouth", ind.Name());
+        Compare("ThreeStarsInSouth", Drive_ThreeStarsInSouth(ind));
+    }
+    [Fact]
+    public void Lifecycle_ThreeStarsInSouth()
+    {
+        using var ind = new Wickra.ThreeStarsInSouth();
+        Assert.False(ind.IsReady(), "ThreeStarsInSouth: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ThreeStarsInSouth: warmup period must be >= 1");
+        var first = Drive_ThreeStarsInSouth(ind);
+        Assert.True(ind.IsReady(), "ThreeStarsInSouth: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ThreeStarsInSouth: still ready after Reset");
+        CompareRuns("ThreeStarsInSouth", first, Drive_ThreeStarsInSouth(ind));
+    }
+    private static List<double[]> Drive_Thrusting(Wickra.Thrusting ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("ThreeStarsInSouth", got);
+        return got;
     }
     [Fact]
     public void Golden_Thrusting()
     {
         using var ind = new Wickra.Thrusting();
         Assert.Equal("Thrusting", ind.Name());
+        Compare("Thrusting", Drive_Thrusting(ind));
+    }
+    [Fact]
+    public void Lifecycle_Thrusting()
+    {
+        using var ind = new Wickra.Thrusting();
+        Assert.False(ind.IsReady(), "Thrusting: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Thrusting: warmup period must be >= 1");
+        var first = Drive_Thrusting(ind);
+        Assert.True(ind.IsReady(), "Thrusting: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Thrusting: still ready after Reset");
+        CompareRuns("Thrusting", first, Drive_Thrusting(ind));
+    }
+    private static List<double[]> Drive_TickBars(Wickra.TickBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0)));
         }
-        Compare("Thrusting", got);
+        return got;
     }
     [Fact]
     public void Golden_TickBars()
     {
         using var ind = new Wickra.TickBars(2);
         Assert.Equal("TickBars", ind.Name());
+        Compare("TickBars", Drive_TickBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_TickBars()
+    {
+        using var ind = new Wickra.TickBars(2);
+        var first = Drive_TickBars(ind);
+        ind.Reset();
+        CompareRuns("TickBars", first, Drive_TickBars(ind));
+    }
+    private static List<double[]> Drive_TickIndex(Wickra.TickIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0)));
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("TickBars", got);
+        return got;
     }
     [Fact]
     public void Golden_TickIndex()
     {
         using var ind = new Wickra.TickIndex();
         Assert.Equal("TickIndex", ind.Name());
+        Compare("TickIndex", Drive_TickIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_TickIndex()
+    {
+        using var ind = new Wickra.TickIndex();
+        Assert.False(ind.IsReady(), "TickIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TickIndex: warmup period must be >= 1");
+        var first = Drive_TickIndex(ind);
+        Assert.True(ind.IsReady(), "TickIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TickIndex: still ready after Reset");
+        CompareRuns("TickIndex", first, Drive_TickIndex(ind));
+    }
+    private static List<double[]> Drive_Tii(Wickra.Tii ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TickIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_Tii()
     {
         using var ind = new Wickra.Tii(3, 7);
         Assert.Equal("TII", ind.Name());
+        Compare("Tii", Drive_Tii(ind));
+    }
+    [Fact]
+    public void Lifecycle_Tii()
+    {
+        using var ind = new Wickra.Tii(3, 7);
+        Assert.False(ind.IsReady(), "Tii: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tii: warmup period must be >= 1");
+        var first = Drive_Tii(ind);
+        Assert.True(ind.IsReady(), "Tii: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tii: still ready after Reset");
+        CompareRuns("Tii", first, Drive_Tii(ind));
+    }
+    private static List<double[]> Drive_TimeBasedStop(Wickra.TimeBasedStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Tii", got);
+        return got;
     }
     [Fact]
     public void Golden_TimeBasedStop()
     {
         using var ind = new Wickra.TimeBasedStop(14);
         Assert.Equal("TimeBasedStop", ind.Name());
+        Compare("TimeBasedStop", Drive_TimeBasedStop(ind));
+    }
+    [Fact]
+    public void Lifecycle_TimeBasedStop()
+    {
+        using var ind = new Wickra.TimeBasedStop(14);
+        Assert.False(ind.IsReady(), "TimeBasedStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TimeBasedStop: warmup period must be >= 1");
+        var first = Drive_TimeBasedStop(ind);
+        Assert.True(ind.IsReady(), "TimeBasedStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TimeBasedStop: still ready after Reset");
+        CompareRuns("TimeBasedStop", first, Drive_TimeBasedStop(ind));
+    }
+    private static List<double[]> Drive_TimeOfDayReturnProfile(Wickra.TimeOfDayReturnProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            var bins = ind.Update(r[0], r[1], r[2], r[3], r[4], i);
+            got.Add(bins ?? NanRow(24));
         }
-        Compare("TimeBasedStop", got);
+        return got;
     }
     [Fact]
     public void Golden_TimeOfDayReturnProfile()
     {
         using var ind = new Wickra.TimeOfDayReturnProfile(24, 0);
         Assert.Equal("TimeOfDayReturnProfile", ind.Name());
+        Compare("TimeOfDayReturnProfile", Drive_TimeOfDayReturnProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_TimeOfDayReturnProfile()
+    {
+        using var ind = new Wickra.TimeOfDayReturnProfile(24, 0);
+        Assert.False(ind.IsReady(), "TimeOfDayReturnProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TimeOfDayReturnProfile: warmup period must be >= 1");
+        var first = Drive_TimeOfDayReturnProfile(ind);
+        Assert.True(ind.IsReady(), "TimeOfDayReturnProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TimeOfDayReturnProfile: still ready after Reset");
+        CompareRuns("TimeOfDayReturnProfile", first, Drive_TimeOfDayReturnProfile(ind));
+    }
+    private static List<double[]> Drive_TowerTopBottom(Wickra.TowerTopBottom ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var bins = ind.Update(r[0], r[1], r[2], r[3], r[4], i);
-            got.Add(bins ?? NanRow(24));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TimeOfDayReturnProfile", got);
+        return got;
     }
     [Fact]
     public void Golden_TowerTopBottom()
     {
         using var ind = new Wickra.TowerTopBottom();
         Assert.Equal("TowerTopBottom", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("TowerTopBottom", got);
+        Compare("TowerTopBottom", Drive_TowerTopBottom(ind));
     }
     [Fact]
-    public void Golden_TpoProfile()
+    public void Lifecycle_TowerTopBottom()
     {
-        using var ind = new Wickra.TpoProfile(30, 50);
-        Assert.Equal("TpoProfile", ind.Name());
+        using var ind = new Wickra.TowerTopBottom();
+        Assert.False(ind.IsReady(), "TowerTopBottom: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TowerTopBottom: warmup period must be >= 1");
+        var first = Drive_TowerTopBottom(ind);
+        Assert.True(ind.IsReady(), "TowerTopBottom: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TowerTopBottom: still ready after Reset");
+        CompareRuns("TowerTopBottom", first, Drive_TowerTopBottom(ind));
+    }
+    private static List<double[]> Drive_TpoProfile(Wickra.TpoProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 52));
         }
-        Compare("TpoProfile", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_TpoProfile()
+    {
+        using var ind = new Wickra.TpoProfile(30, 50);
+        Assert.Equal("TpoProfile", ind.Name());
+        Compare("TpoProfile", Drive_TpoProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_TpoProfile()
+    {
+        using var ind = new Wickra.TpoProfile(30, 50);
+        Assert.False(ind.IsReady(), "TpoProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TpoProfile: warmup period must be >= 1");
+        var first = Drive_TpoProfile(ind);
+        Assert.True(ind.IsReady(), "TpoProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TpoProfile: still ready after Reset");
+        CompareRuns("TpoProfile", first, Drive_TpoProfile(ind));
+    }
+    private static List<double[]> Drive_TradeImbalance(Wickra.TradeImbalance ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_TradeImbalance()
     {
         using var ind = new Wickra.TradeImbalance(20);
         Assert.Equal("TradeImbalance", ind.Name());
+        Compare("TradeImbalance", Drive_TradeImbalance(ind));
+    }
+    [Fact]
+    public void Lifecycle_TradeImbalance()
+    {
+        using var ind = new Wickra.TradeImbalance(20);
+        Assert.False(ind.IsReady(), "TradeImbalance: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TradeImbalance: warmup period must be >= 1");
+        var first = Drive_TradeImbalance(ind);
+        Assert.True(ind.IsReady(), "TradeImbalance: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TradeImbalance: still ready after Reset");
+        CompareRuns("TradeImbalance", first, Drive_TradeImbalance(ind));
+    }
+    private static List<double[]> Drive_TradeSignAutocorrelation(Wickra.TradeSignAutocorrelation ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("TradeImbalance", got);
+        return got;
     }
     [Fact]
     public void Golden_TradeSignAutocorrelation()
     {
         using var ind = new Wickra.TradeSignAutocorrelation(20);
         Assert.Equal("TradeSignAutocorrelation", ind.Name());
+        Compare("TradeSignAutocorrelation", Drive_TradeSignAutocorrelation(ind));
+    }
+    [Fact]
+    public void Lifecycle_TradeSignAutocorrelation()
+    {
+        using var ind = new Wickra.TradeSignAutocorrelation(20);
+        Assert.False(ind.IsReady(), "TradeSignAutocorrelation: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TradeSignAutocorrelation: warmup period must be >= 1");
+        var first = Drive_TradeSignAutocorrelation(ind);
+        Assert.True(ind.IsReady(), "TradeSignAutocorrelation: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TradeSignAutocorrelation: still ready after Reset");
+        CompareRuns("TradeSignAutocorrelation", first, Drive_TradeSignAutocorrelation(ind));
+    }
+    private static List<double[]> Drive_TradeVolumeIndex(Wickra.TradeVolumeIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TradeSignAutocorrelation", got);
+        return got;
     }
     [Fact]
     public void Golden_TradeVolumeIndex()
     {
         using var ind = new Wickra.TradeVolumeIndex(2.0);
         Assert.Equal("TradeVolumeIndex", ind.Name());
+        Compare("TradeVolumeIndex", Drive_TradeVolumeIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_TradeVolumeIndex()
+    {
+        using var ind = new Wickra.TradeVolumeIndex(2.0);
+        Assert.False(ind.IsReady(), "TradeVolumeIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TradeVolumeIndex: warmup period must be >= 1");
+        var first = Drive_TradeVolumeIndex(ind);
+        Assert.True(ind.IsReady(), "TradeVolumeIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TradeVolumeIndex: still ready after Reset");
+        CompareRuns("TradeVolumeIndex", first, Drive_TradeVolumeIndex(ind));
+    }
+    private static List<double[]> Drive_TrendLabel(Wickra.TrendLabel ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TradeVolumeIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_TrendLabel()
     {
         using var ind = new Wickra.TrendLabel(14);
         Assert.Equal("TrendLabel", ind.Name());
+        Compare("TrendLabel", Drive_TrendLabel(ind));
+    }
+    [Fact]
+    public void Lifecycle_TrendLabel()
+    {
+        using var ind = new Wickra.TrendLabel(14);
+        Assert.False(ind.IsReady(), "TrendLabel: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TrendLabel: warmup period must be >= 1");
+        var first = Drive_TrendLabel(ind);
+        Assert.True(ind.IsReady(), "TrendLabel: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TrendLabel: still ready after Reset");
+        CompareRuns("TrendLabel", first, Drive_TrendLabel(ind));
+    }
+    private static List<double[]> Drive_TrendStrengthIndex(Wickra.TrendStrengthIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TrendLabel", got);
+        return got;
     }
     [Fact]
     public void Golden_TrendStrengthIndex()
     {
         using var ind = new Wickra.TrendStrengthIndex(14);
         Assert.Equal("TrendStrengthIndex", ind.Name());
+        Compare("TrendStrengthIndex", Drive_TrendStrengthIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_TrendStrengthIndex()
+    {
+        using var ind = new Wickra.TrendStrengthIndex(14);
+        Assert.False(ind.IsReady(), "TrendStrengthIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TrendStrengthIndex: warmup period must be >= 1");
+        var first = Drive_TrendStrengthIndex(ind);
+        Assert.True(ind.IsReady(), "TrendStrengthIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TrendStrengthIndex: still ready after Reset");
+        CompareRuns("TrendStrengthIndex", first, Drive_TrendStrengthIndex(ind));
+    }
+    private static List<double[]> Drive_Trendflex(Wickra.Trendflex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TrendStrengthIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_Trendflex()
     {
         using var ind = new Wickra.Trendflex(14);
         Assert.Equal("Trendflex", ind.Name());
+        Compare("Trendflex", Drive_Trendflex(ind));
+    }
+    [Fact]
+    public void Lifecycle_Trendflex()
+    {
+        using var ind = new Wickra.Trendflex(14);
+        Assert.False(ind.IsReady(), "Trendflex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Trendflex: warmup period must be >= 1");
+        var first = Drive_Trendflex(ind);
+        Assert.True(ind.IsReady(), "Trendflex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Trendflex: still ready after Reset");
+        CompareRuns("Trendflex", first, Drive_Trendflex(ind));
+    }
+    private static List<double[]> Drive_TreynorRatio(Wickra.TreynorRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("Trendflex", got);
+        return got;
     }
     [Fact]
     public void Golden_TreynorRatio()
     {
         using var ind = new Wickra.TreynorRatio(14, 2.0);
         Assert.Equal("TreynorRatio", ind.Name());
+        Compare("TreynorRatio", Drive_TreynorRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_TreynorRatio()
+    {
+        using var ind = new Wickra.TreynorRatio(14, 2.0);
+        Assert.False(ind.IsReady(), "TreynorRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TreynorRatio: warmup period must be >= 1");
+        var first = Drive_TreynorRatio(ind);
+        Assert.True(ind.IsReady(), "TreynorRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TreynorRatio: still ready after Reset");
+        CompareRuns("TreynorRatio", first, Drive_TreynorRatio(ind));
+    }
+    private static List<double[]> Drive_Triangle(Wickra.Triangle ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3], r[0]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TreynorRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_Triangle()
     {
         using var ind = new Wickra.Triangle();
         Assert.Equal("Triangle", ind.Name());
+        Compare("Triangle", Drive_Triangle(ind));
+    }
+    [Fact]
+    public void Lifecycle_Triangle()
+    {
+        using var ind = new Wickra.Triangle();
+        Assert.False(ind.IsReady(), "Triangle: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Triangle: warmup period must be >= 1");
+        var first = Drive_Triangle(ind);
+        Assert.True(ind.IsReady(), "Triangle: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Triangle: still ready after Reset");
+        CompareRuns("Triangle", first, Drive_Triangle(ind));
+    }
+    private static List<double[]> Drive_Trima(Wickra.Trima ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Triangle", got);
+        return got;
     }
     [Fact]
     public void Golden_Trima()
     {
         using var ind = new Wickra.Trima(14);
         Assert.Equal("TRIMA", ind.Name());
+        Compare("Trima", Drive_Trima(ind));
+    }
+    [Fact]
+    public void Lifecycle_Trima()
+    {
+        using var ind = new Wickra.Trima(14);
+        Assert.False(ind.IsReady(), "Trima: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Trima: warmup period must be >= 1");
+        var first = Drive_Trima(ind);
+        Assert.True(ind.IsReady(), "Trima: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Trima: still ready after Reset");
+        CompareRuns("Trima", first, Drive_Trima(ind));
+    }
+    private static List<double[]> Drive_Trin(Wickra.Trin ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
+            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("Trima", got);
+        return got;
     }
     [Fact]
     public void Golden_Trin()
     {
         using var ind = new Wickra.Trin();
         Assert.Equal("Trin", ind.Name());
+        Compare("Trin", Drive_Trin(ind));
+    }
+    [Fact]
+    public void Lifecycle_Trin()
+    {
+        using var ind = new Wickra.Trin();
+        Assert.False(ind.IsReady(), "Trin: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Trin: warmup period must be >= 1");
+        var first = Drive_Trin(ind);
+        Assert.True(ind.IsReady(), "Trin: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Trin: still ready after Reset");
+        CompareRuns("Trin", first, Drive_Trin(ind));
+    }
+    private static List<double[]> Drive_TripleTopBottom(Wickra.TripleTopBottom ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            var (ch, vo, nh, nl, am, ob) = CrossLists(r);
-            got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Trin", got);
+        return got;
     }
     [Fact]
     public void Golden_TripleTopBottom()
     {
         using var ind = new Wickra.TripleTopBottom();
         Assert.Equal("TripleTopBottom", ind.Name());
+        Compare("TripleTopBottom", Drive_TripleTopBottom(ind));
+    }
+    [Fact]
+    public void Lifecycle_TripleTopBottom()
+    {
+        using var ind = new Wickra.TripleTopBottom();
+        Assert.False(ind.IsReady(), "TripleTopBottom: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TripleTopBottom: warmup period must be >= 1");
+        var first = Drive_TripleTopBottom(ind);
+        Assert.True(ind.IsReady(), "TripleTopBottom: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TripleTopBottom: still ready after Reset");
+        CompareRuns("TripleTopBottom", first, Drive_TripleTopBottom(ind));
+    }
+    private static List<double[]> Drive_Tristar(Wickra.Tristar ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TripleTopBottom", got);
+        return got;
     }
     [Fact]
     public void Golden_Tristar()
     {
         using var ind = new Wickra.Tristar();
         Assert.Equal("Tristar", ind.Name());
+        Compare("Tristar", Drive_Tristar(ind));
+    }
+    [Fact]
+    public void Lifecycle_Tristar()
+    {
+        using var ind = new Wickra.Tristar();
+        Assert.False(ind.IsReady(), "Tristar: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tristar: warmup period must be >= 1");
+        var first = Drive_Tristar(ind);
+        Assert.True(ind.IsReady(), "Tristar: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tristar: still ready after Reset");
+        CompareRuns("Tristar", first, Drive_Tristar(ind));
+    }
+    private static List<double[]> Drive_Trix(Wickra.Trix ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Tristar", got);
+        return got;
     }
     [Fact]
     public void Golden_Trix()
     {
         using var ind = new Wickra.Trix(14);
         Assert.Equal("TRIX", ind.Name());
+        Compare("Trix", Drive_Trix(ind));
+    }
+    [Fact]
+    public void Lifecycle_Trix()
+    {
+        using var ind = new Wickra.Trix(14);
+        Assert.False(ind.IsReady(), "Trix: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Trix: warmup period must be >= 1");
+        var first = Drive_Trix(ind);
+        Assert.True(ind.IsReady(), "Trix: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Trix: still ready after Reset");
+        CompareRuns("Trix", first, Drive_Trix(ind));
+    }
+    private static List<double[]> Drive_TrueRange(Wickra.TrueRange ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Trix", got);
+        return got;
     }
     [Fact]
     public void Golden_TrueRange()
     {
         using var ind = new Wickra.TrueRange();
         Assert.Equal("TrueRange", ind.Name());
+        Compare("TrueRange", Drive_TrueRange(ind));
+    }
+    [Fact]
+    public void Lifecycle_TrueRange()
+    {
+        using var ind = new Wickra.TrueRange();
+        Assert.False(ind.IsReady(), "TrueRange: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TrueRange: warmup period must be >= 1");
+        var first = Drive_TrueRange(ind);
+        Assert.True(ind.IsReady(), "TrueRange: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TrueRange: still ready after Reset");
+        CompareRuns("TrueRange", first, Drive_TrueRange(ind));
+    }
+    private static List<double[]> Drive_Tsf(Wickra.Tsf ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TrueRange", got);
+        return got;
     }
     [Fact]
     public void Golden_Tsf()
     {
         using var ind = new Wickra.Tsf(14);
         Assert.Equal("TSF", ind.Name());
+        Compare("Tsf", Drive_Tsf(ind));
+    }
+    [Fact]
+    public void Lifecycle_Tsf()
+    {
+        using var ind = new Wickra.Tsf(14);
+        Assert.False(ind.IsReady(), "Tsf: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tsf: warmup period must be >= 1");
+        var first = Drive_Tsf(ind);
+        Assert.True(ind.IsReady(), "Tsf: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tsf: still ready after Reset");
+        CompareRuns("Tsf", first, Drive_Tsf(ind));
+    }
+    private static List<double[]> Drive_TsfOscillator(Wickra.TsfOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Tsf", got);
+        return got;
     }
     [Fact]
     public void Golden_TsfOscillator()
     {
         using var ind = new Wickra.TsfOscillator(14);
         Assert.Equal("TsfOscillator", ind.Name());
+        Compare("TsfOscillator", Drive_TsfOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_TsfOscillator()
+    {
+        using var ind = new Wickra.TsfOscillator(14);
+        Assert.False(ind.IsReady(), "TsfOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TsfOscillator: warmup period must be >= 1");
+        var first = Drive_TsfOscillator(ind);
+        Assert.True(ind.IsReady(), "TsfOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TsfOscillator: still ready after Reset");
+        CompareRuns("TsfOscillator", first, Drive_TsfOscillator(ind));
+    }
+    private static List<double[]> Drive_Tsi(Wickra.Tsi ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TsfOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_Tsi()
     {
         using var ind = new Wickra.Tsi(3, 7);
         Assert.Equal("TSI", ind.Name());
+        Compare("Tsi", Drive_Tsi(ind));
+    }
+    [Fact]
+    public void Lifecycle_Tsi()
+    {
+        using var ind = new Wickra.Tsi(3, 7);
+        Assert.False(ind.IsReady(), "Tsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tsi: warmup period must be >= 1");
+        var first = Drive_Tsi(ind);
+        Assert.True(ind.IsReady(), "Tsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tsi: still ready after Reset");
+        CompareRuns("Tsi", first, Drive_Tsi(ind));
+    }
+    private static List<double[]> Drive_Tsv(Wickra.Tsv ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Tsi", got);
+        return got;
     }
     [Fact]
     public void Golden_Tsv()
     {
         using var ind = new Wickra.Tsv(14);
         Assert.Equal("TSV", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Tsv", got);
+        Compare("Tsv", Drive_Tsv(ind));
     }
     [Fact]
-    public void Golden_TtmSqueeze()
+    public void Lifecycle_Tsv()
     {
-        using var ind = new Wickra.TtmSqueeze(14, 2.0, 0.5);
-        Assert.Equal("TtmSqueeze", ind.Name());
+        using var ind = new Wickra.Tsv(14);
+        Assert.False(ind.IsReady(), "Tsv: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tsv: warmup period must be >= 1");
+        var first = Drive_Tsv(ind);
+        Assert.True(ind.IsReady(), "Tsv: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tsv: still ready after Reset");
+        CompareRuns("Tsv", first, Drive_Tsv(ind));
+    }
+    private static List<double[]> Drive_TtmSqueeze(Wickra.TtmSqueeze ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("TtmSqueeze", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_TtmSqueeze()
+    {
+        using var ind = new Wickra.TtmSqueeze(14, 2.0, 0.5);
+        Assert.Equal("TtmSqueeze", ind.Name());
+        Compare("TtmSqueeze", Drive_TtmSqueeze(ind));
+    }
+    [Fact]
+    public void Lifecycle_TtmSqueeze()
+    {
+        using var ind = new Wickra.TtmSqueeze(14, 2.0, 0.5);
+        Assert.False(ind.IsReady(), "TtmSqueeze: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TtmSqueeze: warmup period must be >= 1");
+        var first = Drive_TtmSqueeze(ind);
+        Assert.True(ind.IsReady(), "TtmSqueeze: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TtmSqueeze: still ready after Reset");
+        CompareRuns("TtmSqueeze", first, Drive_TtmSqueeze(ind));
+    }
+    private static List<double[]> Drive_TtmTrend(Wickra.TtmTrend ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_TtmTrend()
     {
         using var ind = new Wickra.TtmTrend(14);
         Assert.Equal("TtmTrend", ind.Name());
+        Compare("TtmTrend", Drive_TtmTrend(ind));
+    }
+    [Fact]
+    public void Lifecycle_TtmTrend()
+    {
+        using var ind = new Wickra.TtmTrend(14);
+        Assert.False(ind.IsReady(), "TtmTrend: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TtmTrend: warmup period must be >= 1");
+        var first = Drive_TtmTrend(ind);
+        Assert.True(ind.IsReady(), "TtmTrend: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TtmTrend: still ready after Reset");
+        CompareRuns("TtmTrend", first, Drive_TtmTrend(ind));
+    }
+    private static List<double[]> Drive_TurnOfMonth(Wickra.TurnOfMonth ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TtmTrend", got);
+        return got;
     }
     [Fact]
     public void Golden_TurnOfMonth()
     {
         using var ind = new Wickra.TurnOfMonth(3u, 3u, 0);
         Assert.Equal("TurnOfMonth", ind.Name());
+        Compare("TurnOfMonth", Drive_TurnOfMonth(ind));
+    }
+    [Fact]
+    public void Lifecycle_TurnOfMonth()
+    {
+        using var ind = new Wickra.TurnOfMonth(3u, 3u, 0);
+        Assert.False(ind.IsReady(), "TurnOfMonth: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TurnOfMonth: warmup period must be >= 1");
+        var first = Drive_TurnOfMonth(ind);
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TurnOfMonth: still ready after Reset");
+        CompareRuns("TurnOfMonth", first, Drive_TurnOfMonth(ind));
+    }
+    private static List<double[]> Drive_Tweezer(Wickra.Tweezer ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TurnOfMonth", got);
+        return got;
     }
     [Fact]
     public void Golden_Tweezer()
     {
         using var ind = new Wickra.Tweezer();
         Assert.Equal("Tweezer", ind.Name());
+        Compare("Tweezer", Drive_Tweezer(ind));
+    }
+    [Fact]
+    public void Lifecycle_Tweezer()
+    {
+        using var ind = new Wickra.Tweezer();
+        Assert.False(ind.IsReady(), "Tweezer: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Tweezer: warmup period must be >= 1");
+        var first = Drive_Tweezer(ind);
+        Assert.True(ind.IsReady(), "Tweezer: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Tweezer: still ready after Reset");
+        CompareRuns("Tweezer", first, Drive_Tweezer(ind));
+    }
+    private static List<double[]> Drive_TwiggsMoneyFlow(Wickra.TwiggsMoneyFlow ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Tweezer", got);
+        return got;
     }
     [Fact]
     public void Golden_TwiggsMoneyFlow()
     {
         using var ind = new Wickra.TwiggsMoneyFlow(14);
         Assert.Equal("TwiggsMoneyFlow", ind.Name());
+        Compare("TwiggsMoneyFlow", Drive_TwiggsMoneyFlow(ind));
+    }
+    [Fact]
+    public void Lifecycle_TwiggsMoneyFlow()
+    {
+        using var ind = new Wickra.TwiggsMoneyFlow(14);
+        Assert.False(ind.IsReady(), "TwiggsMoneyFlow: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TwiggsMoneyFlow: warmup period must be >= 1");
+        var first = Drive_TwiggsMoneyFlow(ind);
+        Assert.True(ind.IsReady(), "TwiggsMoneyFlow: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TwiggsMoneyFlow: still ready after Reset");
+        CompareRuns("TwiggsMoneyFlow", first, Drive_TwiggsMoneyFlow(ind));
+    }
+    private static List<double[]> Drive_TwoCrows(Wickra.TwoCrows ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TwiggsMoneyFlow", got);
+        return got;
     }
     [Fact]
     public void Golden_TwoCrows()
     {
         using var ind = new Wickra.TwoCrows();
         Assert.Equal("TwoCrows", ind.Name());
+        Compare("TwoCrows", Drive_TwoCrows(ind));
+    }
+    [Fact]
+    public void Lifecycle_TwoCrows()
+    {
+        using var ind = new Wickra.TwoCrows();
+        Assert.False(ind.IsReady(), "TwoCrows: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TwoCrows: warmup period must be >= 1");
+        var first = Drive_TwoCrows(ind);
+        Assert.True(ind.IsReady(), "TwoCrows: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TwoCrows: still ready after Reset");
+        CompareRuns("TwoCrows", first, Drive_TwoCrows(ind));
+    }
+    private static List<double[]> Drive_TypicalPrice(Wickra.TypicalPrice ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("TwoCrows", got);
+        return got;
     }
     [Fact]
     public void Golden_TypicalPrice()
     {
         using var ind = new Wickra.TypicalPrice();
         Assert.Equal("TypicalPrice", ind.Name());
+        Compare("TypicalPrice", Drive_TypicalPrice(ind));
+    }
+    [Fact]
+    public void Lifecycle_TypicalPrice()
+    {
+        using var ind = new Wickra.TypicalPrice();
+        Assert.False(ind.IsReady(), "TypicalPrice: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "TypicalPrice: warmup period must be >= 1");
+        var first = Drive_TypicalPrice(ind);
+        Assert.True(ind.IsReady(), "TypicalPrice: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "TypicalPrice: still ready after Reset");
+        CompareRuns("TypicalPrice", first, Drive_TypicalPrice(ind));
+    }
+    private static List<double[]> Drive_UlcerIndex(Wickra.UlcerIndex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("TypicalPrice", got);
+        return got;
     }
     [Fact]
     public void Golden_UlcerIndex()
     {
         using var ind = new Wickra.UlcerIndex(14);
         Assert.Equal("UlcerIndex", ind.Name());
+        Compare("UlcerIndex", Drive_UlcerIndex(ind));
+    }
+    [Fact]
+    public void Lifecycle_UlcerIndex()
+    {
+        using var ind = new Wickra.UlcerIndex(14);
+        Assert.False(ind.IsReady(), "UlcerIndex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UlcerIndex: warmup period must be >= 1");
+        var first = Drive_UlcerIndex(ind);
+        Assert.True(ind.IsReady(), "UlcerIndex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UlcerIndex: still ready after Reset");
+        CompareRuns("UlcerIndex", first, Drive_UlcerIndex(ind));
+    }
+    private static List<double[]> Drive_UltimateOscillator(Wickra.UltimateOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("UlcerIndex", got);
+        return got;
     }
     [Fact]
     public void Golden_UltimateOscillator()
     {
         using var ind = new Wickra.UltimateOscillator(3, 7, 14);
         Assert.Equal("UltimateOscillator", ind.Name());
+        Compare("UltimateOscillator", Drive_UltimateOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_UltimateOscillator()
+    {
+        using var ind = new Wickra.UltimateOscillator(3, 7, 14);
+        Assert.False(ind.IsReady(), "UltimateOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UltimateOscillator: warmup period must be >= 1");
+        var first = Drive_UltimateOscillator(ind);
+        Assert.True(ind.IsReady(), "UltimateOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UltimateOscillator: still ready after Reset");
+        CompareRuns("UltimateOscillator", first, Drive_UltimateOscillator(ind));
+    }
+    private static List<double[]> Drive_UniqueThreeRiver(Wickra.UniqueThreeRiver ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("UltimateOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_UniqueThreeRiver()
     {
         using var ind = new Wickra.UniqueThreeRiver();
         Assert.Equal("UniqueThreeRiver", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("UniqueThreeRiver", got);
+        Compare("UniqueThreeRiver", Drive_UniqueThreeRiver(ind));
     }
     [Fact]
-    public void Golden_UniversalOscillator()
+    public void Lifecycle_UniqueThreeRiver()
     {
-        using var ind = new Wickra.UniversalOscillator(14);
-        Assert.Equal("UniversalOscillator", ind.Name());
+        using var ind = new Wickra.UniqueThreeRiver();
+        Assert.False(ind.IsReady(), "UniqueThreeRiver: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UniqueThreeRiver: warmup period must be >= 1");
+        var first = Drive_UniqueThreeRiver(ind);
+        Assert.True(ind.IsReady(), "UniqueThreeRiver: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UniqueThreeRiver: still ready after Reset");
+        CompareRuns("UniqueThreeRiver", first, Drive_UniqueThreeRiver(ind));
+    }
+    private static List<double[]> Drive_UniversalOscillator(Wickra.UniversalOscillator ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("UniversalOscillator", got);
+        return got;
     }
     [Fact]
-    public void Golden_UpDownVolumeRatio()
+    public void Golden_UniversalOscillator()
     {
-        using var ind = new Wickra.UpDownVolumeRatio();
-        Assert.Equal("UpDownVolumeRatio", ind.Name());
+        using var ind = new Wickra.UniversalOscillator(14);
+        Assert.Equal("UniversalOscillator", ind.Name());
+        Compare("UniversalOscillator", Drive_UniversalOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_UniversalOscillator()
+    {
+        using var ind = new Wickra.UniversalOscillator(14);
+        Assert.False(ind.IsReady(), "UniversalOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UniversalOscillator: warmup period must be >= 1");
+        var first = Drive_UniversalOscillator(ind);
+        Assert.True(ind.IsReady(), "UniversalOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UniversalOscillator: still ready after Reset");
+        CompareRuns("UniversalOscillator", first, Drive_UniversalOscillator(ind));
+    }
+    private static List<double[]> Drive_UpDownVolumeRatio(Wickra.UpDownVolumeRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6320,195 +13795,431 @@ public class GoldenAllTests
             var (ch, vo, nh, nl, am, ob) = CrossLists(r);
             got.Add(new[] { ind.Update(ch, vo, nh, nl, am, ob, i) });
         }
-        Compare("UpDownVolumeRatio", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_UpDownVolumeRatio()
+    {
+        using var ind = new Wickra.UpDownVolumeRatio();
+        Assert.Equal("UpDownVolumeRatio", ind.Name());
+        Compare("UpDownVolumeRatio", Drive_UpDownVolumeRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_UpDownVolumeRatio()
+    {
+        using var ind = new Wickra.UpDownVolumeRatio();
+        Assert.False(ind.IsReady(), "UpDownVolumeRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UpDownVolumeRatio: warmup period must be >= 1");
+        var first = Drive_UpDownVolumeRatio(ind);
+        Assert.True(ind.IsReady(), "UpDownVolumeRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UpDownVolumeRatio: still ready after Reset");
+        CompareRuns("UpDownVolumeRatio", first, Drive_UpDownVolumeRatio(ind));
+    }
+    private static List<double[]> Drive_UpsideGapThreeMethods(Wickra.UpsideGapThreeMethods ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_UpsideGapThreeMethods()
     {
         using var ind = new Wickra.UpsideGapThreeMethods();
         Assert.Equal("UpsideGapThreeMethods", ind.Name());
+        Compare("UpsideGapThreeMethods", Drive_UpsideGapThreeMethods(ind));
+    }
+    [Fact]
+    public void Lifecycle_UpsideGapThreeMethods()
+    {
+        using var ind = new Wickra.UpsideGapThreeMethods();
+        Assert.False(ind.IsReady(), "UpsideGapThreeMethods: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UpsideGapThreeMethods: warmup period must be >= 1");
+        var first = Drive_UpsideGapThreeMethods(ind);
+        Assert.True(ind.IsReady(), "UpsideGapThreeMethods: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UpsideGapThreeMethods: still ready after Reset");
+        CompareRuns("UpsideGapThreeMethods", first, Drive_UpsideGapThreeMethods(ind));
+    }
+    private static List<double[]> Drive_UpsideGapTwoCrows(Wickra.UpsideGapTwoCrows ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("UpsideGapThreeMethods", got);
+        return got;
     }
     [Fact]
     public void Golden_UpsideGapTwoCrows()
     {
         using var ind = new Wickra.UpsideGapTwoCrows();
         Assert.Equal("UpsideGapTwoCrows", ind.Name());
+        Compare("UpsideGapTwoCrows", Drive_UpsideGapTwoCrows(ind));
+    }
+    [Fact]
+    public void Lifecycle_UpsideGapTwoCrows()
+    {
+        using var ind = new Wickra.UpsideGapTwoCrows();
+        Assert.False(ind.IsReady(), "UpsideGapTwoCrows: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UpsideGapTwoCrows: warmup period must be >= 1");
+        var first = Drive_UpsideGapTwoCrows(ind);
+        Assert.True(ind.IsReady(), "UpsideGapTwoCrows: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UpsideGapTwoCrows: still ready after Reset");
+        CompareRuns("UpsideGapTwoCrows", first, Drive_UpsideGapTwoCrows(ind));
+    }
+    private static List<double[]> Drive_UpsidePotentialRatio(Wickra.UpsidePotentialRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("UpsideGapTwoCrows", got);
+        return got;
     }
     [Fact]
     public void Golden_UpsidePotentialRatio()
     {
         using var ind = new Wickra.UpsidePotentialRatio(14, 2.0);
         Assert.Equal("UpsidePotentialRatio", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("UpsidePotentialRatio", got);
+        Compare("UpsidePotentialRatio", Drive_UpsidePotentialRatio(ind));
     }
     [Fact]
-    public void Golden_ValueArea()
+    public void Lifecycle_UpsidePotentialRatio()
     {
-        using var ind = new Wickra.ValueArea(20, 50, 0.7);
-        Assert.Equal("ValueArea", ind.Name());
+        using var ind = new Wickra.UpsidePotentialRatio(14, 2.0);
+        Assert.False(ind.IsReady(), "UpsidePotentialRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "UpsidePotentialRatio: warmup period must be >= 1");
+        var first = Drive_UpsidePotentialRatio(ind);
+        Assert.True(ind.IsReady(), "UpsidePotentialRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "UpsidePotentialRatio: still ready after Reset");
+        CompareRuns("UpsidePotentialRatio", first, Drive_UpsidePotentialRatio(ind));
+    }
+    private static List<double[]> Drive_ValueArea(Wickra.ValueArea ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("ValueArea", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_ValueArea()
+    {
+        using var ind = new Wickra.ValueArea(20, 50, 0.7);
+        Assert.Equal("ValueArea", ind.Name());
+        Compare("ValueArea", Drive_ValueArea(ind));
+    }
+    [Fact]
+    public void Lifecycle_ValueArea()
+    {
+        using var ind = new Wickra.ValueArea(20, 50, 0.7);
+        Assert.False(ind.IsReady(), "ValueArea: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ValueArea: warmup period must be >= 1");
+        var first = Drive_ValueArea(ind);
+        Assert.True(ind.IsReady(), "ValueArea: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ValueArea: still ready after Reset");
+        CompareRuns("ValueArea", first, Drive_ValueArea(ind));
+    }
+    private static List<double[]> Drive_ValueAtRisk(Wickra.ValueAtRisk ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_ValueAtRisk()
     {
         using var ind = new Wickra.ValueAtRisk(20, 0.95);
         Assert.Equal("ValueAtRisk", ind.Name());
+        Compare("ValueAtRisk", Drive_ValueAtRisk(ind));
+    }
+    [Fact]
+    public void Lifecycle_ValueAtRisk()
+    {
+        using var ind = new Wickra.ValueAtRisk(20, 0.95);
+        Assert.False(ind.IsReady(), "ValueAtRisk: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ValueAtRisk: warmup period must be >= 1");
+        var first = Drive_ValueAtRisk(ind);
+        Assert.True(ind.IsReady(), "ValueAtRisk: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ValueAtRisk: still ready after Reset");
+        CompareRuns("ValueAtRisk", first, Drive_ValueAtRisk(ind));
+    }
+    private static List<double[]> Drive_Variance(Wickra.Variance ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("ValueAtRisk", got);
+        return got;
     }
     [Fact]
     public void Golden_Variance()
     {
         using var ind = new Wickra.Variance(14);
         Assert.Equal("Variance", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("Variance", got);
+        Compare("Variance", Drive_Variance(ind));
     }
     [Fact]
-    public void Golden_VarianceRatio()
+    public void Lifecycle_Variance()
     {
-        using var ind = new Wickra.VarianceRatio(60, 2);
-        Assert.Equal("VarianceRatio", ind.Name());
+        using var ind = new Wickra.Variance(14);
+        Assert.False(ind.IsReady(), "Variance: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Variance: warmup period must be >= 1");
+        var first = Drive_Variance(ind);
+        Assert.True(ind.IsReady(), "Variance: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Variance: still ready after Reset");
+        CompareRuns("Variance", first, Drive_Variance(ind));
+    }
+    private static List<double[]> Drive_VarianceRatio(Wickra.VarianceRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[0]) });
         }
-        Compare("VarianceRatio", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_VarianceRatio()
+    {
+        using var ind = new Wickra.VarianceRatio(60, 2);
+        Assert.Equal("VarianceRatio", ind.Name());
+        Compare("VarianceRatio", Drive_VarianceRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_VarianceRatio()
+    {
+        using var ind = new Wickra.VarianceRatio(60, 2);
+        Assert.False(ind.IsReady(), "VarianceRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VarianceRatio: warmup period must be >= 1");
+        var first = Drive_VarianceRatio(ind);
+        Assert.True(ind.IsReady(), "VarianceRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VarianceRatio: still ready after Reset");
+        CompareRuns("VarianceRatio", first, Drive_VarianceRatio(ind));
+    }
+    private static List<double[]> Drive_VerticalHorizontalFilter(Wickra.VerticalHorizontalFilter ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[3]) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_VerticalHorizontalFilter()
     {
         using var ind = new Wickra.VerticalHorizontalFilter(14);
         Assert.Equal("VerticalHorizontalFilter", ind.Name());
+        Compare("VerticalHorizontalFilter", Drive_VerticalHorizontalFilter(ind));
+    }
+    [Fact]
+    public void Lifecycle_VerticalHorizontalFilter()
+    {
+        using var ind = new Wickra.VerticalHorizontalFilter(14);
+        Assert.False(ind.IsReady(), "VerticalHorizontalFilter: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VerticalHorizontalFilter: warmup period must be >= 1");
+        var first = Drive_VerticalHorizontalFilter(ind);
+        Assert.True(ind.IsReady(), "VerticalHorizontalFilter: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VerticalHorizontalFilter: still ready after Reset");
+        CompareRuns("VerticalHorizontalFilter", first, Drive_VerticalHorizontalFilter(ind));
+    }
+    private static List<double[]> Drive_Vidya(Wickra.Vidya ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("VerticalHorizontalFilter", got);
+        return got;
     }
     [Fact]
     public void Golden_Vidya()
     {
         using var ind = new Wickra.Vidya(3, 7);
         Assert.Equal("VIDYA", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("Vidya", got);
+        Compare("Vidya", Drive_Vidya(ind));
     }
     [Fact]
-    public void Golden_VolatilityCone()
+    public void Lifecycle_Vidya()
     {
-        using var ind = new Wickra.VolatilityCone(3, 7);
-        Assert.Equal("VolatilityCone", ind.Name());
+        using var ind = new Wickra.Vidya(3, 7);
+        Assert.False(ind.IsReady(), "Vidya: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Vidya: warmup period must be >= 1");
+        var first = Drive_Vidya(ind);
+        Assert.True(ind.IsReady(), "Vidya: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Vidya: still ready after Reset");
+        CompareRuns("Vidya", first, Drive_Vidya(ind));
+    }
+    private static List<double[]> Drive_VolatilityCone(Wickra.VolatilityCone ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 5));
         }
-        Compare("VolatilityCone", got);
+        return got;
     }
     [Fact]
-    public void Golden_VolatilityOfVolatility()
+    public void Golden_VolatilityCone()
     {
-        using var ind = new Wickra.VolatilityOfVolatility(3, 7);
-        Assert.Equal("VolatilityOfVolatility", ind.Name());
+        using var ind = new Wickra.VolatilityCone(3, 7);
+        Assert.Equal("VolatilityCone", ind.Name());
+        Compare("VolatilityCone", Drive_VolatilityCone(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolatilityCone()
+    {
+        using var ind = new Wickra.VolatilityCone(3, 7);
+        Assert.False(ind.IsReady(), "VolatilityCone: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolatilityCone: warmup period must be >= 1");
+        var first = Drive_VolatilityCone(ind);
+        Assert.True(ind.IsReady(), "VolatilityCone: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolatilityCone: still ready after Reset");
+        CompareRuns("VolatilityCone", first, Drive_VolatilityCone(ind));
+    }
+    private static List<double[]> Drive_VolatilityOfVolatility(Wickra.VolatilityOfVolatility ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("VolatilityOfVolatility", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_VolatilityOfVolatility()
+    {
+        using var ind = new Wickra.VolatilityOfVolatility(3, 7);
+        Assert.Equal("VolatilityOfVolatility", ind.Name());
+        Compare("VolatilityOfVolatility", Drive_VolatilityOfVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolatilityOfVolatility()
+    {
+        using var ind = new Wickra.VolatilityOfVolatility(3, 7);
+        Assert.False(ind.IsReady(), "VolatilityOfVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolatilityOfVolatility: warmup period must be >= 1");
+        var first = Drive_VolatilityOfVolatility(ind);
+        Assert.True(ind.IsReady(), "VolatilityOfVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolatilityOfVolatility: still ready after Reset");
+        CompareRuns("VolatilityOfVolatility", first, Drive_VolatilityOfVolatility(ind));
+    }
+    private static List<double[]> Drive_VolatilityRatio(Wickra.VolatilityRatio ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_VolatilityRatio()
     {
         using var ind = new Wickra.VolatilityRatio(14);
         Assert.Equal("VolatilityRatio", ind.Name());
+        Compare("VolatilityRatio", Drive_VolatilityRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolatilityRatio()
+    {
+        using var ind = new Wickra.VolatilityRatio(14);
+        Assert.False(ind.IsReady(), "VolatilityRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolatilityRatio: warmup period must be >= 1");
+        var first = Drive_VolatilityRatio(ind);
+        Assert.True(ind.IsReady(), "VolatilityRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolatilityRatio: still ready after Reset");
+        CompareRuns("VolatilityRatio", first, Drive_VolatilityRatio(ind));
+    }
+    private static List<double[]> Drive_VoltyStop(Wickra.VoltyStop ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("VolatilityRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_VoltyStop()
     {
         using var ind = new Wickra.VoltyStop(14, 2.0);
         Assert.Equal("VoltyStop", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("VoltyStop", got);
+        Compare("VoltyStop", Drive_VoltyStop(ind));
     }
     [Fact]
-    public void Golden_VolumeBars()
+    public void Lifecycle_VoltyStop()
     {
-        using var ind = new Wickra.VolumeBars(500.0);
-        Assert.Equal("VolumeBars", ind.Name());
+        using var ind = new Wickra.VoltyStop(14, 2.0);
+        Assert.False(ind.IsReady(), "VoltyStop: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VoltyStop: warmup period must be >= 1");
+        var first = Drive_VoltyStop(ind);
+        Assert.True(ind.IsReady(), "VoltyStop: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VoltyStop: still ready after Reset");
+        CompareRuns("VoltyStop", first, Drive_VoltyStop(ind));
+    }
+    private static List<double[]> Drive_VolumeBars(Wickra.VolumeBars ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0)));
         }
-        Compare("VolumeBars", got);
+        return got;
     }
     [Fact]
-    public void Golden_VolumeByTimeProfile()
+    public void Golden_VolumeBars()
     {
-        using var ind = new Wickra.VolumeByTimeProfile(24, 0);
-        Assert.Equal("VolumeByTimeProfile", ind.Name());
+        using var ind = new Wickra.VolumeBars(500.0);
+        Assert.Equal("VolumeBars", ind.Name());
+        Compare("VolumeBars", Drive_VolumeBars(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolumeBars()
+    {
+        using var ind = new Wickra.VolumeBars(500.0);
+        var first = Drive_VolumeBars(ind);
+        ind.Reset();
+        CompareRuns("VolumeBars", first, Drive_VolumeBars(ind));
+    }
+    private static List<double[]> Drive_VolumeByTimeProfile(Wickra.VolumeByTimeProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
@@ -6516,383 +14227,866 @@ public class GoldenAllTests
             var bins = ind.Update(r[0], r[1], r[2], r[3], r[4], i);
             got.Add(bins ?? NanRow(24));
         }
-        Compare("VolumeByTimeProfile", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_VolumeByTimeProfile()
+    {
+        using var ind = new Wickra.VolumeByTimeProfile(24, 0);
+        Assert.Equal("VolumeByTimeProfile", ind.Name());
+        Compare("VolumeByTimeProfile", Drive_VolumeByTimeProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolumeByTimeProfile()
+    {
+        using var ind = new Wickra.VolumeByTimeProfile(24, 0);
+        Assert.False(ind.IsReady(), "VolumeByTimeProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumeByTimeProfile: warmup period must be >= 1");
+        var first = Drive_VolumeByTimeProfile(ind);
+        Assert.True(ind.IsReady(), "VolumeByTimeProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumeByTimeProfile: still ready after Reset");
+        CompareRuns("VolumeByTimeProfile", first, Drive_VolumeByTimeProfile(ind));
+    }
+    private static List<double[]> Drive_VolumeOscillator(Wickra.VolumeOscillator ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_VolumeOscillator()
     {
         using var ind = new Wickra.VolumeOscillator(3, 7);
         Assert.Equal("VolumeOscillator", ind.Name());
+        Compare("VolumeOscillator", Drive_VolumeOscillator(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolumeOscillator()
+    {
+        using var ind = new Wickra.VolumeOscillator(3, 7);
+        Assert.False(ind.IsReady(), "VolumeOscillator: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumeOscillator: warmup period must be >= 1");
+        var first = Drive_VolumeOscillator(ind);
+        Assert.True(ind.IsReady(), "VolumeOscillator: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumeOscillator: still ready after Reset");
+        CompareRuns("VolumeOscillator", first, Drive_VolumeOscillator(ind));
+    }
+    private static List<double[]> Drive_VolumePriceTrend(Wickra.VolumePriceTrend ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("VolumeOscillator", got);
+        return got;
     }
     [Fact]
     public void Golden_VolumePriceTrend()
     {
         using var ind = new Wickra.VolumePriceTrend();
         Assert.Equal("VPT", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("VolumePriceTrend", got);
+        Compare("VolumePriceTrend", Drive_VolumePriceTrend(ind));
     }
     [Fact]
-    public void Golden_VolumeProfile()
+    public void Lifecycle_VolumePriceTrend()
     {
-        using var ind = new Wickra.VolumeProfile(20, 50);
-        Assert.Equal("VolumeProfile", ind.Name());
+        using var ind = new Wickra.VolumePriceTrend();
+        Assert.False(ind.IsReady(), "VolumePriceTrend: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumePriceTrend: warmup period must be >= 1");
+        var first = Drive_VolumePriceTrend(ind);
+        Assert.True(ind.IsReady(), "VolumePriceTrend: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumePriceTrend: still ready after Reset");
+        CompareRuns("VolumePriceTrend", first, Drive_VolumePriceTrend(ind));
+    }
+    private static List<double[]> Drive_VolumeProfile(Wickra.VolumeProfile ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 52));
         }
-        Compare("VolumeProfile", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_VolumeProfile()
+    {
+        using var ind = new Wickra.VolumeProfile(20, 50);
+        Assert.Equal("VolumeProfile", ind.Name());
+        Compare("VolumeProfile", Drive_VolumeProfile(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolumeProfile()
+    {
+        using var ind = new Wickra.VolumeProfile(20, 50);
+        Assert.False(ind.IsReady(), "VolumeProfile: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumeProfile: warmup period must be >= 1");
+        var first = Drive_VolumeProfile(ind);
+        Assert.True(ind.IsReady(), "VolumeProfile: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumeProfile: still ready after Reset");
+        CompareRuns("VolumeProfile", first, Drive_VolumeProfile(ind));
+    }
+    private static List<double[]> Drive_VolumeRsi(Wickra.VolumeRsi ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_VolumeRsi()
     {
         using var ind = new Wickra.VolumeRsi(14);
         Assert.Equal("VolumeRsi", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("VolumeRsi", got);
+        Compare("VolumeRsi", Drive_VolumeRsi(ind));
     }
     [Fact]
-    public void Golden_VolumeWeightedMacd()
+    public void Lifecycle_VolumeRsi()
     {
-        using var ind = new Wickra.VolumeWeightedMacd(3, 7, 14);
-        Assert.Equal("VolumeWeightedMacd", ind.Name());
+        using var ind = new Wickra.VolumeRsi(14);
+        Assert.False(ind.IsReady(), "VolumeRsi: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumeRsi: warmup period must be >= 1");
+        var first = Drive_VolumeRsi(ind);
+        Assert.True(ind.IsReady(), "VolumeRsi: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumeRsi: still ready after Reset");
+        CompareRuns("VolumeRsi", first, Drive_VolumeRsi(ind));
+    }
+    private static List<double[]> Drive_VolumeWeightedMacd(Wickra.VolumeWeightedMacd ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 3));
         }
-        Compare("VolumeWeightedMacd", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_VolumeWeightedMacd()
+    {
+        using var ind = new Wickra.VolumeWeightedMacd(3, 7, 14);
+        Assert.Equal("VolumeWeightedMacd", ind.Name());
+        Compare("VolumeWeightedMacd", Drive_VolumeWeightedMacd(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolumeWeightedMacd()
+    {
+        using var ind = new Wickra.VolumeWeightedMacd(3, 7, 14);
+        Assert.False(ind.IsReady(), "VolumeWeightedMacd: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumeWeightedMacd: warmup period must be >= 1");
+        var first = Drive_VolumeWeightedMacd(ind);
+        Assert.True(ind.IsReady(), "VolumeWeightedMacd: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumeWeightedMacd: still ready after Reset");
+        CompareRuns("VolumeWeightedMacd", first, Drive_VolumeWeightedMacd(ind));
+    }
+    private static List<double[]> Drive_VolumeWeightedSr(Wickra.VolumeWeightedSr ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+        }
+        return got;
     }
     [Fact]
     public void Golden_VolumeWeightedSr()
     {
         using var ind = new Wickra.VolumeWeightedSr(14);
         Assert.Equal("VolumeWeightedSr", ind.Name());
+        Compare("VolumeWeightedSr", Drive_VolumeWeightedSr(ind));
+    }
+    [Fact]
+    public void Lifecycle_VolumeWeightedSr()
+    {
+        using var ind = new Wickra.VolumeWeightedSr(14);
+        Assert.False(ind.IsReady(), "VolumeWeightedSr: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VolumeWeightedSr: warmup period must be >= 1");
+        var first = Drive_VolumeWeightedSr(ind);
+        Assert.True(ind.IsReady(), "VolumeWeightedSr: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VolumeWeightedSr: still ready after Reset");
+        CompareRuns("VolumeWeightedSr", first, Drive_VolumeWeightedSr(ind));
+    }
+    private static List<double[]> Drive_Vortex(Wickra.Vortex ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("VolumeWeightedSr", got);
+        return got;
     }
     [Fact]
     public void Golden_Vortex()
     {
         using var ind = new Wickra.Vortex(14);
         Assert.Equal("Vortex", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
-        }
-        Compare("Vortex", got);
+        Compare("Vortex", Drive_Vortex(ind));
     }
     [Fact]
-    public void Golden_Vpin()
+    public void Lifecycle_Vortex()
     {
-        using var ind = new Wickra.Vpin(5000.0, 10);
-        Assert.Equal("Vpin", ind.Name());
+        using var ind = new Wickra.Vortex(14);
+        Assert.False(ind.IsReady(), "Vortex: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Vortex: warmup period must be >= 1");
+        var first = Drive_Vortex(ind);
+        Assert.True(ind.IsReady(), "Vortex: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Vortex: still ready after Reset");
+        CompareRuns("Vortex", first, Drive_Vortex(ind));
+    }
+    private static List<double[]> Drive_Vpin(Wickra.Vpin ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3], r[4], r[3] >= r[0], i) });
         }
-        Compare("Vpin", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Vpin()
+    {
+        using var ind = new Wickra.Vpin(5000.0, 10);
+        Assert.Equal("Vpin", ind.Name());
+        Compare("Vpin", Drive_Vpin(ind));
+    }
+    [Fact]
+    public void Lifecycle_Vpin()
+    {
+        using var ind = new Wickra.Vpin(5000.0, 10);
+        Assert.False(ind.IsReady(), "Vpin: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Vpin: warmup period must be >= 1");
+        var first = Drive_Vpin(ind);
+        Assert.True(ind.IsReady(), "Vpin: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Vpin: still ready after Reset");
+        CompareRuns("Vpin", first, Drive_Vpin(ind));
+    }
+    private static List<double[]> Drive_Vwap(Wickra.Vwap ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Vwap()
     {
         using var ind = new Wickra.Vwap();
         Assert.Equal("VWAP", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
-        }
-        Compare("Vwap", got);
+        Compare("Vwap", Drive_Vwap(ind));
     }
     [Fact]
-    public void Golden_VwapStdDevBands()
+    public void Lifecycle_Vwap()
     {
-        using var ind = new Wickra.VwapStdDevBands(2.0);
-        Assert.Equal("VwapStdDevBands", ind.Name());
+        using var ind = new Wickra.Vwap();
+        Assert.False(ind.IsReady(), "Vwap: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Vwap: warmup period must be >= 1");
+        var first = Drive_Vwap(ind);
+        Assert.True(ind.IsReady(), "Vwap: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Vwap: still ready after Reset");
+        CompareRuns("Vwap", first, Drive_Vwap(ind));
+    }
+    private static List<double[]> Drive_VwapStdDevBands(Wickra.VwapStdDevBands ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 4));
         }
-        Compare("VwapStdDevBands", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_VwapStdDevBands()
+    {
+        using var ind = new Wickra.VwapStdDevBands(2.0);
+        Assert.Equal("VwapStdDevBands", ind.Name());
+        Compare("VwapStdDevBands", Drive_VwapStdDevBands(ind));
+    }
+    [Fact]
+    public void Lifecycle_VwapStdDevBands()
+    {
+        using var ind = new Wickra.VwapStdDevBands(2.0);
+        Assert.False(ind.IsReady(), "VwapStdDevBands: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "VwapStdDevBands: warmup period must be >= 1");
+        var first = Drive_VwapStdDevBands(ind);
+        Assert.True(ind.IsReady(), "VwapStdDevBands: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "VwapStdDevBands: still ready after Reset");
+        CompareRuns("VwapStdDevBands", first, Drive_VwapStdDevBands(ind));
+    }
+    private static List<double[]> Drive_Vwma(Wickra.Vwma ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_Vwma()
     {
         using var ind = new Wickra.Vwma(14);
         Assert.Equal("VWMA", ind.Name());
+        Compare("Vwma", Drive_Vwma(ind));
+    }
+    [Fact]
+    public void Lifecycle_Vwma()
+    {
+        using var ind = new Wickra.Vwma(14);
+        Assert.False(ind.IsReady(), "Vwma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Vwma: warmup period must be >= 1");
+        var first = Drive_Vwma(ind);
+        Assert.True(ind.IsReady(), "Vwma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Vwma: still ready after Reset");
+        CompareRuns("Vwma", first, Drive_Vwma(ind));
+    }
+    private static List<double[]> Drive_Vzo(Wickra.Vzo ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Vwma", got);
+        return got;
     }
     [Fact]
     public void Golden_Vzo()
     {
         using var ind = new Wickra.Vzo(14);
         Assert.Equal("VZO", ind.Name());
+        Compare("Vzo", Drive_Vzo(ind));
+    }
+    [Fact]
+    public void Lifecycle_Vzo()
+    {
+        using var ind = new Wickra.Vzo(14);
+        Assert.False(ind.IsReady(), "Vzo: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Vzo: warmup period must be >= 1");
+        var first = Drive_Vzo(ind);
+        Assert.True(ind.IsReady(), "Vzo: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Vzo: still ready after Reset");
+        CompareRuns("Vzo", first, Drive_Vzo(ind));
+    }
+    private static List<double[]> Drive_Wad(Wickra.Wad ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Vzo", got);
+        return got;
     }
     [Fact]
     public void Golden_Wad()
     {
         using var ind = new Wickra.Wad();
         Assert.Equal("Wad", ind.Name());
+        Compare("Wad", Drive_Wad(ind));
+    }
+    [Fact]
+    public void Lifecycle_Wad()
+    {
+        using var ind = new Wickra.Wad();
+        Assert.False(ind.IsReady(), "Wad: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Wad: warmup period must be >= 1");
+        var first = Drive_Wad(ind);
+        Assert.True(ind.IsReady(), "Wad: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Wad: still ready after Reset");
+        CompareRuns("Wad", first, Drive_Wad(ind));
+    }
+    private static List<double[]> Drive_WavePm(Wickra.WavePm ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Wad", got);
+        return got;
     }
     [Fact]
     public void Golden_WavePm()
     {
         using var ind = new Wickra.WavePm(3, 7);
         Assert.Equal("WavePm", ind.Name());
+        Compare("WavePm", Drive_WavePm(ind));
+    }
+    [Fact]
+    public void Lifecycle_WavePm()
+    {
+        using var ind = new Wickra.WavePm(3, 7);
+        Assert.False(ind.IsReady(), "WavePm: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WavePm: warmup period must be >= 1");
+        var first = Drive_WavePm(ind);
+        Assert.True(ind.IsReady(), "WavePm: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WavePm: still ready after Reset");
+        CompareRuns("WavePm", first, Drive_WavePm(ind));
+    }
+    private static List<double[]> Drive_WaveTrend(Wickra.WaveTrend ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("WavePm", got);
+        return got;
     }
     [Fact]
     public void Golden_WaveTrend()
     {
         using var ind = new Wickra.WaveTrend(3, 7, 14);
         Assert.Equal("WaveTrend", ind.Name());
+        Compare("WaveTrend", Drive_WaveTrend(ind));
+    }
+    [Fact]
+    public void Lifecycle_WaveTrend()
+    {
+        using var ind = new Wickra.WaveTrend(3, 7, 14);
+        Assert.False(ind.IsReady(), "WaveTrend: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WaveTrend: warmup period must be >= 1");
+        var first = Drive_WaveTrend(ind);
+        Assert.True(ind.IsReady(), "WaveTrend: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WaveTrend: still ready after Reset");
+        CompareRuns("WaveTrend", first, Drive_WaveTrend(ind));
+    }
+    private static List<double[]> Drive_Wedge(Wickra.Wedge ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("WaveTrend", got);
+        return got;
     }
     [Fact]
     public void Golden_Wedge()
     {
         using var ind = new Wickra.Wedge();
         Assert.Equal("Wedge", ind.Name());
+        Compare("Wedge", Drive_Wedge(ind));
+    }
+    [Fact]
+    public void Lifecycle_Wedge()
+    {
+        using var ind = new Wickra.Wedge();
+        Assert.False(ind.IsReady(), "Wedge: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Wedge: warmup period must be >= 1");
+        var first = Drive_Wedge(ind);
+        Assert.True(ind.IsReady(), "Wedge: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Wedge: still ready after Reset");
+        CompareRuns("Wedge", first, Drive_Wedge(ind));
+    }
+    private static List<double[]> Drive_WeightedClose(Wickra.WeightedClose ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("Wedge", got);
+        return got;
     }
     [Fact]
     public void Golden_WeightedClose()
     {
         using var ind = new Wickra.WeightedClose();
         Assert.Equal("WeightedClose", ind.Name());
+        Compare("WeightedClose", Drive_WeightedClose(ind));
+    }
+    [Fact]
+    public void Lifecycle_WeightedClose()
+    {
+        using var ind = new Wickra.WeightedClose();
+        Assert.False(ind.IsReady(), "WeightedClose: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WeightedClose: warmup period must be >= 1");
+        var first = Drive_WeightedClose(ind);
+        Assert.True(ind.IsReady(), "WeightedClose: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WeightedClose: still ready after Reset");
+        CompareRuns("WeightedClose", first, Drive_WeightedClose(ind));
+    }
+    private static List<double[]> Drive_WickRatio(Wickra.WickRatio ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("WeightedClose", got);
+        return got;
     }
     [Fact]
     public void Golden_WickRatio()
     {
         using var ind = new Wickra.WickRatio();
         Assert.Equal("WickRatio", ind.Name());
+        Compare("WickRatio", Drive_WickRatio(ind));
+    }
+    [Fact]
+    public void Lifecycle_WickRatio()
+    {
+        using var ind = new Wickra.WickRatio();
+        Assert.False(ind.IsReady(), "WickRatio: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WickRatio: warmup period must be >= 1");
+        var first = Drive_WickRatio(ind);
+        Assert.True(ind.IsReady(), "WickRatio: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WickRatio: still ready after Reset");
+        CompareRuns("WickRatio", first, Drive_WickRatio(ind));
+    }
+    private static List<double[]> Drive_WilliamsFractals(Wickra.WilliamsFractals ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("WickRatio", got);
+        return got;
     }
     [Fact]
     public void Golden_WilliamsFractals()
     {
         using var ind = new Wickra.WilliamsFractals();
         Assert.Equal("WilliamsFractals", ind.Name());
+        Compare("WilliamsFractals", Drive_WilliamsFractals(ind));
+    }
+    [Fact]
+    public void Lifecycle_WilliamsFractals()
+    {
+        using var ind = new Wickra.WilliamsFractals();
+        Assert.False(ind.IsReady(), "WilliamsFractals: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WilliamsFractals: warmup period must be >= 1");
+        var first = Drive_WilliamsFractals(ind);
+        Assert.True(ind.IsReady(), "WilliamsFractals: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WilliamsFractals: still ready after Reset");
+        CompareRuns("WilliamsFractals", first, Drive_WilliamsFractals(ind));
+    }
+    private static List<double[]> Drive_WilliamsR(Wickra.WilliamsR ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("WilliamsFractals", got);
+        return got;
     }
     [Fact]
     public void Golden_WilliamsR()
     {
         using var ind = new Wickra.WilliamsR(14);
         Assert.Equal("WilliamsR", ind.Name());
+        Compare("WilliamsR", Drive_WilliamsR(ind));
+    }
+    [Fact]
+    public void Lifecycle_WilliamsR()
+    {
+        using var ind = new Wickra.WilliamsR(14);
+        Assert.False(ind.IsReady(), "WilliamsR: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WilliamsR: warmup period must be >= 1");
+        var first = Drive_WilliamsR(ind);
+        Assert.True(ind.IsReady(), "WilliamsR: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WilliamsR: still ready after Reset");
+        CompareRuns("WilliamsR", first, Drive_WilliamsR(ind));
+    }
+    private static List<double[]> Drive_WinRate(Wickra.WinRate ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("WilliamsR", got);
+        return got;
     }
     [Fact]
     public void Golden_WinRate()
     {
         using var ind = new Wickra.WinRate(14);
         Assert.Equal("WinRate", ind.Name());
+        Compare("WinRate", Drive_WinRate(ind));
+    }
+    [Fact]
+    public void Lifecycle_WinRate()
+    {
+        using var ind = new Wickra.WinRate(14);
+        Assert.False(ind.IsReady(), "WinRate: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WinRate: warmup period must be >= 1");
+        var first = Drive_WinRate(ind);
+        Assert.True(ind.IsReady(), "WinRate: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WinRate: still ready after Reset");
+        CompareRuns("WinRate", first, Drive_WinRate(ind));
+    }
+    private static List<double[]> Drive_Wma(Wickra.Wma ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("WinRate", got);
+        return got;
     }
     [Fact]
     public void Golden_Wma()
     {
         using var ind = new Wickra.Wma(14);
         Assert.Equal("WMA", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("Wma", got);
+        Compare("Wma", Drive_Wma(ind));
     }
     [Fact]
-    public void Golden_WoodiePivots()
+    public void Lifecycle_Wma()
     {
-        using var ind = new Wickra.WoodiePivots();
-        Assert.Equal("WoodiePivots", ind.Name());
+        using var ind = new Wickra.Wma(14);
+        Assert.False(ind.IsReady(), "Wma: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Wma: warmup period must be >= 1");
+        var first = Drive_Wma(ind);
+        Assert.True(ind.IsReady(), "Wma: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Wma: still ready after Reset");
+        CompareRuns("Wma", first, Drive_Wma(ind));
+    }
+    private static List<double[]> Drive_WoodiePivots(Wickra.WoodiePivots ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 5));
         }
-        Compare("WoodiePivots", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_WoodiePivots()
+    {
+        using var ind = new Wickra.WoodiePivots();
+        Assert.Equal("WoodiePivots", ind.Name());
+        Compare("WoodiePivots", Drive_WoodiePivots(ind));
+    }
+    [Fact]
+    public void Lifecycle_WoodiePivots()
+    {
+        using var ind = new Wickra.WoodiePivots();
+        Assert.False(ind.IsReady(), "WoodiePivots: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "WoodiePivots: warmup period must be >= 1");
+        var first = Drive_WoodiePivots(ind);
+        Assert.True(ind.IsReady(), "WoodiePivots: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "WoodiePivots: still ready after Reset");
+        CompareRuns("WoodiePivots", first, Drive_WoodiePivots(ind));
+    }
+    private static List<double[]> Drive_YangZhangVolatility(Wickra.YangZhangVolatility ind)
+    {
+        var got = new List<double[]>();
+        for (var i = 0; i < Rows.Length; i++)
+        {
+            var r = Rows[i];
+            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+        }
+        return got;
     }
     [Fact]
     public void Golden_YangZhangVolatility()
     {
         using var ind = new Wickra.YangZhangVolatility(20, 252);
         Assert.Equal("YangZhangVolatility", ind.Name());
+        Compare("YangZhangVolatility", Drive_YangZhangVolatility(ind));
+    }
+    [Fact]
+    public void Lifecycle_YangZhangVolatility()
+    {
+        using var ind = new Wickra.YangZhangVolatility(20, 252);
+        Assert.False(ind.IsReady(), "YangZhangVolatility: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "YangZhangVolatility: warmup period must be >= 1");
+        var first = Drive_YangZhangVolatility(ind);
+        Assert.True(ind.IsReady(), "YangZhangVolatility: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "YangZhangVolatility: still ready after Reset");
+        CompareRuns("YangZhangVolatility", first, Drive_YangZhangVolatility(ind));
+    }
+    private static List<double[]> Drive_YoyoExit(Wickra.YoyoExit ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
         }
-        Compare("YangZhangVolatility", got);
+        return got;
     }
     [Fact]
     public void Golden_YoyoExit()
     {
         using var ind = new Wickra.YoyoExit(14, 2.0);
         Assert.Equal("YoyoExit", ind.Name());
+        Compare("YoyoExit", Drive_YoyoExit(ind));
+    }
+    [Fact]
+    public void Lifecycle_YoyoExit()
+    {
+        using var ind = new Wickra.YoyoExit(14, 2.0);
+        Assert.False(ind.IsReady(), "YoyoExit: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "YoyoExit: warmup period must be >= 1");
+        var first = Drive_YoyoExit(ind);
+        Assert.True(ind.IsReady(), "YoyoExit: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "YoyoExit: still ready after Reset");
+        CompareRuns("YoyoExit", first, Drive_YoyoExit(ind));
+    }
+    private static List<double[]> Drive_ZScore(Wickra.ZScore ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
-            got.Add(new[] { ind.Update(r[0], r[1], r[2], r[3], r[4], i) });
+            got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("YoyoExit", got);
+        return got;
     }
     [Fact]
     public void Golden_ZScore()
     {
         using var ind = new Wickra.ZScore(14);
         Assert.Equal("ZScore", ind.Name());
-        var got = new List<double[]>();
-        for (var i = 0; i < Rows.Length; i++)
-        {
-            var r = Rows[i];
-            got.Add(new[] { ind.Update(r[3]) });
-        }
-        Compare("ZScore", got);
+        Compare("ZScore", Drive_ZScore(ind));
     }
     [Fact]
-    public void Golden_ZeroLagMacd()
+    public void Lifecycle_ZScore()
     {
-        using var ind = new Wickra.ZeroLagMacd(3, 7, 14);
-        Assert.Equal("ZeroLagMACD", ind.Name());
+        using var ind = new Wickra.ZScore(14);
+        Assert.False(ind.IsReady(), "ZScore: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ZScore: warmup period must be >= 1");
+        var first = Drive_ZScore(ind);
+        Assert.True(ind.IsReady(), "ZScore: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ZScore: still ready after Reset");
+        CompareRuns("ZScore", first, Drive_ZScore(ind));
+    }
+    private static List<double[]> Drive_ZeroLagMacd(Wickra.ZeroLagMacd ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[3]), 3));
         }
-        Compare("ZeroLagMacd", got);
+        return got;
     }
     [Fact]
-    public void Golden_ZigZag()
+    public void Golden_ZeroLagMacd()
     {
-        using var ind = new Wickra.ZigZag(0.02);
-        Assert.Equal("ZigZag", ind.Name());
+        using var ind = new Wickra.ZeroLagMacd(3, 7, 14);
+        Assert.Equal("ZeroLagMACD", ind.Name());
+        Compare("ZeroLagMacd", Drive_ZeroLagMacd(ind));
+    }
+    [Fact]
+    public void Lifecycle_ZeroLagMacd()
+    {
+        using var ind = new Wickra.ZeroLagMacd(3, 7, 14);
+        Assert.False(ind.IsReady(), "ZeroLagMacd: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ZeroLagMacd: warmup period must be >= 1");
+        var first = Drive_ZeroLagMacd(ind);
+        Assert.True(ind.IsReady(), "ZeroLagMacd: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ZeroLagMacd: still ready after Reset");
+        CompareRuns("ZeroLagMacd", first, Drive_ZeroLagMacd(ind));
+    }
+    private static List<double[]> Drive_ZigZag(Wickra.ZigZag ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(FlattenNullable(ind.Update(r[0], r[1], r[2], r[3], r[4], i), 2));
         }
-        Compare("ZigZag", got);
+        return got;
     }
     [Fact]
-    public void Golden_Zlema()
+    public void Golden_ZigZag()
     {
-        using var ind = new Wickra.Zlema(14);
-        Assert.Equal("ZLEMA", ind.Name());
+        using var ind = new Wickra.ZigZag(0.02);
+        Assert.Equal("ZigZag", ind.Name());
+        Compare("ZigZag", Drive_ZigZag(ind));
+    }
+    [Fact]
+    public void Lifecycle_ZigZag()
+    {
+        using var ind = new Wickra.ZigZag(0.02);
+        Assert.False(ind.IsReady(), "ZigZag: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "ZigZag: warmup period must be >= 1");
+        var first = Drive_ZigZag(ind);
+        Assert.True(ind.IsReady(), "ZigZag: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "ZigZag: still ready after Reset");
+        CompareRuns("ZigZag", first, Drive_ZigZag(ind));
+    }
+    private static List<double[]> Drive_Zlema(Wickra.Zlema ind)
+    {
         var got = new List<double[]>();
         for (var i = 0; i < Rows.Length; i++)
         {
             var r = Rows[i];
             got.Add(new[] { ind.Update(r[3]) });
         }
-        Compare("Zlema", got);
+        return got;
+    }
+    [Fact]
+    public void Golden_Zlema()
+    {
+        using var ind = new Wickra.Zlema(14);
+        Assert.Equal("ZLEMA", ind.Name());
+        Compare("Zlema", Drive_Zlema(ind));
+    }
+    [Fact]
+    public void Lifecycle_Zlema()
+    {
+        using var ind = new Wickra.Zlema(14);
+        Assert.False(ind.IsReady(), "Zlema: ready before any input");
+        Assert.True(ind.WarmupPeriod() >= 1, "Zlema: warmup period must be >= 1");
+        var first = Drive_Zlema(ind);
+        Assert.True(ind.IsReady(), "Zlema: not ready after the whole series, but the fixture has values");
+        ind.Reset();
+        Assert.False(ind.IsReady(), "Zlema: still ready after Reset");
+        CompareRuns("Zlema", first, Drive_Zlema(ind));
     }
 }

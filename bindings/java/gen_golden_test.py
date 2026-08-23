@@ -277,6 +277,89 @@ class GoldenAllTest {
         };
     }
 
+    /** Drive one indicator over the whole golden input, rows flattened as the fixture stores them. */
+    private static double[][] drive(Spec s, Object ind, Method upd, double[][] rows) throws Exception {
+        double[][] out = new double[rows.length][];
+        for (int i = 0; i < rows.length; i++) {
+            out[i] = row(s, ind, upd, rows[i], i);
+        }
+        return out;
+    }
+
+    /**
+     * Whether the reference fixture holds a single finite value. A few
+     * indicators never emit over this input, and for those "ready once the
+     * series is done" would be the wrong assertion. Reading it off the fixture
+     * beats inferring it at runtime from a row that might legitimately be NaN.
+     */
+    private static boolean fixtureEmits(String canonical) throws IOException {
+        for (double[] r : fixture(canonical)) {
+            for (double v : r) {
+                if (Double.isFinite(v)) return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Equality, not tolerance: the same code over the same input in the same
+     * process has no reason to differ in a single bit, and a tolerance here
+     * would hide exactly the leftover state this is looking for.
+     */
+    private static void assertSameRuns(String canonical, double[][] first, double[][] second) {
+        assertTrue(first.length == second.length,
+            canonical + ": " + first.length + " rows before reset, " + second.length + " after");
+        for (int i = 0; i < first.length; i++) {
+            assertTrue(first[i].length == second[i].length,
+                canonical + " row " + i + ": " + first[i].length + " values before reset, " + second[i].length + " after");
+            for (int k = 0; k < first[i].length; k++) {
+                double before = first[i][k], after = second[i][k];
+                if (Double.isNaN(before) && Double.isNaN(after)) continue;
+                assertTrue(before == after,
+                    canonical + " row " + i + " col " + k + ": " + before + " before reset, " + after + " after");
+            }
+        }
+    }
+
+    /**
+     * The contract around the values, for every indicator: a fresh one is not
+     * ready, a driven one is, and reset really does return it to the start.
+     * The value pass above checks only what an indicator computes, so a reset
+     * that forgot a field replays perfectly clean through it.
+     */
+    @TestFactory
+    List<DynamicTest> lifecycle() throws Exception {
+        double[][] rows = input();
+        List<DynamicTest> tests = new ArrayList<>();
+        for (Spec s : SPECS) {
+            tests.add(dynamicTest(s.canonical(), () -> {
+                Object ind = construct(s);
+                Method upd = updateMethod(ind);
+                // The ten bar builders implement BarBuilder, not Indicator: one
+                // candle can complete any number of bars, so they carry no
+                // warmup or ready state. They do have reset.
+                boolean stateful = !s.arch().startsWith("bars_");
+                Method ready = stateful ? ind.getClass().getMethod("isReady") : null;
+                if (stateful) {
+                    assertTrue(!(boolean) ready.invoke(ind), s.canonical() + ": ready before any input");
+                    int warmup = (int) ind.getClass().getMethod("warmupPeriod").invoke(ind);
+                    assertTrue(warmup >= 1, s.canonical() + ": warmup period " + warmup + ", want >= 1");
+                }
+                double[][] first = drive(s, ind, upd, rows);
+                if (stateful && fixtureEmits(s.canonical())) {
+                    assertTrue((boolean) ready.invoke(ind),
+                        s.canonical() + ": not ready after the whole series, but the fixture has values");
+                }
+                ind.getClass().getMethod("reset").invoke(ind);
+                if (stateful) {
+                    assertTrue(!(boolean) ready.invoke(ind), s.canonical() + ": still ready after reset");
+                }
+                assertSameRuns(s.canonical(), first, drive(s, ind, upd, rows));
+            }));
+        }
+        return tests;
+    }
+
     @TestFactory
     List<DynamicTest> golden() throws Exception {
         double[][] rows = input();

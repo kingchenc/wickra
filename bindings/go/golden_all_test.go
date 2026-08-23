@@ -375,6 +375,32 @@ func compareGolden(t *testing.T, name string, got [][]float64) {
 	}
 }
 
+// compareRuns asserts that Reset really put the indicator back where it started:
+// the second pass over the same input has to reproduce the first. Equality, not
+// tolerance — the same code over the same input on the same machine has no
+// reason to differ in a single bit, and a tolerance here would hide exactly the
+// leftover state this is looking for.
+func compareRuns(t *testing.T, name string, first, second [][]float64) {
+	t.Helper()
+	if len(first) != len(second) {
+		t.Fatalf("%s: %d rows before Reset, %d after", name, len(first), len(second))
+	}
+	for i := range first {
+		if len(first[i]) != len(second[i]) {
+			t.Fatalf("%s row %d: %d values before Reset, %d after", name, i, len(first[i]), len(second[i]))
+		}
+		for k := range first[i] {
+			before, after := first[i][k], second[i][k]
+			if math.IsNaN(before) && math.IsNaN(after) {
+				continue
+			}
+			if before != after {
+				t.Fatalf("%s row %d col %d: %v before Reset, %v after", name, i, k, before, after)
+			}
+		}
+	}
+}
+
 func TestGoldenAll(t *testing.T) {
 	rows := goldenInput(t)
 
@@ -12905,5 +12931,14410 @@ func TestGoldenAllBatch(t *testing.T) {
 		cols := goldenColumns(rows)
 		got := scalarRows(ind.Batch(cols.close))
 		compareGolden(t, "Zlema", got)
+	})
+}
+
+// TestGoldenAllLifecycle covers what the value passes do not: that a fresh
+// indicator is not ready, that a driven one is, and that Reset returns it to
+// the start rather than to something that merely looks like it.
+func TestGoldenAllLifecycle(t *testing.T) {
+	rows := goldenInput(t)
+	t.Run("AbandonedBaby", func(t *testing.T) {
+		ind, err := NewAbandonedBaby()
+		if err != nil {
+			t.Fatalf("new AbandonedBaby: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AbandonedBaby: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AbandonedBaby: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AbandonedBaby: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AbandonedBaby: still ready after Reset")
+		}
+		compareRuns(t, "AbandonedBaby", first, drive())
+	})
+	t.Run("Abcd", func(t *testing.T) {
+		ind, err := NewAbcd()
+		if err != nil {
+			t.Fatalf("new Abcd: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Abcd: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Abcd: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Abcd: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Abcd: still ready after Reset")
+		}
+		compareRuns(t, "Abcd", first, drive())
+	})
+	t.Run("AbsoluteBreadthIndex", func(t *testing.T) {
+		ind, err := NewAbsoluteBreadthIndex()
+		if err != nil {
+			t.Fatalf("new AbsoluteBreadthIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AbsoluteBreadthIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AbsoluteBreadthIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AbsoluteBreadthIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AbsoluteBreadthIndex: still ready after Reset")
+		}
+		compareRuns(t, "AbsoluteBreadthIndex", first, drive())
+	})
+	t.Run("AccelerationBands", func(t *testing.T) {
+		ind, err := NewAccelerationBands(14, 2.0)
+		if err != nil {
+			t.Fatalf("new AccelerationBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AccelerationBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AccelerationBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AccelerationBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AccelerationBands: still ready after Reset")
+		}
+		compareRuns(t, "AccelerationBands", first, drive())
+	})
+	t.Run("AcceleratorOscillator", func(t *testing.T) {
+		ind, err := NewAcceleratorOscillator(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new AcceleratorOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AcceleratorOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AcceleratorOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AcceleratorOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AcceleratorOscillator: still ready after Reset")
+		}
+		compareRuns(t, "AcceleratorOscillator", first, drive())
+	})
+	t.Run("AdOscillator", func(t *testing.T) {
+		ind, err := NewAdOscillator()
+		if err != nil {
+			t.Fatalf("new AdOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdOscillator: still ready after Reset")
+		}
+		compareRuns(t, "AdOscillator", first, drive())
+	})
+	t.Run("AdVolumeLine", func(t *testing.T) {
+		ind, err := NewAdVolumeLine()
+		if err != nil {
+			t.Fatalf("new AdVolumeLine: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdVolumeLine: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdVolumeLine: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdVolumeLine: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdVolumeLine: still ready after Reset")
+		}
+		compareRuns(t, "AdVolumeLine", first, drive())
+	})
+	t.Run("AdaptiveCci", func(t *testing.T) {
+		ind, err := NewAdaptiveCci(14)
+		if err != nil {
+			t.Fatalf("new AdaptiveCci: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdaptiveCci: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdaptiveCci: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdaptiveCci: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdaptiveCci: still ready after Reset")
+		}
+		compareRuns(t, "AdaptiveCci", first, drive())
+	})
+	t.Run("AdaptiveCycle", func(t *testing.T) {
+		ind, err := NewAdaptiveCycle()
+		if err != nil {
+			t.Fatalf("new AdaptiveCycle: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdaptiveCycle: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdaptiveCycle: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdaptiveCycle: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdaptiveCycle: still ready after Reset")
+		}
+		compareRuns(t, "AdaptiveCycle", first, drive())
+	})
+	t.Run("AdaptiveLaguerreFilter", func(t *testing.T) {
+		ind, err := NewAdaptiveLaguerreFilter(20)
+		if err != nil {
+			t.Fatalf("new AdaptiveLaguerreFilter: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdaptiveLaguerreFilter: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdaptiveLaguerreFilter: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdaptiveLaguerreFilter: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdaptiveLaguerreFilter: still ready after Reset")
+		}
+		compareRuns(t, "AdaptiveLaguerreFilter", first, drive())
+	})
+	t.Run("AdaptiveRsi", func(t *testing.T) {
+		ind, err := NewAdaptiveRsi(14)
+		if err != nil {
+			t.Fatalf("new AdaptiveRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdaptiveRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdaptiveRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdaptiveRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdaptiveRsi: still ready after Reset")
+		}
+		compareRuns(t, "AdaptiveRsi", first, drive())
+	})
+	t.Run("Adl", func(t *testing.T) {
+		ind, err := NewAdl()
+		if err != nil {
+			t.Fatalf("new Adl: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Adl: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Adl: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Adl: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Adl: still ready after Reset")
+		}
+		compareRuns(t, "Adl", first, drive())
+	})
+	t.Run("AdvanceBlock", func(t *testing.T) {
+		ind, err := NewAdvanceBlock()
+		if err != nil {
+			t.Fatalf("new AdvanceBlock: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdvanceBlock: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdvanceBlock: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdvanceBlock: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdvanceBlock: still ready after Reset")
+		}
+		compareRuns(t, "AdvanceBlock", first, drive())
+	})
+	t.Run("AdvanceDecline", func(t *testing.T) {
+		ind, err := NewAdvanceDecline()
+		if err != nil {
+			t.Fatalf("new AdvanceDecline: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdvanceDecline: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdvanceDecline: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdvanceDecline: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdvanceDecline: still ready after Reset")
+		}
+		compareRuns(t, "AdvanceDecline", first, drive())
+	})
+	t.Run("AdvanceDeclineRatio", func(t *testing.T) {
+		ind, err := NewAdvanceDeclineRatio()
+		if err != nil {
+			t.Fatalf("new AdvanceDeclineRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AdvanceDeclineRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AdvanceDeclineRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AdvanceDeclineRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AdvanceDeclineRatio: still ready after Reset")
+		}
+		compareRuns(t, "AdvanceDeclineRatio", first, drive())
+	})
+	t.Run("Adx", func(t *testing.T) {
+		ind, err := NewAdx(14)
+		if err != nil {
+			t.Fatalf("new Adx: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Adx: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Adx: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Adx: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Adx: still ready after Reset")
+		}
+		compareRuns(t, "Adx", first, drive())
+	})
+	t.Run("Adxr", func(t *testing.T) {
+		ind, err := NewAdxr(14)
+		if err != nil {
+			t.Fatalf("new Adxr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Adxr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Adxr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Adxr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Adxr: still ready after Reset")
+		}
+		compareRuns(t, "Adxr", first, drive())
+	})
+	t.Run("Alligator", func(t *testing.T) {
+		ind, err := NewAlligator(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new Alligator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Alligator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Alligator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Alligator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Alligator: still ready after Reset")
+		}
+		compareRuns(t, "Alligator", first, drive())
+	})
+	t.Run("Alma", func(t *testing.T) {
+		ind, err := NewAlma(9, 0.85, 6.0)
+		if err != nil {
+			t.Fatalf("new Alma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Alma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Alma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Alma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Alma: still ready after Reset")
+		}
+		compareRuns(t, "Alma", first, drive())
+	})
+	t.Run("Alpha", func(t *testing.T) {
+		ind, err := NewAlpha(14, 2.0)
+		if err != nil {
+			t.Fatalf("new Alpha: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Alpha: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Alpha: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Alpha: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Alpha: still ready after Reset")
+		}
+		compareRuns(t, "Alpha", first, drive())
+	})
+	t.Run("AmihudIlliquidity", func(t *testing.T) {
+		ind, err := NewAmihudIlliquidity(20)
+		if err != nil {
+			t.Fatalf("new AmihudIlliquidity: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AmihudIlliquidity: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AmihudIlliquidity: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AmihudIlliquidity: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AmihudIlliquidity: still ready after Reset")
+		}
+		compareRuns(t, "AmihudIlliquidity", first, drive())
+	})
+	t.Run("AnchoredRsi", func(t *testing.T) {
+		ind, err := NewAnchoredRsi()
+		if err != nil {
+			t.Fatalf("new AnchoredRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AnchoredRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AnchoredRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AnchoredRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AnchoredRsi: still ready after Reset")
+		}
+		compareRuns(t, "AnchoredRsi", first, drive())
+	})
+	t.Run("AnchoredVwap", func(t *testing.T) {
+		ind, err := NewAnchoredVwap()
+		if err != nil {
+			t.Fatalf("new AnchoredVwap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AnchoredVwap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AnchoredVwap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AnchoredVwap: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AnchoredVwap: still ready after Reset")
+		}
+		compareRuns(t, "AnchoredVwap", first, drive())
+	})
+	t.Run("AndrewsPitchfork", func(t *testing.T) {
+		ind, err := NewAndrewsPitchfork(14)
+		if err != nil {
+			t.Fatalf("new AndrewsPitchfork: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AndrewsPitchfork: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AndrewsPitchfork: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AndrewsPitchfork: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AndrewsPitchfork: still ready after Reset")
+		}
+		compareRuns(t, "AndrewsPitchfork", first, drive())
+	})
+	t.Run("Apo", func(t *testing.T) {
+		ind, err := NewApo(3, 7)
+		if err != nil {
+			t.Fatalf("new Apo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Apo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Apo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Apo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Apo: still ready after Reset")
+		}
+		compareRuns(t, "Apo", first, drive())
+	})
+	t.Run("Aroon", func(t *testing.T) {
+		ind, err := NewAroon(14)
+		if err != nil {
+			t.Fatalf("new Aroon: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Aroon: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Aroon: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Aroon: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Aroon: still ready after Reset")
+		}
+		compareRuns(t, "Aroon", first, drive())
+	})
+	t.Run("AroonOscillator", func(t *testing.T) {
+		ind, err := NewAroonOscillator(14)
+		if err != nil {
+			t.Fatalf("new AroonOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AroonOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AroonOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AroonOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AroonOscillator: still ready after Reset")
+		}
+		compareRuns(t, "AroonOscillator", first, drive())
+	})
+	t.Run("Atr", func(t *testing.T) {
+		ind, err := NewAtr(14)
+		if err != nil {
+			t.Fatalf("new Atr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Atr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Atr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Atr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Atr: still ready after Reset")
+		}
+		compareRuns(t, "Atr", first, drive())
+	})
+	t.Run("AtrBands", func(t *testing.T) {
+		ind, err := NewAtrBands(14, 2.0)
+		if err != nil {
+			t.Fatalf("new AtrBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AtrBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AtrBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AtrBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AtrBands: still ready after Reset")
+		}
+		compareRuns(t, "AtrBands", first, drive())
+	})
+	t.Run("AtrRatchet", func(t *testing.T) {
+		ind, err := NewAtrRatchet(14, 2.0, 0.5)
+		if err != nil {
+			t.Fatalf("new AtrRatchet: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AtrRatchet: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AtrRatchet: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AtrRatchet: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AtrRatchet: still ready after Reset")
+		}
+		compareRuns(t, "AtrRatchet", first, drive())
+	})
+	t.Run("AtrTrailingStop", func(t *testing.T) {
+		ind, err := NewAtrTrailingStop(14, 2.0)
+		if err != nil {
+			t.Fatalf("new AtrTrailingStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AtrTrailingStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AtrTrailingStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AtrTrailingStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AtrTrailingStop: still ready after Reset")
+		}
+		compareRuns(t, "AtrTrailingStop", first, drive())
+	})
+	t.Run("AutoFib", func(t *testing.T) {
+		ind, err := NewAutoFib()
+		if err != nil {
+			t.Fatalf("new AutoFib: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 7)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AutoFib: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AutoFib: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AutoFib: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AutoFib: still ready after Reset")
+		}
+		compareRuns(t, "AutoFib", first, drive())
+	})
+	t.Run("Autocorrelation", func(t *testing.T) {
+		ind, err := NewAutocorrelation(10, 1)
+		if err != nil {
+			t.Fatalf("new Autocorrelation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Autocorrelation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Autocorrelation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Autocorrelation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Autocorrelation: still ready after Reset")
+		}
+		compareRuns(t, "Autocorrelation", first, drive())
+	})
+	t.Run("AutocorrelationPeriodogram", func(t *testing.T) {
+		ind, err := NewAutocorrelationPeriodogram(10, 48)
+		if err != nil {
+			t.Fatalf("new AutocorrelationPeriodogram: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AutocorrelationPeriodogram: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AutocorrelationPeriodogram: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AutocorrelationPeriodogram: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AutocorrelationPeriodogram: still ready after Reset")
+		}
+		compareRuns(t, "AutocorrelationPeriodogram", first, drive())
+	})
+	t.Run("AverageDailyRange", func(t *testing.T) {
+		ind, err := NewAverageDailyRange(14, 0)
+		if err != nil {
+			t.Fatalf("new AverageDailyRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AverageDailyRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AverageDailyRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AverageDailyRange: still ready after Reset")
+		}
+		compareRuns(t, "AverageDailyRange", first, drive())
+	})
+	t.Run("AverageDrawdown", func(t *testing.T) {
+		ind, err := NewAverageDrawdown(14)
+		if err != nil {
+			t.Fatalf("new AverageDrawdown: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AverageDrawdown: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AverageDrawdown: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AverageDrawdown: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AverageDrawdown: still ready after Reset")
+		}
+		compareRuns(t, "AverageDrawdown", first, drive())
+	})
+	t.Run("AvgPrice", func(t *testing.T) {
+		ind, err := NewAvgPrice()
+		if err != nil {
+			t.Fatalf("new AvgPrice: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AvgPrice: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AvgPrice: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AvgPrice: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AvgPrice: still ready after Reset")
+		}
+		compareRuns(t, "AvgPrice", first, drive())
+	})
+	t.Run("AwesomeOscillator", func(t *testing.T) {
+		ind, err := NewAwesomeOscillator(3, 7)
+		if err != nil {
+			t.Fatalf("new AwesomeOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AwesomeOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AwesomeOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AwesomeOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AwesomeOscillator: still ready after Reset")
+		}
+		compareRuns(t, "AwesomeOscillator", first, drive())
+	})
+	t.Run("AwesomeOscillatorHistogram", func(t *testing.T) {
+		ind, err := NewAwesomeOscillatorHistogram(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new AwesomeOscillatorHistogram: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("AwesomeOscillatorHistogram: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("AwesomeOscillatorHistogram: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("AwesomeOscillatorHistogram: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("AwesomeOscillatorHistogram: still ready after Reset")
+		}
+		compareRuns(t, "AwesomeOscillatorHistogram", first, drive())
+	})
+	t.Run("BalanceOfPower", func(t *testing.T) {
+		ind, err := NewBalanceOfPower()
+		if err != nil {
+			t.Fatalf("new BalanceOfPower: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BalanceOfPower: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BalanceOfPower: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BalanceOfPower: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BalanceOfPower: still ready after Reset")
+		}
+		compareRuns(t, "BalanceOfPower", first, drive())
+	})
+	t.Run("BandpassFilter", func(t *testing.T) {
+		ind, err := NewBandpassFilter(20, 0.3)
+		if err != nil {
+			t.Fatalf("new BandpassFilter: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BandpassFilter: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BandpassFilter: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BandpassFilter: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BandpassFilter: still ready after Reset")
+		}
+		compareRuns(t, "BandpassFilter", first, drive())
+	})
+	t.Run("Bat", func(t *testing.T) {
+		ind, err := NewBat()
+		if err != nil {
+			t.Fatalf("new Bat: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Bat: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Bat: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Bat: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Bat: still ready after Reset")
+		}
+		compareRuns(t, "Bat", first, drive())
+	})
+	t.Run("BeltHold", func(t *testing.T) {
+		ind, err := NewBeltHold()
+		if err != nil {
+			t.Fatalf("new BeltHold: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BeltHold: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BeltHold: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BeltHold: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BeltHold: still ready after Reset")
+		}
+		compareRuns(t, "BeltHold", first, drive())
+	})
+	t.Run("Beta", func(t *testing.T) {
+		ind, err := NewBeta(14)
+		if err != nil {
+			t.Fatalf("new Beta: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Beta: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Beta: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Beta: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Beta: still ready after Reset")
+		}
+		compareRuns(t, "Beta", first, drive())
+	})
+	t.Run("BetaNeutralSpread", func(t *testing.T) {
+		ind, err := NewBetaNeutralSpread(14)
+		if err != nil {
+			t.Fatalf("new BetaNeutralSpread: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BetaNeutralSpread: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BetaNeutralSpread: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BetaNeutralSpread: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BetaNeutralSpread: still ready after Reset")
+		}
+		compareRuns(t, "BetaNeutralSpread", first, drive())
+	})
+	t.Run("BetterVolume", func(t *testing.T) {
+		ind, err := NewBetterVolume(14)
+		if err != nil {
+			t.Fatalf("new BetterVolume: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BetterVolume: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BetterVolume: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BetterVolume: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BetterVolume: still ready after Reset")
+		}
+		compareRuns(t, "BetterVolume", first, drive())
+	})
+	t.Run("BipowerVariation", func(t *testing.T) {
+		ind, err := NewBipowerVariation(14)
+		if err != nil {
+			t.Fatalf("new BipowerVariation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BipowerVariation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BipowerVariation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BipowerVariation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BipowerVariation: still ready after Reset")
+		}
+		compareRuns(t, "BipowerVariation", first, drive())
+	})
+	t.Run("BodySizePct", func(t *testing.T) {
+		ind, err := NewBodySizePct()
+		if err != nil {
+			t.Fatalf("new BodySizePct: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BodySizePct: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BodySizePct: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BodySizePct: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BodySizePct: still ready after Reset")
+		}
+		compareRuns(t, "BodySizePct", first, drive())
+	})
+	t.Run("BollingerBands", func(t *testing.T) {
+		ind, err := NewBollingerBands(20, 2.0)
+		if err != nil {
+			t.Fatalf("new BollingerBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BollingerBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BollingerBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BollingerBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BollingerBands: still ready after Reset")
+		}
+		compareRuns(t, "BollingerBands", first, drive())
+	})
+	t.Run("BollingerBandwidth", func(t *testing.T) {
+		ind, err := NewBollingerBandwidth(14, 2.0)
+		if err != nil {
+			t.Fatalf("new BollingerBandwidth: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BollingerBandwidth: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BollingerBandwidth: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BollingerBandwidth: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BollingerBandwidth: still ready after Reset")
+		}
+		compareRuns(t, "BollingerBandwidth", first, drive())
+	})
+	t.Run("BomarBands", func(t *testing.T) {
+		ind, err := NewBomarBands(4, 0.85)
+		if err != nil {
+			t.Fatalf("new BomarBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BomarBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BomarBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BomarBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BomarBands: still ready after Reset")
+		}
+		compareRuns(t, "BomarBands", first, drive())
+	})
+	t.Run("BreadthThrust", func(t *testing.T) {
+		ind, err := NewBreadthThrust(10)
+		if err != nil {
+			t.Fatalf("new BreadthThrust: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BreadthThrust: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BreadthThrust: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BreadthThrust: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BreadthThrust: still ready after Reset")
+		}
+		compareRuns(t, "BreadthThrust", first, drive())
+	})
+	t.Run("Breakaway", func(t *testing.T) {
+		ind, err := NewBreakaway()
+		if err != nil {
+			t.Fatalf("new Breakaway: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Breakaway: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Breakaway: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Breakaway: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Breakaway: still ready after Reset")
+		}
+		compareRuns(t, "Breakaway", first, drive())
+	})
+	t.Run("BullishPercentIndex", func(t *testing.T) {
+		ind, err := NewBullishPercentIndex()
+		if err != nil {
+			t.Fatalf("new BullishPercentIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BullishPercentIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BullishPercentIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BullishPercentIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BullishPercentIndex: still ready after Reset")
+		}
+		compareRuns(t, "BullishPercentIndex", first, drive())
+	})
+	t.Run("BurkeRatio", func(t *testing.T) {
+		ind, err := NewBurkeRatio(14)
+		if err != nil {
+			t.Fatalf("new BurkeRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("BurkeRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("BurkeRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("BurkeRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("BurkeRatio: still ready after Reset")
+		}
+		compareRuns(t, "BurkeRatio", first, drive())
+	})
+	t.Run("Butterfly", func(t *testing.T) {
+		ind, err := NewButterfly()
+		if err != nil {
+			t.Fatalf("new Butterfly: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Butterfly: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Butterfly: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Butterfly: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Butterfly: still ready after Reset")
+		}
+		compareRuns(t, "Butterfly", first, drive())
+	})
+	t.Run("CalendarSpread", func(t *testing.T) {
+		ind, err := NewCalendarSpread()
+		if err != nil {
+			t.Fatalf("new CalendarSpread: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CalendarSpread: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CalendarSpread: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CalendarSpread: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CalendarSpread: still ready after Reset")
+		}
+		compareRuns(t, "CalendarSpread", first, drive())
+	})
+	t.Run("CalmarRatio", func(t *testing.T) {
+		ind, err := NewCalmarRatio(14)
+		if err != nil {
+			t.Fatalf("new CalmarRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CalmarRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CalmarRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CalmarRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CalmarRatio: still ready after Reset")
+		}
+		compareRuns(t, "CalmarRatio", first, drive())
+	})
+	t.Run("Camarilla", func(t *testing.T) {
+		ind, err := NewCamarilla()
+		if err != nil {
+			t.Fatalf("new Camarilla: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 9)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Camarilla: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Camarilla: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Camarilla: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Camarilla: still ready after Reset")
+		}
+		compareRuns(t, "Camarilla", first, drive())
+	})
+	t.Run("CandleVolume", func(t *testing.T) {
+		ind, err := NewCandleVolume(14)
+		if err != nil {
+			t.Fatalf("new CandleVolume: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CandleVolume: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CandleVolume: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CandleVolume: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CandleVolume: still ready after Reset")
+		}
+		compareRuns(t, "CandleVolume", first, drive())
+	})
+	t.Run("Cci", func(t *testing.T) {
+		ind, err := NewCci(14)
+		if err != nil {
+			t.Fatalf("new Cci: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Cci: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Cci: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Cci: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Cci: still ready after Reset")
+		}
+		compareRuns(t, "Cci", first, drive())
+	})
+	t.Run("CenterOfGravity", func(t *testing.T) {
+		ind, err := NewCenterOfGravity(14)
+		if err != nil {
+			t.Fatalf("new CenterOfGravity: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CenterOfGravity: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CenterOfGravity: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CenterOfGravity: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CenterOfGravity: still ready after Reset")
+		}
+		compareRuns(t, "CenterOfGravity", first, drive())
+	})
+	t.Run("CentralPivotRange", func(t *testing.T) {
+		ind, err := NewCentralPivotRange()
+		if err != nil {
+			t.Fatalf("new CentralPivotRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CentralPivotRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CentralPivotRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CentralPivotRange: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CentralPivotRange: still ready after Reset")
+		}
+		compareRuns(t, "CentralPivotRange", first, drive())
+	})
+	t.Run("Cfo", func(t *testing.T) {
+		ind, err := NewCfo(14)
+		if err != nil {
+			t.Fatalf("new Cfo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Cfo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Cfo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Cfo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Cfo: still ready after Reset")
+		}
+		compareRuns(t, "Cfo", first, drive())
+	})
+	t.Run("ChaikinMoneyFlow", func(t *testing.T) {
+		ind, err := NewChaikinMoneyFlow(20)
+		if err != nil {
+			t.Fatalf("new ChaikinMoneyFlow: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ChaikinMoneyFlow: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ChaikinMoneyFlow: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ChaikinMoneyFlow: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ChaikinMoneyFlow: still ready after Reset")
+		}
+		compareRuns(t, "ChaikinMoneyFlow", first, drive())
+	})
+	t.Run("ChaikinOscillator", func(t *testing.T) {
+		ind, err := NewChaikinOscillator(3, 7)
+		if err != nil {
+			t.Fatalf("new ChaikinOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ChaikinOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ChaikinOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ChaikinOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ChaikinOscillator: still ready after Reset")
+		}
+		compareRuns(t, "ChaikinOscillator", first, drive())
+	})
+	t.Run("ChaikinVolatility", func(t *testing.T) {
+		ind, err := NewChaikinVolatility(3, 7)
+		if err != nil {
+			t.Fatalf("new ChaikinVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ChaikinVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ChaikinVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ChaikinVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ChaikinVolatility: still ready after Reset")
+		}
+		compareRuns(t, "ChaikinVolatility", first, drive())
+	})
+	t.Run("ChandeKrollStop", func(t *testing.T) {
+		ind, err := NewChandeKrollStop(3, 2.0, 7)
+		if err != nil {
+			t.Fatalf("new ChandeKrollStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ChandeKrollStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ChandeKrollStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ChandeKrollStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ChandeKrollStop: still ready after Reset")
+		}
+		compareRuns(t, "ChandeKrollStop", first, drive())
+	})
+	t.Run("ChandelierExit", func(t *testing.T) {
+		ind, err := NewChandelierExit(14, 2.0)
+		if err != nil {
+			t.Fatalf("new ChandelierExit: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ChandelierExit: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ChandelierExit: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ChandelierExit: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ChandelierExit: still ready after Reset")
+		}
+		compareRuns(t, "ChandelierExit", first, drive())
+	})
+	t.Run("ChoppinessIndex", func(t *testing.T) {
+		ind, err := NewChoppinessIndex(14)
+		if err != nil {
+			t.Fatalf("new ChoppinessIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ChoppinessIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ChoppinessIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ChoppinessIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ChoppinessIndex: still ready after Reset")
+		}
+		compareRuns(t, "ChoppinessIndex", first, drive())
+	})
+	t.Run("ClassicPivots", func(t *testing.T) {
+		ind, err := NewClassicPivots()
+		if err != nil {
+			t.Fatalf("new ClassicPivots: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 7)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ClassicPivots: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ClassicPivots: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ClassicPivots: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ClassicPivots: still ready after Reset")
+		}
+		compareRuns(t, "ClassicPivots", first, drive())
+	})
+	t.Run("CloseVsOpen", func(t *testing.T) {
+		ind, err := NewCloseVsOpen()
+		if err != nil {
+			t.Fatalf("new CloseVsOpen: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CloseVsOpen: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CloseVsOpen: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CloseVsOpen: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CloseVsOpen: still ready after Reset")
+		}
+		compareRuns(t, "CloseVsOpen", first, drive())
+	})
+	t.Run("ClosingMarubozu", func(t *testing.T) {
+		ind, err := NewClosingMarubozu()
+		if err != nil {
+			t.Fatalf("new ClosingMarubozu: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ClosingMarubozu: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ClosingMarubozu: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ClosingMarubozu: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ClosingMarubozu: still ready after Reset")
+		}
+		compareRuns(t, "ClosingMarubozu", first, drive())
+	})
+	t.Run("Cmo", func(t *testing.T) {
+		ind, err := NewCmo(14)
+		if err != nil {
+			t.Fatalf("new Cmo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Cmo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Cmo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Cmo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Cmo: still ready after Reset")
+		}
+		compareRuns(t, "Cmo", first, drive())
+	})
+	t.Run("CoefficientOfVariation", func(t *testing.T) {
+		ind, err := NewCoefficientOfVariation(14)
+		if err != nil {
+			t.Fatalf("new CoefficientOfVariation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CoefficientOfVariation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CoefficientOfVariation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CoefficientOfVariation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CoefficientOfVariation: still ready after Reset")
+		}
+		compareRuns(t, "CoefficientOfVariation", first, drive())
+	})
+	t.Run("Cointegration", func(t *testing.T) {
+		ind, err := NewCointegration(40, 1)
+		if err != nil {
+			t.Fatalf("new Cointegration: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3], r[0])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Cointegration: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Cointegration: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Cointegration: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Cointegration: still ready after Reset")
+		}
+		compareRuns(t, "Cointegration", first, drive())
+	})
+	t.Run("CommonSenseRatio", func(t *testing.T) {
+		ind, err := NewCommonSenseRatio(14)
+		if err != nil {
+			t.Fatalf("new CommonSenseRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CommonSenseRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CommonSenseRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CommonSenseRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CommonSenseRatio: still ready after Reset")
+		}
+		compareRuns(t, "CommonSenseRatio", first, drive())
+	})
+	t.Run("CompositeProfile", func(t *testing.T) {
+		ind, err := NewCompositeProfile(20, 24, 0.7)
+		if err != nil {
+			t.Fatalf("new CompositeProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CompositeProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CompositeProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CompositeProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CompositeProfile: still ready after Reset")
+		}
+		compareRuns(t, "CompositeProfile", first, drive())
+	})
+	t.Run("ConcealingBabySwallow", func(t *testing.T) {
+		ind, err := NewConcealingBabySwallow()
+		if err != nil {
+			t.Fatalf("new ConcealingBabySwallow: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ConcealingBabySwallow: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ConcealingBabySwallow: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ConcealingBabySwallow: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ConcealingBabySwallow: still ready after Reset")
+		}
+		compareRuns(t, "ConcealingBabySwallow", first, drive())
+	})
+	t.Run("ConditionalValueAtRisk", func(t *testing.T) {
+		ind, err := NewConditionalValueAtRisk(20, 0.95)
+		if err != nil {
+			t.Fatalf("new ConditionalValueAtRisk: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ConditionalValueAtRisk: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ConditionalValueAtRisk: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ConditionalValueAtRisk: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ConditionalValueAtRisk: still ready after Reset")
+		}
+		compareRuns(t, "ConditionalValueAtRisk", first, drive())
+	})
+	t.Run("ConnorsRsi", func(t *testing.T) {
+		ind, err := NewConnorsRsi(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new ConnorsRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ConnorsRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ConnorsRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ConnorsRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ConnorsRsi: still ready after Reset")
+		}
+		compareRuns(t, "ConnorsRsi", first, drive())
+	})
+	t.Run("Coppock", func(t *testing.T) {
+		ind, err := NewCoppock(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new Coppock: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Coppock: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Coppock: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Coppock: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Coppock: still ready after Reset")
+		}
+		compareRuns(t, "Coppock", first, drive())
+	})
+	t.Run("CorrelationTrendIndicator", func(t *testing.T) {
+		ind, err := NewCorrelationTrendIndicator(14)
+		if err != nil {
+			t.Fatalf("new CorrelationTrendIndicator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CorrelationTrendIndicator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CorrelationTrendIndicator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CorrelationTrendIndicator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CorrelationTrendIndicator: still ready after Reset")
+		}
+		compareRuns(t, "CorrelationTrendIndicator", first, drive())
+	})
+	t.Run("Counterattack", func(t *testing.T) {
+		ind, err := NewCounterattack()
+		if err != nil {
+			t.Fatalf("new Counterattack: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Counterattack: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Counterattack: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Counterattack: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Counterattack: still ready after Reset")
+		}
+		compareRuns(t, "Counterattack", first, drive())
+	})
+	t.Run("Crab", func(t *testing.T) {
+		ind, err := NewCrab()
+		if err != nil {
+			t.Fatalf("new Crab: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Crab: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Crab: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Crab: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Crab: still ready after Reset")
+		}
+		compareRuns(t, "Crab", first, drive())
+	})
+	t.Run("CumulativeVolumeDelta", func(t *testing.T) {
+		ind, err := NewCumulativeVolumeDelta()
+		if err != nil {
+			t.Fatalf("new CumulativeVolumeDelta: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CumulativeVolumeDelta: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CumulativeVolumeDelta: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CumulativeVolumeDelta: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CumulativeVolumeDelta: still ready after Reset")
+		}
+		compareRuns(t, "CumulativeVolumeDelta", first, drive())
+	})
+	t.Run("CumulativeVolumeIndex", func(t *testing.T) {
+		ind, err := NewCumulativeVolumeIndex()
+		if err != nil {
+			t.Fatalf("new CumulativeVolumeIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CumulativeVolumeIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CumulativeVolumeIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CumulativeVolumeIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CumulativeVolumeIndex: still ready after Reset")
+		}
+		compareRuns(t, "CumulativeVolumeIndex", first, drive())
+	})
+	t.Run("CupAndHandle", func(t *testing.T) {
+		ind, err := NewCupAndHandle()
+		if err != nil {
+			t.Fatalf("new CupAndHandle: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CupAndHandle: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CupAndHandle: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CupAndHandle: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CupAndHandle: still ready after Reset")
+		}
+		compareRuns(t, "CupAndHandle", first, drive())
+	})
+	t.Run("CyberneticCycle", func(t *testing.T) {
+		ind, err := NewCyberneticCycle(14)
+		if err != nil {
+			t.Fatalf("new CyberneticCycle: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("CyberneticCycle: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("CyberneticCycle: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("CyberneticCycle: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("CyberneticCycle: still ready after Reset")
+		}
+		compareRuns(t, "CyberneticCycle", first, drive())
+	})
+	t.Run("Cypher", func(t *testing.T) {
+		ind, err := NewCypher()
+		if err != nil {
+			t.Fatalf("new Cypher: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Cypher: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Cypher: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Cypher: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Cypher: still ready after Reset")
+		}
+		compareRuns(t, "Cypher", first, drive())
+	})
+	t.Run("DayOfWeekProfile", func(t *testing.T) {
+		ind, err := NewDayOfWeekProfile(0)
+		if err != nil {
+			t.Fatalf("new DayOfWeekProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				if ok {
+					got[i] = bins
+				} else {
+					got[i] = nanRow(7)
+				}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DayOfWeekProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DayOfWeekProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DayOfWeekProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DayOfWeekProfile: still ready after Reset")
+		}
+		compareRuns(t, "DayOfWeekProfile", first, drive())
+	})
+	t.Run("Decycler", func(t *testing.T) {
+		ind, err := NewDecycler(14)
+		if err != nil {
+			t.Fatalf("new Decycler: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Decycler: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Decycler: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Decycler: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Decycler: still ready after Reset")
+		}
+		compareRuns(t, "Decycler", first, drive())
+	})
+	t.Run("DecyclerOscillator", func(t *testing.T) {
+		ind, err := NewDecyclerOscillator(3, 7)
+		if err != nil {
+			t.Fatalf("new DecyclerOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DecyclerOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DecyclerOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DecyclerOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DecyclerOscillator: still ready after Reset")
+		}
+		compareRuns(t, "DecyclerOscillator", first, drive())
+	})
+	t.Run("Dema", func(t *testing.T) {
+		ind, err := NewDema(14)
+		if err != nil {
+			t.Fatalf("new Dema: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Dema: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Dema: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Dema: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Dema: still ready after Reset")
+		}
+		compareRuns(t, "Dema", first, drive())
+	})
+	t.Run("DemandIndex", func(t *testing.T) {
+		ind, err := NewDemandIndex(14)
+		if err != nil {
+			t.Fatalf("new DemandIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DemandIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DemandIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DemandIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DemandIndex: still ready after Reset")
+		}
+		compareRuns(t, "DemandIndex", first, drive())
+	})
+	t.Run("DemarkPivots", func(t *testing.T) {
+		ind, err := NewDemarkPivots()
+		if err != nil {
+			t.Fatalf("new DemarkPivots: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DemarkPivots: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DemarkPivots: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DemarkPivots: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DemarkPivots: still ready after Reset")
+		}
+		compareRuns(t, "DemarkPivots", first, drive())
+	})
+	t.Run("DepthSlope", func(t *testing.T) {
+		ind, err := NewDepthSlope()
+		if err != nil {
+			t.Fatalf("new DepthSlope: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DepthSlope: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DepthSlope: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DepthSlope: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DepthSlope: still ready after Reset")
+		}
+		compareRuns(t, "DepthSlope", first, drive())
+	})
+	t.Run("DerivativeOscillator", func(t *testing.T) {
+		ind, err := NewDerivativeOscillator(3, 7, 14, 28)
+		if err != nil {
+			t.Fatalf("new DerivativeOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DerivativeOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DerivativeOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DerivativeOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DerivativeOscillator: still ready after Reset")
+		}
+		compareRuns(t, "DerivativeOscillator", first, drive())
+	})
+	t.Run("DetrendedStdDev", func(t *testing.T) {
+		ind, err := NewDetrendedStdDev(14)
+		if err != nil {
+			t.Fatalf("new DetrendedStdDev: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DetrendedStdDev: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DetrendedStdDev: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DetrendedStdDev: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DetrendedStdDev: still ready after Reset")
+		}
+		compareRuns(t, "DetrendedStdDev", first, drive())
+	})
+	t.Run("DisparityIndex", func(t *testing.T) {
+		ind, err := NewDisparityIndex(14)
+		if err != nil {
+			t.Fatalf("new DisparityIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DisparityIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DisparityIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DisparityIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DisparityIndex: still ready after Reset")
+		}
+		compareRuns(t, "DisparityIndex", first, drive())
+	})
+	t.Run("DistanceSsd", func(t *testing.T) {
+		ind, err := NewDistanceSsd(14)
+		if err != nil {
+			t.Fatalf("new DistanceSsd: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DistanceSsd: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DistanceSsd: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DistanceSsd: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DistanceSsd: still ready after Reset")
+		}
+		compareRuns(t, "DistanceSsd", first, drive())
+	})
+	t.Run("Doji", func(t *testing.T) {
+		ind, err := NewDoji()
+		if err != nil {
+			t.Fatalf("new Doji: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Doji: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Doji: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Doji: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Doji: still ready after Reset")
+		}
+		compareRuns(t, "Doji", first, drive())
+	})
+	t.Run("DojiStar", func(t *testing.T) {
+		ind, err := NewDojiStar()
+		if err != nil {
+			t.Fatalf("new DojiStar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DojiStar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DojiStar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DojiStar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DojiStar: still ready after Reset")
+		}
+		compareRuns(t, "DojiStar", first, drive())
+	})
+	t.Run("DollarBars", func(t *testing.T) {
+		ind, err := NewDollarBars(50000.0)
+		if err != nil {
+			t.Fatalf("new DollarBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "DollarBars", first, drive())
+	})
+	t.Run("Donchian", func(t *testing.T) {
+		ind, err := NewDonchian(14)
+		if err != nil {
+			t.Fatalf("new Donchian: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Donchian: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Donchian: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Donchian: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Donchian: still ready after Reset")
+		}
+		compareRuns(t, "Donchian", first, drive())
+	})
+	t.Run("DonchianStop", func(t *testing.T) {
+		ind, err := NewDonchianStop(14)
+		if err != nil {
+			t.Fatalf("new DonchianStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DonchianStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DonchianStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DonchianStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DonchianStop: still ready after Reset")
+		}
+		compareRuns(t, "DonchianStop", first, drive())
+	})
+	t.Run("DoubleBollinger", func(t *testing.T) {
+		ind, err := NewDoubleBollinger(20, 1.0, 2.0)
+		if err != nil {
+			t.Fatalf("new DoubleBollinger: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 5)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DoubleBollinger: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DoubleBollinger: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DoubleBollinger: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DoubleBollinger: still ready after Reset")
+		}
+		compareRuns(t, "DoubleBollinger", first, drive())
+	})
+	t.Run("DoubleTopBottom", func(t *testing.T) {
+		ind, err := NewDoubleTopBottom()
+		if err != nil {
+			t.Fatalf("new DoubleTopBottom: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DoubleTopBottom: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DoubleTopBottom: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DoubleTopBottom: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DoubleTopBottom: still ready after Reset")
+		}
+		compareRuns(t, "DoubleTopBottom", first, drive())
+	})
+	t.Run("DownsideGapThreeMethods", func(t *testing.T) {
+		ind, err := NewDownsideGapThreeMethods()
+		if err != nil {
+			t.Fatalf("new DownsideGapThreeMethods: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DownsideGapThreeMethods: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DownsideGapThreeMethods: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DownsideGapThreeMethods: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DownsideGapThreeMethods: still ready after Reset")
+		}
+		compareRuns(t, "DownsideGapThreeMethods", first, drive())
+	})
+	t.Run("Dpo", func(t *testing.T) {
+		ind, err := NewDpo(14)
+		if err != nil {
+			t.Fatalf("new Dpo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Dpo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Dpo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Dpo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Dpo: still ready after Reset")
+		}
+		compareRuns(t, "Dpo", first, drive())
+	})
+	t.Run("DragonflyDoji", func(t *testing.T) {
+		ind, err := NewDragonflyDoji()
+		if err != nil {
+			t.Fatalf("new DragonflyDoji: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DragonflyDoji: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DragonflyDoji: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DragonflyDoji: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DragonflyDoji: still ready after Reset")
+		}
+		compareRuns(t, "DragonflyDoji", first, drive())
+	})
+	t.Run("DrawdownDuration", func(t *testing.T) {
+		ind, err := NewDrawdownDuration()
+		if err != nil {
+			t.Fatalf("new DrawdownDuration: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DrawdownDuration: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DrawdownDuration: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DrawdownDuration: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DrawdownDuration: still ready after Reset")
+		}
+		compareRuns(t, "DrawdownDuration", first, drive())
+	})
+	t.Run("DumplingTop", func(t *testing.T) {
+		ind, err := NewDumplingTop(14)
+		if err != nil {
+			t.Fatalf("new DumplingTop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DumplingTop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DumplingTop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DumplingTop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DumplingTop: still ready after Reset")
+		}
+		compareRuns(t, "DumplingTop", first, drive())
+	})
+	t.Run("Dx", func(t *testing.T) {
+		ind, err := NewDx(14)
+		if err != nil {
+			t.Fatalf("new Dx: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Dx: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Dx: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Dx: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Dx: still ready after Reset")
+		}
+		compareRuns(t, "Dx", first, drive())
+	})
+	t.Run("DynamicMomentumIndex", func(t *testing.T) {
+		ind, err := NewDynamicMomentumIndex(14)
+		if err != nil {
+			t.Fatalf("new DynamicMomentumIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("DynamicMomentumIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("DynamicMomentumIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("DynamicMomentumIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("DynamicMomentumIndex: still ready after Reset")
+		}
+		compareRuns(t, "DynamicMomentumIndex", first, drive())
+	})
+	t.Run("EaseOfMovement", func(t *testing.T) {
+		ind, err := NewEaseOfMovement(14)
+		if err != nil {
+			t.Fatalf("new EaseOfMovement: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EaseOfMovement: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EaseOfMovement: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EaseOfMovement: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EaseOfMovement: still ready after Reset")
+		}
+		compareRuns(t, "EaseOfMovement", first, drive())
+	})
+	t.Run("EffectiveSpread", func(t *testing.T) {
+		ind, err := NewEffectiveSpread()
+		if err != nil {
+			t.Fatalf("new EffectiveSpread: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i), (r[1]+r[2])/2)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EffectiveSpread: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EffectiveSpread: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EffectiveSpread: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EffectiveSpread: still ready after Reset")
+		}
+		compareRuns(t, "EffectiveSpread", first, drive())
+	})
+	t.Run("EhlersStochastic", func(t *testing.T) {
+		ind, err := NewEhlersStochastic(14)
+		if err != nil {
+			t.Fatalf("new EhlersStochastic: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EhlersStochastic: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EhlersStochastic: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EhlersStochastic: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EhlersStochastic: still ready after Reset")
+		}
+		compareRuns(t, "EhlersStochastic", first, drive())
+	})
+	t.Run("Ehma", func(t *testing.T) {
+		ind, err := NewEhma(14)
+		if err != nil {
+			t.Fatalf("new Ehma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Ehma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Ehma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Ehma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Ehma: still ready after Reset")
+		}
+		compareRuns(t, "Ehma", first, drive())
+	})
+	t.Run("ElderImpulse", func(t *testing.T) {
+		ind, err := NewElderImpulse(3, 7, 14, 28)
+		if err != nil {
+			t.Fatalf("new ElderImpulse: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ElderImpulse: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ElderImpulse: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ElderImpulse: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ElderImpulse: still ready after Reset")
+		}
+		compareRuns(t, "ElderImpulse", first, drive())
+	})
+	t.Run("ElderRay", func(t *testing.T) {
+		ind, err := NewElderRay(14)
+		if err != nil {
+			t.Fatalf("new ElderRay: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ElderRay: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ElderRay: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ElderRay: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ElderRay: still ready after Reset")
+		}
+		compareRuns(t, "ElderRay", first, drive())
+	})
+	t.Run("ElderSafeZone", func(t *testing.T) {
+		ind, err := NewElderSafeZone(10, 2.0)
+		if err != nil {
+			t.Fatalf("new ElderSafeZone: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ElderSafeZone: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ElderSafeZone: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ElderSafeZone: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ElderSafeZone: still ready after Reset")
+		}
+		compareRuns(t, "ElderSafeZone", first, drive())
+	})
+	t.Run("Ema", func(t *testing.T) {
+		ind, err := NewEma(14)
+		if err != nil {
+			t.Fatalf("new Ema: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Ema: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Ema: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Ema: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Ema: still ready after Reset")
+		}
+		compareRuns(t, "Ema", first, drive())
+	})
+	t.Run("EmpiricalModeDecomposition", func(t *testing.T) {
+		ind, err := NewEmpiricalModeDecomposition(20, 0.1)
+		if err != nil {
+			t.Fatalf("new EmpiricalModeDecomposition: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EmpiricalModeDecomposition: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EmpiricalModeDecomposition: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EmpiricalModeDecomposition: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EmpiricalModeDecomposition: still ready after Reset")
+		}
+		compareRuns(t, "EmpiricalModeDecomposition", first, drive())
+	})
+	t.Run("Engulfing", func(t *testing.T) {
+		ind, err := NewEngulfing()
+		if err != nil {
+			t.Fatalf("new Engulfing: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Engulfing: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Engulfing: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Engulfing: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Engulfing: still ready after Reset")
+		}
+		compareRuns(t, "Engulfing", first, drive())
+	})
+	t.Run("Equivolume", func(t *testing.T) {
+		ind, err := NewEquivolume(14)
+		if err != nil {
+			t.Fatalf("new Equivolume: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Equivolume: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Equivolume: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Equivolume: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Equivolume: still ready after Reset")
+		}
+		compareRuns(t, "Equivolume", first, drive())
+	})
+	t.Run("EstimatedLeverageRatio", func(t *testing.T) {
+		ind, err := NewEstimatedLeverageRatio()
+		if err != nil {
+			t.Fatalf("new EstimatedLeverageRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EstimatedLeverageRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EstimatedLeverageRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EstimatedLeverageRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EstimatedLeverageRatio: still ready after Reset")
+		}
+		compareRuns(t, "EstimatedLeverageRatio", first, drive())
+	})
+	t.Run("EvenBetterSinewave", func(t *testing.T) {
+		ind, err := NewEvenBetterSinewave(40, 10)
+		if err != nil {
+			t.Fatalf("new EvenBetterSinewave: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EvenBetterSinewave: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EvenBetterSinewave: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EvenBetterSinewave: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EvenBetterSinewave: still ready after Reset")
+		}
+		compareRuns(t, "EvenBetterSinewave", first, drive())
+	})
+	t.Run("EveningDojiStar", func(t *testing.T) {
+		ind, err := NewEveningDojiStar()
+		if err != nil {
+			t.Fatalf("new EveningDojiStar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EveningDojiStar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EveningDojiStar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EveningDojiStar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EveningDojiStar: still ready after Reset")
+		}
+		compareRuns(t, "EveningDojiStar", first, drive())
+	})
+	t.Run("Evwma", func(t *testing.T) {
+		ind, err := NewEvwma(14)
+		if err != nil {
+			t.Fatalf("new Evwma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Evwma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Evwma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Evwma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Evwma: still ready after Reset")
+		}
+		compareRuns(t, "Evwma", first, drive())
+	})
+	t.Run("EwmaVolatility", func(t *testing.T) {
+		ind, err := NewEwmaVolatility(0.94)
+		if err != nil {
+			t.Fatalf("new EwmaVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("EwmaVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("EwmaVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("EwmaVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("EwmaVolatility: still ready after Reset")
+		}
+		compareRuns(t, "EwmaVolatility", first, drive())
+	})
+	t.Run("Expectancy", func(t *testing.T) {
+		ind, err := NewExpectancy(14)
+		if err != nil {
+			t.Fatalf("new Expectancy: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Expectancy: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Expectancy: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Expectancy: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Expectancy: still ready after Reset")
+		}
+		compareRuns(t, "Expectancy", first, drive())
+	})
+	t.Run("FallingThreeMethods", func(t *testing.T) {
+		ind, err := NewFallingThreeMethods()
+		if err != nil {
+			t.Fatalf("new FallingThreeMethods: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FallingThreeMethods: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FallingThreeMethods: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FallingThreeMethods: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FallingThreeMethods: still ready after Reset")
+		}
+		compareRuns(t, "FallingThreeMethods", first, drive())
+	})
+	t.Run("Fama", func(t *testing.T) {
+		ind, err := NewFama(0.5, 0.05)
+		if err != nil {
+			t.Fatalf("new Fama: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Fama: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Fama: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Fama: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Fama: still ready after Reset")
+		}
+		compareRuns(t, "Fama", first, drive())
+	})
+	t.Run("FibArcs", func(t *testing.T) {
+		ind, err := NewFibArcs()
+		if err != nil {
+			t.Fatalf("new FibArcs: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibArcs: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibArcs: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibArcs: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibArcs: still ready after Reset")
+		}
+		compareRuns(t, "FibArcs", first, drive())
+	})
+	t.Run("FibChannel", func(t *testing.T) {
+		ind, err := NewFibChannel()
+		if err != nil {
+			t.Fatalf("new FibChannel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibChannel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibChannel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibChannel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibChannel: still ready after Reset")
+		}
+		compareRuns(t, "FibChannel", first, drive())
+	})
+	t.Run("FibConfluence", func(t *testing.T) {
+		ind, err := NewFibConfluence()
+		if err != nil {
+			t.Fatalf("new FibConfluence: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibConfluence: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibConfluence: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibConfluence: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibConfluence: still ready after Reset")
+		}
+		compareRuns(t, "FibConfluence", first, drive())
+	})
+	t.Run("FibExtension", func(t *testing.T) {
+		ind, err := NewFibExtension()
+		if err != nil {
+			t.Fatalf("new FibExtension: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 5)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibExtension: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibExtension: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibExtension: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibExtension: still ready after Reset")
+		}
+		compareRuns(t, "FibExtension", first, drive())
+	})
+	t.Run("FibFan", func(t *testing.T) {
+		ind, err := NewFibFan()
+		if err != nil {
+			t.Fatalf("new FibFan: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibFan: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibFan: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibFan: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibFan: still ready after Reset")
+		}
+		compareRuns(t, "FibFan", first, drive())
+	})
+	t.Run("FibProjection", func(t *testing.T) {
+		ind, err := NewFibProjection()
+		if err != nil {
+			t.Fatalf("new FibProjection: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibProjection: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibProjection: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibProjection: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibProjection: still ready after Reset")
+		}
+		compareRuns(t, "FibProjection", first, drive())
+	})
+	t.Run("FibRetracement", func(t *testing.T) {
+		ind, err := NewFibRetracement()
+		if err != nil {
+			t.Fatalf("new FibRetracement: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 7)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibRetracement: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibRetracement: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibRetracement: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibRetracement: still ready after Reset")
+		}
+		compareRuns(t, "FibRetracement", first, drive())
+	})
+	t.Run("FibTimeZones", func(t *testing.T) {
+		ind, err := NewFibTimeZones()
+		if err != nil {
+			t.Fatalf("new FibTimeZones: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibTimeZones: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibTimeZones: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibTimeZones: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibTimeZones: still ready after Reset")
+		}
+		compareRuns(t, "FibTimeZones", first, drive())
+	})
+	t.Run("FibonacciPivots", func(t *testing.T) {
+		ind, err := NewFibonacciPivots()
+		if err != nil {
+			t.Fatalf("new FibonacciPivots: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 7)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FibonacciPivots: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FibonacciPivots: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FibonacciPivots: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FibonacciPivots: still ready after Reset")
+		}
+		compareRuns(t, "FibonacciPivots", first, drive())
+	})
+	t.Run("FisherRsi", func(t *testing.T) {
+		ind, err := NewFisherRsi(14)
+		if err != nil {
+			t.Fatalf("new FisherRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FisherRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FisherRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FisherRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FisherRsi: still ready after Reset")
+		}
+		compareRuns(t, "FisherRsi", first, drive())
+	})
+	t.Run("FisherTransform", func(t *testing.T) {
+		ind, err := NewFisherTransform(14)
+		if err != nil {
+			t.Fatalf("new FisherTransform: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FisherTransform: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FisherTransform: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FisherTransform: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FisherTransform: still ready after Reset")
+		}
+		compareRuns(t, "FisherTransform", first, drive())
+	})
+	t.Run("FlagPennant", func(t *testing.T) {
+		ind, err := NewFlagPennant()
+		if err != nil {
+			t.Fatalf("new FlagPennant: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FlagPennant: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FlagPennant: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FlagPennant: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FlagPennant: still ready after Reset")
+		}
+		compareRuns(t, "FlagPennant", first, drive())
+	})
+	t.Run("Footprint", func(t *testing.T) {
+		ind, err := NewFootprint(1.0)
+		if err != nil {
+			t.Fatalf("new Footprint: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[3], r[4], r[3] >= r[0], int64(i)))
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Footprint: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Footprint: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Footprint: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Footprint: still ready after Reset")
+		}
+		compareRuns(t, "Footprint", first, drive())
+	})
+	t.Run("ForceIndex", func(t *testing.T) {
+		ind, err := NewForceIndex(14)
+		if err != nil {
+			t.Fatalf("new ForceIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ForceIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ForceIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ForceIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ForceIndex: still ready after Reset")
+		}
+		compareRuns(t, "ForceIndex", first, drive())
+	})
+	t.Run("FractalChaosBands", func(t *testing.T) {
+		ind, err := NewFractalChaosBands(14)
+		if err != nil {
+			t.Fatalf("new FractalChaosBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FractalChaosBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FractalChaosBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FractalChaosBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FractalChaosBands: still ready after Reset")
+		}
+		compareRuns(t, "FractalChaosBands", first, drive())
+	})
+	t.Run("Frama", func(t *testing.T) {
+		ind, err := NewFrama(14)
+		if err != nil {
+			t.Fatalf("new Frama: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Frama: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Frama: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Frama: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Frama: still ready after Reset")
+		}
+		compareRuns(t, "Frama", first, drive())
+	})
+	t.Run("FryPanBottom", func(t *testing.T) {
+		ind, err := NewFryPanBottom(14)
+		if err != nil {
+			t.Fatalf("new FryPanBottom: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FryPanBottom: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FryPanBottom: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FryPanBottom: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FryPanBottom: still ready after Reset")
+		}
+		compareRuns(t, "FryPanBottom", first, drive())
+	})
+	t.Run("FundingBasis", func(t *testing.T) {
+		ind, err := NewFundingBasis()
+		if err != nil {
+			t.Fatalf("new FundingBasis: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FundingBasis: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FundingBasis: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FundingBasis: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FundingBasis: still ready after Reset")
+		}
+		compareRuns(t, "FundingBasis", first, drive())
+	})
+	t.Run("FundingImpliedApr", func(t *testing.T) {
+		ind, err := NewFundingImpliedApr(1095.0)
+		if err != nil {
+			t.Fatalf("new FundingImpliedApr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FundingImpliedApr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FundingImpliedApr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FundingImpliedApr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FundingImpliedApr: still ready after Reset")
+		}
+		compareRuns(t, "FundingImpliedApr", first, drive())
+	})
+	t.Run("FundingRate", func(t *testing.T) {
+		ind, err := NewFundingRate()
+		if err != nil {
+			t.Fatalf("new FundingRate: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FundingRate: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FundingRate: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FundingRate: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FundingRate: still ready after Reset")
+		}
+		compareRuns(t, "FundingRate", first, drive())
+	})
+	t.Run("FundingRateMean", func(t *testing.T) {
+		ind, err := NewFundingRateMean(20)
+		if err != nil {
+			t.Fatalf("new FundingRateMean: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FundingRateMean: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FundingRateMean: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FundingRateMean: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FundingRateMean: still ready after Reset")
+		}
+		compareRuns(t, "FundingRateMean", first, drive())
+	})
+	t.Run("FundingRateZScore", func(t *testing.T) {
+		ind, err := NewFundingRateZScore(20)
+		if err != nil {
+			t.Fatalf("new FundingRateZScore: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("FundingRateZScore: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("FundingRateZScore: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("FundingRateZScore: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("FundingRateZScore: still ready after Reset")
+		}
+		compareRuns(t, "FundingRateZScore", first, drive())
+	})
+	t.Run("GainLossRatio", func(t *testing.T) {
+		ind, err := NewGainLossRatio(14)
+		if err != nil {
+			t.Fatalf("new GainLossRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GainLossRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GainLossRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GainLossRatio: still ready after Reset")
+		}
+		compareRuns(t, "GainLossRatio", first, drive())
+	})
+	t.Run("GainToPainRatio", func(t *testing.T) {
+		ind, err := NewGainToPainRatio(14)
+		if err != nil {
+			t.Fatalf("new GainToPainRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GainToPainRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GainToPainRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GainToPainRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GainToPainRatio: still ready after Reset")
+		}
+		compareRuns(t, "GainToPainRatio", first, drive())
+	})
+	t.Run("GapSideBySideWhite", func(t *testing.T) {
+		ind, err := NewGapSideBySideWhite()
+		if err != nil {
+			t.Fatalf("new GapSideBySideWhite: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GapSideBySideWhite: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GapSideBySideWhite: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GapSideBySideWhite: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GapSideBySideWhite: still ready after Reset")
+		}
+		compareRuns(t, "GapSideBySideWhite", first, drive())
+	})
+	t.Run("Garch11", func(t *testing.T) {
+		ind, err := NewGarch11(2e-06, 0.1, 0.88)
+		if err != nil {
+			t.Fatalf("new Garch11: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Garch11: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Garch11: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Garch11: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Garch11: still ready after Reset")
+		}
+		compareRuns(t, "Garch11", first, drive())
+	})
+	t.Run("GarmanKlassVolatility", func(t *testing.T) {
+		ind, err := NewGarmanKlassVolatility(20, 252)
+		if err != nil {
+			t.Fatalf("new GarmanKlassVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GarmanKlassVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GarmanKlassVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GarmanKlassVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GarmanKlassVolatility: still ready after Reset")
+		}
+		compareRuns(t, "GarmanKlassVolatility", first, drive())
+	})
+	t.Run("Gartley", func(t *testing.T) {
+		ind, err := NewGartley()
+		if err != nil {
+			t.Fatalf("new Gartley: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Gartley: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Gartley: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Gartley: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Gartley: still ready after Reset")
+		}
+		compareRuns(t, "Gartley", first, drive())
+	})
+	t.Run("GatorOscillator", func(t *testing.T) {
+		ind, err := NewGatorOscillator(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new GatorOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GatorOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GatorOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GatorOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GatorOscillator: still ready after Reset")
+		}
+		compareRuns(t, "GatorOscillator", first, drive())
+	})
+	t.Run("GeneralizedDema", func(t *testing.T) {
+		ind, err := NewGeneralizedDema(5, 0.7)
+		if err != nil {
+			t.Fatalf("new GeneralizedDema: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GeneralizedDema: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GeneralizedDema: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GeneralizedDema: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GeneralizedDema: still ready after Reset")
+		}
+		compareRuns(t, "GeneralizedDema", first, drive())
+	})
+	t.Run("GeometricMa", func(t *testing.T) {
+		ind, err := NewGeometricMa(14)
+		if err != nil {
+			t.Fatalf("new GeometricMa: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GeometricMa: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GeometricMa: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GeometricMa: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GeometricMa: still ready after Reset")
+		}
+		compareRuns(t, "GeometricMa", first, drive())
+	})
+	t.Run("GoldenPocket", func(t *testing.T) {
+		ind, err := NewGoldenPocket()
+		if err != nil {
+			t.Fatalf("new GoldenPocket: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GoldenPocket: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GoldenPocket: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GoldenPocket: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GoldenPocket: still ready after Reset")
+		}
+		compareRuns(t, "GoldenPocket", first, drive())
+	})
+	t.Run("GrangerCausality", func(t *testing.T) {
+		ind, err := NewGrangerCausality(60, 1)
+		if err != nil {
+			t.Fatalf("new GrangerCausality: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GrangerCausality: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GrangerCausality: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GrangerCausality: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GrangerCausality: still ready after Reset")
+		}
+		compareRuns(t, "GrangerCausality", first, drive())
+	})
+	t.Run("GravestoneDoji", func(t *testing.T) {
+		ind, err := NewGravestoneDoji()
+		if err != nil {
+			t.Fatalf("new GravestoneDoji: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("GravestoneDoji: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("GravestoneDoji: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("GravestoneDoji: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("GravestoneDoji: still ready after Reset")
+		}
+		compareRuns(t, "GravestoneDoji", first, drive())
+	})
+	t.Run("Hammer", func(t *testing.T) {
+		ind, err := NewHammer()
+		if err != nil {
+			t.Fatalf("new Hammer: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Hammer: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Hammer: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Hammer: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Hammer: still ready after Reset")
+		}
+		compareRuns(t, "Hammer", first, drive())
+	})
+	t.Run("HangingMan", func(t *testing.T) {
+		ind, err := NewHangingMan()
+		if err != nil {
+			t.Fatalf("new HangingMan: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HangingMan: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HangingMan: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HangingMan: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HangingMan: still ready after Reset")
+		}
+		compareRuns(t, "HangingMan", first, drive())
+	})
+	t.Run("Harami", func(t *testing.T) {
+		ind, err := NewHarami()
+		if err != nil {
+			t.Fatalf("new Harami: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Harami: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Harami: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Harami: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Harami: still ready after Reset")
+		}
+		compareRuns(t, "Harami", first, drive())
+	})
+	t.Run("HaramiCross", func(t *testing.T) {
+		ind, err := NewHaramiCross()
+		if err != nil {
+			t.Fatalf("new HaramiCross: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HaramiCross: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HaramiCross: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HaramiCross: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HaramiCross: still ready after Reset")
+		}
+		compareRuns(t, "HaramiCross", first, drive())
+	})
+	t.Run("HasbrouckInformationShare", func(t *testing.T) {
+		ind, err := NewHasbrouckInformationShare(14)
+		if err != nil {
+			t.Fatalf("new HasbrouckInformationShare: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HasbrouckInformationShare: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HasbrouckInformationShare: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HasbrouckInformationShare: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HasbrouckInformationShare: still ready after Reset")
+		}
+		compareRuns(t, "HasbrouckInformationShare", first, drive())
+	})
+	t.Run("HeadAndShoulders", func(t *testing.T) {
+		ind, err := NewHeadAndShoulders()
+		if err != nil {
+			t.Fatalf("new HeadAndShoulders: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HeadAndShoulders: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HeadAndShoulders: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HeadAndShoulders: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HeadAndShoulders: still ready after Reset")
+		}
+		compareRuns(t, "HeadAndShoulders", first, drive())
+	})
+	t.Run("HeikinAshi", func(t *testing.T) {
+		ind, err := NewHeikinAshi()
+		if err != nil {
+			t.Fatalf("new HeikinAshi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HeikinAshi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HeikinAshi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HeikinAshi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HeikinAshi: still ready after Reset")
+		}
+		compareRuns(t, "HeikinAshi", first, drive())
+	})
+	t.Run("HeikinAshiOscillator", func(t *testing.T) {
+		ind, err := NewHeikinAshiOscillator(14)
+		if err != nil {
+			t.Fatalf("new HeikinAshiOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HeikinAshiOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HeikinAshiOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HeikinAshiOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HeikinAshiOscillator: still ready after Reset")
+		}
+		compareRuns(t, "HeikinAshiOscillator", first, drive())
+	})
+	t.Run("HiLoActivator", func(t *testing.T) {
+		ind, err := NewHiLoActivator(14)
+		if err != nil {
+			t.Fatalf("new HiLoActivator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HiLoActivator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HiLoActivator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HiLoActivator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HiLoActivator: still ready after Reset")
+		}
+		compareRuns(t, "HiLoActivator", first, drive())
+	})
+	t.Run("HighLowIndex", func(t *testing.T) {
+		ind, err := NewHighLowIndex(10)
+		if err != nil {
+			t.Fatalf("new HighLowIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HighLowIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HighLowIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HighLowIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HighLowIndex: still ready after Reset")
+		}
+		compareRuns(t, "HighLowIndex", first, drive())
+	})
+	t.Run("HighLowRange", func(t *testing.T) {
+		ind, err := NewHighLowRange()
+		if err != nil {
+			t.Fatalf("new HighLowRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HighLowRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HighLowRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HighLowRange: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HighLowRange: still ready after Reset")
+		}
+		compareRuns(t, "HighLowRange", first, drive())
+	})
+	t.Run("HighLowVolumeNodes", func(t *testing.T) {
+		ind, err := NewHighLowVolumeNodes(3, 7)
+		if err != nil {
+			t.Fatalf("new HighLowVolumeNodes: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HighLowVolumeNodes: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HighLowVolumeNodes: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HighLowVolumeNodes: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HighLowVolumeNodes: still ready after Reset")
+		}
+		compareRuns(t, "HighLowVolumeNodes", first, drive())
+	})
+	t.Run("HighWave", func(t *testing.T) {
+		ind, err := NewHighWave()
+		if err != nil {
+			t.Fatalf("new HighWave: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HighWave: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HighWave: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HighWave: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HighWave: still ready after Reset")
+		}
+		compareRuns(t, "HighWave", first, drive())
+	})
+	t.Run("HighpassFilter", func(t *testing.T) {
+		ind, err := NewHighpassFilter(14)
+		if err != nil {
+			t.Fatalf("new HighpassFilter: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HighpassFilter: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HighpassFilter: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HighpassFilter: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HighpassFilter: still ready after Reset")
+		}
+		compareRuns(t, "HighpassFilter", first, drive())
+	})
+	t.Run("Hikkake", func(t *testing.T) {
+		ind, err := NewHikkake()
+		if err != nil {
+			t.Fatalf("new Hikkake: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Hikkake: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Hikkake: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Hikkake: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Hikkake: still ready after Reset")
+		}
+		compareRuns(t, "Hikkake", first, drive())
+	})
+	t.Run("HikkakeModified", func(t *testing.T) {
+		ind, err := NewHikkakeModified()
+		if err != nil {
+			t.Fatalf("new HikkakeModified: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HikkakeModified: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HikkakeModified: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HikkakeModified: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HikkakeModified: still ready after Reset")
+		}
+		compareRuns(t, "HikkakeModified", first, drive())
+	})
+	t.Run("HilbertDominantCycle", func(t *testing.T) {
+		ind, err := NewHilbertDominantCycle()
+		if err != nil {
+			t.Fatalf("new HilbertDominantCycle: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HilbertDominantCycle: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HilbertDominantCycle: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HilbertDominantCycle: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HilbertDominantCycle: still ready after Reset")
+		}
+		compareRuns(t, "HilbertDominantCycle", first, drive())
+	})
+	t.Run("HistoricalVolatility", func(t *testing.T) {
+		ind, err := NewHistoricalVolatility(3, 7)
+		if err != nil {
+			t.Fatalf("new HistoricalVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HistoricalVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HistoricalVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HistoricalVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HistoricalVolatility: still ready after Reset")
+		}
+		compareRuns(t, "HistoricalVolatility", first, drive())
+	})
+	t.Run("Hma", func(t *testing.T) {
+		ind, err := NewHma(14)
+		if err != nil {
+			t.Fatalf("new Hma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Hma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Hma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Hma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Hma: still ready after Reset")
+		}
+		compareRuns(t, "Hma", first, drive())
+	})
+	t.Run("HoltWinters", func(t *testing.T) {
+		ind, err := NewHoltWinters(0.5, 0.1)
+		if err != nil {
+			t.Fatalf("new HoltWinters: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HoltWinters: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HoltWinters: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HoltWinters: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HoltWinters: still ready after Reset")
+		}
+		compareRuns(t, "HoltWinters", first, drive())
+	})
+	t.Run("HomingPigeon", func(t *testing.T) {
+		ind, err := NewHomingPigeon()
+		if err != nil {
+			t.Fatalf("new HomingPigeon: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HomingPigeon: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HomingPigeon: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HomingPigeon: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HomingPigeon: still ready after Reset")
+		}
+		compareRuns(t, "HomingPigeon", first, drive())
+	})
+	t.Run("HtDcPhase", func(t *testing.T) {
+		ind, err := NewHtDcPhase()
+		if err != nil {
+			t.Fatalf("new HtDcPhase: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HtDcPhase: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HtDcPhase: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HtDcPhase: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HtDcPhase: still ready after Reset")
+		}
+		compareRuns(t, "HtDcPhase", first, drive())
+	})
+	t.Run("HtPhasor", func(t *testing.T) {
+		ind, err := NewHtPhasor()
+		if err != nil {
+			t.Fatalf("new HtPhasor: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HtPhasor: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HtPhasor: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HtPhasor: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HtPhasor: still ready after Reset")
+		}
+		compareRuns(t, "HtPhasor", first, drive())
+	})
+	t.Run("HtTrendMode", func(t *testing.T) {
+		ind, err := NewHtTrendMode()
+		if err != nil {
+			t.Fatalf("new HtTrendMode: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HtTrendMode: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HtTrendMode: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HtTrendMode: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HtTrendMode: still ready after Reset")
+		}
+		compareRuns(t, "HtTrendMode", first, drive())
+	})
+	t.Run("HurstChannel", func(t *testing.T) {
+		ind, err := NewHurstChannel(14, 2.0)
+		if err != nil {
+			t.Fatalf("new HurstChannel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HurstChannel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HurstChannel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("HurstChannel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HurstChannel: still ready after Reset")
+		}
+		compareRuns(t, "HurstChannel", first, drive())
+	})
+	t.Run("HurstExponent", func(t *testing.T) {
+		ind, err := NewHurstExponent(100, 4)
+		if err != nil {
+			t.Fatalf("new HurstExponent: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("HurstExponent: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("HurstExponent: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("HurstExponent: still ready after Reset")
+		}
+		compareRuns(t, "HurstExponent", first, drive())
+	})
+	t.Run("Ichimoku", func(t *testing.T) {
+		ind, err := NewIchimoku(9, 26, 52, 26)
+		if err != nil {
+			t.Fatalf("new Ichimoku: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 5)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Ichimoku: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Ichimoku: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Ichimoku: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Ichimoku: still ready after Reset")
+		}
+		compareRuns(t, "Ichimoku", first, drive())
+	})
+	t.Run("IdenticalThreeCrows", func(t *testing.T) {
+		ind, err := NewIdenticalThreeCrows()
+		if err != nil {
+			t.Fatalf("new IdenticalThreeCrows: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("IdenticalThreeCrows: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("IdenticalThreeCrows: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("IdenticalThreeCrows: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("IdenticalThreeCrows: still ready after Reset")
+		}
+		compareRuns(t, "IdenticalThreeCrows", first, drive())
+	})
+	t.Run("ImbalanceBars", func(t *testing.T) {
+		ind, err := NewImbalanceBars(5.0)
+		if err != nil {
+			t.Fatalf("new ImbalanceBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "ImbalanceBars", first, drive())
+	})
+	t.Run("InNeck", func(t *testing.T) {
+		ind, err := NewInNeck()
+		if err != nil {
+			t.Fatalf("new InNeck: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("InNeck: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("InNeck: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("InNeck: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("InNeck: still ready after Reset")
+		}
+		compareRuns(t, "InNeck", first, drive())
+	})
+	t.Run("Inertia", func(t *testing.T) {
+		ind, err := NewInertia(3, 7)
+		if err != nil {
+			t.Fatalf("new Inertia: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Inertia: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Inertia: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Inertia: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Inertia: still ready after Reset")
+		}
+		compareRuns(t, "Inertia", first, drive())
+	})
+	t.Run("InformationRatio", func(t *testing.T) {
+		ind, err := NewInformationRatio(14)
+		if err != nil {
+			t.Fatalf("new InformationRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("InformationRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("InformationRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("InformationRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("InformationRatio: still ready after Reset")
+		}
+		compareRuns(t, "InformationRatio", first, drive())
+	})
+	t.Run("InitialBalance", func(t *testing.T) {
+		ind, err := NewInitialBalance(14)
+		if err != nil {
+			t.Fatalf("new InitialBalance: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("InitialBalance: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("InitialBalance: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("InitialBalance: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("InitialBalance: still ready after Reset")
+		}
+		compareRuns(t, "InitialBalance", first, drive())
+	})
+	t.Run("InstantaneousTrendline", func(t *testing.T) {
+		ind, err := NewInstantaneousTrendline(14)
+		if err != nil {
+			t.Fatalf("new InstantaneousTrendline: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("InstantaneousTrendline: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("InstantaneousTrendline: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("InstantaneousTrendline: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("InstantaneousTrendline: still ready after Reset")
+		}
+		compareRuns(t, "InstantaneousTrendline", first, drive())
+	})
+	t.Run("IntradayIntensity", func(t *testing.T) {
+		ind, err := NewIntradayIntensity()
+		if err != nil {
+			t.Fatalf("new IntradayIntensity: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("IntradayIntensity: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("IntradayIntensity: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("IntradayIntensity: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("IntradayIntensity: still ready after Reset")
+		}
+		compareRuns(t, "IntradayIntensity", first, drive())
+	})
+	t.Run("IntradayMomentumIndex", func(t *testing.T) {
+		ind, err := NewIntradayMomentumIndex(14)
+		if err != nil {
+			t.Fatalf("new IntradayMomentumIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("IntradayMomentumIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("IntradayMomentumIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("IntradayMomentumIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("IntradayMomentumIndex: still ready after Reset")
+		}
+		compareRuns(t, "IntradayMomentumIndex", first, drive())
+	})
+	t.Run("IntradayVolatilityProfile", func(t *testing.T) {
+		ind, err := NewIntradayVolatilityProfile(24, 0)
+		if err != nil {
+			t.Fatalf("new IntradayVolatilityProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				if ok {
+					got[i] = bins
+				} else {
+					got[i] = nanRow(24)
+				}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("IntradayVolatilityProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("IntradayVolatilityProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("IntradayVolatilityProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("IntradayVolatilityProfile: still ready after Reset")
+		}
+		compareRuns(t, "IntradayVolatilityProfile", first, drive())
+	})
+	t.Run("InverseFisherTransform", func(t *testing.T) {
+		ind, err := NewInverseFisherTransform(2.0)
+		if err != nil {
+			t.Fatalf("new InverseFisherTransform: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("InverseFisherTransform: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("InverseFisherTransform: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("InverseFisherTransform: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("InverseFisherTransform: still ready after Reset")
+		}
+		compareRuns(t, "InverseFisherTransform", first, drive())
+	})
+	t.Run("InvertedHammer", func(t *testing.T) {
+		ind, err := NewInvertedHammer()
+		if err != nil {
+			t.Fatalf("new InvertedHammer: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("InvertedHammer: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("InvertedHammer: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("InvertedHammer: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("InvertedHammer: still ready after Reset")
+		}
+		compareRuns(t, "InvertedHammer", first, drive())
+	})
+	t.Run("JarqueBera", func(t *testing.T) {
+		ind, err := NewJarqueBera(14)
+		if err != nil {
+			t.Fatalf("new JarqueBera: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("JarqueBera: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("JarqueBera: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("JarqueBera: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("JarqueBera: still ready after Reset")
+		}
+		compareRuns(t, "JarqueBera", first, drive())
+	})
+	t.Run("Jma", func(t *testing.T) {
+		ind, err := NewJma(7, 0.0, 2.0)
+		if err != nil {
+			t.Fatalf("new Jma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Jma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Jma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Jma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Jma: still ready after Reset")
+		}
+		compareRuns(t, "Jma", first, drive())
+	})
+	t.Run("JumpIndicator", func(t *testing.T) {
+		ind, err := NewJumpIndicator(14, 2.0)
+		if err != nil {
+			t.Fatalf("new JumpIndicator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("JumpIndicator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("JumpIndicator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("JumpIndicator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("JumpIndicator: still ready after Reset")
+		}
+		compareRuns(t, "JumpIndicator", first, drive())
+	})
+	t.Run("KRatio", func(t *testing.T) {
+		ind, err := NewKRatio(14)
+		if err != nil {
+			t.Fatalf("new KRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KRatio: still ready after Reset")
+		}
+		compareRuns(t, "KRatio", first, drive())
+	})
+	t.Run("KagiBars", func(t *testing.T) {
+		ind, err := NewKagiBars(2.0)
+		if err != nil {
+			t.Fatalf("new KagiBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "KagiBars", first, drive())
+	})
+	t.Run("KalmanHedgeRatio", func(t *testing.T) {
+		ind, err := NewKalmanHedgeRatio(0.01, 0.001)
+		if err != nil {
+			t.Fatalf("new KalmanHedgeRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3], r[0])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KalmanHedgeRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KalmanHedgeRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KalmanHedgeRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KalmanHedgeRatio: still ready after Reset")
+		}
+		compareRuns(t, "KalmanHedgeRatio", first, drive())
+	})
+	t.Run("Kama", func(t *testing.T) {
+		ind, err := NewKama(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new Kama: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Kama: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Kama: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Kama: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Kama: still ready after Reset")
+		}
+		compareRuns(t, "Kama", first, drive())
+	})
+	t.Run("KaseDevStop", func(t *testing.T) {
+		ind, err := NewKaseDevStop(14, 2.0)
+		if err != nil {
+			t.Fatalf("new KaseDevStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KaseDevStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KaseDevStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KaseDevStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KaseDevStop: still ready after Reset")
+		}
+		compareRuns(t, "KaseDevStop", first, drive())
+	})
+	t.Run("KasePermissionStochastic", func(t *testing.T) {
+		ind, err := NewKasePermissionStochastic(3, 7)
+		if err != nil {
+			t.Fatalf("new KasePermissionStochastic: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KasePermissionStochastic: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KasePermissionStochastic: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KasePermissionStochastic: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KasePermissionStochastic: still ready after Reset")
+		}
+		compareRuns(t, "KasePermissionStochastic", first, drive())
+	})
+	t.Run("KellyCriterion", func(t *testing.T) {
+		ind, err := NewKellyCriterion(14)
+		if err != nil {
+			t.Fatalf("new KellyCriterion: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KellyCriterion: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KellyCriterion: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KellyCriterion: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KellyCriterion: still ready after Reset")
+		}
+		compareRuns(t, "KellyCriterion", first, drive())
+	})
+	t.Run("Keltner", func(t *testing.T) {
+		ind, err := NewKeltner(3, 7, 2.0)
+		if err != nil {
+			t.Fatalf("new Keltner: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Keltner: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Keltner: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Keltner: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Keltner: still ready after Reset")
+		}
+		compareRuns(t, "Keltner", first, drive())
+	})
+	t.Run("KendallTau", func(t *testing.T) {
+		ind, err := NewKendallTau(14)
+		if err != nil {
+			t.Fatalf("new KendallTau: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KendallTau: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KendallTau: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KendallTau: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KendallTau: still ready after Reset")
+		}
+		compareRuns(t, "KendallTau", first, drive())
+	})
+	t.Run("Kicking", func(t *testing.T) {
+		ind, err := NewKicking()
+		if err != nil {
+			t.Fatalf("new Kicking: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Kicking: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Kicking: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Kicking: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Kicking: still ready after Reset")
+		}
+		compareRuns(t, "Kicking", first, drive())
+	})
+	t.Run("KickingByLength", func(t *testing.T) {
+		ind, err := NewKickingByLength()
+		if err != nil {
+			t.Fatalf("new KickingByLength: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KickingByLength: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KickingByLength: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KickingByLength: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KickingByLength: still ready after Reset")
+		}
+		compareRuns(t, "KickingByLength", first, drive())
+	})
+	t.Run("Kst", func(t *testing.T) {
+		ind, err := NewKst(3, 7, 14, 28, 35, 42, 56, 63, 70)
+		if err != nil {
+			t.Fatalf("new Kst: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Kst: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Kst: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Kst: still ready after Reset")
+		}
+		compareRuns(t, "Kst", first, drive())
+	})
+	t.Run("Kurtosis", func(t *testing.T) {
+		ind, err := NewKurtosis(14)
+		if err != nil {
+			t.Fatalf("new Kurtosis: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Kurtosis: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Kurtosis: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Kurtosis: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Kurtosis: still ready after Reset")
+		}
+		compareRuns(t, "Kurtosis", first, drive())
+	})
+	t.Run("Kvo", func(t *testing.T) {
+		ind, err := NewKvo(3, 7)
+		if err != nil {
+			t.Fatalf("new Kvo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Kvo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Kvo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Kvo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Kvo: still ready after Reset")
+		}
+		compareRuns(t, "Kvo", first, drive())
+	})
+	t.Run("KylesLambda", func(t *testing.T) {
+		ind, err := NewKylesLambda(20)
+		if err != nil {
+			t.Fatalf("new KylesLambda: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i), (r[1]+r[2])/2)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("KylesLambda: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("KylesLambda: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("KylesLambda: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("KylesLambda: still ready after Reset")
+		}
+		compareRuns(t, "KylesLambda", first, drive())
+	})
+	t.Run("LadderBottom", func(t *testing.T) {
+		ind, err := NewLadderBottom()
+		if err != nil {
+			t.Fatalf("new LadderBottom: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LadderBottom: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LadderBottom: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LadderBottom: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LadderBottom: still ready after Reset")
+		}
+		compareRuns(t, "LadderBottom", first, drive())
+	})
+	t.Run("LaguerreRsi", func(t *testing.T) {
+		ind, err := NewLaguerreRsi(0.5)
+		if err != nil {
+			t.Fatalf("new LaguerreRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LaguerreRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LaguerreRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LaguerreRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LaguerreRsi: still ready after Reset")
+		}
+		compareRuns(t, "LaguerreRsi", first, drive())
+	})
+	t.Run("LeadLagCrossCorrelation", func(t *testing.T) {
+		ind, err := NewLeadLagCrossCorrelation(20, 10)
+		if err != nil {
+			t.Fatalf("new LeadLagCrossCorrelation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3], r[0])
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LeadLagCrossCorrelation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LeadLagCrossCorrelation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LeadLagCrossCorrelation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LeadLagCrossCorrelation: still ready after Reset")
+		}
+		compareRuns(t, "LeadLagCrossCorrelation", first, drive())
+	})
+	t.Run("LinRegAngle", func(t *testing.T) {
+		ind, err := NewLinRegAngle(14)
+		if err != nil {
+			t.Fatalf("new LinRegAngle: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LinRegAngle: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LinRegAngle: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LinRegAngle: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LinRegAngle: still ready after Reset")
+		}
+		compareRuns(t, "LinRegAngle", first, drive())
+	})
+	t.Run("LinRegChannel", func(t *testing.T) {
+		ind, err := NewLinRegChannel(14, 2.0)
+		if err != nil {
+			t.Fatalf("new LinRegChannel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LinRegChannel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LinRegChannel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LinRegChannel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LinRegChannel: still ready after Reset")
+		}
+		compareRuns(t, "LinRegChannel", first, drive())
+	})
+	t.Run("LinRegIntercept", func(t *testing.T) {
+		ind, err := NewLinRegIntercept(14)
+		if err != nil {
+			t.Fatalf("new LinRegIntercept: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LinRegIntercept: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LinRegIntercept: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LinRegIntercept: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LinRegIntercept: still ready after Reset")
+		}
+		compareRuns(t, "LinRegIntercept", first, drive())
+	})
+	t.Run("LinRegSlope", func(t *testing.T) {
+		ind, err := NewLinRegSlope(14)
+		if err != nil {
+			t.Fatalf("new LinRegSlope: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LinRegSlope: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LinRegSlope: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LinRegSlope: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LinRegSlope: still ready after Reset")
+		}
+		compareRuns(t, "LinRegSlope", first, drive())
+	})
+	t.Run("LinearRegression", func(t *testing.T) {
+		ind, err := NewLinearRegression(14)
+		if err != nil {
+			t.Fatalf("new LinearRegression: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LinearRegression: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LinearRegression: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LinearRegression: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LinearRegression: still ready after Reset")
+		}
+		compareRuns(t, "LinearRegression", first, drive())
+	})
+	t.Run("LiquidationFeatures", func(t *testing.T) {
+		ind, err := NewLiquidationFeatures()
+		if err != nil {
+			t.Fatalf("new LiquidationFeatures: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				out, ok := ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))
+				got[i] = reflectRow(out, ok, 5)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LiquidationFeatures: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LiquidationFeatures: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LiquidationFeatures: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LiquidationFeatures: still ready after Reset")
+		}
+		compareRuns(t, "LiquidationFeatures", first, drive())
+	})
+	t.Run("LogReturn", func(t *testing.T) {
+		ind, err := NewLogReturn(14)
+		if err != nil {
+			t.Fatalf("new LogReturn: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LogReturn: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LogReturn: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LogReturn: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LogReturn: still ready after Reset")
+		}
+		compareRuns(t, "LogReturn", first, drive())
+	})
+	t.Run("LongLeggedDoji", func(t *testing.T) {
+		ind, err := NewLongLeggedDoji()
+		if err != nil {
+			t.Fatalf("new LongLeggedDoji: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LongLeggedDoji: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LongLeggedDoji: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LongLeggedDoji: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LongLeggedDoji: still ready after Reset")
+		}
+		compareRuns(t, "LongLeggedDoji", first, drive())
+	})
+	t.Run("LongLine", func(t *testing.T) {
+		ind, err := NewLongLine()
+		if err != nil {
+			t.Fatalf("new LongLine: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LongLine: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LongLine: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LongLine: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LongLine: still ready after Reset")
+		}
+		compareRuns(t, "LongLine", first, drive())
+	})
+	t.Run("LongShortRatio", func(t *testing.T) {
+		ind, err := NewLongShortRatio()
+		if err != nil {
+			t.Fatalf("new LongShortRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("LongShortRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("LongShortRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("LongShortRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("LongShortRatio: still ready after Reset")
+		}
+		compareRuns(t, "LongShortRatio", first, drive())
+	})
+	t.Run("M2Measure", func(t *testing.T) {
+		ind, err := NewM2Measure(14, 2.0, 0.5)
+		if err != nil {
+			t.Fatalf("new M2Measure: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("M2Measure: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("M2Measure: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("M2Measure: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("M2Measure: still ready after Reset")
+		}
+		compareRuns(t, "M2Measure", first, drive())
+	})
+	t.Run("MaEnvelope", func(t *testing.T) {
+		ind, err := NewMaEnvelope(14, 2.0)
+		if err != nil {
+			t.Fatalf("new MaEnvelope: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MaEnvelope: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MaEnvelope: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MaEnvelope: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MaEnvelope: still ready after Reset")
+		}
+		compareRuns(t, "MaEnvelope", first, drive())
+	})
+	t.Run("MacdExt", func(t *testing.T) {
+		ind, err := NewMacdExt(12, 0.0, 26, 0.0, 9, 0.0)
+		if err != nil {
+			t.Fatalf("new MacdExt: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MacdExt: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MacdExt: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MacdExt: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MacdExt: still ready after Reset")
+		}
+		compareRuns(t, "MacdExt", first, drive())
+	})
+	t.Run("MacdFix", func(t *testing.T) {
+		ind, err := NewMacdFix(9)
+		if err != nil {
+			t.Fatalf("new MacdFix: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MacdFix: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MacdFix: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MacdFix: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MacdFix: still ready after Reset")
+		}
+		compareRuns(t, "MacdFix", first, drive())
+	})
+	t.Run("MacdHistogram", func(t *testing.T) {
+		ind, err := NewMacdHistogram(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new MacdHistogram: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MacdHistogram: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MacdHistogram: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MacdHistogram: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MacdHistogram: still ready after Reset")
+		}
+		compareRuns(t, "MacdHistogram", first, drive())
+	})
+	t.Run("MacdIndicator", func(t *testing.T) {
+		ind, err := NewMacdIndicator(12, 26, 9)
+		if err != nil {
+			t.Fatalf("new MacdIndicator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MacdIndicator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MacdIndicator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MacdIndicator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MacdIndicator: still ready after Reset")
+		}
+		compareRuns(t, "MacdIndicator", first, drive())
+	})
+	t.Run("Mama", func(t *testing.T) {
+		ind, err := NewMama(0.5, 0.05)
+		if err != nil {
+			t.Fatalf("new Mama: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Mama: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Mama: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Mama: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Mama: still ready after Reset")
+		}
+		compareRuns(t, "Mama", first, drive())
+	})
+	t.Run("MarketFacilitationIndex", func(t *testing.T) {
+		ind, err := NewMarketFacilitationIndex()
+		if err != nil {
+			t.Fatalf("new MarketFacilitationIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MarketFacilitationIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MarketFacilitationIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MarketFacilitationIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MarketFacilitationIndex: still ready after Reset")
+		}
+		compareRuns(t, "MarketFacilitationIndex", first, drive())
+	})
+	t.Run("MartinRatio", func(t *testing.T) {
+		ind, err := NewMartinRatio(14)
+		if err != nil {
+			t.Fatalf("new MartinRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MartinRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MartinRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MartinRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MartinRatio: still ready after Reset")
+		}
+		compareRuns(t, "MartinRatio", first, drive())
+	})
+	t.Run("Marubozu", func(t *testing.T) {
+		ind, err := NewMarubozu()
+		if err != nil {
+			t.Fatalf("new Marubozu: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Marubozu: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Marubozu: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Marubozu: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Marubozu: still ready after Reset")
+		}
+		compareRuns(t, "Marubozu", first, drive())
+	})
+	t.Run("MassIndex", func(t *testing.T) {
+		ind, err := NewMassIndex(3, 7)
+		if err != nil {
+			t.Fatalf("new MassIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MassIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MassIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MassIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MassIndex: still ready after Reset")
+		}
+		compareRuns(t, "MassIndex", first, drive())
+	})
+	t.Run("MatHold", func(t *testing.T) {
+		ind, err := NewMatHold()
+		if err != nil {
+			t.Fatalf("new MatHold: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MatHold: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MatHold: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MatHold: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MatHold: still ready after Reset")
+		}
+		compareRuns(t, "MatHold", first, drive())
+	})
+	t.Run("MatchingLow", func(t *testing.T) {
+		ind, err := NewMatchingLow()
+		if err != nil {
+			t.Fatalf("new MatchingLow: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MatchingLow: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MatchingLow: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MatchingLow: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MatchingLow: still ready after Reset")
+		}
+		compareRuns(t, "MatchingLow", first, drive())
+	})
+	t.Run("MaxDrawdown", func(t *testing.T) {
+		ind, err := NewMaxDrawdown(14)
+		if err != nil {
+			t.Fatalf("new MaxDrawdown: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MaxDrawdown: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MaxDrawdown: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MaxDrawdown: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MaxDrawdown: still ready after Reset")
+		}
+		compareRuns(t, "MaxDrawdown", first, drive())
+	})
+	t.Run("McClellanOscillator", func(t *testing.T) {
+		ind, err := NewMcClellanOscillator()
+		if err != nil {
+			t.Fatalf("new McClellanOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("McClellanOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("McClellanOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("McClellanOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("McClellanOscillator: still ready after Reset")
+		}
+		compareRuns(t, "McClellanOscillator", first, drive())
+	})
+	t.Run("McClellanSummationIndex", func(t *testing.T) {
+		ind, err := NewMcClellanSummationIndex()
+		if err != nil {
+			t.Fatalf("new McClellanSummationIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("McClellanSummationIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("McClellanSummationIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("McClellanSummationIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("McClellanSummationIndex: still ready after Reset")
+		}
+		compareRuns(t, "McClellanSummationIndex", first, drive())
+	})
+	t.Run("McGinleyDynamic", func(t *testing.T) {
+		ind, err := NewMcGinleyDynamic(14)
+		if err != nil {
+			t.Fatalf("new McGinleyDynamic: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("McGinleyDynamic: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("McGinleyDynamic: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("McGinleyDynamic: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("McGinleyDynamic: still ready after Reset")
+		}
+		compareRuns(t, "McGinleyDynamic", first, drive())
+	})
+	t.Run("MedianAbsoluteDeviation", func(t *testing.T) {
+		ind, err := NewMedianAbsoluteDeviation(14)
+		if err != nil {
+			t.Fatalf("new MedianAbsoluteDeviation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MedianAbsoluteDeviation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MedianAbsoluteDeviation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MedianAbsoluteDeviation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MedianAbsoluteDeviation: still ready after Reset")
+		}
+		compareRuns(t, "MedianAbsoluteDeviation", first, drive())
+	})
+	t.Run("MedianChannel", func(t *testing.T) {
+		ind, err := NewMedianChannel(14, 2.0)
+		if err != nil {
+			t.Fatalf("new MedianChannel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MedianChannel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MedianChannel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MedianChannel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MedianChannel: still ready after Reset")
+		}
+		compareRuns(t, "MedianChannel", first, drive())
+	})
+	t.Run("MedianMa", func(t *testing.T) {
+		ind, err := NewMedianMa(14)
+		if err != nil {
+			t.Fatalf("new MedianMa: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MedianMa: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MedianMa: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MedianMa: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MedianMa: still ready after Reset")
+		}
+		compareRuns(t, "MedianMa", first, drive())
+	})
+	t.Run("MedianPrice", func(t *testing.T) {
+		ind, err := NewMedianPrice()
+		if err != nil {
+			t.Fatalf("new MedianPrice: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MedianPrice: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MedianPrice: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MedianPrice: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MedianPrice: still ready after Reset")
+		}
+		compareRuns(t, "MedianPrice", first, drive())
+	})
+	t.Run("Mfi", func(t *testing.T) {
+		ind, err := NewMfi(14)
+		if err != nil {
+			t.Fatalf("new Mfi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Mfi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Mfi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Mfi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Mfi: still ready after Reset")
+		}
+		compareRuns(t, "Mfi", first, drive())
+	})
+	t.Run("Microprice", func(t *testing.T) {
+		ind, err := NewMicroprice()
+		if err != nil {
+			t.Fatalf("new Microprice: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Microprice: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Microprice: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Microprice: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Microprice: still ready after Reset")
+		}
+		compareRuns(t, "Microprice", first, drive())
+	})
+	t.Run("MidPoint", func(t *testing.T) {
+		ind, err := NewMidPoint(14)
+		if err != nil {
+			t.Fatalf("new MidPoint: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MidPoint: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MidPoint: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MidPoint: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MidPoint: still ready after Reset")
+		}
+		compareRuns(t, "MidPoint", first, drive())
+	})
+	t.Run("MidPrice", func(t *testing.T) {
+		ind, err := NewMidPrice(14)
+		if err != nil {
+			t.Fatalf("new MidPrice: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MidPrice: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MidPrice: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MidPrice: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MidPrice: still ready after Reset")
+		}
+		compareRuns(t, "MidPrice", first, drive())
+	})
+	t.Run("MinusDi", func(t *testing.T) {
+		ind, err := NewMinusDi(14)
+		if err != nil {
+			t.Fatalf("new MinusDi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MinusDi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MinusDi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MinusDi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MinusDi: still ready after Reset")
+		}
+		compareRuns(t, "MinusDi", first, drive())
+	})
+	t.Run("MinusDm", func(t *testing.T) {
+		ind, err := NewMinusDm(14)
+		if err != nil {
+			t.Fatalf("new MinusDm: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MinusDm: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MinusDm: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MinusDm: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MinusDm: still ready after Reset")
+		}
+		compareRuns(t, "MinusDm", first, drive())
+	})
+	t.Run("ModifiedMaStop", func(t *testing.T) {
+		ind, err := NewModifiedMaStop(14)
+		if err != nil {
+			t.Fatalf("new ModifiedMaStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ModifiedMaStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ModifiedMaStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ModifiedMaStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ModifiedMaStop: still ready after Reset")
+		}
+		compareRuns(t, "ModifiedMaStop", first, drive())
+	})
+	t.Run("Mom", func(t *testing.T) {
+		ind, err := NewMom(14)
+		if err != nil {
+			t.Fatalf("new Mom: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Mom: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Mom: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Mom: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Mom: still ready after Reset")
+		}
+		compareRuns(t, "Mom", first, drive())
+	})
+	t.Run("MorningDojiStar", func(t *testing.T) {
+		ind, err := NewMorningDojiStar()
+		if err != nil {
+			t.Fatalf("new MorningDojiStar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MorningDojiStar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MorningDojiStar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MorningDojiStar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MorningDojiStar: still ready after Reset")
+		}
+		compareRuns(t, "MorningDojiStar", first, drive())
+	})
+	t.Run("MorningEveningStar", func(t *testing.T) {
+		ind, err := NewMorningEveningStar()
+		if err != nil {
+			t.Fatalf("new MorningEveningStar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MorningEveningStar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MorningEveningStar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MorningEveningStar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MorningEveningStar: still ready after Reset")
+		}
+		compareRuns(t, "MorningEveningStar", first, drive())
+	})
+	t.Run("MurreyMathLines", func(t *testing.T) {
+		ind, err := NewMurreyMathLines(14)
+		if err != nil {
+			t.Fatalf("new MurreyMathLines: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 9)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("MurreyMathLines: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("MurreyMathLines: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("MurreyMathLines: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("MurreyMathLines: still ready after Reset")
+		}
+		compareRuns(t, "MurreyMathLines", first, drive())
+	})
+	t.Run("NakedPoc", func(t *testing.T) {
+		ind, err := NewNakedPoc(3, 7)
+		if err != nil {
+			t.Fatalf("new NakedPoc: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("NakedPoc: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("NakedPoc: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("NakedPoc: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("NakedPoc: still ready after Reset")
+		}
+		compareRuns(t, "NakedPoc", first, drive())
+	})
+	t.Run("Natr", func(t *testing.T) {
+		ind, err := NewNatr(14)
+		if err != nil {
+			t.Fatalf("new Natr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Natr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Natr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Natr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Natr: still ready after Reset")
+		}
+		compareRuns(t, "Natr", first, drive())
+	})
+	t.Run("NewHighsNewLows", func(t *testing.T) {
+		ind, err := NewNewHighsNewLows()
+		if err != nil {
+			t.Fatalf("new NewHighsNewLows: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("NewHighsNewLows: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("NewHighsNewLows: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("NewHighsNewLows: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("NewHighsNewLows: still ready after Reset")
+		}
+		compareRuns(t, "NewHighsNewLows", first, drive())
+	})
+	t.Run("NewPriceLines", func(t *testing.T) {
+		ind, err := NewNewPriceLines(14)
+		if err != nil {
+			t.Fatalf("new NewPriceLines: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("NewPriceLines: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("NewPriceLines: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("NewPriceLines: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("NewPriceLines: still ready after Reset")
+		}
+		compareRuns(t, "NewPriceLines", first, drive())
+	})
+	t.Run("Nrtr", func(t *testing.T) {
+		ind, err := NewNrtr(2.0)
+		if err != nil {
+			t.Fatalf("new Nrtr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Nrtr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Nrtr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Nrtr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Nrtr: still ready after Reset")
+		}
+		compareRuns(t, "Nrtr", first, drive())
+	})
+	t.Run("Nvi", func(t *testing.T) {
+		ind, err := NewNvi()
+		if err != nil {
+			t.Fatalf("new Nvi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Nvi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Nvi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Nvi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Nvi: still ready after Reset")
+		}
+		compareRuns(t, "Nvi", first, drive())
+	})
+	t.Run("OIPriceDivergence", func(t *testing.T) {
+		ind, err := NewOIPriceDivergence(20)
+		if err != nil {
+			t.Fatalf("new OIPriceDivergence: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OIPriceDivergence: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OIPriceDivergence: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OIPriceDivergence: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OIPriceDivergence: still ready after Reset")
+		}
+		compareRuns(t, "OIPriceDivergence", first, drive())
+	})
+	t.Run("OIWeighted", func(t *testing.T) {
+		ind, err := NewOIWeighted()
+		if err != nil {
+			t.Fatalf("new OIWeighted: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OIWeighted: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OIWeighted: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OIWeighted: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OIWeighted: still ready after Reset")
+		}
+		compareRuns(t, "OIWeighted", first, drive())
+	})
+	t.Run("Obv", func(t *testing.T) {
+		ind, err := NewObv()
+		if err != nil {
+			t.Fatalf("new Obv: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Obv: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Obv: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Obv: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Obv: still ready after Reset")
+		}
+		compareRuns(t, "Obv", first, drive())
+	})
+	t.Run("OiToVolumeRatio", func(t *testing.T) {
+		ind, err := NewOiToVolumeRatio()
+		if err != nil {
+			t.Fatalf("new OiToVolumeRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OiToVolumeRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OiToVolumeRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OiToVolumeRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OiToVolumeRatio: still ready after Reset")
+		}
+		compareRuns(t, "OiToVolumeRatio", first, drive())
+	})
+	t.Run("OmegaRatio", func(t *testing.T) {
+		ind, err := NewOmegaRatio(14, 2.0)
+		if err != nil {
+			t.Fatalf("new OmegaRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OmegaRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OmegaRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OmegaRatio: still ready after Reset")
+		}
+		compareRuns(t, "OmegaRatio", first, drive())
+	})
+	t.Run("OnNeck", func(t *testing.T) {
+		ind, err := NewOnNeck()
+		if err != nil {
+			t.Fatalf("new OnNeck: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OnNeck: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OnNeck: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OnNeck: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OnNeck: still ready after Reset")
+		}
+		compareRuns(t, "OnNeck", first, drive())
+	})
+	t.Run("OpenInterestDelta", func(t *testing.T) {
+		ind, err := NewOpenInterestDelta()
+		if err != nil {
+			t.Fatalf("new OpenInterestDelta: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OpenInterestDelta: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OpenInterestDelta: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OpenInterestDelta: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OpenInterestDelta: still ready after Reset")
+		}
+		compareRuns(t, "OpenInterestDelta", first, drive())
+	})
+	t.Run("OpenInterestMomentum", func(t *testing.T) {
+		ind, err := NewOpenInterestMomentum(10)
+		if err != nil {
+			t.Fatalf("new OpenInterestMomentum: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OpenInterestMomentum: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OpenInterestMomentum: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OpenInterestMomentum: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OpenInterestMomentum: still ready after Reset")
+		}
+		compareRuns(t, "OpenInterestMomentum", first, drive())
+	})
+	t.Run("OpeningMarubozu", func(t *testing.T) {
+		ind, err := NewOpeningMarubozu()
+		if err != nil {
+			t.Fatalf("new OpeningMarubozu: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OpeningMarubozu: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OpeningMarubozu: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OpeningMarubozu: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OpeningMarubozu: still ready after Reset")
+		}
+		compareRuns(t, "OpeningMarubozu", first, drive())
+	})
+	t.Run("OpeningRange", func(t *testing.T) {
+		ind, err := NewOpeningRange(14)
+		if err != nil {
+			t.Fatalf("new OpeningRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OpeningRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OpeningRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OpeningRange: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OpeningRange: still ready after Reset")
+		}
+		compareRuns(t, "OpeningRange", first, drive())
+	})
+	t.Run("OrderBookImbalanceFull", func(t *testing.T) {
+		ind, err := NewOrderBookImbalanceFull()
+		if err != nil {
+			t.Fatalf("new OrderBookImbalanceFull: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OrderBookImbalanceFull: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OrderBookImbalanceFull: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OrderBookImbalanceFull: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OrderBookImbalanceFull: still ready after Reset")
+		}
+		compareRuns(t, "OrderBookImbalanceFull", first, drive())
+	})
+	t.Run("OrderBookImbalanceTop1", func(t *testing.T) {
+		ind, err := NewOrderBookImbalanceTop1()
+		if err != nil {
+			t.Fatalf("new OrderBookImbalanceTop1: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OrderBookImbalanceTop1: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OrderBookImbalanceTop1: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OrderBookImbalanceTop1: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OrderBookImbalanceTop1: still ready after Reset")
+		}
+		compareRuns(t, "OrderBookImbalanceTop1", first, drive())
+	})
+	t.Run("OrderBookImbalanceTopN", func(t *testing.T) {
+		ind, err := NewOrderBookImbalanceTopN(5)
+		if err != nil {
+			t.Fatalf("new OrderBookImbalanceTopN: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OrderBookImbalanceTopN: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OrderBookImbalanceTopN: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OrderBookImbalanceTopN: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OrderBookImbalanceTopN: still ready after Reset")
+		}
+		compareRuns(t, "OrderBookImbalanceTopN", first, drive())
+	})
+	t.Run("OrderFlowImbalance", func(t *testing.T) {
+		ind, err := NewOrderFlowImbalance(20)
+		if err != nil {
+			t.Fatalf("new OrderFlowImbalance: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OrderFlowImbalance: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OrderFlowImbalance: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OrderFlowImbalance: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OrderFlowImbalance: still ready after Reset")
+		}
+		compareRuns(t, "OrderFlowImbalance", first, drive())
+	})
+	t.Run("OuHalfLife", func(t *testing.T) {
+		ind, err := NewOuHalfLife(14)
+		if err != nil {
+			t.Fatalf("new OuHalfLife: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OuHalfLife: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OuHalfLife: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("OuHalfLife: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OuHalfLife: still ready after Reset")
+		}
+		compareRuns(t, "OuHalfLife", first, drive())
+	})
+	t.Run("OvernightGap", func(t *testing.T) {
+		ind, err := NewOvernightGap(0)
+		if err != nil {
+			t.Fatalf("new OvernightGap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OvernightGap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OvernightGap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OvernightGap: still ready after Reset")
+		}
+		compareRuns(t, "OvernightGap", first, drive())
+	})
+	t.Run("OvernightIntradayReturn", func(t *testing.T) {
+		ind, err := NewOvernightIntradayReturn(14)
+		if err != nil {
+			t.Fatalf("new OvernightIntradayReturn: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("OvernightIntradayReturn: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("OvernightIntradayReturn: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("OvernightIntradayReturn: still ready after Reset")
+		}
+		compareRuns(t, "OvernightIntradayReturn", first, drive())
+	})
+	t.Run("PainIndex", func(t *testing.T) {
+		ind, err := NewPainIndex(14)
+		if err != nil {
+			t.Fatalf("new PainIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PainIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PainIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PainIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PainIndex: still ready after Reset")
+		}
+		compareRuns(t, "PainIndex", first, drive())
+	})
+	t.Run("PairSpreadZScore", func(t *testing.T) {
+		ind, err := NewPairSpreadZScore(20, 20)
+		if err != nil {
+			t.Fatalf("new PairSpreadZScore: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PairSpreadZScore: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PairSpreadZScore: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PairSpreadZScore: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PairSpreadZScore: still ready after Reset")
+		}
+		compareRuns(t, "PairSpreadZScore", first, drive())
+	})
+	t.Run("PairwiseBeta", func(t *testing.T) {
+		ind, err := NewPairwiseBeta(14)
+		if err != nil {
+			t.Fatalf("new PairwiseBeta: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PairwiseBeta: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PairwiseBeta: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PairwiseBeta: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PairwiseBeta: still ready after Reset")
+		}
+		compareRuns(t, "PairwiseBeta", first, drive())
+	})
+	t.Run("ParkinsonVolatility", func(t *testing.T) {
+		ind, err := NewParkinsonVolatility(20, 252)
+		if err != nil {
+			t.Fatalf("new ParkinsonVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ParkinsonVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ParkinsonVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ParkinsonVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ParkinsonVolatility: still ready after Reset")
+		}
+		compareRuns(t, "ParkinsonVolatility", first, drive())
+	})
+	t.Run("PearsonCorrelation", func(t *testing.T) {
+		ind, err := NewPearsonCorrelation(14)
+		if err != nil {
+			t.Fatalf("new PearsonCorrelation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PearsonCorrelation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PearsonCorrelation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PearsonCorrelation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PearsonCorrelation: still ready after Reset")
+		}
+		compareRuns(t, "PearsonCorrelation", first, drive())
+	})
+	t.Run("PercentAboveMa", func(t *testing.T) {
+		ind, err := NewPercentAboveMa()
+		if err != nil {
+			t.Fatalf("new PercentAboveMa: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PercentAboveMa: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PercentAboveMa: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PercentAboveMa: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PercentAboveMa: still ready after Reset")
+		}
+		compareRuns(t, "PercentAboveMa", first, drive())
+	})
+	t.Run("PercentB", func(t *testing.T) {
+		ind, err := NewPercentB(14, 2.0)
+		if err != nil {
+			t.Fatalf("new PercentB: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PercentB: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PercentB: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PercentB: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PercentB: still ready after Reset")
+		}
+		compareRuns(t, "PercentB", first, drive())
+	})
+	t.Run("PercentageTrailingStop", func(t *testing.T) {
+		ind, err := NewPercentageTrailingStop(2.0)
+		if err != nil {
+			t.Fatalf("new PercentageTrailingStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PercentageTrailingStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PercentageTrailingStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PercentageTrailingStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PercentageTrailingStop: still ready after Reset")
+		}
+		compareRuns(t, "PercentageTrailingStop", first, drive())
+	})
+	t.Run("PerpetualPremiumIndex", func(t *testing.T) {
+		ind, err := NewPerpetualPremiumIndex()
+		if err != nil {
+			t.Fatalf("new PerpetualPremiumIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PerpetualPremiumIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PerpetualPremiumIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PerpetualPremiumIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PerpetualPremiumIndex: still ready after Reset")
+		}
+		compareRuns(t, "PerpetualPremiumIndex", first, drive())
+	})
+	t.Run("Pgo", func(t *testing.T) {
+		ind, err := NewPgo(14)
+		if err != nil {
+			t.Fatalf("new Pgo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Pgo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Pgo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Pgo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Pgo: still ready after Reset")
+		}
+		compareRuns(t, "Pgo", first, drive())
+	})
+	t.Run("PiercingDarkCloud", func(t *testing.T) {
+		ind, err := NewPiercingDarkCloud()
+		if err != nil {
+			t.Fatalf("new PiercingDarkCloud: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PiercingDarkCloud: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PiercingDarkCloud: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PiercingDarkCloud: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PiercingDarkCloud: still ready after Reset")
+		}
+		compareRuns(t, "PiercingDarkCloud", first, drive())
+	})
+	t.Run("Pin", func(t *testing.T) {
+		ind, err := NewPin(20)
+		if err != nil {
+			t.Fatalf("new Pin: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Pin: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Pin: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Pin: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Pin: still ready after Reset")
+		}
+		compareRuns(t, "Pin", first, drive())
+	})
+	t.Run("PivotReversal", func(t *testing.T) {
+		ind, err := NewPivotReversal(3, 7)
+		if err != nil {
+			t.Fatalf("new PivotReversal: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PivotReversal: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PivotReversal: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PivotReversal: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PivotReversal: still ready after Reset")
+		}
+		compareRuns(t, "PivotReversal", first, drive())
+	})
+	t.Run("PlusDi", func(t *testing.T) {
+		ind, err := NewPlusDi(14)
+		if err != nil {
+			t.Fatalf("new PlusDi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PlusDi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PlusDi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PlusDi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PlusDi: still ready after Reset")
+		}
+		compareRuns(t, "PlusDi", first, drive())
+	})
+	t.Run("PlusDm", func(t *testing.T) {
+		ind, err := NewPlusDm(14)
+		if err != nil {
+			t.Fatalf("new PlusDm: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PlusDm: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PlusDm: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PlusDm: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PlusDm: still ready after Reset")
+		}
+		compareRuns(t, "PlusDm", first, drive())
+	})
+	t.Run("Pmo", func(t *testing.T) {
+		ind, err := NewPmo(3, 7)
+		if err != nil {
+			t.Fatalf("new Pmo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Pmo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Pmo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Pmo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Pmo: still ready after Reset")
+		}
+		compareRuns(t, "Pmo", first, drive())
+	})
+	t.Run("PointAndFigureBars", func(t *testing.T) {
+		ind, err := NewPointAndFigureBars(2.0, 3)
+		if err != nil {
+			t.Fatalf("new PointAndFigureBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "PointAndFigureBars", first, drive())
+	})
+	t.Run("PolarizedFractalEfficiency", func(t *testing.T) {
+		ind, err := NewPolarizedFractalEfficiency(10, 5)
+		if err != nil {
+			t.Fatalf("new PolarizedFractalEfficiency: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PolarizedFractalEfficiency: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PolarizedFractalEfficiency: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PolarizedFractalEfficiency: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PolarizedFractalEfficiency: still ready after Reset")
+		}
+		compareRuns(t, "PolarizedFractalEfficiency", first, drive())
+	})
+	t.Run("Ppo", func(t *testing.T) {
+		ind, err := NewPpo(3, 7)
+		if err != nil {
+			t.Fatalf("new Ppo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Ppo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Ppo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Ppo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Ppo: still ready after Reset")
+		}
+		compareRuns(t, "Ppo", first, drive())
+	})
+	t.Run("PpoHistogram", func(t *testing.T) {
+		ind, err := NewPpoHistogram(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new PpoHistogram: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("PpoHistogram: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("PpoHistogram: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("PpoHistogram: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("PpoHistogram: still ready after Reset")
+		}
+		compareRuns(t, "PpoHistogram", first, drive())
+	})
+	t.Run("ProfileShape", func(t *testing.T) {
+		ind, err := NewProfileShape(3, 7)
+		if err != nil {
+			t.Fatalf("new ProfileShape: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ProfileShape: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ProfileShape: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ProfileShape: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ProfileShape: still ready after Reset")
+		}
+		compareRuns(t, "ProfileShape", first, drive())
+	})
+	t.Run("ProfitFactor", func(t *testing.T) {
+		ind, err := NewProfitFactor(14)
+		if err != nil {
+			t.Fatalf("new ProfitFactor: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ProfitFactor: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ProfitFactor: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ProfitFactor: still ready after Reset")
+		}
+		compareRuns(t, "ProfitFactor", first, drive())
+	})
+	t.Run("ProjectionBands", func(t *testing.T) {
+		ind, err := NewProjectionBands(14)
+		if err != nil {
+			t.Fatalf("new ProjectionBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ProjectionBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ProjectionBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ProjectionBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ProjectionBands: still ready after Reset")
+		}
+		compareRuns(t, "ProjectionBands", first, drive())
+	})
+	t.Run("ProjectionOscillator", func(t *testing.T) {
+		ind, err := NewProjectionOscillator(14)
+		if err != nil {
+			t.Fatalf("new ProjectionOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ProjectionOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ProjectionOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ProjectionOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ProjectionOscillator: still ready after Reset")
+		}
+		compareRuns(t, "ProjectionOscillator", first, drive())
+	})
+	t.Run("Psar", func(t *testing.T) {
+		ind, err := NewPsar(0.02, 0.02, 0.2)
+		if err != nil {
+			t.Fatalf("new Psar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Psar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Psar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Psar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Psar: still ready after Reset")
+		}
+		compareRuns(t, "Psar", first, drive())
+	})
+	t.Run("Pvi", func(t *testing.T) {
+		ind, err := NewPvi()
+		if err != nil {
+			t.Fatalf("new Pvi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Pvi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Pvi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Pvi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Pvi: still ready after Reset")
+		}
+		compareRuns(t, "Pvi", first, drive())
+	})
+	t.Run("Qqe", func(t *testing.T) {
+		ind, err := NewQqe(3, 7, 2.0)
+		if err != nil {
+			t.Fatalf("new Qqe: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Qqe: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Qqe: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Qqe: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Qqe: still ready after Reset")
+		}
+		compareRuns(t, "Qqe", first, drive())
+	})
+	t.Run("Qstick", func(t *testing.T) {
+		ind, err := NewQstick(14)
+		if err != nil {
+			t.Fatalf("new Qstick: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Qstick: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Qstick: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Qstick: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Qstick: still ready after Reset")
+		}
+		compareRuns(t, "Qstick", first, drive())
+	})
+	t.Run("QuartileBands", func(t *testing.T) {
+		ind, err := NewQuartileBands(14)
+		if err != nil {
+			t.Fatalf("new QuartileBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("QuartileBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("QuartileBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("QuartileBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("QuartileBands: still ready after Reset")
+		}
+		compareRuns(t, "QuartileBands", first, drive())
+	})
+	t.Run("QuotedSpread", func(t *testing.T) {
+		ind, err := NewQuotedSpread()
+		if err != nil {
+			t.Fatalf("new QuotedSpread: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bp, bs, ap, as_ := obLists(r)
+				got[i] = []float64{ind.Update(bp, bs, ap, as_)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("QuotedSpread: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("QuotedSpread: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("QuotedSpread: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("QuotedSpread: still ready after Reset")
+		}
+		compareRuns(t, "QuotedSpread", first, drive())
+	})
+	t.Run("RSquared", func(t *testing.T) {
+		ind, err := NewRSquared(14)
+		if err != nil {
+			t.Fatalf("new RSquared: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RSquared: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RSquared: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RSquared: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RSquared: still ready after Reset")
+		}
+		compareRuns(t, "RSquared", first, drive())
+	})
+	t.Run("RangeBars", func(t *testing.T) {
+		ind, err := NewRangeBars(2.0)
+		if err != nil {
+			t.Fatalf("new RangeBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "RangeBars", first, drive())
+	})
+	t.Run("RealizedSpread", func(t *testing.T) {
+		ind, err := NewRealizedSpread(20)
+		if err != nil {
+			t.Fatalf("new RealizedSpread: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i), (r[1]+r[2])/2)}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RealizedSpread: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RealizedSpread: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RealizedSpread: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RealizedSpread: still ready after Reset")
+		}
+		compareRuns(t, "RealizedSpread", first, drive())
+	})
+	t.Run("RealizedVolatility", func(t *testing.T) {
+		ind, err := NewRealizedVolatility(14)
+		if err != nil {
+			t.Fatalf("new RealizedVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RealizedVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RealizedVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RealizedVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RealizedVolatility: still ready after Reset")
+		}
+		compareRuns(t, "RealizedVolatility", first, drive())
+	})
+	t.Run("RecoveryFactor", func(t *testing.T) {
+		ind, err := NewRecoveryFactor()
+		if err != nil {
+			t.Fatalf("new RecoveryFactor: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RecoveryFactor: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RecoveryFactor: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RecoveryFactor: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RecoveryFactor: still ready after Reset")
+		}
+		compareRuns(t, "RecoveryFactor", first, drive())
+	})
+	t.Run("RectangleRange", func(t *testing.T) {
+		ind, err := NewRectangleRange()
+		if err != nil {
+			t.Fatalf("new RectangleRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RectangleRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RectangleRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RectangleRange: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RectangleRange: still ready after Reset")
+		}
+		compareRuns(t, "RectangleRange", first, drive())
+	})
+	t.Run("Reflex", func(t *testing.T) {
+		ind, err := NewReflex(14)
+		if err != nil {
+			t.Fatalf("new Reflex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Reflex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Reflex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Reflex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Reflex: still ready after Reset")
+		}
+		compareRuns(t, "Reflex", first, drive())
+	})
+	t.Run("RegimeLabel", func(t *testing.T) {
+		ind, err := NewRegimeLabel(3, 7)
+		if err != nil {
+			t.Fatalf("new RegimeLabel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RegimeLabel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RegimeLabel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RegimeLabel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RegimeLabel: still ready after Reset")
+		}
+		compareRuns(t, "RegimeLabel", first, drive())
+	})
+	t.Run("RelativeStrengthAB", func(t *testing.T) {
+		ind, err := NewRelativeStrengthAB(14, 14)
+		if err != nil {
+			t.Fatalf("new RelativeStrengthAB: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3], r[0])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RelativeStrengthAB: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RelativeStrengthAB: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RelativeStrengthAB: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RelativeStrengthAB: still ready after Reset")
+		}
+		compareRuns(t, "RelativeStrengthAB", first, drive())
+	})
+	t.Run("RenkoBars", func(t *testing.T) {
+		ind, err := NewRenkoBars(2.0)
+		if err != nil {
+			t.Fatalf("new RenkoBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "RenkoBars", first, drive())
+	})
+	t.Run("RenkoTrailingStop", func(t *testing.T) {
+		ind, err := NewRenkoTrailingStop(2.0)
+		if err != nil {
+			t.Fatalf("new RenkoTrailingStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RenkoTrailingStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RenkoTrailingStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RenkoTrailingStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RenkoTrailingStop: still ready after Reset")
+		}
+		compareRuns(t, "RenkoTrailingStop", first, drive())
+	})
+	t.Run("RickshawMan", func(t *testing.T) {
+		ind, err := NewRickshawMan()
+		if err != nil {
+			t.Fatalf("new RickshawMan: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RickshawMan: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RickshawMan: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RickshawMan: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RickshawMan: still ready after Reset")
+		}
+		compareRuns(t, "RickshawMan", first, drive())
+	})
+	t.Run("RisingThreeMethods", func(t *testing.T) {
+		ind, err := NewRisingThreeMethods()
+		if err != nil {
+			t.Fatalf("new RisingThreeMethods: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RisingThreeMethods: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RisingThreeMethods: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RisingThreeMethods: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RisingThreeMethods: still ready after Reset")
+		}
+		compareRuns(t, "RisingThreeMethods", first, drive())
+	})
+	t.Run("Rmi", func(t *testing.T) {
+		ind, err := NewRmi(3, 7)
+		if err != nil {
+			t.Fatalf("new Rmi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rmi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rmi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rmi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rmi: still ready after Reset")
+		}
+		compareRuns(t, "Rmi", first, drive())
+	})
+	t.Run("Roc", func(t *testing.T) {
+		ind, err := NewRoc(14)
+		if err != nil {
+			t.Fatalf("new Roc: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Roc: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Roc: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Roc: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Roc: still ready after Reset")
+		}
+		compareRuns(t, "Roc", first, drive())
+	})
+	t.Run("Rocp", func(t *testing.T) {
+		ind, err := NewRocp(14)
+		if err != nil {
+			t.Fatalf("new Rocp: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rocp: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rocp: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rocp: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rocp: still ready after Reset")
+		}
+		compareRuns(t, "Rocp", first, drive())
+	})
+	t.Run("Rocr", func(t *testing.T) {
+		ind, err := NewRocr(14)
+		if err != nil {
+			t.Fatalf("new Rocr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rocr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rocr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rocr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rocr: still ready after Reset")
+		}
+		compareRuns(t, "Rocr", first, drive())
+	})
+	t.Run("Rocr100", func(t *testing.T) {
+		ind, err := NewRocr100(14)
+		if err != nil {
+			t.Fatalf("new Rocr100: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rocr100: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rocr100: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rocr100: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rocr100: still ready after Reset")
+		}
+		compareRuns(t, "Rocr100", first, drive())
+	})
+	t.Run("RogersSatchellVolatility", func(t *testing.T) {
+		ind, err := NewRogersSatchellVolatility(20, 252)
+		if err != nil {
+			t.Fatalf("new RogersSatchellVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RogersSatchellVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RogersSatchellVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RogersSatchellVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RogersSatchellVolatility: still ready after Reset")
+		}
+		compareRuns(t, "RogersSatchellVolatility", first, drive())
+	})
+	t.Run("RollMeasure", func(t *testing.T) {
+		ind, err := NewRollMeasure(20)
+		if err != nil {
+			t.Fatalf("new RollMeasure: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollMeasure: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollMeasure: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollMeasure: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollMeasure: still ready after Reset")
+		}
+		compareRuns(t, "RollMeasure", first, drive())
+	})
+	t.Run("RollingCorrelation", func(t *testing.T) {
+		ind, err := NewRollingCorrelation(14)
+		if err != nil {
+			t.Fatalf("new RollingCorrelation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingCorrelation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingCorrelation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingCorrelation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingCorrelation: still ready after Reset")
+		}
+		compareRuns(t, "RollingCorrelation", first, drive())
+	})
+	t.Run("RollingCovariance", func(t *testing.T) {
+		ind, err := NewRollingCovariance(14)
+		if err != nil {
+			t.Fatalf("new RollingCovariance: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingCovariance: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingCovariance: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingCovariance: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingCovariance: still ready after Reset")
+		}
+		compareRuns(t, "RollingCovariance", first, drive())
+	})
+	t.Run("RollingIqr", func(t *testing.T) {
+		ind, err := NewRollingIqr(14)
+		if err != nil {
+			t.Fatalf("new RollingIqr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingIqr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingIqr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingIqr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingIqr: still ready after Reset")
+		}
+		compareRuns(t, "RollingIqr", first, drive())
+	})
+	t.Run("RollingMinMaxScaler", func(t *testing.T) {
+		ind, err := NewRollingMinMaxScaler(14)
+		if err != nil {
+			t.Fatalf("new RollingMinMaxScaler: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingMinMaxScaler: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingMinMaxScaler: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingMinMaxScaler: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingMinMaxScaler: still ready after Reset")
+		}
+		compareRuns(t, "RollingMinMaxScaler", first, drive())
+	})
+	t.Run("RollingPercentileRank", func(t *testing.T) {
+		ind, err := NewRollingPercentileRank(14)
+		if err != nil {
+			t.Fatalf("new RollingPercentileRank: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingPercentileRank: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingPercentileRank: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingPercentileRank: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingPercentileRank: still ready after Reset")
+		}
+		compareRuns(t, "RollingPercentileRank", first, drive())
+	})
+	t.Run("RollingQuantile", func(t *testing.T) {
+		ind, err := NewRollingQuantile(20, 0.5)
+		if err != nil {
+			t.Fatalf("new RollingQuantile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingQuantile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingQuantile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingQuantile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingQuantile: still ready after Reset")
+		}
+		compareRuns(t, "RollingQuantile", first, drive())
+	})
+	t.Run("RollingVwap", func(t *testing.T) {
+		ind, err := NewRollingVwap(14)
+		if err != nil {
+			t.Fatalf("new RollingVwap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RollingVwap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RollingVwap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RollingVwap: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RollingVwap: still ready after Reset")
+		}
+		compareRuns(t, "RollingVwap", first, drive())
+	})
+	t.Run("RoofingFilter", func(t *testing.T) {
+		ind, err := NewRoofingFilter(3, 7)
+		if err != nil {
+			t.Fatalf("new RoofingFilter: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RoofingFilter: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RoofingFilter: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RoofingFilter: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RoofingFilter: still ready after Reset")
+		}
+		compareRuns(t, "RoofingFilter", first, drive())
+	})
+	t.Run("Rsi", func(t *testing.T) {
+		ind, err := NewRsi(14)
+		if err != nil {
+			t.Fatalf("new Rsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rsi: still ready after Reset")
+		}
+		compareRuns(t, "Rsi", first, drive())
+	})
+	t.Run("Rsx", func(t *testing.T) {
+		ind, err := NewRsx(14)
+		if err != nil {
+			t.Fatalf("new Rsx: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rsx: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rsx: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rsx: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rsx: still ready after Reset")
+		}
+		compareRuns(t, "Rsx", first, drive())
+	})
+	t.Run("RunBars", func(t *testing.T) {
+		ind, err := NewRunBars(3)
+		if err != nil {
+			t.Fatalf("new RunBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "RunBars", first, drive())
+	})
+	t.Run("Rvi", func(t *testing.T) {
+		ind, err := NewRvi(14)
+		if err != nil {
+			t.Fatalf("new Rvi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rvi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rvi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rvi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rvi: still ready after Reset")
+		}
+		compareRuns(t, "Rvi", first, drive())
+	})
+	t.Run("RviVolatility", func(t *testing.T) {
+		ind, err := NewRviVolatility(14)
+		if err != nil {
+			t.Fatalf("new RviVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("RviVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("RviVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("RviVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("RviVolatility: still ready after Reset")
+		}
+		compareRuns(t, "RviVolatility", first, drive())
+	})
+	t.Run("Rwi", func(t *testing.T) {
+		ind, err := NewRwi(14)
+		if err != nil {
+			t.Fatalf("new Rwi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Rwi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Rwi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Rwi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Rwi: still ready after Reset")
+		}
+		compareRuns(t, "Rwi", first, drive())
+	})
+	t.Run("SampleEntropy", func(t *testing.T) {
+		ind, err := NewSampleEntropy(20, 2, 0.2)
+		if err != nil {
+			t.Fatalf("new SampleEntropy: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SampleEntropy: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SampleEntropy: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SampleEntropy: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SampleEntropy: still ready after Reset")
+		}
+		compareRuns(t, "SampleEntropy", first, drive())
+	})
+	t.Run("SarExt", func(t *testing.T) {
+		ind, err := NewSarExt(2.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+		if err != nil {
+			t.Fatalf("new SarExt: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SarExt: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SarExt: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SarExt: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SarExt: still ready after Reset")
+		}
+		compareRuns(t, "SarExt", first, drive())
+	})
+	t.Run("SeasonalZScore", func(t *testing.T) {
+		ind, err := NewSeasonalZScore(14)
+		if err != nil {
+			t.Fatalf("new SeasonalZScore: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SeasonalZScore: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SeasonalZScore: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SeasonalZScore: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SeasonalZScore: still ready after Reset")
+		}
+		compareRuns(t, "SeasonalZScore", first, drive())
+	})
+	t.Run("SeparatingLines", func(t *testing.T) {
+		ind, err := NewSeparatingLines()
+		if err != nil {
+			t.Fatalf("new SeparatingLines: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SeparatingLines: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SeparatingLines: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SeparatingLines: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SeparatingLines: still ready after Reset")
+		}
+		compareRuns(t, "SeparatingLines", first, drive())
+	})
+	t.Run("SessionHighLow", func(t *testing.T) {
+		ind, err := NewSessionHighLow(14)
+		if err != nil {
+			t.Fatalf("new SessionHighLow: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SessionHighLow: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SessionHighLow: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SessionHighLow: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SessionHighLow: still ready after Reset")
+		}
+		compareRuns(t, "SessionHighLow", first, drive())
+	})
+	t.Run("SessionRange", func(t *testing.T) {
+		ind, err := NewSessionRange(14)
+		if err != nil {
+			t.Fatalf("new SessionRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SessionRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SessionRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SessionRange: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SessionRange: still ready after Reset")
+		}
+		compareRuns(t, "SessionRange", first, drive())
+	})
+	t.Run("SessionVwap", func(t *testing.T) {
+		ind, err := NewSessionVwap(14)
+		if err != nil {
+			t.Fatalf("new SessionVwap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SessionVwap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SessionVwap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SessionVwap: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SessionVwap: still ready after Reset")
+		}
+		compareRuns(t, "SessionVwap", first, drive())
+	})
+	t.Run("ShannonEntropy", func(t *testing.T) {
+		ind, err := NewShannonEntropy(3, 7)
+		if err != nil {
+			t.Fatalf("new ShannonEntropy: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ShannonEntropy: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ShannonEntropy: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ShannonEntropy: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ShannonEntropy: still ready after Reset")
+		}
+		compareRuns(t, "ShannonEntropy", first, drive())
+	})
+	t.Run("Shark", func(t *testing.T) {
+		ind, err := NewShark()
+		if err != nil {
+			t.Fatalf("new Shark: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Shark: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Shark: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Shark: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Shark: still ready after Reset")
+		}
+		compareRuns(t, "Shark", first, drive())
+	})
+	t.Run("SharpeRatio", func(t *testing.T) {
+		ind, err := NewSharpeRatio(14, 2.0)
+		if err != nil {
+			t.Fatalf("new SharpeRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SharpeRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SharpeRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SharpeRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SharpeRatio: still ready after Reset")
+		}
+		compareRuns(t, "SharpeRatio", first, drive())
+	})
+	t.Run("ShootingStar", func(t *testing.T) {
+		ind, err := NewShootingStar()
+		if err != nil {
+			t.Fatalf("new ShootingStar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ShootingStar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ShootingStar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ShootingStar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ShootingStar: still ready after Reset")
+		}
+		compareRuns(t, "ShootingStar", first, drive())
+	})
+	t.Run("ShortLine", func(t *testing.T) {
+		ind, err := NewShortLine()
+		if err != nil {
+			t.Fatalf("new ShortLine: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ShortLine: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ShortLine: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ShortLine: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ShortLine: still ready after Reset")
+		}
+		compareRuns(t, "ShortLine", first, drive())
+	})
+	t.Run("SignedVolume", func(t *testing.T) {
+		ind, err := NewSignedVolume()
+		if err != nil {
+			t.Fatalf("new SignedVolume: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SignedVolume: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SignedVolume: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SignedVolume: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SignedVolume: still ready after Reset")
+		}
+		compareRuns(t, "SignedVolume", first, drive())
+	})
+	t.Run("SineWave", func(t *testing.T) {
+		ind, err := NewSineWave()
+		if err != nil {
+			t.Fatalf("new SineWave: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SineWave: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SineWave: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SineWave: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SineWave: still ready after Reset")
+		}
+		compareRuns(t, "SineWave", first, drive())
+	})
+	t.Run("SineWeightedMa", func(t *testing.T) {
+		ind, err := NewSineWeightedMa(14)
+		if err != nil {
+			t.Fatalf("new SineWeightedMa: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SineWeightedMa: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SineWeightedMa: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SineWeightedMa: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SineWeightedMa: still ready after Reset")
+		}
+		compareRuns(t, "SineWeightedMa", first, drive())
+	})
+	t.Run("SinglePrints", func(t *testing.T) {
+		ind, err := NewSinglePrints(3, 7)
+		if err != nil {
+			t.Fatalf("new SinglePrints: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SinglePrints: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SinglePrints: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SinglePrints: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SinglePrints: still ready after Reset")
+		}
+		compareRuns(t, "SinglePrints", first, drive())
+	})
+	t.Run("Skewness", func(t *testing.T) {
+		ind, err := NewSkewness(14)
+		if err != nil {
+			t.Fatalf("new Skewness: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Skewness: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Skewness: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Skewness: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Skewness: still ready after Reset")
+		}
+		compareRuns(t, "Skewness", first, drive())
+	})
+	t.Run("Sma", func(t *testing.T) {
+		ind, err := NewSma(14)
+		if err != nil {
+			t.Fatalf("new Sma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Sma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Sma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Sma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Sma: still ready after Reset")
+		}
+		compareRuns(t, "Sma", first, drive())
+	})
+	t.Run("Smi", func(t *testing.T) {
+		ind, err := NewSmi(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new Smi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Smi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Smi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Smi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Smi: still ready after Reset")
+		}
+		compareRuns(t, "Smi", first, drive())
+	})
+	t.Run("Smma", func(t *testing.T) {
+		ind, err := NewSmma(14)
+		if err != nil {
+			t.Fatalf("new Smma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Smma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Smma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Smma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Smma: still ready after Reset")
+		}
+		compareRuns(t, "Smma", first, drive())
+	})
+	t.Run("SmoothedHeikinAshi", func(t *testing.T) {
+		ind, err := NewSmoothedHeikinAshi(14)
+		if err != nil {
+			t.Fatalf("new SmoothedHeikinAshi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SmoothedHeikinAshi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SmoothedHeikinAshi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SmoothedHeikinAshi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SmoothedHeikinAshi: still ready after Reset")
+		}
+		compareRuns(t, "SmoothedHeikinAshi", first, drive())
+	})
+	t.Run("SortinoRatio", func(t *testing.T) {
+		ind, err := NewSortinoRatio(14, 2.0)
+		if err != nil {
+			t.Fatalf("new SortinoRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SortinoRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SortinoRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SortinoRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SortinoRatio: still ready after Reset")
+		}
+		compareRuns(t, "SortinoRatio", first, drive())
+	})
+	t.Run("SpearmanCorrelation", func(t *testing.T) {
+		ind, err := NewSpearmanCorrelation(14)
+		if err != nil {
+			t.Fatalf("new SpearmanCorrelation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SpearmanCorrelation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SpearmanCorrelation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SpearmanCorrelation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SpearmanCorrelation: still ready after Reset")
+		}
+		compareRuns(t, "SpearmanCorrelation", first, drive())
+	})
+	t.Run("SpinningTop", func(t *testing.T) {
+		ind, err := NewSpinningTop()
+		if err != nil {
+			t.Fatalf("new SpinningTop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SpinningTop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SpinningTop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SpinningTop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SpinningTop: still ready after Reset")
+		}
+		compareRuns(t, "SpinningTop", first, drive())
+	})
+	t.Run("SpreadAr1Coefficient", func(t *testing.T) {
+		ind, err := NewSpreadAr1Coefficient(14)
+		if err != nil {
+			t.Fatalf("new SpreadAr1Coefficient: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SpreadAr1Coefficient: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SpreadAr1Coefficient: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SpreadAr1Coefficient: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SpreadAr1Coefficient: still ready after Reset")
+		}
+		compareRuns(t, "SpreadAr1Coefficient", first, drive())
+	})
+	t.Run("SpreadBollingerBands", func(t *testing.T) {
+		ind, err := NewSpreadBollingerBands(14, 2.0)
+		if err != nil {
+			t.Fatalf("new SpreadBollingerBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3], r[0])
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SpreadBollingerBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SpreadBollingerBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SpreadBollingerBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SpreadBollingerBands: still ready after Reset")
+		}
+		compareRuns(t, "SpreadBollingerBands", first, drive())
+	})
+	t.Run("SpreadHurst", func(t *testing.T) {
+		ind, err := NewSpreadHurst(14)
+		if err != nil {
+			t.Fatalf("new SpreadHurst: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SpreadHurst: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SpreadHurst: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SpreadHurst: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SpreadHurst: still ready after Reset")
+		}
+		compareRuns(t, "SpreadHurst", first, drive())
+	})
+	t.Run("StalledPattern", func(t *testing.T) {
+		ind, err := NewStalledPattern()
+		if err != nil {
+			t.Fatalf("new StalledPattern: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StalledPattern: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StalledPattern: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StalledPattern: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StalledPattern: still ready after Reset")
+		}
+		compareRuns(t, "StalledPattern", first, drive())
+	})
+	t.Run("StandardError", func(t *testing.T) {
+		ind, err := NewStandardError(14)
+		if err != nil {
+			t.Fatalf("new StandardError: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StandardError: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StandardError: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StandardError: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StandardError: still ready after Reset")
+		}
+		compareRuns(t, "StandardError", first, drive())
+	})
+	t.Run("StandardErrorBands", func(t *testing.T) {
+		ind, err := NewStandardErrorBands(14, 2.0)
+		if err != nil {
+			t.Fatalf("new StandardErrorBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StandardErrorBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StandardErrorBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StandardErrorBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StandardErrorBands: still ready after Reset")
+		}
+		compareRuns(t, "StandardErrorBands", first, drive())
+	})
+	t.Run("StarcBands", func(t *testing.T) {
+		ind, err := NewStarcBands(3, 7, 2.0)
+		if err != nil {
+			t.Fatalf("new StarcBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StarcBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StarcBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StarcBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StarcBands: still ready after Reset")
+		}
+		compareRuns(t, "StarcBands", first, drive())
+	})
+	t.Run("Stc", func(t *testing.T) {
+		ind, err := NewStc(10, 23, 10, 0.5)
+		if err != nil {
+			t.Fatalf("new Stc: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Stc: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Stc: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Stc: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Stc: still ready after Reset")
+		}
+		compareRuns(t, "Stc", first, drive())
+	})
+	t.Run("StdDev", func(t *testing.T) {
+		ind, err := NewStdDev(14)
+		if err != nil {
+			t.Fatalf("new StdDev: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StdDev: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StdDev: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StdDev: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StdDev: still ready after Reset")
+		}
+		compareRuns(t, "StdDev", first, drive())
+	})
+	t.Run("StepTrailingStop", func(t *testing.T) {
+		ind, err := NewStepTrailingStop(2.0)
+		if err != nil {
+			t.Fatalf("new StepTrailingStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StepTrailingStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StepTrailingStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StepTrailingStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StepTrailingStop: still ready after Reset")
+		}
+		compareRuns(t, "StepTrailingStop", first, drive())
+	})
+	t.Run("SterlingRatio", func(t *testing.T) {
+		ind, err := NewSterlingRatio(14)
+		if err != nil {
+			t.Fatalf("new SterlingRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SterlingRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SterlingRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SterlingRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SterlingRatio: still ready after Reset")
+		}
+		compareRuns(t, "SterlingRatio", first, drive())
+	})
+	t.Run("StickSandwich", func(t *testing.T) {
+		ind, err := NewStickSandwich()
+		if err != nil {
+			t.Fatalf("new StickSandwich: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StickSandwich: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StickSandwich: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StickSandwich: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StickSandwich: still ready after Reset")
+		}
+		compareRuns(t, "StickSandwich", first, drive())
+	})
+	t.Run("StochRsi", func(t *testing.T) {
+		ind, err := NewStochRsi(3, 7)
+		if err != nil {
+			t.Fatalf("new StochRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StochRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StochRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StochRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StochRsi: still ready after Reset")
+		}
+		compareRuns(t, "StochRsi", first, drive())
+	})
+	t.Run("Stochastic", func(t *testing.T) {
+		ind, err := NewStochastic(3, 7)
+		if err != nil {
+			t.Fatalf("new Stochastic: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Stochastic: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Stochastic: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Stochastic: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Stochastic: still ready after Reset")
+		}
+		compareRuns(t, "Stochastic", first, drive())
+	})
+	t.Run("StochasticCci", func(t *testing.T) {
+		ind, err := NewStochasticCci(14)
+		if err != nil {
+			t.Fatalf("new StochasticCci: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("StochasticCci: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("StochasticCci: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("StochasticCci: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("StochasticCci: still ready after Reset")
+		}
+		compareRuns(t, "StochasticCci", first, drive())
+	})
+	t.Run("SuperSmoother", func(t *testing.T) {
+		ind, err := NewSuperSmoother(14)
+		if err != nil {
+			t.Fatalf("new SuperSmoother: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SuperSmoother: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SuperSmoother: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SuperSmoother: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SuperSmoother: still ready after Reset")
+		}
+		compareRuns(t, "SuperSmoother", first, drive())
+	})
+	t.Run("SuperTrend", func(t *testing.T) {
+		ind, err := NewSuperTrend(14, 2.0)
+		if err != nil {
+			t.Fatalf("new SuperTrend: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("SuperTrend: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("SuperTrend: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("SuperTrend: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("SuperTrend: still ready after Reset")
+		}
+		compareRuns(t, "SuperTrend", first, drive())
+	})
+	t.Run("T3", func(t *testing.T) {
+		ind, err := NewT3(5, 0.7)
+		if err != nil {
+			t.Fatalf("new T3: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("T3: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("T3: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("T3: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("T3: still ready after Reset")
+		}
+		compareRuns(t, "T3", first, drive())
+	})
+	t.Run("TailRatio", func(t *testing.T) {
+		ind, err := NewTailRatio(14)
+		if err != nil {
+			t.Fatalf("new TailRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TailRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TailRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TailRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TailRatio: still ready after Reset")
+		}
+		compareRuns(t, "TailRatio", first, drive())
+	})
+	t.Run("TakerBuySellRatio", func(t *testing.T) {
+		ind, err := NewTakerBuySellRatio()
+		if err != nil {
+			t.Fatalf("new TakerBuySellRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TakerBuySellRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TakerBuySellRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TakerBuySellRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TakerBuySellRatio: still ready after Reset")
+		}
+		compareRuns(t, "TakerBuySellRatio", first, drive())
+	})
+	t.Run("Takuri", func(t *testing.T) {
+		ind, err := NewTakuri()
+		if err != nil {
+			t.Fatalf("new Takuri: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Takuri: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Takuri: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Takuri: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Takuri: still ready after Reset")
+		}
+		compareRuns(t, "Takuri", first, drive())
+	})
+	t.Run("TasukiGap", func(t *testing.T) {
+		ind, err := NewTasukiGap()
+		if err != nil {
+			t.Fatalf("new TasukiGap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TasukiGap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TasukiGap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TasukiGap: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TasukiGap: still ready after Reset")
+		}
+		compareRuns(t, "TasukiGap", first, drive())
+	})
+	t.Run("TdCamouflage", func(t *testing.T) {
+		ind, err := NewTdCamouflage()
+		if err != nil {
+			t.Fatalf("new TdCamouflage: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdCamouflage: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdCamouflage: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdCamouflage: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdCamouflage: still ready after Reset")
+		}
+		compareRuns(t, "TdCamouflage", first, drive())
+	})
+	t.Run("TdClop", func(t *testing.T) {
+		ind, err := NewTdClop()
+		if err != nil {
+			t.Fatalf("new TdClop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdClop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdClop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdClop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdClop: still ready after Reset")
+		}
+		compareRuns(t, "TdClop", first, drive())
+	})
+	t.Run("TdClopwin", func(t *testing.T) {
+		ind, err := NewTdClopwin()
+		if err != nil {
+			t.Fatalf("new TdClopwin: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdClopwin: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdClopwin: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdClopwin: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdClopwin: still ready after Reset")
+		}
+		compareRuns(t, "TdClopwin", first, drive())
+	})
+	t.Run("TdCombo", func(t *testing.T) {
+		ind, err := NewTdCombo(3, 7, 14, 28)
+		if err != nil {
+			t.Fatalf("new TdCombo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdCombo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdCombo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdCombo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdCombo: still ready after Reset")
+		}
+		compareRuns(t, "TdCombo", first, drive())
+	})
+	t.Run("TdCountdown", func(t *testing.T) {
+		ind, err := NewTdCountdown(3, 7, 14, 28)
+		if err != nil {
+			t.Fatalf("new TdCountdown: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdCountdown: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdCountdown: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdCountdown: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdCountdown: still ready after Reset")
+		}
+		compareRuns(t, "TdCountdown", first, drive())
+	})
+	t.Run("TdDWave", func(t *testing.T) {
+		ind, err := NewTdDWave(2)
+		if err != nil {
+			t.Fatalf("new TdDWave: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdDWave: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdDWave: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdDWave: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdDWave: still ready after Reset")
+		}
+		compareRuns(t, "TdDWave", first, drive())
+	})
+	t.Run("TdDeMarker", func(t *testing.T) {
+		ind, err := NewTdDeMarker(14)
+		if err != nil {
+			t.Fatalf("new TdDeMarker: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdDeMarker: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdDeMarker: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdDeMarker: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdDeMarker: still ready after Reset")
+		}
+		compareRuns(t, "TdDeMarker", first, drive())
+	})
+	t.Run("TdDifferential", func(t *testing.T) {
+		ind, err := NewTdDifferential()
+		if err != nil {
+			t.Fatalf("new TdDifferential: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdDifferential: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdDifferential: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdDifferential: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdDifferential: still ready after Reset")
+		}
+		compareRuns(t, "TdDifferential", first, drive())
+	})
+	t.Run("TdLines", func(t *testing.T) {
+		ind, err := NewTdLines(3, 7)
+		if err != nil {
+			t.Fatalf("new TdLines: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdLines: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdLines: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdLines: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdLines: still ready after Reset")
+		}
+		compareRuns(t, "TdLines", first, drive())
+	})
+	t.Run("TdMovingAverage", func(t *testing.T) {
+		ind, err := NewTdMovingAverage(3, 7)
+		if err != nil {
+			t.Fatalf("new TdMovingAverage: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdMovingAverage: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdMovingAverage: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdMovingAverage: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdMovingAverage: still ready after Reset")
+		}
+		compareRuns(t, "TdMovingAverage", first, drive())
+	})
+	t.Run("TdOpen", func(t *testing.T) {
+		ind, err := NewTdOpen()
+		if err != nil {
+			t.Fatalf("new TdOpen: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdOpen: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdOpen: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdOpen: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdOpen: still ready after Reset")
+		}
+		compareRuns(t, "TdOpen", first, drive())
+	})
+	t.Run("TdPressure", func(t *testing.T) {
+		ind, err := NewTdPressure(14)
+		if err != nil {
+			t.Fatalf("new TdPressure: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdPressure: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdPressure: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdPressure: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdPressure: still ready after Reset")
+		}
+		compareRuns(t, "TdPressure", first, drive())
+	})
+	t.Run("TdPropulsion", func(t *testing.T) {
+		ind, err := NewTdPropulsion()
+		if err != nil {
+			t.Fatalf("new TdPropulsion: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdPropulsion: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdPropulsion: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdPropulsion: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdPropulsion: still ready after Reset")
+		}
+		compareRuns(t, "TdPropulsion", first, drive())
+	})
+	t.Run("TdRangeProjection", func(t *testing.T) {
+		ind, err := NewTdRangeProjection()
+		if err != nil {
+			t.Fatalf("new TdRangeProjection: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdRangeProjection: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdRangeProjection: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdRangeProjection: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdRangeProjection: still ready after Reset")
+		}
+		compareRuns(t, "TdRangeProjection", first, drive())
+	})
+	t.Run("TdRei", func(t *testing.T) {
+		ind, err := NewTdRei(14)
+		if err != nil {
+			t.Fatalf("new TdRei: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdRei: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdRei: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdRei: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdRei: still ready after Reset")
+		}
+		compareRuns(t, "TdRei", first, drive())
+	})
+	t.Run("TdRiskLevel", func(t *testing.T) {
+		ind, err := NewTdRiskLevel(3, 7)
+		if err != nil {
+			t.Fatalf("new TdRiskLevel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdRiskLevel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdRiskLevel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdRiskLevel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdRiskLevel: still ready after Reset")
+		}
+		compareRuns(t, "TdRiskLevel", first, drive())
+	})
+	t.Run("TdSequential", func(t *testing.T) {
+		ind, err := NewTdSequential(3, 7, 14, 28)
+		if err != nil {
+			t.Fatalf("new TdSequential: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdSequential: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdSequential: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdSequential: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdSequential: still ready after Reset")
+		}
+		compareRuns(t, "TdSequential", first, drive())
+	})
+	t.Run("TdSetup", func(t *testing.T) {
+		ind, err := NewTdSetup(3, 7)
+		if err != nil {
+			t.Fatalf("new TdSetup: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdSetup: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdSetup: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdSetup: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdSetup: still ready after Reset")
+		}
+		compareRuns(t, "TdSetup", first, drive())
+	})
+	t.Run("TdTrap", func(t *testing.T) {
+		ind, err := NewTdTrap()
+		if err != nil {
+			t.Fatalf("new TdTrap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TdTrap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TdTrap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TdTrap: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TdTrap: still ready after Reset")
+		}
+		compareRuns(t, "TdTrap", first, drive())
+	})
+	t.Run("Tema", func(t *testing.T) {
+		ind, err := NewTema(14)
+		if err != nil {
+			t.Fatalf("new Tema: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tema: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tema: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tema: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tema: still ready after Reset")
+		}
+		compareRuns(t, "Tema", first, drive())
+	})
+	t.Run("TermStructureBasis", func(t *testing.T) {
+		ind, err := NewTermStructureBasis()
+		if err != nil {
+			t.Fatalf("new TermStructureBasis: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				d := derivFields(r)
+				got[i] = []float64{ind.Update(d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7], d[8], d[9], d[10], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TermStructureBasis: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TermStructureBasis: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TermStructureBasis: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TermStructureBasis: still ready after Reset")
+		}
+		compareRuns(t, "TermStructureBasis", first, drive())
+	})
+	t.Run("ThreeDrives", func(t *testing.T) {
+		ind, err := NewThreeDrives()
+		if err != nil {
+			t.Fatalf("new ThreeDrives: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeDrives: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeDrives: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeDrives: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeDrives: still ready after Reset")
+		}
+		compareRuns(t, "ThreeDrives", first, drive())
+	})
+	t.Run("ThreeInside", func(t *testing.T) {
+		ind, err := NewThreeInside()
+		if err != nil {
+			t.Fatalf("new ThreeInside: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeInside: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeInside: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeInside: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeInside: still ready after Reset")
+		}
+		compareRuns(t, "ThreeInside", first, drive())
+	})
+	t.Run("ThreeLineBreak", func(t *testing.T) {
+		ind, err := NewThreeLineBreak(14)
+		if err != nil {
+			t.Fatalf("new ThreeLineBreak: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeLineBreak: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeLineBreak: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeLineBreak: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeLineBreak: still ready after Reset")
+		}
+		compareRuns(t, "ThreeLineBreak", first, drive())
+	})
+	t.Run("ThreeLineBreakBars", func(t *testing.T) {
+		ind, err := NewThreeLineBreakBars(3)
+		if err != nil {
+			t.Fatalf("new ThreeLineBreakBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[3], r[3], r[3], r[3], 1.0, 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "ThreeLineBreakBars", first, drive())
+	})
+	t.Run("ThreeLineStrike", func(t *testing.T) {
+		ind, err := NewThreeLineStrike()
+		if err != nil {
+			t.Fatalf("new ThreeLineStrike: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeLineStrike: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeLineStrike: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeLineStrike: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeLineStrike: still ready after Reset")
+		}
+		compareRuns(t, "ThreeLineStrike", first, drive())
+	})
+	t.Run("ThreeOutside", func(t *testing.T) {
+		ind, err := NewThreeOutside()
+		if err != nil {
+			t.Fatalf("new ThreeOutside: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeOutside: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeOutside: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeOutside: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeOutside: still ready after Reset")
+		}
+		compareRuns(t, "ThreeOutside", first, drive())
+	})
+	t.Run("ThreeSoldiersOrCrows", func(t *testing.T) {
+		ind, err := NewThreeSoldiersOrCrows()
+		if err != nil {
+			t.Fatalf("new ThreeSoldiersOrCrows: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeSoldiersOrCrows: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeSoldiersOrCrows: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeSoldiersOrCrows: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeSoldiersOrCrows: still ready after Reset")
+		}
+		compareRuns(t, "ThreeSoldiersOrCrows", first, drive())
+	})
+	t.Run("ThreeStarsInSouth", func(t *testing.T) {
+		ind, err := NewThreeStarsInSouth()
+		if err != nil {
+			t.Fatalf("new ThreeStarsInSouth: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ThreeStarsInSouth: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ThreeStarsInSouth: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ThreeStarsInSouth: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ThreeStarsInSouth: still ready after Reset")
+		}
+		compareRuns(t, "ThreeStarsInSouth", first, drive())
+	})
+	t.Run("Thrusting", func(t *testing.T) {
+		ind, err := NewThrusting()
+		if err != nil {
+			t.Fatalf("new Thrusting: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Thrusting: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Thrusting: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Thrusting: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Thrusting: still ready after Reset")
+		}
+		compareRuns(t, "Thrusting", first, drive())
+	})
+	t.Run("TickBars", func(t *testing.T) {
+		ind, err := NewTickBars(2)
+		if err != nil {
+			t.Fatalf("new TickBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "TickBars", first, drive())
+	})
+	t.Run("TickIndex", func(t *testing.T) {
+		ind, err := NewTickIndex()
+		if err != nil {
+			t.Fatalf("new TickIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TickIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TickIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TickIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TickIndex: still ready after Reset")
+		}
+		compareRuns(t, "TickIndex", first, drive())
+	})
+	t.Run("Tii", func(t *testing.T) {
+		ind, err := NewTii(3, 7)
+		if err != nil {
+			t.Fatalf("new Tii: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tii: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tii: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tii: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tii: still ready after Reset")
+		}
+		compareRuns(t, "Tii", first, drive())
+	})
+	t.Run("TimeBasedStop", func(t *testing.T) {
+		ind, err := NewTimeBasedStop(14)
+		if err != nil {
+			t.Fatalf("new TimeBasedStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TimeBasedStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TimeBasedStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TimeBasedStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TimeBasedStop: still ready after Reset")
+		}
+		compareRuns(t, "TimeBasedStop", first, drive())
+	})
+	t.Run("TimeOfDayReturnProfile", func(t *testing.T) {
+		ind, err := NewTimeOfDayReturnProfile(24, 0)
+		if err != nil {
+			t.Fatalf("new TimeOfDayReturnProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				if ok {
+					got[i] = bins
+				} else {
+					got[i] = nanRow(24)
+				}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TimeOfDayReturnProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TimeOfDayReturnProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TimeOfDayReturnProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TimeOfDayReturnProfile: still ready after Reset")
+		}
+		compareRuns(t, "TimeOfDayReturnProfile", first, drive())
+	})
+	t.Run("TowerTopBottom", func(t *testing.T) {
+		ind, err := NewTowerTopBottom()
+		if err != nil {
+			t.Fatalf("new TowerTopBottom: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TowerTopBottom: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TowerTopBottom: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TowerTopBottom: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TowerTopBottom: still ready after Reset")
+		}
+		compareRuns(t, "TowerTopBottom", first, drive())
+	})
+	t.Run("TpoProfile", func(t *testing.T) {
+		ind, err := NewTpoProfile(30, 50)
+		if err != nil {
+			t.Fatalf("new TpoProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 52)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TpoProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TpoProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TpoProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TpoProfile: still ready after Reset")
+		}
+		compareRuns(t, "TpoProfile", first, drive())
+	})
+	t.Run("TradeImbalance", func(t *testing.T) {
+		ind, err := NewTradeImbalance(20)
+		if err != nil {
+			t.Fatalf("new TradeImbalance: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TradeImbalance: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TradeImbalance: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TradeImbalance: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TradeImbalance: still ready after Reset")
+		}
+		compareRuns(t, "TradeImbalance", first, drive())
+	})
+	t.Run("TradeSignAutocorrelation", func(t *testing.T) {
+		ind, err := NewTradeSignAutocorrelation(20)
+		if err != nil {
+			t.Fatalf("new TradeSignAutocorrelation: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TradeSignAutocorrelation: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TradeSignAutocorrelation: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TradeSignAutocorrelation: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TradeSignAutocorrelation: still ready after Reset")
+		}
+		compareRuns(t, "TradeSignAutocorrelation", first, drive())
+	})
+	t.Run("TradeVolumeIndex", func(t *testing.T) {
+		ind, err := NewTradeVolumeIndex(2.0)
+		if err != nil {
+			t.Fatalf("new TradeVolumeIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TradeVolumeIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TradeVolumeIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TradeVolumeIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TradeVolumeIndex: still ready after Reset")
+		}
+		compareRuns(t, "TradeVolumeIndex", first, drive())
+	})
+	t.Run("TrendLabel", func(t *testing.T) {
+		ind, err := NewTrendLabel(14)
+		if err != nil {
+			t.Fatalf("new TrendLabel: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TrendLabel: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TrendLabel: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TrendLabel: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TrendLabel: still ready after Reset")
+		}
+		compareRuns(t, "TrendLabel", first, drive())
+	})
+	t.Run("TrendStrengthIndex", func(t *testing.T) {
+		ind, err := NewTrendStrengthIndex(14)
+		if err != nil {
+			t.Fatalf("new TrendStrengthIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TrendStrengthIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TrendStrengthIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TrendStrengthIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TrendStrengthIndex: still ready after Reset")
+		}
+		compareRuns(t, "TrendStrengthIndex", first, drive())
+	})
+	t.Run("Trendflex", func(t *testing.T) {
+		ind, err := NewTrendflex(14)
+		if err != nil {
+			t.Fatalf("new Trendflex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Trendflex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Trendflex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Trendflex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Trendflex: still ready after Reset")
+		}
+		compareRuns(t, "Trendflex", first, drive())
+	})
+	t.Run("TreynorRatio", func(t *testing.T) {
+		ind, err := NewTreynorRatio(14, 2.0)
+		if err != nil {
+			t.Fatalf("new TreynorRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TreynorRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TreynorRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TreynorRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TreynorRatio: still ready after Reset")
+		}
+		compareRuns(t, "TreynorRatio", first, drive())
+	})
+	t.Run("Triangle", func(t *testing.T) {
+		ind, err := NewTriangle()
+		if err != nil {
+			t.Fatalf("new Triangle: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Triangle: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Triangle: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Triangle: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Triangle: still ready after Reset")
+		}
+		compareRuns(t, "Triangle", first, drive())
+	})
+	t.Run("Trima", func(t *testing.T) {
+		ind, err := NewTrima(14)
+		if err != nil {
+			t.Fatalf("new Trima: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Trima: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Trima: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Trima: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Trima: still ready after Reset")
+		}
+		compareRuns(t, "Trima", first, drive())
+	})
+	t.Run("Trin", func(t *testing.T) {
+		ind, err := NewTrin()
+		if err != nil {
+			t.Fatalf("new Trin: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Trin: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Trin: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Trin: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Trin: still ready after Reset")
+		}
+		compareRuns(t, "Trin", first, drive())
+	})
+	t.Run("TripleTopBottom", func(t *testing.T) {
+		ind, err := NewTripleTopBottom()
+		if err != nil {
+			t.Fatalf("new TripleTopBottom: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TripleTopBottom: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TripleTopBottom: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TripleTopBottom: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TripleTopBottom: still ready after Reset")
+		}
+		compareRuns(t, "TripleTopBottom", first, drive())
+	})
+	t.Run("Tristar", func(t *testing.T) {
+		ind, err := NewTristar()
+		if err != nil {
+			t.Fatalf("new Tristar: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tristar: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tristar: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tristar: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tristar: still ready after Reset")
+		}
+		compareRuns(t, "Tristar", first, drive())
+	})
+	t.Run("Trix", func(t *testing.T) {
+		ind, err := NewTrix(14)
+		if err != nil {
+			t.Fatalf("new Trix: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Trix: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Trix: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Trix: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Trix: still ready after Reset")
+		}
+		compareRuns(t, "Trix", first, drive())
+	})
+	t.Run("TrueRange", func(t *testing.T) {
+		ind, err := NewTrueRange()
+		if err != nil {
+			t.Fatalf("new TrueRange: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TrueRange: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TrueRange: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TrueRange: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TrueRange: still ready after Reset")
+		}
+		compareRuns(t, "TrueRange", first, drive())
+	})
+	t.Run("Tsf", func(t *testing.T) {
+		ind, err := NewTsf(14)
+		if err != nil {
+			t.Fatalf("new Tsf: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tsf: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tsf: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tsf: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tsf: still ready after Reset")
+		}
+		compareRuns(t, "Tsf", first, drive())
+	})
+	t.Run("TsfOscillator", func(t *testing.T) {
+		ind, err := NewTsfOscillator(14)
+		if err != nil {
+			t.Fatalf("new TsfOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TsfOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TsfOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TsfOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TsfOscillator: still ready after Reset")
+		}
+		compareRuns(t, "TsfOscillator", first, drive())
+	})
+	t.Run("Tsi", func(t *testing.T) {
+		ind, err := NewTsi(3, 7)
+		if err != nil {
+			t.Fatalf("new Tsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tsi: still ready after Reset")
+		}
+		compareRuns(t, "Tsi", first, drive())
+	})
+	t.Run("Tsv", func(t *testing.T) {
+		ind, err := NewTsv(14)
+		if err != nil {
+			t.Fatalf("new Tsv: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tsv: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tsv: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tsv: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tsv: still ready after Reset")
+		}
+		compareRuns(t, "Tsv", first, drive())
+	})
+	t.Run("TtmSqueeze", func(t *testing.T) {
+		ind, err := NewTtmSqueeze(14, 2.0, 0.5)
+		if err != nil {
+			t.Fatalf("new TtmSqueeze: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TtmSqueeze: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TtmSqueeze: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TtmSqueeze: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TtmSqueeze: still ready after Reset")
+		}
+		compareRuns(t, "TtmSqueeze", first, drive())
+	})
+	t.Run("TtmTrend", func(t *testing.T) {
+		ind, err := NewTtmTrend(14)
+		if err != nil {
+			t.Fatalf("new TtmTrend: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TtmTrend: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TtmTrend: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TtmTrend: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TtmTrend: still ready after Reset")
+		}
+		compareRuns(t, "TtmTrend", first, drive())
+	})
+	t.Run("TurnOfMonth", func(t *testing.T) {
+		ind, err := NewTurnOfMonth(3.0, 3.0, 0)
+		if err != nil {
+			t.Fatalf("new TurnOfMonth: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TurnOfMonth: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TurnOfMonth: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TurnOfMonth: still ready after Reset")
+		}
+		compareRuns(t, "TurnOfMonth", first, drive())
+	})
+	t.Run("Tweezer", func(t *testing.T) {
+		ind, err := NewTweezer()
+		if err != nil {
+			t.Fatalf("new Tweezer: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Tweezer: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Tweezer: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Tweezer: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Tweezer: still ready after Reset")
+		}
+		compareRuns(t, "Tweezer", first, drive())
+	})
+	t.Run("TwiggsMoneyFlow", func(t *testing.T) {
+		ind, err := NewTwiggsMoneyFlow(14)
+		if err != nil {
+			t.Fatalf("new TwiggsMoneyFlow: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TwiggsMoneyFlow: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TwiggsMoneyFlow: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TwiggsMoneyFlow: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TwiggsMoneyFlow: still ready after Reset")
+		}
+		compareRuns(t, "TwiggsMoneyFlow", first, drive())
+	})
+	t.Run("TwoCrows", func(t *testing.T) {
+		ind, err := NewTwoCrows()
+		if err != nil {
+			t.Fatalf("new TwoCrows: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TwoCrows: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TwoCrows: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TwoCrows: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TwoCrows: still ready after Reset")
+		}
+		compareRuns(t, "TwoCrows", first, drive())
+	})
+	t.Run("TypicalPrice", func(t *testing.T) {
+		ind, err := NewTypicalPrice()
+		if err != nil {
+			t.Fatalf("new TypicalPrice: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("TypicalPrice: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("TypicalPrice: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("TypicalPrice: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("TypicalPrice: still ready after Reset")
+		}
+		compareRuns(t, "TypicalPrice", first, drive())
+	})
+	t.Run("UlcerIndex", func(t *testing.T) {
+		ind, err := NewUlcerIndex(14)
+		if err != nil {
+			t.Fatalf("new UlcerIndex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UlcerIndex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UlcerIndex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UlcerIndex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UlcerIndex: still ready after Reset")
+		}
+		compareRuns(t, "UlcerIndex", first, drive())
+	})
+	t.Run("UltimateOscillator", func(t *testing.T) {
+		ind, err := NewUltimateOscillator(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new UltimateOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UltimateOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UltimateOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UltimateOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UltimateOscillator: still ready after Reset")
+		}
+		compareRuns(t, "UltimateOscillator", first, drive())
+	})
+	t.Run("UniqueThreeRiver", func(t *testing.T) {
+		ind, err := NewUniqueThreeRiver()
+		if err != nil {
+			t.Fatalf("new UniqueThreeRiver: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UniqueThreeRiver: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UniqueThreeRiver: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UniqueThreeRiver: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UniqueThreeRiver: still ready after Reset")
+		}
+		compareRuns(t, "UniqueThreeRiver", first, drive())
+	})
+	t.Run("UniversalOscillator", func(t *testing.T) {
+		ind, err := NewUniversalOscillator(14)
+		if err != nil {
+			t.Fatalf("new UniversalOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UniversalOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UniversalOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UniversalOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UniversalOscillator: still ready after Reset")
+		}
+		compareRuns(t, "UniversalOscillator", first, drive())
+	})
+	t.Run("UpDownVolumeRatio", func(t *testing.T) {
+		ind, err := NewUpDownVolumeRatio()
+		if err != nil {
+			t.Fatalf("new UpDownVolumeRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				ch, vo, nh, nl, am, ob_ := crossLists(r)
+				got[i] = []float64{ind.Update(ch, vo, nh, nl, am, ob_, int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UpDownVolumeRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UpDownVolumeRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UpDownVolumeRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UpDownVolumeRatio: still ready after Reset")
+		}
+		compareRuns(t, "UpDownVolumeRatio", first, drive())
+	})
+	t.Run("UpsideGapThreeMethods", func(t *testing.T) {
+		ind, err := NewUpsideGapThreeMethods()
+		if err != nil {
+			t.Fatalf("new UpsideGapThreeMethods: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UpsideGapThreeMethods: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UpsideGapThreeMethods: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UpsideGapThreeMethods: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UpsideGapThreeMethods: still ready after Reset")
+		}
+		compareRuns(t, "UpsideGapThreeMethods", first, drive())
+	})
+	t.Run("UpsideGapTwoCrows", func(t *testing.T) {
+		ind, err := NewUpsideGapTwoCrows()
+		if err != nil {
+			t.Fatalf("new UpsideGapTwoCrows: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UpsideGapTwoCrows: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UpsideGapTwoCrows: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UpsideGapTwoCrows: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UpsideGapTwoCrows: still ready after Reset")
+		}
+		compareRuns(t, "UpsideGapTwoCrows", first, drive())
+	})
+	t.Run("UpsidePotentialRatio", func(t *testing.T) {
+		ind, err := NewUpsidePotentialRatio(14, 2.0)
+		if err != nil {
+			t.Fatalf("new UpsidePotentialRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("UpsidePotentialRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("UpsidePotentialRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("UpsidePotentialRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("UpsidePotentialRatio: still ready after Reset")
+		}
+		compareRuns(t, "UpsidePotentialRatio", first, drive())
+	})
+	t.Run("ValueArea", func(t *testing.T) {
+		ind, err := NewValueArea(20, 50, 0.7)
+		if err != nil {
+			t.Fatalf("new ValueArea: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ValueArea: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ValueArea: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ValueArea: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ValueArea: still ready after Reset")
+		}
+		compareRuns(t, "ValueArea", first, drive())
+	})
+	t.Run("ValueAtRisk", func(t *testing.T) {
+		ind, err := NewValueAtRisk(20, 0.95)
+		if err != nil {
+			t.Fatalf("new ValueAtRisk: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ValueAtRisk: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ValueAtRisk: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ValueAtRisk: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ValueAtRisk: still ready after Reset")
+		}
+		compareRuns(t, "ValueAtRisk", first, drive())
+	})
+	t.Run("Variance", func(t *testing.T) {
+		ind, err := NewVariance(14)
+		if err != nil {
+			t.Fatalf("new Variance: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Variance: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Variance: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Variance: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Variance: still ready after Reset")
+		}
+		compareRuns(t, "Variance", first, drive())
+	})
+	t.Run("VarianceRatio", func(t *testing.T) {
+		ind, err := NewVarianceRatio(60, 2)
+		if err != nil {
+			t.Fatalf("new VarianceRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[0])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VarianceRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VarianceRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VarianceRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VarianceRatio: still ready after Reset")
+		}
+		compareRuns(t, "VarianceRatio", first, drive())
+	})
+	t.Run("VerticalHorizontalFilter", func(t *testing.T) {
+		ind, err := NewVerticalHorizontalFilter(14)
+		if err != nil {
+			t.Fatalf("new VerticalHorizontalFilter: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VerticalHorizontalFilter: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VerticalHorizontalFilter: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VerticalHorizontalFilter: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VerticalHorizontalFilter: still ready after Reset")
+		}
+		compareRuns(t, "VerticalHorizontalFilter", first, drive())
+	})
+	t.Run("Vidya", func(t *testing.T) {
+		ind, err := NewVidya(3, 7)
+		if err != nil {
+			t.Fatalf("new Vidya: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Vidya: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Vidya: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Vidya: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Vidya: still ready after Reset")
+		}
+		compareRuns(t, "Vidya", first, drive())
+	})
+	t.Run("VolatilityCone", func(t *testing.T) {
+		ind, err := NewVolatilityCone(3, 7)
+		if err != nil {
+			t.Fatalf("new VolatilityCone: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 5)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolatilityCone: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolatilityCone: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolatilityCone: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolatilityCone: still ready after Reset")
+		}
+		compareRuns(t, "VolatilityCone", first, drive())
+	})
+	t.Run("VolatilityOfVolatility", func(t *testing.T) {
+		ind, err := NewVolatilityOfVolatility(3, 7)
+		if err != nil {
+			t.Fatalf("new VolatilityOfVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolatilityOfVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolatilityOfVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolatilityOfVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolatilityOfVolatility: still ready after Reset")
+		}
+		compareRuns(t, "VolatilityOfVolatility", first, drive())
+	})
+	t.Run("VolatilityRatio", func(t *testing.T) {
+		ind, err := NewVolatilityRatio(14)
+		if err != nil {
+			t.Fatalf("new VolatilityRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolatilityRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolatilityRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolatilityRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolatilityRatio: still ready after Reset")
+		}
+		compareRuns(t, "VolatilityRatio", first, drive())
+	})
+	t.Run("VoltyStop", func(t *testing.T) {
+		ind, err := NewVoltyStop(14, 2.0)
+		if err != nil {
+			t.Fatalf("new VoltyStop: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VoltyStop: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VoltyStop: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VoltyStop: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VoltyStop: still ready after Reset")
+		}
+		compareRuns(t, "VoltyStop", first, drive())
+	})
+	t.Run("VolumeBars", func(t *testing.T) {
+		ind, err := NewVolumeBars(500.0)
+		if err != nil {
+			t.Fatalf("new VolumeBars: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = flattenBars(ind.Update(r[0], r[1], r[2], r[3], r[4], 0))
+			}
+			return got
+		}
+		first := drive()
+		ind.Reset()
+		compareRuns(t, "VolumeBars", first, drive())
+	})
+	t.Run("VolumeByTimeProfile", func(t *testing.T) {
+		ind, err := NewVolumeByTimeProfile(24, 0)
+		if err != nil {
+			t.Fatalf("new VolumeByTimeProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				if ok {
+					got[i] = bins
+				} else {
+					got[i] = nanRow(24)
+				}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumeByTimeProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumeByTimeProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumeByTimeProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumeByTimeProfile: still ready after Reset")
+		}
+		compareRuns(t, "VolumeByTimeProfile", first, drive())
+	})
+	t.Run("VolumeOscillator", func(t *testing.T) {
+		ind, err := NewVolumeOscillator(3, 7)
+		if err != nil {
+			t.Fatalf("new VolumeOscillator: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumeOscillator: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumeOscillator: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumeOscillator: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumeOscillator: still ready after Reset")
+		}
+		compareRuns(t, "VolumeOscillator", first, drive())
+	})
+	t.Run("VolumePriceTrend", func(t *testing.T) {
+		ind, err := NewVolumePriceTrend()
+		if err != nil {
+			t.Fatalf("new VolumePriceTrend: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumePriceTrend: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumePriceTrend: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumePriceTrend: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumePriceTrend: still ready after Reset")
+		}
+		compareRuns(t, "VolumePriceTrend", first, drive())
+	})
+	t.Run("VolumeProfile", func(t *testing.T) {
+		ind, err := NewVolumeProfile(20, 50)
+		if err != nil {
+			t.Fatalf("new VolumeProfile: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 52)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumeProfile: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumeProfile: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumeProfile: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumeProfile: still ready after Reset")
+		}
+		compareRuns(t, "VolumeProfile", first, drive())
+	})
+	t.Run("VolumeRsi", func(t *testing.T) {
+		ind, err := NewVolumeRsi(14)
+		if err != nil {
+			t.Fatalf("new VolumeRsi: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumeRsi: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumeRsi: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumeRsi: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumeRsi: still ready after Reset")
+		}
+		compareRuns(t, "VolumeRsi", first, drive())
+	})
+	t.Run("VolumeWeightedMacd", func(t *testing.T) {
+		ind, err := NewVolumeWeightedMacd(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new VolumeWeightedMacd: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumeWeightedMacd: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumeWeightedMacd: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumeWeightedMacd: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumeWeightedMacd: still ready after Reset")
+		}
+		compareRuns(t, "VolumeWeightedMacd", first, drive())
+	})
+	t.Run("VolumeWeightedSr", func(t *testing.T) {
+		ind, err := NewVolumeWeightedSr(14)
+		if err != nil {
+			t.Fatalf("new VolumeWeightedSr: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VolumeWeightedSr: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VolumeWeightedSr: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VolumeWeightedSr: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VolumeWeightedSr: still ready after Reset")
+		}
+		compareRuns(t, "VolumeWeightedSr", first, drive())
+	})
+	t.Run("Vortex", func(t *testing.T) {
+		ind, err := NewVortex(14)
+		if err != nil {
+			t.Fatalf("new Vortex: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Vortex: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Vortex: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Vortex: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Vortex: still ready after Reset")
+		}
+		compareRuns(t, "Vortex", first, drive())
+	})
+	t.Run("Vpin", func(t *testing.T) {
+		ind, err := NewVpin(5000.0, 10)
+		if err != nil {
+			t.Fatalf("new Vpin: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3], r[4], r[3] >= r[0], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Vpin: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Vpin: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Vpin: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Vpin: still ready after Reset")
+		}
+		compareRuns(t, "Vpin", first, drive())
+	})
+	t.Run("Vwap", func(t *testing.T) {
+		ind, err := NewVwap()
+		if err != nil {
+			t.Fatalf("new Vwap: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Vwap: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Vwap: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Vwap: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Vwap: still ready after Reset")
+		}
+		compareRuns(t, "Vwap", first, drive())
+	})
+	t.Run("VwapStdDevBands", func(t *testing.T) {
+		ind, err := NewVwapStdDevBands(2.0)
+		if err != nil {
+			t.Fatalf("new VwapStdDevBands: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 4)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("VwapStdDevBands: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("VwapStdDevBands: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("VwapStdDevBands: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("VwapStdDevBands: still ready after Reset")
+		}
+		compareRuns(t, "VwapStdDevBands", first, drive())
+	})
+	t.Run("Vwma", func(t *testing.T) {
+		ind, err := NewVwma(14)
+		if err != nil {
+			t.Fatalf("new Vwma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Vwma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Vwma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Vwma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Vwma: still ready after Reset")
+		}
+		compareRuns(t, "Vwma", first, drive())
+	})
+	t.Run("Vzo", func(t *testing.T) {
+		ind, err := NewVzo(14)
+		if err != nil {
+			t.Fatalf("new Vzo: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Vzo: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Vzo: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Vzo: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Vzo: still ready after Reset")
+		}
+		compareRuns(t, "Vzo", first, drive())
+	})
+	t.Run("Wad", func(t *testing.T) {
+		ind, err := NewWad()
+		if err != nil {
+			t.Fatalf("new Wad: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Wad: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Wad: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Wad: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Wad: still ready after Reset")
+		}
+		compareRuns(t, "Wad", first, drive())
+	})
+	t.Run("WavePm", func(t *testing.T) {
+		ind, err := NewWavePm(3, 7)
+		if err != nil {
+			t.Fatalf("new WavePm: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WavePm: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WavePm: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WavePm: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WavePm: still ready after Reset")
+		}
+		compareRuns(t, "WavePm", first, drive())
+	})
+	t.Run("WaveTrend", func(t *testing.T) {
+		ind, err := NewWaveTrend(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new WaveTrend: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WaveTrend: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WaveTrend: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WaveTrend: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WaveTrend: still ready after Reset")
+		}
+		compareRuns(t, "WaveTrend", first, drive())
+	})
+	t.Run("Wedge", func(t *testing.T) {
+		ind, err := NewWedge()
+		if err != nil {
+			t.Fatalf("new Wedge: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Wedge: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Wedge: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Wedge: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Wedge: still ready after Reset")
+		}
+		compareRuns(t, "Wedge", first, drive())
+	})
+	t.Run("WeightedClose", func(t *testing.T) {
+		ind, err := NewWeightedClose()
+		if err != nil {
+			t.Fatalf("new WeightedClose: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WeightedClose: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WeightedClose: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WeightedClose: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WeightedClose: still ready after Reset")
+		}
+		compareRuns(t, "WeightedClose", first, drive())
+	})
+	t.Run("WickRatio", func(t *testing.T) {
+		ind, err := NewWickRatio()
+		if err != nil {
+			t.Fatalf("new WickRatio: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WickRatio: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WickRatio: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WickRatio: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WickRatio: still ready after Reset")
+		}
+		compareRuns(t, "WickRatio", first, drive())
+	})
+	t.Run("WilliamsFractals", func(t *testing.T) {
+		ind, err := NewWilliamsFractals()
+		if err != nil {
+			t.Fatalf("new WilliamsFractals: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WilliamsFractals: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WilliamsFractals: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WilliamsFractals: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WilliamsFractals: still ready after Reset")
+		}
+		compareRuns(t, "WilliamsFractals", first, drive())
+	})
+	t.Run("WilliamsR", func(t *testing.T) {
+		ind, err := NewWilliamsR(14)
+		if err != nil {
+			t.Fatalf("new WilliamsR: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WilliamsR: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WilliamsR: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WilliamsR: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WilliamsR: still ready after Reset")
+		}
+		compareRuns(t, "WilliamsR", first, drive())
+	})
+	t.Run("WinRate", func(t *testing.T) {
+		ind, err := NewWinRate(14)
+		if err != nil {
+			t.Fatalf("new WinRate: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WinRate: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WinRate: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WinRate: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WinRate: still ready after Reset")
+		}
+		compareRuns(t, "WinRate", first, drive())
+	})
+	t.Run("Wma", func(t *testing.T) {
+		ind, err := NewWma(14)
+		if err != nil {
+			t.Fatalf("new Wma: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Wma: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Wma: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Wma: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Wma: still ready after Reset")
+		}
+		compareRuns(t, "Wma", first, drive())
+	})
+	t.Run("WoodiePivots", func(t *testing.T) {
+		ind, err := NewWoodiePivots()
+		if err != nil {
+			t.Fatalf("new WoodiePivots: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 5)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("WoodiePivots: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("WoodiePivots: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("WoodiePivots: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("WoodiePivots: still ready after Reset")
+		}
+		compareRuns(t, "WoodiePivots", first, drive())
+	})
+	t.Run("YangZhangVolatility", func(t *testing.T) {
+		ind, err := NewYangZhangVolatility(20, 252)
+		if err != nil {
+			t.Fatalf("new YangZhangVolatility: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("YangZhangVolatility: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("YangZhangVolatility: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("YangZhangVolatility: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("YangZhangVolatility: still ready after Reset")
+		}
+		compareRuns(t, "YangZhangVolatility", first, drive())
+	})
+	t.Run("YoyoExit", func(t *testing.T) {
+		ind, err := NewYoyoExit(14, 2.0)
+		if err != nil {
+			t.Fatalf("new YoyoExit: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("YoyoExit: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("YoyoExit: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("YoyoExit: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("YoyoExit: still ready after Reset")
+		}
+		compareRuns(t, "YoyoExit", first, drive())
+	})
+	t.Run("ZScore", func(t *testing.T) {
+		ind, err := NewZScore(14)
+		if err != nil {
+			t.Fatalf("new ZScore: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ZScore: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ZScore: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ZScore: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ZScore: still ready after Reset")
+		}
+		compareRuns(t, "ZScore", first, drive())
+	})
+	t.Run("ZeroLagMacd", func(t *testing.T) {
+		ind, err := NewZeroLagMacd(3, 7, 14)
+		if err != nil {
+			t.Fatalf("new ZeroLagMacd: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[3])
+				got[i] = reflectRow(out, ok, 3)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ZeroLagMacd: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ZeroLagMacd: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ZeroLagMacd: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ZeroLagMacd: still ready after Reset")
+		}
+		compareRuns(t, "ZeroLagMacd", first, drive())
+	})
+	t.Run("ZigZag", func(t *testing.T) {
+		ind, err := NewZigZag(0.02)
+		if err != nil {
+			t.Fatalf("new ZigZag: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				out, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
+				got[i] = reflectRow(out, ok, 2)
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("ZigZag: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("ZigZag: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("ZigZag: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("ZigZag: still ready after Reset")
+		}
+		compareRuns(t, "ZigZag", first, drive())
+	})
+	t.Run("Zlema", func(t *testing.T) {
+		ind, err := NewZlema(14)
+		if err != nil {
+			t.Fatalf("new Zlema: %v", err)
+		}
+		drive := func() [][]float64 {
+			got := make([][]float64, len(rows))
+			for i, r := range rows {
+				got[i] = []float64{ind.Update(r[3])}
+			}
+			return got
+		}
+		if ind.IsReady() {
+			t.Errorf("Zlema: ready before any input")
+		}
+		if w := ind.WarmupPeriod(); w < 1 {
+			t.Errorf("Zlema: warmup period %d, want >= 1", w)
+		}
+		first := drive()
+		if !ind.IsReady() {
+			t.Errorf("Zlema: not ready after the whole series, but the fixture has values")
+		}
+		ind.Reset()
+		if ind.IsReady() {
+			t.Errorf("Zlema: still ready after Reset")
+		}
+		compareRuns(t, "Zlema", first, drive())
 	})
 }
