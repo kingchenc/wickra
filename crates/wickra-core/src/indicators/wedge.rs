@@ -7,7 +7,7 @@ use crate::traits::Indicator;
 /// Wedge — a pattern where both trendlines slope the same way but converge,
 /// signalling exhaustion of the prevailing move.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%); evaluated from the
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%); evaluated from the
 /// last two swing highs and lows:
 ///
 /// ```text

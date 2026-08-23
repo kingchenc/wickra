@@ -19,7 +19,7 @@ use crate::traits::Indicator;
 /// It is maintained as an O(1) rolling state machine: running first and second
 /// moments, updated by one add and one subtract per bar. The moments are
 /// accumulated relative to a reference point inside the window
-/// ([`ShiftedMoments`]) rather than around zero, because `E[x²] - E[x]²` on raw
+/// (`ShiftedMoments`) rather than around zero, because `E[x²] - E[x]²` on raw
 /// price levels cancels catastrophically — at a level of 1e5 with a tight range
 /// it loses most of its significant digits, and at 1e8 it collapses to exactly
 /// zero.

@@ -56,7 +56,7 @@ pub struct BollingerBands {
     /// Number of slots filled, saturating at `period`.
     count: usize,
     /// Rolling first and second moments, accumulated around a reference point
-    /// inside the window. See [`ShiftedMoments`] for why the textbook
+    /// inside the window. See `ShiftedMoments` for why the textbook
     /// `E[x²] − E[x]²` form is not usable on raw price levels.
     moments: ShiftedMoments,
 }

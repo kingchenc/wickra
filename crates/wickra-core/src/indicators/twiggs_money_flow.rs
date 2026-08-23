@@ -14,7 +14,7 @@ use crate::traits::Indicator;
 /// TMF   = WilderEMA(ad, period) / WilderEMA(volume, period)
 /// ```
 ///
-/// Colin Twiggs' money flow fixes two issues with [`Cmf`](crate::Cmf): it replaces
+/// Colin Twiggs' money flow fixes two issues with [`ChaikinMoneyFlow`](crate::ChaikinMoneyFlow): it replaces
 /// the bar's raw high/low with the *true* high/low (folding in the prior close so
 /// gaps count), and it smooths the accumulated money flow and the volume with a
 /// Wilder exponential average rather than a flat `period`-sum, so the oscillator

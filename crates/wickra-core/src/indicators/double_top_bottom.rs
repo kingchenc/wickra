@@ -9,7 +9,7 @@ use crate::traits::Indicator;
 /// Double Top / Double Bottom — a two-peak (or two-trough) reversal pattern.
 ///
 /// The detector tracks confirmed swing pivots (a non-repainting percent-threshold
-/// zig-zag, [`SWING_THRESHOLD`] = 5%). A pattern is recognised on the bar that
+/// zig-zag, `SWING_THRESHOLD` = 5%). A pattern is recognised on the bar that
 /// confirms the **second** matching extreme:
 ///
 /// ```text
@@ -18,7 +18,7 @@ use crate::traits::Indicator;
 /// ```
 ///
 /// Two extremes count as the same level when they are within
-/// [`LEVEL_TOLERANCE`] (3%) of each other. Because pivots strictly alternate
+/// `LEVEL_TOLERANCE` (3%) of each other. Because pivots strictly alternate
 /// high/low, the trough between the twin tops (or the peak between the twin
 /// bottoms) is guaranteed to sit beyond both, so no extra separation check is
 /// needed.

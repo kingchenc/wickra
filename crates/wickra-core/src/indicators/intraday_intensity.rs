@@ -20,7 +20,7 @@ use crate::traits::Indicator;
 /// derived forms Wickra ships separately: the **cumulative** running total is
 /// the Accumulation/Distribution Line ([`Adl`](crate::Adl)), and the
 /// volume-normalized windowed form ("Intraday Intensity %") is mathematically
-/// the Chaikin Money Flow ([`Cmf`](crate::Cmf)). A doji whose `high == low`
+/// the Chaikin Money Flow ([`ChaikinMoneyFlow`](crate::ChaikinMoneyFlow)). A doji whose `high == low`
 /// contributes nothing. Each `update` is O(1) and the first bar already emits a
 /// value.
 ///

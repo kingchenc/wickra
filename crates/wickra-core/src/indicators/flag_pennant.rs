@@ -11,7 +11,7 @@ const MAX_RETRACE_FRACTION: f64 = 0.5;
 /// Flag / Pennant — a brief consolidation against a sharp prior move (the
 /// "pole"), resolving in the pole's direction.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%); evaluated from the
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%); evaluated from the
 /// last three pivots `pole_start → pole_end → consolidation`:
 ///
 /// ```text

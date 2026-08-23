@@ -43,6 +43,13 @@ pub struct SeasonalZScore {
 }
 
 impl SeasonalZScore {
+    ///
+    /// The offset is a constant and does not follow daylight saving: for a
+    /// venue that observes it, one value is correct for part of the year and an
+    /// hour out for the rest, which shifts every session boundary by an hour.
+    /// Either pass the offset in force for the span being analysed and keep
+    /// spans that cross a transition apart, or convert the timestamps to the
+    /// venue's wall clock upstream and pass `0`.
     /// Construct a Seasonal Z-Score indicator with the given UTC offset (minutes).
     pub const fn new(utc_offset_minutes: i32) -> Self {
         Self {

@@ -452,6 +452,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   No golden fixture moves — the golden candles never produce a flat window,
   which is precisely why this survived as long as it did.
+- **The session family says that its UTC offset does not follow daylight
+  saving.** `utc_offset_minutes` is a constant shift, which is correct
+  arithmetic and a real limitation that appeared nowhere in the crate: for a
+  venue that observes a transition, one offset is right for part of the year and
+  an hour out for the rest, and an hour moves every session boundary. For
+  indicators whose whole job is bucketing bars by session, an hour of bars lands
+  in the wrong bucket for roughly eight months of a U.S. calendar year.
+
+  The `calendar` module now states the model and the two ways to be correct
+  about it — analyse spans that do not cross a transition with the offset in
+  force, or convert timestamps to the venue's wall clock upstream and pass `0` —
+  and says plainly why Wickra does not ship a timezone database. The same
+  guidance is on all twelve affected constructors, inline rather than as a link,
+  because `calendar` is private and a reader cannot follow a link into it.
+- **Every rustdoc warning in `wickra-core` is gone: 33 to 0.** 21 predate this
+  work and are dead links in published documentation, which docs.rs has been
+  rendering as plain text. Fourteen pointed at `pub(crate)` constants
+  (`SWING_THRESHOLD`, `LEVEL_TOLERANCE`, `ShiftedMoments`) and now name them
+  without linking; the rest referenced types under names they no longer have —
+  `Cmf` is `ChaikinMoneyFlow`, `OIDelta` is `OpenInterestDelta` — or needed a
+  path, as `Hma` and the two `Error` variants in `MacdHistogram` did.
+
 
 
 

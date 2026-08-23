@@ -9,7 +9,7 @@ use crate::traits::Indicator;
 /// Triangle — a consolidation pattern bounded by two converging trendlines,
 /// detected from the two most recent swing highs and lows.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%); evaluated on every
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%); evaluated on every
 /// bar that confirms a new pivot once four pivots exist:
 ///
 /// ```text
@@ -19,7 +19,7 @@ use crate::traits::Indicator;
 ///                                                 (an up-bounce), else -1
 /// ```
 ///
-/// "Flat" means the two highs (or lows) are within [`LEVEL_TOLERANCE`] (3%) of
+/// "Flat" means the two highs (or lows) are within `LEVEL_TOLERANCE` (3%) of
 /// each other; "rising"/"falling" means they differ by more than that tolerance.
 /// The symmetrical case is directionally neutral, so its sign follows the
 /// momentum of the most recently confirmed swing. Output is `+1.0` / `-1.0` /

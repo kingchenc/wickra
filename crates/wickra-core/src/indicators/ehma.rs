@@ -11,7 +11,7 @@ use crate::traits::Indicator;
 /// EHMA = EMA( 2 · EMA(price, period/2) − EMA(price, period), round(sqrt(period)) )
 /// ```
 ///
-/// Alan Hull's [`Hma`](crate::Hma) uses weighted moving averages; replacing them
+/// Alan Hull's [`crate::Hma`](crate::Hma) uses weighted moving averages; replacing them
 /// with exponential moving averages keeps the same lag-reduction trick — a fast
 /// half-length average minus a full-length one, smoothed over `sqrt(period)` —
 /// while inheriting the EMA's strictly recursive O(1) update and infinite
@@ -19,7 +19,7 @@ use crate::traits::Indicator;
 /// WMA-based Hull at the cost of a little more lag.
 ///
 /// The half period is `(period / 2).max(1)` and the smoothing period is
-/// `round(sqrt(period)).max(1)`, matching the rounding used by [`Hma`].
+/// `round(sqrt(period)).max(1)`, matching the rounding used by [`crate::Hma`].
 ///
 /// # Example
 ///

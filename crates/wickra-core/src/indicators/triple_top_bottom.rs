@@ -9,7 +9,7 @@ use crate::traits::Indicator;
 /// Triple Top / Triple Bottom — a three-peak (or three-trough) reversal pattern,
 /// a stronger variant of the double top/bottom.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%). A pattern is
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%). A pattern is
 /// recognised on the bar that confirms the **third** matching extreme:
 ///
 /// ```text
@@ -18,7 +18,7 @@ use crate::traits::Indicator;
 /// ```
 ///
 /// The three same-direction extremes (positions `n-5`, `n-3`, `n-1` in the pivot
-/// history) must all lie within [`LEVEL_TOLERANCE`] (3%) of one another.
+/// history) must all lie within `LEVEL_TOLERANCE` (3%) of one another.
 ///
 /// Output is `+1.0` for a triple bottom, `-1.0` for a triple top, and `0.0`
 /// otherwise; never `None`.

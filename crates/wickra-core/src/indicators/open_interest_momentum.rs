@@ -13,7 +13,7 @@ use crate::traits::Indicator;
 /// OIM = 100 · (OI_t − OI_{t−period}) / OI_{t−period}
 /// ```
 ///
-/// Where [`OIDelta`](crate::OIDelta) reports the single-tick change in open
+/// Where [`OpenInterestDelta`](crate::OpenInterestDelta) reports the single-tick change in open
 /// interest, OI Momentum measures the trend in positioning over a window: positive
 /// values mean open interest is expanding (new money entering — a position build
 /// that fuels the prevailing move), negative values mean it is contracting

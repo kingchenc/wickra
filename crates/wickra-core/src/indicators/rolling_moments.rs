@@ -20,7 +20,7 @@
 //! z-score divides by zero dispersion. Bitcoin at 100 000 on one-second bars sits
 //! in the 1e5 / 0.01 row.
 //!
-//! [`ShiftedMoments`] fixes this by accumulating the moments of `x − offset`
+//! `ShiftedMoments` fixes this by accumulating the moments of `x − offset`
 //! instead of `x`, where `offset` is a value from inside the window. The
 //! subtraction is exact in the common case and near-exact otherwise, so the
 //! cancellation that remains is between quantities of order `spread²` rather
@@ -430,7 +430,7 @@ impl RollingSum {
 ///
 /// Accumulating the same power sums for `x − offset` keeps every term on the
 /// scale of the spread, so the expansions stay meaningful. The reference point
-/// is maintained exactly as in [`ShiftedMoments`].
+/// is maintained exactly as in `ShiftedMoments`.
 #[derive(Debug, Clone)]
 pub(crate) struct ShiftedHigherMoments {
     /// Reference point the accumulated power sums are relative to.

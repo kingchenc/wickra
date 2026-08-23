@@ -9,6 +9,29 @@
 //!
 //! All arithmetic is floor-based (`div_euclid`/`rem_euclid`) so instants before
 //! the Unix epoch decompose correctly without a dedicated negative-input branch.
+//!
+//! # The offset is fixed, and does not follow daylight saving
+//!
+//! `utc_offset_minutes` is a constant shift. It has no notion of a timezone and
+//! therefore cannot follow a daylight-saving transition, which matters more
+//! here than the phrase "fixed offset" suggests: for a venue that observes one,
+//! a single offset is correct for part of the year and an hour out for the
+//! rest, and being an hour out moves every session boundary by an hour. For an
+//! indicator whose whole job is to bucket bars by session, an hour of bars then
+//! lands in the wrong bucket for roughly eight months of a U.S. calendar year.
+//!
+//! There are two ways to be correct about this, and both belong to the caller:
+//!
+//! * Pass the offset that was actually in effect for the span being analysed,
+//!   and analyse spans that do not cross a transition separately. This is the
+//!   right approach when the answer is per-period anyway.
+//! * Convert the timestamps to the venue's local wall clock upstream, with a
+//!   real timezone database, and pass `0`.
+//!
+//! Wickra deliberately does not carry a timezone database. Doing so would put a
+//! multi-megabyte, periodically-stale data dependency into a library that is
+//! otherwise dependency-free and runs in WebAssembly, to solve a problem the
+//! caller's data pipeline has usually already solved.
 
 /// Civil (wall-clock) decomposition of an epoch-millisecond instant.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

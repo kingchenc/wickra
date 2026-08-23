@@ -46,8 +46,8 @@ impl MacdHistogram {
     ///
     /// # Errors
     ///
-    /// Returns [`Error::PeriodZero`] if any period is zero, and
-    /// [`Error::InvalidPeriod`] if `fast >= slow`.
+    /// Returns [`crate::Error::PeriodZero`] if any period is zero, and
+    /// [`crate::Error::InvalidPeriod`] if `fast >= slow`.
     pub fn new(fast: usize, slow: usize, signal: usize) -> Result<Self> {
         Ok(Self {
             macd: MacdIndicator::new(fast, slow, signal)?,

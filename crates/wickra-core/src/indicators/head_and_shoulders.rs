@@ -10,7 +10,7 @@ use crate::traits::Indicator;
 /// pattern with a central extreme (the head) flanked by two lower/higher
 /// shoulders at a similar level, joined by a roughly horizontal neckline.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%); recognised on the
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%); recognised on the
 /// bar that confirms the right shoulder:
 ///
 /// ```text
@@ -23,7 +23,7 @@ use crate::traits::Indicator;
 ///   Head < both shoulders ; LeftShoulder ≈ RightShoulder ; Peak₁ ≈ Peak₂
 /// ```
 ///
-/// The shoulders must match within [`LEVEL_TOLERANCE`] (3%) and the two neckline
+/// The shoulders must match within `LEVEL_TOLERANCE` (3%) and the two neckline
 /// points within the same tolerance. Output is `-1.0` for a top, `+1.0` for an
 /// inverse, `0.0` otherwise; never `None`.
 #[derive(Debug, Clone)]

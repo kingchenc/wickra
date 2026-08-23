@@ -9,7 +9,7 @@ use crate::traits::Indicator;
 /// Cup-and-Handle / Inverse — a rounded base (the cup) followed by a shallow
 /// pullback (the handle) near the rim, then a breakout in the cup's direction.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%) and read from the
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%) and read from the
 /// last four pivots:
 ///
 /// ```text

@@ -9,8 +9,8 @@ use crate::traits::Indicator;
 /// Rectangle / Range — price oscillating between a roughly horizontal support
 /// and resistance, a mean-reversion (range-trading) structure.
 ///
-/// Built on confirmed swing pivots ([`SWING_THRESHOLD`] = 5%); recognised when the
-/// last two highs and the last two lows are each flat within [`LEVEL_TOLERANCE`]
+/// Built on confirmed swing pivots (`SWING_THRESHOLD` = 5%); recognised when the
+/// last two highs and the last two lows are each flat within `LEVEL_TOLERANCE`
 /// (3%):
 ///
 /// ```text
