@@ -131,7 +131,7 @@
         `bb=${bbV ? `${fmt(bbV.lower)}/${fmt(bbV.middle)}/${fmt(bbV.upper)}` : "—"}`;
       appendLog(line);
 
-      if (rsiV !== null && macdV !== null && bbV !== null) {
+      if (rsiV != null && macdV != null && bbV != null) {
         if (rsiV > 70 && hist < 0 && close >= bbV.upper) {
           appendLog(
             `  SELL candidate: rsi=${fmt(rsiV)} hist=${fmt(hist)} close >= bb_upper=${fmt(bbV.upper)}`,

@@ -31,9 +31,11 @@ def synthesize_panel(n_assets: int, n_bars: int, seed: int = 0xBADC0FFEE0DDF00D)
 
 def compute_one(prices: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return (RSI, EMA, MACD-line) for one asset."""
-    rsi = ta.RSI(14).batch(prices)
-    ema = ta.EMA(20).batch(prices)
-    macd = ta.MACD().batch(prices)
+    rsi = np.asarray(ta.RSI(14).batch(prices), dtype=np.float64)
+    ema = np.asarray(ta.EMA(20).batch(prices), dtype=np.float64)
+    # A multi-output batch returns a `Matrix`, not a NumPy array; `tolist` is the
+    # documented bridge to one.
+    macd = np.asarray(ta.MACD().batch(prices).tolist(), dtype=np.float64)
     return rsi, ema, macd[:, 0]
 
 

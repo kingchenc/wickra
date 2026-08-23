@@ -18,6 +18,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   catch-all; the raised exception and message are unchanged.
 
 ### Fixed
+- **Every shipped example that resamples was broken, in eight languages.** When
+  `Resampler::update` became `push` returning the candles a bar closed, and grew
+  a `gap_fill` argument, no example followed. The C, C# and Go examples plus
+  `examples/c/data_layer_test.c` no longer compiled; the Java one did not
+  compile either; and the Node, WASM and Python `multi_timeframe` examples
+  treated the returned list as a single candle, which crashed at runtime or
+  silently aggregated nothing. All eight now agree to the digit with
+  `cargo run -p wickra-examples --bin multi_timeframe`.
+- **Four WASM demos tested a warmup value with `!== null`.** A WASM `update`
+  returns `undefined` before warmup completes, so the guard passed immediately
+  and the code went on to read fields off nothing. They compare with `!= null`
+  now, which covers both spellings.
+- **`backtest.py`, `multi_timeframe.py` and `parallel_assets.py` raised
+  `TypeError` on their first summary line.** They index the result of `batch`
+  as a NumPy array, which it stopped being when the NumPy dependency was
+  dropped: a scalar batch returns `array.array('d')` and a multi-output batch
+  returns a `Matrix`. They convert explicitly now.
+- **`Matrix`'s docstring promised NumPy interop it does not have.** It claimed
+  `numpy.asarray(result)` rebuilds an `(nrows, ncols)` array; the result is
+  actually a 0-d object array, which is why the test suite detours through
+  `.tolist()`. Exposing the block through the buffer protocol would make the
+  claim true, but `Py_buffer` is outside the limited API the `abi3` wheels are
+  built against. The docstring now gives the incantation that works and says
+  why.
 - **A zero `max_reconnect_attempts` could panic the Binance stream task.**
   `BinanceConfig::max_reconnect_attempts` is a public field documented as
   "must be >= 1", but nothing enforced it: `connect_with_config` validated only

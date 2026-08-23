@@ -30,14 +30,16 @@ func resample(source []market.Bar, factor int) []market.Bar {
 	}
 	// Native Resampler: bucket by an absolute timeframe (the synthetic bars step
 	// 60_000 ms, so factor minutes == factor*60_000 ms). No hand-written bucketing.
-	r, _ := wickra.NewResampler(int64(factor) * 60_000)
+	// Push returns the candles that bar closed — normally none or one, but with
+	// gap filling on it would be one per skipped bucket, so always iterate.
+	r, _ := wickra.NewResampler(int64(factor)*60_000, false)
 	defer r.Close()
 	var out []market.Bar
 	emit := func(c wickra.Candle) {
 		out = append(out, market.Bar{Open: c.Open, High: c.High, Low: c.Low, Close: c.Close, Volume: c.Volume, Timestamp: c.Timestamp})
 	}
 	for _, b := range source {
-		if c, ok := r.Update(b.Open, b.High, b.Low, b.Close, b.Volume, b.Timestamp); ok {
+		for _, c := range r.Push(b.Open, b.High, b.Low, b.Close, b.Volume, b.Timestamp) {
 			emit(c)
 		}
 	}

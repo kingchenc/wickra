@@ -23,6 +23,12 @@ import wickra as ta
 Candle = Tuple[float, float, float, float, float, int]
 
 
+def columns(matrix) -> np.ndarray:
+    """A multi-output ``batch`` returns a ``Matrix``, not a NumPy array; ``tolist``
+    is the documented bridge to one."""
+    return np.asarray(matrix.tolist(), dtype=np.float64)
+
+
 def load(path: str) -> List[Candle]:
     """Read an OHLCV CSV into candles with ``CandleReader`` (validates the
     ``timestamp,open,high,low,close,volume`` header; raises ``ValueError`` on a
@@ -37,9 +43,9 @@ def resample(candles: List[Candle], bucket_ms: int) -> List[Candle]:
     r = ta.Resampler(bucket_ms)
     out: List[Candle] = []
     for o, h, l, c, v, ts in candles:
-        agg = r.update(o, h, l, c, v, ts)
-        if agg is not None:
-            out.append(agg)
+        # One push can close several candles at once (gap filling emits a flat
+        # placeholder per skipped bucket), so update returns a list.
+        out.extend(r.update(o, h, l, c, v, ts))
     tail = r.flush()
     if tail is not None:
         out.append(tail)
@@ -52,9 +58,9 @@ def summarize(label: str, candles: List[Candle]) -> None:
         return
     # Transpose into contiguous 1-D columns (batch() needs C-contiguous arrays).
     _o, high, low, close, _v, _ts = (np.array(col, dtype=np.float64) for col in zip(*candles))
-    rsi = ta.RSI(14).batch(close)
-    macd = ta.MACD().batch(close)
-    adx = ta.ADX(14).batch(high, low, close)
+    rsi = np.asarray(ta.RSI(14).batch(close), dtype=np.float64)
+    macd = columns(ta.MACD().batch(close))
+    adx = columns(ta.ADX(14).batch(high, low, close))
     last_macd_hist = macd[~np.isnan(macd[:, 2])][-1, 2] if np.any(~np.isnan(macd[:, 2])) else float("nan")
     last_adx = adx[~np.isnan(adx[:, 2])][-1, 2] if np.any(~np.isnan(adx[:, 2])) else float("nan")
     valid_rsi = rsi[~np.isnan(rsi)]

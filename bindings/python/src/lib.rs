@@ -80,10 +80,14 @@ fn f64_array<'py>(py: Python<'py>, data: &[f64]) -> PyResult<Bound<'py, PyAny>> 
 
 /// A row-major, two-dimensional `f64` result returned by multi-output batch helpers.
 ///
-/// Backed by a flat, buffer-protocol `array.array('d')`, it preserves the ergonomics
-/// of the former `NumPy` return type — `result.shape`, integer row access and
-/// `result[i, j]` element access — without depending on `NumPy`. `numpy.asarray(result)`
-/// rebuilds an `(nrows, ncols)` array for callers who want one.
+/// Rows come back as flat, buffer-protocol `array.array('d')` values, so it
+/// preserves the ergonomics of the former `NumPy` return type — `result.shape`,
+/// integer row access and `result[i, j]` element access — without depending on
+/// `NumPy`. Callers who want an `(nrows, ncols)` `NumPy` array build one with
+/// `numpy.asarray(result.tolist())`; exposing the block through the buffer
+/// protocol instead would let `numpy.asarray(result)` do it directly, but
+/// `Py_buffer` is outside the limited API these `abi3` wheels are built
+/// against.
 #[pyclass(name = "Matrix", module = "wickra._wickra")]
 struct Matrix {
     data: Vec<f64>,

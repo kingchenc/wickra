@@ -22,6 +22,12 @@ import numpy as np
 import wickra as ta
 
 
+def columns(matrix) -> np.ndarray:
+    """A multi-output ``batch`` returns a ``Matrix``, not a NumPy array; ``tolist``
+    is the documented bridge to one."""
+    return np.asarray(matrix.tolist(), dtype=np.float64)
+
+
 @dataclass
 class History:
     timestamp: np.ndarray
@@ -70,8 +76,11 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def summarize(name: str, values: np.ndarray) -> None:
-    valid = values[~np.isnan(values)]
+def summarize(name: str, values) -> None:
+    # A scalar `batch` returns `array.array('d')`, which NumPy reads through the
+    # buffer protocol but cannot be boolean-indexed directly.
+    valid = np.asarray(values, dtype=np.float64)
+    valid = valid[~np.isnan(valid)]
     if valid.size == 0:
         print(f"  {name:<12} (no valid samples — series too short)")
         return
@@ -87,10 +96,10 @@ def main() -> int:
 
     rsi = ta.RSI(args.rsi).batch(history.close)
     ema = ta.EMA(args.ema).batch(history.close)
-    macd = ta.MACD().batch(history.close)  # shape (n, 3)
-    bb = ta.BollingerBands(args.bb_period, args.bb_mult).batch(history.close)  # (n, 4)
+    macd = columns(ta.MACD().batch(history.close))  # shape (n, 3)
+    bb = columns(ta.BollingerBands(args.bb_period, args.bb_mult).batch(history.close))  # (n, 4)
     atr = ta.ATR(14).batch(history.high, history.low, history.close)
-    adx = ta.ADX(14).batch(history.high, history.low, history.close)  # (n, 3)
+    adx = columns(ta.ADX(14).batch(history.high, history.low, history.close))  # (n, 3)
     obv = ta.OBV().batch(history.close, history.volume)
 
     print(f"Backtest summary for {args.path} ({history.close.size} bars)")

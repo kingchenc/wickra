@@ -32,18 +32,23 @@
  * buckets were produced. */
 static size_t resample(const WickraBar *in, size_t count, int64_t tf_ms,
                        WickraBar *out) {
-    /* Native Resampler — no hand-written bucketing. update() emits a closed
-     * candle on a bucket boundary; flush() yields the final partial bucket. */
-    struct Resampler *r = wickra_resampler_new(tf_ms);
+    /* Native Resampler — no hand-written bucketing. push() buffers the candles
+     * one bar closed and returns how many, drain() copies them out, and flush()
+     * yields the final partial bucket. Gap filling stays off, so a push closes
+     * at most one bucket; draining the reported count is correct either way. */
+    struct Resampler *r = wickra_resampler_new(tf_ms, false);
     if (r == NULL) {
         return 0;
     }
     size_t produced = 0;
     struct WickraCandle c;
     for (size_t i = 0; i < count; ++i) {
-        if (wickra_resampler_update(r, in[i].open, in[i].high, in[i].low,
-                                    in[i].close, in[i].volume, in[i].timestamp,
-                                    &c)) {
+        intptr_t closed = wickra_resampler_push(r, in[i].open, in[i].high, in[i].low,
+                                                in[i].close, in[i].volume, in[i].timestamp);
+        for (intptr_t k = 0; k < closed; ++k) {
+            if (wickra_resampler_drain(r, &c, 1) != 1) {
+                break;
+            }
             out[produced].timestamp = c.timestamp;
             out[produced].open = c.open;
             out[produced].high = c.high;

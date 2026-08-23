@@ -99,7 +99,7 @@ static int check_resample(void) {
     int ni = read_csv("input", input, 5);
     double want[MAXROWS * 6];
     int nw = read_csv("data_resampled", want, 6);
-    struct Resampler *r = wickra_resampler_new(5);
+    struct Resampler *r = wickra_resampler_new(5, false);
     if (!r) {
         printf("FAIL resample: new returned NULL\n");
         return 1;
@@ -108,8 +108,13 @@ static int check_resample(void) {
     int ng = 0;
     struct WickraCandle out;
     for (int i = 0; i < ni; i++) {
-        if (wickra_resampler_update(r, input[i * 5 + 0], input[i * 5 + 1], input[i * 5 + 2],
-                                    input[i * 5 + 3], input[i * 5 + 4], (int64_t)i, &out)) {
+        intptr_t closed = wickra_resampler_push(r, input[i * 5 + 0], input[i * 5 + 1],
+                                                input[i * 5 + 2], input[i * 5 + 3],
+                                                input[i * 5 + 4], (int64_t)i);
+        for (intptr_t k = 0; k < closed; k++) {
+            if (wickra_resampler_drain(r, &out, 1) != 1) {
+                break;
+            }
             got[ng * 6 + 0] = out.open;
             got[ng * 6 + 1] = out.high;
             got[ng * 6 + 2] = out.low;

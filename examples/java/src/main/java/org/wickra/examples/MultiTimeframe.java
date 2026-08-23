@@ -32,11 +32,12 @@ public final class MultiTimeframe {
         }
         // Native Resampler: bucket by an absolute timeframe (the synthetic bars step
         // 60_000 ms, so factor minutes == factor*60_000 ms). No hand-written bucketing.
+        // push returns the candles that bar closed — normally none or one, but with
+        // gap filling on it would be one per skipped bucket, so always iterate.
         List<Bar> output = new ArrayList<>();
-        try (Resampler r = new Resampler((long) factor * 60_000L)) {
+        try (Resampler r = new Resampler((long) factor * 60_000L, false)) {
             for (Bar b : source) {
-                Candle c = r.update(b.open(), b.high(), b.low(), b.close(), b.volume(), b.timestamp());
-                if (c != null) {
+                for (Candle c : r.push(b.open(), b.high(), b.low(), b.close(), b.volume(), b.timestamp())) {
                     output.add(toBar(c));
                 }
             }

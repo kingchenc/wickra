@@ -75,8 +75,8 @@
     // construction).
     function resample(cols, bucketMs) {
       if (cols.timestamp.length === 0) throw new Error("resample: empty series");
-      // Native Resampler — no hand-written bucketing. update() returns a closed
-      // candle on a bucket boundary; flush() yields the final partial bucket.
+      // Native Resampler — no hand-written bucketing. update() returns the
+      // candles a push closed; flush() yields the final partial bucket.
       const r = new Resampler(bucketMs);
       const out = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
       const push = (k) => {
@@ -85,12 +85,15 @@
         out.close.push(k.close); out.volume.push(k.volume);
       };
       for (let i = 0; i < cols.timestamp.length; i++) {
-        const k = r.update(cols.open[i], cols.high[i], cols.low[i],
-          cols.close[i], cols.volume[i], cols.timestamp[i]);
-        if (k !== null) push(k);
+        // One push can close several candles at once (gap filling emits a flat
+        // placeholder per skipped bucket), so update returns a list.
+        for (const k of r.update(cols.open[i], cols.high[i], cols.low[i],
+          cols.close[i], cols.volume[i], cols.timestamp[i])) {
+          push(k);
+        }
       }
       const last = r.flush();
-      if (last !== null) push(last);
+      if (last != null) push(last);
       r.free();
       return out;
     }
@@ -105,7 +108,7 @@
       let lastRsi = null, lastHist = null, lastAdx = null;
       for (let i = 0; i < cols.close.length; i++) {
         const r = rsi.update(cols.close[i]);
-        if (r !== null) lastRsi = r;
+        if (r != null) lastRsi = r;
         const m = macd.update(cols.close[i]);
         if (m) lastHist = m.histogram;
         const a = adx.update(cols.high[i], cols.low[i], cols.close[i]);
@@ -129,8 +132,8 @@
         if (r.bars === 0) {
           tr.innerHTML = `<td>${r.label}</td><td colspan="5">empty</td>`;
         } else {
-          const f = (v, p = 2) => (v === null ? "—" : v.toFixed(p));
-          const hist = r.hist === null ? "—" : `${r.hist >= 0 ? "+" : ""}${r.hist.toFixed(2)}`;
+          const f = (v, p = 2) => (v == null ? "—" : v.toFixed(p));
+          const hist = r.hist == null ? "—" : `${r.hist >= 0 ? "+" : ""}${r.hist.toFixed(2)}`;
           tr.innerHTML =
             `<td>${r.label}</td>` +
             `<td>${r.bars}</td>` +

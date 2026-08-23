@@ -27,14 +27,15 @@ static Bar[] Resample(Bar[] source, int factor)
 
     // Native Resampler: bucket by an absolute timeframe (the synthetic bars step
     // 60_000 ms, so factor minutes == factor*60_000 ms). No hand-written bucketing.
-    using var r = new Resampler((long)factor * 60_000);
+    // Push returns the candles that bar closed — normally none or one, but with
+    // gap filling on it would be one per skipped bucket, so always iterate.
+    using var r = new Resampler((long)factor * 60_000, gapFill: false);
     var output = new List<Bar>();
     foreach (var b in source)
     {
-        var c = r.Update(b.Open, b.High, b.Low, b.Close, b.Volume, b.Timestamp);
-        if (c is not null)
+        foreach (var c in r.Push(b.Open, b.High, b.Low, b.Close, b.Volume, b.Timestamp))
         {
-            output.Add(ToBar(c.Value));
+            output.Add(ToBar(c));
         }
     }
 

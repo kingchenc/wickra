@@ -18,7 +18,7 @@ self.addEventListener("message", async (event) => {
     let last = null;
     for (let j = 0; j < prices.length; j++) {
       const v = ind.update(prices[j]);
-      if (v !== null) last = v;
+      if (v != null) last = v;
     }
     results[i] = last;
   }

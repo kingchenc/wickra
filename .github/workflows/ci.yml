@@ -96,12 +96,12 @@ jobs:
         # streaming.
         run: cargo build -p wickra-examples --bins
 
-  # Syntax/parse smoke for the non-Rust examples. The Rust examples are built
-  # in the `rust` job above (`cargo build -p wickra-examples --bins`); the Node,
-  # browser-WASM and Python examples otherwise have no build gate, so a broken
-  # edit could land unnoticed. This is a parse-only smoke — actually running the
-  # examples needs the built native binding / wasm module / wheel, which the
-  # binding jobs provide separately.
+  # Syntax/parse smoke for the non-Rust examples. The Rust examples are built in
+  # the `rust` job above (`cargo build -p wickra-examples --bins`). Running an
+  # example needs the built native binding / wheel, which this job does not have,
+  # so the `node` and `python` jobs run the offline Node and Python examples
+  # after building theirs. What is left here is the browser-WASM demos, which
+  # need a browser and so can only be parsed.
   examples-smoke:
     name: Examples (syntax smoke)
     runs-on: ubuntu-latest
@@ -536,6 +536,22 @@ jobs:
         working-directory: bindings/python
         run: pytest -v
 
+      # Same gap as the Node examples: `backtest.py`, `multi_timeframe.py` and
+      # `parallel_assets.py` had all been raising TypeError since `batch` stopped
+      # returning NumPy arrays, and byte-compiling them could not tell.
+      # fetch_btcusdt and live_binance need the network; the rest are offline.
+      - name: Run the offline Python examples
+        shell: bash
+        run: |
+          python examples/python/streaming.py > /dev/null
+          python examples/python/backtest.py examples/data/btcusdt-1m.csv > /dev/null
+          python examples/python/multi_timeframe.py examples/data/btcusdt-1m.csv > /dev/null
+          python examples/python/parallel_assets.py --assets 8 --bars 500 > /dev/null
+          for f in strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do
+            echo "python examples/python/$f.py"
+            python "examples/python/$f.py" > /dev/null
+          done
+
   wasm:
     name: WASM build
     runs-on: ubuntu-latest
@@ -678,6 +694,31 @@ jobs:
           max_attempts: 2
           command: cd bindings/node && node --test
           shell: bash
+
+      # The examples are the only consumer of the binding that is shaped like
+      # user code, and nothing ran them: `multi_timeframe.js` had been dead since
+      # `Resampler.update` started returning a list, and the parse-only smoke
+      # could not see it. `examples/node` resolves wickra as `file:` against
+      # bindings/node, so this runs against the module built above.
+      - name: Install the Node example dependencies
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 20
+          command: cd examples/node && npm ci
+          shell: bash
+
+      # fetch_btcusdt and live_binance need the network; the rest are offline.
+      - name: Run the offline Node examples
+        shell: bash
+        run: |
+          cd examples/node
+          for f in streaming backtest multi_timeframe parallel_assets \
+                   strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do
+            echo "node $f.js"
+            node "$f.js" > /dev/null
+          done
 
   c-abi:
     name: C ABI on ${{ matrix.os }}

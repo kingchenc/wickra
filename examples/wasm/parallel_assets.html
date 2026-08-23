@@ -84,7 +84,7 @@
       let last = null;
       for (let i = 0; i < prices.length; i++) {
         const v = ind.update(prices[i]);
-        if (v !== null) last = v;
+        if (v != null) last = v;
       }
       return last;
     }
@@ -163,7 +163,7 @@
         // Sanity check: serial and parallel must agree per asset.
         let mismatches = 0;
         for (let i = 0; i < assets; i++) {
-          if (serial[i] !== parallel[i] && !(serial[i] === null && parallel[i] === null)) {
+          if (serial[i] !== parallel[i] && !(serial[i] == null && parallel[i] == null)) {
             mismatches += 1;
           }
         }

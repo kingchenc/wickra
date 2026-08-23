@@ -41,8 +41,8 @@ function resample(cols, bucketMs) {
   if (cols.timestamp.length === 0) {
     throw new Error('resample: empty input series');
   }
-  // Native Resampler — no hand-written bucketing. update() emits a closed candle
-  // when a bucket boundary is crossed; flush() yields the final partial bucket.
+  // Native Resampler — no hand-written bucketing. update() returns the candles
+  // a push closed; flush() yields the final partial bucket.
   const r = new wickra.Resampler(bucketMs);
   const out = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
   const push = (k) => {
@@ -54,11 +54,14 @@ function resample(cols, bucketMs) {
     out.volume.push(k.volume);
   };
   for (let i = 0; i < cols.timestamp.length; i++) {
-    const k = r.update(cols.open[i], cols.high[i], cols.low[i], cols.close[i], cols.volume[i], cols.timestamp[i]);
-    if (k !== null) push(k);
+    // One push can close several candles at once (gap filling emits a flat
+    // placeholder per skipped bucket), so update returns a list.
+    for (const k of r.update(cols.open[i], cols.high[i], cols.low[i], cols.close[i], cols.volume[i], cols.timestamp[i])) {
+      push(k);
+    }
   }
   const last = r.flush();
-  if (last !== null) push(last);
+  if (last != null) push(last);
   return out;
 }
 
