@@ -61,6 +61,59 @@ public final class VolumeProfile implements AutoCloseable {
         }
     }
 
+    /**
+     * Feeds a whole series in one native call and returns one profile per
+     * input. A row the indicator did not produce carries NaN.
+     */
+    public VolumeProfileOutputScalars[] batch(double[] open, double[] high, double[] low, double[] close, double[] volume, long[] timestamp) {
+        int n = open.length;
+        if (high.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (low.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (close.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (volume.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (timestamp.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (n == 0) {
+            return new VolumeProfileOutputScalars[0];
+        }
+        int width = (int) valuesCapacity;
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment openSeg = a.allocateFrom(JAVA_DOUBLE, open);
+            MemorySegment highSeg = a.allocateFrom(JAVA_DOUBLE, high);
+            MemorySegment lowSeg = a.allocateFrom(JAVA_DOUBLE, low);
+            MemorySegment closeSeg = a.allocateFrom(JAVA_DOUBLE, close);
+            MemorySegment volumeSeg = a.allocateFrom(JAVA_DOUBLE, volume);
+            MemorySegment timestampSeg = a.allocateFrom(JAVA_LONG, timestamp);
+            MemorySegment scalars = a.allocate(16L * n);
+            MemorySegment flat = a.allocate(JAVA_DOUBLE.byteSize() * width * n);
+            NativeMethods.WICKRA_VOLUME_PROFILE_BATCH.invokeExact(handle(), openSeg, highSeg, lowSeg, closeSeg, volumeSeg, timestampSeg, scalars, flat, (long) width, (long) n);
+            VolumeProfileOutputScalars[] result = new VolumeProfileOutputScalars[n];
+            for (int i = 0; i < n; i++) {
+                double[] row = new double[width];
+                MemorySegment.copy(flat, JAVA_DOUBLE, (long) i * width * JAVA_DOUBLE.byteSize(), row, 0, width);
+                long s = (long) i * 16L;
+                result[i] = new VolumeProfileOutputScalars(
+                        scalars.get(JAVA_DOUBLE, s + 0L),
+                        scalars.get(JAVA_DOUBLE, s + 8L),
+                        row);
+            }
+            return result;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

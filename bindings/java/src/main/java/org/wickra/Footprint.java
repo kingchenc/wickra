@@ -68,6 +68,51 @@ public final class Footprint implements AutoCloseable {
         }
     }
 
+    /**
+     * Feeds a whole series in one native call and returns every bar it
+     * completed. The count depends on the data, not on the input length.
+     */
+    public FootprintLevel[] batch(double[] price, double[] size, boolean[] isBuy, long[] timestamp) {
+        int n = price.length;
+        if (size.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (isBuy.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (timestamp.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (n == 0) {
+            return new FootprintLevel[0];
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment priceSeg = a.allocateFrom(JAVA_DOUBLE, price);
+            MemorySegment sizeSeg = a.allocateFrom(JAVA_DOUBLE, size);
+            MemorySegment isBuySeg = WickraNative.boolSegment(a, isBuy);
+            MemorySegment timestampSeg = a.allocateFrom(JAVA_LONG, timestamp);
+            long total = (long) NativeMethods.WICKRA_FOOTPRINT_BATCH.invokeExact(handle(), priceSeg, sizeSeg, isBuySeg, timestampSeg, (long) n);
+            if (total <= 0) {
+                return new FootprintLevel[0];
+            }
+            MemorySegment buf = a.allocate(24L * total);
+            long drained = (long) NativeMethods.WICKRA_FOOTPRINT_DRAIN.invokeExact(handle(), buf, total);
+            FootprintLevel[] result = new FootprintLevel[(int) drained];
+            for (int i = 0; i < drained; i++) {
+                long b = (long) i * 24L;
+                result[i] = new FootprintLevel(
+                    buf.get(JAVA_DOUBLE, b + 0L),
+                    buf.get(JAVA_DOUBLE, b + 8L),
+                    buf.get(JAVA_DOUBLE, b + 16L));
+            }
+            return result;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

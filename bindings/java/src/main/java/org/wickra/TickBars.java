@@ -75,6 +75,61 @@ public final class TickBars implements AutoCloseable {
         }
     }
 
+    /**
+     * Feeds a whole series in one native call and returns every bar it
+     * completed. The count depends on the data, not on the input length.
+     */
+    public TickBar[] batch(double[] open, double[] high, double[] low, double[] close, double[] volume, long[] timestamp) {
+        int n = open.length;
+        if (high.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (low.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (close.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (volume.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (timestamp.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (n == 0) {
+            return new TickBar[0];
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment openSeg = a.allocateFrom(JAVA_DOUBLE, open);
+            MemorySegment highSeg = a.allocateFrom(JAVA_DOUBLE, high);
+            MemorySegment lowSeg = a.allocateFrom(JAVA_DOUBLE, low);
+            MemorySegment closeSeg = a.allocateFrom(JAVA_DOUBLE, close);
+            MemorySegment volumeSeg = a.allocateFrom(JAVA_DOUBLE, volume);
+            MemorySegment timestampSeg = a.allocateFrom(JAVA_LONG, timestamp);
+            long total = (long) NativeMethods.WICKRA_TICK_BARS_BATCH.invokeExact(handle(), openSeg, highSeg, lowSeg, closeSeg, volumeSeg, timestampSeg, (long) n);
+            if (total <= 0) {
+                return new TickBar[0];
+            }
+            MemorySegment buf = a.allocate(40L * total);
+            long drained = (long) NativeMethods.WICKRA_TICK_BARS_DRAIN.invokeExact(handle(), buf, total);
+            TickBar[] result = new TickBar[(int) drained];
+            for (int i = 0; i < drained; i++) {
+                long b = (long) i * 40L;
+                result[i] = new TickBar(
+                    buf.get(JAVA_DOUBLE, b + 0L),
+                    buf.get(JAVA_DOUBLE, b + 8L),
+                    buf.get(JAVA_DOUBLE, b + 16L),
+                    buf.get(JAVA_DOUBLE, b + 24L),
+                    buf.get(JAVA_DOUBLE, b + 32L));
+            }
+            return result;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** The indicator's canonical name. */
     public String name() {
         try {

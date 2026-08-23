@@ -53,6 +53,51 @@ public final class OrderBookImbalanceTopN implements AutoCloseable {
         }
     }
 
+    /**
+     * Feeds a whole series in one native call and returns the per-bar output.
+     * Every snapshot carries the same width, so the per-member arrays are
+     * flat: bar i occupies elements [i*width, (i+1)*width).
+     */
+    public double[] batch(double[] bidPrice, double[] bidSize, int nBids, double[] askPrice, double[] askSize, int nAsks) {
+        if (nBids <= 0) {
+            throw new IllegalArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0) {
+            throw new IllegalArgumentException("the per-bar width must be positive");
+        }
+        int n = bidPrice.length / nBids;
+        if (bidPrice.length != n * nBids) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (bidSize.length != n * nBids) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (askPrice.length != n * nAsks) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (askSize.length != n * nAsks) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        double[] out = new double[n];
+        if (n == 0) {
+            return out;
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment bidPriceSeg = a.allocateFrom(JAVA_DOUBLE, bidPrice);
+            MemorySegment bidSizeSeg = a.allocateFrom(JAVA_DOUBLE, bidSize);
+            MemorySegment askPriceSeg = a.allocateFrom(JAVA_DOUBLE, askPrice);
+            MemorySegment askSizeSeg = a.allocateFrom(JAVA_DOUBLE, askSize);
+            MemorySegment outSeg = a.allocate(JAVA_DOUBLE.byteSize() * n);
+            NativeMethods.WICKRA_ORDER_BOOK_IMBALANCE_TOP_N_BATCH.invokeExact(handle(), bidPriceSeg, bidSizeSeg, (long) nBids, askPriceSeg, askSizeSeg, (long) nAsks, outSeg, (long) n);
+            MemorySegment.copy(outSeg, JAVA_DOUBLE, 0L, out, 0, n);
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

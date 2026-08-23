@@ -349,6 +349,72 @@ public sealed class AbsoluteBreadthIndex : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_absolute_breadth_index_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -728,6 +794,72 @@ public sealed class AdVolumeLine : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_ad_volume_line_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -1294,6 +1426,72 @@ public sealed class AdvanceDecline : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_advance_decline_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -1376,6 +1574,72 @@ public sealed class AdvanceDeclineRatio : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_advance_decline_ratio_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -4619,6 +4883,72 @@ public sealed class BreadthThrust : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_breadth_thrust_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -4793,6 +5123,72 @@ public sealed class BullishPercentIndex : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_bullish_percent_index_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -7766,6 +8162,72 @@ public sealed class CumulativeVolumeIndex : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_cumulative_volume_index_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -8087,6 +8549,66 @@ public sealed class DayOfWeekProfile : IDisposable
         }
 
         return values;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns one profile per
+    /// input. A row the indicator did not produce carries NaN.
+    /// </summary>
+    public double[][] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<double[]>();
+        }
+
+        var width = _valuesCapacity;
+        var flat = new double[n * width];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* flatPtr = flat)
+            {
+                NativeMethods.wickra_day_of_week_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, flatPtr, (nuint)width, (nuint)n);
+            }
+        }
+
+        var result = new double[n][];
+        for (var i = 0; i < n; i++)
+        {
+            var row = new double[width];
+            Array.Copy(flat, i * width, row, 0, width);
+            result[i] = row;
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -8564,6 +9086,61 @@ public sealed class DepthSlope : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_depth_slope_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -9117,6 +9694,77 @@ public sealed class DollarBars : IDisposable
             {
                 result[cap + i] = new DollarBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].volume, rest[i].dollar);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public DollarBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<DollarBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_dollar_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<DollarBar>();
+        }
+
+        var buffer = new WickraDollarBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraDollarBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_dollar_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new DollarBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new DollarBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume, buffer[i].dollar);
         }
 
         return result;
@@ -12994,6 +13642,67 @@ public sealed class Footprint : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public FootprintLevel[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<FootprintLevel>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_footprint_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<FootprintLevel>();
+        }
+
+        var buffer = new WickraFootprintLevel[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraFootprintLevel* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_footprint_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new FootprintLevel[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new FootprintLevel(buffer[i].price, buffer[i].bid_vol, buffer[i].ask_vol);
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -15887,6 +16596,72 @@ public sealed class HighLowIndex : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_high_low_index_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -17491,6 +18266,77 @@ public sealed class ImbalanceBars : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public ImbalanceBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<ImbalanceBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_imbalance_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<ImbalanceBar>();
+        }
+
+        var buffer = new WickraImbalanceBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraImbalanceBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_imbalance_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new ImbalanceBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new ImbalanceBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].imbalance, buffer[i].direction);
+        }
+
+        return result;
+    }
+
     /// <summary>The indicator's canonical name.</summary>
     public string Name()
     {
@@ -18171,6 +19017,66 @@ public sealed class IntradayVolatilityProfile : IDisposable
         return values;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns one profile per
+    /// input. A row the indicator did not produce carries NaN.
+    /// </summary>
+    public double[][] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<double[]>();
+        }
+
+        var width = _valuesCapacity;
+        var flat = new double[n * width];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* flatPtr = flat)
+            {
+                NativeMethods.wickra_intraday_volatility_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, flatPtr, (nuint)width, (nuint)n);
+            }
+        }
+
+        var result = new double[n][];
+        for (var i = 0; i < n; i++)
+        {
+            var row = new double[width];
+            Array.Copy(flat, i * width, row, 0, width);
+            result[i] = row;
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -18689,6 +19595,77 @@ public sealed class KagiBars : IDisposable
             {
                 result[cap + i] = new KagiBar(rest[i].start, rest[i].end, rest[i].direction);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public KagiBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<KagiBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_kagi_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<KagiBar>();
+        }
+
+        var buffer = new WickraKagiBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraKagiBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_kagi_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new KagiBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new KagiBar(buffer[i].start, buffer[i].end, buffer[i].direction);
         }
 
         return result;
@@ -22207,6 +23184,72 @@ public sealed class McClellanOscillator : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_mc_clellan_oscillator_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -22289,6 +23332,72 @@ public sealed class McClellanSummationIndex : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_mc_clellan_summation_index_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -22833,6 +23942,61 @@ public sealed class Microprice : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_microprice_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -23923,6 +25087,72 @@ public sealed class NewHighsNewLows : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_new_highs_new_lows_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -25355,6 +26585,61 @@ public sealed class OrderBookImbalanceFull : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_order_book_imbalance_full_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -25423,6 +26708,61 @@ public sealed class OrderBookImbalanceTop1 : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_order_book_imbalance_top1_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -25496,6 +26836,61 @@ public sealed class OrderBookImbalanceTopN : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_order_book_imbalance_top_n_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -25565,6 +26960,61 @@ public sealed class OrderFlowImbalance : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_order_flow_imbalance_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -26305,6 +27755,72 @@ public sealed class PercentAboveMa : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_percent_above_ma_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -27269,6 +28785,77 @@ public sealed class PointAndFigureBars : IDisposable
             {
                 result[cap + i] = new PnfColumn(rest[i].direction, rest[i].high, rest[i].low);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public PnfColumn[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<PnfColumn>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_point_and_figure_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<PnfColumn>();
+        }
+
+        var buffer = new WickraPnfColumn[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraPnfColumn* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_point_and_figure_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new PnfColumn[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new PnfColumn(buffer[i].direction, buffer[i].high, buffer[i].low);
         }
 
         return result;
@@ -28351,6 +29938,61 @@ public sealed class QuotedSpread : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> bidPrice, ReadOnlySpan<double> bidSize, int nBids, ReadOnlySpan<double> askPrice, ReadOnlySpan<double> askSize, int nAsks)
+    {
+        if (nBids <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+        if (nAsks <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = bidPrice.Length / nBids;
+        if (bidPrice.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (bidSize.Length != n * nBids)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askPrice.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (askSize.Length != n * nAsks)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* bidPricePtr = bidPrice)
+            fixed (double* bidSizePtr = bidSize)
+            fixed (double* askPricePtr = askPrice)
+            fixed (double* askSizePtr = askSize)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_quoted_spread_batch(_handle, bidPricePtr, bidSizePtr, (nuint)nBids, askPricePtr, askSizePtr, (nuint)nAsks, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -28506,6 +30148,77 @@ public sealed class RangeBars : IDisposable
             {
                 result[cap + i] = new RangeBar(rest[i].open, rest[i].close, rest[i].direction);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public RangeBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<RangeBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_range_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<RangeBar>();
+        }
+
+        var buffer = new WickraRangeBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraRangeBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_range_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new RangeBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new RangeBar(buffer[i].open, buffer[i].close, buffer[i].direction);
         }
 
         return result;
@@ -29127,6 +30840,77 @@ public sealed class RenkoBars : IDisposable
             {
                 result[cap + i] = new RenkoBrick(rest[i].open, rest[i].close, rest[i].direction);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public RenkoBrick[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<RenkoBrick>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_renko_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<RenkoBrick>();
+        }
+
+        var buffer = new WickraRenkoBrick[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraRenkoBrick* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_renko_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new RenkoBrick[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new RenkoBrick(buffer[i].open, buffer[i].close, buffer[i].direction);
         }
 
         return result;
@@ -30746,6 +32530,77 @@ public sealed class RunBars : IDisposable
             {
                 result[cap + i] = new RunBar(rest[i].open, rest[i].high, rest[i].low, rest[i].close, rest[i].length, rest[i].direction);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public RunBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<RunBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_run_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<RunBar>();
+        }
+
+        var buffer = new WickraRunBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraRunBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_run_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new RunBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new RunBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].length, buffer[i].direction);
         }
 
         return result;
@@ -37296,6 +39151,77 @@ public sealed class ThreeLineBreakBars : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public LineBreakBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<LineBreakBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_three_line_break_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<LineBreakBar>();
+        }
+
+        var buffer = new WickraLineBreakBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraLineBreakBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_three_line_break_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new LineBreakBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new LineBreakBar(buffer[i].open, buffer[i].close, buffer[i].direction);
+        }
+
+        return result;
+    }
+
     /// <summary>The indicator's canonical name.</summary>
     public string Name()
     {
@@ -37878,6 +39804,77 @@ public sealed class TickBars : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public TickBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<TickBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_tick_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<TickBar>();
+        }
+
+        var buffer = new WickraTickBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraTickBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_tick_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new TickBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new TickBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume);
+        }
+
+        return result;
+    }
+
     /// <summary>The indicator's canonical name.</summary>
     public string Name()
     {
@@ -37946,6 +39943,72 @@ public sealed class TickIndex : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_tick_index_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -38182,6 +40245,66 @@ public sealed class TimeOfDayReturnProfile : IDisposable
         return values;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns one profile per
+    /// input. A row the indicator did not produce carries NaN.
+    /// </summary>
+    public double[][] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<double[]>();
+        }
+
+        var width = _valuesCapacity;
+        var flat = new double[n * width];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* flatPtr = flat)
+            {
+                NativeMethods.wickra_time_of_day_return_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, flatPtr, (nuint)width, (nuint)n);
+            }
+        }
+
+        var result = new double[n][];
+        for (var i = 0; i < n; i++)
+        {
+            var row = new double[width];
+            Array.Copy(flat, i * width, row, 0, width);
+            result[i] = row;
+        }
+
+        return result;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -38346,6 +40469,68 @@ public sealed class TpoProfile : IDisposable
         }
 
         return new TpoProfileOutputScalars(scalars.price_low, scalars.price_high, values);
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns one profile per
+    /// input. A row the indicator did not produce carries NaN.
+    /// </summary>
+    public TpoProfileOutputScalars[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<TpoProfileOutputScalars>();
+        }
+
+        var width = _valuesCapacity;
+        var flat = new double[n * width];
+        var scalars = new WickraTpoProfileOutputScalars[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* flatPtr = flat)
+            fixed (WickraTpoProfileOutputScalars* scalarsPtr = scalars)
+            {
+                NativeMethods.wickra_tpo_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, scalarsPtr, flatPtr, (nuint)width, (nuint)n);
+            }
+        }
+
+        var result = new TpoProfileOutputScalars[n];
+        for (var i = 0; i < n; i++)
+        {
+            var row = new double[width];
+            Array.Copy(flat, i * width, row, 0, width);
+            result[i] = new TpoProfileOutputScalars(scalars[i].price_low, scalars[i].price_high, row);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -39125,6 +41310,72 @@ public sealed class Trin : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_trin_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -40840,6 +43091,72 @@ public sealed class UpDownVolumeRatio : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns the per-bar output.
+    /// Every snapshot carries the same width, so the per-member spans are flat:
+    /// bar i occupies elements [i*width, (i+1)*width).
+    /// </summary>
+    public double[] Batch(ReadOnlySpan<double> change, ReadOnlySpan<double> volume, ReadOnlySpan<bool> newHigh, ReadOnlySpan<bool> newLow, ReadOnlySpan<bool> aboveMa, ReadOnlySpan<bool> onBuySignal, int members, ReadOnlySpan<long> timestamp)
+    {
+        if (members <= 0)
+        {
+            throw new ArgumentException("the per-bar width must be positive");
+        }
+
+        var n = timestamp.Length;
+        if (change.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (volume.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newHigh.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (newLow.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (aboveMa.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (onBuySignal.Length != n * members)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("every input span must cover the whole series");
+        }
+
+        var output = new double[n];
+        if (n == 0)
+        {
+            return output;
+        }
+
+        unsafe
+        {
+            fixed (double* changePtr = change)
+            fixed (double* volumePtr = volume)
+            fixed (bool* newHighPtr = newHigh)
+            fixed (bool* newLowPtr = newLow)
+            fixed (bool* aboveMaPtr = aboveMa)
+            fixed (bool* onBuySignalPtr = onBuySignal)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_up_down_volume_ratio_batch(_handle, changePtr, volumePtr, newHighPtr, newLowPtr, aboveMaPtr, onBuySignalPtr, (nuint)members, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -42008,6 +44325,77 @@ public sealed class VolumeBars : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Feeds a whole series in one native call and returns every bar it
+    /// completed. The count depends on the data, not on the input length.
+    /// </summary>
+    public VolumeBar[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<VolumeBar>();
+        }
+
+        long total;
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            {
+                total = (long)NativeMethods.wickra_volume_bars_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, (nuint)n);
+            }
+        }
+
+        if (total <= 0)
+        {
+            return Array.Empty<VolumeBar>();
+        }
+
+        var buffer = new WickraVolumeBar[total];
+        long drained;
+        unsafe
+        {
+            fixed (WickraVolumeBar* bufferPtr = buffer)
+            {
+                drained = (long)NativeMethods.wickra_volume_bars_drain(_handle, bufferPtr, (nuint)total);
+            }
+        }
+
+        var result = new VolumeBar[drained];
+        for (var i = 0; i < drained; i++)
+        {
+            result[i] = new VolumeBar(buffer[i].open, buffer[i].high, buffer[i].low, buffer[i].close, buffer[i].volume);
+        }
+
+        return result;
+    }
+
     /// <summary>The indicator's canonical name.</summary>
     public string Name()
     {
@@ -42064,6 +44452,66 @@ public sealed class VolumeByTimeProfile : IDisposable
         }
 
         return values;
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns one profile per
+    /// input. A row the indicator did not produce carries NaN.
+    /// </summary>
+    public double[][] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<double[]>();
+        }
+
+        var width = _valuesCapacity;
+        var flat = new double[n * width];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* flatPtr = flat)
+            {
+                NativeMethods.wickra_volume_by_time_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, flatPtr, (nuint)width, (nuint)n);
+            }
+        }
+
+        var result = new double[n][];
+        for (var i = 0; i < n; i++)
+        {
+            var row = new double[width];
+            Array.Copy(flat, i * width, row, 0, width);
+            result[i] = row;
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -42324,6 +44772,68 @@ public sealed class VolumeProfile : IDisposable
         }
 
         return new VolumeProfileOutputScalars(scalars.price_low, scalars.price_high, values);
+    }
+
+    /// <summary>
+    /// Feeds a whole series in one native call and returns one profile per
+    /// input. A row the indicator did not produce carries NaN.
+    /// </summary>
+    public VolumeProfileOutputScalars[] Batch(ReadOnlySpan<double> open, ReadOnlySpan<double> high, ReadOnlySpan<double> low, ReadOnlySpan<double> close, ReadOnlySpan<double> volume, ReadOnlySpan<long> timestamp)
+    {
+        var n = open.Length;
+        if (high.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (low.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (close.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (volume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        if (n == 0)
+        {
+            return Array.Empty<VolumeProfileOutputScalars>();
+        }
+
+        var width = _valuesCapacity;
+        var flat = new double[n * width];
+        var scalars = new WickraVolumeProfileOutputScalars[n];
+        unsafe
+        {
+            fixed (double* openPtr = open)
+            fixed (double* highPtr = high)
+            fixed (double* lowPtr = low)
+            fixed (double* closePtr = close)
+            fixed (double* volumePtr = volume)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* flatPtr = flat)
+            fixed (WickraVolumeProfileOutputScalars* scalarsPtr = scalars)
+            {
+                NativeMethods.wickra_volume_profile_batch(_handle, openPtr, highPtr, lowPtr, closePtr, volumePtr, timestampPtr, scalarsPtr, flatPtr, (nuint)width, (nuint)n);
+            }
+        }
+
+        var result = new VolumeProfileOutputScalars[n];
+        for (var i = 0; i < n; i++)
+        {
+            var row = new double[width];
+            Array.Copy(flat, i * width, row, 0, width);
+            result[i] = new VolumeProfileOutputScalars(scalars[i].price_low, scalars[i].price_high, row);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>

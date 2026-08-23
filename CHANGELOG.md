@@ -653,6 +653,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bar-builder and profile families — had a vectorized path in the C ABI that the
   Go wrapper could not call, because their per-bar input is itself an array or
   their output length depends on the data. All 514 Go types have a `Batch` now.
+- **C# and Java reach every batch too.** The same 39 indicators — the
+  cross-section, order-book, bar-builder and profile families — were unreachable
+  from those two for the same reason. All three generated bindings now expose a
+  batch for every one of the 514 indicators.
 - **Every indicator in the C ABI has a `batch`.** The bar builders feed the
   whole series and buffer the bars for the drain; the profiles write a flat
   `n * width` block with `NaN` rows during warmup. Of the 517 handles, the only

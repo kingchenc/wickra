@@ -61,6 +61,60 @@ public final class TickIndex implements AutoCloseable {
         }
     }
 
+    /**
+     * Feeds a whole series in one native call and returns the per-bar output.
+     * Every snapshot carries the same width, so the per-member arrays are
+     * flat: bar i occupies elements [i*width, (i+1)*width).
+     */
+    public double[] batch(double[] change, double[] volume, boolean[] newHigh, boolean[] newLow, boolean[] aboveMa, boolean[] onBuySignal, int members, long[] timestamp) {
+        if (members <= 0) {
+            throw new IllegalArgumentException("the per-bar width must be positive");
+        }
+        int n = timestamp.length;
+        if (change.length != n * members) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (volume.length != n * members) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (newHigh.length != n * members) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (newLow.length != n * members) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (aboveMa.length != n * members) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (onBuySignal.length != n * members) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        if (timestamp.length != n) {
+            throw new IllegalArgumentException("every input array must cover the whole series");
+        }
+        double[] out = new double[n];
+        if (n == 0) {
+            return out;
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment changeSeg = a.allocateFrom(JAVA_DOUBLE, change);
+            MemorySegment volumeSeg = a.allocateFrom(JAVA_DOUBLE, volume);
+            MemorySegment newHighSeg = WickraNative.boolSegment(a, newHigh);
+            MemorySegment newLowSeg = WickraNative.boolSegment(a, newLow);
+            MemorySegment aboveMaSeg = WickraNative.boolSegment(a, aboveMa);
+            MemorySegment onBuySignalSeg = WickraNative.boolSegment(a, onBuySignal);
+            MemorySegment timestampSeg = a.allocateFrom(JAVA_LONG, timestamp);
+            MemorySegment outSeg = a.allocate(JAVA_DOUBLE.byteSize() * n);
+            NativeMethods.WICKRA_TICK_INDEX_BATCH.invokeExact(handle(), changeSeg, volumeSeg, newHighSeg, newLowSeg, aboveMaSeg, onBuySignalSeg, (long) members, timestampSeg, outSeg, (long) n);
+            MemorySegment.copy(outSeg, JAVA_DOUBLE, 0L, out, 0, n);
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {
