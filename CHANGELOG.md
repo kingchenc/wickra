@@ -615,6 +615,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **The WASM array returns are typed too.** The bar builders, the data-layer
+  candle streams and the Footprint and bucket-profile batches all returned
+  `Array<any>`, so nothing described their elements. `RenkoBars.update` now
+  reads `{ open: number; close: number; direction: number }[]` and
+  `TickAggregator.push` reads the candle shape. `any` is gone from the type
+  definitions entirely.
 - **WASM multi-output `update` is typed.** It handed back a `JsValue`, which
   the generated `.d.ts` writes as `any`, so a TypeScript caller lost every field
   name and type for 94 of the 517 indicators. `ADX.update` now reads

@@ -34,6 +34,73 @@ extern "C" {
 
 #[wasm_bindgen]
 extern "C" {
+    /// A run of candles from the data layer.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; volume: number; timestamp: number }[]"
+    )]
+    pub type WasmCandleArrayValue;
+
+    /// The bars `DollarBars` completes.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; volume: number; dollar: number }[]"
+    )]
+    pub type WasmDollarBarsValue;
+
+    /// Every `Footprint.batch` snapshot: one price-level array per trade.
+    #[wasm_bindgen(typescript_type = "{ price: number; bidVol: number; askVol: number }[][]")]
+    pub type WasmFootprintBatchValue;
+
+    /// The bars `ImbalanceBars` completes.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; imbalance: number; direction: number }[]"
+    )]
+    pub type WasmImbalanceBarsValue;
+
+    /// The bars `KagiBars` completes.
+    #[wasm_bindgen(typescript_type = "{ start: number; end: number; direction: number }[]")]
+    pub type WasmKagiBarsValue;
+
+    /// The bars `PointAndFigureBars` completes.
+    #[wasm_bindgen(typescript_type = "{ direction: number; high: number; low: number }[]")]
+    pub type WasmPointAndFigureBarsValue;
+
+    /// One bucket profile per bar, `undefined` while warming up.
+    #[wasm_bindgen(typescript_type = "(Float64Array | undefined)[]")]
+    pub type WasmProfileBatchValue;
+
+    /// The bars `RangeBars` completes.
+    #[wasm_bindgen(typescript_type = "{ open: number; close: number; direction: number }[]")]
+    pub type WasmRangeBarsValue;
+
+    /// The bars `RenkoBars` completes.
+    #[wasm_bindgen(typescript_type = "{ open: number; close: number; direction: number }[]")]
+    pub type WasmRenkoBarsValue;
+
+    /// The bars `RunBars` completes.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; length: number; direction: number }[]"
+    )]
+    pub type WasmRunBarsValue;
+
+    /// The bars `ThreeLineBreakBars` completes.
+    #[wasm_bindgen(typescript_type = "{ open: number; close: number; direction: number }[]")]
+    pub type WasmThreeLineBreakBarsValue;
+
+    /// The bars `TickBars` completes.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; volume: number }[]"
+    )]
+    pub type WasmTickBarsValue;
+
+    /// The bars `VolumeBars` completes.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; volume: number }[]"
+    )]
+    pub type WasmVolumeBarsValue;
+}
+
+#[wasm_bindgen]
+extern "C" {
     /// One `Footprint.update` snapshot: the price levels seen so far.
     #[wasm_bindgen(typescript_type = "{ price: number; bidVol: number; askVol: number }[]")]
     pub type WasmFootprintValue;
@@ -12451,7 +12518,7 @@ impl WasmFootprint {
         price: &[f64],
         size: &[f64],
         is_buy: &BoolArray,
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmFootprintBatchValue, JsError> {
         let is_buy = bool_series(is_buy)?;
         if size.len() != price.len() || is_buy.len() != price.len() {
             return Err(JsError::new("price, size, is_buy must be equal length"));
@@ -12460,7 +12527,7 @@ impl WasmFootprint {
         for i in 0..price.len() {
             out.push(self.update(price[i], size[i], is_buy[i])?.as_ref());
         }
-        Ok(out)
+        Ok(out.unchecked_into())
     }
 }
 
@@ -16526,7 +16593,7 @@ impl WasmRenkoBars {
         })
     }
     /// Returns an array of `{ open, close, direction }` bricks completed on this close.
-    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+    pub fn update(&mut self, close: f64) -> Result<WasmRenkoBarsValue, JsError> {
         let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16536,9 +16603,9 @@ impl WasmRenkoBars {
             Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
-    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+    pub fn batch(&mut self, close: &[f64]) -> Result<WasmRenkoBarsValue, JsError> {
         let arr = Array::new();
         for &price in close {
             let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
@@ -16550,7 +16617,7 @@ impl WasmRenkoBars {
                 arr.push(&obj);
             }
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     #[wasm_bindgen(js_name = boxSize)]
     pub fn box_size(&self) -> f64 {
@@ -16579,7 +16646,7 @@ impl WasmKagiBars {
         })
     }
     /// Returns an array of `{ start, end, direction }` segments completed on this close.
-    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+    pub fn update(&mut self, close: f64) -> Result<WasmKagiBarsValue, JsError> {
         let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16589,9 +16656,9 @@ impl WasmKagiBars {
             Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
-    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+    pub fn batch(&mut self, close: &[f64]) -> Result<WasmKagiBarsValue, JsError> {
         let arr = Array::new();
         for &price in close {
             let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
@@ -16603,7 +16670,7 @@ impl WasmKagiBars {
                 arr.push(&obj);
             }
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     pub fn reversal(&self) -> f64 {
         self.inner.reversal()
@@ -16631,7 +16698,7 @@ impl WasmPointAndFigureBars {
         })
     }
     /// Returns an array of `{ direction, high, low }` columns completed on this close.
-    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+    pub fn update(&mut self, close: f64) -> Result<WasmPointAndFigureBarsValue, JsError> {
         let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for col in self.inner.update(candle) {
@@ -16641,9 +16708,9 @@ impl WasmPointAndFigureBars {
             Reflect::set(&obj, &"low".into(), &col.low.into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
-    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+    pub fn batch(&mut self, close: &[f64]) -> Result<WasmPointAndFigureBarsValue, JsError> {
         let arr = Array::new();
         for &price in close {
             let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
@@ -16655,7 +16722,7 @@ impl WasmPointAndFigureBars {
                 arr.push(&obj);
             }
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     #[wasm_bindgen(js_name = boxSize)]
     pub fn box_size(&self) -> f64 {
@@ -16687,7 +16754,7 @@ impl WasmRangeBars {
         })
     }
     /// Returns an array of `{ open, close, direction }` bars completed on this close.
-    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+    pub fn update(&mut self, close: f64) -> Result<WasmRangeBarsValue, JsError> {
         let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16697,9 +16764,9 @@ impl WasmRangeBars {
             Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
-    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+    pub fn batch(&mut self, close: &[f64]) -> Result<WasmRangeBarsValue, JsError> {
         let arr = Array::new();
         for &price in close {
             let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
@@ -16711,7 +16778,7 @@ impl WasmRangeBars {
                 arr.push(&obj);
             }
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     pub fn range(&self) -> f64 {
         self.inner.range()
@@ -16746,7 +16813,7 @@ impl WasmTickBars {
         low: f64,
         close: f64,
         volume: f64,
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmTickBarsValue, JsError> {
         let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16758,7 +16825,7 @@ impl WasmTickBars {
             Reflect::set(&obj, &"volume".into(), &b.volume.into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     pub fn ticks(&self) -> usize {
         self.inner.ticks()
@@ -16779,7 +16846,7 @@ impl WasmTickBars {
         low: &[f64],
         close: &[f64],
         volume: &[f64],
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmTickBarsValue, JsError> {
         if high.len() != open.len()
             || low.len() != open.len()
             || close.len() != open.len()
@@ -16793,12 +16860,13 @@ impl WasmTickBars {
         for i in 0..open.len() {
             for bar in self
                 .update(open[i], high[i], low[i], close[i], volume[i])?
+                .unchecked_into::<Array>()
                 .iter()
             {
                 out.push(&bar);
             }
         }
-        Ok(out)
+        Ok(out.unchecked_into())
     }
 }
 
@@ -16823,7 +16891,7 @@ impl WasmVolumeBars {
         low: f64,
         close: f64,
         volume: f64,
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmVolumeBarsValue, JsError> {
         let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16835,7 +16903,7 @@ impl WasmVolumeBars {
             Reflect::set(&obj, &"volume".into(), &b.volume.into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     #[wasm_bindgen(js_name = volumePerBar)]
     pub fn volume_per_bar(&self) -> f64 {
@@ -16857,7 +16925,7 @@ impl WasmVolumeBars {
         low: &[f64],
         close: &[f64],
         volume: &[f64],
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmVolumeBarsValue, JsError> {
         if high.len() != open.len()
             || low.len() != open.len()
             || close.len() != open.len()
@@ -16871,12 +16939,13 @@ impl WasmVolumeBars {
         for i in 0..open.len() {
             for bar in self
                 .update(open[i], high[i], low[i], close[i], volume[i])?
+                .unchecked_into::<Array>()
                 .iter()
             {
                 out.push(&bar);
             }
         }
-        Ok(out)
+        Ok(out.unchecked_into())
     }
 }
 
@@ -16901,7 +16970,7 @@ impl WasmDollarBars {
         low: f64,
         close: f64,
         volume: f64,
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmDollarBarsValue, JsError> {
         let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16914,7 +16983,7 @@ impl WasmDollarBars {
             Reflect::set(&obj, &"dollar".into(), &b.dollar.into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     #[wasm_bindgen(js_name = dollarPerBar)]
     pub fn dollar_per_bar(&self) -> f64 {
@@ -16936,7 +17005,7 @@ impl WasmDollarBars {
         low: &[f64],
         close: &[f64],
         volume: &[f64],
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmDollarBarsValue, JsError> {
         if high.len() != open.len()
             || low.len() != open.len()
             || close.len() != open.len()
@@ -16950,12 +17019,13 @@ impl WasmDollarBars {
         for i in 0..open.len() {
             for bar in self
                 .update(open[i], high[i], low[i], close[i], volume[i])?
+                .unchecked_into::<Array>()
                 .iter()
             {
                 out.push(&bar);
             }
         }
-        Ok(out)
+        Ok(out.unchecked_into())
     }
 }
 
@@ -16973,7 +17043,13 @@ impl WasmImbalanceBars {
         })
     }
     /// Returns an array of `{ open, high, low, close, imbalance, direction }` bars completed on this candle.
-    pub fn update(&mut self, open: f64, high: f64, low: f64, close: f64) -> Result<Array, JsError> {
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<WasmImbalanceBarsValue, JsError> {
         let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -16986,7 +17062,7 @@ impl WasmImbalanceBars {
             Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     pub fn threshold(&self) -> f64 {
         self.inner.threshold()
@@ -17006,17 +17082,21 @@ impl WasmImbalanceBars {
         high: &[f64],
         low: &[f64],
         close: &[f64],
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmImbalanceBarsValue, JsError> {
         if high.len() != open.len() || low.len() != open.len() || close.len() != open.len() {
             return Err(JsError::new("open, high, low, close must be equal length"));
         }
         let out = Array::new();
         for i in 0..open.len() {
-            for bar in self.update(open[i], high[i], low[i], close[i])?.iter() {
+            for bar in self
+                .update(open[i], high[i], low[i], close[i])?
+                .unchecked_into::<Array>()
+                .iter()
+            {
                 out.push(&bar);
             }
         }
-        Ok(out)
+        Ok(out.unchecked_into())
     }
 }
 
@@ -17034,7 +17114,13 @@ impl WasmRunBars {
         })
     }
     /// Returns an array of `{ open, high, low, close, length, direction }` bars completed on this candle.
-    pub fn update(&mut self, open: f64, high: f64, low: f64, close: f64) -> Result<Array, JsError> {
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<WasmRunBarsValue, JsError> {
         let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -17048,7 +17134,7 @@ impl WasmRunBars {
             Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     #[wasm_bindgen(js_name = runLength)]
     pub fn run_length(&self) -> usize {
@@ -17069,17 +17155,21 @@ impl WasmRunBars {
         high: &[f64],
         low: &[f64],
         close: &[f64],
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmRunBarsValue, JsError> {
         if high.len() != open.len() || low.len() != open.len() || close.len() != open.len() {
             return Err(JsError::new("open, high, low, close must be equal length"));
         }
         let out = Array::new();
         for i in 0..open.len() {
-            for bar in self.update(open[i], high[i], low[i], close[i])?.iter() {
+            for bar in self
+                .update(open[i], high[i], low[i], close[i])?
+                .unchecked_into::<Array>()
+                .iter()
+            {
                 out.push(&bar);
             }
         }
-        Ok(out)
+        Ok(out.unchecked_into())
     }
 }
 
@@ -17097,7 +17187,7 @@ impl WasmThreeLineBreakBars {
         })
     }
     /// Returns an array of `{ open, close, direction }` bars completed on this close.
-    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+    pub fn update(&mut self, close: f64) -> Result<WasmThreeLineBreakBarsValue, JsError> {
         let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
         let arr = Array::new();
         for b in self.inner.update(candle) {
@@ -17107,9 +17197,9 @@ impl WasmThreeLineBreakBars {
             Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
-    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+    pub fn batch(&mut self, close: &[f64]) -> Result<WasmThreeLineBreakBarsValue, JsError> {
         let arr = Array::new();
         for &price in close {
             let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
@@ -17121,7 +17211,7 @@ impl WasmThreeLineBreakBars {
                 arr.push(&obj);
             }
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
     pub fn lines(&self) -> usize {
         self.inner.lines()
@@ -17313,7 +17403,7 @@ macro_rules! wasm_seasonality_bucket_profile {
                 close: &[f64],
                 volume: &[f64],
                 timestamp: &[i64],
-            ) -> Result<Array, JsError> {
+            ) -> Result<WasmProfileBatchValue, JsError> {
                 if high.len() != open.len()
                     || low.len() != open.len()
                     || close.len() != open.len()
@@ -17329,9 +17419,9 @@ macro_rules! wasm_seasonality_bucket_profile {
                     // `null` for a warmup bar; the array carries one entry per bar either way.
                     let bins =
                         self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?;
-                    out.push(&bins.map_or(JsValue::NULL, JsValue::from));
+                    out.push(&bins.map_or(JsValue::UNDEFINED, JsValue::from));
                 }
-                Ok(out)
+                Ok(out.unchecked_into())
             }
 
             pub fn reset(&mut self) {
@@ -17399,7 +17489,7 @@ macro_rules! wasm_seasonality_offset_profile {
                 close: &[f64],
                 volume: &[f64],
                 timestamp: &[i64],
-            ) -> Result<Array, JsError> {
+            ) -> Result<WasmProfileBatchValue, JsError> {
                 if high.len() != open.len()
                     || low.len() != open.len()
                     || close.len() != open.len()
@@ -17415,9 +17505,9 @@ macro_rules! wasm_seasonality_offset_profile {
                     // `null` for a warmup bar; the array carries one entry per bar either way.
                     let bins =
                         self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?;
-                    out.push(&bins.map_or(JsValue::NULL, JsValue::from));
+                    out.push(&bins.map_or(JsValue::UNDEFINED, JsValue::from));
                 }
-                Ok(out)
+                Ok(out.unchecked_into())
             }
 
             pub fn reset(&mut self) {
@@ -18989,7 +19079,12 @@ impl WasmTickAggregator {
 
     /// Push one trade tick; returns an array of `{ open, high, low, close,
     /// volume, timestamp }` candles closed as a result.
-    pub fn push(&mut self, price: f64, size: f64, timestamp: f64) -> Result<Array, JsError> {
+    pub fn push(
+        &mut self,
+        price: f64,
+        size: f64,
+        timestamp: f64,
+    ) -> Result<WasmCandleArrayValue, JsError> {
         let tick = wc::Tick::new(price, size, timestamp as i64).map_err(map_err)?;
         let arr = Array::new();
         for c in self.inner.push(tick).map_err(map_data_err)? {
@@ -19002,7 +19097,7 @@ impl WasmTickAggregator {
             Reflect::set(&obj, &"timestamp".into(), &(c.timestamp as f64).into()).ok();
             arr.push(&obj);
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
 
     /// Whether gap filling is enabled.
@@ -19064,14 +19159,14 @@ impl WasmResampler {
         close: f64,
         volume: f64,
         timestamp: f64,
-    ) -> Result<Array, JsError> {
+    ) -> Result<WasmCandleArrayValue, JsError> {
         let candle =
             wc::Candle::new(open, high, low, close, volume, timestamp as i64).map_err(map_err)?;
         let arr = Array::new();
         for c in self.inner.push(candle).map_err(map_data_err)? {
             arr.push(&candle_object(c).into());
         }
-        Ok(arr)
+        Ok(arr.unchecked_into())
     }
 
     /// Emit the final, still-open candle (or `undefined` if none is pending).
@@ -19106,11 +19201,11 @@ impl WasmCandleReader {
 
     /// Return every parsed candle as a `{ open, high, low, close, volume,
     /// timestamp }` object.
-    pub fn read(&self) -> Array {
+    pub fn read(&self) -> WasmCandleArrayValue {
         let arr = Array::new();
         for &c in &self.candles {
             arr.push(&candle_object(c));
         }
-        arr
+        arr.unchecked_into()
     }
 }
