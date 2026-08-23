@@ -615,6 +615,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **The Node build config uses the current NAPI-RS field names.** `napi.triples`
+  and `napi.name` were both deprecated; `name` in particular falls back to the
+  CLI default of `index` once the shim goes, which would rename every published
+  `.node` artifact. They are `napi.targets` and `napi.binaryName` now, and the
+  generated loader and type definitions are byte-identical across the change.
 - **The C ABI gained `batch` for 91 multi-output indicators.** Every scalar
   indicator had a vectorized path and no multi-output one did, so C, C++, Go, C#
   and Java crossed the FFI boundary once per bar for a fifth of the catalogue.
