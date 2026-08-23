@@ -16066,16 +16066,28 @@ pub struct WasmResampler {
 #[wasm_bindgen(js_class = Resampler)]
 impl WasmResampler {
     /// Construct a resampler aggregating inputs into `timeframe`-sized candles.
+    /// Pass `gapFill = true` to emit a flat placeholder candle for every skipped
+    /// bucket.
     #[wasm_bindgen(constructor)]
-    pub fn new(timeframe: f64) -> Result<WasmResampler, JsError> {
+    pub fn new(timeframe: f64, gap_fill: Option<bool>) -> Result<WasmResampler, JsError> {
         let tf = wickra_data::aggregator::Timeframe::new(timeframe as i64).map_err(map_data_err)?;
         Ok(Self {
-            inner: wickra_data::resample::Resampler::new(tf),
+            inner: wickra_data::resample::Resampler::new(tf)
+                .with_gap_fill(gap_fill.unwrap_or(false)),
         })
     }
 
-    /// Push one candle; returns a `{ open, high, low, close, volume, timestamp }`
-    /// object on a bucket boundary, otherwise `null`.
+    /// Whether the resampler emits a flat placeholder candle for skipped
+    /// buckets.
+    #[wasm_bindgen(js_name = fillsGaps)]
+    pub fn fills_gaps(&self) -> bool {
+        self.inner.fills_gaps()
+    }
+
+    /// Push one candle; returns an array of the higher-timeframe candles it
+    /// completed, each `{ open, high, low, close, volume, timestamp }`. Normally
+    /// that is empty or one element; with gap filling on, input that skips whole
+    /// buckets completes several at once.
     pub fn update(
         &mut self,
         open: f64,

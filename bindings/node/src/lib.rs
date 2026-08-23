@@ -22202,15 +22202,24 @@ impl ResamplerNode {
     /// Construct a resampler that aggregates inputs into `timeframe`-sized
     /// candles (same unit as the candle timestamps).
     #[napi(constructor)]
-    pub fn new(timeframe: f64) -> napi::Result<Self> {
+    pub fn new(timeframe: f64, gap_fill: Option<bool>) -> napi::Result<Self> {
         let tf = wickra_data::aggregator::Timeframe::new(timeframe as i64).map_err(map_data_err)?;
         Ok(Self {
-            inner: wickra_data::resample::Resampler::new(tf),
+            inner: wickra_data::resample::Resampler::new(tf)
+                .with_gap_fill(gap_fill.unwrap_or(false)),
         })
     }
 
-    /// Push one candle; returns the completed higher-timeframe candle when a
-    /// bucket boundary is crossed, otherwise `null`.
+    /// Whether the resampler emits a flat placeholder candle for skipped
+    /// buckets.
+    #[napi(js_name = "fillsGaps")]
+    pub fn fills_gaps(&self) -> bool {
+        self.inner.fills_gaps()
+    }
+
+    /// Push one candle; returns the higher-timeframe candles it completed.
+    /// Normally that is none or one; with gap filling on, input that skips
+    /// whole buckets completes several at once.
     #[napi]
     pub fn update(
         &mut self,

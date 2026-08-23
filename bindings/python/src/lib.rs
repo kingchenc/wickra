@@ -26534,16 +26534,25 @@ struct PyResampler {
 #[pymethods]
 impl PyResampler {
     #[new]
-    fn new(timeframe: i64) -> PyResult<Self> {
+    #[pyo3(signature = (timeframe, gap_fill = false))]
+    fn new(timeframe: i64, gap_fill: bool) -> PyResult<Self> {
         let tf = wickra_data::aggregator::Timeframe::new(timeframe).map_err(map_data_err)?;
         Ok(Self {
-            inner: wickra_data::resample::Resampler::new(tf),
+            inner: wickra_data::resample::Resampler::new(tf).with_gap_fill(gap_fill),
         })
     }
 
-    /// Push one candle; returns the completed higher-timeframe candle as
-    /// `(open, high, low, close, volume, timestamp)` on a bucket boundary, else
-    /// `None`.
+    /// Whether the resampler emits a flat placeholder candle for skipped
+    /// buckets.
+    #[getter]
+    fn fills_gaps(&self) -> bool {
+        self.inner.fills_gaps()
+    }
+
+    /// Push one candle; returns the higher-timeframe candles it completed, each
+    /// `(open, high, low, close, volume, timestamp)`. Normally that is an empty
+    /// list or one element; with gap filling on, input that skips whole buckets
+    /// completes several at once.
     fn update(
         &mut self,
         open: f64,

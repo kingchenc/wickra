@@ -187,6 +187,7 @@ fn main() {
     emit_bars(dir, &candles);
     emit_data_layer(dir);
     emit_resampler(dir, &candles);
+    emit_resampler_gap(dir, &candles);
     emit_candle_reader_csv(dir, &candles);
     println!("golden fixtures written to {}", dir.display());
 }
@@ -260,6 +261,42 @@ fn emit_resampler(dir: &Path, candles: &[Candle]) {
     write_csv(
         dir,
         "data_resampled",
+        "open,high,low,close,volume,timestamp",
+        &rows,
+    );
+}
+
+/// The row range the gap-fill resampler fixture drops, opening a five-bucket
+/// hole in otherwise contiguous input. Every binding replays the same subset.
+const RESAMPLE_GAP: std::ops::RangeInclusive<usize> = 20..=44;
+
+/// Data layer: the resampler with gap filling on. The input candles carry
+/// `timestamp = row index` and no gaps of their own, so the fixture drops
+/// `RESAMPLE_GAP` to create one; the resampler then emits a flat placeholder
+/// candle for each skipped bucket instead of jumping the timestamp.
+fn emit_resampler_gap(dir: &Path, candles: &[Candle]) {
+    let mut resampler = Resampler::new(Timeframe::new(5).unwrap()).with_gap_fill(true);
+    let mut rows = Vec::new();
+    for (i, &candle) in candles.iter().enumerate() {
+        if RESAMPLE_GAP.contains(&i) {
+            continue;
+        }
+        for out in resampler.push(candle).expect("valid resample push") {
+            rows.push(format!(
+                "{},{},{},{},{},{}",
+                out.open, out.high, out.low, out.close, out.volume, out.timestamp
+            ));
+        }
+    }
+    if let Some(out) = resampler.flush().expect("valid resample flush") {
+        rows.push(format!(
+            "{},{},{},{},{},{}",
+            out.open, out.high, out.low, out.close, out.volume, out.timestamp
+        ));
+    }
+    write_csv(
+        dir,
+        "data_resampled_gap",
         "open,high,low,close,volume,timestamp",
         &rows,
     );

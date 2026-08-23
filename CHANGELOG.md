@@ -615,6 +615,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **The resampler fills gaps in every binding, not just the C ABI.** Gap
+  filling arrived with the streaming resampler but was only wired into the C
+  entry point, which Go, Java and C# inherit; Node, Python and WASM could not
+  reach it. All three take the flag now and report it back through
+  `fillsGaps` / `fills_gaps`, the same shape `TickAggregator` already had.
+- **Three resampler doc comments described the old return type.** They promised
+  "the completed candle on a bucket boundary, otherwise null" while the method
+  had become one that returns every candle the push completed — which is more
+  than one when gap filling covers skipped buckets.
+- **Gap filling in the resampler is covered by a golden fixture.** Nothing
+  exercised it from any binding. The shared input candles are contiguous, so
+  the generator drops a run of rows to open a five-bucket hole, and the new
+  `data_resampled_gap` fixture pins the flat placeholder candles that fill it.
 
 
 

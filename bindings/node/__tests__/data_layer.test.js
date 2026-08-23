@@ -61,10 +61,19 @@ test('candle reader matches the golden candles', () => {
 
 const INPUT = readCsv('input'); // open,high,low,close,volume (timestamp = row index)
 
-function runResample() {
-  const r = new Resampler(5);
+// `data_resampled_gap` drops input rows 20..44 (see `RESAMPLE_GAP` in
+// gen_golden.rs), opening a five-bucket hole that gap filling covers with flat
+// placeholder candles.
+const RESAMPLE_GAP_START = 20;
+const RESAMPLE_GAP_END = 44;
+
+function runResample(gapFill) {
+  const r = new Resampler(5, gapFill);
   const out = [];
   INPUT.forEach(([o, h, l, c, v], i) => {
+    if (gapFill && i >= RESAMPLE_GAP_START && i <= RESAMPLE_GAP_END) {
+      return;
+    }
     for (const candle of r.update(o, h, l, c, v, i)) {
       out.push([candle.open, candle.high, candle.low, candle.close, candle.volume, candle.timestamp]);
     }
@@ -76,6 +85,12 @@ function runResample() {
   return out;
 }
 
+test('resampler gap-fill matches the golden candles', () => {
+  assert.equal(new Resampler(5, true).fillsGaps(), true);
+  assertCandles(runResample(true), readCsv('data_resampled_gap'), 'resample-gap');
+});
+
 test('resampler matches the golden candles', () => {
-  assertCandles(runResample(), readCsv('data_resampled'), 'resample');
+  assert.equal(new Resampler(5).fillsGaps(), false);
+  assertCandles(runResample(false), readCsv('data_resampled'), 'resample');
 });

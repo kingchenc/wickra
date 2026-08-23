@@ -3858,10 +3858,16 @@ export declare class Resampler {
    * Construct a resampler that aggregates inputs into `timeframe`-sized
    * candles (same unit as the candle timestamps).
    */
-  constructor(timeframe: number)
+  constructor(timeframe: number, gapFill?: boolean | undefined | null)
   /**
-   * Push one candle; returns the completed higher-timeframe candle when a
-   * bucket boundary is crossed, otherwise `null`.
+   * Whether the resampler emits a flat placeholder candle for skipped
+   * buckets.
+   */
+  fillsGaps(): boolean
+  /**
+   * Push one candle; returns the higher-timeframe candles it completed.
+   * Normally that is none or one; with gap filling on, input that skips
+   * whole buckets completes several at once.
    */
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<CandleValue>
   /** Emit the final, still-open candle (or `null` if none is pending). */
