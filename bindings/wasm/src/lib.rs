@@ -32,6 +32,432 @@ extern "C" {
     pub type BoolArray;
 }
 
+#[wasm_bindgen]
+extern "C" {
+    /// One `Footprint.update` snapshot: the price levels seen so far.
+    #[wasm_bindgen(typescript_type = "{ price: number; bidVol: number; askVol: number }[]")]
+    pub type WasmFootprintValue;
+
+    /// A candle handed back by the data layer.
+    #[wasm_bindgen(
+        typescript_type = "{ open: number; high: number; low: number; close: number; volume: number; timestamp: number }"
+    )]
+    pub type WasmCandleValue;
+}
+
+#[wasm_bindgen]
+extern "C" {
+    /// The object `AccelerationBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmAccelerationBandsValue;
+
+    /// The object `ADX.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ plusDi: number; minusDi: number; adx: number }")]
+    pub type WasmAdxValue;
+
+    /// The object `Alligator.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ jaw: number; teeth: number; lips: number }")]
+    pub type WasmAlligatorValue;
+
+    /// The object `AndrewsPitchfork.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ median: number; upper: number; lower: number }")]
+    pub type WasmAndrewsPitchforkValue;
+
+    /// The object `Aroon.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ up: number; down: number }")]
+    pub type WasmAroonValue;
+
+    /// The object `AtrBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmAtrBandsValue;
+
+    /// The object `AtrRatchet.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ value: number; direction: number }")]
+    pub type WasmAtrRatchetValue;
+
+    /// The object `AutoFib.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ level0: number; level236: number; level382: number; level500: number; level618: number; level786: number; level1000: number }"
+    )]
+    pub type WasmAutoFibValue;
+
+    /// The object `BollingerBands.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ upper: number; middle: number; lower: number; stddev: number }"
+    )]
+    pub type WasmBbValue;
+
+    /// The object `BomarBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmBomarBandsValue;
+
+    /// The object `Camarilla.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ pp: number; r1: number; r2: number; r3: number; r4: number; s1: number; s2: number; s3: number; s4: number }"
+    )]
+    pub type WasmCamarillaValue;
+
+    /// The object `CandleVolume.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ body: number; width: number }")]
+    pub type WasmCandleVolumeValue;
+
+    /// The object `CentralPivotRange.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ pivot: number; tc: number; bc: number }")]
+    pub type WasmCentralPivotRangeValue;
+
+    /// The object `ChandeKrollStop.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ stopLong: number; stopShort: number }")]
+    pub type WasmChandeKrollStopValue;
+
+    /// The object `ChandelierExit.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ longStop: number; shortStop: number }")]
+    pub type WasmChandelierExitValue;
+
+    /// The object `ClassicPivots.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ pp: number; r1: number; r2: number; r3: number; s1: number; s2: number; s3: number }"
+    )]
+    pub type WasmClassicPivotsValue;
+
+    /// The object `Cointegration.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ hedgeRatio: number; spread: number; adfStat: number }")]
+    pub type WasmCointegrationValue;
+
+    /// The object `CompositeProfile.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ poc: number; vah: number; val: number }")]
+    pub type WasmCompositeProfileValue;
+
+    /// The object `DemarkPivots.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ pp: number; r1: number; s1: number }")]
+    pub type WasmDemarkPivotsValue;
+
+    /// The object `DonchianStop.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ stopLong: number; stopShort: number }")]
+    pub type WasmDonchianStopValue;
+
+    /// The object `Donchian.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmDonchianValue;
+
+    /// The object `DoubleBollinger.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ upperOuter: number; upperInner: number; middle: number; lowerInner: number; lowerOuter: number }"
+    )]
+    pub type WasmDoubleBollingerValue;
+
+    /// The object `ElderRay.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ bullPower: number; bearPower: number }")]
+    pub type WasmElderRayValue;
+
+    /// The object `ElderSafeZone.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ value: number; direction: number }")]
+    pub type WasmElderSafeZoneValue;
+
+    /// The object `Equivolume.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ height: number; width: number }")]
+    pub type WasmEquivolumeValue;
+
+    /// The object `FibArcs.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ arc382: number; arc500: number; arc618: number }")]
+    pub type WasmFibArcsValue;
+
+    /// The object `FibChannel.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ base: number; level618: number; level1000: number; level1618: number }"
+    )]
+    pub type WasmFibChannelValue;
+
+    /// The object `FibConfluence.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ price: number; strength: number }")]
+    pub type WasmFibConfluenceValue;
+
+    /// The object `FibExtension.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ level1272: number; level1414: number; level1618: number; level2000: number; level2618: number }"
+    )]
+    pub type WasmFibExtensionValue;
+
+    /// The object `FibFan.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ fan382: number; fan500: number; fan618: number }")]
+    pub type WasmFibFanValue;
+
+    /// The object `FibProjection.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ level618: number; level1000: number; level1618: number; level2618: number }"
+    )]
+    pub type WasmFibProjectionValue;
+
+    /// The object `FibRetracement.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ level0: number; level236: number; level382: number; level500: number; level618: number; level786: number; level1000: number }"
+    )]
+    pub type WasmFibRetracementValue;
+
+    /// The object `FibTimeZones.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ onZone: number; barsToNext: number }")]
+    pub type WasmFibTimeZonesValue;
+
+    /// The object `FibonacciPivots.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ pp: number; r1: number; r2: number; r3: number; s1: number; s2: number; s3: number }"
+    )]
+    pub type WasmFibonacciPivotsValue;
+
+    /// The object `FractalChaosBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; lower: number }")]
+    pub type WasmFractalChaosBandsValue;
+
+    /// The object `GatorOscillator.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; lower: number }")]
+    pub type WasmGatorOscillatorValue;
+
+    /// The object `GoldenPocket.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ low: number; mid: number; high: number }")]
+    pub type WasmGoldenPocketValue;
+
+    /// The object `HeikinAshi.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ open: number; high: number; low: number; close: number }")]
+    pub type WasmHeikinAshiValue;
+
+    /// The object `HighLowVolumeNodes.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ hvn: number; lvn: number }")]
+    pub type WasmHighLowVolumeNodesValue;
+
+    /// The object `HT_PHASOR.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ inphase: number; quadrature: number }")]
+    pub type WasmHtPhasorValue;
+
+    /// The object `HurstChannel.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmHurstChannelValue;
+
+    /// The object `Ichimoku.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ tenkan: number; kijun: number; senkouA: number; senkouB: number; chikou: number }"
+    )]
+    pub type WasmIchimokuValue;
+
+    /// The object `InitialBalance.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ high: number; low: number }")]
+    pub type WasmInitialBalanceValue;
+
+    /// The object `KalmanHedgeRatio.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ hedgeRatio: number; intercept: number; spread: number }")]
+    pub type WasmKalmanHedgeRatioValue;
+
+    /// The object `KaseDevStop.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ value: number; direction: number }")]
+    pub type WasmKaseDevStopValue;
+
+    /// The object `KasePermissionStochastic.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ fast: number; slow: number }")]
+    pub type WasmKasePermissionStochasticValue;
+
+    /// The object `Keltner.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmKeltnerValue;
+
+    /// The object `KST.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ kst: number; signal: number }")]
+    pub type WasmKstValue;
+
+    /// The object `LeadLagCrossCorrelation.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ lag: number; correlation: number }")]
+    pub type WasmLeadLagCrossCorrelationValue;
+
+    /// The object `LinRegChannel.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmLinRegChannelValue;
+
+    /// The object `LiquidationFeatures.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ long: number; short: number; net: number; total: number; imbalance: number }"
+    )]
+    pub type WasmLiquidationFeaturesValue;
+
+    /// The object `MaEnvelope.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmMaEnvelopeValue;
+
+    /// The object `MACDEXT.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ macd: number; signal: number; histogram: number }")]
+    pub type WasmMacdExtValue;
+
+    /// The object `MACDFIX.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ macd: number; signal: number; histogram: number }")]
+    pub type WasmMacdFixValue;
+
+    /// The object `MACD.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ macd: number; signal: number; histogram: number }")]
+    pub type WasmMacdValue;
+
+    /// The object `MAMA.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ mama: number; fama: number }")]
+    pub type WasmMamaValue;
+
+    /// The object `MedianChannel.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmMedianChannelValue;
+
+    /// The object `ModifiedMaStop.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ value: number; direction: number }")]
+    pub type WasmModifiedMaStopValue;
+
+    /// The object `MurreyMathLines.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ mm8_8: number; mm7_8: number; mm6_8: number; mm5_8: number; mm4_8: number; mm3_8: number; mm2_8: number; mm1_8: number; mm0_8: number }"
+    )]
+    pub type WasmMurreyMathLinesValue;
+
+    /// The object `Nrtr.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ value: number; direction: number }")]
+    pub type WasmNrtrValue;
+
+    /// The object `OpeningRange.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ high: number; low: number; breakoutDistance: number }")]
+    pub type WasmOpeningRangeValue;
+
+    /// The object `OvernightIntradayReturn.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ overnight: number; intraday: number }")]
+    pub type WasmOvernightIntradayReturnValue;
+
+    /// The object `ProjectionBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmProjectionBandsValue;
+
+    /// The object `QQE.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ rsiMa: number; trailingLine: number }")]
+    pub type WasmQqeValue;
+
+    /// The object `QuartileBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmQuartileBandsValue;
+
+    /// The object `RelativeStrengthAB.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ ratio: number; ratioMa: number; ratioRsi: number }")]
+    pub type WasmRelativeStrengthABValue;
+
+    /// The object `RWI.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ high: number; low: number }")]
+    pub type WasmRwiValue;
+
+    /// The object `SessionHighLow.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ high: number; low: number }")]
+    pub type WasmSessionHighLowValue;
+
+    /// The object `SessionRange.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ asia: number; eu: number; us: number }")]
+    pub type WasmSessionRangeValue;
+
+    /// The object `SmoothedHeikinAshi.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ open: number; high: number; low: number; close: number }")]
+    pub type WasmSmoothedHeikinAshiValue;
+
+    /// The object `SpreadBollingerBands.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ middle: number; upper: number; lower: number; percentB: number }"
+    )]
+    pub type WasmSpreadBollingerBandsValue;
+
+    /// The object `StandardErrorBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmStandardErrorBandsValue;
+
+    /// The object `StarcBands.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ upper: number; middle: number; lower: number }")]
+    pub type WasmStarcBandsValue;
+
+    /// The object `Stochastic.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ k: number; d: number }")]
+    pub type WasmStochValue;
+
+    /// The object `SuperTrend.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ value: number; direction: number }")]
+    pub type WasmSuperTrendValue;
+
+    /// The object `TDLines.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ resistance: number; support: number }")]
+    pub type WasmTdLinesValue;
+
+    /// The object `TDMovingAverage.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ st1: number; st2: number }")]
+    pub type WasmTdMovingAverageValue;
+
+    /// The object `TDRangeProjection.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ high: number; low: number }")]
+    pub type WasmTdRangeProjectionValue;
+
+    /// The object `TDRiskLevel.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ buyRisk: number; sellRisk: number }")]
+    pub type WasmTdRiskLevelValue;
+
+    /// The object `TDSequential.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ setup: number; countdown: number; direction: number }")]
+    pub type WasmTdSequentialValue;
+
+    /// The object `TpoProfile.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ priceLow: number; priceHigh: number; counts: number }")]
+    pub type WasmTpoProfileValue;
+
+    /// The object `TtmSqueeze.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ squeeze: number; momentum: number }")]
+    pub type WasmTtmSqueezeValue;
+
+    /// The object `ValueArea.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ poc: number; vah: number; val: number }")]
+    pub type WasmValueAreaValue;
+
+    /// The object `VolatilityCone.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ current: number; min: number; median: number; max: number; percentile: number }"
+    )]
+    pub type WasmVolatilityConeValue;
+
+    /// The object `VolumeProfile.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ priceLow: number; priceHigh: number; bins: number }")]
+    pub type WasmVolumeProfileValue;
+
+    /// The object `VolumeWeightedMacd.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ macd: number; signal: number; histogram: number }")]
+    pub type WasmVolumeWeightedMacdValue;
+
+    /// The object `VolumeWeightedSr.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ support: number; resistance: number }")]
+    pub type WasmVolumeWeightedSrValue;
+
+    /// The object `Vortex.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ plus: number; minus: number }")]
+    pub type WasmVortexValue;
+
+    /// The object `VwapStdDevBands.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ upper: number; middle: number; lower: number; stddev: number }"
+    )]
+    pub type WasmVwapStdDevBandsValue;
+
+    /// The object `WaveTrend.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ wt1: number; wt2: number }")]
+    pub type WasmWaveTrendValue;
+
+    /// The object `WilliamsFractals.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ up: number; down: number }")]
+    pub type WasmWilliamsFractalsValue;
+
+    /// The object `WoodiePivots.update` returns once it is warm.
+    #[wasm_bindgen(
+        typescript_type = "{ pp: number; r1: number; r2: number; s1: number; s2: number }"
+    )]
+    pub type WasmWoodiePivotsValue;
+
+    /// The object `ZeroLagMACD.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ macd: number; signal: number; histogram: number }")]
+    pub type WasmZeroLagMacdValue;
+
+    /// The object `ZigZag.update` returns once it is warm.
+    #[wasm_bindgen(typescript_type = "{ swing: number; direction: number }")]
+    pub type WasmZigZagValue;
+}
+
 /// Read a `boolean[]` into a `Vec<bool>`, rejecting anything else.
 fn bool_series(flags: &BoolArray) -> Result<Vec<bool>, JsError> {
     Array::from(flags.as_ref())
@@ -161,15 +587,15 @@ impl WasmKst {
             inner: wc::Kst::classic(),
         }
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmKstValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"kst".into(), &o.kst.into()).ok();
                 Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns `[kst0, signal0, kst1, signal1, ...]`, length `2 * n`. Warmup is NaN.
@@ -236,17 +662,17 @@ impl WasmZeroLagMacd {
         }
         Float64Array::from(out.as_slice())
     }
-    /// Returns `{ macd, signal, histogram }` once warm, else `null`.
-    pub fn update(&mut self, value: f64) -> JsValue {
+    /// Returns `{ macd, signal, histogram }` once warm, else `undefined`.
+    pub fn update(&mut self, value: f64) -> Option<WasmZeroLagMacdValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
                 Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
                 Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     pub fn reset(&mut self) {
@@ -692,17 +1118,17 @@ impl WasmLeadLagCrossCorrelation {
             inner: wc::LeadLagCrossCorrelation::new(window, max_lag).map_err(map_err)?,
         })
     }
-    /// Returns `{ lag, correlation }`, or `null` during warmup. Positive lag
+    /// Returns `{ lag, correlation }`, or `undefined` during warmup. Positive lag
     /// means `a` leads `b`.
-    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+    pub fn update(&mut self, a: f64, b: f64) -> Option<WasmLeadLagCrossCorrelationValue> {
         match self.inner.update((a, b)) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"lag".into(), &(o.lag as f64).into()).ok();
                 Reflect::set(&obj, &"correlation".into(), &o.correlation.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `Float64Array` of length `2 * n`: `[lag0, corr0, lag1, corr1, ...]`.
@@ -753,17 +1179,17 @@ impl WasmCointegration {
             inner: wc::Cointegration::new(period, adf_lags).map_err(map_err)?,
         })
     }
-    /// Returns `{ hedgeRatio, spread, adfStat }`, or `null` during warmup.
-    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+    /// Returns `{ hedgeRatio, spread, adfStat }`, or `undefined` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> Option<WasmCointegrationValue> {
         match self.inner.update((a, b)) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"hedgeRatio".into(), &o.hedge_ratio.into()).ok();
                 Reflect::set(&obj, &"spread".into(), &o.spread.into()).ok();
                 Reflect::set(&obj, &"adfStat".into(), &o.adf_stat.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `Float64Array` of length `3 * n`:
@@ -815,17 +1241,17 @@ impl WasmRelativeStrengthAB {
             inner: wc::RelativeStrengthAB::new(ma_period, rsi_period).map_err(map_err)?,
         })
     }
-    /// Returns `{ ratio, ratioMa, ratioRsi }`, or `null` during warmup.
-    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+    /// Returns `{ ratio, ratioMa, ratioRsi }`, or `undefined` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> Option<WasmRelativeStrengthABValue> {
         match self.inner.update((a, b)) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"ratio".into(), &o.ratio.into()).ok();
                 Reflect::set(&obj, &"ratioMa".into(), &o.ratio_ma.into()).ok();
                 Reflect::set(&obj, &"ratioRsi".into(), &o.ratio_rsi.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `Float64Array` of length `3 * n`:
@@ -971,17 +1397,17 @@ impl WasmKalmanHedgeRatio {
             inner: wc::KalmanHedgeRatio::new(delta, observation_var).map_err(map_err)?,
         })
     }
-    /// Returns `{ hedgeRatio, intercept, spread }`, or `null` during warmup.
-    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+    /// Returns `{ hedgeRatio, intercept, spread }`, or `undefined` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> Option<WasmKalmanHedgeRatioValue> {
         match self.inner.update((a, b)) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"hedgeRatio".into(), &o.hedge_ratio.into()).ok();
                 Reflect::set(&obj, &"intercept".into(), &o.intercept.into()).ok();
                 Reflect::set(&obj, &"spread".into(), &o.spread.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `Float64Array` of length `3 * n`:
@@ -1033,8 +1459,8 @@ impl WasmSpreadBollingerBands {
             inner: wc::SpreadBollingerBands::new(period, num_std).map_err(map_err)?,
         })
     }
-    /// Returns `{ middle, upper, lower, percentB }`, or `null` during warmup.
-    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+    /// Returns `{ middle, upper, lower, percentB }`, or `undefined` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> Option<WasmSpreadBollingerBandsValue> {
         match self.inner.update((a, b)) {
             Some(o) => {
                 let obj = Object::new();
@@ -1042,9 +1468,9 @@ impl WasmSpreadBollingerBands {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
                 Reflect::set(&obj, &"percentB".into(), &o.percent_b.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `Float64Array` of length `4 * n`:
@@ -1136,16 +1562,16 @@ impl WasmMacd {
             inner: wc::MacdIndicator::new(fast, slow, signal).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmMacdValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
                 Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
                 Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns a flat `Float64Array` of length `3 * n`: `[macd0, sig0, hist0, macd1, sig1, hist1, ...]`.
@@ -1195,7 +1621,7 @@ impl WasmBb {
             inner: wc::BollingerBands::new(period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmBbValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
@@ -1203,9 +1629,9 @@ impl WasmBb {
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
                 Reflect::set(&obj, &"stddev".into(), &o.stddev.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns `[u0, m0, l0, sd0, u1, m1, l1, sd1, ...]`, length `4 * n`.
@@ -1930,16 +2356,16 @@ impl WasmMacdExt {
             .map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmMacdExtValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
                 Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
                 Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns a flat `Float64Array` of length `3 * n`: `[macd0, sig0, hist0, ...]`.
@@ -1987,16 +2413,16 @@ impl WasmMacdFix {
             inner: wc::MacdFix::new(signal).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmMacdFixValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
                 Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
                 Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns a flat `Float64Array` of length `3 * n`: `[macd0, sig0, hist0, ...]`.
@@ -2122,15 +2548,15 @@ impl WasmHtPhasor {
             inner: wc::HtPhasor::new(),
         }
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmHtPhasorValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"inphase".into(), &o.inphase.into()).ok();
                 Reflect::set(&obj, &"quadrature".into(), &o.quadrature.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns a flat `Float64Array` of length `2 * n`: `[inphase0, quad0, ...]`.
@@ -2569,16 +2995,16 @@ impl WasmQqe {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
-    /// Streaming update. Returns `{ rsiMa, trailingLine }` once warm, else `null`.
-    pub fn update(&mut self, value: f64) -> JsValue {
+    /// Streaming update. Returns `{ rsiMa, trailingLine }` once warm, else `undefined`.
+    pub fn update(&mut self, value: f64) -> Option<WasmQqeValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"rsiMa".into(), &o.rsi_ma.into()).ok();
                 Reflect::set(&obj, &"trailingLine".into(), &o.trailing_line.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     #[wasm_bindgen(js_name = isReady)]
@@ -2632,17 +3058,22 @@ impl WasmElderRay {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
-    /// Streaming update. Returns `{ bullPower, bearPower }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ bullPower, bearPower }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmElderRayValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"bullPower".into(), &o.bull_power.into()).ok();
                 Reflect::set(&obj, &"bearPower".into(), &o.bear_power.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     #[wasm_bindgen(js_name = isReady)]
@@ -2807,17 +3238,22 @@ impl WasmGatorOscillator {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
-    /// Streaming update. Returns `{ upper, lower }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ upper, lower }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmGatorOscillatorValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     #[wasm_bindgen(js_name = isReady)]
@@ -2871,17 +3307,22 @@ impl WasmKasePermissionStochastic {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
-    /// Streaming update. Returns `{ fast, slow }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ fast, slow }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmKasePermissionStochasticValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"fast".into(), &o.fast.into()).ok();
                 Reflect::set(&obj, &"slow".into(), &o.slow.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     #[wasm_bindgen(js_name = isReady)]
@@ -3143,17 +3584,22 @@ impl WasmStoch {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
-    /// Streaming update. Returns `{ k, d }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ k, d }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmStochValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"k".into(), &o.k.into()).ok();
                 Reflect::set(&obj, &"d".into(), &o.d.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     #[wasm_bindgen(js_name = isReady)]
@@ -4200,17 +4646,22 @@ impl WasmSuperTrend {
             inner: wc::SuperTrend::new(atr_period, multiplier).map_err(map_err)?,
         })
     }
-    /// Returns `{ value, direction }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ value, direction }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmSuperTrendValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
@@ -4267,17 +4718,22 @@ impl WasmChandelierExit {
             inner: wc::ChandelierExit::new(period, multiplier).map_err(map_err)?,
         })
     }
-    /// Returns `{ longStop, shortStop }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ longStop, shortStop }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmChandelierExitValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"longStop".into(), &o.long_stop.into()).ok();
                 Reflect::set(&obj, &"shortStop".into(), &o.short_stop.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup is NaN.
@@ -4338,17 +4794,22 @@ impl WasmChandeKrollStop {
                 .map_err(map_err)?,
         })
     }
-    /// Returns `{ stopLong, stopShort }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ stopLong, stopShort }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmChandeKrollStopValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"stopLong".into(), &o.stop_long.into()).ok();
                 Reflect::set(&obj, &"stopShort".into(), &o.stop_short.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup is NaN.
@@ -4622,17 +5083,21 @@ impl WasmDonchianStop {
             inner: wc::DonchianStop::new(period).map_err(map_err)?,
         })
     }
-    /// Returns `{ stopLong, stopShort }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ stopLong, stopShort }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmDonchianStopValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"stopLong".into(), &o.stop_long.into()).ok();
                 Reflect::set(&obj, &"stopShort".into(), &o.stop_short.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup is NaN.
@@ -4800,17 +5265,22 @@ impl WasmKaseDevStop {
             inner: wc::KaseDevStop::new(period, dev).map_err(map_err)?,
         })
     }
-    /// Returns `{ value, direction }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ value, direction }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmKaseDevStopValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
@@ -4867,17 +5337,22 @@ impl WasmElderSafeZone {
             inner: wc::ElderSafeZone::new(period, coeff).map_err(map_err)?,
         })
     }
-    /// Returns `{ value, direction }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ value, direction }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmElderSafeZoneValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
@@ -4938,17 +5413,22 @@ impl WasmAtrRatchet {
             inner: wc::AtrRatchet::new(atr_period, start_mult, increment).map_err(map_err)?,
         })
     }
-    /// Returns `{ value, direction }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ value, direction }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmAtrRatchetValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
@@ -5005,17 +5485,22 @@ impl WasmNrtr {
             inner: wc::Nrtr::new(pct).map_err(map_err)?,
         })
     }
-    /// Returns `{ value, direction }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ value, direction }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmNrtrValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
@@ -5072,17 +5557,22 @@ impl WasmModifiedMaStop {
             inner: wc::ModifiedMaStop::new(period).map_err(map_err)?,
         })
     }
-    /// Returns `{ value, direction }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ value, direction }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmModifiedMaStopValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
@@ -5686,16 +6176,21 @@ impl WasmVortex {
             inner: wc::Vortex::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmVortexValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"plus".into(), &o.plus.into()).ok();
                 Reflect::set(&obj, &"minus".into(), &o.minus.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[plus0, minus0, plus1, minus1, ...]`, length `2 * n`. Warmup is NaN.
@@ -5761,16 +6256,21 @@ impl WasmWaveTrend {
             inner: wc::WaveTrend::classic().map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmWaveTrendValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"wt1".into(), &o.wt1.into()).ok();
                 Reflect::set(&obj, &"wt2".into(), &o.wt2.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -5825,16 +6325,21 @@ impl WasmRwi {
             inner: wc::Rwi::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmRwiValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[high0, low0, high1, low1, ...]`, length `2 * n`. Warmup is NaN.
@@ -6051,8 +6556,13 @@ impl WasmAdx {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ plusDi, minusDi, adx }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ plusDi, minusDi, adx }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmAdxValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -6060,9 +6570,9 @@ impl WasmAdx {
                 Reflect::set(&obj, &"plusDi".into(), &o.plus_di.into()).ok();
                 Reflect::set(&obj, &"minusDi".into(), &o.minus_di.into()).ok();
                 Reflect::set(&obj, &"adx".into(), &o.adx.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -6379,8 +6889,13 @@ impl WasmKeltner {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ upper, middle, lower }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ upper, middle, lower }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmKeltnerValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -6388,9 +6903,9 @@ impl WasmKeltner {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -6439,8 +6954,8 @@ impl WasmDonchian {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ upper, middle, lower }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ upper, middle, lower }` once warm, else `undefined`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmDonchianValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -6448,9 +6963,9 @@ impl WasmDonchian {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -6718,8 +7233,8 @@ impl WasmAlligator {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ jaw, teeth, lips }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ jaw, teeth, lips }` once warm, else `undefined`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmAlligatorValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -6727,9 +7242,9 @@ impl WasmAlligator {
                 Reflect::set(&obj, &"jaw".into(), &o.jaw.into()).ok();
                 Reflect::set(&obj, &"teeth".into(), &o.teeth.into()).ok();
                 Reflect::set(&obj, &"lips".into(), &o.lips.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -6778,17 +7293,17 @@ impl WasmAroon {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ up, down }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ up, down }` once warm, else `undefined`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmAroonValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"up".into(), &o.up.into()).ok();
                 Reflect::set(&obj, &"down".into(), &o.down.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -7011,15 +7526,15 @@ impl WasmMama {
             inner: wc::Mama::new(fast_limit, slow_limit).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmMamaValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"mama".into(), &o.mama.into()).ok();
                 Reflect::set(&obj, &"fama".into(), &o.fama.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Returns a flat `Float64Array` of length `2 * n`: `[mama0, fama0, mama1, fama1, ...]`.
@@ -7074,16 +7589,16 @@ impl WasmMaEnvelope {
             inner: wc::MaEnvelope::new(period, percent).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmMaEnvelopeValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `[upper0, middle0, lower0, upper1, ...]`, length `3 * n`.
@@ -7131,7 +7646,12 @@ impl WasmAccelerationBands {
             inner: wc::AccelerationBands::new(period, factor).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmAccelerationBandsValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -7139,9 +7659,9 @@ impl WasmAccelerationBands {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[u0, m0, l0, u1, m1, l1, ...]`, length `3 * n`.
@@ -7202,7 +7722,12 @@ impl WasmStarcBands {
             inner: wc::StarcBands::new(sma_period, atr_period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmStarcBandsValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -7210,9 +7735,9 @@ impl WasmStarcBands {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -7268,7 +7793,12 @@ impl WasmAtrBands {
             inner: wc::AtrBands::new(period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmAtrBandsValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -7276,9 +7806,9 @@ impl WasmAtrBands {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -7334,7 +7864,12 @@ impl WasmHurstChannel {
             inner: wc::HurstChannel::new(period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmHurstChannelValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -7342,9 +7877,9 @@ impl WasmHurstChannel {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -7400,16 +7935,16 @@ impl WasmLinRegChannel {
             inner: wc::LinRegChannel::new(period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmLinRegChannelValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
@@ -7456,16 +7991,16 @@ impl WasmStandardErrorBands {
             inner: wc::StandardErrorBands::new(period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmStandardErrorBandsValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
@@ -7512,16 +8047,16 @@ impl WasmQuartileBands {
             inner: wc::QuartileBands::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmQuartileBandsValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
@@ -7568,16 +8103,16 @@ impl WasmBomarBands {
             inner: wc::BomarBands::new(period, coverage).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmBomarBandsValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
@@ -7624,16 +8159,16 @@ impl WasmMedianChannel {
             inner: wc::MedianChannel::new(period, multiplier).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmMedianChannelValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
@@ -7680,7 +8215,11 @@ impl WasmProjectionBands {
             inner: wc::ProjectionBands::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmProjectionBandsValue>, JsError> {
         let candle = make_candle(high, low, low, 0.0)?;
         match self.inner.update(candle) {
             Some(o) => {
@@ -7688,9 +8227,9 @@ impl WasmProjectionBands {
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -7747,7 +8286,12 @@ impl WasmCentralPivotRange {
             inner: wc::CentralPivotRange::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmCentralPivotRangeValue>, JsError> {
         let candle = make_candle(high, low, close, 0.0)?;
         match self.inner.update(candle) {
             Some(o) => {
@@ -7755,9 +8299,9 @@ impl WasmCentralPivotRange {
                 Reflect::set(&obj, &"pivot".into(), &o.pivot.into()).ok();
                 Reflect::set(&obj, &"tc".into(), &o.tc.into()).ok();
                 Reflect::set(&obj, &"bc".into(), &o.bc.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(
@@ -7813,7 +8357,11 @@ impl WasmMurreyMathLines {
             inner: wc::MurreyMathLines::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmMurreyMathLinesValue>, JsError> {
         let candle = make_candle(high, low, low, 0.0)?;
         match self.inner.update(candle) {
             Some(o) => {
@@ -7827,9 +8375,9 @@ impl WasmMurreyMathLines {
                 Reflect::set(&obj, &"mm2_8".into(), &o.mm2_8.into()).ok();
                 Reflect::set(&obj, &"mm1_8".into(), &o.mm1_8.into()).ok();
                 Reflect::set(&obj, &"mm0_8".into(), &o.mm0_8.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -7886,7 +8434,11 @@ impl WasmAndrewsPitchfork {
             inner: wc::AndrewsPitchfork::new(strength).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmAndrewsPitchforkValue>, JsError> {
         let candle = make_candle(high, low, low, 0.0)?;
         match self.inner.update(candle) {
             Some(o) => {
@@ -7894,9 +8446,9 @@ impl WasmAndrewsPitchfork {
                 Reflect::set(&obj, &"median".into(), &o.median.into()).ok();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -7947,16 +8499,21 @@ impl WasmVolumeWeightedSr {
             inner: wc::VolumeWeightedSr::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> Result<Option<WasmVolumeWeightedSrValue>, JsError> {
         let candle = make_candle(high, low, low, volume)?;
         match self.inner.update(candle) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"support".into(), &o.support.into()).ok();
                 Reflect::set(&obj, &"resistance".into(), &o.resistance.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(
@@ -8063,7 +8620,7 @@ impl WasmDoubleBollinger {
             inner: wc::DoubleBollinger::new(period, k_inner, k_outer).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, value: f64) -> JsValue {
+    pub fn update(&mut self, value: f64) -> Option<WasmDoubleBollingerValue> {
         match self.inner.update(value) {
             Some(o) => {
                 let obj = Object::new();
@@ -8072,9 +8629,9 @@ impl WasmDoubleBollinger {
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lowerInner".into(), &o.lower_inner.into()).ok();
                 Reflect::set(&obj, &"lowerOuter".into(), &o.lower_outer.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         }
     }
     /// Flat `[u_o, u_i, m, l_i, l_o, ...]`, length `5 * n`.
@@ -8124,16 +8681,21 @@ impl WasmTtmSqueeze {
             inner: wc::TtmSqueeze::new(period, bb_mult, kc_mult).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmTtmSqueezeValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"squeeze".into(), &o.squeeze.into()).ok();
                 Reflect::set(&obj, &"momentum".into(), &o.momentum.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Flat `[sq0, mom0, sq1, mom1, ...]`, length `2 * n`.
@@ -8189,16 +8751,20 @@ impl WasmFractalChaosBands {
             inner: wc::FractalChaosBands::new(k).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmFractalChaosBandsValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Flat `[u0, l0, u1, l1, ...]`, length `2 * n`.
@@ -8255,7 +8821,7 @@ impl WasmVwapStdDevBands {
         low: f64,
         close: f64,
         volume: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmVwapStdDevBandsValue>, JsError> {
         let c = make_candle(high, low, close, volume)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8264,9 +8830,9 @@ impl WasmVwapStdDevBands {
                 Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
                 Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
                 Reflect::set(&obj, &"stddev".into(), &o.stddev.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Flat `[u0, m0, l0, sd0, ...]`, length `4 * n`.
@@ -8333,7 +8899,12 @@ impl WasmClassicPivots {
             inner: wc::ClassicPivots::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmClassicPivotsValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8345,9 +8916,9 @@ impl WasmClassicPivots {
                 Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
                 Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
                 Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -8411,7 +8982,12 @@ impl WasmFibonacciPivots {
             inner: wc::FibonacciPivots::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmFibonacciPivotsValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8423,9 +8999,9 @@ impl WasmFibonacciPivots {
                 Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
                 Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
                 Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -8489,7 +9065,12 @@ impl WasmCamarilla {
             inner: wc::Camarilla::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmCamarillaValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8503,9 +9084,9 @@ impl WasmCamarilla {
                 Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
                 Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
                 Reflect::set(&obj, &"s4".into(), &o.s4.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -8571,7 +9152,12 @@ impl WasmWoodiePivots {
             inner: wc::WoodiePivots::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmWoodiePivotsValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8581,9 +9167,9 @@ impl WasmWoodiePivots {
                 Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
                 Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
                 Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -8651,7 +9237,7 @@ impl WasmDemarkPivots {
         high: f64,
         low: f64,
         close: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmDemarkPivotsValue>, JsError> {
         let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8659,9 +9245,9 @@ impl WasmDemarkPivots {
                 Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
                 Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
                 Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -8724,17 +9310,21 @@ impl WasmWilliamsFractals {
     }
     /// Returns `{ up, down }` where each is the fractal price or `NaN` when no
     /// fractal was confirmed at the centre of the most recent 5-bar window.
-    /// Returns `null` during the four-bar warmup.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    /// Returns `undefined` during the four-bar warmup.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmWilliamsFractalsValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"up".into(), &o.up.unwrap_or(f64::NAN).into()).ok();
                 Reflect::set(&obj, &"down".into(), &o.down.unwrap_or(f64::NAN).into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -8786,16 +9376,16 @@ impl WasmZigZag {
             inner: wc::ZigZag::new(threshold).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmZigZagValue>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"swing".into(), &o.swing.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -8912,8 +9502,13 @@ impl WasmTdSequential {
         })
     }
     /// Streaming update. Returns `{ setup, countdown, direction }` once warm,
-    /// else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmTdSequentialValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -8921,9 +9516,9 @@ impl WasmTdSequential {
                 Reflect::set(&obj, &"setup".into(), &o.setup.into()).ok();
                 Reflect::set(&obj, &"countdown".into(), &o.countdown.into()).ok();
                 Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Batch returns a flat `Float64Array` `[setup0, countdown0, direction0, ...]`.
@@ -9257,16 +9852,20 @@ impl WasmTdMovingAverage {
             inner: wc::TdMovingAverage::new(period_st1, period_st2).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmTdMovingAverageValue>, JsError> {
         let candle = make_candle(high, low, low, 0.0)?;
         match self.inner.update(candle) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"st1".into(), &o.st1.into()).ok();
                 Reflect::set(&obj, &"st2".into(), &o.st2.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -9379,17 +9978,22 @@ impl WasmTdLines {
             inner: wc::TdLines::new(lookback, target).map_err(map_err)?,
         })
     }
-    /// Streaming update. Returns `{ resistance, support }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ resistance, support }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmTdLinesValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"resistance".into(), &o.resistance.into()).ok();
                 Reflect::set(&obj, &"support".into(), &o.support.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Batch returns a flat `Float64Array` `[resistance0, support0, ...]`.
@@ -9453,16 +10057,16 @@ impl WasmTdRangeProjection {
         high: f64,
         low: f64,
         close: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmTdRangeProjectionValue>, JsError> {
         let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Batch returns a flat `Float64Array` `[projHigh0, projLow0, ...]`.
@@ -9632,17 +10236,22 @@ impl WasmTdRiskLevel {
             inner: wc::TdRiskLevel::new(lookback, target).map_err(map_err)?,
         })
     }
-    /// Streaming update. Returns `{ buyRisk, sellRisk }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ buyRisk, sellRisk }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmTdRiskLevelValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"buyRisk".into(), &o.buy_risk.into()).ok();
                 Reflect::set(&obj, &"sellRisk".into(), &o.sell_risk.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Batch returns a flat `Float64Array` `[buyRisk0, sellRisk0, ...]`.
@@ -9706,7 +10315,12 @@ impl WasmIchimoku {
     }
     /// Streaming update. Returns `{ tenkan, kijun, senkouA, senkouB, chikou }`
     /// with `NaN` for any line that is not yet defined.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmIchimokuValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -9726,9 +10340,9 @@ impl WasmIchimoku {
                 )
                 .ok();
                 Reflect::set(&obj, &"chikou".into(), &o.chikou.unwrap_or(f64::NAN).into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[tenkan0, kijun0, senkouA0, senkouB0, chikou0, tenkan1, ...]`,
@@ -9812,7 +10426,7 @@ impl WasmHeikinAshi {
         high: f64,
         low: f64,
         close: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmHeikinAshiValue>, JsError> {
         let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -9821,9 +10435,9 @@ impl WasmHeikinAshi {
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
                 Reflect::set(&obj, &"close".into(), &o.close.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[open0, high0, low0, close0, open1, ...]`, length `4 * n`.
@@ -9906,8 +10520,13 @@ impl WasmValueArea {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> Result<Option<WasmValueAreaValue>, JsError> {
         let mid = f64::midpoint(high, low);
         let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
@@ -9916,9 +10535,9 @@ impl WasmValueArea {
                 Reflect::set(&obj, &"poc".into(), &o.poc.into()).ok();
                 Reflect::set(&obj, &"vah".into(), &o.vah.into()).ok();
                 Reflect::set(&obj, &"val".into(), &o.val.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -10147,8 +10766,13 @@ impl WasmHighLowVolumeNodes {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ hvn, lvn }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ hvn, lvn }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> Result<Option<WasmHighLowVolumeNodesValue>, JsError> {
         let mid = f64::midpoint(high, low);
         let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
@@ -10156,9 +10780,9 @@ impl WasmHighLowVolumeNodes {
                 let obj = Object::new();
                 Reflect::set(&obj, &"hvn".into(), &o.hvn.into()).ok();
                 Reflect::set(&obj, &"lvn".into(), &o.lvn.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -10218,8 +10842,13 @@ impl WasmCompositeProfile {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> Result<Option<WasmCompositeProfileValue>, JsError> {
         let mid = f64::midpoint(high, low);
         let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
@@ -10228,9 +10857,9 @@ impl WasmCompositeProfile {
                 Reflect::set(&obj, &"poc".into(), &o.poc.into()).ok();
                 Reflect::set(&obj, &"vah".into(), &o.vah.into()).ok();
                 Reflect::set(&obj, &"val".into(), &o.val.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -10288,8 +10917,13 @@ impl WasmVolumeProfile {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ priceLow, priceHigh, bins }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ priceLow, priceHigh, bins }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> Result<Option<WasmVolumeProfileValue>, JsError> {
         let mid = f64::midpoint(high, low);
         let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
@@ -10299,9 +10933,9 @@ impl WasmVolumeProfile {
                 Reflect::set(&obj, &"priceHigh".into(), &o.price_high.into()).ok();
                 let bins = Float64Array::from(o.bins.as_slice());
                 Reflect::set(&obj, &"bins".into(), &bins).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -10354,8 +10988,8 @@ impl WasmTpoProfile {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
-    /// Streaming update. Returns `{ priceLow, priceHigh, counts }` once warm, else `null`.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    /// Streaming update. Returns `{ priceLow, priceHigh, counts }` once warm, else `undefined`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmTpoProfileValue>, JsError> {
         let mid = f64::midpoint(high, low);
         let c = wc::Candle::new(mid, high, low, mid, 1.0, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
@@ -10365,9 +10999,9 @@ impl WasmTpoProfile {
                 Reflect::set(&obj, &"priceHigh".into(), &o.price_high.into()).ok();
                 let counts = Float64Array::from(o.counts.as_slice());
                 Reflect::set(&obj, &"counts".into(), &counts).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -10417,7 +11051,11 @@ impl WasmInitialBalance {
         Ok(Float64Array::from(out.as_slice()))
     }
     /// Streaming update. Returns `{ high, low }`.
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmInitialBalanceValue>, JsError> {
         let mid = f64::midpoint(high, low);
         let c = wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
@@ -10425,9 +11063,9 @@ impl WasmInitialBalance {
                 let obj = Object::new();
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -10487,7 +11125,12 @@ impl WasmOpeningRange {
         Ok(Float64Array::from(out.as_slice()))
     }
     /// Streaming update. Returns `{ high, low, breakoutDistance }`.
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmOpeningRangeValue>, JsError> {
         let c = wc::Candle::new(close, high, low, close, 0.0, 0).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -10500,9 +11143,9 @@ impl WasmOpeningRange {
                     &o.breakout_distance.into(),
                 )
                 .ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -11765,7 +12408,12 @@ impl WasmFootprint {
             inner: wc::Footprint::new(tick_size).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+    ) -> Result<WasmFootprintValue, JsError> {
         let out = self
             .inner
             .update(build_trade(price, size, is_buy)?)
@@ -11778,7 +12426,7 @@ impl WasmFootprint {
             Reflect::set(&obj, &"askVol".into(), &level.ask_vol.into()).ok();
             levels.push(&obj);
         }
-        Ok(levels.into())
+        Ok(levels.unchecked_into())
     }
     pub fn reset(&mut self) {
         self.inner.reset();
@@ -11810,7 +12458,7 @@ impl WasmFootprint {
         }
         let out = Array::new();
         for i in 0..price.len() {
-            out.push(&self.update(price[i], size[i], is_buy[i])?);
+            out.push(self.update(price[i], size[i], is_buy[i])?.as_ref());
         }
         Ok(out)
     }
@@ -12497,7 +13145,7 @@ impl WasmLiquidationFeatures {
         &mut self,
         long_liquidation: f64,
         short_liquidation: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<WasmLiquidationFeaturesValue, JsError> {
         let out = self
             .inner
             .update(deriv_liquidation(long_liquidation, short_liquidation)?)
@@ -12508,7 +13156,7 @@ impl WasmLiquidationFeatures {
         Reflect::set(&obj, &"net".into(), &out.net.into()).ok();
         Reflect::set(&obj, &"total".into(), &out.total.into()).ok();
         Reflect::set(&obj, &"imbalance".into(), &out.imbalance.into()).ok();
-        Ok(obj.into())
+        Ok(obj.unchecked_into())
     }
     pub fn reset(&mut self) {
         self.inner.reset();
@@ -13150,7 +13798,7 @@ impl WasmSmoothedHeikinAshi {
         high: f64,
         low: f64,
         close: f64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmSmoothedHeikinAshiValue>, JsError> {
         let candle = make_candle_ohlc(open, high, low, close)?;
         match self.inner.update(candle) {
             Some(o) => {
@@ -13159,9 +13807,9 @@ impl WasmSmoothedHeikinAshi {
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
                 Reflect::set(&obj, &"close".into(), &o.close.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(
@@ -13219,16 +13867,21 @@ impl WasmEquivolume {
             inner: wc::Equivolume::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> Result<Option<WasmEquivolumeValue>, JsError> {
         let candle = wc::Candle::new(low, high, low, low, volume, 0).map_err(map_err)?;
         match self.inner.update(candle) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"height".into(), &o.height.into()).ok();
                 Reflect::set(&obj, &"width".into(), &o.width.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(
@@ -13284,7 +13937,12 @@ impl WasmCandleVolume {
             inner: wc::CandleVolume::new(period).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, open: f64, close: f64, volume: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        open: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<WasmCandleVolumeValue>, JsError> {
         let high = open.max(close);
         let low = open.min(close);
         let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
@@ -13293,9 +13951,9 @@ impl WasmCandleVolume {
                 let obj = Object::new();
                 Reflect::set(&obj, &"body".into(), &o.body.into()).ok();
                 Reflect::set(&obj, &"width".into(), &o.width.into()).ok();
-                Ok(obj.into())
+                Ok(Some(obj.unchecked_into()))
             }
-            None => Ok(JsValue::NULL),
+            None => Ok(None),
         }
     }
     pub fn batch(
@@ -14900,10 +15558,8 @@ mod tests {
             let bp = batch.get_index((i * 3) as u32);
             let bm = batch.get_index((i * 3 + 1) as u32);
             let ba = batch.get_index((i * 3 + 2) as u32);
-            if stream.is_null() {
-                assert!(bp.is_nan() && bm.is_nan() && ba.is_nan(), "row {i}");
-            } else {
-                let obj: &Object = stream.unchecked_ref();
+            if let Some(value) = &stream {
+                let obj: &Object = value.unchecked_ref();
                 let p = Reflect::get(obj, &"plusDi".into())
                     .unwrap()
                     .as_f64()
@@ -14916,6 +15572,8 @@ mod tests {
                 assert!(close_enough(p, bp), "ADX plusDi diverges at {i}");
                 assert!(close_enough(m, bm), "ADX minusDi diverges at {i}");
                 assert!(close_enough(a, ba), "ADX value diverges at {i}");
+            } else {
+                assert!(bp.is_nan() && bm.is_nan() && ba.is_nan(), "row {i}");
             }
         }
         assert!(adx.is_ready());
@@ -14999,10 +15657,8 @@ mod tests {
             let bu = batch.get_index((i * 3) as u32);
             let bm = batch.get_index((i * 3 + 1) as u32);
             let bl = batch.get_index((i * 3 + 2) as u32);
-            if stream.is_null() {
-                assert!(bu.is_nan() && bm.is_nan() && bl.is_nan(), "Keltner row {i}");
-            } else {
-                let obj: &Object = stream.unchecked_ref();
+            if let Some(value) = &stream {
+                let obj: &Object = value.unchecked_ref();
                 let u = Reflect::get(obj, &"upper".into())
                     .unwrap()
                     .as_f64()
@@ -15018,6 +15674,8 @@ mod tests {
                 assert!(close_enough(u, bu), "Keltner upper at {i}");
                 assert!(close_enough(m, bm), "Keltner middle at {i}");
                 assert!(close_enough(lo, bl), "Keltner lower at {i}");
+            } else {
+                assert!(bu.is_nan() && bm.is_nan() && bl.is_nan(), "Keltner row {i}");
             }
         }
 
@@ -15032,13 +15690,8 @@ mod tests {
             let bu = batch.get_index((i * 3) as u32);
             let bm = batch.get_index((i * 3 + 1) as u32);
             let bl = batch.get_index((i * 3 + 2) as u32);
-            if stream.is_null() {
-                assert!(
-                    bu.is_nan() && bm.is_nan() && bl.is_nan(),
-                    "Donchian row {i}"
-                );
-            } else {
-                let obj: &Object = stream.unchecked_ref();
+            if let Some(value) = &stream {
+                let obj: &Object = value.unchecked_ref();
                 let u = Reflect::get(obj, &"upper".into())
                     .unwrap()
                     .as_f64()
@@ -15054,6 +15707,11 @@ mod tests {
                 assert!(close_enough(u, bu), "Donchian upper at {i}");
                 assert!(close_enough(m, bm), "Donchian middle at {i}");
                 assert!(close_enough(lo, bl), "Donchian lower at {i}");
+            } else {
+                assert!(
+                    bu.is_nan() && bm.is_nan() && bl.is_nan(),
+                    "Donchian row {i}"
+                );
             }
         }
 
@@ -15089,14 +15747,14 @@ mod tests {
             let stream = aroon.update(h[i], l[i]).expect("valid");
             let bu = batch.get_index((i * 2) as u32);
             let bd = batch.get_index((i * 2 + 1) as u32);
-            if stream.is_null() {
-                assert!(bu.is_nan() && bd.is_nan(), "Aroon row {i}");
-            } else {
-                let obj: &Object = stream.unchecked_ref();
+            if let Some(value) = &stream {
+                let obj: &Object = value.unchecked_ref();
                 let u = Reflect::get(obj, &"up".into()).unwrap().as_f64().unwrap();
                 let d = Reflect::get(obj, &"down".into()).unwrap().as_f64().unwrap();
                 assert!(close_enough(u, bu), "Aroon up at {i}");
                 assert!(close_enough(d, bd), "Aroon down at {i}");
+            } else {
+                assert!(bu.is_nan() && bd.is_nan(), "Aroon row {i}");
             }
         }
 
@@ -15110,14 +15768,14 @@ mod tests {
             let stream = st.update(h[i], l[i], c[i]).expect("valid");
             let bk = batch.get_index((i * 2) as u32);
             let bd = batch.get_index((i * 2 + 1) as u32);
-            if stream.is_null() {
-                assert!(bk.is_nan() && bd.is_nan(), "Stoch row {i}");
-            } else {
-                let obj: &Object = stream.unchecked_ref();
+            if let Some(value) = &stream {
+                let obj: &Object = value.unchecked_ref();
                 let k = Reflect::get(obj, &"k".into()).unwrap().as_f64().unwrap();
                 let d = Reflect::get(obj, &"d".into()).unwrap().as_f64().unwrap();
                 assert!(close_enough(k, bk), "Stoch k at {i}");
                 assert!(close_enough(d, bd), "Stoch d at {i}");
+            } else {
+                assert!(bk.is_nan() && bd.is_nan(), "Stoch row {i}");
             }
         }
 
@@ -15595,7 +16253,12 @@ impl WasmVolatilityCone {
             inner: wc::VolatilityCone::new(window, lookback).map_err(map_err)?,
         })
     }
-    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<WasmVolatilityConeValue>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -15605,9 +16268,9 @@ impl WasmVolatilityCone {
                 Reflect::set(&obj, &"median".into(), &o.median.into()).ok();
                 Reflect::set(&obj, &"max".into(), &o.max.into()).ok();
                 Reflect::set(&obj, &"percentile".into(), &o.percentile.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(
@@ -16630,16 +17293,16 @@ macro_rules! wasm_seasonality_bucket_profile {
                 close: f64,
                 volume: f64,
                 timestamp: i64,
-            ) -> Result<JsValue, JsError> {
+            ) -> Result<Option<Float64Array>, JsError> {
                 let c =
                     wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
-                Ok(match self.inner.update(c) {
-                    Some(o) => Float64Array::from(o.bins.as_slice()).into(),
-                    None => JsValue::NULL,
-                })
+                Ok(self
+                    .inner
+                    .update(c)
+                    .map(|o| Float64Array::from(o.bins.as_slice())))
             }
             /// Batch over the same inputs as `update`. Returns one entry per
-            /// bar: the bucket profile as a `Float64Array`, or `null` while
+            /// bar: the bucket profile as a `Float64Array`, or `undefined` while
             /// warming up. The bucket count is fixed by the constructor, so a
             /// flat array would carry no more information.
             pub fn batch(
@@ -16663,14 +17326,10 @@ macro_rules! wasm_seasonality_bucket_profile {
                 }
                 let out = Array::new();
                 for i in 0..open.len() {
-                    out.push(&self.update(
-                        open[i],
-                        high[i],
-                        low[i],
-                        close[i],
-                        volume[i],
-                        timestamp[i],
-                    )?);
+                    // `null` for a warmup bar; the array carries one entry per bar either way.
+                    let bins =
+                        self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?;
+                    out.push(&bins.map_or(JsValue::NULL, JsValue::from));
                 }
                 Ok(out)
             }
@@ -16720,16 +17379,16 @@ macro_rules! wasm_seasonality_offset_profile {
                 close: f64,
                 volume: f64,
                 timestamp: i64,
-            ) -> Result<JsValue, JsError> {
+            ) -> Result<Option<Float64Array>, JsError> {
                 let c =
                     wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
-                Ok(match self.inner.update(c) {
-                    Some(o) => Float64Array::from(o.bins.as_slice()).into(),
-                    None => JsValue::NULL,
-                })
+                Ok(self
+                    .inner
+                    .update(c)
+                    .map(|o| Float64Array::from(o.bins.as_slice())))
             }
             /// Batch over the same inputs as `update`. Returns one entry per
-            /// bar: the bucket profile as a `Float64Array`, or `null` while
+            /// bar: the bucket profile as a `Float64Array`, or `undefined` while
             /// warming up. The bucket count is fixed by the constructor, so a
             /// flat array would carry no more information.
             pub fn batch(
@@ -16753,14 +17412,10 @@ macro_rules! wasm_seasonality_offset_profile {
                 }
                 let out = Array::new();
                 for i in 0..open.len() {
-                    out.push(&self.update(
-                        open[i],
-                        high[i],
-                        low[i],
-                        close[i],
-                        volume[i],
-                        timestamp[i],
-                    )?);
+                    // `null` for a warmup bar; the array carries one entry per bar either way.
+                    let bins =
+                        self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?;
+                    out.push(&bins.map_or(JsValue::NULL, JsValue::from));
                 }
                 Ok(out)
             }
@@ -16978,16 +17633,16 @@ impl WasmSessionHighLow {
         close: f64,
         volume: f64,
         timestamp: i64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmSessionHighLowValue>, JsError> {
         let c = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -17059,7 +17714,7 @@ impl WasmSessionRange {
         close: f64,
         volume: f64,
         timestamp: i64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmSessionRangeValue>, JsError> {
         let c = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17067,9 +17722,9 @@ impl WasmSessionRange {
                 Reflect::set(&obj, &"asia".into(), &o.asia.into()).ok();
                 Reflect::set(&obj, &"eu".into(), &o.eu.into()).ok();
                 Reflect::set(&obj, &"us".into(), &o.us.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -17142,16 +17797,16 @@ impl WasmOvernightIntradayReturn {
         close: f64,
         volume: f64,
         timestamp: i64,
-    ) -> Result<JsValue, JsError> {
+    ) -> Result<Option<WasmOvernightIntradayReturnValue>, JsError> {
         let c = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"overnight".into(), &o.overnight.into()).ok();
                 Reflect::set(&obj, &"intraday".into(), &o.intraday.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn reset(&mut self) {
@@ -17230,7 +17885,11 @@ impl WasmFibRetracement {
             inner: wc::FibRetracement::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmFibRetracementValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17242,9 +17901,9 @@ impl WasmFibRetracement {
                 Reflect::set(&obj, &"level618".into(), &o.level_618.into()).ok();
                 Reflect::set(&obj, &"level786".into(), &o.level_786.into()).ok();
                 Reflect::set(&obj, &"level1000".into(), &o.level_1000.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17302,7 +17961,11 @@ impl WasmFibExtension {
             inner: wc::FibExtension::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmFibExtensionValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17312,9 +17975,9 @@ impl WasmFibExtension {
                 Reflect::set(&obj, &"level1618".into(), &o.level_1618.into()).ok();
                 Reflect::set(&obj, &"level2000".into(), &o.level_2000.into()).ok();
                 Reflect::set(&obj, &"level2618".into(), &o.level_2618.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17370,7 +18033,11 @@ impl WasmFibProjection {
             inner: wc::FibProjection::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmFibProjectionValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17379,9 +18046,9 @@ impl WasmFibProjection {
                 Reflect::set(&obj, &"level1000".into(), &o.level_1000.into()).ok();
                 Reflect::set(&obj, &"level1618".into(), &o.level_1618.into()).ok();
                 Reflect::set(&obj, &"level2618".into(), &o.level_2618.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17436,7 +18103,7 @@ impl WasmAutoFib {
             inner: wc::AutoFib::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmAutoFibValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17448,9 +18115,9 @@ impl WasmAutoFib {
                 Reflect::set(&obj, &"level618".into(), &o.level_618.into()).ok();
                 Reflect::set(&obj, &"level786".into(), &o.level_786.into()).ok();
                 Reflect::set(&obj, &"level1000".into(), &o.level_1000.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17508,7 +18175,11 @@ impl WasmGoldenPocket {
             inner: wc::GoldenPocket::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmGoldenPocketValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17516,9 +18187,9 @@ impl WasmGoldenPocket {
                 Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
                 Reflect::set(&obj, &"mid".into(), &o.mid.into()).ok();
                 Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17572,16 +18243,20 @@ impl WasmFibConfluence {
             inner: wc::FibConfluence::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmFibConfluenceValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"price".into(), &o.price.into()).ok();
                 Reflect::set(&obj, &"strength".into(), &o.strength.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17634,7 +18309,7 @@ impl WasmFibFan {
             inner: wc::FibFan::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmFibFanValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17642,9 +18317,9 @@ impl WasmFibFan {
                 Reflect::set(&obj, &"fan382".into(), &o.fan_382.into()).ok();
                 Reflect::set(&obj, &"fan500".into(), &o.fan_500.into()).ok();
                 Reflect::set(&obj, &"fan618".into(), &o.fan_618.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17698,7 +18373,7 @@ impl WasmFibArcs {
             inner: wc::FibArcs::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmFibArcsValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17706,9 +18381,9 @@ impl WasmFibArcs {
                 Reflect::set(&obj, &"arc382".into(), &o.arc_382.into()).ok();
                 Reflect::set(&obj, &"arc500".into(), &o.arc_500.into()).ok();
                 Reflect::set(&obj, &"arc618".into(), &o.arc_618.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17762,7 +18437,7 @@ impl WasmFibChannel {
             inner: wc::FibChannel::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<WasmFibChannelValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -17771,9 +18446,9 @@ impl WasmFibChannel {
                 Reflect::set(&obj, &"level618".into(), &o.level_618.into()).ok();
                 Reflect::set(&obj, &"level1000".into(), &o.level_1000.into()).ok();
                 Reflect::set(&obj, &"level1618".into(), &o.level_1618.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -17828,16 +18503,20 @@ impl WasmFibTimeZones {
             inner: wc::FibTimeZones::new(),
         }
     }
-    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+    ) -> Result<Option<WasmFibTimeZonesValue>, JsError> {
         let c = swing_make_candle(high, low)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
                 let obj = Object::new();
                 Reflect::set(&obj, &"onZone".into(), &o.on_zone.into()).ok();
                 Reflect::set(&obj, &"barsToNext".into(), &o.bars_to_next.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
@@ -18215,8 +18894,12 @@ impl WasmVolumeWeightedMacd {
             inner: wc::VolumeWeightedMacd::new(fast, slow, signal).map_err(map_err)?,
         })
     }
-    /// Returns `{ macd, signal, histogram }` once warm, else `null`.
-    pub fn update(&mut self, close: f64, volume: f64) -> Result<JsValue, JsError> {
+    /// Returns `{ macd, signal, histogram }` once warm, else `undefined`.
+    pub fn update(
+        &mut self,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<WasmVolumeWeightedMacdValue>, JsError> {
         let c = make_candle(close, close, close, volume)?;
         Ok(match self.inner.update(c) {
             Some(o) => {
@@ -18224,9 +18907,9 @@ impl WasmVolumeWeightedMacd {
                 Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
                 Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
                 Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
-                obj.into()
+                Some(obj.unchecked_into())
             }
-            None => JsValue::NULL,
+            None => None,
         })
     }
     /// Returns `[macd0, signal0, histogram0, macd1, ...]`, length `3 * n`.
@@ -18391,12 +19074,13 @@ impl WasmResampler {
         Ok(arr)
     }
 
-    /// Emit the final, still-open candle (or `null` if none is pending).
-    pub fn flush(&mut self) -> Result<JsValue, JsError> {
-        match self.inner.flush().map_err(map_data_err)? {
-            Some(c) => Ok(candle_object(c).into()),
-            None => Ok(JsValue::NULL),
-        }
+    /// Emit the final, still-open candle (or `undefined` if none is pending).
+    pub fn flush(&mut self) -> Result<Option<WasmCandleValue>, JsError> {
+        Ok(self
+            .inner
+            .flush()
+            .map_err(map_data_err)?
+            .map(|c| candle_object(c).unchecked_into()))
     }
 }
 

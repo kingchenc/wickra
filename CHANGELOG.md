@@ -615,6 +615,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **WASM multi-output `update` is typed.** It handed back a `JsValue`, which
+  the generated `.d.ts` writes as `any`, so a TypeScript caller lost every field
+  name and type for 94 of the 517 indicators. `ADX.update` now reads
+  `{ plusDi: number; minusDi: number; adx: number } | undefined`, and `any` is
+  gone from every method signature the type definitions declare.
+- **A warming-up WASM `update` returns `undefined`, not `null`.** The
+  multi-output methods returned `null` while every scalar one has always
+  returned `undefined`; typing the multi-output returns settles the
+  disagreement in favour of the majority. Code testing for `null` specifically
+  needs to test for absence instead — `== null`, `?.` and `??` already cover
+  both.
 - **The Node build config uses the current NAPI-RS field names.** `napi.triples`
   and `napi.name` were both deprecated; `name` in particular falls back to the
   CLI default of `index` once the shim goes, which would rename every published
