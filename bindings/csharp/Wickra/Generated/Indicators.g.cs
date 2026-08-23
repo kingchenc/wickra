@@ -1885,6 +1885,38 @@ public sealed class AmihudIlliquidity : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_amihud_illiquidity_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -4973,6 +5005,78 @@ public sealed class CalendarSpread : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_calendar_spread_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -7546,6 +7650,38 @@ public sealed class CumulativeVolumeDelta : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_cumulative_volume_delta_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10064,6 +10200,43 @@ public sealed class EffectiveSpread : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp, ReadOnlySpan<double> mid)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (mid.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* midPtr = mid)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_effective_spread_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, midPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -10877,6 +11050,78 @@ public sealed class EstimatedLeverageRatio : IDisposable
     {
         var result = NativeMethods.wickra_estimated_leverage_ratio_update(_handle, fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_estimated_leverage_ratio_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -13121,6 +13366,78 @@ public sealed class FundingBasis : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_funding_basis_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -13171,6 +13488,78 @@ public sealed class FundingImpliedApr : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_funding_implied_apr_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -13219,6 +13608,78 @@ public sealed class FundingRate : IDisposable
     {
         var result = NativeMethods.wickra_funding_rate_update(_handle, fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_funding_rate_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -13272,6 +13733,78 @@ public sealed class FundingRateMean : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_funding_rate_mean_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -13321,6 +13854,78 @@ public sealed class FundingRateZScore : IDisposable
     {
         var result = NativeMethods.wickra_funding_rate_z_score_update(_handle, fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_funding_rate_z_score_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -19113,6 +19718,43 @@ public sealed class KylesLambda : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp, ReadOnlySpan<double> mid)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (mid.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* midPtr = mid)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_kyles_lambda_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, midPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -20161,6 +20803,78 @@ public sealed class LongShortRatio : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_long_short_ratio_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -20371,6 +21085,34 @@ public sealed class MacdExt : IDisposable
         }
 
         return ok ? new MacdOutput(native.macd, native.signal, native.histogram) : null;
+    }
+
+    /// <summary>
+    /// Runs the indicator over whole spans in one native call, returning one
+    /// output per input. A row the indicator did not produce -- warmup, or an
+    /// input it rejected -- carries NaN in every floating-point field.
+    /// </summary>
+    public MacdOutput[] Batch(ReadOnlySpan<double> input)
+    {
+        var n = input.Length;
+
+        var native = new WickraMacdOutput[n];
+        unsafe
+        {
+            fixed (double* inputPtr = input)
+            fixed (WickraMacdOutput* nativePtr = native)
+            {
+                NativeMethods.wickra_macd_ext_batch(_handle, inputPtr, nativePtr, (nuint)n);
+            }
+        }
+
+        var result = new MacdOutput[n];
+        for (var i = 0; i < n; i++)
+        {
+            result[i] = new MacdOutput(native[i].macd, native[i].signal, native[i].histogram);
+        }
+
+        return result;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -23536,6 +24278,78 @@ public sealed class OIPriceDivergence : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_oi_price_divergence_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -23586,6 +24400,78 @@ public sealed class OiToVolumeRatio : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_oi_to_volume_ratio_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -23634,6 +24520,78 @@ public sealed class OIWeighted : IDisposable
     {
         var result = NativeMethods.wickra_oi_weighted_update(_handle, fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_oi_weighted_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -23846,6 +24804,78 @@ public sealed class OpenInterestDelta : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_open_interest_delta_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -23895,6 +24925,78 @@ public sealed class OpenInterestMomentum : IDisposable
     {
         var result = NativeMethods.wickra_open_interest_momentum_update(_handle, fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_open_interest_momentum_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -25306,6 +26408,78 @@ public sealed class PerpetualPremiumIndex : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_perpetual_premium_index_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -25540,6 +26714,38 @@ public sealed class Pin : IDisposable
     {
         var result = NativeMethods.wickra_pin_update(_handle, price, size, isBuy, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_pin_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -27216,6 +28422,43 @@ public sealed class RealizedSpread : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp, ReadOnlySpan<double> mid)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (mid.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* midPtr = mid)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_realized_spread_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, midPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -28518,6 +29761,38 @@ public sealed class RollMeasure : IDisposable
     {
         var result = NativeMethods.wickra_roll_measure_update(_handle, price, size, isBuy, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_roll_measure_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -30681,6 +31956,38 @@ public sealed class SignedVolume : IDisposable
     {
         var result = NativeMethods.wickra_signed_volume_update(_handle, price, size, isBuy, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_signed_volume_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -33148,6 +34455,78 @@ public sealed class TakerBuySellRatio : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_taker_buy_sell_ratio_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -35307,6 +36686,78 @@ public sealed class TermStructureBasis : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> fundingRate, ReadOnlySpan<double> markPrice, ReadOnlySpan<double> indexPrice, ReadOnlySpan<double> futuresPrice, ReadOnlySpan<double> openInterest, ReadOnlySpan<double> longSize, ReadOnlySpan<double> shortSize, ReadOnlySpan<double> takerBuyVolume, ReadOnlySpan<double> takerSellVolume, ReadOnlySpan<double> longLiquidation, ReadOnlySpan<double> shortLiquidation, ReadOnlySpan<long> timestamp)
+    {
+        var n = fundingRate.Length;
+        if (markPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (indexPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (futuresPrice.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (openInterest.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortSize.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerBuyVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (takerSellVolume.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (longLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (shortLiquidation.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* fundingRatePtr = fundingRate)
+            fixed (double* markPricePtr = markPrice)
+            fixed (double* indexPricePtr = indexPrice)
+            fixed (double* futuresPricePtr = futuresPrice)
+            fixed (double* openInterestPtr = openInterest)
+            fixed (double* longSizePtr = longSize)
+            fixed (double* shortSizePtr = shortSize)
+            fixed (double* takerBuyVolumePtr = takerBuyVolume)
+            fixed (double* takerSellVolumePtr = takerSellVolume)
+            fixed (double* longLiquidationPtr = longLiquidation)
+            fixed (double* shortLiquidationPtr = shortLiquidation)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_term_structure_basis_batch(_handle, fundingRatePtr, markPricePtr, indexPricePtr, futuresPricePtr, openInterestPtr, longSizePtr, shortSizePtr, takerBuyVolumePtr, takerSellVolumePtr, longLiquidationPtr, shortLiquidationPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -36738,6 +38189,38 @@ public sealed class TradeImbalance : IDisposable
         return result;
     }
 
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_trade_imbalance_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
+    }
+
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
     public int WarmupPeriod()
     {
@@ -36787,6 +38270,38 @@ public sealed class TradeSignAutocorrelation : IDisposable
     {
         var result = NativeMethods.wickra_trade_sign_autocorrelation_update(_handle, price, size, isBuy, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_trade_sign_autocorrelation_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
@@ -41054,6 +42569,38 @@ public sealed class Vpin : IDisposable
     {
         var result = NativeMethods.wickra_vpin_update(_handle, price, size, isBuy, timestamp);
         return result;
+    }
+
+    public double[] Batch(ReadOnlySpan<double> price, ReadOnlySpan<double> size, ReadOnlySpan<bool> isBuy, ReadOnlySpan<long> timestamp)
+    {
+        var n = price.Length;
+        if (size.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (isBuy.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+        if (timestamp.Length != n)
+        {
+            throw new ArgumentException("all input spans must have the same length");
+        }
+
+        var output = new double[n];
+        unsafe
+        {
+            fixed (double* pricePtr = price)
+            fixed (double* sizePtr = size)
+            fixed (bool* isBuyPtr = isBuy)
+            fixed (long* timestampPtr = timestamp)
+            fixed (double* outputPtr = output)
+            {
+                NativeMethods.wickra_vpin_batch(_handle, pricePtr, sizePtr, isBuyPtr, timestampPtr, outputPtr, (nuint)n);
+            }
+        }
+
+        return output;
     }
 
     /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>

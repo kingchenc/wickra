@@ -48603,6 +48603,46 @@ pub unsafe extern "C" fn wickra_amihud_illiquidity_update(
     }
 }
 
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_amihud_illiquidity_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_batch(
+    handle: *mut AmihudIlliquidity,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -48704,6 +48744,46 @@ pub unsafe extern "C" fn wickra_cumulative_volume_delta_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_cumulative_volume_delta_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_batch(
+    handle: *mut CumulativeVolumeDelta,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -48814,6 +48894,46 @@ pub unsafe extern "C" fn wickra_pin_update(
     }
 }
 
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_pin_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_batch(
+    handle: *mut Pin,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -48915,6 +49035,46 @@ pub unsafe extern "C" fn wickra_roll_measure_update(
     }
 }
 
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_roll_measure_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_batch(
+    handle: *mut RollMeasure,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -49010,6 +49170,46 @@ pub unsafe extern "C" fn wickra_signed_volume_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_signed_volume_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_batch(
+    handle: *mut SignedVolume,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -49111,6 +49311,46 @@ pub unsafe extern "C" fn wickra_trade_imbalance_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_trade_imbalance_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_batch(
+    handle: *mut TradeImbalance,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -49216,6 +49456,46 @@ pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_trade_sign_autocorrelation_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_batch(
+    handle: *mut TradeSignAutocorrelation,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -49330,6 +49610,46 @@ pub unsafe extern "C" fn wickra_vpin_update(
     }
 }
 
+/// Run over the trade series (`price`/`size`/`is_buy`/`timestamp[0..n]`) into
+/// `out[0..n]` (`NaN` at warmup or on an invalid trade).
+///
+/// # Safety
+/// `handle` valid (from `wickra_vpin_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_batch(
+    handle: *mut Vpin,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        *slot = match Trade::new(prices[i], sizes[i], side, stamps[i]) {
+            Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -49431,6 +49751,53 @@ pub unsafe extern "C" fn wickra_effective_spread_update(
     match TradeQuote::new(trade, mid) {
         Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the trade series with the prevailing mid price into `out[0..n]`
+/// (`NaN` at warmup or on an invalid trade or mid).
+///
+/// # Safety
+/// `handle` valid (from `wickra_effective_spread_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_batch(
+    handle: *mut EffectiveSpread,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    mid: *const f64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || mid.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let mids = slice::from_raw_parts(mid, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        let Ok(trade) = Trade::new(prices[i], sizes[i], side, stamps[i]) else {
+            *slot = f64::NAN;
+            continue;
+        };
+        *slot = match TradeQuote::new(trade, mids[i]) {
+            Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -49543,6 +49910,53 @@ pub unsafe extern "C" fn wickra_kyles_lambda_update(
     }
 }
 
+/// Run over the trade series with the prevailing mid price into `out[0..n]`
+/// (`NaN` at warmup or on an invalid trade or mid).
+///
+/// # Safety
+/// `handle` valid (from `wickra_kyles_lambda_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_batch(
+    handle: *mut KylesLambda,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    mid: *const f64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || mid.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let mids = slice::from_raw_parts(mid, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        let Ok(trade) = Trade::new(prices[i], sizes[i], side, stamps[i]) else {
+            *slot = f64::NAN;
+            continue;
+        };
+        *slot = match TradeQuote::new(trade, mids[i]) {
+            Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -49645,6 +50059,53 @@ pub unsafe extern "C" fn wickra_realized_spread_update(
     match TradeQuote::new(trade, mid) {
         Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the trade series with the prevailing mid price into `out[0..n]`
+/// (`NaN` at warmup or on an invalid trade or mid).
+///
+/// # Safety
+/// `handle` valid (from `wickra_realized_spread_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_batch(
+    handle: *mut RealizedSpread,
+    price: *const f64,
+    size: *const f64,
+    is_buy: *const bool,
+    timestamp: *const i64,
+    mid: *const f64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || price.is_null()
+        || size.is_null()
+        || is_buy.is_null()
+        || timestamp.is_null()
+        || mid.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let prices = slice::from_raw_parts(price, n);
+    let sizes = slice::from_raw_parts(size, n);
+    let sides = slice::from_raw_parts(is_buy, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let mids = slice::from_raw_parts(mid, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        let side = if sides[i] { Side::Buy } else { Side::Sell };
+        let Ok(trade) = Trade::new(prices[i], sizes[i], side, stamps[i]) else {
+            *slot = f64::NAN;
+            continue;
+        };
+        *slot = match TradeQuote::new(trade, mids[i]) {
+            Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -49770,6 +50231,82 @@ pub unsafe extern "C" fn wickra_calendar_spread_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_calendar_spread_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_batch(
+    handle: *mut CalendarSpread,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -49887,6 +50424,82 @@ pub unsafe extern "C" fn wickra_estimated_leverage_ratio_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_estimated_leverage_ratio_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_batch(
+    handle: *mut EstimatedLeverageRatio,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -50016,6 +50629,82 @@ pub unsafe extern "C" fn wickra_funding_basis_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_funding_basis_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_batch(
+    handle: *mut FundingBasis,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -50136,6 +50825,82 @@ pub unsafe extern "C" fn wickra_funding_implied_apr_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_funding_implied_apr_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_batch(
+    handle: *mut FundingImpliedApr,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -50263,6 +51028,82 @@ pub unsafe extern "C" fn wickra_funding_rate_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_funding_rate_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_batch(
+    handle: *mut FundingRate,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -50381,6 +51222,82 @@ pub unsafe extern "C" fn wickra_funding_rate_mean_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_funding_rate_mean_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_batch(
+    handle: *mut FundingRateMean,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -50509,6 +51426,82 @@ pub unsafe extern "C" fn wickra_funding_rate_z_score_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_funding_rate_z_score_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_batch(
+    handle: *mut FundingRateZScore,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -50633,6 +51626,82 @@ pub unsafe extern "C" fn wickra_long_short_ratio_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_long_short_ratio_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_batch(
+    handle: *mut LongShortRatio,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -50752,6 +51821,82 @@ pub unsafe extern "C" fn wickra_open_interest_delta_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_open_interest_delta_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_batch(
+    handle: *mut OpenInterestDelta,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -50882,6 +52027,82 @@ pub unsafe extern "C" fn wickra_oi_price_divergence_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_oi_price_divergence_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_batch(
+    handle: *mut OIPriceDivergence,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -51003,6 +52224,82 @@ pub unsafe extern "C" fn wickra_oi_to_volume_ratio_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_oi_to_volume_ratio_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_batch(
+    handle: *mut OiToVolumeRatio,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -51128,6 +52425,82 @@ pub unsafe extern "C" fn wickra_oi_weighted_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_oi_weighted_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_batch(
+    handle: *mut OIWeighted,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -51246,6 +52619,82 @@ pub unsafe extern "C" fn wickra_open_interest_momentum_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_open_interest_momentum_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_batch(
+    handle: *mut OpenInterestMomentum,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -51373,6 +52822,82 @@ pub unsafe extern "C" fn wickra_perpetual_premium_index_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_perpetual_premium_index_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_batch(
+    handle: *mut PerpetualPremiumIndex,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -51497,6 +53022,82 @@ pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_update(
     }
 }
 
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_taker_buy_sell_ratio_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_batch(
+    handle: *mut TakerBuySellRatio,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
+    }
+}
+
 /// Number of updates the indicator needs before it produces a non-`NaN` output.
 /// Returns `0` if `handle` is `NULL`.
 ///
@@ -51618,6 +53219,82 @@ pub unsafe extern "C" fn wickra_term_structure_basis_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Run over the derivatives-tick series into `out[0..n]` (`NaN` at warmup or on
+/// an invalid tick).
+///
+/// # Safety
+/// `handle` valid (from `wickra_term_structure_basis_new`, not freed); every input pointer and `out`
+/// cover `n` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_batch(
+    handle: *mut TermStructureBasis,
+    funding_rate: *const f64,
+    mark_price: *const f64,
+    index_price: *const f64,
+    futures_price: *const f64,
+    open_interest: *const f64,
+    long_size: *const f64,
+    short_size: *const f64,
+    taker_buy_volume: *const f64,
+    taker_sell_volume: *const f64,
+    long_liquidation: *const f64,
+    short_liquidation: *const f64,
+    timestamp: *const i64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null()
+        || funding_rate.is_null()
+        || mark_price.is_null()
+        || index_price.is_null()
+        || futures_price.is_null()
+        || open_interest.is_null()
+        || long_size.is_null()
+        || short_size.is_null()
+        || taker_buy_volume.is_null()
+        || taker_sell_volume.is_null()
+        || long_liquidation.is_null()
+        || short_liquidation.is_null()
+        || timestamp.is_null()
+        || out.is_null()
+    {
+        return;
+    }
+    let ind = &mut *handle;
+    let funding_rates = slice::from_raw_parts(funding_rate, n);
+    let mark_prices = slice::from_raw_parts(mark_price, n);
+    let index_prices = slice::from_raw_parts(index_price, n);
+    let futures_prices = slice::from_raw_parts(futures_price, n);
+    let open_interests = slice::from_raw_parts(open_interest, n);
+    let long_sizes = slice::from_raw_parts(long_size, n);
+    let short_sizes = slice::from_raw_parts(short_size, n);
+    let taker_buy_volumes = slice::from_raw_parts(taker_buy_volume, n);
+    let taker_sell_volumes = slice::from_raw_parts(taker_sell_volume, n);
+    let long_liquidations = slice::from_raw_parts(long_liquidation, n);
+    let short_liquidations = slice::from_raw_parts(short_liquidation, n);
+    let stamps = slice::from_raw_parts(timestamp, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = match DerivativesTick::new(
+            funding_rates[i],
+            mark_prices[i],
+            index_prices[i],
+            futures_prices[i],
+            open_interests[i],
+            long_sizes[i],
+            short_sizes[i],
+            taker_buy_volumes[i],
+            taker_sell_volumes[i],
+            long_liquidations[i],
+            short_liquidations[i],
+            stamps[i],
+        ) {
+            Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+            Err(_) => f64::NAN,
+        };
     }
 }
 
@@ -73286,6 +74963,42 @@ pub unsafe extern "C" fn wickra_macd_ext_update(
     }
 }
 
+/// Run over `input[0..n]`, writing one `WickraMacdOutput` per input into
+/// `out[0..n]`. A row the indicator did not produce is written with every field
+/// set to `NaN`, which is how a caller tells it from a real value.
+///
+/// # Safety
+/// `handle` valid (from `wickra_macd_ext_new`, not freed); `input` covers `n`
+/// `double`s and `out` covers `n` `WickraMacdOutput` values.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_batch(
+    handle: *mut MacdExt,
+    input: *const f64,
+    out: *mut WickraMacdOutput,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (i, slot) in outputs.iter_mut().enumerate() {
+        *slot = WickraMacdOutput {
+            macd: f64::NAN,
+            signal: f64::NAN,
+            histogram: f64::NAN,
+        };
+        if let Some(out_val) = ind.update(inputs[i]) {
+            *slot = WickraMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+        }
+    }
+}
+
 /// Number of updates the indicator needs before it produces a value. Returns `0`
 /// if `handle` is `NULL`.
 ///
@@ -74182,6 +75895,58 @@ mod tests {
             wickra_adx_free(streamed);
             assert!(emitted > 0, "the fixture must clear warmup");
         }
+    }
+
+    #[test]
+    fn trade_batch_matches_streaming() {
+        // The trade shape is the one that carries a `const bool*` side column,
+        // which every language binding has to marshal one byte per element.
+        let prices = [100.0_f64, 100.5, 99.5, 101.0, 100.0, 102.0, 101.5, 103.0];
+        let sizes = [1.0_f64, 2.0, 1.5, 3.0, 2.5, 1.0, 4.0, 2.0];
+        let sides = [true, false, true, true, false, true, false, true];
+        let stamps = [0_i64, 1, 2, 3, 4, 5, 6, 7];
+
+        let n = prices.len();
+        let mut batched = [0.0_f64; 8];
+        unsafe {
+            let handle = wickra_signed_volume_new();
+            assert!(!handle.is_null());
+            wickra_signed_volume_batch(
+                handle,
+                prices.as_ptr(),
+                sizes.as_ptr(),
+                sides.as_ptr(),
+                stamps.as_ptr(),
+                batched.as_mut_ptr(),
+                n,
+            );
+            wickra_signed_volume_free(handle);
+
+            let streamed = wickra_signed_volume_new();
+            for i in 0..n {
+                let one =
+                    wickra_signed_volume_update(streamed, prices[i], sizes[i], sides[i], stamps[i]);
+                assert!((batched[i] - one).abs() < 1e-12, "row {i}");
+            }
+            wickra_signed_volume_free(streamed);
+        }
+        // The side column has to reach the indicator: flipping it moves the sum.
+        let flipped = [false, true, false, false, true, false, true, false];
+        let mut other = [0.0_f64; 8];
+        unsafe {
+            let handle = wickra_signed_volume_new();
+            wickra_signed_volume_batch(
+                handle,
+                prices.as_ptr(),
+                sizes.as_ptr(),
+                flipped.as_ptr(),
+                stamps.as_ptr(),
+                other.as_mut_ptr(),
+                n,
+            );
+            wickra_signed_volume_free(handle);
+        }
+        assert!((batched[n - 1] - other[n - 1]).abs() > 1e-9);
     }
 
     #[test]

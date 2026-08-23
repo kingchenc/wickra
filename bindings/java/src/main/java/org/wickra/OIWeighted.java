@@ -40,6 +40,67 @@ public final class OIWeighted implements AutoCloseable {
         }
     }
 
+    /** Vectorized update over a whole series; NaN at warmup positions. */
+    public double[] batch(double[] fundingRate, double[] markPrice, double[] indexPrice, double[] futuresPrice, double[] openInterest, double[] longSize, double[] shortSize, double[] takerBuyVolume, double[] takerSellVolume, double[] longLiquidation, double[] shortLiquidation, long[] timestamp) {
+        int n = fundingRate.length;
+        if (markPrice.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (indexPrice.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (futuresPrice.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (openInterest.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (longSize.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (shortSize.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (takerBuyVolume.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (takerSellVolume.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (longLiquidation.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (shortLiquidation.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (timestamp.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment fundingRateSeg = a.allocateFrom(JAVA_DOUBLE, fundingRate);
+            MemorySegment markPriceSeg = a.allocateFrom(JAVA_DOUBLE, markPrice);
+            MemorySegment indexPriceSeg = a.allocateFrom(JAVA_DOUBLE, indexPrice);
+            MemorySegment futuresPriceSeg = a.allocateFrom(JAVA_DOUBLE, futuresPrice);
+            MemorySegment openInterestSeg = a.allocateFrom(JAVA_DOUBLE, openInterest);
+            MemorySegment longSizeSeg = a.allocateFrom(JAVA_DOUBLE, longSize);
+            MemorySegment shortSizeSeg = a.allocateFrom(JAVA_DOUBLE, shortSize);
+            MemorySegment takerBuyVolumeSeg = a.allocateFrom(JAVA_DOUBLE, takerBuyVolume);
+            MemorySegment takerSellVolumeSeg = a.allocateFrom(JAVA_DOUBLE, takerSellVolume);
+            MemorySegment longLiquidationSeg = a.allocateFrom(JAVA_DOUBLE, longLiquidation);
+            MemorySegment shortLiquidationSeg = a.allocateFrom(JAVA_DOUBLE, shortLiquidation);
+            MemorySegment timestampSeg = a.allocateFrom(JAVA_LONG, timestamp);
+            MemorySegment outSeg = a.allocate(JAVA_DOUBLE.byteSize() * n);
+            NativeMethods.WICKRA_OI_WEIGHTED_BATCH.invokeExact(handle(), fundingRateSeg, markPriceSeg, indexPriceSeg, futuresPriceSeg, openInterestSeg, longSizeSeg, shortSizeSeg, takerBuyVolumeSeg, takerSellVolumeSeg, longLiquidationSeg, shortLiquidationSeg, timestampSeg, outSeg, (long) n);
+            double[] out = new double[n];
+            MemorySegment.copy(outSeg, JAVA_DOUBLE, 0L, out, 0, n);
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

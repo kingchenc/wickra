@@ -43,6 +43,39 @@ public final class RealizedSpread implements AutoCloseable {
         }
     }
 
+    /** Vectorized update over a whole series; NaN at warmup positions. */
+    public double[] batch(double[] price, double[] size, boolean[] isBuy, long[] timestamp, double[] mid) {
+        int n = price.length;
+        if (size.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (isBuy.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (timestamp.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        if (mid.length != n) {
+            throw new IllegalArgumentException("all input arrays must have the same length");
+        }
+        try (Arena a = Arena.ofConfined()) {
+            MemorySegment priceSeg = a.allocateFrom(JAVA_DOUBLE, price);
+            MemorySegment sizeSeg = a.allocateFrom(JAVA_DOUBLE, size);
+            MemorySegment isBuySeg = WickraNative.boolSegment(a, isBuy);
+            MemorySegment timestampSeg = a.allocateFrom(JAVA_LONG, timestamp);
+            MemorySegment midSeg = a.allocateFrom(JAVA_DOUBLE, mid);
+            MemorySegment outSeg = a.allocate(JAVA_DOUBLE.byteSize() * n);
+            NativeMethods.WICKRA_REALIZED_SPREAD_BATCH.invokeExact(handle(), priceSeg, sizeSeg, isBuySeg, timestampSeg, midSeg, outSeg, (long) n);
+            double[] out = new double[n];
+            MemorySegment.copy(outSeg, JAVA_DOUBLE, 0L, out, 0, n);
+            return out;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        } finally {
+            Reference.reachabilityFence(this);
+        }
+    }
+
     /** Number of updates required before update() yields a value. */
     public int warmupPeriod() {
         try {

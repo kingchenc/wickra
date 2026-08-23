@@ -10437,6 +10437,14 @@ double wickra_amihud_illiquidity_update(struct AmihudIlliquidity *handle,
                                         bool is_buy,
                                         int64_t timestamp);
 
+void wickra_amihud_illiquidity_batch(struct AmihudIlliquidity *handle,
+                                     const double *price,
+                                     const double *size,
+                                     const bool *is_buy,
+                                     const int64_t *timestamp,
+                                     double *out,
+                                     uintptr_t n);
+
 uintptr_t wickra_amihud_illiquidity_warmup_period(struct AmihudIlliquidity *handle);
 
 bool wickra_amihud_illiquidity_is_ready(struct AmihudIlliquidity *handle);
@@ -10454,6 +10462,14 @@ double wickra_cumulative_volume_delta_update(struct CumulativeVolumeDelta *handl
                                              double size,
                                              bool is_buy,
                                              int64_t timestamp);
+
+void wickra_cumulative_volume_delta_batch(struct CumulativeVolumeDelta *handle,
+                                          const double *price,
+                                          const double *size,
+                                          const bool *is_buy,
+                                          const int64_t *timestamp,
+                                          double *out,
+                                          uintptr_t n);
 
 uintptr_t wickra_cumulative_volume_delta_warmup_period(struct CumulativeVolumeDelta *handle);
 
@@ -10473,6 +10489,14 @@ double wickra_pin_update(struct Pin *handle,
                          bool is_buy,
                          int64_t timestamp);
 
+void wickra_pin_batch(struct Pin *handle,
+                      const double *price,
+                      const double *size,
+                      const bool *is_buy,
+                      const int64_t *timestamp,
+                      double *out,
+                      uintptr_t n);
+
 uintptr_t wickra_pin_warmup_period(struct Pin *handle);
 
 bool wickra_pin_is_ready(struct Pin *handle);
@@ -10490,6 +10514,14 @@ double wickra_roll_measure_update(struct RollMeasure *handle,
                                   double size,
                                   bool is_buy,
                                   int64_t timestamp);
+
+void wickra_roll_measure_batch(struct RollMeasure *handle,
+                               const double *price,
+                               const double *size,
+                               const bool *is_buy,
+                               const int64_t *timestamp,
+                               double *out,
+                               uintptr_t n);
 
 uintptr_t wickra_roll_measure_warmup_period(struct RollMeasure *handle);
 
@@ -10509,6 +10541,14 @@ double wickra_signed_volume_update(struct SignedVolume *handle,
                                    bool is_buy,
                                    int64_t timestamp);
 
+void wickra_signed_volume_batch(struct SignedVolume *handle,
+                                const double *price,
+                                const double *size,
+                                const bool *is_buy,
+                                const int64_t *timestamp,
+                                double *out,
+                                uintptr_t n);
+
 uintptr_t wickra_signed_volume_warmup_period(struct SignedVolume *handle);
 
 bool wickra_signed_volume_is_ready(struct SignedVolume *handle);
@@ -10526,6 +10566,14 @@ double wickra_trade_imbalance_update(struct TradeImbalance *handle,
                                      double size,
                                      bool is_buy,
                                      int64_t timestamp);
+
+void wickra_trade_imbalance_batch(struct TradeImbalance *handle,
+                                  const double *price,
+                                  const double *size,
+                                  const bool *is_buy,
+                                  const int64_t *timestamp,
+                                  double *out,
+                                  uintptr_t n);
 
 uintptr_t wickra_trade_imbalance_warmup_period(struct TradeImbalance *handle);
 
@@ -10545,6 +10593,14 @@ double wickra_trade_sign_autocorrelation_update(struct TradeSignAutocorrelation 
                                                 bool is_buy,
                                                 int64_t timestamp);
 
+void wickra_trade_sign_autocorrelation_batch(struct TradeSignAutocorrelation *handle,
+                                             const double *price,
+                                             const double *size,
+                                             const bool *is_buy,
+                                             const int64_t *timestamp,
+                                             double *out,
+                                             uintptr_t n);
+
 uintptr_t wickra_trade_sign_autocorrelation_warmup_period(struct TradeSignAutocorrelation *handle);
 
 bool wickra_trade_sign_autocorrelation_is_ready(struct TradeSignAutocorrelation *handle);
@@ -10562,6 +10618,14 @@ double wickra_vpin_update(struct Vpin *handle,
                           double size,
                           bool is_buy,
                           int64_t timestamp);
+
+void wickra_vpin_batch(struct Vpin *handle,
+                       const double *price,
+                       const double *size,
+                       const bool *is_buy,
+                       const int64_t *timestamp,
+                       double *out,
+                       uintptr_t n);
 
 uintptr_t wickra_vpin_warmup_period(struct Vpin *handle);
 
@@ -10582,6 +10646,15 @@ double wickra_effective_spread_update(struct EffectiveSpread *handle,
                                       int64_t timestamp,
                                       double mid);
 
+void wickra_effective_spread_batch(struct EffectiveSpread *handle,
+                                   const double *price,
+                                   const double *size,
+                                   const bool *is_buy,
+                                   const int64_t *timestamp,
+                                   const double *mid,
+                                   double *out,
+                                   uintptr_t n);
+
 uintptr_t wickra_effective_spread_warmup_period(struct EffectiveSpread *handle);
 
 bool wickra_effective_spread_is_ready(struct EffectiveSpread *handle);
@@ -10601,6 +10674,15 @@ double wickra_kyles_lambda_update(struct KylesLambda *handle,
                                   int64_t timestamp,
                                   double mid);
 
+void wickra_kyles_lambda_batch(struct KylesLambda *handle,
+                               const double *price,
+                               const double *size,
+                               const bool *is_buy,
+                               const int64_t *timestamp,
+                               const double *mid,
+                               double *out,
+                               uintptr_t n);
+
 uintptr_t wickra_kyles_lambda_warmup_period(struct KylesLambda *handle);
 
 bool wickra_kyles_lambda_is_ready(struct KylesLambda *handle);
@@ -10619,6 +10701,15 @@ double wickra_realized_spread_update(struct RealizedSpread *handle,
                                      bool is_buy,
                                      int64_t timestamp,
                                      double mid);
+
+void wickra_realized_spread_batch(struct RealizedSpread *handle,
+                                  const double *price,
+                                  const double *size,
+                                  const bool *is_buy,
+                                  const int64_t *timestamp,
+                                  const double *mid,
+                                  double *out,
+                                  uintptr_t n);
 
 uintptr_t wickra_realized_spread_warmup_period(struct RealizedSpread *handle);
 
@@ -10646,6 +10737,22 @@ double wickra_calendar_spread_update(struct CalendarSpread *handle,
                                      double short_liquidation,
                                      int64_t timestamp);
 
+void wickra_calendar_spread_batch(struct CalendarSpread *handle,
+                                  const double *funding_rate,
+                                  const double *mark_price,
+                                  const double *index_price,
+                                  const double *futures_price,
+                                  const double *open_interest,
+                                  const double *long_size,
+                                  const double *short_size,
+                                  const double *taker_buy_volume,
+                                  const double *taker_sell_volume,
+                                  const double *long_liquidation,
+                                  const double *short_liquidation,
+                                  const int64_t *timestamp,
+                                  double *out,
+                                  uintptr_t n);
+
 uintptr_t wickra_calendar_spread_warmup_period(struct CalendarSpread *handle);
 
 bool wickra_calendar_spread_is_ready(struct CalendarSpread *handle);
@@ -10671,6 +10778,22 @@ double wickra_estimated_leverage_ratio_update(struct EstimatedLeverageRatio *han
                                               double long_liquidation,
                                               double short_liquidation,
                                               int64_t timestamp);
+
+void wickra_estimated_leverage_ratio_batch(struct EstimatedLeverageRatio *handle,
+                                           const double *funding_rate,
+                                           const double *mark_price,
+                                           const double *index_price,
+                                           const double *futures_price,
+                                           const double *open_interest,
+                                           const double *long_size,
+                                           const double *short_size,
+                                           const double *taker_buy_volume,
+                                           const double *taker_sell_volume,
+                                           const double *long_liquidation,
+                                           const double *short_liquidation,
+                                           const int64_t *timestamp,
+                                           double *out,
+                                           uintptr_t n);
 
 uintptr_t wickra_estimated_leverage_ratio_warmup_period(struct EstimatedLeverageRatio *handle);
 
@@ -10698,6 +10821,22 @@ double wickra_funding_basis_update(struct FundingBasis *handle,
                                    double short_liquidation,
                                    int64_t timestamp);
 
+void wickra_funding_basis_batch(struct FundingBasis *handle,
+                                const double *funding_rate,
+                                const double *mark_price,
+                                const double *index_price,
+                                const double *futures_price,
+                                const double *open_interest,
+                                const double *long_size,
+                                const double *short_size,
+                                const double *taker_buy_volume,
+                                const double *taker_sell_volume,
+                                const double *long_liquidation,
+                                const double *short_liquidation,
+                                const int64_t *timestamp,
+                                double *out,
+                                uintptr_t n);
+
 uintptr_t wickra_funding_basis_warmup_period(struct FundingBasis *handle);
 
 bool wickra_funding_basis_is_ready(struct FundingBasis *handle);
@@ -10723,6 +10862,22 @@ double wickra_funding_implied_apr_update(struct FundingImpliedApr *handle,
                                          double long_liquidation,
                                          double short_liquidation,
                                          int64_t timestamp);
+
+void wickra_funding_implied_apr_batch(struct FundingImpliedApr *handle,
+                                      const double *funding_rate,
+                                      const double *mark_price,
+                                      const double *index_price,
+                                      const double *futures_price,
+                                      const double *open_interest,
+                                      const double *long_size,
+                                      const double *short_size,
+                                      const double *taker_buy_volume,
+                                      const double *taker_sell_volume,
+                                      const double *long_liquidation,
+                                      const double *short_liquidation,
+                                      const int64_t *timestamp,
+                                      double *out,
+                                      uintptr_t n);
 
 uintptr_t wickra_funding_implied_apr_warmup_period(struct FundingImpliedApr *handle);
 
@@ -10750,6 +10905,22 @@ double wickra_funding_rate_update(struct FundingRate *handle,
                                   double short_liquidation,
                                   int64_t timestamp);
 
+void wickra_funding_rate_batch(struct FundingRate *handle,
+                               const double *funding_rate,
+                               const double *mark_price,
+                               const double *index_price,
+                               const double *futures_price,
+                               const double *open_interest,
+                               const double *long_size,
+                               const double *short_size,
+                               const double *taker_buy_volume,
+                               const double *taker_sell_volume,
+                               const double *long_liquidation,
+                               const double *short_liquidation,
+                               const int64_t *timestamp,
+                               double *out,
+                               uintptr_t n);
+
 uintptr_t wickra_funding_rate_warmup_period(struct FundingRate *handle);
 
 bool wickra_funding_rate_is_ready(struct FundingRate *handle);
@@ -10775,6 +10946,22 @@ double wickra_funding_rate_mean_update(struct FundingRateMean *handle,
                                        double long_liquidation,
                                        double short_liquidation,
                                        int64_t timestamp);
+
+void wickra_funding_rate_mean_batch(struct FundingRateMean *handle,
+                                    const double *funding_rate,
+                                    const double *mark_price,
+                                    const double *index_price,
+                                    const double *futures_price,
+                                    const double *open_interest,
+                                    const double *long_size,
+                                    const double *short_size,
+                                    const double *taker_buy_volume,
+                                    const double *taker_sell_volume,
+                                    const double *long_liquidation,
+                                    const double *short_liquidation,
+                                    const int64_t *timestamp,
+                                    double *out,
+                                    uintptr_t n);
 
 uintptr_t wickra_funding_rate_mean_warmup_period(struct FundingRateMean *handle);
 
@@ -10802,6 +10989,22 @@ double wickra_funding_rate_z_score_update(struct FundingRateZScore *handle,
                                           double short_liquidation,
                                           int64_t timestamp);
 
+void wickra_funding_rate_z_score_batch(struct FundingRateZScore *handle,
+                                       const double *funding_rate,
+                                       const double *mark_price,
+                                       const double *index_price,
+                                       const double *futures_price,
+                                       const double *open_interest,
+                                       const double *long_size,
+                                       const double *short_size,
+                                       const double *taker_buy_volume,
+                                       const double *taker_sell_volume,
+                                       const double *long_liquidation,
+                                       const double *short_liquidation,
+                                       const int64_t *timestamp,
+                                       double *out,
+                                       uintptr_t n);
+
 uintptr_t wickra_funding_rate_z_score_warmup_period(struct FundingRateZScore *handle);
 
 bool wickra_funding_rate_z_score_is_ready(struct FundingRateZScore *handle);
@@ -10827,6 +11030,22 @@ double wickra_long_short_ratio_update(struct LongShortRatio *handle,
                                       double long_liquidation,
                                       double short_liquidation,
                                       int64_t timestamp);
+
+void wickra_long_short_ratio_batch(struct LongShortRatio *handle,
+                                   const double *funding_rate,
+                                   const double *mark_price,
+                                   const double *index_price,
+                                   const double *futures_price,
+                                   const double *open_interest,
+                                   const double *long_size,
+                                   const double *short_size,
+                                   const double *taker_buy_volume,
+                                   const double *taker_sell_volume,
+                                   const double *long_liquidation,
+                                   const double *short_liquidation,
+                                   const int64_t *timestamp,
+                                   double *out,
+                                   uintptr_t n);
 
 uintptr_t wickra_long_short_ratio_warmup_period(struct LongShortRatio *handle);
 
@@ -10854,6 +11073,22 @@ double wickra_open_interest_delta_update(struct OpenInterestDelta *handle,
                                          double short_liquidation,
                                          int64_t timestamp);
 
+void wickra_open_interest_delta_batch(struct OpenInterestDelta *handle,
+                                      const double *funding_rate,
+                                      const double *mark_price,
+                                      const double *index_price,
+                                      const double *futures_price,
+                                      const double *open_interest,
+                                      const double *long_size,
+                                      const double *short_size,
+                                      const double *taker_buy_volume,
+                                      const double *taker_sell_volume,
+                                      const double *long_liquidation,
+                                      const double *short_liquidation,
+                                      const int64_t *timestamp,
+                                      double *out,
+                                      uintptr_t n);
+
 uintptr_t wickra_open_interest_delta_warmup_period(struct OpenInterestDelta *handle);
 
 bool wickra_open_interest_delta_is_ready(struct OpenInterestDelta *handle);
@@ -10879,6 +11114,22 @@ double wickra_oi_price_divergence_update(struct OIPriceDivergence *handle,
                                          double long_liquidation,
                                          double short_liquidation,
                                          int64_t timestamp);
+
+void wickra_oi_price_divergence_batch(struct OIPriceDivergence *handle,
+                                      const double *funding_rate,
+                                      const double *mark_price,
+                                      const double *index_price,
+                                      const double *futures_price,
+                                      const double *open_interest,
+                                      const double *long_size,
+                                      const double *short_size,
+                                      const double *taker_buy_volume,
+                                      const double *taker_sell_volume,
+                                      const double *long_liquidation,
+                                      const double *short_liquidation,
+                                      const int64_t *timestamp,
+                                      double *out,
+                                      uintptr_t n);
 
 uintptr_t wickra_oi_price_divergence_warmup_period(struct OIPriceDivergence *handle);
 
@@ -10906,6 +11157,22 @@ double wickra_oi_to_volume_ratio_update(struct OiToVolumeRatio *handle,
                                         double short_liquidation,
                                         int64_t timestamp);
 
+void wickra_oi_to_volume_ratio_batch(struct OiToVolumeRatio *handle,
+                                     const double *funding_rate,
+                                     const double *mark_price,
+                                     const double *index_price,
+                                     const double *futures_price,
+                                     const double *open_interest,
+                                     const double *long_size,
+                                     const double *short_size,
+                                     const double *taker_buy_volume,
+                                     const double *taker_sell_volume,
+                                     const double *long_liquidation,
+                                     const double *short_liquidation,
+                                     const int64_t *timestamp,
+                                     double *out,
+                                     uintptr_t n);
+
 uintptr_t wickra_oi_to_volume_ratio_warmup_period(struct OiToVolumeRatio *handle);
 
 bool wickra_oi_to_volume_ratio_is_ready(struct OiToVolumeRatio *handle);
@@ -10931,6 +11198,22 @@ double wickra_oi_weighted_update(struct OIWeighted *handle,
                                  double long_liquidation,
                                  double short_liquidation,
                                  int64_t timestamp);
+
+void wickra_oi_weighted_batch(struct OIWeighted *handle,
+                              const double *funding_rate,
+                              const double *mark_price,
+                              const double *index_price,
+                              const double *futures_price,
+                              const double *open_interest,
+                              const double *long_size,
+                              const double *short_size,
+                              const double *taker_buy_volume,
+                              const double *taker_sell_volume,
+                              const double *long_liquidation,
+                              const double *short_liquidation,
+                              const int64_t *timestamp,
+                              double *out,
+                              uintptr_t n);
 
 uintptr_t wickra_oi_weighted_warmup_period(struct OIWeighted *handle);
 
@@ -10958,6 +11241,22 @@ double wickra_open_interest_momentum_update(struct OpenInterestMomentum *handle,
                                             double short_liquidation,
                                             int64_t timestamp);
 
+void wickra_open_interest_momentum_batch(struct OpenInterestMomentum *handle,
+                                         const double *funding_rate,
+                                         const double *mark_price,
+                                         const double *index_price,
+                                         const double *futures_price,
+                                         const double *open_interest,
+                                         const double *long_size,
+                                         const double *short_size,
+                                         const double *taker_buy_volume,
+                                         const double *taker_sell_volume,
+                                         const double *long_liquidation,
+                                         const double *short_liquidation,
+                                         const int64_t *timestamp,
+                                         double *out,
+                                         uintptr_t n);
+
 uintptr_t wickra_open_interest_momentum_warmup_period(struct OpenInterestMomentum *handle);
 
 bool wickra_open_interest_momentum_is_ready(struct OpenInterestMomentum *handle);
@@ -10983,6 +11282,22 @@ double wickra_perpetual_premium_index_update(struct PerpetualPremiumIndex *handl
                                              double long_liquidation,
                                              double short_liquidation,
                                              int64_t timestamp);
+
+void wickra_perpetual_premium_index_batch(struct PerpetualPremiumIndex *handle,
+                                          const double *funding_rate,
+                                          const double *mark_price,
+                                          const double *index_price,
+                                          const double *futures_price,
+                                          const double *open_interest,
+                                          const double *long_size,
+                                          const double *short_size,
+                                          const double *taker_buy_volume,
+                                          const double *taker_sell_volume,
+                                          const double *long_liquidation,
+                                          const double *short_liquidation,
+                                          const int64_t *timestamp,
+                                          double *out,
+                                          uintptr_t n);
 
 uintptr_t wickra_perpetual_premium_index_warmup_period(struct PerpetualPremiumIndex *handle);
 
@@ -11010,6 +11325,22 @@ double wickra_taker_buy_sell_ratio_update(struct TakerBuySellRatio *handle,
                                           double short_liquidation,
                                           int64_t timestamp);
 
+void wickra_taker_buy_sell_ratio_batch(struct TakerBuySellRatio *handle,
+                                       const double *funding_rate,
+                                       const double *mark_price,
+                                       const double *index_price,
+                                       const double *futures_price,
+                                       const double *open_interest,
+                                       const double *long_size,
+                                       const double *short_size,
+                                       const double *taker_buy_volume,
+                                       const double *taker_sell_volume,
+                                       const double *long_liquidation,
+                                       const double *short_liquidation,
+                                       const int64_t *timestamp,
+                                       double *out,
+                                       uintptr_t n);
+
 uintptr_t wickra_taker_buy_sell_ratio_warmup_period(struct TakerBuySellRatio *handle);
 
 bool wickra_taker_buy_sell_ratio_is_ready(struct TakerBuySellRatio *handle);
@@ -11035,6 +11366,22 @@ double wickra_term_structure_basis_update(struct TermStructureBasis *handle,
                                           double long_liquidation,
                                           double short_liquidation,
                                           int64_t timestamp);
+
+void wickra_term_structure_basis_batch(struct TermStructureBasis *handle,
+                                       const double *funding_rate,
+                                       const double *mark_price,
+                                       const double *index_price,
+                                       const double *futures_price,
+                                       const double *open_interest,
+                                       const double *long_size,
+                                       const double *short_size,
+                                       const double *taker_buy_volume,
+                                       const double *taker_sell_volume,
+                                       const double *long_liquidation,
+                                       const double *short_liquidation,
+                                       const int64_t *timestamp,
+                                       double *out,
+                                       uintptr_t n);
 
 uintptr_t wickra_term_structure_basis_warmup_period(struct TermStructureBasis *handle);
 
@@ -14513,6 +14860,11 @@ struct MacdExt *wickra_macd_ext_new(uintptr_t fast,
                                     uint8_t signal_type);
 
 bool wickra_macd_ext_update(struct MacdExt *handle, double value, struct WickraMacdOutput *out);
+
+void wickra_macd_ext_batch(struct MacdExt *handle,
+                           const double *input,
+                           struct WickraMacdOutput *out,
+                           uintptr_t n);
 
 uintptr_t wickra_macd_ext_warmup_period(struct MacdExt *handle);
 

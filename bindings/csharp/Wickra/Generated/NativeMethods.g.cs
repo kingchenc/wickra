@@ -8913,6 +8913,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_amihud_illiquidity_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_amihud_illiquidity_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_amihud_illiquidity_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -8933,6 +8936,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_cumulative_volume_delta_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_cumulative_volume_delta_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_cumulative_volume_delta_warmup_period(WickraHandle handle);
@@ -8957,6 +8963,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_pin_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_pin_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_pin_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -8977,6 +8986,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_roll_measure_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_roll_measure_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_roll_measure_warmup_period(WickraHandle handle);
@@ -9001,6 +9013,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_signed_volume_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_signed_volume_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_signed_volume_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9021,6 +9036,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_trade_imbalance_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_trade_imbalance_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_trade_imbalance_warmup_period(WickraHandle handle);
@@ -9045,6 +9063,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_trade_sign_autocorrelation_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_trade_sign_autocorrelation_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_trade_sign_autocorrelation_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9065,6 +9086,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_vpin_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_vpin_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_vpin_warmup_period(WickraHandle handle);
@@ -9089,6 +9113,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_effective_spread_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, double mid);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_effective_spread_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* mid, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_effective_spread_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9109,6 +9136,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_kyles_lambda_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, double mid);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_kyles_lambda_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* mid, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_kyles_lambda_warmup_period(WickraHandle handle);
@@ -9133,6 +9163,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_realized_spread_update(WickraHandle handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, double mid);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_realized_spread_batch(WickraHandle handle, double* price, double* size, bool* isBuy, long* timestamp, double* mid, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_realized_spread_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9153,6 +9186,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_calendar_spread_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_calendar_spread_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_calendar_spread_warmup_period(WickraHandle handle);
@@ -9177,6 +9213,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_estimated_leverage_ratio_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_estimated_leverage_ratio_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_estimated_leverage_ratio_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9197,6 +9236,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_funding_basis_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_funding_basis_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_funding_basis_warmup_period(WickraHandle handle);
@@ -9221,6 +9263,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_funding_implied_apr_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_funding_implied_apr_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_funding_implied_apr_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9241,6 +9286,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_funding_rate_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_funding_rate_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_funding_rate_warmup_period(WickraHandle handle);
@@ -9265,6 +9313,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_funding_rate_mean_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_funding_rate_mean_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_funding_rate_mean_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9285,6 +9336,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_funding_rate_z_score_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_funding_rate_z_score_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_funding_rate_z_score_warmup_period(WickraHandle handle);
@@ -9309,6 +9363,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_long_short_ratio_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_long_short_ratio_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_long_short_ratio_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9329,6 +9386,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_open_interest_delta_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_open_interest_delta_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_open_interest_delta_warmup_period(WickraHandle handle);
@@ -9353,6 +9413,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_oi_price_divergence_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_oi_price_divergence_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_oi_price_divergence_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9373,6 +9436,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_oi_to_volume_ratio_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_oi_to_volume_ratio_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_oi_to_volume_ratio_warmup_period(WickraHandle handle);
@@ -9397,6 +9463,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_oi_weighted_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_oi_weighted_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_oi_weighted_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9417,6 +9486,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_open_interest_momentum_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_open_interest_momentum_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_open_interest_momentum_warmup_period(WickraHandle handle);
@@ -9441,6 +9513,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_perpetual_premium_index_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_perpetual_premium_index_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_perpetual_premium_index_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9463,6 +9538,9 @@ internal static partial class NativeMethods
     internal static partial double wickra_taker_buy_sell_ratio_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_taker_buy_sell_ratio_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_taker_buy_sell_ratio_warmup_period(WickraHandle handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -9483,6 +9561,9 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_term_structure_basis_update(WickraHandle handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_term_structure_basis_batch(WickraHandle handle, double* fundingRate, double* markPrice, double* indexPrice, double* futuresPrice, double* openInterest, double* longSize, double* shortSize, double* takerBuyVolume, double* takerSellVolume, double* longLiquidation, double* shortLiquidation, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_term_structure_basis_warmup_period(WickraHandle handle);
@@ -12638,6 +12719,9 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_macd_ext_update(WickraHandle handle, double @value, WickraMacdOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static unsafe partial void wickra_macd_ext_batch(WickraHandle handle, double* input, WickraMacdOutput* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial nuint wickra_macd_ext_warmup_period(WickraHandle handle);

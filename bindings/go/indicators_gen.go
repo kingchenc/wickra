@@ -2718,6 +2718,32 @@ func (ind *AmihudIlliquidity) Update(price float64, size float64, isBuy bool, ti
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *AmihudIlliquidity) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_amihud_illiquidity_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *AmihudIlliquidity) Reset() {
 	C.wickra_amihud_illiquidity_reset(ind.handle)
@@ -6117,6 +6143,64 @@ func (ind *CalendarSpread) Update(fundingRate float64, markPrice float64, indexP
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *CalendarSpread) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_calendar_spread_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *CalendarSpread) Reset() {
 	C.wickra_calendar_spread_reset(ind.handle)
@@ -8948,6 +9032,32 @@ func (ind *CumulativeVolumeDelta) Update(price float64, size float64, isBuy bool
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *CumulativeVolumeDelta) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_cumulative_volume_delta_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *CumulativeVolumeDelta) Reset() {
 	C.wickra_cumulative_volume_delta_reset(ind.handle)
@@ -11730,6 +11840,36 @@ func (ind *EffectiveSpread) Update(price float64, size float64, isBuy bool, time
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *EffectiveSpread) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64, mid []float64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(mid) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_effective_spread_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&mid[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	runtime.KeepAlive(mid)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *EffectiveSpread) Reset() {
 	C.wickra_effective_spread_reset(ind.handle)
@@ -12645,6 +12785,64 @@ func (ind *EstimatedLeverageRatio) Update(fundingRate float64, markPrice float64
 	r := float64(C.wickra_estimated_leverage_ratio_update(ind.handle, C.double(fundingRate), C.double(markPrice), C.double(indexPrice), C.double(futuresPrice), C.double(openInterest), C.double(longSize), C.double(shortSize), C.double(takerBuyVolume), C.double(takerSellVolume), C.double(longLiquidation), C.double(shortLiquidation), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *EstimatedLeverageRatio) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_estimated_leverage_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -15028,6 +15226,64 @@ func (ind *FundingBasis) Update(fundingRate float64, markPrice float64, indexPri
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *FundingBasis) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_funding_basis_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FundingBasis) Reset() {
 	C.wickra_funding_basis_reset(ind.handle)
@@ -15092,6 +15348,64 @@ func (ind *FundingImpliedApr) Update(fundingRate float64, markPrice float64, ind
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *FundingImpliedApr) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_funding_implied_apr_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FundingImpliedApr) Reset() {
 	C.wickra_funding_implied_apr_reset(ind.handle)
@@ -15154,6 +15468,64 @@ func (ind *FundingRate) Update(fundingRate float64, markPrice float64, indexPric
 	r := float64(C.wickra_funding_rate_update(ind.handle, C.double(fundingRate), C.double(markPrice), C.double(indexPrice), C.double(futuresPrice), C.double(openInterest), C.double(longSize), C.double(shortSize), C.double(takerBuyVolume), C.double(takerSellVolume), C.double(longLiquidation), C.double(shortLiquidation), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *FundingRate) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_funding_rate_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -15224,6 +15596,64 @@ func (ind *FundingRateMean) Update(fundingRate float64, markPrice float64, index
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *FundingRateMean) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_funding_rate_mean_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *FundingRateMean) Reset() {
 	C.wickra_funding_rate_mean_reset(ind.handle)
@@ -15290,6 +15720,64 @@ func (ind *FundingRateZScore) Update(fundingRate float64, markPrice float64, ind
 	r := float64(C.wickra_funding_rate_z_score_update(ind.handle, C.double(fundingRate), C.double(markPrice), C.double(indexPrice), C.double(futuresPrice), C.double(openInterest), C.double(longSize), C.double(shortSize), C.double(takerBuyVolume), C.double(takerSellVolume), C.double(longLiquidation), C.double(shortLiquidation), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *FundingRateZScore) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_funding_rate_z_score_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -21702,6 +22190,36 @@ func (ind *KylesLambda) Update(price float64, size float64, isBuy bool, timestam
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *KylesLambda) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64, mid []float64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(mid) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_kyles_lambda_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&mid[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	runtime.KeepAlive(mid)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *KylesLambda) Reset() {
 	C.wickra_kyles_lambda_reset(ind.handle)
@@ -22869,6 +23387,64 @@ func (ind *LongShortRatio) Update(fundingRate float64, markPrice float64, indexP
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *LongShortRatio) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_long_short_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *LongShortRatio) Reset() {
 	C.wickra_long_short_ratio_reset(ind.handle)
@@ -23120,6 +23696,25 @@ func (ind *MacdExt) Update(value float64) (MacdOutput, bool) {
 		return MacdOutput{}, false
 	}
 	return MacdOutput{float64(out.macd), float64(out.signal), float64(out.histogram)}, true
+}
+
+// Batch runs the indicator over whole slices in one FFI call and returns
+// one output per input. A row the indicator did not produce -- warmup, or
+// an input it rejected -- carries NaN in every floating-point field.
+func (ind *MacdExt) Batch(input []float64) []MacdOutput {
+	n := len(input)
+	out := make([]MacdOutput, n)
+	if n == 0 {
+		return out
+	}
+	buf := make([]C.struct_WickraMacdOutput, n)
+	C.wickra_macd_ext_batch(ind.handle, (*C.double)(unsafe.Pointer(&input[0])), &buf[0], C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(input)
+	for i := range buf {
+		out[i] = MacdOutput{float64(buf[i].macd), float64(buf[i].signal), float64(buf[i].histogram)}
+	}
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -26586,6 +27181,64 @@ func (ind *OIPriceDivergence) Update(fundingRate float64, markPrice float64, ind
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *OIPriceDivergence) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_oi_price_divergence_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *OIPriceDivergence) Reset() {
 	C.wickra_oi_price_divergence_reset(ind.handle)
@@ -26650,6 +27303,64 @@ func (ind *OiToVolumeRatio) Update(fundingRate float64, markPrice float64, index
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *OiToVolumeRatio) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_oi_to_volume_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *OiToVolumeRatio) Reset() {
 	C.wickra_oi_to_volume_ratio_reset(ind.handle)
@@ -26712,6 +27423,64 @@ func (ind *OIWeighted) Update(fundingRate float64, markPrice float64, indexPrice
 	r := float64(C.wickra_oi_weighted_update(ind.handle, C.double(fundingRate), C.double(markPrice), C.double(indexPrice), C.double(futuresPrice), C.double(openInterest), C.double(longSize), C.double(shortSize), C.double(takerBuyVolume), C.double(takerSellVolume), C.double(longLiquidation), C.double(shortLiquidation), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *OIWeighted) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_oi_weighted_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -26958,6 +27727,64 @@ func (ind *OpenInterestDelta) Update(fundingRate float64, markPrice float64, ind
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *OpenInterestDelta) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_open_interest_delta_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *OpenInterestDelta) Reset() {
 	C.wickra_open_interest_delta_reset(ind.handle)
@@ -27024,6 +27851,64 @@ func (ind *OpenInterestMomentum) Update(fundingRate float64, markPrice float64, 
 	r := float64(C.wickra_open_interest_momentum_update(ind.handle, C.double(fundingRate), C.double(markPrice), C.double(indexPrice), C.double(futuresPrice), C.double(openInterest), C.double(longSize), C.double(shortSize), C.double(takerBuyVolume), C.double(takerSellVolume), C.double(longLiquidation), C.double(shortLiquidation), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *OpenInterestMomentum) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_open_interest_momentum_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -28589,6 +29474,64 @@ func (ind *PerpetualPremiumIndex) Update(fundingRate float64, markPrice float64,
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *PerpetualPremiumIndex) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_perpetual_premium_index_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *PerpetualPremiumIndex) Reset() {
 	C.wickra_perpetual_premium_index_reset(ind.handle)
@@ -28855,6 +29798,32 @@ func (ind *Pin) Update(price float64, size float64, isBuy bool, timestamp int64)
 	r := float64(C.wickra_pin_update(ind.handle, C.double(price), C.double(size), C.bool(isBuy), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *Pin) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_pin_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -30742,6 +31711,36 @@ func (ind *RealizedSpread) Update(price float64, size float64, isBuy bool, times
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *RealizedSpread) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64, mid []float64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(mid) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_realized_spread_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&mid[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	runtime.KeepAlive(mid)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *RealizedSpread) Reset() {
 	C.wickra_realized_spread_reset(ind.handle)
@@ -32240,6 +33239,32 @@ func (ind *RollMeasure) Update(price float64, size float64, isBuy bool, timestam
 	r := float64(C.wickra_roll_measure_update(ind.handle, C.double(price), C.double(size), C.bool(isBuy), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *RollMeasure) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_roll_measure_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -34666,6 +35691,32 @@ func (ind *SignedVolume) Update(price float64, size float64, isBuy bool, timesta
 	r := float64(C.wickra_signed_volume_update(ind.handle, C.double(price), C.double(size), C.bool(isBuy), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *SignedVolume) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_signed_volume_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -37474,6 +38525,64 @@ func (ind *TakerBuySellRatio) Update(fundingRate float64, markPrice float64, ind
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *TakerBuySellRatio) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_taker_buy_sell_ratio_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TakerBuySellRatio) Reset() {
 	C.wickra_taker_buy_sell_ratio_reset(ind.handle)
@@ -39819,6 +40928,64 @@ func (ind *TermStructureBasis) Update(fundingRate float64, markPrice float64, in
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *TermStructureBasis) Batch(fundingRate []float64, markPrice []float64, indexPrice []float64, futuresPrice []float64, openInterest []float64, longSize []float64, shortSize []float64, takerBuyVolume []float64, takerSellVolume []float64, longLiquidation []float64, shortLiquidation []float64, timestamp []int64) []float64 {
+	n := len(fundingRate)
+	if len(markPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(indexPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(futuresPrice) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(openInterest) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortSize) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerBuyVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(takerSellVolume) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(longLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(shortLiquidation) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_term_structure_basis_batch(ind.handle, (*C.double)(unsafe.Pointer(&fundingRate[0])), (*C.double)(unsafe.Pointer(&markPrice[0])), (*C.double)(unsafe.Pointer(&indexPrice[0])), (*C.double)(unsafe.Pointer(&futuresPrice[0])), (*C.double)(unsafe.Pointer(&openInterest[0])), (*C.double)(unsafe.Pointer(&longSize[0])), (*C.double)(unsafe.Pointer(&shortSize[0])), (*C.double)(unsafe.Pointer(&takerBuyVolume[0])), (*C.double)(unsafe.Pointer(&takerSellVolume[0])), (*C.double)(unsafe.Pointer(&longLiquidation[0])), (*C.double)(unsafe.Pointer(&shortLiquidation[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(fundingRate)
+	runtime.KeepAlive(markPrice)
+	runtime.KeepAlive(indexPrice)
+	runtime.KeepAlive(futuresPrice)
+	runtime.KeepAlive(openInterest)
+	runtime.KeepAlive(longSize)
+	runtime.KeepAlive(shortSize)
+	runtime.KeepAlive(takerBuyVolume)
+	runtime.KeepAlive(takerSellVolume)
+	runtime.KeepAlive(longLiquidation)
+	runtime.KeepAlive(shortLiquidation)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TermStructureBasis) Reset() {
 	C.wickra_term_structure_basis_reset(ind.handle)
@@ -41366,6 +42533,32 @@ func (ind *TradeImbalance) Update(price float64, size float64, isBuy bool, times
 	return r
 }
 
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *TradeImbalance) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_trade_imbalance_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
+}
+
 // Reset clears all internal state, returning the indicator to warmup.
 func (ind *TradeImbalance) Reset() {
 	C.wickra_trade_imbalance_reset(ind.handle)
@@ -41432,6 +42625,32 @@ func (ind *TradeSignAutocorrelation) Update(price float64, size float64, isBuy b
 	r := float64(C.wickra_trade_sign_autocorrelation_update(ind.handle, C.double(price), C.double(size), C.bool(isBuy), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *TradeSignAutocorrelation) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_trade_sign_autocorrelation_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.
@@ -46164,6 +47383,32 @@ func (ind *Vpin) Update(price float64, size float64, isBuy bool, timestamp int64
 	r := float64(C.wickra_vpin_update(ind.handle, C.double(price), C.double(size), C.bool(isBuy), C.int64_t(timestamp)))
 	runtime.KeepAlive(ind)
 	return r
+}
+
+// Batch runs the indicator over a whole slice in one FFI call and
+// returns the per-element output (NaN during warmup).
+func (ind *Vpin) Batch(price []float64, size []float64, isBuy []bool, timestamp []int64) []float64 {
+	n := len(price)
+	if len(size) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(isBuy) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	if len(timestamp) != n {
+		panic("wickra: all input slices must have the same length")
+	}
+	out := make([]float64, n)
+	if n == 0 {
+		return out
+	}
+	C.wickra_vpin_batch(ind.handle, (*C.double)(unsafe.Pointer(&price[0])), (*C.double)(unsafe.Pointer(&size[0])), (*C.bool)(unsafe.Pointer(&isBuy[0])), (*C.int64_t)(unsafe.Pointer(&timestamp[0])), (*C.double)(unsafe.Pointer(&out[0])), C.uintptr_t(n))
+	runtime.KeepAlive(ind)
+	runtime.KeepAlive(price)
+	runtime.KeepAlive(size)
+	runtime.KeepAlive(isBuy)
+	runtime.KeepAlive(timestamp)
+	return out
 }
 
 // Reset clears all internal state, returning the indicator to warmup.

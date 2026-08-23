@@ -643,6 +643,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `out` is an array of the output struct the ABI already defines, one entry per
   input; a row the indicator did not produce — warmup, or an input it rejected —
   has every floating-point field set to `NaN`. Go, C# and Java expose it.
+- **28 more C ABI indicators gained `batch`.** The derivatives, trade and
+  trade-with-quote handles emit one value per input, so they take the same
+  vectorized path the candle indicators always had; `MACDEXT` joins them, having
+  been missed only because its constructor takes moving-average type codes and
+  it therefore sits outside the generated section. 475 of the 517 handles have a
+  batch now.
 - **`dotnet publish` failed for every Windows app using the NuGet package.**
   The managed assembly is `Wickra.dll` and the native library shipped as
   `wickra.dll`; Windows file names are case-insensitive and a RID-specific
