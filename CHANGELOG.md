@@ -615,6 +615,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   strided view and getting the right answer. The advice was stale too, naming a
   dependency the package no longer has. `as_slice` returns a plain slice now,
   which removes 1431 lines.
+- **68 WASM classes gained `batch`.** 63 indicators had no batch method at all,
+  so a browser caller had to loop in JavaScript and pay a boundary crossing per
+  bar — the opposite of what the batch API is for — and five of the ten bar
+  builders were missing it while the other five had it. Every one of the 514
+  indicators now produces the same values through `batch` as through `update`,
+  checked against the Rust reference fixtures.
+- **The WASM suite covers `batch` and the interface contract.** The golden
+  suite only ever called `update`, so a missing or wrong `batch` was invisible;
+  there are now a batch-parity replay of all 514 and a completeness test
+  mirroring the Node one.
+- **CI runs the whole WASM test directory.** It named a single file, so the
+  data-layer tests had never run there — which is how a resampler test that had
+  been failing since the streaming change went unnoticed.
 - **73 WASM classes can be asked whether they are ready.** `isReady` and
   `warmupPeriod` are part of the indicator contract everywhere else, and the
   macro-generated WASM wrappers had them from the start — but the classes

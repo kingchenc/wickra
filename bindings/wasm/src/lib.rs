@@ -22,6 +22,28 @@ fn flatten(values: Vec<Option<f64>>) -> Vec<f64> {
     values.into_iter().map(|v| v.unwrap_or(f64::NAN)).collect()
 }
 
+#[wasm_bindgen]
+extern "C" {
+    /// A JavaScript array of booleans. `wasm_bindgen` has no slice type for
+    /// `bool` the way it does for the numeric primitives, so the batch methods
+    /// that take a trade side or a breadth flag take this and are typed
+    /// `boolean[]` on the TypeScript side rather than `any`.
+    #[wasm_bindgen(typescript_type = "boolean[]")]
+    pub type BoolArray;
+}
+
+/// Read a `boolean[]` into a `Vec<bool>`, rejecting anything else.
+fn bool_series(flags: &BoolArray) -> Result<Vec<bool>, JsError> {
+    Array::from(flags.as_ref())
+        .iter()
+        .map(|value| {
+            value
+                .as_bool()
+                .ok_or_else(|| JsError::new("expected an array of booleans"))
+        })
+        .collect()
+}
+
 /// Optional helper: install `console.error` panic hook in the browser.
 #[wasm_bindgen(js_name = installPanicHook)]
 pub fn install_panic_hook() {
@@ -10848,6 +10870,39 @@ macro_rules! wasm_ob_indicator {
                 let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
                 Ok(self.inner.update(book))
             }
+            /// Batch over the same inputs as `update`, one element per bar.
+            /// Warmup positions come back as `NaN`, so the output length
+            /// matches the input.
+            pub fn batch(
+                &mut self,
+                bid_px: Vec<Float64Array>,
+                bid_sz: Vec<Float64Array>,
+                ask_px: Vec<Float64Array>,
+                ask_sz: Vec<Float64Array>,
+            ) -> Result<Float64Array, JsError> {
+                if bid_sz.len() != bid_px.len()
+                    || ask_px.len() != bid_px.len()
+                    || ask_sz.len() != bid_px.len()
+                {
+                    return Err(JsError::new(
+                        "bid_px, bid_sz, ask_px, ask_sz must be equal length",
+                    ));
+                }
+                let mut out = Vec::with_capacity(bid_px.len());
+                for i in 0..bid_px.len() {
+                    out.push(
+                        self.update(
+                            &bid_px[i].to_vec(),
+                            &bid_sz[i].to_vec(),
+                            &ask_px[i].to_vec(),
+                            &ask_sz[i].to_vec(),
+                        )?
+                        .unwrap_or(f64::NAN),
+                    );
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
@@ -10920,6 +10975,38 @@ impl WasmOrderBookImbalanceTopN {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        bid_px: Vec<Float64Array>,
+        bid_sz: Vec<Float64Array>,
+        ask_px: Vec<Float64Array>,
+        ask_sz: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if bid_sz.len() != bid_px.len()
+            || ask_px.len() != bid_px.len()
+            || ask_sz.len() != bid_px.len()
+        {
+            return Err(JsError::new(
+                "bid_px, bid_sz, ask_px, ask_sz must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(bid_px.len());
+        for i in 0..bid_px.len() {
+            out.push(
+                self.update(
+                    &bid_px[i].to_vec(),
+                    &bid_sz[i].to_vec(),
+                    &ask_px[i].to_vec(),
+                    &ask_sz[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // ============================== Microstructure: Trade Flow ==============================
@@ -10966,6 +11053,29 @@ macro_rules! wasm_trade_indicator {
             ) -> Result<Option<f64>, JsError> {
                 Ok(self.inner.update(build_trade(price, size, is_buy)?))
             }
+            /// Batch over the same inputs as `update`, one element per bar.
+            /// Warmup positions come back as `NaN`, so the output length
+            /// matches the input.
+            pub fn batch(
+                &mut self,
+                price: &[f64],
+                size: &[f64],
+                is_buy: &BoolArray,
+            ) -> Result<Float64Array, JsError> {
+                let is_buy = bool_series(is_buy)?;
+                if size.len() != price.len() || is_buy.len() != price.len() {
+                    return Err(JsError::new("price, size, is_buy must be equal length"));
+                }
+                let mut out = Vec::with_capacity(price.len());
+                for i in 0..price.len() {
+                    out.push(
+                        self.update(price[i], size[i], is_buy[i])?
+                            .unwrap_or(f64::NAN),
+                    );
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
@@ -11024,6 +11134,28 @@ impl WasmTradeImbalance {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // Trade-sign autocorrelation carries a `period` parameter, so it is hand-written.
@@ -11058,6 +11190,28 @@ impl WasmTradeSignAutocorrelation {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // PIN carries a `window` parameter, so it is hand-written.
@@ -11091,6 +11245,28 @@ impl WasmPin {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11133,6 +11309,38 @@ impl WasmOrderFlowImbalance {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        bid_px: Vec<Float64Array>,
+        bid_sz: Vec<Float64Array>,
+        ask_px: Vec<Float64Array>,
+        ask_sz: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if bid_sz.len() != bid_px.len()
+            || ask_px.len() != bid_px.len()
+            || ask_sz.len() != bid_px.len()
+        {
+            return Err(JsError::new(
+                "bid_px, bid_sz, ask_px, ask_sz must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(bid_px.len());
+        for i in 0..bid_px.len() {
+            out.push(
+                self.update(
+                    &bid_px[i].to_vec(),
+                    &bid_sz[i].to_vec(),
+                    &ask_px[i].to_vec(),
+                    &ask_sz[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // VPIN: trade input, volume-bucketed `(bucket_volume, num_buckets)`.
@@ -11166,6 +11374,28 @@ impl WasmVpin {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11201,6 +11431,28 @@ impl WasmAmihudIlliquidity {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // Roll Measure: trade input with a `period` parameter.
@@ -11234,6 +11486,28 @@ impl WasmRollMeasure {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11287,6 +11561,35 @@ macro_rules! wasm_trade_quote_indicator {
                     .inner
                     .update(build_trade_quote(price, size, is_buy, mid)?))
             }
+            /// Batch over the same inputs as `update`, one element per bar.
+            /// Warmup positions come back as `NaN`, so the output length
+            /// matches the input.
+            pub fn batch(
+                &mut self,
+                price: &[f64],
+                size: &[f64],
+                is_buy: &BoolArray,
+                mid: &[f64],
+            ) -> Result<Float64Array, JsError> {
+                let is_buy = bool_series(is_buy)?;
+                if size.len() != price.len()
+                    || is_buy.len() != price.len()
+                    || mid.len() != price.len()
+                {
+                    return Err(JsError::new(
+                        "price, size, is_buy, mid must be equal length",
+                    ));
+                }
+                let mut out = Vec::with_capacity(price.len());
+                for i in 0..price.len() {
+                    out.push(
+                        self.update(price[i], size[i], is_buy[i], mid[i])?
+                            .unwrap_or(f64::NAN),
+                    );
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
@@ -11348,6 +11651,31 @@ impl WasmRealizedSpread {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+        mid: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() || mid.len() != price.len() {
+            return Err(JsError::new(
+                "price, size, is_buy, mid must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i], mid[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // Kyle's lambda carries a `window` parameter, so it is hand-written.
@@ -11389,6 +11717,31 @@ impl WasmKylesLambda {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+        mid: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() || mid.len() != price.len() {
+            return Err(JsError::new(
+                "price, size, is_buy, mid must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            out.push(
+                self.update(price[i], size[i], is_buy[i], mid[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11441,6 +11794,25 @@ impl WasmFootprint {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`. Returns one array of
+    /// `{ price, bidVol, askVol }` levels per trade, since the level count
+    /// varies with the trades seen so far.
+    pub fn batch(
+        &mut self,
+        price: &[f64],
+        size: &[f64],
+        is_buy: &BoolArray,
+    ) -> Result<Array, JsError> {
+        let is_buy = bool_series(is_buy)?;
+        if size.len() != price.len() || is_buy.len() != price.len() {
+            return Err(JsError::new("price, size, is_buy must be equal length"));
+        }
+        let out = Array::new();
+        for i in 0..price.len() {
+            out.push(&self.update(price[i], size[i], is_buy[i])?);
+        }
+        Ok(out)
     }
 }
 
@@ -11543,6 +11915,16 @@ impl WasmFundingRate {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(&mut self, funding_rate: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for &value in funding_rate {
+            out.push(self.update(value)?.unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = FundingRateMean)]
@@ -11576,6 +11958,16 @@ impl WasmFundingRateMean {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(&mut self, funding_rate: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for &value in funding_rate {
+            out.push(self.update(value)?.unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = FundingRateZScore)]
@@ -11608,6 +12000,16 @@ impl WasmFundingRateZScore {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(&mut self, funding_rate: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for &value in funding_rate {
+            out.push(self.update(value)?.unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11648,6 +12050,26 @@ impl WasmFundingBasis {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        mark_price: &[f64],
+        index_price: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if index_price.len() != mark_price.len() {
+            return Err(JsError::new("mark_price, index_price must be equal length"));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.update(mark_price[i], index_price[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = OpenInterestDelta)]
@@ -11686,6 +12108,16 @@ impl WasmOpenInterestDelta {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(&mut self, open_interest: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(open_interest.len());
+        for &value in open_interest {
+            out.push(self.update(value)?.unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11831,6 +12263,28 @@ impl WasmOIPriceDivergence {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        open_interest: &[f64],
+        mark_price: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if mark_price.len() != open_interest.len() {
+            return Err(JsError::new(
+                "open_interest, mark_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.update(open_interest[i], mark_price[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = OIWeighted)]
@@ -11870,6 +12324,28 @@ impl WasmOIWeighted {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        mark_price: &[f64],
+        open_interest: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open_interest.len() != mark_price.len() {
+            return Err(JsError::new(
+                "mark_price, open_interest must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.update(mark_price[i], open_interest[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = LongShortRatio)]
@@ -11908,6 +12384,26 @@ impl WasmLongShortRatio {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        long_size: &[f64],
+        short_size: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if short_size.len() != long_size.len() {
+            return Err(JsError::new("long_size, short_size must be equal length"));
+        }
+        let mut out = Vec::with_capacity(long_size.len());
+        for i in 0..long_size.len() {
+            out.push(
+                self.update(long_size[i], short_size[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -11953,6 +12449,28 @@ impl WasmTakerBuySellRatio {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        taker_buy_volume: &[f64],
+        taker_sell_volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if taker_sell_volume.len() != taker_buy_volume.len() {
+            return Err(JsError::new(
+                "taker_buy_volume, taker_sell_volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(taker_buy_volume.len());
+        for i in 0..taker_buy_volume.len() {
+            out.push(
+                self.update(taker_buy_volume[i], taker_sell_volume[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -12006,6 +12524,35 @@ impl WasmLiquidationFeatures {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`. Returns a flat array of
+    /// `n * 5` values, `[long, short, net, total, imbalance]` per tick.
+    pub fn batch(
+        &mut self,
+        long_liquidation: &[f64],
+        short_liquidation: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if short_liquidation.len() != long_liquidation.len() {
+            return Err(JsError::new(
+                "long_liquidation, short_liquidation must be equal length",
+            ));
+        }
+        let mut out = vec![f64::NAN; long_liquidation.len() * 5];
+        for i in 0..long_liquidation.len() {
+            let o = self
+                .inner
+                .update(deriv_liquidation(
+                    long_liquidation[i],
+                    short_liquidation[i],
+                )?)
+                .expect("liquidation features emit on every tick");
+            out[i * 5] = o.long;
+            out[i * 5 + 1] = o.short;
+            out[i * 5 + 2] = o.net;
+            out[i * 5 + 3] = o.total;
+            out[i * 5 + 4] = o.imbalance;
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -12087,6 +12634,28 @@ impl WasmTermStructureBasis {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        futures_price: &[f64],
+        index_price: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if index_price.len() != futures_price.len() {
+            return Err(JsError::new(
+                "futures_price, index_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(futures_price.len());
+        for i in 0..futures_price.len() {
+            out.push(
+                self.update(futures_price[i], index_price[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = CalendarSpread)]
@@ -12127,6 +12696,28 @@ impl WasmCalendarSpread {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        futures_price: &[f64],
+        mark_price: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if mark_price.len() != futures_price.len() {
+            return Err(JsError::new(
+                "futures_price, mark_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(futures_price.len());
+        for i in 0..futures_price.len() {
+            out.push(
+                self.update(futures_price[i], mark_price[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -12175,6 +12766,29 @@ impl WasmEstimatedLeverageRatio {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        open_interest: &[f64],
+        long_size: &[f64],
+        short_size: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if long_size.len() != open_interest.len() || short_size.len() != open_interest.len() {
+            return Err(JsError::new(
+                "open_interest, long_size, short_size must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.update(open_interest[i], long_size[i], short_size[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -12226,6 +12840,31 @@ impl WasmOiToVolumeRatio {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        open_interest: &[f64],
+        taker_buy_volume: &[f64],
+        taker_sell_volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if taker_buy_volume.len() != open_interest.len()
+            || taker_sell_volume.len() != open_interest.len()
+        {
+            return Err(JsError::new(
+                "open_interest, taker_buy_volume, taker_sell_volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.update(open_interest[i], taker_buy_volume[i], taker_sell_volume[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // ---------- Perpetual Premium Index ----------
@@ -12267,6 +12906,26 @@ impl WasmPerpetualPremiumIndex {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        mark_price: &[f64],
+        index_price: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if index_price.len() != mark_price.len() {
+            return Err(JsError::new("mark_price, index_price must be equal length"));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.update(mark_price[i], index_price[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // ---------- Funding-Implied APR ----------
@@ -12302,6 +12961,16 @@ impl WasmFundingImpliedApr {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(&mut self, funding_rate: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for &value in funding_rate {
+            out.push(self.update(value)?.unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 // ---------- Open-Interest Momentum ----------
@@ -12336,6 +13005,16 @@ impl WasmOpenInterestMomentum {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(&mut self, open_interest: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(open_interest.len());
+        for &value in open_interest {
+            out.push(self.update(value)?.unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -12889,6 +13568,38 @@ impl WasmAdvanceDecline {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 fn build_cross_section_above_ma(
@@ -12998,6 +13709,38 @@ impl WasmAdvanceDeclineRatio {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = AdVolumeLine)]
@@ -13044,6 +13787,38 @@ impl WasmAdVolumeLine {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -13092,6 +13867,38 @@ impl WasmMcClellanOscillator {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = McClellanSummationIndex)]
@@ -13138,6 +13945,38 @@ impl WasmMcClellanSummationIndex {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -13186,6 +14025,38 @@ impl WasmTrin {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = BreadthThrust)]
@@ -13226,6 +14097,38 @@ impl WasmBreadthThrust {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -13274,6 +14177,38 @@ impl WasmNewHighsNewLows {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = HighLowIndex)]
@@ -13314,6 +14249,38 @@ impl WasmHighLowIndex {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -13363,6 +14330,41 @@ impl WasmPercentAboveMa {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+        above_ma: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+            || above_ma.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low, above_ma must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                    above_ma[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = UpDownVolumeRatio)]
@@ -13409,6 +14411,38 @@ impl WasmUpDownVolumeRatio {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -13462,6 +14496,41 @@ impl WasmBullishPercentIndex {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+        on_buy_signal: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+            || on_buy_signal.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low, on_buy_signal must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                    on_buy_signal[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = CumulativeVolumeIndex)]
@@ -13508,6 +14577,38 @@ impl WasmCumulativeVolumeIndex {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -13556,6 +14657,38 @@ impl WasmAbsoluteBreadthIndex {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = TickIndex)]
@@ -13602,6 +14735,38 @@ impl WasmTickIndex {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        change: Vec<Float64Array>,
+        volume: Vec<Float64Array>,
+        new_high: Vec<Float64Array>,
+        new_low: Vec<Float64Array>,
+    ) -> Result<Float64Array, JsError> {
+        if volume.len() != change.len()
+            || new_high.len() != change.len()
+            || new_low.len() != change.len()
+        {
+            return Err(JsError::new(
+                "change, volume, new_high, new_low must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            out.push(
+                self.update(
+                    change[i].to_vec(),
+                    volume[i].to_vec(),
+                    new_high[i].to_vec(),
+                    new_low[i].to_vec(),
+                )?
+                .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -14942,6 +16107,36 @@ impl WasmTickBars {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Batch over the same inputs as `update`, concatenating the bars each
+    /// candle completed. The output length is data-dependent, not `n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume must be equal length",
+            ));
+        }
+        let out = Array::new();
+        for i in 0..open.len() {
+            for bar in self
+                .update(open[i], high[i], low[i], close[i], volume[i])?
+                .iter()
+            {
+                out.push(&bar);
+            }
+        }
+        Ok(out)
+    }
 }
 
 #[wasm_bindgen(js_name = VolumeBars)]
@@ -14989,6 +16184,36 @@ impl WasmVolumeBars {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Batch over the same inputs as `update`, concatenating the bars each
+    /// candle completed. The output length is data-dependent, not `n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume must be equal length",
+            ));
+        }
+        let out = Array::new();
+        for i in 0..open.len() {
+            for bar in self
+                .update(open[i], high[i], low[i], close[i], volume[i])?
+                .iter()
+            {
+                out.push(&bar);
+            }
+        }
+        Ok(out)
     }
 }
 
@@ -15039,6 +16264,36 @@ impl WasmDollarBars {
     pub fn name(&self) -> String {
         self.inner.name().to_string()
     }
+    /// Batch over the same inputs as `update`, concatenating the bars each
+    /// candle completed. The output length is data-dependent, not `n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume must be equal length",
+            ));
+        }
+        let out = Array::new();
+        for i in 0..open.len() {
+            for bar in self
+                .update(open[i], high[i], low[i], close[i], volume[i])?
+                .iter()
+            {
+                out.push(&bar);
+            }
+        }
+        Ok(out)
+    }
 }
 
 #[wasm_bindgen(js_name = ImbalanceBars)]
@@ -15079,6 +16334,26 @@ impl WasmImbalanceBars {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Batch over the same inputs as `update`, concatenating the bars each
+    /// candle completed. The output length is data-dependent, not `n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Array, JsError> {
+        if high.len() != open.len() || low.len() != open.len() || close.len() != open.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let out = Array::new();
+        for i in 0..open.len() {
+            for bar in self.update(open[i], high[i], low[i], close[i])?.iter() {
+                out.push(&bar);
+            }
+        }
+        Ok(out)
     }
 }
 
@@ -15122,6 +16397,26 @@ impl WasmRunBars {
 
     pub fn name(&self) -> String {
         self.inner.name().to_string()
+    }
+    /// Batch over the same inputs as `update`, concatenating the bars each
+    /// candle completed. The output length is data-dependent, not `n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Array, JsError> {
+        if high.len() != open.len() || low.len() != open.len() || close.len() != open.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let out = Array::new();
+        for i in 0..open.len() {
+            for bar in self.update(open[i], high[i], low[i], close[i])?.iter() {
+                out.push(&bar);
+            }
+        }
+        Ok(out)
     }
 }
 
@@ -15258,6 +16553,38 @@ macro_rules! wasm_seasonality_offset_scalar {
                     wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?,
                 ))
             }
+            /// Batch over the same inputs as `update`, one element per bar.
+            /// Warmup positions come back as `NaN`, so the output length
+            /// matches the input.
+            pub fn batch(
+                &mut self,
+                open: &[f64],
+                high: &[f64],
+                low: &[f64],
+                close: &[f64],
+                volume: &[f64],
+                timestamp: &[i64],
+            ) -> Result<Float64Array, JsError> {
+                if high.len() != open.len()
+                    || low.len() != open.len()
+                    || close.len() != open.len()
+                    || volume.len() != open.len()
+                    || timestamp.len() != open.len()
+                {
+                    return Err(JsError::new(
+                        "open, high, low, close, volume, timestamp must be equal length",
+                    ));
+                }
+                let mut out = Vec::with_capacity(open.len());
+                for i in 0..open.len() {
+                    out.push(
+                        self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?
+                            .unwrap_or(f64::NAN),
+                    );
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
@@ -15311,6 +16638,43 @@ macro_rules! wasm_seasonality_bucket_profile {
                     None => JsValue::NULL,
                 })
             }
+            /// Batch over the same inputs as `update`. Returns one entry per
+            /// bar: the bucket profile as a `Float64Array`, or `null` while
+            /// warming up. The bucket count is fixed by the constructor, so a
+            /// flat array would carry no more information.
+            pub fn batch(
+                &mut self,
+                open: &[f64],
+                high: &[f64],
+                low: &[f64],
+                close: &[f64],
+                volume: &[f64],
+                timestamp: &[i64],
+            ) -> Result<Array, JsError> {
+                if high.len() != open.len()
+                    || low.len() != open.len()
+                    || close.len() != open.len()
+                    || volume.len() != open.len()
+                    || timestamp.len() != open.len()
+                {
+                    return Err(JsError::new(
+                        "open, high, low, close, volume, timestamp must be equal length",
+                    ));
+                }
+                let out = Array::new();
+                for i in 0..open.len() {
+                    out.push(&self.update(
+                        open[i],
+                        high[i],
+                        low[i],
+                        close[i],
+                        volume[i],
+                        timestamp[i],
+                    )?);
+                }
+                Ok(out)
+            }
+
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
@@ -15364,6 +16728,43 @@ macro_rules! wasm_seasonality_offset_profile {
                     None => JsValue::NULL,
                 })
             }
+            /// Batch over the same inputs as `update`. Returns one entry per
+            /// bar: the bucket profile as a `Float64Array`, or `null` while
+            /// warming up. The bucket count is fixed by the constructor, so a
+            /// flat array would carry no more information.
+            pub fn batch(
+                &mut self,
+                open: &[f64],
+                high: &[f64],
+                low: &[f64],
+                close: &[f64],
+                volume: &[f64],
+                timestamp: &[i64],
+            ) -> Result<Array, JsError> {
+                if high.len() != open.len()
+                    || low.len() != open.len()
+                    || close.len() != open.len()
+                    || volume.len() != open.len()
+                    || timestamp.len() != open.len()
+                {
+                    return Err(JsError::new(
+                        "open, high, low, close, volume, timestamp must be equal length",
+                    ));
+                }
+                let out = Array::new();
+                for i in 0..open.len() {
+                    out.push(&self.update(
+                        open[i],
+                        high[i],
+                        low[i],
+                        close[i],
+                        volume[i],
+                        timestamp[i],
+                    )?);
+                }
+                Ok(out)
+            }
+
             pub fn reset(&mut self) {
                 self.inner.reset();
             }
@@ -15447,6 +16848,37 @@ impl WasmAverageDailyRange {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+        timestamp: &[i64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+            || timestamp.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume, timestamp must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            out.push(
+                self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = TurnOfMonth)]
@@ -15492,6 +16924,37 @@ impl WasmTurnOfMonth {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`, one element per bar.
+    /// Warmup positions come back as `NaN`, so the output length matches
+    /// the input.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+        timestamp: &[i64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+            || timestamp.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume, timestamp must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            out.push(
+                self.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i])?
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -15541,6 +17004,38 @@ impl WasmSessionHighLow {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`. Returns a flat array of
+    /// `n * 2` values, `[high, low]` per bar, `NaN` while warming up.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+        timestamp: &[i64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+            || timestamp.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume, timestamp must be equal length",
+            ));
+        }
+        let mut out = vec![f64::NAN; open.len() * 2];
+        for i in 0..open.len() {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], timestamp[i])
+                .map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 
@@ -15592,6 +17087,39 @@ impl WasmSessionRange {
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
     }
+    /// Batch over the same inputs as `update`. Returns a flat array of
+    /// `n * 3` values, `[asia, eu, us]` per bar, `NaN` while warming up.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+        timestamp: &[i64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+            || timestamp.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume, timestamp must be equal length",
+            ));
+        }
+        let mut out = vec![f64::NAN; open.len() * 3];
+        for i in 0..open.len() {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], timestamp[i])
+                .map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.asia;
+                out[i * 3 + 1] = o.eu;
+                out[i * 3 + 2] = o.us;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
 }
 
 #[wasm_bindgen(js_name = OvernightIntradayReturn)]
@@ -15640,6 +17168,38 @@ impl WasmOvernightIntradayReturn {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+    /// Batch over the same inputs as `update`. Returns a flat array of
+    /// `n * 2` values, `[overnight, intraday]` per bar, `NaN` while warming up.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+        timestamp: &[i64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != open.len()
+            || low.len() != open.len()
+            || close.len() != open.len()
+            || volume.len() != open.len()
+            || timestamp.len() != open.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume, timestamp must be equal length",
+            ));
+        }
+        let mut out = vec![f64::NAN; open.len() * 2];
+        for i in 0..open.len() {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], timestamp[i])
+                .map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.overnight;
+                out[i * 2 + 1] = o.intraday;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
 }
 

@@ -583,8 +583,11 @@ jobs:
       - name: Build WASM package (nodejs target) for the golden suite
         run: wasm-pack build bindings/wasm --target nodejs --release --out-dir pkg
 
-      - name: Golden parity — all 514 indicators vs the Rust reference
-        run: node --test bindings/wasm/tests/golden.test.js
+      # The whole directory, not just golden.test.js: naming one file meant
+      # data_layer.test.js had never run in CI, which is how a resampler test
+      # that had been failing since the streaming change went unnoticed.
+      - name: WASM suite — golden parity, batch parity, data layer, completeness
+        run: node --test bindings/wasm/tests/
 
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
