@@ -3,31 +3,35 @@
 \name{push}
 \alias{push}
 \alias{push.wickra_indicator}
-\title{Push a trade tick into a tick aggregator}
+\title{Push one input into a streaming aggregator}
 \usage{
-push(object, price, size, timestamp)
+push(object, ...)
 
-\method{push}{wickra_indicator}(object, price, size, timestamp)
+\method{push}{wickra_indicator}(object, ...)
 }
 \arguments{
-\item{object}{A \code{wickra_indicator} created by \code{\link[=TickAggregator]{TickAggregator()}}.}
+\item{object}{A \code{wickra_indicator} created by \code{\link[=TickAggregator]{TickAggregator()}} or
+\code{\link[=Resampler]{Resampler()}}.}
 
-\item{price}{Trade price.}
-
-\item{size}{Trade size (volume).}
-
-\item{timestamp}{Trade timestamp, in the same unit as the aggregator bucket.}
+\item{...}{The input fields, in the order that object takes them: a tick is
+\verb{price, size, timestamp}; a candle is \verb{open, high, low, close, volume, timestamp}.}
 }
 \value{
 A numeric matrix with six named columns (possibly zero rows).
 }
 \description{
-Feeds one trade tick to a \code{\link[=TickAggregator]{TickAggregator()}} and returns the candles it
-closed as a numeric matrix with columns \code{open}, \code{high}, \code{low}, \code{close},
-\code{volume}, \code{timestamp} (zero rows while the open bar merely grows).
+Feeds a \code{\link[=TickAggregator]{TickAggregator()}} one trade tick (\code{price}, \code{size}, \code{timestamp}) or a
+\code{\link[=Resampler]{Resampler()}} one candle (\code{open}, \code{high}, \code{low}, \code{close}, \code{volume},
+\code{timestamp}), and returns the candles it closed as a numeric matrix with
+columns \code{open}, \code{high}, \code{low}, \code{close}, \code{volume}, \code{timestamp}. The matrix has
+zero rows while the open bar merely grows, and more than one row when gap
+filling emits placeholders for skipped buckets.
 }
 \examples{
 agg <- TickAggregator(1000, FALSE)
 push(agg, 100, 1, 0)
 push(agg, 102, 1, 1000) # closes the first bucket
+
+r <- Resampler(5, TRUE)
+push(r, 100, 101, 99, 100, 10, 0)
 }

@@ -37,12 +37,24 @@ update.wickra_indicator <- function(object, ...) {
 
 #' Run an indicator over a whole series in one call
 #'
-#' Available for scalar indicators. The result is identical to feeding the same
-#' inputs through [update()] one at a time, with `NA` at warmup positions.
+#' The result is identical to feeding the same inputs through [update()] one at a
+#' time, with `NA` at warmup positions.
+#'
+#' Most indicators take one column per input field, all the same length. The
+#' cross-section and order-book families take a per-bar snapshot instead: each
+#' field arrives as one flat column with bar `i` at `[i*width, (i+1)*width)`, and
+#' the width is passed as a named argument in the position the native routine
+#' declares it (`members` for a cross-section, `n_bids` / `n_asks` for an order
+#' book). Naming it is what distinguishes a width from a column, so the rule that
+#' keeps a short column from being read past its end still applies to the rest.
 #'
 #' @param object A `wickra_indicator`.
-#' @param ... The input vector(s).
-#' @return A numeric vector the same length as the input.
+#' @param ... The input columns, and for the snapshot families the per-bar width
+#'   as a named argument.
+#' @return A numeric vector for a scalar indicator; an `n x k` matrix for a
+#'   multi-output or profile indicator, with the field names as columns; and for
+#'   a bar builder the bars the series completed, which is as many as the data
+#'   makes it rather than one per input row.
 #' @examples
 #' batch(Sma(3), c(1, 2, 3, 4, 5)) # NA NA 2 3 4
 #' @export
@@ -53,29 +65,47 @@ batch <- function(object, ...) {
 #' @rdname batch
 #' @export
 batch.wickra_indicator <- function(object, ...) {
-  cols <- list(...)
-  if (length(cols) == 0L) {
+  args <- list(...)
+  if (length(args) == 0L) {
     stop("batch() needs at least one input column", call. = FALSE)
   }
-  # The native routine takes its row count from the first column and indexes
-  # every other column with it, so a shorter column would be read past its end.
-  # It also expects doubles: an integer vector such as `1:100` has a different
-  # internal representation, and reading it as doubles yields nonsense.
-  cols <- lapply(seq_along(cols), function(i) {
-    column <- cols[[i]]
-    if (!is.numeric(column)) {
+  labels <- names(args)
+  is_width <- if (is.null(labels)) rep(FALSE, length(args)) else nzchar(labels)
+
+  # The native routine takes its row count from the columns and indexes every
+  # one of them with it, so a shorter column would be read past its end. It also
+  # expects doubles: an integer vector such as `1:100` has a different internal
+  # representation, and reading it as doubles yields nonsense.
+  args <- lapply(seq_along(args), function(i) {
+    value <- args[[i]]
+    if (!is.numeric(value) && !is.logical(value)) {
       stop(sprintf("batch() column %d must be numeric, got %s",
-                   i, class(column)[1L]), call. = FALSE)
+                   i, class(value)[1L]), call. = FALSE)
     }
-    as.double(column)
+    if (is_width[i]) {
+      if (length(value) != 1L || is.na(value) || value < 1) {
+        stop(sprintf("batch() argument `%s` must be a single positive per-bar width",
+                     labels[i]), call. = FALSE)
+      }
+      return(as.integer(value))
+    }
+    as.double(value)
   })
-  sizes <- vapply(cols, length, integer(1L))
-  if (any(sizes != sizes[1L])) {
-    stop(sprintf("batch() columns must all have the same length; got %s",
-                 paste(sizes, collapse = ", ")), call. = FALSE)
+
+  # With no width given, every column carries one value per bar and they have to
+  # agree. With one given, they deliberately do not -- a snapshot column is
+  # `n * width` long and a plain one is `n` -- and only the native routine knows
+  # which is which, so it does the checking; it holds every column to the width
+  # its own signature declares.
+  if (!any(is_width)) {
+    sizes <- vapply(args, length, integer(1L))
+    if (any(sizes != sizes[1L])) {
+      stop(sprintf("batch() columns must all have the same length; got %s",
+                   paste(sizes, collapse = ", ")), call. = FALSE)
+    }
   }
   do.call(".Call", c(list(paste0("wk_", object$prefix, "_batch"), object$ptr),
-                     cols, list(PACKAGE = "wickra")))
+                     unname(args), list(PACKAGE = "wickra")))
 }
 
 #' Reset an indicator to its warmup state

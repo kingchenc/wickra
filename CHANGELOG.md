@@ -35,16 +35,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `BatchShapes`-style test covering one indicator per awkward input shape, which
   is what it was for, and nothing that drove the whole catalogue through the
   batch path — so a batch that disagreed with streaming only had to avoid those
-  few to pass. C# and Java now replay all 514 through `Batch` against the same
-  fixtures the streaming pass uses; R covers the 475 that have a shim and pins
-  the count of those that do not. Verified by feeding a scalar batch the open
-  instead of the close and watching each suite fail.
-- **R has no `batch` for 39 of the 514.** The cross-section, order-book,
+  few to pass. All three now replay the whole catalogue through it against the
+  same fixtures the streaming pass uses. Verified by feeding a scalar batch the
+  open instead of the close and watching each suite fail.
+- **Two R manual pages documented a signature that had changed.**
+  `Resampler.Rd` still showed `Resampler(timeframe)` after the resampler gained
+  `gap_fill`, and `push.Rd` was equally behind. The R job runs `R CMD check`
+  precisely to catch that class of drift — a stale page shipped to r-universe
+  once before — so this was failing there. Regenerated, along with the R
+  package description, which called every indicator an "O(1) streaming state
+  machine": the same unqualified claim corrected elsewhere, and the one visible
+  on CRAN and r-universe.
+- **R had no `batch` for 39 of the 514.** The cross-section, order-book,
   profile, bar-builder and footprint families take a per-bar snapshot or emit a
-  variable number of rows, which R's generic column forwarding cannot express,
-  and no shim was ever generated for them. The other seven bindings have one.
-  The new test reports the 475/39 split rather than passing over it, so the gap
-  cannot widen unnoticed.
+  variable number of rows, and no shim was ever generated for them, while the
+  other seven bindings had one for every indicator. All four shapes are
+  generated now. A snapshot arrives as one flat column per field — bar `i` at
+  `[i*width, (i+1)*width)` — with the width passed by name (`members`,
+  `n_bids`/`n_asks`), the same shape the Java and C# batches take. A profile
+  comes back as an `n x width` matrix, the width read from the handle rather
+  than asked of the caller. A bar builder's batch reports what the whole series
+  completed and drains it, so the result is as long as the data makes it rather
+  than one row per input. `batch()` gained the one rule that makes this
+  expressible: a named argument is a per-bar width, an unnamed one is a column,
+  and with no width given the guard against a short column being read past its
+  end is unchanged.
 - **The catalogue-wide binding suites now check the contract, not just the
   values.** Go, WASM, C#, Java and R replay all 514 indicators through `update`
   and compare against the Rust fixtures, and stop there — a `reset` that forgot

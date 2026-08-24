@@ -118,6 +118,33 @@ golden_drive <- function(spec, ind, input_rows) {
   lapply(seq_along(input_rows), function(i) golden_compute(spec, ind, input_rows[[i]], i))
 }
 
+# A result as one flat, row-major numeric vector, whatever shape it came back in.
+golden_flatten <- function(x) {
+  if (is.matrix(x)) as.numeric(t(x)) else as.numeric(x)
+}
+
+# One expectation for a whole indicator rather than one per value. testthat
+# records every expectation, and at 514 indicators x 80 rows x up to 52 columns
+# that bookkeeping costs far more than the arithmetic. A mismatch still fails;
+# the message says how many values differ and names the first.
+golden_expect_values <- function(canon, got, want, tol) {
+  if (length(got) != length(want)) {
+    expect_equal(length(got), length(want),
+      info = sprintf("%s: batch produced %d values, fixture has %d",
+                     canon, length(got), length(want)))
+    return(invisible(NULL))
+  }
+  ok <- (is.na(want) & is.na(got)) |
+    (is.infinite(want) & is.infinite(got) & sign(want) == sign(got)) |
+    (is.finite(want) & is.finite(got) & abs(got - want) <= tol * pmax(1, abs(want)))
+  bad <- which(!ok)
+  expect_equal(length(bad), 0L,
+    info = if (length(bad) == 0L) canon else sprintf(
+      "%s: %d of %d values differ; first at %d (got %s want %s)",
+      canon, length(bad), length(want), bad[1],
+      format(got[bad[1]]), format(want[bad[1]])))
+}
+
 # Whether the reference fixture holds a single finite value. A few indicators
 # never emit over this input, and for those "ready once the series is done"
 # would be the wrong assertion. Reading it off the fixture beats inferring it at
@@ -200,17 +227,22 @@ test_that("all 514 indicators honour reset, is_ready and warmup_period", {
   }
 })
 
-# The archetypes whose per-bar inputs are ordinary equal-length columns. The
-# cross-section, order-book, profile and bar-builder families take a per-bar
-# snapshot or emit a variable number of rows, and have no batch shim in R at all
-# -- see the count this test reports.
-GOLDEN_BATCHABLE <- c(
-  "scalar_f64", "multi_f64", "pairwise", "multi_pairwise",
-  "scalar_candle", "multi_candle", "trade", "trademid", "deriv", "deriv_multi"
-)
-
 # The whole-series columns for one archetype, in the order its batch declares
-# them. Logicals cross the C boundary as 0/1 doubles.
+# them, named where the argument is a per-bar width rather than a column.
+# Logicals cross the C boundary as 0/1 doubles.
+#
+# A cross-section or order-book snapshot is one flat column per field, bar `i`
+# at `[i*width, (i+1)*width)`, which is the shape the Java and C# batches take
+# too. `golden_flat` builds one from the same per-bar values `compute` feeds
+# `update`.
+golden_flat <- function(input_rows, f) {
+  # `vapply` returns a width x n matrix, one column per bar, and R stores it
+  # column-major -- so reading it straight out is already bar-major. Transposing
+  # first would interleave the bars, which is the layout the native routine does
+  # not take.
+  as.numeric(vapply(input_rows, f, numeric(5)))
+}
+
 golden_batch_columns <- function(arch, input_rows) {
   n <- length(input_rows)
   col <- function(k) vapply(input_rows, function(r) r[k], numeric(1))
@@ -219,64 +251,68 @@ golden_batch_columns <- function(arch, input_rows) {
   switch(arch,
     scalar_f64 = , multi_f64 = list(close),
     pairwise = , multi_pairwise = list(close, open),
-    scalar_candle = , multi_candle = list(open, high, low, close, volume, ts),
-    trade = list(close, volume, as.numeric(close >= open), ts),
+    scalar_candle = , multi_candle = , profile_bins = , profile_pricebins =
+      list(open, high, low, close, volume, ts),
+    trade = , footprint = list(close, volume, as.numeric(close >= open), ts),
     trademid = list(close, volume, as.numeric(close >= open), ts, (high + low) / 2),
     deriv = , deriv_multi = c(
       lapply(seq_len(11), function(f) vapply(input_rows, function(r) deriv_fields(r)[f], numeric(1))),
       list(ts)
     ),
+    cross = list(
+      golden_flat(input_rows, function(r) (r[4] - r[1]) + 0:4),
+      golden_flat(input_rows, function(r) r[5] + (0:4) * 10),
+      golden_flat(input_rows, function(r) as.numeric((0:4) %% 2 == 0)),
+      golden_flat(input_rows, function(r) as.numeric((0:4) %% 3 == 0)),
+      golden_flat(input_rows, function(r) as.numeric((0:4) %% 2 == 0)),
+      golden_flat(input_rows, function(r) as.numeric((0:4) %% 3 == 0)),
+      members = 5L, ts
+    ),
+    ob = list(
+      golden_flat(input_rows, function(r) r[4] - 0.1 * (1:5)),
+      golden_flat(input_rows, function(r) r[5] / (1:5)),
+      n_bids = 5L,
+      golden_flat(input_rows, function(r) r[4] + 0.1 * (1:5)),
+      golden_flat(input_rows, function(r) r[5] * 0.9 / (1:5)),
+      n_asks = 5L
+    ),
+    bars_close = list(close, close, close, close, rep(1, n), rep(0, n)),
+    bars_candle4 = list(open, high, low, close, rep(1, n), rep(0, n)),
+    bars_candle5 = list(open, high, low, close, volume, rep(0, n)),
     stop("batch arch ", arch)
   )
 }
 
 # A batch is a separate native path from `update`; until this existed only a
-# handful of indicators had ever been checked through it.
-test_that("every R indicator with a batch shim matches the Rust golden fixtures", {
+# handful of indicators had ever been checked through it, and 39 of them had no
+# batch to check.
+test_that("all 514 indicators match the Rust golden fixtures through batch", {
   skip_if(is.null(golden_dir_all), "golden fixtures not bundled with the package")
   source(test_path("golden_specs.R"), local = TRUE)
   input_rows <- golden_input_rows()
   n <- length(input_rows)
 
   checked <- 0L
-  skipped <- 0L
   for (spec in GOLDEN_SPECS) {
-    if (!(spec$arch %in% GOLDEN_BATCHABLE)) {
-      skipped <- skipped + 1L
-      next
-    }
     checked <- checked + 1L
     ind <- do.call(get(spec$canon), as.list(spec$params))
     got <- do.call(batch, c(list(ind), golden_batch_columns(spec$arch, input_rows)))
     exp <- golden_read_rows(paste0("g_", spec$canon))
-    tol <- golden_tol(spec$canon)
 
-    if (is.matrix(got)) {
-      expect_equal(nrow(got), n, info = sprintf("%s: batch rows", spec$canon))
+    want <- if (identical(spec$arch, "footprint")) {
+      # Footprint reports the whole book after each trade, so the batch holds
+      # the final snapshot rather than every intermediate one.
+      nonempty <- Filter(function(r) length(r) > 0, exp)
+      if (length(nonempty)) nonempty[[length(nonempty)]] else numeric(0)
     } else {
-      expect_equal(length(got), n, info = sprintf("%s: batch length", spec$canon))
+      # A bar builder completes an unpredictable number of bars per candle, so
+      # its batch is the concatenation of what streaming emits row by row; for
+      # everything else the fixture is one row per input and flattens the same.
+      unlist(exp, use.names = FALSE)
     }
-    for (i in seq_len(n)) {
-      want <- exp[[i]]
-      row <- if (is.matrix(got)) unname(got[i, ]) else got[i]
-      expect_equal(length(row), length(want),
-        info = sprintf("%s row %d arity", spec$canon, i))
-      for (k in seq_along(want)) {
-        w <- want[k]; g <- row[k]
-        if (is.na(w)) {
-          expect_true(is.na(g), info = sprintf("%s row %d col %d: want NA", spec$canon, i, k))
-        } else if (is.infinite(w)) {
-          expect_true(is.infinite(g) && sign(g) == sign(w),
-            info = sprintf("%s row %d col %d: want %g", spec$canon, i, k, w))
-        } else {
-          expect_lte(abs(g - w), tol * max(1, abs(w)),
-            label = sprintf("%s row %d col %d (got %s want %g)", spec$canon, i, k, as.character(g), w))
-        }
-      }
-    }
+    golden_expect_values(spec$canon, golden_flatten(got), want, golden_tol(spec$canon))
   }
-  # Not a silent cap: the families without a batch shim are named above, and
-  # this pins how many of them there are so the number cannot drift unnoticed.
-  expect_equal(checked, 475L)
-  expect_equal(skipped, 39L)
+  # Every indicator has a batch now; the cross-section, order-book, profile and
+  # bar-builder families had none until the R shims were generated for them.
+  expect_equal(checked, 514L)
 })

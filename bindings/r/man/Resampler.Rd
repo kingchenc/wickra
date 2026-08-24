@@ -4,17 +4,23 @@
 \alias{Resampler}
 \title{Resample candles to a higher timeframe}
 \usage{
-Resampler(timeframe)
+Resampler(timeframe, gap_fill = FALSE)
 }
 \arguments{
 \item{timeframe}{Integer number of input candles per higher-timeframe bar.}
+
+\item{gap_fill}{Logical. When \code{TRUE}, a flat placeholder bar
+(\verb{open == high == low == close}, zero volume, carrying the close before the
+gap) is emitted for every output bucket no input candle fell into, so the
+series stays evenly spaced. Defaults to \code{FALSE}, which leaves holes.}
 }
 \value{
 A \code{wickra_indicator} resampler.
 }
 \description{
 Aggregates a stream of candles into higher-timeframe bars. Feed candles with
-\code{\link[=update]{update()}} (it returns a completed higher-timeframe bar, or \code{NULL} while the
-current bar is still open) and emit the final, still-open bar with \code{\link[=flush]{flush()}}.
+\code{\link[=update]{update()}} (it returns every bar that closed as a result, which is none while
+the current bar is still open) and emit the final, still-open bar with
+\code{\link[=flush]{flush()}}.
 }
 \keyword{internal}

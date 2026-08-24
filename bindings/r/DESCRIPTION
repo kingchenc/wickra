@@ -4,9 +4,9 @@ Title: Streaming-First Technical Indicators
 Version: 0.9.9
 Authors@R: person("kingchenc", role = c("aut", "cre"), email = "support@wickra.org")
 Description: R bindings for the Wickra technical-analysis library over its C ABI
-    hub. Exposes 514 indicators, each an O(1) streaming state machine shared with
-    the Rust core and the other language bindings, so that live and historical
-    evaluation use the exact same implementation.
+    hub. Exposes 514 indicators, each an incremental streaming state machine
+    shared with the Rust core and the other language bindings, so that live and
+    historical evaluation use the exact same implementation.
 License: MIT + file LICENSE | Apache License 2.0
 URL: https://github.com/wickra-lib/wickra, https://docs.wickra.org,
     https://wickra-lib.r-universe.dev

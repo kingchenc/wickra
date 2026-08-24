@@ -143,6 +143,26 @@ SEXP wk_absolute_breadth_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_absolute_breadth_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_absolute_breadth_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_absolute_breadth_index_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_absolute_breadth_index_warmup_period(SEXP e) {
   struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_absolute_breadth_index_warmup_period(h));
@@ -359,6 +379,26 @@ SEXP wk_ad_volume_line_new(void) {
 SEXP wk_ad_volume_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_ad_volume_line_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_ad_volume_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ad_volume_line_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_ad_volume_line_warmup_period(SEXP e) {
   struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
@@ -686,6 +726,26 @@ SEXP wk_advance_decline_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_advance_decline_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_advance_decline_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_advance_decline_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_advance_decline_warmup_period(SEXP e) {
   struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_advance_decline_warmup_period(h));
@@ -720,6 +780,26 @@ SEXP wk_advance_decline_ratio_new(void) {
 SEXP wk_advance_decline_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_advance_decline_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_advance_decline_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_advance_decline_ratio_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_advance_decline_ratio_warmup_period(SEXP e) {
   struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
@@ -2779,6 +2859,26 @@ SEXP wk_breadth_thrust_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_breadth_thrust_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_breadth_thrust_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_breadth_thrust_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_breadth_thrust_warmup_period(SEXP e) {
   struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_breadth_thrust_warmup_period(h));
@@ -2865,6 +2965,26 @@ SEXP wk_bullish_percent_index_new(void) {
 SEXP wk_bullish_percent_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_bullish_percent_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_bullish_percent_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_bullish_percent_index_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_bullish_percent_index_warmup_period(SEXP e) {
   struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
@@ -4758,6 +4878,26 @@ SEXP wk_cumulative_volume_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
   struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_cumulative_volume_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_cumulative_volume_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_cumulative_volume_index_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_cumulative_volume_index_warmup_period(SEXP e) {
   struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_cumulative_volume_index_warmup_period(h));
@@ -4948,6 +5088,30 @@ SEXP wk_day_of_week_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
   UNPROTECT(2);
   return vv;
+}
+SEXP wk_day_of_week_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t width = wickra_day_of_week_profile_width(h);
+  double *values = (double *)R_alloc(n * (width ? width : 1), sizeof(double));
+  wickra_day_of_week_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, values, width, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, (int)(width)));
+  for (R_xlen_t i = 0; i < n; i++) {
+    for (uintptr_t j = 0; j < width; j++) {
+      REAL(out)[i + n * (j)] = values[i * width + j];
+    }
+  }
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_day_of_week_profile_warmup_period(SEXP e) {
   struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
@@ -5248,6 +5412,24 @@ SEXP wk_depth_slope_new(void) {
 SEXP wk_depth_slope_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_depth_slope_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_depth_slope_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_depth_slope_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_depth_slope_warmup_period(SEXP e) {
   struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
@@ -5603,6 +5785,44 @@ SEXP wk_dollar_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   Rf_setAttrib(r, R_DimNamesSymbol, dn);
   UNPROTECT(3);
   return r;
+}
+SEXP wk_dollar_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DollarBars *h = (struct DollarBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_dollar_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraDollarBar *buf = (struct WickraDollarBar *)R_alloc(total ? total : 1, sizeof(struct WickraDollarBar));
+  uintptr_t got = wickra_dollar_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 6));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].high;
+    REAL(out)[i + got * 2] = (double)buf[i].low;
+    REAL(out)[i + got * 3] = (double)buf[i].close;
+    REAL(out)[i + got * 4] = (double)buf[i].volume;
+    REAL(out)[i + got * 5] = (double)buf[i].dollar;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("volume"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("dollar"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_dollar_bars_name(SEXP e) {
   struct DollarBars *h = (struct DollarBars *)R_ExternalPtrAddr(e);
@@ -8165,6 +8385,36 @@ SEXP wk_footprint_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   UNPROTECT(3);
   return r;
 }
+SEXP wk_footprint_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (size) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (is_buy) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b3 = (int64_t *)R_alloc(Rf_xlength(a3), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a3); k++) b3[k] = (int64_t)REAL(a3)[k];
+  uintptr_t total = wickra_footprint_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), b3, (uintptr_t)n);
+  struct WickraFootprintLevel *buf = (struct WickraFootprintLevel *)R_alloc(total ? total : 1, sizeof(struct WickraFootprintLevel));
+  uintptr_t got = wickra_footprint_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 3));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].price;
+    REAL(out)[i + got * 1] = (double)buf[i].bid_vol;
+    REAL(out)[i + got * 2] = (double)buf[i].ask_vol;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("price"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("bid_vol"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("ask_vol"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_footprint_warmup_period(SEXP e) {
   struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_footprint_warmup_period(h));
@@ -9836,6 +10086,26 @@ SEXP wk_high_low_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_high_low_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_high_low_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_high_low_index_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_high_low_index_warmup_period(SEXP e) {
   struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_high_low_index_warmup_period(h));
@@ -10883,6 +11153,44 @@ SEXP wk_imbalance_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(3);
   return r;
 }
+SEXP wk_imbalance_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ImbalanceBars *h = (struct ImbalanceBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_imbalance_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraImbalanceBar *buf = (struct WickraImbalanceBar *)R_alloc(total ? total : 1, sizeof(struct WickraImbalanceBar));
+  uintptr_t got = wickra_imbalance_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 6));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].high;
+    REAL(out)[i + got * 2] = (double)buf[i].low;
+    REAL(out)[i + got * 3] = (double)buf[i].close;
+    REAL(out)[i + got * 4] = (double)buf[i].imbalance;
+    REAL(out)[i + got * 5] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("imbalance"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_imbalance_bars_name(SEXP e) {
   struct ImbalanceBars *h = (struct ImbalanceBars *)R_ExternalPtrAddr(e);
   return Rf_mkString(wickra_imbalance_bars_name(h));
@@ -11290,6 +11598,30 @@ SEXP wk_intraday_volatility_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SE
   UNPROTECT(2);
   return vv;
 }
+SEXP wk_intraday_volatility_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t width = wickra_intraday_volatility_profile_width(h);
+  double *values = (double *)R_alloc(n * (width ? width : 1), sizeof(double));
+  wickra_intraday_volatility_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, values, width, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, (int)(width)));
+  for (R_xlen_t i = 0; i < n; i++) {
+    for (uintptr_t j = 0; j < width; j++) {
+      REAL(out)[i + n * (j)] = values[i * width + j];
+    }
+  }
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_intraday_volatility_profile_warmup_period(SEXP e) {
   struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_intraday_volatility_profile_warmup_period(h));
@@ -11627,6 +11959,38 @@ SEXP wk_kagi_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   Rf_setAttrib(r, R_DimNamesSymbol, dn);
   UNPROTECT(3);
   return r;
+}
+SEXP wk_kagi_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KagiBars *h = (struct KagiBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_kagi_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraKagiBar *buf = (struct WickraKagiBar *)R_alloc(total ? total : 1, sizeof(struct WickraKagiBar));
+  uintptr_t got = wickra_kagi_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 3));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].start;
+    REAL(out)[i + got * 1] = (double)buf[i].end;
+    REAL(out)[i + got * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("start"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("end"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_kagi_bars_name(SEXP e) {
   struct KagiBars *h = (struct KagiBars *)R_ExternalPtrAddr(e);
@@ -13916,6 +14280,26 @@ SEXP wk_mc_clellan_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_mc_clellan_oscillator_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_mc_clellan_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_mc_clellan_oscillator_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_mc_clellan_oscillator_warmup_period(SEXP e) {
   struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_mc_clellan_oscillator_warmup_period(h));
@@ -13950,6 +14334,26 @@ SEXP wk_mc_clellan_summation_index_new(void) {
 SEXP wk_mc_clellan_summation_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_mc_clellan_summation_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_mc_clellan_summation_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_mc_clellan_summation_index_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_mc_clellan_summation_index_warmup_period(SEXP e) {
   struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
@@ -14295,6 +14699,24 @@ SEXP wk_microprice_new(void) {
 SEXP wk_microprice_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_microprice_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_microprice_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_microprice_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_microprice_warmup_period(SEXP e) {
   struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
@@ -14960,6 +15382,26 @@ SEXP wk_new_highs_new_lows_new(void) {
 SEXP wk_new_highs_new_lows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_new_highs_new_lows_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_new_highs_new_lows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_new_highs_new_lows_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_new_highs_new_lows_warmup_period(SEXP e) {
   struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
@@ -15743,6 +16185,24 @@ SEXP wk_order_book_imbalance_full_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
   struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_book_imbalance_full_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
 }
+SEXP wk_order_book_imbalance_full_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_order_book_imbalance_full_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_order_book_imbalance_full_warmup_period(SEXP e) {
   struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_order_book_imbalance_full_warmup_period(h));
@@ -15777,6 +16237,24 @@ SEXP wk_order_book_imbalance_top1_new(void) {
 SEXP wk_order_book_imbalance_top1_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_book_imbalance_top1_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_book_imbalance_top1_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_order_book_imbalance_top1_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_order_book_imbalance_top1_warmup_period(SEXP e) {
   struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
@@ -15813,6 +16291,24 @@ SEXP wk_order_book_imbalance_top_n_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
   struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_book_imbalance_top_n_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
 }
+SEXP wk_order_book_imbalance_top_n_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_order_book_imbalance_top_n_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_order_book_imbalance_top_n_warmup_period(SEXP e) {
   struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_order_book_imbalance_top_n_warmup_period(h));
@@ -15847,6 +16343,24 @@ SEXP wk_order_flow_imbalance_new(SEXP a0) {
 SEXP wk_order_flow_imbalance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_flow_imbalance_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_flow_imbalance_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_order_flow_imbalance_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_order_flow_imbalance_warmup_period(SEXP e) {
   struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
@@ -16289,6 +16803,26 @@ SEXP wk_percent_above_ma_new(void) {
 SEXP wk_percent_above_ma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_percent_above_ma_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_percent_above_ma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_percent_above_ma_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_percent_above_ma_warmup_period(SEXP e) {
   struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
@@ -16855,6 +17389,38 @@ SEXP wk_point_and_figure_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   Rf_setAttrib(r, R_DimNamesSymbol, dn);
   UNPROTECT(3);
   return r;
+}
+SEXP wk_point_and_figure_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PointAndFigureBars *h = (struct PointAndFigureBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_point_and_figure_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraPnfColumn *buf = (struct WickraPnfColumn *)R_alloc(total ? total : 1, sizeof(struct WickraPnfColumn));
+  uintptr_t got = wickra_point_and_figure_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 3));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].direction;
+    REAL(out)[i + got * 1] = (double)buf[i].high;
+    REAL(out)[i + got * 2] = (double)buf[i].low;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("direction"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_point_and_figure_bars_name(SEXP e) {
   struct PointAndFigureBars *h = (struct PointAndFigureBars *)R_ExternalPtrAddr(e);
@@ -17539,6 +18105,24 @@ SEXP wk_quoted_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_quoted_spread_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
 }
+SEXP wk_quoted_spread_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w2 = Rf_asInteger(a2);
+  if (w2 < 1) Rf_error("wickra: batch argument 3 (n_bids) must be a positive per-bar width");
+  int w5 = Rf_asInteger(a5);
+  if (w5 < 1) Rf_error("wickra: batch argument 6 (n_asks) must be a positive per-bar width");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0) / w2;
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w2) Rf_error("wickra: batch argument 1 (bid_price) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w2) Rf_error("wickra: batch argument 2 (bid_size) must be a double vector of length %lld", (long long)(n * w2));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w5) Rf_error("wickra: batch argument 4 (ask_price) must be a double vector of length %lld", (long long)(n * w5));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w5) Rf_error("wickra: batch argument 5 (ask_size) must be a double vector of length %lld", (long long)(n * w5));
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_quoted_spread_batch(h, REAL(a0), REAL(a1), (uintptr_t)w2, REAL(a3), REAL(a4), (uintptr_t)w5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_quoted_spread_warmup_period(SEXP e) {
   struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_quoted_spread_warmup_period(h));
@@ -17644,6 +18228,38 @@ SEXP wk_range_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   Rf_setAttrib(r, R_DimNamesSymbol, dn);
   UNPROTECT(3);
   return r;
+}
+SEXP wk_range_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RangeBars *h = (struct RangeBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_range_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraRangeBar *buf = (struct WickraRangeBar *)R_alloc(total ? total : 1, sizeof(struct WickraRangeBar));
+  uintptr_t got = wickra_range_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 3));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].close;
+    REAL(out)[i + got * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_range_bars_name(SEXP e) {
   struct RangeBars *h = (struct RangeBars *)R_ExternalPtrAddr(e);
@@ -18054,6 +18670,38 @@ SEXP wk_renko_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   Rf_setAttrib(r, R_DimNamesSymbol, dn);
   UNPROTECT(3);
   return r;
+}
+SEXP wk_renko_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RenkoBars *h = (struct RenkoBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_renko_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraRenkoBrick *buf = (struct WickraRenkoBrick *)R_alloc(total ? total : 1, sizeof(struct WickraRenkoBrick));
+  uintptr_t got = wickra_renko_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 3));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].close;
+    REAL(out)[i + got * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_renko_bars_name(SEXP e) {
   struct RenkoBars *h = (struct RenkoBars *)R_ExternalPtrAddr(e);
@@ -19107,6 +19755,44 @@ SEXP wk_run_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   Rf_setAttrib(r, R_DimNamesSymbol, dn);
   UNPROTECT(3);
   return r;
+}
+SEXP wk_run_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RunBars *h = (struct RunBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_run_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraRunBar *buf = (struct WickraRunBar *)R_alloc(total ? total : 1, sizeof(struct WickraRunBar));
+  uintptr_t got = wickra_run_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 6));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].high;
+    REAL(out)[i + got * 2] = (double)buf[i].low;
+    REAL(out)[i + got * 3] = (double)buf[i].close;
+    REAL(out)[i + got * 4] = (double)buf[i].length;
+    REAL(out)[i + got * 5] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("length"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
 }
 SEXP wk_run_bars_name(SEXP e) {
   struct RunBars *h = (struct RunBars *)R_ExternalPtrAddr(e);
@@ -23138,6 +23824,38 @@ SEXP wk_three_line_break_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   UNPROTECT(3);
   return r;
 }
+SEXP wk_three_line_break_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeLineBreakBars *h = (struct ThreeLineBreakBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_three_line_break_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraLineBreakBar *buf = (struct WickraLineBreakBar *)R_alloc(total ? total : 1, sizeof(struct WickraLineBreakBar));
+  uintptr_t got = wickra_three_line_break_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 3));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].close;
+    REAL(out)[i + got * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_three_line_break_bars_name(SEXP e) {
   struct ThreeLineBreakBars *h = (struct ThreeLineBreakBars *)R_ExternalPtrAddr(e);
   return Rf_mkString(wickra_three_line_break_bars_name(h));
@@ -23489,6 +24207,42 @@ SEXP wk_tick_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(3);
   return r;
 }
+SEXP wk_tick_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TickBars *h = (struct TickBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_tick_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraTickBar *buf = (struct WickraTickBar *)R_alloc(total ? total : 1, sizeof(struct WickraTickBar));
+  uintptr_t got = wickra_tick_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 5));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].high;
+    REAL(out)[i + got * 2] = (double)buf[i].low;
+    REAL(out)[i + got * 3] = (double)buf[i].close;
+    REAL(out)[i + got * 4] = (double)buf[i].volume;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("volume"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_tick_bars_name(SEXP e) {
   struct TickBars *h = (struct TickBars *)R_ExternalPtrAddr(e);
   return Rf_mkString(wickra_tick_bars_name(h));
@@ -23515,6 +24269,26 @@ SEXP wk_tick_index_new(void) {
 SEXP wk_tick_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_tick_index_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_tick_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tick_index_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_tick_index_warmup_period(SEXP e) {
   struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
@@ -23655,6 +24429,30 @@ SEXP wk_time_of_day_return_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
   UNPROTECT(2);
   return vv;
 }
+SEXP wk_time_of_day_return_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t width = wickra_time_of_day_return_profile_width(h);
+  double *values = (double *)R_alloc(n * (width ? width : 1), sizeof(double));
+  wickra_time_of_day_return_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, values, width, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, (int)(width)));
+  for (R_xlen_t i = 0; i < n; i++) {
+    for (uintptr_t j = 0; j < width; j++) {
+      REAL(out)[i + n * (j)] = values[i * width + j];
+    }
+  }
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_time_of_day_return_profile_warmup_period(SEXP e) {
   struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_time_of_day_return_profile_warmup_period(h));
@@ -23757,6 +24555,33 @@ SEXP wk_tpo_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   SET_STRING_ELT(onm, 2, Rf_mkChar("values"));
   Rf_setAttrib(out, R_NamesSymbol, onm);
   UNPROTECT(4);
+  return out;
+}
+SEXP wk_tpo_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t width = wickra_tpo_profile_width(h);
+  double *values = (double *)R_alloc(n * (width ? width : 1), sizeof(double));
+  struct WickraTpoProfileOutputScalars *scalars = (struct WickraTpoProfileOutputScalars *)R_alloc(n, sizeof(struct WickraTpoProfileOutputScalars));
+  wickra_tpo_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, scalars, values, width, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, (int)(width + 2)));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)scalars[i].price_low;
+    REAL(out)[i + n * 1] = (double)scalars[i].price_high;
+    for (uintptr_t j = 0; j < width; j++) {
+      REAL(out)[i + n * (j + 2)] = values[i * width + j];
+    }
+  }
+  UNPROTECT(1);
   return out;
 }
 SEXP wk_tpo_profile_warmup_period(SEXP e) {
@@ -24227,6 +25052,26 @@ SEXP wk_trin_new(void) {
 SEXP wk_trin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_trin_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_trin_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_trin_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_trin_warmup_period(SEXP e) {
   struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
@@ -25231,6 +26076,26 @@ SEXP wk_up_down_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_up_down_volume_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_up_down_volume_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  int w6 = Rf_asInteger(a6);
+  if (w6 < 1) Rf_error("wickra: batch argument 7 (members) must be a positive per-bar width");
+  if (TYPEOF(a7) != REALSXP) Rf_error("wickra: batch argument 8 must be a double vector");
+  R_xlen_t n = Rf_xlength(a7);
+  if (TYPEOF(a0) != REALSXP || Rf_xlength(a0) != n * w6) Rf_error("wickra: batch argument 1 (change) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n * w6) Rf_error("wickra: batch argument 2 (volume) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n * w6) Rf_error("wickra: batch argument 3 (new_high) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n * w6) Rf_error("wickra: batch argument 4 (new_low) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n * w6) Rf_error("wickra: batch argument 5 (above_ma) must be a double vector of length %lld", (long long)(n * w6));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n * w6) Rf_error("wickra: batch argument 6 (on_buy_signal) must be a double vector of length %lld", (long long)(n * w6));
+  int64_t *b7 = (int64_t *)R_alloc(Rf_xlength(a7), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a7); k++) b7[k] = (int64_t)REAL(a7)[k];
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_up_down_volume_ratio_batch(h, REAL(a0), REAL(a1), wk_bool_vec(a2), wk_bool_vec(a3), wk_bool_vec(a4), wk_bool_vec(a5), (uintptr_t)w6, b7, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
 SEXP wk_up_down_volume_ratio_warmup_period(SEXP e) {
   struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarInteger((int)wickra_up_down_volume_ratio_warmup_period(h));
@@ -25986,6 +26851,42 @@ SEXP wk_volume_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(3);
   return r;
 }
+SEXP wk_volume_bars_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeBars *h = (struct VolumeBars *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t total = wickra_volume_bars_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, (uintptr_t)n);
+  struct WickraVolumeBar *buf = (struct WickraVolumeBar *)R_alloc(total ? total : 1, sizeof(struct WickraVolumeBar));
+  uintptr_t got = wickra_volume_bars_drain(h, buf, total);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)got, 5));
+  for (uintptr_t i = 0; i < got; i++) {
+    REAL(out)[i + got * 0] = (double)buf[i].open;
+    REAL(out)[i + got * 1] = (double)buf[i].high;
+    REAL(out)[i + got * 2] = (double)buf[i].low;
+    REAL(out)[i + got * 3] = (double)buf[i].close;
+    REAL(out)[i + got * 4] = (double)buf[i].volume;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("volume"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 0, R_NilValue);
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(out, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return out;
+}
 SEXP wk_volume_bars_name(SEXP e) {
   struct VolumeBars *h = (struct VolumeBars *)R_ExternalPtrAddr(e);
   return Rf_mkString(wickra_volume_bars_name(h));
@@ -26019,6 +26920,30 @@ SEXP wk_volume_by_time_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
   UNPROTECT(2);
   return vv;
+}
+SEXP wk_volume_by_time_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t width = wickra_volume_by_time_profile_width(h);
+  double *values = (double *)R_alloc(n * (width ? width : 1), sizeof(double));
+  wickra_volume_by_time_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, values, width, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, (int)(width)));
+  for (R_xlen_t i = 0; i < n; i++) {
+    for (uintptr_t j = 0; j < width; j++) {
+      REAL(out)[i + n * (j)] = values[i * width + j];
+    }
+  }
+  UNPROTECT(1);
+  return out;
 }
 SEXP wk_volume_by_time_profile_warmup_period(SEXP e) {
   struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
@@ -26174,6 +27099,33 @@ SEXP wk_volume_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   SET_STRING_ELT(onm, 2, Rf_mkChar("values"));
   Rf_setAttrib(out, R_NamesSymbol, onm);
   UNPROTECT(4);
+  return out;
+}
+SEXP wk_volume_profile_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
+  if (h == NULL) Rf_error("wickra: indicator handle is no longer valid");
+  if (TYPEOF(a0) != REALSXP) Rf_error("wickra: batch argument 1 must be a double vector");
+  R_xlen_t n = Rf_xlength(a0);
+  if (TYPEOF(a1) != REALSXP || Rf_xlength(a1) != n) Rf_error("wickra: batch argument 2 (high) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a2) != REALSXP || Rf_xlength(a2) != n) Rf_error("wickra: batch argument 3 (low) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a3) != REALSXP || Rf_xlength(a3) != n) Rf_error("wickra: batch argument 4 (close) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a4) != REALSXP || Rf_xlength(a4) != n) Rf_error("wickra: batch argument 5 (volume) must be a double vector of length %lld", (long long)(n));
+  if (TYPEOF(a5) != REALSXP || Rf_xlength(a5) != n) Rf_error("wickra: batch argument 6 (timestamp) must be a double vector of length %lld", (long long)(n));
+  int64_t *b5 = (int64_t *)R_alloc(Rf_xlength(a5), sizeof(int64_t));
+  for (R_xlen_t k = 0; k < Rf_xlength(a5); k++) b5[k] = (int64_t)REAL(a5)[k];
+  uintptr_t width = wickra_volume_profile_width(h);
+  double *values = (double *)R_alloc(n * (width ? width : 1), sizeof(double));
+  struct WickraVolumeProfileOutputScalars *scalars = (struct WickraVolumeProfileOutputScalars *)R_alloc(n, sizeof(struct WickraVolumeProfileOutputScalars));
+  wickra_volume_profile_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, scalars, values, width, (uintptr_t)n);
+  SEXP out = PROTECT(Rf_allocMatrix(REALSXP, (int)n, (int)(width + 2)));
+  for (R_xlen_t i = 0; i < n; i++) {
+    REAL(out)[i + n * 0] = (double)scalars[i].price_low;
+    REAL(out)[i + n * 1] = (double)scalars[i].price_high;
+    for (uintptr_t j = 0; j < width; j++) {
+      REAL(out)[i + n * (j + 2)] = values[i * width + j];
+    }
+  }
+  UNPROTECT(1);
   return out;
 }
 SEXP wk_volume_profile_warmup_period(SEXP e) {
@@ -27821,6 +28773,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_abcd_reset", (DL_FUNC)&wk_abcd_reset, 1},
   {"wk_absolute_breadth_index_new", (DL_FUNC)&wk_absolute_breadth_index_new, 0},
   {"wk_absolute_breadth_index_update", (DL_FUNC)&wk_absolute_breadth_index_update, 8},
+  {"wk_absolute_breadth_index_batch", (DL_FUNC)&wk_absolute_breadth_index_batch, 9},
   {"wk_absolute_breadth_index_warmup_period", (DL_FUNC)&wk_absolute_breadth_index_warmup_period, 1},
   {"wk_absolute_breadth_index_is_ready", (DL_FUNC)&wk_absolute_breadth_index_is_ready, 1},
   {"wk_absolute_breadth_index_name", (DL_FUNC)&wk_absolute_breadth_index_name, 1},
@@ -27848,6 +28801,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_ad_oscillator_reset", (DL_FUNC)&wk_ad_oscillator_reset, 1},
   {"wk_ad_volume_line_new", (DL_FUNC)&wk_ad_volume_line_new, 0},
   {"wk_ad_volume_line_update", (DL_FUNC)&wk_ad_volume_line_update, 8},
+  {"wk_ad_volume_line_batch", (DL_FUNC)&wk_ad_volume_line_batch, 9},
   {"wk_ad_volume_line_warmup_period", (DL_FUNC)&wk_ad_volume_line_warmup_period, 1},
   {"wk_ad_volume_line_is_ready", (DL_FUNC)&wk_ad_volume_line_is_ready, 1},
   {"wk_ad_volume_line_name", (DL_FUNC)&wk_ad_volume_line_name, 1},
@@ -27896,12 +28850,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_advance_block_reset", (DL_FUNC)&wk_advance_block_reset, 1},
   {"wk_advance_decline_new", (DL_FUNC)&wk_advance_decline_new, 0},
   {"wk_advance_decline_update", (DL_FUNC)&wk_advance_decline_update, 8},
+  {"wk_advance_decline_batch", (DL_FUNC)&wk_advance_decline_batch, 9},
   {"wk_advance_decline_warmup_period", (DL_FUNC)&wk_advance_decline_warmup_period, 1},
   {"wk_advance_decline_is_ready", (DL_FUNC)&wk_advance_decline_is_ready, 1},
   {"wk_advance_decline_name", (DL_FUNC)&wk_advance_decline_name, 1},
   {"wk_advance_decline_reset", (DL_FUNC)&wk_advance_decline_reset, 1},
   {"wk_advance_decline_ratio_new", (DL_FUNC)&wk_advance_decline_ratio_new, 0},
   {"wk_advance_decline_ratio_update", (DL_FUNC)&wk_advance_decline_ratio_update, 8},
+  {"wk_advance_decline_ratio_batch", (DL_FUNC)&wk_advance_decline_ratio_batch, 9},
   {"wk_advance_decline_ratio_warmup_period", (DL_FUNC)&wk_advance_decline_ratio_warmup_period, 1},
   {"wk_advance_decline_ratio_is_ready", (DL_FUNC)&wk_advance_decline_ratio_is_ready, 1},
   {"wk_advance_decline_ratio_name", (DL_FUNC)&wk_advance_decline_ratio_name, 1},
@@ -28160,6 +29116,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_bomar_bands_reset", (DL_FUNC)&wk_bomar_bands_reset, 1},
   {"wk_breadth_thrust_new", (DL_FUNC)&wk_breadth_thrust_new, 1},
   {"wk_breadth_thrust_update", (DL_FUNC)&wk_breadth_thrust_update, 8},
+  {"wk_breadth_thrust_batch", (DL_FUNC)&wk_breadth_thrust_batch, 9},
   {"wk_breadth_thrust_warmup_period", (DL_FUNC)&wk_breadth_thrust_warmup_period, 1},
   {"wk_breadth_thrust_is_ready", (DL_FUNC)&wk_breadth_thrust_is_ready, 1},
   {"wk_breadth_thrust_name", (DL_FUNC)&wk_breadth_thrust_name, 1},
@@ -28173,6 +29130,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_breakaway_reset", (DL_FUNC)&wk_breakaway_reset, 1},
   {"wk_bullish_percent_index_new", (DL_FUNC)&wk_bullish_percent_index_new, 0},
   {"wk_bullish_percent_index_update", (DL_FUNC)&wk_bullish_percent_index_update, 8},
+  {"wk_bullish_percent_index_batch", (DL_FUNC)&wk_bullish_percent_index_batch, 9},
   {"wk_bullish_percent_index_warmup_period", (DL_FUNC)&wk_bullish_percent_index_warmup_period, 1},
   {"wk_bullish_percent_index_is_ready", (DL_FUNC)&wk_bullish_percent_index_is_ready, 1},
   {"wk_bullish_percent_index_name", (DL_FUNC)&wk_bullish_percent_index_name, 1},
@@ -28405,6 +29363,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_cumulative_volume_delta_reset", (DL_FUNC)&wk_cumulative_volume_delta_reset, 1},
   {"wk_cumulative_volume_index_new", (DL_FUNC)&wk_cumulative_volume_index_new, 0},
   {"wk_cumulative_volume_index_update", (DL_FUNC)&wk_cumulative_volume_index_update, 8},
+  {"wk_cumulative_volume_index_batch", (DL_FUNC)&wk_cumulative_volume_index_batch, 9},
   {"wk_cumulative_volume_index_warmup_period", (DL_FUNC)&wk_cumulative_volume_index_warmup_period, 1},
   {"wk_cumulative_volume_index_is_ready", (DL_FUNC)&wk_cumulative_volume_index_is_ready, 1},
   {"wk_cumulative_volume_index_name", (DL_FUNC)&wk_cumulative_volume_index_name, 1},
@@ -28432,6 +29391,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_cypher_reset", (DL_FUNC)&wk_cypher_reset, 1},
   {"wk_day_of_week_profile_new", (DL_FUNC)&wk_day_of_week_profile_new, 1},
   {"wk_day_of_week_profile_update", (DL_FUNC)&wk_day_of_week_profile_update, 8},
+  {"wk_day_of_week_profile_batch", (DL_FUNC)&wk_day_of_week_profile_batch, 7},
   {"wk_day_of_week_profile_warmup_period", (DL_FUNC)&wk_day_of_week_profile_warmup_period, 1},
   {"wk_day_of_week_profile_is_ready", (DL_FUNC)&wk_day_of_week_profile_is_ready, 1},
   {"wk_day_of_week_profile_name", (DL_FUNC)&wk_day_of_week_profile_name, 1},
@@ -28473,6 +29433,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_demark_pivots_reset", (DL_FUNC)&wk_demark_pivots_reset, 1},
   {"wk_depth_slope_new", (DL_FUNC)&wk_depth_slope_new, 0},
   {"wk_depth_slope_update", (DL_FUNC)&wk_depth_slope_update, 5},
+  {"wk_depth_slope_batch", (DL_FUNC)&wk_depth_slope_batch, 7},
   {"wk_depth_slope_warmup_period", (DL_FUNC)&wk_depth_slope_warmup_period, 1},
   {"wk_depth_slope_is_ready", (DL_FUNC)&wk_depth_slope_is_ready, 1},
   {"wk_depth_slope_name", (DL_FUNC)&wk_depth_slope_name, 1},
@@ -28521,6 +29482,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_doji_star_reset", (DL_FUNC)&wk_doji_star_reset, 1},
   {"wk_dollar_bars_new", (DL_FUNC)&wk_dollar_bars_new, 1},
   {"wk_dollar_bars_update", (DL_FUNC)&wk_dollar_bars_update, 7},
+  {"wk_dollar_bars_batch", (DL_FUNC)&wk_dollar_bars_batch, 7},
   {"wk_dollar_bars_name", (DL_FUNC)&wk_dollar_bars_name, 1},
   {"wk_dollar_bars_reset", (DL_FUNC)&wk_dollar_bars_reset, 1},
   {"wk_donchian_new", (DL_FUNC)&wk_donchian_new, 1},
@@ -28819,6 +29781,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_flag_pennant_reset", (DL_FUNC)&wk_flag_pennant_reset, 1},
   {"wk_footprint_new", (DL_FUNC)&wk_footprint_new, 1},
   {"wk_footprint_update", (DL_FUNC)&wk_footprint_update, 5},
+  {"wk_footprint_batch", (DL_FUNC)&wk_footprint_batch, 5},
   {"wk_footprint_warmup_period", (DL_FUNC)&wk_footprint_warmup_period, 1},
   {"wk_footprint_is_ready", (DL_FUNC)&wk_footprint_is_ready, 1},
   {"wk_footprint_name", (DL_FUNC)&wk_footprint_name, 1},
@@ -29035,6 +29998,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_hi_lo_activator_reset", (DL_FUNC)&wk_hi_lo_activator_reset, 1},
   {"wk_high_low_index_new", (DL_FUNC)&wk_high_low_index_new, 1},
   {"wk_high_low_index_update", (DL_FUNC)&wk_high_low_index_update, 8},
+  {"wk_high_low_index_batch", (DL_FUNC)&wk_high_low_index_batch, 9},
   {"wk_high_low_index_warmup_period", (DL_FUNC)&wk_high_low_index_warmup_period, 1},
   {"wk_high_low_index_is_ready", (DL_FUNC)&wk_high_low_index_is_ready, 1},
   {"wk_high_low_index_name", (DL_FUNC)&wk_high_low_index_name, 1},
@@ -29167,6 +30131,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_identical_three_crows_reset", (DL_FUNC)&wk_identical_three_crows_reset, 1},
   {"wk_imbalance_bars_new", (DL_FUNC)&wk_imbalance_bars_new, 1},
   {"wk_imbalance_bars_update", (DL_FUNC)&wk_imbalance_bars_update, 7},
+  {"wk_imbalance_bars_batch", (DL_FUNC)&wk_imbalance_bars_batch, 7},
   {"wk_imbalance_bars_name", (DL_FUNC)&wk_imbalance_bars_name, 1},
   {"wk_imbalance_bars_reset", (DL_FUNC)&wk_imbalance_bars_reset, 1},
   {"wk_in_neck_new", (DL_FUNC)&wk_in_neck_new, 0},
@@ -29220,6 +30185,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_intraday_momentum_index_reset", (DL_FUNC)&wk_intraday_momentum_index_reset, 1},
   {"wk_intraday_volatility_profile_new", (DL_FUNC)&wk_intraday_volatility_profile_new, 2},
   {"wk_intraday_volatility_profile_update", (DL_FUNC)&wk_intraday_volatility_profile_update, 8},
+  {"wk_intraday_volatility_profile_batch", (DL_FUNC)&wk_intraday_volatility_profile_batch, 7},
   {"wk_intraday_volatility_profile_warmup_period", (DL_FUNC)&wk_intraday_volatility_profile_warmup_period, 1},
   {"wk_intraday_volatility_profile_is_ready", (DL_FUNC)&wk_intraday_volatility_profile_is_ready, 1},
   {"wk_intraday_volatility_profile_name", (DL_FUNC)&wk_intraday_volatility_profile_name, 1},
@@ -29268,6 +30234,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_k_ratio_reset", (DL_FUNC)&wk_k_ratio_reset, 1},
   {"wk_kagi_bars_new", (DL_FUNC)&wk_kagi_bars_new, 1},
   {"wk_kagi_bars_update", (DL_FUNC)&wk_kagi_bars_update, 7},
+  {"wk_kagi_bars_batch", (DL_FUNC)&wk_kagi_bars_batch, 7},
   {"wk_kagi_bars_name", (DL_FUNC)&wk_kagi_bars_name, 1},
   {"wk_kagi_bars_reset", (DL_FUNC)&wk_kagi_bars_reset, 1},
   {"wk_kalman_hedge_ratio_new", (DL_FUNC)&wk_kalman_hedge_ratio_new, 2},
@@ -29552,12 +30519,14 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_max_drawdown_reset", (DL_FUNC)&wk_max_drawdown_reset, 1},
   {"wk_mc_clellan_oscillator_new", (DL_FUNC)&wk_mc_clellan_oscillator_new, 0},
   {"wk_mc_clellan_oscillator_update", (DL_FUNC)&wk_mc_clellan_oscillator_update, 8},
+  {"wk_mc_clellan_oscillator_batch", (DL_FUNC)&wk_mc_clellan_oscillator_batch, 9},
   {"wk_mc_clellan_oscillator_warmup_period", (DL_FUNC)&wk_mc_clellan_oscillator_warmup_period, 1},
   {"wk_mc_clellan_oscillator_is_ready", (DL_FUNC)&wk_mc_clellan_oscillator_is_ready, 1},
   {"wk_mc_clellan_oscillator_name", (DL_FUNC)&wk_mc_clellan_oscillator_name, 1},
   {"wk_mc_clellan_oscillator_reset", (DL_FUNC)&wk_mc_clellan_oscillator_reset, 1},
   {"wk_mc_clellan_summation_index_new", (DL_FUNC)&wk_mc_clellan_summation_index_new, 0},
   {"wk_mc_clellan_summation_index_update", (DL_FUNC)&wk_mc_clellan_summation_index_update, 8},
+  {"wk_mc_clellan_summation_index_batch", (DL_FUNC)&wk_mc_clellan_summation_index_batch, 9},
   {"wk_mc_clellan_summation_index_warmup_period", (DL_FUNC)&wk_mc_clellan_summation_index_warmup_period, 1},
   {"wk_mc_clellan_summation_index_is_ready", (DL_FUNC)&wk_mc_clellan_summation_index_is_ready, 1},
   {"wk_mc_clellan_summation_index_name", (DL_FUNC)&wk_mc_clellan_summation_index_name, 1},
@@ -29606,6 +30575,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_mfi_reset", (DL_FUNC)&wk_mfi_reset, 1},
   {"wk_microprice_new", (DL_FUNC)&wk_microprice_new, 0},
   {"wk_microprice_update", (DL_FUNC)&wk_microprice_update, 5},
+  {"wk_microprice_batch", (DL_FUNC)&wk_microprice_batch, 7},
   {"wk_microprice_warmup_period", (DL_FUNC)&wk_microprice_warmup_period, 1},
   {"wk_microprice_is_ready", (DL_FUNC)&wk_microprice_is_ready, 1},
   {"wk_microprice_name", (DL_FUNC)&wk_microprice_name, 1},
@@ -29689,6 +30659,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_natr_reset", (DL_FUNC)&wk_natr_reset, 1},
   {"wk_new_highs_new_lows_new", (DL_FUNC)&wk_new_highs_new_lows_new, 0},
   {"wk_new_highs_new_lows_update", (DL_FUNC)&wk_new_highs_new_lows_update, 8},
+  {"wk_new_highs_new_lows_batch", (DL_FUNC)&wk_new_highs_new_lows_batch, 9},
   {"wk_new_highs_new_lows_warmup_period", (DL_FUNC)&wk_new_highs_new_lows_warmup_period, 1},
   {"wk_new_highs_new_lows_is_ready", (DL_FUNC)&wk_new_highs_new_lows_is_ready, 1},
   {"wk_new_highs_new_lows_name", (DL_FUNC)&wk_new_highs_new_lows_name, 1},
@@ -29786,24 +30757,28 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_opening_range_reset", (DL_FUNC)&wk_opening_range_reset, 1},
   {"wk_order_book_imbalance_full_new", (DL_FUNC)&wk_order_book_imbalance_full_new, 0},
   {"wk_order_book_imbalance_full_update", (DL_FUNC)&wk_order_book_imbalance_full_update, 5},
+  {"wk_order_book_imbalance_full_batch", (DL_FUNC)&wk_order_book_imbalance_full_batch, 7},
   {"wk_order_book_imbalance_full_warmup_period", (DL_FUNC)&wk_order_book_imbalance_full_warmup_period, 1},
   {"wk_order_book_imbalance_full_is_ready", (DL_FUNC)&wk_order_book_imbalance_full_is_ready, 1},
   {"wk_order_book_imbalance_full_name", (DL_FUNC)&wk_order_book_imbalance_full_name, 1},
   {"wk_order_book_imbalance_full_reset", (DL_FUNC)&wk_order_book_imbalance_full_reset, 1},
   {"wk_order_book_imbalance_top1_new", (DL_FUNC)&wk_order_book_imbalance_top1_new, 0},
   {"wk_order_book_imbalance_top1_update", (DL_FUNC)&wk_order_book_imbalance_top1_update, 5},
+  {"wk_order_book_imbalance_top1_batch", (DL_FUNC)&wk_order_book_imbalance_top1_batch, 7},
   {"wk_order_book_imbalance_top1_warmup_period", (DL_FUNC)&wk_order_book_imbalance_top1_warmup_period, 1},
   {"wk_order_book_imbalance_top1_is_ready", (DL_FUNC)&wk_order_book_imbalance_top1_is_ready, 1},
   {"wk_order_book_imbalance_top1_name", (DL_FUNC)&wk_order_book_imbalance_top1_name, 1},
   {"wk_order_book_imbalance_top1_reset", (DL_FUNC)&wk_order_book_imbalance_top1_reset, 1},
   {"wk_order_book_imbalance_top_n_new", (DL_FUNC)&wk_order_book_imbalance_top_n_new, 1},
   {"wk_order_book_imbalance_top_n_update", (DL_FUNC)&wk_order_book_imbalance_top_n_update, 5},
+  {"wk_order_book_imbalance_top_n_batch", (DL_FUNC)&wk_order_book_imbalance_top_n_batch, 7},
   {"wk_order_book_imbalance_top_n_warmup_period", (DL_FUNC)&wk_order_book_imbalance_top_n_warmup_period, 1},
   {"wk_order_book_imbalance_top_n_is_ready", (DL_FUNC)&wk_order_book_imbalance_top_n_is_ready, 1},
   {"wk_order_book_imbalance_top_n_name", (DL_FUNC)&wk_order_book_imbalance_top_n_name, 1},
   {"wk_order_book_imbalance_top_n_reset", (DL_FUNC)&wk_order_book_imbalance_top_n_reset, 1},
   {"wk_order_flow_imbalance_new", (DL_FUNC)&wk_order_flow_imbalance_new, 1},
   {"wk_order_flow_imbalance_update", (DL_FUNC)&wk_order_flow_imbalance_update, 5},
+  {"wk_order_flow_imbalance_batch", (DL_FUNC)&wk_order_flow_imbalance_batch, 7},
   {"wk_order_flow_imbalance_warmup_period", (DL_FUNC)&wk_order_flow_imbalance_warmup_period, 1},
   {"wk_order_flow_imbalance_is_ready", (DL_FUNC)&wk_order_flow_imbalance_is_ready, 1},
   {"wk_order_flow_imbalance_name", (DL_FUNC)&wk_order_flow_imbalance_name, 1},
@@ -29866,6 +30841,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_pearson_correlation_reset", (DL_FUNC)&wk_pearson_correlation_reset, 1},
   {"wk_percent_above_ma_new", (DL_FUNC)&wk_percent_above_ma_new, 0},
   {"wk_percent_above_ma_update", (DL_FUNC)&wk_percent_above_ma_update, 8},
+  {"wk_percent_above_ma_batch", (DL_FUNC)&wk_percent_above_ma_batch, 9},
   {"wk_percent_above_ma_warmup_period", (DL_FUNC)&wk_percent_above_ma_warmup_period, 1},
   {"wk_percent_above_ma_is_ready", (DL_FUNC)&wk_percent_above_ma_is_ready, 1},
   {"wk_percent_above_ma_name", (DL_FUNC)&wk_percent_above_ma_name, 1},
@@ -29942,6 +30918,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_pmo_reset", (DL_FUNC)&wk_pmo_reset, 1},
   {"wk_point_and_figure_bars_new", (DL_FUNC)&wk_point_and_figure_bars_new, 2},
   {"wk_point_and_figure_bars_update", (DL_FUNC)&wk_point_and_figure_bars_update, 7},
+  {"wk_point_and_figure_bars_batch", (DL_FUNC)&wk_point_and_figure_bars_batch, 7},
   {"wk_point_and_figure_bars_name", (DL_FUNC)&wk_point_and_figure_bars_name, 1},
   {"wk_point_and_figure_bars_reset", (DL_FUNC)&wk_point_and_figure_bars_reset, 1},
   {"wk_polarized_fractal_efficiency_new", (DL_FUNC)&wk_polarized_fractal_efficiency_new, 2},
@@ -30030,6 +31007,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_quartile_bands_reset", (DL_FUNC)&wk_quartile_bands_reset, 1},
   {"wk_quoted_spread_new", (DL_FUNC)&wk_quoted_spread_new, 0},
   {"wk_quoted_spread_update", (DL_FUNC)&wk_quoted_spread_update, 5},
+  {"wk_quoted_spread_batch", (DL_FUNC)&wk_quoted_spread_batch, 7},
   {"wk_quoted_spread_warmup_period", (DL_FUNC)&wk_quoted_spread_warmup_period, 1},
   {"wk_quoted_spread_is_ready", (DL_FUNC)&wk_quoted_spread_is_ready, 1},
   {"wk_quoted_spread_name", (DL_FUNC)&wk_quoted_spread_name, 1},
@@ -30043,6 +31021,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_r_squared_reset", (DL_FUNC)&wk_r_squared_reset, 1},
   {"wk_range_bars_new", (DL_FUNC)&wk_range_bars_new, 1},
   {"wk_range_bars_update", (DL_FUNC)&wk_range_bars_update, 7},
+  {"wk_range_bars_batch", (DL_FUNC)&wk_range_bars_batch, 7},
   {"wk_range_bars_name", (DL_FUNC)&wk_range_bars_name, 1},
   {"wk_range_bars_reset", (DL_FUNC)&wk_range_bars_reset, 1},
   {"wk_realized_spread_new", (DL_FUNC)&wk_realized_spread_new, 1},
@@ -30096,6 +31075,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_relative_strength_ab_reset", (DL_FUNC)&wk_relative_strength_ab_reset, 1},
   {"wk_renko_bars_new", (DL_FUNC)&wk_renko_bars_new, 1},
   {"wk_renko_bars_update", (DL_FUNC)&wk_renko_bars_update, 7},
+  {"wk_renko_bars_batch", (DL_FUNC)&wk_renko_bars_batch, 7},
   {"wk_renko_bars_name", (DL_FUNC)&wk_renko_bars_name, 1},
   {"wk_renko_bars_reset", (DL_FUNC)&wk_renko_bars_reset, 1},
   {"wk_renko_trailing_stop_new", (DL_FUNC)&wk_renko_trailing_stop_new, 1},
@@ -30243,6 +31223,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_rsx_reset", (DL_FUNC)&wk_rsx_reset, 1},
   {"wk_run_bars_new", (DL_FUNC)&wk_run_bars_new, 1},
   {"wk_run_bars_update", (DL_FUNC)&wk_run_bars_update, 7},
+  {"wk_run_bars_batch", (DL_FUNC)&wk_run_bars_batch, 7},
   {"wk_run_bars_name", (DL_FUNC)&wk_run_bars_name, 1},
   {"wk_run_bars_reset", (DL_FUNC)&wk_run_bars_reset, 1},
   {"wk_rvi_new", (DL_FUNC)&wk_rvi_new, 1},
@@ -30758,6 +31739,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_three_line_break_reset", (DL_FUNC)&wk_three_line_break_reset, 1},
   {"wk_three_line_break_bars_new", (DL_FUNC)&wk_three_line_break_bars_new, 1},
   {"wk_three_line_break_bars_update", (DL_FUNC)&wk_three_line_break_bars_update, 7},
+  {"wk_three_line_break_bars_batch", (DL_FUNC)&wk_three_line_break_bars_batch, 7},
   {"wk_three_line_break_bars_name", (DL_FUNC)&wk_three_line_break_bars_name, 1},
   {"wk_three_line_break_bars_reset", (DL_FUNC)&wk_three_line_break_bars_reset, 1},
   {"wk_three_line_strike_new", (DL_FUNC)&wk_three_line_strike_new, 0},
@@ -30799,10 +31781,12 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_tick_aggregator_push", (DL_FUNC)&wk_tick_aggregator_push, 4},
   {"wk_tick_bars_new", (DL_FUNC)&wk_tick_bars_new, 1},
   {"wk_tick_bars_update", (DL_FUNC)&wk_tick_bars_update, 7},
+  {"wk_tick_bars_batch", (DL_FUNC)&wk_tick_bars_batch, 7},
   {"wk_tick_bars_name", (DL_FUNC)&wk_tick_bars_name, 1},
   {"wk_tick_bars_reset", (DL_FUNC)&wk_tick_bars_reset, 1},
   {"wk_tick_index_new", (DL_FUNC)&wk_tick_index_new, 0},
   {"wk_tick_index_update", (DL_FUNC)&wk_tick_index_update, 8},
+  {"wk_tick_index_batch", (DL_FUNC)&wk_tick_index_batch, 9},
   {"wk_tick_index_warmup_period", (DL_FUNC)&wk_tick_index_warmup_period, 1},
   {"wk_tick_index_is_ready", (DL_FUNC)&wk_tick_index_is_ready, 1},
   {"wk_tick_index_name", (DL_FUNC)&wk_tick_index_name, 1},
@@ -30823,6 +31807,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_time_based_stop_reset", (DL_FUNC)&wk_time_based_stop_reset, 1},
   {"wk_time_of_day_return_profile_new", (DL_FUNC)&wk_time_of_day_return_profile_new, 2},
   {"wk_time_of_day_return_profile_update", (DL_FUNC)&wk_time_of_day_return_profile_update, 8},
+  {"wk_time_of_day_return_profile_batch", (DL_FUNC)&wk_time_of_day_return_profile_batch, 7},
   {"wk_time_of_day_return_profile_warmup_period", (DL_FUNC)&wk_time_of_day_return_profile_warmup_period, 1},
   {"wk_time_of_day_return_profile_is_ready", (DL_FUNC)&wk_time_of_day_return_profile_is_ready, 1},
   {"wk_time_of_day_return_profile_name", (DL_FUNC)&wk_time_of_day_return_profile_name, 1},
@@ -30836,6 +31821,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_tower_top_bottom_reset", (DL_FUNC)&wk_tower_top_bottom_reset, 1},
   {"wk_tpo_profile_new", (DL_FUNC)&wk_tpo_profile_new, 2},
   {"wk_tpo_profile_update", (DL_FUNC)&wk_tpo_profile_update, 8},
+  {"wk_tpo_profile_batch", (DL_FUNC)&wk_tpo_profile_batch, 7},
   {"wk_tpo_profile_warmup_period", (DL_FUNC)&wk_tpo_profile_warmup_period, 1},
   {"wk_tpo_profile_is_ready", (DL_FUNC)&wk_tpo_profile_is_ready, 1},
   {"wk_tpo_profile_name", (DL_FUNC)&wk_tpo_profile_name, 1},
@@ -30905,6 +31891,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_trima_reset", (DL_FUNC)&wk_trima_reset, 1},
   {"wk_trin_new", (DL_FUNC)&wk_trin_new, 0},
   {"wk_trin_update", (DL_FUNC)&wk_trin_update, 8},
+  {"wk_trin_batch", (DL_FUNC)&wk_trin_batch, 9},
   {"wk_trin_warmup_period", (DL_FUNC)&wk_trin_warmup_period, 1},
   {"wk_trin_is_ready", (DL_FUNC)&wk_trin_is_ready, 1},
   {"wk_trin_name", (DL_FUNC)&wk_trin_name, 1},
@@ -31044,6 +32031,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_universal_oscillator_reset", (DL_FUNC)&wk_universal_oscillator_reset, 1},
   {"wk_up_down_volume_ratio_new", (DL_FUNC)&wk_up_down_volume_ratio_new, 0},
   {"wk_up_down_volume_ratio_update", (DL_FUNC)&wk_up_down_volume_ratio_update, 8},
+  {"wk_up_down_volume_ratio_batch", (DL_FUNC)&wk_up_down_volume_ratio_batch, 9},
   {"wk_up_down_volume_ratio_warmup_period", (DL_FUNC)&wk_up_down_volume_ratio_warmup_period, 1},
   {"wk_up_down_volume_ratio_is_ready", (DL_FUNC)&wk_up_down_volume_ratio_is_ready, 1},
   {"wk_up_down_volume_ratio_name", (DL_FUNC)&wk_up_down_volume_ratio_name, 1},
@@ -31141,10 +32129,12 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_volty_stop_reset", (DL_FUNC)&wk_volty_stop_reset, 1},
   {"wk_volume_bars_new", (DL_FUNC)&wk_volume_bars_new, 1},
   {"wk_volume_bars_update", (DL_FUNC)&wk_volume_bars_update, 7},
+  {"wk_volume_bars_batch", (DL_FUNC)&wk_volume_bars_batch, 7},
   {"wk_volume_bars_name", (DL_FUNC)&wk_volume_bars_name, 1},
   {"wk_volume_bars_reset", (DL_FUNC)&wk_volume_bars_reset, 1},
   {"wk_volume_by_time_profile_new", (DL_FUNC)&wk_volume_by_time_profile_new, 2},
   {"wk_volume_by_time_profile_update", (DL_FUNC)&wk_volume_by_time_profile_update, 8},
+  {"wk_volume_by_time_profile_batch", (DL_FUNC)&wk_volume_by_time_profile_batch, 7},
   {"wk_volume_by_time_profile_warmup_period", (DL_FUNC)&wk_volume_by_time_profile_warmup_period, 1},
   {"wk_volume_by_time_profile_is_ready", (DL_FUNC)&wk_volume_by_time_profile_is_ready, 1},
   {"wk_volume_by_time_profile_name", (DL_FUNC)&wk_volume_by_time_profile_name, 1},
@@ -31165,6 +32155,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_volume_price_trend_reset", (DL_FUNC)&wk_volume_price_trend_reset, 1},
   {"wk_volume_profile_new", (DL_FUNC)&wk_volume_profile_new, 2},
   {"wk_volume_profile_update", (DL_FUNC)&wk_volume_profile_update, 8},
+  {"wk_volume_profile_batch", (DL_FUNC)&wk_volume_profile_batch, 7},
   {"wk_volume_profile_warmup_period", (DL_FUNC)&wk_volume_profile_warmup_period, 1},
   {"wk_volume_profile_is_ready", (DL_FUNC)&wk_volume_profile_is_ready, 1},
   {"wk_volume_profile_name", (DL_FUNC)&wk_volume_profile_name, 1},

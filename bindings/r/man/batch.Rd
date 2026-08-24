@@ -12,14 +12,27 @@ batch(object, ...)
 \arguments{
 \item{object}{A \code{wickra_indicator}.}
 
-\item{...}{The input vector(s).}
+\item{...}{The input columns, and for the snapshot families the per-bar width
+as a named argument.}
 }
 \value{
-A numeric vector the same length as the input.
+A numeric vector for a scalar indicator; an \verb{n x k} matrix for a
+multi-output or profile indicator, with the field names as columns; and for
+a bar builder the bars the series completed, which is as many as the data
+makes it rather than one per input row.
 }
 \description{
-Available for scalar indicators. The result is identical to feeding the same
-inputs through \code{\link[=update]{update()}} one at a time, with \code{NA} at warmup positions.
+The result is identical to feeding the same inputs through \code{\link[=update]{update()}} one at a
+time, with \code{NA} at warmup positions.
+}
+\details{
+Most indicators take one column per input field, all the same length. The
+cross-section and order-book families take a per-bar snapshot instead: each
+field arrives as one flat column with bar \code{i} at \verb{[i*width, (i+1)*width)}, and
+the width is passed as a named argument in the position the native routine
+declares it (\code{members} for a cross-section, \code{n_bids} / \code{n_asks} for an order
+book). Naming it is what distinguishes a width from a column, so the rule that
+keeps a short column from being read past its end still applies to the rest.
 }
 \examples{
 batch(Sma(3), c(1, 2, 3, 4, 5)) # NA NA 2 3 4

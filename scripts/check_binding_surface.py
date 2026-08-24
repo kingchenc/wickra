@@ -206,13 +206,6 @@ BINDINGS = {
     "R": surface_r,
 }
 
-# R has no batch shim for the families whose per-bar input is a snapshot or whose
-# output length is data-dependent: `batch()` forwards equal-length numeric
-# columns and cannot express a per-bar width. Every other binding has one. This
-# is a real gap, pinned here so it cannot widen without the number changing --
-# see D3d in the audit and the R golden suite, which asserts the same split.
-R_BATCH_GAP = 39
-
 
 def main() -> int:
     expected = truth()
@@ -229,13 +222,9 @@ def main() -> int:
 
         gaps: list[str] = []
         extras: list[str] = []
-        waived = 0
         for canonical, want in expected.items():
             have = actual[canonical]
             for cap in sorted(want - have):
-                if label == "R" and cap == "batch":
-                    waived += 1
-                    continue
                 gaps.append(f"{canonical}.{cap}")
             # The other direction: a bar builder that grew a warmup or a ready
             # flag has drifted just as far as an indicator that lost one.
@@ -247,15 +236,9 @@ def main() -> int:
             failures.append(f"{label}: {len(gaps)} missing, e.g. {gaps[:5]}")
         if extras:
             failures.append(f"{label}: {len(extras)} beyond the C ABI shape, e.g. {extras[:5]}")
-        if label == "R" and waived != R_BATCH_GAP:
-            failures.append(
-                f"R: {waived} indicators without a batch shim, expected {R_BATCH_GAP}"
-                " — update R_BATCH_GAP here and in the R golden suite"
-            )
 
-        note = f"  ({waived} without a batch shim)" if waived else ""
         verdict = "contract complete" if len(failures) == before else "DRIFTED"
-        print(f"  {label:<7} {len(expected):>4} indicators, {verdict}{note}")
+        print(f"  {label:<7} {len(expected):>4} indicators, {verdict}")
 
     stateful = sum(1 for caps in expected.values() if "ready" in caps)
     print(
