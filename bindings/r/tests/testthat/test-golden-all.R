@@ -138,11 +138,15 @@ golden_expect_values <- function(canon, got, want, tol) {
     (is.infinite(want) & is.infinite(got) & sign(want) == sign(got)) |
     (is.finite(want) & is.finite(got) & abs(got - want) <= tol * pmax(1, abs(want)))
   bad <- which(!ok)
+  # Full precision, and the relative delta: a last-bit divergence prints
+  # identically at R's default seven digits, which says nothing about whether it
+  # is a rounding difference or a real one.
   expect_equal(length(bad), 0L,
     info = if (length(bad) == 0L) canon else sprintf(
-      "%s: %d of %d values differ; first at %d (got %s want %s)",
+      "%s: %d of %d values differ; first at %d (got %s want %s, rel %.3e)",
       canon, length(bad), length(want), bad[1],
-      format(got[bad[1]]), format(want[bad[1]])))
+      format(got[bad[1]], digits = 17), format(want[bad[1]], digits = 17),
+      abs(got[bad[1]] - want[bad[1]]) / max(1, abs(want[bad[1]]))))
 }
 
 # Whether the reference fixture holds a single finite value. A few indicators
