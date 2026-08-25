@@ -54,6 +54,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and non-finite handling — 513 of the 514 were covered and nothing said so.
   It is covered now, and a guard reads the catalogue back against the suite
   so the next indicator cannot be added without one.
+- **The R `multi_timeframe` example drove the resampler with `update()`.**
+  The seven other languages were repaired when the resampler moved to
+  `push`/`drain`; R's was missed, and the only thing that runs it is a CI step
+  that had never been reached because the job failed earlier. It now prints the
+  same numbers as the other seven.
 - **An R example still drove the resampler with `update()`.** The resampler
   moved to `push`/`drain`, which removed the `wk_resampler_update` symbol, but
   the example under `flush()` was never updated — so anyone copying it hit

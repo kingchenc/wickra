@@ -5,14 +5,16 @@ source("_common.R")
 resample <- function(bars, factor) {
   if (factor <= 1) return(bars)
   # Native Resampler: bucket by an absolute timeframe (synthetic bars step 60000 ms,
-  # so factor minutes == factor*60000 ms). update() yields NA until a bucket closes;
-  # flush() returns the final partial bucket. No hand-written bucketing.
+  # so factor minutes == factor*60000 ms). push() returns the bars that candle
+  # closed, as a matrix with a row per bar -- none while the open bucket merely
+  # grows, and more than one where gap filling emits placeholders. flush()
+  # returns the final partial bucket. No hand-written bucketing.
   r <- Resampler(factor * 60000)
   out <- list()
   for (i in seq_len(nrow(bars))) {
-    c <- update(r, bars$open[i], bars$high[i], bars$low[i], bars$close[i],
-                bars$volume[i], bars$timestamp[i])
-    if (!is.na(c[1])) out[[length(out) + 1L]] <- c
+    closed <- push(r, bars$open[i], bars$high[i], bars$low[i], bars$close[i],
+                   bars$volume[i], bars$timestamp[i])
+    for (k in seq_len(nrow(closed))) out[[length(out) + 1L]] <- closed[k, ]
   }
   f <- flush(r)
   if (!is.null(f)) out[[length(out) + 1L]] <- f
