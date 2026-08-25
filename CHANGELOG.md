@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- **The `rust-cache` action pin claimed a version it no longer points at.** All
+  19 uses across `ci.yml`, `release.yml` and `bench.yml` pinned commit
+  `e18b497` with the comment `# v2`, but `v2` has since moved to `6323deb`
+  and no tag points at the pinned commit any more. A stale comment is worse
+  than none: it invites a reviewer to trust a version claim that no longer
+  holds. The pin is now `6323deb` with the exact release it corresponds to,
+  `# v2.9.2`. Every other pinned action was checked the same way — all 25
+  resolve to the commit their comment names.
+
 ### Changed
 - **Eight hand-written midpoints now call `f64::midpoint`.** Averaging two
   values as `0.5 * (a + b)` is the same arithmetic for any pair under
