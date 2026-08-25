@@ -20,6 +20,6 @@ generic \code{\link[base:flush]{base::flush()}}.
 }
 \examples{
 r <- Resampler(5)
-for (t in 0:6) update(r, 100 + t, 101 + t, 99 + t, 100 + t, 10, t)
+for (t in 0:6) push(r, 100 + t, 101 + t, 99 + t, 100 + t, 10, t)
 flush(r)
 }

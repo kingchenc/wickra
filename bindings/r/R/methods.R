@@ -243,7 +243,7 @@ push.wickra_indicator <- function(object, ...) {
 #'   `timestamp`), or `NULL` if nothing is pending.
 #' @examples
 #' r <- Resampler(5)
-#' for (t in 0:6) update(r, 100 + t, 101 + t, 99 + t, 100 + t, 10, t)
+#' for (t in 0:6) push(r, 100 + t, 101 + t, 99 + t, 100 + t, 10, t)
 #' flush(r)
 #' @exportS3Method base::flush
 flush.wickra_indicator <- function(con) {

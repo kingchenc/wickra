@@ -132,7 +132,7 @@ impl Indicator for Doji {
         }
         // Signed mode: classify the Doji by where its (negligible) body sits
         // within the high–low range.
-        let body_mid = 0.5 * (candle.open + candle.close);
+        let body_mid = f64::midpoint(candle.open, candle.close);
         let pos = (body_mid - candle.low) / range;
         if pos > 2.0 / 3.0 {
             Some(1.0)

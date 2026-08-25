@@ -115,7 +115,7 @@ impl Indicator for EhlersStochastic {
         };
         // 2-bar SMA smoothing.
         let smoothed = if self.has_prev {
-            0.5 * (raw + self.prev_stoch)
+            f64::midpoint(raw, self.prev_stoch)
         } else {
             raw
         };

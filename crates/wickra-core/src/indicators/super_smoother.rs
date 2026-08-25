@@ -109,7 +109,7 @@ impl Indicator for SuperSmoother {
         self.count += 1;
         let output = match (self.prev_input, self.prev_output_1, self.prev_output_2) {
             (Some(p_in), Some(y1), Some(y2)) => {
-                let avg = 0.5 * (input + p_in);
+                let avg = f64::midpoint(input, p_in);
                 self.c1 * avg + self.c2 * y1 + self.c3 * y2
             }
             _ => input,

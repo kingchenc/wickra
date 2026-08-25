@@ -615,11 +615,14 @@ jobs:
       - name: Build WASM package (nodejs target) for the golden suite
         run: wasm-pack build bindings/wasm --target nodejs --release --out-dir pkg
 
-      # The whole directory, not just golden.test.js: naming one file meant
+      # Every test file, not just golden.test.js: naming one file meant
       # data_layer.test.js had never run in CI, which is how a resampler test
-      # that had been failing since the streaming change went unnoticed.
+      # that had been failing since the streaming change went unnoticed. The
+      # glob rather than the bare directory, because Node 22 resolves a
+      # directory argument as a module path and fails to load it, and because
+      # tests/harness.js is shared driving code rather than a suite.
       - name: WASM suite — golden parity, batch parity, data layer, completeness
-        run: node --test bindings/wasm/tests/
+        run: node --test bindings/wasm/tests/*.test.js
 
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}

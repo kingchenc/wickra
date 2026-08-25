@@ -62,7 +62,7 @@ impl Indicator for MatchingLow {
         self.prev = Some(candle);
         let bar1 = prev?;
         self.has_emitted = true;
-        let mean_range = 0.5 * ((bar1.high - bar1.low) + (candle.high - candle.low));
+        let mean_range = f64::midpoint(bar1.high - bar1.low, candle.high - candle.low);
         let tol = 0.05 * mean_range;
         if bar1.close < bar1.open
             && candle.close < candle.open

@@ -67,7 +67,7 @@ impl Indicator for RickshawMan {
         }
         let upper = candle.high - candle.open.max(candle.close);
         let lower = candle.open.min(candle.close) - candle.low;
-        let body_mid = 0.5 * (candle.open + candle.close);
+        let body_mid = f64::midpoint(candle.open, candle.close);
         let pos = (body_mid - candle.low) / range;
         if upper >= 0.3 * range && lower >= 0.3 * range && (0.4..=0.6).contains(&pos) {
             return Some(1.0);

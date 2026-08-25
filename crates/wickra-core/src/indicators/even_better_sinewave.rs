@@ -106,8 +106,10 @@ impl Indicator for EvenBetterSinewave {
         if !price.is_finite() {
             return None;
         }
+        // Ehlers' high-pass gain, (1 + alpha1) / 2.
+        let gain = f64::midpoint(1.0, self.alpha1);
         let hp = match self.prev_price {
-            Some(prev) => 0.5 * (1.0 + self.alpha1) * (price - prev) + self.alpha1 * self.hp,
+            Some(prev) => gain * (price - prev) + self.alpha1 * self.hp,
             None => 0.0,
         };
         self.prev_price = Some(price);

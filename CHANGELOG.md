@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Eight hand-written midpoints now call `f64::midpoint`.** Averaging two
+  values as `0.5 * (a + b)` is the same arithmetic for any pair under
+  `f64::MAX / 2` — both scale by a power of two exactly — so no value moves,
+  and regenerating every golden fixture confirms it: not one changed.
+  `midpoint` says what the line means and satisfies the lint a newer
+  toolchain raises.
 - **`wickra_core::Error` and `wickra_data::Error` are now `#[non_exhaustive]`.**
   The core enum has already grown from 4 to 11 variants, and the data enum's
   variant set is feature-dependent (`live-binance`), so a downstream exhaustive
@@ -38,6 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   few to pass. All three now replay the whole catalogue through it against the
   same fixtures the streaming pass uses. Verified by feeding a scalar batch the
   open instead of the close and watching each suite fail.
+- **An R example still drove the resampler with `update()`.** The resampler
+  moved to `push`/`drain`, which removed the `wk_resampler_update` symbol, but
+  the example under `flush()` was never updated — so anyone copying it hit
+  "not available for .Call()", and `R CMD check` failed on it. All 532 manual
+  pages now run their examples clean.
 - **Two R manual pages documented a signature that had changed.**
   `Resampler.Rd` still showed `Resampler(timeframe)` after the resampler gained
   `gap_fill`, and `push.Rd` was equally behind. The R job runs `R CMD check`

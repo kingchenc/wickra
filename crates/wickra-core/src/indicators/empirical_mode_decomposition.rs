@@ -159,7 +159,7 @@ impl Indicator for EmpiricalModeDecomposition {
         let avg_valley = self.valley_smoother.update(valley)?;
 
         // The EMD line is the bandpass minus the smoothed mean envelope.
-        let mean = 0.5 * (avg_peak + avg_valley);
+        let mean = f64::midpoint(avg_peak, avg_valley);
         let raw = bp - mean;
         let v = self.smoother.update(raw)?;
         self.last_value = Some(v);

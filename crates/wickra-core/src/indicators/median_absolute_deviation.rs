@@ -83,7 +83,7 @@ fn median_sorted(sorted: &[f64]) -> f64 {
     let n = sorted.len();
     let mid = n / 2;
     if n % 2 == 0 {
-        (sorted[mid - 1] + sorted[mid]) * 0.5
+        f64::midpoint(sorted[mid - 1], sorted[mid])
     } else {
         sorted[mid]
     }
