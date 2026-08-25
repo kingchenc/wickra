@@ -29,8 +29,36 @@ GOLDEN_LIBM_DEPENDENT <- local({
   trimws(readLines(p, warn = FALSE))
 })
 
+# Four indicators cannot be held to 1e-12 *in R specifically*, and the reason is
+# the harness rather than the library. Every other binding parses the golden
+# input with a correctly rounded decimal parser and reproduces the fixture bit
+# for bit; R parses it with its own, and on aarch64 that differs by a last bit on
+# at least one bar. These four then amplify that bit, because each one subtracts
+# nearly equal quantities:
+#
+#   Adl                 (close - low) - (high - close), then accumulated
+#   IntradayIntensity   2*close - high - low, near zero when close sits mid-bar
+#   EffectiveSpread     price - mid, near zero when a trade prints at the mid
+#   ChaikinOscillator   a difference of two EMAs of the same series
+#
+# Measured on macos-latest: 1.015e-12, 3.217e-12, 2.491e-12 and 1.000e-11. The
+# streaming and batch passes report identical values for them, so the library's
+# two paths agree exactly with each other -- only the comparison against a
+# fixture that Rust parsed is affected. 1e-9 keeps a hundredfold margin over the
+# worst observed and stays a thousand times tighter than the libm bound, so a
+# real regression could not hide here.
+GOLDEN_CANCELLATION_SENSITIVE <- c(
+  "Adl", "ChaikinOscillator", "EffectiveSpread", "IntradayIntensity"
+)
+
 golden_tol <- function(canonical) {
-  if (canonical %in% GOLDEN_LIBM_DEPENDENT) 1e-6 else 1e-12
+  if (canonical %in% GOLDEN_LIBM_DEPENDENT) {
+    1e-6
+  } else if (canonical %in% GOLDEN_CANCELLATION_SENSITIVE) {
+    1e-9
+  } else {
+    1e-12
+  }
 }
 
 golden_cell <- function(s) {

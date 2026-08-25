@@ -54,6 +54,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and non-finite handling — 513 of the 514 were covered and nothing said so.
   It is covered now, and a guard reads the catalogue back against the suite
   so the next indicator cannot be added without one.
+- **Four indicators are compared at 1e-9 rather than 1e-12 in the R golden
+  suite.** Every other binding parses the golden input with a correctly
+  rounded decimal parser and reproduces the fixture bit for bit; R parses it
+  with its own, which differs by a last bit on aarch64. `Adl`,
+  `ChaikinOscillator`, `EffectiveSpread` and `IntradayIntensity` amplify that
+  bit because each subtracts nearly equal quantities, reaching 1.0e-11 at
+  worst. The library is unaffected — its streaming and batch paths report
+  byte-identical values for these four, so `batch == streaming` remains exact;
+  only the comparison against a Rust-parsed fixture moves.
 - **The R `multi_timeframe` example drove the resampler with `update()`.**
   The seven other languages were repaired when the resampler moved to
   `push`/`drain`; R's was missed, and the only thing that runs it is a CI step
