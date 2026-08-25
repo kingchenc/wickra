@@ -24,6 +24,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   catch-all; the raised exception and message are unchanged.
 
 ### Fixed
+- **Nothing checked the R binding against the C ABI it actually links.** Every
+  other binding ships its native half in the same artifact as its wrapper, so the
+  two cannot disagree. R is the exception: `bindings/r/configure` downloads a
+  prebuilt `wickra-c-<triple>.tar.gz` from the release named by
+  `DESCRIPTION: Version` and compiles the generated `src/wickra.c` against it,
+  while the R CI job sets `WICKRA_INCLUDE_DIR`/`WICKRA_LIB_DIR` and builds
+  against the header in the tree, which match by construction. r-universe
+  compiles the pairing CI never sees, and went red for it: 177 exports the
+  wrapper calls were added to the C ABI after v0.9.9 and `wickra_resampler_new`
+  gained a second parameter, so the source build failed with 354 compile errors
+  that all had one cause. `scripts/check_r_abi_skew.py` now checks the generated
+  wrapper against both headers. A symbol absent from the header in the tree means
+  the wrapper is stale, which is a defect and fails; a symbol absent from the
+  released ABI means main is ahead of the last release and r-universe stays red
+  until the next one, which is a release-readiness signal and warns.
 - **Nothing compared the bindings to each other.** Each is generated or written
   separately and tested separately, so a method that went missing in one of them
   failed nowhere — which is how the WASM binding shipped 73 classes without

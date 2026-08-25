@@ -112,6 +112,14 @@ jobs:
       - name: Compare every binding's surface with the C ABI
         run: python3 scripts/check_binding_surface.py
 
+      # R is the one binding whose native half comes from a published release
+      # rather than from this tree (bindings/r/configure downloads the C ABI for
+      # DESCRIPTION's Version), so the pairing r-universe compiles is one our own
+      # R job never sees -- it builds against the header in the tree. This checks
+      # the generated wrapper against both.
+      - name: Check the R wrapper against the released C ABI
+        run: python3 scripts/check_r_abi_skew.py
+
   # Syntax/parse smoke for the non-Rust examples. The Rust examples are built in
   # the `rust` job above (`cargo build -p wickra-examples --bins`). Running an
   # example needs the built native binding / wheel, which this job does not have,
