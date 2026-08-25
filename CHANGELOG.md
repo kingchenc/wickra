@@ -44,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   few to pass. All three now replay the whole catalogue through it against the
   same fixtures the streaming pass uses. Verified by feeding a scalar batch the
   open instead of the close and watching each suite fail.
+- **The R vignette promised an O(1) update for every indicator.** The same
+  unqualified claim corrected elsewhere, in the getting-started vignette that
+  ships to CRAN and r-universe. It now says what the code promises: a step
+  whose cost does not grow with the history behind it.
 - **An R example still drove the resampler with `update()`.** The resampler
   moved to `push`/`drain`, which removed the `wk_resampler_update` symbol, but
   the example under `flush()` was never updated — so anyone copying it hit

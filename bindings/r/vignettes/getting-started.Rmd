@@ -13,8 +13,9 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 
 `wickra` exposes the Wickra technical-analysis library in R over its C ABI hub.
 Every indicator is a constructor returning a `wickra_indicator`; you feed it data
-one observation at a time with `update()` (an O(1) streaming step) or run a whole
-series at once with `batch()`. Both paths share the exact same Rust core, so a
+one observation at a time with `update()` — a streaming step whose cost does not
+grow with how much history you have already fed it — or run a whole series at
+once with `batch()`. Both paths share the exact same Rust core, so a
 live feed and a historical backtest compute identical values.
 
 ```{r}
