@@ -1031,6 +1031,7 @@ candle_inv!(
 candle_inv!(inv_volume_weighted_sr, VolumeWeightedSr::new(20).unwrap());
 candle_inv!(inv_vortex, Vortex::new(14).unwrap());
 candle_inv!(inv_vpt, VolumePriceTrend::new());
+candle_inv!(inv_rolling_vwap, RollingVwap::new(14).unwrap());
 candle_inv!(inv_vwap, Vwap::new());
 candle_inv!(inv_vwap_stddev_bands, VwapStdDevBands::new(2.0).unwrap());
 candle_inv!(inv_vwma, Vwma::new(5).unwrap());
@@ -1196,3 +1197,45 @@ bar_inv!(
 );
 bar_inv!(inv_tick_bars, TickBars::new(3).unwrap());
 bar_inv!(inv_volume_bars, VolumeBars::new(100.0).unwrap());
+
+// The suite is a long list of macro calls, and `vwap.rs` defines two indicators
+// while only one of them was ever listed -- so `RollingVwap` alone was never
+// held to the warmup, readiness, reset and non-finite contract the other 513
+// are. Nothing noticed, because a missing entry is a test that does not exist.
+//
+// `FAMILIES` is the catalogue, so it can say what the list should contain.
+// Reading this file back at compile time is the cheapest way to compare the two
+// without a build script.
+#[test]
+fn every_catalogued_indicator_has_an_invariant_test() {
+    const SOURCE: &str = include_str!("invariants.rs");
+
+    // One catalogued name can be the suffix of another -- `Vwap` and
+    // `RollingVwap` -- so a plain `contains` would let the shorter one ride on
+    // the longer one's entry. Require that the character before the match
+    // cannot continue an identifier.
+    //
+    // For the same reason this function must not spell any constructor out in
+    // prose: the haystack is this very file, so a name written in a comment
+    // would answer for itself.
+    fn constructs(name: &str) -> bool {
+        let needle = format!("{name}::new");
+        SOURCE.match_indices(&needle).any(|(at, _)| {
+            at == 0
+                || !SOURCE[..at]
+                    .chars()
+                    .next_back()
+                    .is_some_and(|c| c.is_alphanumeric() || c == '_')
+        })
+    }
+
+    let missing: Vec<&str> = FAMILIES
+        .iter()
+        .flat_map(|(_, members)| members.iter().copied())
+        .filter(|name| !constructs(name))
+        .collect();
+    assert!(
+        missing.is_empty(),
+        "catalogued indicators with no invariant test: {missing:?}"
+    );
+}

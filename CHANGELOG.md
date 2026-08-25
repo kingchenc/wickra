@@ -48,6 +48,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unqualified claim corrected elsewhere, in the getting-started vignette that
   ships to CRAN and r-universe. It now says what the code promises: a step
   whose cost does not grow with the history behind it.
+- **One indicator was never held to the property contract.** `vwap.rs`
+  defines two indicators and only one of them was listed in the invariants
+  suite, so `RollingVwap` alone went unchecked for warmup, readiness, reset
+  and non-finite handling — 513 of the 514 were covered and nothing said so.
+  It is covered now, and a guard reads the catalogue back against the suite
+  so the next indicator cannot be added without one.
 - **An R example still drove the resampler with `update()`.** The resampler
   moved to `push`/`drain`, which removed the `wk_resampler_update` symbol, but
   the example under `flush()` was never updated — so anyone copying it hit
@@ -443,7 +449,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instead. The value stream after warmup is unchanged, and `is_ready()` and
   `warmup_period()` finally agree with what `update` does.
 
-  A new `check_warmup` invariant asserts the bound across all 513 indicators. It
+  A new `check_warmup` invariant asserts the bound across all 514 indicators. It
   only forbids emitting *earlier* than declared: several indicators declare a
   bound that is right for their intended bar size and merely look late on a
   probe series of another, so the other direction is not an error.
@@ -499,7 +505,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `check_scalar_nonfinite` and `check_pairwise_nonfinite` now inject after every
   input as well as before the first, and compare the whole interleaved series
   against a clean run — so "a rejected input changed the values around it" is a
-  test failure across all 513 indicators rather than an assumption.
+  test failure across all 514 indicators rather than an assumption.
 
   157 unit assertions pinned the old behaviour and were updated. Fifteen of them
   captured a cached value purely to compare against it; rather than delete those
@@ -876,7 +882,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to be present, long after it began emitting; `ZigZag` keyed off a trend state
   seeded on the first bar, which emits nothing; `LongLine` and `ShortLine`
   required a full window while emitting from bar one. All four now track
-  emission. The property suite asserts the contract for all 513 indicators, in
+  emission. The property suite asserts the contract for all 514 indicators, in
   every input family — including that a fresh instance is not ready, and that
   `reset()` returns it to not ready. Verified to bite by reintroducing the
   `Trix` defect fixed earlier in this release: the check fails on it immediately.
