@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **The per-binding reference benchmark discarded its own results.** Every other
+  harness in the repository guards its measurement loop, but
+  `examples/rust/src/bin/throughput.rs` -- the FFI-free Rust baseline that all
+  nine bindings in BENCHMARKS.md §3 are measured against -- called
+  `ind.update(price);` and dropped the value, leaving the optimiser free to
+  delete work nothing reads. It has been that way since the benchmarks landed in
+  #246. Measured cost of the omission: `SMA(20)` streaming reports 1836 Mupd/s
+  unguarded and 1341 guarded, a 27% inflation on the one row every other row is
+  compared to. Batch was never affected (505 vs 514) because the result array is
+  returned.
+- **`bindings/java/benchmarks` did not compile.** Its pom pinned `wickra` 0.9.6,
+  three releases behind, so it built against an API where `Atr.batch` took a
+  `double[]` of timestamps; the current one takes `long[]`. Against a current jar
+  it failed at runtime with `NoSuchMethodError`, and against its own source it
+  failed to compile. Nothing caught it because CI does not build that module.
+  `Throughput.java` now declares `long[] timestamp`, which is what the binding
+  has taken for some time, and the redundant `(long)` cast at the call site is
+  gone.
+
+
+### Fixed
 - **`sync-about` reported success while syncing nothing.** Every clone and push
   in the workflow was written as `if ! git <cmd> 2>/dev/null; then echo
   "::warning::…"`, so a failure printed a warning, discarded the reason and let
