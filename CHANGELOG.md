@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-26
+
 ### Security
 - **The `rust-cache` action pin claimed a version it no longer points at.** All
   19 uses across `ci.yml`, `release.yml` and `bench.yml` pinned commit
@@ -48,7 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   wrapper against both headers. A symbol absent from the header in the tree means
   the wrapper is stale, which is a defect and fails; a symbol absent from the
   released ABI means main is ahead of the last release and r-universe stays red
-  until the next one, which is a release-readiness signal and warns.
+  until the next one, which is a release-readiness signal and warns. A version
+  with no release at all is a release in flight, where the tag publishes wrapper
+  and ABI together, and passes.
 - **Nothing compared the bindings to each other.** Each is generated or written
   separately and tested separately, so a method that went missing in one of them
   failed nowhere — which is how the WASM binding shipped 73 classes without
@@ -2995,7 +2999,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.9...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/wickra-lib/wickra/compare/v0.9.9...v1.0.0
 [0.9.9]: https://github.com/wickra-lib/wickra/compare/v0.9.8...v0.9.9
 [0.9.8]: https://github.com/wickra-lib/wickra/compare/v0.9.7...v0.9.8
 [0.9.7]: https://github.com/wickra-lib/wickra/compare/v0.9.6...v0.9.7
