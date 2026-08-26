@@ -8,17 +8,17 @@ are recorded in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Status
 
-Wickra is **pre-1.0**. The public API is largely stable but may still change in
-minor releases; breaking changes are called out in the changelog.
+Wickra is at **1.0**. The public API follows semantic versioning: a breaking
+change requires a major release, and every change is recorded in the changelog.
 
 ## Themes
 
 - **Indicator coverage.** Continue broadening the indicator catalogue across
   families (trend, momentum, volatility, volume, statistics, market profile,
   and more), each with the same streaming/batch parity and test guarantees.
-- **API stabilization toward 1.0.** Settle the public `Indicator` and
-  `BarBuilder` traits and the binding surfaces, then commit to semantic
-  versioning stability for a 1.0 release.
+- **API stability.** The public `Indicator` and `BarBuilder` traits and the
+  binding surfaces are settled as of 1.0; keep them that way and reserve
+  breaking changes for a major release.
 - **Performance.** Keep a tick free of any pass over the history behind it, and maintain the benchmark suite;
   investigate further allocation and cache improvements.
 - **Bindings parity.** Keep the Python, Node.js and WASM bindings — plus

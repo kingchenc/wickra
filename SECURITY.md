@@ -2,8 +2,8 @@
 
 ## Supported versions
 
-Wickra is pre-1.0. Security fixes are applied to the latest released `1.0.0`
-version only; please upgrade to the newest release before reporting an issue.
+Security fixes are applied to the latest released version, `1.0.0`, only; please
+upgrade to the newest release before reporting an issue.
 
 | Version | Supported |
 | --- | --- |
@@ -111,12 +111,12 @@ publisher identity.
 
 ## Support timeline and end of support
 
-Wickra is **pre-1.0**: only the **latest released `0.y.z`** version receives
-security fixes. When a newer release is published, the previous version
-**immediately reaches end of support** and will not receive further fixes;
-users should upgrade to the latest release. The supported-versions table above
-is authoritative. After the `1.0.0` release this policy will be revised to
-support a defined window of releases.
+Only the **latest released version** receives security fixes. When a newer
+release is published, the previous version **immediately reaches end of
+support** and will not receive further fixes; users should upgrade to the
+latest release. The supported-versions table above is authoritative. A defined
+support window covering older releases may be introduced later; until it is,
+only the latest release is supported.
 
 ## Remediation policy (dependencies and code scanning)
 

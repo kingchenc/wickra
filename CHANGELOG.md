@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   not a success. Nothing about the token is asserted in the message any more —
   the clone guards claimed it "likely lacks write", which cannot be the cause of
   a failed clone of a public repository.
+- **The 1.0.0 release left `SECURITY.md` contradicting itself.** The version
+  strings were bumped, the prose around them was not: the supported-versions
+  section read "Wickra is pre-1.0. Security fixes are applied to the latest
+  released `1.0.0`", and the support timeline promised a policy revision "after
+  the `1.0.0` release" while claiming only `0.y.z` versions are supported.
+  `ROADMAP.md` still listed "API stabilization toward 1.0" as a future theme.
+  Both now describe 1.0 as shipped and the API as semver-stable.
 
 ## [1.0.0] - 2026-08-26
 
