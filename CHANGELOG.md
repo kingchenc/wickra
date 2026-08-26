@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **`sync-about` reported success while syncing nothing.** Every clone and push
+  in the workflow was written as `if ! git <cmd> 2>/dev/null; then echo
+  "::warning::…"`, so a failure printed a warning, discarded the reason and let
+  the job go green. The v1.0.0 tag run did exactly that: it built the docs
+  commit, could not push it, and reported success — `wickra-docs` and the
+  webpage stayed on 0.9.9 while the release itself was live on five registries.
+  `ABOUT_SYNC_TOKEN` was rotated on 2026-07-01, two days after the last release,
+  so the first run that needed write was this one, seven weeks later. All twelve
+  guards now let git print why and fail the step: a sync that did not happen is
+  not a success. Nothing about the token is asserted in the message any more —
+  the clone guards claimed it "likely lacks write", which cannot be the cause of
+  a failed clone of a public repository.
+
 ## [1.0.0] - 2026-08-26
 
 ### Security

@@ -182,9 +182,9 @@ jobs:
           GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
         run: |
           n="${{ steps.count.outputs.count }}"
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs-count 2>/dev/null; then
-            echo "::warning::cannot clone wickra-lib/wickra-docs — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping docs count sync."
-            exit 0
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs-count; then
+            echo "::error::cannot clone wickra-lib/wickra-docs; nothing was synced."
+            exit 1
           fi
           cd docs-count
           sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" index.md overview.md Indicators-Overview.md .vitepress/config.ts
@@ -196,11 +196,11 @@ jobs:
           git config user.email "wickra-bot@users.noreply.github.com"
           git add index.md overview.md Indicators-Overview.md .vitepress/config.ts
           git commit -m "chore: sync indicator count to ${n}"
-          if ! git push 2>/dev/null; then
-            echo "::warning::push to wickra-lib/wickra-docs failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
-          else
-            echo "Docs indicator count synced to ${n}."
+          if ! git push; then
+            echo "::error::push to wickra-lib/wickra-docs failed; nothing was synced. ABOUT_SYNC_TOKEN is rotated outside this workflow -- check that it still carries write on that repository."
+            exit 1
           fi
+          echo "Docs indicator count synced to ${n}."
 
       # The GitHub wiki (wickra-lib/wickra.wiki) was collapsed to a single
       # Home.md pointer page that sends visitors to docs.wickra.org, but that
@@ -216,9 +216,9 @@ jobs:
           GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
         run: |
           n="${{ steps.count.outputs.count }}"
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra.wiki.git" wiki-count 2>/dev/null; then
-            echo "::warning::cannot clone wickra-lib/wickra.wiki — ABOUT_SYNC_TOKEN likely lacks write on the wiki. Skipping wiki count sync."
-            exit 0
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra.wiki.git" wiki-count; then
+            echo "::error::cannot clone wickra-lib/wickra.wiki; nothing was synced."
+            exit 1
           fi
           cd wiki-count
           sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" Home.md
@@ -230,11 +230,11 @@ jobs:
           git config user.email "wickra-bot@users.noreply.github.com"
           git add Home.md
           git commit -m "chore: sync indicator count to ${n}"
-          if ! git push 2>/dev/null; then
-            echo "::warning::push to wickra-lib/wickra.wiki failed — ABOUT_SYNC_TOKEN likely lacks write on the wiki."
-          else
-            echo "Wiki pointer indicator count synced to ${n}."
+          if ! git push; then
+            echo "::error::push to wickra-lib/wickra.wiki failed; nothing was synced. ABOUT_SYNC_TOKEN is rotated outside this workflow -- check that it still carries write on that repository."
+            exit 1
           fi
+          echo "Wiki pointer indicator count synced to ${n}."
 
       # ----- org-profile sync (soft-skip until PAT scope lands) -------
       #
@@ -252,9 +252,9 @@ jobs:
           GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
         run: |
           n="${{ steps.count.outputs.count }}"
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/.github.git" orgprofile 2>/dev/null; then
-            echo "::warning::cannot clone wickra-lib/.github — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping org profile sync."
-            exit 0
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/.github.git" orgprofile; then
+            echo "::error::cannot clone wickra-lib/.github; nothing was synced."
+            exit 1
           fi
           cd orgprofile
           sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" profile/README.md
@@ -266,11 +266,11 @@ jobs:
           git config user.email "wickra-bot@users.noreply.github.com"
           git add profile/README.md
           git commit -m "chore: sync indicator count to ${n}"
-          if ! git push 2>/dev/null; then
-            echo "::warning::push to wickra-lib/.github failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
-          else
-            echo "Org profile README synced to ${n}."
+          if ! git push; then
+            echo "::error::push to wickra-lib/.github failed; nothing was synced. ABOUT_SYNC_TOKEN is rotated outside this workflow -- check that it still carries write on that repository."
+            exit 1
           fi
+          echo "Org profile README synced to ${n}."
 
       - name: Sync org description
         if: github.event_name != 'pull_request'
@@ -322,14 +322,12 @@ jobs:
           # Clone into `docs-ver`, NOT `docs`: on a tag push this job checks out
           # the wickra repo at the workspace root, which already contains a
           # top-level `docs/` directory, so `git clone … docs` fails with
-          # "destination path 'docs' already exists" — silently, because of the
-          # 2>/dev/null below — and the version sync never runs (this is exactly
-          # why v0.4.0 did not bump the docs table). `docs-ver` mirrors the
-          # `docs-count` dir used by the count step above and collides with
-          # nothing in the repo.
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs-ver 2>/dev/null; then
-            echo "::warning::cannot clone wickra-lib/wickra-docs — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping docs version sync."
-            exit 0
+          # "destination path 'docs' already exists" — which is why v0.4.0 did
+          # not bump the docs table. `docs-ver` mirrors the `docs-count` dir used
+          # by the count step above and collides with nothing in the repo.
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs-ver; then
+            echo "::error::cannot clone wickra-lib/wickra-docs; nothing was synced."
+            exit 1
           fi
           cd docs-ver
           # Published-versions table rows (all registries): replace only the
@@ -355,11 +353,11 @@ jobs:
           git config user.email "wickra-bot@users.noreply.github.com"
           git add overview.md Quickstart-Rust.md Quickstart-Java.md
           git commit -m "chore: sync published version to ${version}"
-          if ! git push 2>/dev/null; then
-            echo "::warning::push to wickra-lib/wickra-docs failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
-          else
-            echo "Docs version synced to ${version}."
+          if ! git push; then
+            echo "::error::push to wickra-lib/wickra-docs failed; nothing was synced. ABOUT_SYNC_TOKEN is rotated outside this workflow -- check that it still carries write on that repository."
+            exit 1
           fi
+          echo "Docs version synced to ${version}."
 
       # ----- webpage (marketing site) self-update (findings P12.1) ------------
       #
@@ -376,9 +374,9 @@ jobs:
           GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
         run: |
           n="${{ steps.count.outputs.count }}"
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/webpage.git" webpage-count 2>/dev/null; then
-            echo "::warning::cannot clone wickra-lib/webpage — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping webpage count sync."
-            exit 0
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/webpage.git" webpage-count; then
+            echo "::error::cannot clone wickra-lib/webpage; nothing was synced."
+            exit 1
           fi
           cd webpage-count
           sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" index.md about.md .vitepress/config.ts
@@ -390,11 +388,11 @@ jobs:
           git config user.email "wickra-bot@users.noreply.github.com"
           git add index.md about.md .vitepress/config.ts
           git commit -m "chore: sync indicator count to ${n}"
-          if ! git push 2>/dev/null; then
-            echo "::warning::push to wickra-lib/webpage failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
-          else
-            echo "Webpage indicator count synced to ${n}."
+          if ! git push; then
+            echo "::error::push to wickra-lib/webpage failed; nothing was synced. ABOUT_SYNC_TOKEN is rotated outside this workflow -- check that it still carries write on that repository."
+            exit 1
           fi
+          echo "Webpage indicator count synced to ${n}."
 
       - name: Sync webpage version (wickra-lib/webpage)
         if: startsWith(github.ref, 'refs/tags/v')
@@ -427,9 +425,9 @@ jobs:
             sleep 30
           done
           echo "wickra-wasm@${version} is live on npm; proceeding with the webpage version bump."
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/webpage.git" webpage-ver 2>/dev/null; then
-            echo "::warning::cannot clone wickra-lib/webpage — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a). Skipping webpage version sync."
-            exit 0
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/webpage.git" webpage-ver; then
+            echo "::error::cannot clone wickra-lib/webpage; nothing was synced."
+            exit 1
           fi
           cd webpage-ver
           # api/*.md "Latest" lines, the nav version label, and the wickra-wasm
@@ -467,8 +465,8 @@ jobs:
           git config user.email "wickra-bot@users.noreply.github.com"
           git add api/*.md index.md .vitepress/config.ts package.json package-lock.json
           git commit -m "chore: sync published version to ${version}"
-          if ! git push 2>/dev/null; then
-            echo "::warning::push to wickra-lib/webpage failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
-          else
-            echo "Webpage version synced to ${version}."
+          if ! git push; then
+            echo "::error::push to wickra-lib/webpage failed; nothing was synced. ABOUT_SYNC_TOKEN is rotated outside this workflow -- check that it still carries write on that repository."
+            exit 1
           fi
+          echo "Webpage version synced to ${version}."
