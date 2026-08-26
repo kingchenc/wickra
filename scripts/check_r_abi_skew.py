@@ -39,6 +39,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -60,8 +61,12 @@ def released_version() -> str:
     raise SystemExit(f"no Version: field in {DESCRIPTION}")
 
 
-def released_header(tag: str) -> str:
-    """The header as of `tag`, from the local clone if it has the tag, else raw."""
+def released_header(tag: str) -> str | None:
+    """The header as of `tag`, from the local clone if it has the tag, else raw.
+
+    None when no release carries that tag yet, which is what a release branch
+    looks like: DESCRIPTION already names the version the tag will publish.
+    """
     try:
         return subprocess.run(
             ["git", "show", f"{tag}:bindings/c/include/wickra.h"],
@@ -77,6 +82,14 @@ def released_header(tag: str) -> str:
         try:
             with urllib.request.urlopen(url, timeout=60) as response:
                 return response.read().decode("utf-8")
+        except urllib.error.HTTPError as err:
+            # A 404 is an answer, not a flake: that tag does not exist.
+            if err.code == 404:
+                return None
+            reason = err
+            if attempt < 3:
+                print(f"  attempt {attempt}/3 failed ({err}); retrying in {attempt * 5}s")
+                time.sleep(attempt * 5)
         except OSError as err:
             reason = err
             if attempt < 3:
@@ -164,7 +177,12 @@ def main() -> int:
 
     version = released_version()
     tag = f"v{version}"
-    released = declarations(released_header(tag))
+    header = released_header(tag)
+    if header is None:
+        print(f"\nNo release carries {tag} yet, so there is no released ABI to"
+              " compare against: the tag publishes the wrapper and the ABI together.")
+        return 0
+    released = declarations(header)
     skew = compare(used, released, tree)
     print(f"\nDESCRIPTION names version {version}, whose ABI declares {len(released)} exports.")
     if not skew:

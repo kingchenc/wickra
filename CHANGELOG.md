@@ -50,7 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   wrapper against both headers. A symbol absent from the header in the tree means
   the wrapper is stale, which is a defect and fails; a symbol absent from the
   released ABI means main is ahead of the last release and r-universe stays red
-  until the next one, which is a release-readiness signal and warns.
+  until the next one, which is a release-readiness signal and warns. A version
+  with no release at all is a release in flight, where the tag publishes wrapper
+  and ABI together, and passes.
 - **Nothing compared the bindings to each other.** Each is generated or written
   separately and tested separately, so a method that went missing in one of them
   failed nowhere — which is how the WASM binding shipped 73 classes without
