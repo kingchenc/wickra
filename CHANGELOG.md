@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-26
+
 ### Security
 - **The `rust-cache` action pin claimed a version it no longer points at.** All
   19 uses across `ci.yml`, `release.yml` and `bench.yml` pinned commit
@@ -2995,7 +2997,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.9...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/wickra-lib/wickra/compare/v0.9.9...v1.0.0
 [0.9.9]: https://github.com/wickra-lib/wickra/compare/v0.9.8...v0.9.9
 [0.9.8]: https://github.com/wickra-lib/wickra/compare/v0.9.7...v0.9.8
 [0.9.7]: https://github.com/wickra-lib/wickra/compare/v0.9.6...v0.9.7
