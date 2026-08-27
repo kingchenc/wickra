@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **The Python backtest example imported NumPy.** The README promises a data
+  layer that needs "no foreign package -- no pandas, no `csv-parse`, ... not even
+  NumPy", and `examples/python/live_binance.py` and `multi_timeframe.py` already
+  keep that promise; `backtest.py` still used NumPy for two things the standard
+  library does as well -- pulling one field out of a multi-output `batch`, and
+  taking the mean/min/max of a series. The `Matrix` rows now feed a list
+  comprehension, the columns are `array('d')` (which is what a scalar `batch`
+  already hands back), and the summary uses `math.isnan` with `sum`/`min`/`max`.
+  Output is byte-identical to the NumPy version across all nine series, and
+  `numpy` no longer appears in `sys.modules` after the example runs.
+
+
+### Fixed
 - **The per-binding reference benchmark discarded its own results.** Every other
   harness in the repository guards its measurement loop, but
   `examples/rust/src/bin/throughput.rs` -- the FFI-free Rust baseline that all
