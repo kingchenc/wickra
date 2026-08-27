@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-27
+
 ### Fixed
 - **The Python backtest example imported NumPy.** The README promises a data
   layer that needs "no foreign package -- no pandas, no `csv-parse`, ... not even
@@ -19,8 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Output is byte-identical to the NumPy version across all nine series, and
   `numpy` no longer appears in `sys.modules` after the example runs.
 
-
-### Fixed
 - **The per-binding reference benchmark discarded its own results.** Every other
   harness in the repository guards its measurement loop, but
   `examples/rust/src/bin/throughput.rs` -- the FFI-free Rust baseline that all
@@ -40,8 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   has taken for some time, and the redundant `(long)` cast at the call site is
   gone.
 
-
-### Fixed
 - **`sync-about` reported success while syncing nothing.** Every clone and push
   in the workflow was written as `if ! git <cmd> 2>/dev/null; then echo
   "::warning::…"`, so a failure printed a warning, discarded the reason and let
@@ -3054,7 +3052,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/wickra-lib/wickra/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wickra-lib/wickra/compare/v0.9.9...v1.0.0
 [0.9.9]: https://github.com/wickra-lib/wickra/compare/v0.9.8...v0.9.9
 [0.9.8]: https://github.com/wickra-lib/wickra/compare/v0.9.7...v0.9.8
