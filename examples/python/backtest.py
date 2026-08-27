@@ -14,32 +14,35 @@ indicators are wired correctly without pulling in pandas or a charting stack.
 from __future__ import annotations
 
 import argparse
+import math
 import sys
+from array import array
 from dataclasses import dataclass
-
-import numpy as np
 
 import wickra as ta
 
 
-def columns(matrix) -> np.ndarray:
-    """A multi-output ``batch`` returns a ``Matrix``, not a NumPy array; ``tolist``
-    is the documented bridge to one."""
-    return np.asarray(matrix.tolist(), dtype=np.float64)
+def column(matrix, index: int) -> list[float]:
+    """One field of a multi-output ``batch``.
+
+    A multi-output ``batch`` returns a ``Matrix``; ``tolist`` is the documented
+    bridge to plain rows, and this picks one field out of each.
+    """
+    return [row[index] for row in matrix.tolist()]
 
 
 @dataclass
 class History:
-    timestamp: np.ndarray
-    open: np.ndarray
-    high: np.ndarray
-    low: np.ndarray
-    close: np.ndarray
-    volume: np.ndarray
+    timestamp: array
+    open: array
+    high: array
+    low: array
+    close: array
+    volume: array
 
 
 def read_history(path: str) -> History:
-    """Load an OHLCV CSV into typed NumPy columns with Wickra's native
+    """Load an OHLCV CSV into typed columns with Wickra's native
     ``CandleReader`` — no manual CSV parsing.
 
     ``CandleReader`` validates the header (``timestamp,open,high,low,close,volume``),
@@ -54,10 +57,11 @@ def read_history(path: str) -> History:
     if not candles:
         raise ValueError(f"{path}: CSV has a header but no data rows")
     # CandleReader yields (open, high, low, close, volume, timestamp) tuples.
-    # Transpose into contiguous 1-D columns (batch() needs C-contiguous arrays).
-    o, h, l, c, v, ts = (np.array(col, dtype=np.float64) for col in zip(*candles))
+    # Transpose into contiguous 1-D columns; `array('d')` is the stdlib buffer
+    # `batch` already hands back, so no third-party array type is involved.
+    o, h, l, c, v, ts = (array("d", col) for col in zip(*candles))
     return History(
-        timestamp=ts.astype(np.int64),
+        timestamp=array("q", (int(t) for t in ts)),
         open=o,
         high=h,
         low=l,
@@ -77,16 +81,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def summarize(name: str, values) -> None:
-    # A scalar `batch` returns `array.array('d')`, which NumPy reads through the
-    # buffer protocol but cannot be boolean-indexed directly.
-    valid = np.asarray(values, dtype=np.float64)
-    valid = valid[~np.isnan(valid)]
-    if valid.size == 0:
+    # A scalar `batch` returns `array.array('d')`; the warmup entries are NaN.
+    valid = [v for v in values if not math.isnan(v)]
+    if not valid:
         print(f"  {name:<12} (no valid samples — series too short)")
         return
     print(
-        f"  {name:<12} mean={valid.mean():>10.4f}  min={valid.min():>10.4f}  "
-        f"max={valid.max():>10.4f}  last={valid[-1]:>10.4f}"
+        f"  {name:<12} mean={sum(valid) / len(valid):>10.4f}  "
+        f"min={min(valid):>10.4f}  max={max(valid):>10.4f}  last={valid[-1]:>10.4f}"
     )
 
 
@@ -96,21 +98,21 @@ def main() -> int:
 
     rsi = ta.RSI(args.rsi).batch(history.close)
     ema = ta.EMA(args.ema).batch(history.close)
-    macd = columns(ta.MACD().batch(history.close))  # shape (n, 3)
-    bb = columns(ta.BollingerBands(args.bb_period, args.bb_mult).batch(history.close))  # (n, 4)
+    macd = ta.MACD().batch(history.close)  # (n, 3)
+    bb = ta.BollingerBands(args.bb_period, args.bb_mult).batch(history.close)  # (n, 4)
     atr = ta.ATR(14).batch(history.high, history.low, history.close)
-    adx = columns(ta.ADX(14).batch(history.high, history.low, history.close))  # (n, 3)
+    adx = ta.ADX(14).batch(history.high, history.low, history.close)  # (n, 3)
     obv = ta.OBV().batch(history.close, history.volume)
 
-    print(f"Backtest summary for {args.path} ({history.close.size} bars)")
+    print(f"Backtest summary for {args.path} ({len(history.close)} bars)")
     summarize(f"RSI({args.rsi})", rsi)
     summarize(f"EMA({args.ema})", ema)
-    summarize("MACD line", macd[:, 0])
-    summarize("MACD hist", macd[:, 2])
-    summarize(f"BB upper", bb[:, 0])
-    summarize(f"BB lower", bb[:, 2])
+    summarize("MACD line", column(macd, 0))
+    summarize("MACD hist", column(macd, 2))
+    summarize("BB upper", column(bb, 0))
+    summarize("BB lower", column(bb, 2))
     summarize("ATR(14)", atr)
-    summarize("ADX(14)", adx[:, 2])
+    summarize("ADX(14)", column(adx, 2))
     summarize("OBV", obv)
 
     return 0
