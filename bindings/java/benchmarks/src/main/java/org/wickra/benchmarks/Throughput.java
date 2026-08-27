@@ -55,7 +55,7 @@ public final class Throughput {
         double[] low = new double[bars];
         double[] close = new double[bars];
         double[] volume = new double[bars];
-        double[] timestamp = new double[bars];
+        long[] timestamp = new long[bars];
         for (int i = 0; i < bars; i++) {
             double mid = 100 + Math.sin(i * 0.001) * 20 + i * 1e-4;
             double c = mid + Math.sin(i * 0.05) * 2;
@@ -88,7 +88,7 @@ public final class Throughput {
                 () -> {
                     try (Atr ind = new Atr(14)) {
                         for (int i = 0; i < n; i++) {
-                            ind.update(open[i], high[i], low[i], close[i], volume[i], (long) timestamp[i]);
+                            ind.update(open[i], high[i], low[i], close[i], volume[i], timestamp[i]);
                         }
                     }
                 },

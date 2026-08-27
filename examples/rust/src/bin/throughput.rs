@@ -15,6 +15,7 @@
 
 use std::time::Instant;
 
+use std::hint::black_box;
 use wickra::{Atr, Candle, Indicator, MacdIndicator, Sma};
 
 /// Median elapsed-ns over a few repetitions, after one warmup pass.
@@ -73,27 +74,27 @@ fn main() {
     let sma_stream = time_ns(|| {
         let mut ind = Sma::new(20).unwrap();
         for &price in &close {
-            ind.update(price);
+            black_box(ind.update(price));
         }
     });
     let sma_batch = time_ns(|| {
         let mut ind = Sma::new(20).unwrap();
-        ind.batch_nan(&close);
+        black_box(ind.batch_nan(&close));
     });
     let atr_stream = time_ns(|| {
         let mut ind = Atr::new(14).unwrap();
         for &candle in &candles {
-            ind.update(candle);
+            black_box(ind.update(candle));
         }
     });
     let atr_batch = time_ns(|| {
         let mut ind = Atr::new(14).unwrap();
-        ind.batch_atr(&high, &low, &close);
+        black_box(ind.batch_atr(&high, &low, &close));
     });
     let macd_stream = time_ns(|| {
         let mut ind = MacdIndicator::new(12, 26, 9).unwrap();
         for &price in &close {
-            ind.update(price);
+            black_box(ind.update(price));
         }
     });
 
