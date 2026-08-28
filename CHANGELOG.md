@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **`DemarkPivots` had the two conditional branches the wrong way round.** Tom
+  DeMark's formulation weights the low on a down bar and the high on an up bar;
+  the implementation did the opposite (`C < O` produced `2H + L + C`, `C > O`
+  produced `H + 2L + C`). Every mainstream reference agrees on the convention --
+  DeMark's *The New Science of Technical Analysis*, TradingView's "Pivot Points
+  Standard", Interactive Brokers TWS, WealthCharts -- and `PP`, `R1` and `S1`
+  were already derived correctly from `X`, so only the two branches moved. For
+  `O=100, H=110, L=90, C=105` the pivot goes from `98.75` to `103.75`. The unit
+  tests encoded the reversed branches, so they passed while diverging from the
+  published definition; they now assert the convention. Reported in #406.
+
+- **`Cypher` validated the C point against the wrong leg.** The pattern
+  (Darren Oglesbee) constrains the X-to-C projection `XC / XA` to roughly
+  1.272-1.414. The detector instead constrained `BC / XA` to 1.13-1.414, which
+  is a leg no harmonic pattern measures -- every sibling detector in the family
+  (`Gartley`, `Bat`, `Butterfly`, `Crab`, `Shark`, `Abcd`) uses `BC / AB`. The
+  error ran both ways: a canonical Cypher with `XC/XA = 1.3` was rejected, while
+  a shape at `XC/XA = 1.7` was accepted. That false positive was the module's
+  own bullish fixture, so the test suite confirmed the bug. Both fixtures have
+  been recomputed and a regression test pins the previously accepted shape at
+  `0.0`. Reported in #407.
+
+- **`ThreeDrives` detected two drives, not three.** The detector read five
+  pivots, which span only two alternating drive legs, and never measured a third
+  drive -- so a two-push extension could complete a pattern named for three. It
+  now reads seven pivots as six alternating legs (`R1 D1 R2 D2 R3 D3`), requires
+  each drive to extend the retracement before it, and checks symmetry across all
+  three drives and all three retracements. `warmup_period()` moves from `6` to
+  `8` and a five-pivot shape now returns `None` rather than a verdict. Reported
+  in #408.
+
+  Golden fixtures for `DemarkPivots` and `ThreeDrives` were regenerated; the
+  `Cypher` fixture is unchanged because the shared golden series never produced
+  a match under either rule.
+
 ## [1.0.1] - 2026-08-27
 
 ### Fixed

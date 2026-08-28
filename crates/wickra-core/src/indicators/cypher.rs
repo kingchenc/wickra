@@ -4,14 +4,19 @@ use crate::indicators::pattern_swing::{ratios_in, xabcd, SwingTracker, SWING_THR
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
-/// Cypher — a 5-point (X-A-B-C-D) harmonic pattern whose C leg is measured
-/// against XA (not AB) and whose D retraces the XC leg by `0.786`:
+/// Cypher — a 5-point (X-A-B-C-D) harmonic pattern (Darren Oglesbee) whose C
+/// point projects the XA leg beyond A and whose D retraces the XC leg by
+/// `0.786`:
 ///
 /// ```text
 /// AB / XA ∈ [0.382, 0.618]
-/// BC / XA ∈ [1.13, 1.414]  (C extends beyond A, measured on XA)
-/// CD / XC ∈ [0.74, 0.83]   (≈ 0.786 retracement of XC — the D completion)
+/// XC / XA ∈ [1.272, 1.414]  (C projects XA beyond A — measured X-to-C)
+/// CD / XC ∈ [0.74, 0.83]    (≈ 0.786 retracement of XC — the D completion)
 /// ```
+///
+/// The C constraint is the X-to-C projection, not B-to-C: unlike the Gartley
+/// family, the Cypher measures its third point against the initial XA leg
+/// rather than against AB.
 ///
 /// Output is `+1.0` (bullish, D a swing low), `-1.0` (bearish, D a swing high),
 /// or `0.0`; never `None`. See `crates/wickra-core/src/indicators/cypher.rs`.
@@ -59,12 +64,11 @@ impl Indicator for Cypher {
         let p = xabcd(pivots);
         let xa = (p.a - p.x).abs();
         let ab = (p.b - p.a).abs();
-        let bc = (p.c - p.b).abs();
         let xc = (p.c - p.x).abs();
         let cd = (p.d - p.c).abs();
         let matched = ratios_in(&[
             (ab / xa, 0.382, 0.618),
-            (bc / xa, 1.13, 1.414),
+            (xc / xa, 1.272, 1.414),
             (cd / xc, 0.74, 0.83),
         ]);
         if matched {
@@ -119,20 +123,32 @@ mod tests {
 
     #[test]
     fn bullish_cypher_is_plus_one() {
-        let out = run(&[150.0, 100.0, 140.0, 120.0, 168.0, 114.55]);
+        // X=100 A=140 B=120 C=152 D=111.128:
+        // AB/XA = 20/40 = 0.5, XC/XA = 52/40 = 1.3, CD/XC = 40.872/52 = 0.786.
+        let out = run(&[150.0, 100.0, 140.0, 120.0, 152.0, 111.128]);
         assert_eq!(*out.last().unwrap(), 1.0);
         assert!(out[..out.len() - 1].iter().all(|&x| x == 0.0));
     }
 
     #[test]
     fn bearish_cypher_is_minus_one() {
-        let out = run(&[150.0, 110.0, 130.0, 82.0, 135.45]);
+        // X=150 A=110 B=130 C=98 D=138.872: same ratios, terminal D a swing high.
+        let out = run(&[150.0, 110.0, 130.0, 98.0, 138.872]);
         assert_eq!(*out.last().unwrap(), -1.0);
     }
 
     #[test]
     fn out_of_ratio_does_not_trigger() {
         let out = run(&[150.0, 100.0, 140.0, 110.0, 135.0, 105.0]);
+        assert_eq!(*out.last().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn c_beyond_the_projection_window_does_not_trigger() {
+        // X=100 A=140 B=120 C=168 D=114.55: BC/XA = 1.2 sits inside the old
+        // (incorrect) window, but XC/XA = 1.7 is outside the 1.272-1.414
+        // projection, so the pattern must not match.
+        let out = run(&[150.0, 100.0, 140.0, 120.0, 168.0, 114.55]);
         assert_eq!(*out.last().unwrap(), 0.0);
     }
 
@@ -150,7 +166,7 @@ mod tests {
 
     #[test]
     fn batch_equals_streaming() {
-        let candles = candles_for_pivots(&[150.0, 100.0, 140.0, 120.0, 168.0, 114.55]);
+        let candles = candles_for_pivots(&[150.0, 100.0, 140.0, 120.0, 152.0, 111.128]);
         let mut a = Cypher::new();
         let mut b = Cypher::new();
         assert_eq!(

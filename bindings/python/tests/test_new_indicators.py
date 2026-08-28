@@ -2322,12 +2322,12 @@ def test_woodie_pivots_reference():
 
 
 def test_demark_pivots_up_bar_reference():
-    # Up bar: O=100, H=120, L=80, C=110 -> X = H + 2L + C = 390, PP = 97.5.
+    # Up bar: O=100, H=120, L=80, C=110 -> X = 2H + L + C = 430, PP = 107.5.
     dp = ta.DemarkPivots()
     pp, r1, s1 = dp.update((100.0, 120.0, 80.0, 110.0, 1.0, 0))
-    assert pp == pytest.approx(97.5)
-    assert r1 == pytest.approx(195.0 - 80.0)
-    assert s1 == pytest.approx(195.0 - 120.0)
+    assert pp == pytest.approx(107.5)
+    assert r1 == pytest.approx(215.0 - 80.0)
+    assert s1 == pytest.approx(215.0 - 120.0)
 
 
 def test_williams_fractals_isolated_peak():
@@ -2897,24 +2897,32 @@ def test_shark_reference():
 
 
 def test_cypher_reference():
+    # X=100 A=140 B=120 C=152 D=111.128: AB/XA = 0.5, XC/XA = 1.3 (the X-to-C
+    # projection, not BC), CD/XC = 0.786.
     t = ta.Cypher()
     assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) is None
     assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) is None
     assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) is None
     assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) is None
-    assert t.update((121.2, 168.0, 121.2, 121.2, 1.0, 4)) is None
-    assert t.update((114.55, 166.32, 114.55, 114.55, 1.0, 5)) == pytest.approx(0.0)
-    assert t.update((115.6955, 126.005, 115.6955, 115.6955, 1.0, 6)) == pytest.approx(1.0)
+    assert t.update((121.2, 152.0, 121.2, 121.2, 1.0, 4)) is None
+    assert t.update((111.128, 150.48, 111.128, 111.128, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update(
+        (112.23928000000001, 122.24080000000001, 112.23928000000001, 112.23928000000001, 1.0, 6)
+    ) == pytest.approx(1.0)
 
 
 def test_three_drives_reference():
+    # Seven pivots spanning three rising drives (124, 128, 132), each extending
+    # a 10-point retracement by 14. Two drives alone are not a match.
     t = ta.ThreeDrives()
     assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) is None
-    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) is None
-    assert t.update((101.0, 128.0, 101.0, 101.0, 1.0, 2)) is None
-    assert t.update((108.0, 126.72, 108.0, 108.0, 1.0, 3)) is None
-    assert t.update((109.08, 136.0, 109.08, 109.08, 1.0, 4)) is None
-    assert t.update((122.4, 134.64, 122.4, 122.4, 1.0, 5)) == pytest.approx(-1.0)
+    assert t.update((110.0, 118.8, 110.0, 110.0, 1.0, 1)) is None
+    assert t.update((111.1, 124.0, 111.1, 111.1, 1.0, 2)) is None
+    assert t.update((114.0, 122.76, 114.0, 114.0, 1.0, 3)) is None
+    assert t.update((115.14, 128.0, 115.14, 115.14, 1.0, 4)) is None
+    assert t.update((118.0, 126.72, 118.0, 118.0, 1.0, 5)) is None
+    assert t.update((119.18, 132.0, 119.18, 119.18, 1.0, 6)) is None
+    assert t.update((118.8, 130.68, 118.8, 118.8, 1.0, 7)) == pytest.approx(-1.0)
 
 
 def test_fib_retracement_reference():
