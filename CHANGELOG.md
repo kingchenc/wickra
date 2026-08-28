@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-08-28
+
+### Fixed
+- **The npm package shipped every platform binary twice.** `wickra@1.0.2`
+  weighed 98.64 MB unpacked across 22 files -- exactly twice the 49.18 MB that
+  the six `wickra-<platform>` packages occupy on npm together. The `files` list
+  named both `npm` and `*.node`: `napi artifacts` fills `npm/<rid>/` with each
+  target's freshly built binary before publish, and a copy of each also sits in
+  the package root, so both entries pulled in the full matrix. None of it was
+  ever loaded -- `index.js` resolves `./wickra.<rid>.node` first and only falls
+  back to the `wickra-<rid>` optional dependency, so the bundled copy always won
+  and the platform package npm downloaded alongside it was dead weight.
+  Comparable napi-rs projects ship 0.04-0.49 MB. Dropping only `npm` would have
+  halved the package rather than fixed it, so both entries are gone; what
+  remains is `index.js`, `index.d.ts`, `package.json` and the README. The
+  platform packages are unaffected -- they carry their own
+  `files: ["wickra.<rid>.node"]` and are published from `npm/<rid>/` on disk.
+
+
 ## [1.0.2] - 2026-08-28
 
 ### Fixed
@@ -3090,7 +3109,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/wickra-lib/wickra/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/wickra-lib/wickra/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/wickra-lib/wickra/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wickra-lib/wickra/compare/v0.9.9...v1.0.0
