@@ -25,9 +25,7 @@
   "homepage": "https://github.com/wickra-lib/wickra",
   "files": [
     "index.js",
-    "index.d.ts",
-    "npm",
-    "*.node"
+    "index.d.ts"
   ],
   "napi": {
     "binaryName": "wickra",
