@@ -248,6 +248,35 @@ pub(crate) fn xabcd(pivots: &[Pivot]) -> Xabcd {
     }
 }
 
+/// The six legs spanned by the seven most recent pivots, in chronological order,
+/// together with the terminal direction. Alternating shapes that repeat a
+/// `retracement, drive` pair three times need one pair more than the five-point
+/// [`Xabcd`] detectors, so they read this instead.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct DriveLegs {
+    /// Leg magnitudes from oldest to newest: `retracement, drive` three times
+    /// over.
+    pub legs: [f64; 6],
+    /// `true` when the terminal pivot is a swing low (a bullish completion —
+    /// the drives ran down); `false` when it is a swing high.
+    pub bullish: bool,
+}
+
+/// Read the last seven pivots as a [`DriveLegs`]. Pivots are guaranteed
+/// nonzero-leg (the swing tracker only confirms moves of at least the
+/// threshold), so the leg-ratio divisions in the detectors never divide by zero.
+pub(crate) fn drive_legs(pivots: &[Pivot]) -> DriveLegs {
+    let n = pivots.len();
+    let mut legs = [0.0; 6];
+    for (leg, pair) in legs.iter_mut().zip(pivots[n - 7..].windows(2)) {
+        *leg = (pair[1].price - pair[0].price).abs();
+    }
+    DriveLegs {
+        legs,
+        bullish: pivots[n - 1].direction < 0.0,
+    }
+}
+
 /// `true` when every `(value, low, high)` triple satisfies `low <= value <= high`.
 /// Harmonic detectors express their Fibonacci windows as a list of these triples;
 /// evaluating them in one expression keeps the per-triple comparison on a single

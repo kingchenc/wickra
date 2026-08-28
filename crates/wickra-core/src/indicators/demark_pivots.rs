@@ -18,8 +18,8 @@ pub struct DemarkPivotsOutput {
 /// from a sum `X` that depends on whether the bar closed up, down or flat.
 ///
 /// ```text
-/// X = 2·H + L + C   if C  < O   (down bar)
-///     H + 2·L + C   if C  > O   (up bar)
+/// X = H + 2·L + C   if C  < O   (down bar — the low is weighted)
+///     2·H + L + C   if C  > O   (up bar — the high is weighted)
 ///     H + L + 2·C   if C == O   (doji)
 ///
 /// PP = X / 4
@@ -37,10 +37,10 @@ pub struct DemarkPivotsOutput {
 /// ```
 /// use wickra_core::{Candle, DemarkPivots, Indicator};
 ///
-/// // Up bar: O=100, H=120, L=80, C=110 -> X = H + 2·L + C = 390.
+/// // Up bar: O=100, H=120, L=80, C=110 -> X = 2·H + L + C = 430.
 /// let up = Candle::new(100.0, 120.0, 80.0, 110.0, 1.0, 0).unwrap();
 /// let lv = DemarkPivots::new().update(up).unwrap();
-/// assert!((lv.pp - 97.5).abs() < 1e-9);
+/// assert!((lv.pp - 107.5).abs() < 1e-9);
 /// ```
 #[derive(Debug, Clone, Default)]
 pub struct DemarkPivots {
@@ -65,9 +65,9 @@ impl Indicator for DemarkPivots {
         let low = candle.low;
         let close = candle.close;
         let x = if close < open {
-            2.0 * high + low + close
-        } else if close > open {
             high + 2.0 * low + close
+        } else if close > open {
+            2.0 * high + low + close
         } else {
             high + low + 2.0 * close
         };
@@ -108,23 +108,23 @@ mod tests {
     use crate::traits::BatchExt;
 
     #[test]
-    fn down_bar_uses_2h_plus_l_plus_c() {
-        // O=110, H=120, L=80, C=100 (close < open) -> X = 2·120 + 80 + 100 = 420.
+    fn down_bar_uses_h_plus_2l_plus_c() {
+        // O=110, H=120, L=80, C=100 (close < open) -> X = 120 + 2·80 + 100 = 380.
         let cd = Candle::new(110.0, 120.0, 80.0, 100.0, 1.0, 0).unwrap();
         let lv = DemarkPivots::new().update(cd).unwrap();
-        assert!((lv.pp - 105.0).abs() < 1e-12);
-        assert!((lv.r1 - (210.0 - 80.0)).abs() < 1e-12);
-        assert!((lv.s1 - (210.0 - 120.0)).abs() < 1e-12);
+        assert!((lv.pp - 95.0).abs() < 1e-12);
+        assert!((lv.r1 - (190.0 - 80.0)).abs() < 1e-12);
+        assert!((lv.s1 - (190.0 - 120.0)).abs() < 1e-12);
     }
 
     #[test]
-    fn up_bar_uses_h_plus_2l_plus_c() {
-        // O=100, H=120, L=80, C=110 (close > open) -> X = 120 + 160 + 110 = 390.
+    fn up_bar_uses_2h_plus_l_plus_c() {
+        // O=100, H=120, L=80, C=110 (close > open) -> X = 2·120 + 80 + 110 = 430.
         let cd = Candle::new(100.0, 120.0, 80.0, 110.0, 1.0, 0).unwrap();
         let lv = DemarkPivots::new().update(cd).unwrap();
-        assert!((lv.pp - 97.5).abs() < 1e-12);
-        assert!((lv.r1 - (195.0 - 80.0)).abs() < 1e-12);
-        assert!((lv.s1 - (195.0 - 120.0)).abs() < 1e-12);
+        assert!((lv.pp - 107.5).abs() < 1e-12);
+        assert!((lv.r1 - (215.0 - 80.0)).abs() < 1e-12);
+        assert!((lv.s1 - (215.0 - 120.0)).abs() < 1e-12);
     }
 
     #[test]
