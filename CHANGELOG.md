@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-08-28
+
 ### Fixed
 - **`DemarkPivots` had the two conditional branches the wrong way round.** Tom
   DeMark's formulation weights the low on a down bar and the high on an up bar;
@@ -3088,7 +3090,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/wickra-lib/wickra/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/wickra-lib/wickra/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/wickra-lib/wickra/compare/v0.9.9...v1.0.0
 [0.9.9]: https://github.com/wickra-lib/wickra/compare/v0.9.8...v0.9.9
