@@ -1,0 +1,23 @@
+# CodeQL analysis configuration, referenced from .github/workflows/codeql.yml.
+#
+# `bindings/node/src/lib.rs` is excluded from analysis. The file is a thin
+# napi-derive wrapper over wickra-core: roughly 22,000 lines of `#[napi]`
+# attributes, `node_*_indicator!` macro invocations and one-line delegating
+# methods, with a single hand-written `unsafe` item — the `from_napi_value`
+# trait impl that napi requires.
+#
+# napi-derive expands every `#[napi]` into FFI glue that dereferences raw
+# `napi_env` and `napi_value` handles, and CodeQL attributes that generated
+# code back to the source span of the macro. The result is one
+# `rust/access-invalid-pointer` finding per exported class, anchored on a
+# struct identifier rather than on any pointer expression; 518 of them
+# appeared at once when the query first shipped, and every new indicator
+# adds another.
+#
+# `query-filters` matches on query id, tags and severity only — it cannot be
+# scoped to a path. Excluding the rule that way would also disable it for
+# `bindings/c/src`, which is where the workspace's real raw-pointer code
+# lives. Dropping this one file of generated glue keeps the rule active
+# everywhere it can say something useful.
+paths-ignore:
+  - bindings/node/src/lib.rs
