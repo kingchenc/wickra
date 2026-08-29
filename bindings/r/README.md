@@ -2,10 +2,10 @@
   <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
-[![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/ci.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
-[![codecov](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/codecov.svg)](https://codecov.io/gh/wickra-lib/wickra)
-[![r-universe](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/r-universe.svg)](https://wickra-lib.r-universe.dev)
-[![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/license.svg)](https://github.com/wickra-lib/wickra#license)
+[![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra/ci.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
+[![codecov](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra/codecov.svg)](https://codecov.io/gh/wickra-lib/wickra)
+[![r-universe](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra/r-universe.svg)](https://wickra-lib.r-universe.dev)
+[![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra/license.svg)](https://github.com/wickra-lib/wickra#license)
 
 # Wickra — R <img src="man/figures/logo.png" align="right" height="120" alt="Wickra logo" />
 
