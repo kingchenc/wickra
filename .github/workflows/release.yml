@@ -661,9 +661,9 @@ jobs:
           path: wickra-c-${{ matrix.target }}.tar.gz
           if-no-files-found: error
 
-  # Pack and publish the .NET binding to NuGet. Independent of the GitHub-release
-  # job so a C# hiccup never blocks the C/C++ asset release. Authentication uses
-  # NuGet Trusted Publishing (OIDC) — no long-lived API key. The 'wickra-release'
+  # Pack and publish the .NET binding to NuGet. The nupkg it packs is uploaded as
+  # a build artifact so github-release can attach it. Authentication uses NuGet
+  # Trusted Publishing (OIDC) — no long-lived API key. The 'wickra-release'
   # trusted-publishing policy on nuget.org (owner KingchenC, repo wickra-lib/wickra,
   # workflow release.yml) exchanges the GitHub OIDC token for a short-lived key.
   csharp-publish:
@@ -763,12 +763,13 @@ jobs:
           path: nupkg/*.nupkg
           if-no-files-found: error
 
-  # Publish the Java binding to Maven Central. Independent of the GitHub-release
-  # job so a Java hiccup never blocks the C/C++ asset release. The Maven Central
-  # namespace (org.wickra) is verified; authentication uses the Sonatype Central
-  # Portal token (CENTRAL_USERNAME / CENTRAL_PASSWORD) and artifacts are signed
-  # with the GPG key (GPG_PRIVATE_KEY / GPG_PASSPHRASE). The pom version must
-  # match the release tag (kept in sync by the version-bump checklist).
+  # Publish the Java binding to Maven Central. The jar this job packages is also
+  # uploaded as a build artifact so github-release can attach the very file Maven
+  # Central received. The Maven Central namespace (org.wickra) is verified;
+  # authentication uses the Sonatype Central Portal token (CENTRAL_USERNAME /
+  # CENTRAL_PASSWORD) and artifacts are signed with the GPG key (GPG_PRIVATE_KEY
+  # / GPG_PASSPHRASE). The pom version must match the release tag (kept in sync
+  # by the version-bump checklist).
   java-publish:
     name: Publish to Maven Central
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
@@ -833,12 +834,27 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B -f bindings/java -Prelease deploy -DskipTests
 
+      # `deploy` packages before it uploads, so the signed jar is already under
+      # target/. Only the main artefact is kept: the sources and javadoc jars
+      # belong on Maven Central, where a build tool resolves them on demand, and
+      # would only pad the release page.
+      - name: Upload the Java jar as a build artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: java-jar
+          path: |
+            bindings/java/target/*.jar
+            !bindings/java/target/*-sources.jar
+            !bindings/java/target/*-javadoc.jar
+          if-no-files-found: error
+
   # Mirror the in-repo Go module (bindings/go) to the standalone wickra-go
   # repository so `go get github.com/wickra-lib/wickra-go` builds with no extra
   # steps. The in-repo module keeps the prebuilt libraries git-ignored; the
   # mirror commits them per platform under lib/<goos>_<goarch>/ alongside the
-  # vendored header. Independent of the GitHub-release job so a Go hiccup never
-  # blocks the C/C++ asset release. The push uses a fine-grained PAT
+  # vendored header. Produces no asset, but the release notes tell readers the
+  # Go module is live, so github-release waits on it rather than saying so ahead
+  # of time. The push uses a fine-grained PAT
   # (GO_MIRROR_TOKEN, contents:write on wickra-go); the mirror is a
   # derived artifact, so its bot commit is intentionally unsigned.
   go-mirror:
@@ -928,7 +944,22 @@ jobs:
   github-release:
     name: Attach assets to the draft GitHub Release
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: [cargo-publish, python-publish, node-publish, wasm-publish, c-abi-build]
+    # Every job that either produces an asset staged below or publishes something
+    # the release notes claim. csharp-publish and java-publish upload the nupkg
+    # and the jar this job stages, so without the dependency the release was
+    # assembled before those files existed and, with fail_on_unmatched_files
+    # false, shipped without them in silence. go-mirror produces no asset, but
+    # the notes tell readers the Go module is live -- a release should not say so
+    # before it is.
+    needs:
+      - cargo-publish
+      - python-publish
+      - node-publish
+      - wasm-publish
+      - c-abi-build
+      - csharp-publish
+      - java-publish
+      - go-mirror
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -988,6 +1019,10 @@ jobs:
           find artifacts -type f -name "*.crate" -exec cp {} release-assets/ \;
           # CycloneDX SBOMs (one per published crate).
           find artifacts -type f -name "*.cdx.json" -exec cp {} release-assets/ \;
+          # NuGet package (the same file pushed to nuget.org).
+          find artifacts -type f -name "*.nupkg" -exec cp {} release-assets/ \;
+          # Java jar (the same file deployed to Maven Central).
+          find artifacts -type f -name "*.jar" -exec cp {} release-assets/ \;
           ls -lh release-assets/
           echo "asset-count=$(ls release-assets/ | wc -l)"
 
@@ -1031,9 +1066,9 @@ jobs:
             ### Attached assets
 
             Pre-built artefacts for every supported platform — the same files this
-            workflow run published to crates.io, PyPI, and npm. C# ships to NuGet,
-            Java to Maven Central, Go to the wickra-go module, and R to r-universe
-            via their own release jobs.
+            workflow run published to crates.io, PyPI, npm, NuGet and Maven
+            Central. Go ships to the wickra-go module and R to r-universe via
+            their own release jobs.
 
             - `*.whl` / `wickra-*.tar.gz` — Python wheels + sdist (5 platforms, ABI3 ≥ 3.9)
             - `wickra.*.node` — native Node.js bindings (linux-x64-gnu, darwin-x64,
@@ -1043,6 +1078,9 @@ jobs:
             - `wickra-c-<target>.tar.gz` — C ABI: `include/wickra.h` + `wickra.hpp`
               and the cdylib/staticlib per target (linux/macos/windows × x64/arm64),
               the hub for C, C++, C#, Go, Java and R
+            - `Wickra.<version>.nupkg` — the .NET package as pushed to nuget.org
+            - `wickra-<version>.jar` — the Java binding as deployed to Maven
+              Central, natives for all six platforms bundled in
 
             ### Auto-generated changelog
 

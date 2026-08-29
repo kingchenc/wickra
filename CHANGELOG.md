@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Every release since the .NET binding shipped attached the package to
+  nuget.org but not to the release page.** `csharp-publish` packs the package,
+  pushes it, and uploads it as a build artifact -- and the staging step in
+  `github-release` listed six `find` patterns, none of which matched `*.nupkg`,
+  so the file was downloaded with the rest and then left behind. With
+  `fail_on_unmatched_files` false nothing reported it. `v1.0.3` carries 36
+  assets -- wheels, sdist, `.node` binaries, npm tarballs, `.crate` files and
+  SBOMs -- and NuGet was the one registry artefact with no counterpart there.
+  The registry was never affected: all 28 published versions are on nuget.org.
+
+- **The release could be published before NuGet, Maven Central and the Go module
+  were.** `github-release` waited on five of the eight publishing jobs, so the
+  three that ship to those three destinations could still be running -- or
+  failing -- while the release notes already told readers they were live. It now
+  waits on all eight: `csharp-publish` and `java-publish` because it stages the
+  files they upload, `go-mirror` because the notes claim the Go module is
+  available.
+
+### Added
+
+- The Java jar is attached to the GitHub Release. `java-publish` stages the
+  native libraries for all six platforms into the binding's resources, deploys
+  to Maven Central, and now also uploads the packaged jar, so the release page
+  carries the same file Maven Central received. The sources and javadoc jars
+  stay on Maven Central, where a build tool resolves them on demand.
+
 ## [1.0.3] - 2026-08-28
 
 ### Fixed
