@@ -369,6 +369,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Command injection in the C live-Binance example.** `examples/c/live_binance.c`
+  took a trading symbol from `argv[1]`, interpolated it into a URL and handed
+  that to `popen` as `curl "<url>"`. The quotes look like protection and are
+  not: a symbol containing a double quote closes them, and the rest runs as a
+  command. `./live_binance 'X" ; echo PWNED ; echo "'` executed `echo PWNED`.
+
+  Found by CodeQL on the first run after C/C++ joined the matrix — the language
+  the blueprint had described as one where "a memory mistake is not possible",
+  which was wrong twice over. Fixed by validating at the boundary: a Binance
+  symbol is uppercase letters and digits, anything else is refused before it
+  reaches the URL. Verified that the injection no longer executes and that a
+  valid symbol still works.
+
 - **Go standard-library advisories are recorded as not applying, with the
   reasoning.** Turning osv-scanner on surfaced 90 of them at once, all against
   `stdlib 1.23.99` — the scanner reads the `go` directive in a `go.mod` as the

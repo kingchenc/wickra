@@ -116,8 +116,35 @@ static int first_kline(const char *body, int64_t *open_time, double *close) {
     return 0;
 }
 
+/* A Binance symbol is uppercase alphanumeric and nothing else.
+ *
+ * It matters here because the symbol ends up inside a shell command: curl_get
+ * builds `curl "<url>"` and hands it to popen. The quotes around the URL do not
+ * make that safe -- a symbol containing a double quote closes them and the rest
+ * is run as a command. Rejecting anything outside [A-Z0-9] at the boundary is
+ * both the smaller change and the honest one for an example, which is code
+ * people copy. */
+static int symbol_is_sane(const char *symbol) {
+    if (symbol[0] == '\0' || strlen(symbol) > 20) {
+        return 0;
+    }
+    for (const char *c = symbol; *c != '\0'; c++) {
+        int upper = (*c >= 'A' && *c <= 'Z');
+        int digit = (*c >= '0' && *c <= '9');
+        if (!upper && !digit) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 int main(int argc, char **argv) {
     const char *symbol = (argc > 1) ? argv[1] : "BTCUSDT";
+    if (!symbol_is_sane(symbol)) {
+        fprintf(stderr,
+                "symbol must be uppercase letters and digits, e.g. BTCUSDT\n");
+        return 1;
+    }
     char url[256];
     snprintf(url, sizeof(url),
              "https://api.binance.com/api/v3/klines?symbol=%s&interval=1m&limit=2",
