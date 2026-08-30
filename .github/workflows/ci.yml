@@ -112,6 +112,14 @@ jobs:
       - name: Compare every binding's surface with the C ABI
         run: python3 scripts/check_binding_surface.py
 
+      # The version lives in twenty-odd declarations across six package managers.
+      # A bump that misses one ships a package pinning a binary that was never
+      # published, and that surfaces on a user's machine after the tag, which is
+      # irreversible. index.js is in the list because it once shipped 0.9.7
+      # inside the v0.9.9 tag.
+      - name: Every version declaration agrees
+        run: python3 scripts/check_version_sync.py
+
       # R is the one binding whose native half comes from a published release
       # rather than from this tree (bindings/r/configure downloads the C ABI for
       # DESCRIPTION's Version), so the pairing r-universe compiles is one our own
