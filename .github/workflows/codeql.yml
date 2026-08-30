@@ -39,6 +39,12 @@ jobs:
             build-mode: none
           - language: javascript-typescript
             build-mode: none
+          # C# analyses without a build too. The binding is a P/Invoke surface
+          # over the C ABI: manual handle lifetimes, a Cleaner-equivalent
+          # Dispose, and native library resolution -- the places where a leak or
+          # a use-after-free would live, and the only ones CodeQL had no view of.
+          - language: csharp
+            build-mode: none
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

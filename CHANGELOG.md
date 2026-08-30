@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CodeQL analyses the C# binding.** The matrix covered Rust, Python and
+  JavaScript/TypeScript; C# was the largest surface it had no view of, and the
+  one where a memory mistake is possible at all -- `WickraHandle.cs` and
+  `WickraNative.cs` carry manual handle lifetimes, disposal, and native library
+  resolution over the C ABI.
+
+  The three generated files are excluded first, not triaged afterwards.
+  `Indicators.g.cs` and `NativeMethods.g.cs` are 79,000 lines of P/Invoke
+  declarations and one-line delegating methods emitted from the C header, and
+  `GoldenAllTests.g.cs` is one test per catalogue entry. Turning the language on
+  without excluding them would have repeated what the napi glue did once
+  already: 518 findings at once, one per exported class, none of them about
+  anything anyone wrote.
+
 - **`cargo-semver-checks` guards the published API.** `wickra-core`,
   `wickra-data` and `wickra` are on crates.io, and since 1.0.0 the version
   number is a promise: a patch release must not move the public surface. Nothing
