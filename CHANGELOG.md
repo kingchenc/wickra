@@ -254,6 +254,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`Vpin::update` could never return for a large trade size.** It distributes a
+  trade's volume across buckets with `while remaining > 0.0 { ... remaining -=
+  take }`, and once the size is large enough that the bucket volume falls below
+  one ULP of it, the subtraction changes nothing: at 1.4e277 against a bucket of
+  8, `remaining` stays exactly where it was and the loop never ends. Not slow --
+  non-terminating. A single trade hung the caller for good, and 1.4e277 passes
+  `Trade::new` unchanged, so this was reachable through the ordinary validating
+  API rather than only through `new_unchecked`.
+
+  The loop is now bounded by what can still be observed. A trade is one-sided,
+  so every complete bucket it fills carries an imbalance of exactly the bucket
+  volume, and the window keeps only the last `num_buckets`; anything beyond that
+  pushes values identical to the ones it evicts. The bound keeps the remainder
+  that decides where the next bucket boundary falls, so it is exact rather than
+  an approximation — a test asserts that one 1000.5-sized trade leaves the same
+  state as 2001 trades of 0.5.
+
+  Found by `fuzz/fuzz_targets/indicator_update_trade.rs` on its first ever run.
+  It was one of seven targets that were built but never executed, which is what
+  the change to fuzzing every declared target was for.
+
 - **Every release since the .NET binding shipped attached the package to
   nuget.org but not to the release page.** `csharp-publish` packs the package,
   pushes it, and uploads it as a build artifact -- and the staging step in
