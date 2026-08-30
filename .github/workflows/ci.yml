@@ -409,6 +409,44 @@ jobs:
         with:
           command: check
 
+  # The published API is a promise. wickra-core, wickra-data and wickra are on
+  # crates.io, and since 1.0.0 the version number says what may change: a patch
+  # release must not move the public surface. Nothing checked that, and the
+  # surface is 514 exported types that ten language bindings sit on top of --
+  # exactly the shape where a rename slips through review and out to six
+  # registries in one irreversible run.
+  #
+  # The baseline is the newest version already on crates.io, fetched by the tool
+  # itself. On a release that has not moved the API this finds nothing; the run
+  # that matters is the one where it does.
+  semver:
+    name: Public API (cargo-semver-checks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30 # backstop: it builds rustdoc JSON for each crate and its baseline
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust toolchain
+        uses: ./.github/actions/setup-rust
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+
+      - name: Install cargo-semver-checks
+        uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+        timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
+        with:
+          tool: cargo-semver-checks
+
+      # Named explicitly rather than --workspace: wickra-bench and the binding
+      # crates are not published, so they have no baseline to compare against and
+      # nothing to promise.
+      - name: Check the published crates
+        run: |
+          cargo semver-checks check-release             -p wickra-core             -p wickra-data             -p wickra
+
   # Time-boxed fuzz smoke. Each target runs for ~30 s with libfuzzer; any panic
   # fails the job. The goal is to catch a regression in the harness (e.g. a
   # newly added indicator that panics on a particular input shape), not to
