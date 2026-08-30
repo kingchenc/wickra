@@ -62,4 +62,10 @@ jobs:
       - name: Run them under instrumentation
         uses: CodSpeedHQ/action@07725aac5ac9e687bba40b9bed8e2bd389a641c8 # v5.2.1
         with:
+          # Required since action v4, and it used to be inferred. `simulation`
+          # counts instructions under instrumentation; `walltime` measures real
+          # time and needs CodSpeed's dedicated macro runners, which a standard
+          # GitHub runner is not -- there the timing would be as noisy as any
+          # other shared VM, which is the noise this job exists to avoid.
+          mode: simulation
           run: cargo codspeed run -p wickra
