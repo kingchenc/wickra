@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **actionlint checks the workflows for correctness**, which is the half zizmor
+  does not cover. zizmor reads them for security -- template injection,
+  over-broad tokens, unpinned actions. actionlint reads them for whether they
+  work at all: unknown `${{ }}` contexts, wrong event properties, invalid
+  `needs` references, and, through its bundled shellcheck, errors inside every
+  `run:` block. There are around 2,400 lines of workflow here with several
+  hundred lines of shell inside them, and none of it was being checked.
+
+  The binary is fetched from the upstream release and verified against the
+  published checksum. `taiki-e/install-action` carries no actionlint manifest
+  and the project ships no action of its own, so the alternatives were a
+  third-party wrapper or a docker pull; a pinned download with a verified hash
+  adds no supply-chain dependency at all.
+
 ### Changed
 
 - **The indicator count is no longer pushed into four other repositories.**

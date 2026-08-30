@@ -1,0 +1,53 @@
+name: actionlint
+
+# Correctness of the workflow files, which is the half zizmor does not cover.
+# zizmor reads them for security -- template injection, over-broad tokens,
+# unpinned actions. actionlint reads them for whether they work at all: unknown
+# `${{ }}` contexts, wrong event properties, invalid `needs` references, matrix
+# keys that no job uses, and -- through its bundled shellcheck -- errors inside
+# every `run:` block. This repository has around 2,400 lines of workflow and
+# several hundred lines of shell inside them; none of it was being checked.
+#
+# The binary is fetched from the upstream release and verified against the
+# checksum published with it. taiki-e/install-action has no actionlint manifest
+# and the project ships no action of its own, so the alternatives were a
+# third-party wrapper action or a docker pull; a pinned download with a verified
+# hash adds no supply-chain dependency at all, which is the same reasoning that
+# put cargo-deny behind a direct call rather than an action.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: Lint workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10 # backstop against a hung job, not a budget
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install actionlint
+        env:
+          VERSION: "1.7.12"
+          SHA256: "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+        run: |
+          set -euo pipefail
+          file="actionlint_${VERSION}_linux_amd64.tar.gz"
+          curl -fsSL --retry 5 --retry-all-errors -o "$file" \
+            "https://github.com/rhysd/actionlint/releases/download/v${VERSION}/${file}"
+          echo "${SHA256}  ${file}" | sha256sum -c -
+          tar -xzf "$file" actionlint
+          ./actionlint --version
+
+      # shellcheck is preinstalled on the GitHub runners, so actionlint picks it
+      # up and lints the shell inside every `run:` block as well.
+      - name: Lint
+        run: ./actionlint -color
