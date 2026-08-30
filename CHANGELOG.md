@@ -9,41 +9,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **CodeQL analyses the C# and Java bindings**, both compiled rather than read
-  as source. The first C# pass ran with `build-mode: none` and GitHub reported
-  the result as low quality: 64% of calls resolved to a target against a
-  threshold of 85%. Two causes, and the second was self-inflicted -- without a
-  build no dependency resolves, and `paths-ignore` keeps the excluded generated
-  files out of the database entirely, so the hand-written code that calls into
-  them pointed at nothing. Building fixes both: the generated code compiles so
-  the calls resolve, while `paths-ignore` still filters its findings out of the
-  results.
+- **CodSpeed measures the benchmarks on every pull request.** Performance
+  regressions were the one class of defect nothing here reported: `bench.yml`
+  runs on a schedule and prints numbers a person has to read, and the Python
+  batch regression in August was found by re-measuring by hand, weeks after it
+  landed.
 
-- **CodeQL analyses the Java binding.** The binding reaches the C ABI through
-  `java.lang.foreign` -- an `Arena` per handle, a `Cleaner` to release it, and
-  manual marshalling -- and none of it had ever been read by a static analyser.
-  No build is needed; `build-mode: none` covers Java as it does C#.
+  It counts instructions under instrumentation rather than timing wall clock,
+  which is what makes a shared runner usable -- the figure does not move because
+  a neighbour VM got busy. These numbers are therefore not the ones in
+  `BENCHMARKS.md`: those are throughput, this is relative change.
 
-  624 of the 636 files are generated from the C header and carry
-  `Do not edit by hand`, so they are excluded before the language is enabled
-  rather than dismissed afterwards. What stays in the analysis is
-  `internal/WickraNative.java`, which owns the arena, the cleaner and the library
-  lookup, plus the ten hand-written tests. That is the whole surface where a
-  Java-side leak or use-after-free could originate.
+  `criterion` in `crates/wickra` now resolves to `codspeed-criterion-compat`
+  under the same name, so `indicators.rs` and `data_layer.rs` are untouched and
+  `cargo bench` behaves as before off a CodSpeed runner. `crates/wickra-bench`
+  keeps the plain crate: its `cross_lib` bench measures kand, ta and yata
+  alongside us, and instrumenting other people's crates on every pull request
+  costs the most and answers nothing about this one.
 
-- **CodeQL analyses the C# binding.** The matrix covered Rust, Python and
-  JavaScript/TypeScript; C# was the largest surface it had no view of, and the
-  one where a memory mistake is possible at all -- `WickraHandle.cs` and
-  `WickraNative.cs` carry manual handle lifetimes, disposal, and native library
-  resolution over the C ABI.
+- **CodeQL analyses the C# and Java bindings.** The matrix covered Rust, Python
+  and JavaScript/TypeScript. C# and Java were the two largest surfaces it had no
+  view of, and the two where a memory mistake is possible at all: both reach the
+  C ABI directly, C# through `WickraHandle.cs` and `WickraNative.cs` with manual
+  handle lifetimes and native library resolution, Java through
+  `java.lang.foreign` with an `Arena` per handle and a `Cleaner` to release it.
+  None of that had ever been read by a static analyser.
 
-  The three generated files are excluded first, not triaged afterwards.
-  `Indicators.g.cs` and `NativeMethods.g.cs` are 79,000 lines of P/Invoke
-  declarations and one-line delegating methods emitted from the C header, and
-  `GoldenAllTests.g.cs` is one test per catalogue entry. Turning the language on
-  without excluding them would have repeated what the napi glue did once
-  already: 518 findings at once, one per exported class, none of them about
-  anything anyone wrote.
+  Both are compiled for the analysis rather than read as source. The first C#
+  pass ran with `build-mode: none` and GitHub reported it as low quality: 64% of
+  calls resolved to a target against a threshold of 85%. Two causes, and the
+  second was self-inflicted -- without a build no dependency resolves, and
+  `paths-ignore` keeps the excluded files out of the database entirely, so the
+  hand-written code calling into them pointed at nothing. Building fixes both:
+  the generated code compiles so the calls resolve, while `paths-ignore` still
+  filters its findings out of the results.
+
+  The generated files are excluded before the languages are enabled, not triaged
+  afterwards. `Indicators.g.cs` and `NativeMethods.g.cs` are 79,000 lines of
+  P/Invoke declarations emitted from the C header, `GoldenAllTests.g.cs` is one
+  test per catalogue entry, and 624 of the 636 Java files are generated the same
+  way and carry `Do not edit by hand`. Turning the languages on without
+  excluding them would have repeated what the napi glue did once already: 518
+  findings at once, one per exported class, none of them about anything anyone
+  wrote. What stays in the analysis is the hand-written surface --
+  `WickraHandle.cs`, `WickraNative.cs`, `internal/WickraNative.java`, and the
+  tests -- which is the whole area where a leak or a use-after-free could
+  originate.
 
 - **`cargo-semver-checks` guards the published API.** `wickra-core`,
   `wickra-data` and `wickra` are on crates.io, and since 1.0.0 the version
