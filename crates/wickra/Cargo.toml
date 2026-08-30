@@ -29,7 +29,15 @@ parallel = ["wickra-core/parallel"]
 
 [dev-dependencies]
 approx = { workspace = true }
-criterion = { workspace = true }
+# Not the workspace criterion: this is CodSpeed's drop-in replacement, pulled in
+# under the name `criterion` so the benches keep their `use criterion::{...}`
+# and not a line of indicators.rs or data_layer.rs has to change. Off a CodSpeed
+# runner it behaves as criterion does, so `cargo bench` locally is unaffected.
+#
+# crates/wickra-bench keeps the plain workspace criterion on purpose -- its
+# cross_lib bench measures kand, ta and yata alongside us, and instrumenting
+# other people's crates on every pull request is cost without an answer.
+criterion = { package = "codspeed-criterion-compat", version = "5.0.1", features = ["html_reports"] }
 proptest = { workspace = true }
 wickra-data = { path = "../wickra-data" }
 

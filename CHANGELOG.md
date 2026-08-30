@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CodSpeed measures the benchmarks on every pull request.** Performance
+  regressions were the one class of defect nothing here reported: `bench.yml`
+  runs on a schedule and prints numbers a person has to read, and the Python
+  batch regression in August was found by re-measuring by hand, weeks after it
+  landed.
+
+  It counts instructions under instrumentation rather than timing wall clock,
+  which is what makes a shared runner usable -- the figure does not move because
+  a neighbour VM got busy. These numbers are therefore not the ones in
+  `BENCHMARKS.md`: those are throughput, this is relative change.
+
+  `criterion` in `crates/wickra` now resolves to `codspeed-criterion-compat`
+  under the same name, so `indicators.rs` and `data_layer.rs` are untouched and
+  `cargo bench` behaves as before off a CodSpeed runner. `crates/wickra-bench`
+  keeps the plain crate: its `cross_lib` bench measures kand, ta and yata
+  alongside us, and instrumenting other people's crates on every pull request
+  costs the most and answers nothing about this one.
+
 - **CodeQL analyses the C# and Java bindings**, both compiled rather than read
   as source. The first C# pass ran with `build-mode: none` and GitHub reported
   the result as low quality: 64% of calls resolved to a target against a
