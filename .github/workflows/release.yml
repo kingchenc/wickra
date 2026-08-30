@@ -58,9 +58,17 @@ jobs:
       # treat that as success so re-runs of the workflow don't fail.
       - name: Publish wickra-core (idempotent)
         run: |
-          out=$(cargo publish -p wickra-core --token "$CARGO_REGISTRY_TOKEN" 2>&1) && echo "$out" \
-            || (echo "$out" | grep -q "already uploaded\|already exists" && echo "skip: already published" \
-                || (echo "$out"; exit 1))
+          # if/then rather than `A && B || C`: that form runs C when B fails, not
+          # only when A does, so a failing echo would read as a failed publish
+          # (shellcheck SC2015).
+          if out=$(cargo publish -p wickra-core --token "$CARGO_REGISTRY_TOKEN" 2>&1); then
+            echo "$out"
+          elif printf '%s' "$out" | grep -q "already uploaded\|already exists"; then
+            echo "skip: already published"
+          else
+            echo "$out"
+            exit 1
+          fi
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -69,9 +77,17 @@ jobs:
 
       - name: Publish wickra-data (idempotent)
         run: |
-          out=$(cargo publish -p wickra-data --token "$CARGO_REGISTRY_TOKEN" 2>&1) && echo "$out" \
-            || (echo "$out" | grep -q "already uploaded\|already exists" && echo "skip: already published" \
-                || (echo "$out"; exit 1))
+          # if/then rather than `A && B || C`: that form runs C when B fails, not
+          # only when A does, so a failing echo would read as a failed publish
+          # (shellcheck SC2015).
+          if out=$(cargo publish -p wickra-data --token "$CARGO_REGISTRY_TOKEN" 2>&1); then
+            echo "$out"
+          elif printf '%s' "$out" | grep -q "already uploaded\|already exists"; then
+            echo "skip: already published"
+          else
+            echo "$out"
+            exit 1
+          fi
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -80,9 +96,17 @@ jobs:
 
       - name: Publish wickra (idempotent)
         run: |
-          out=$(cargo publish -p wickra --token "$CARGO_REGISTRY_TOKEN" 2>&1) && echo "$out" \
-            || (echo "$out" | grep -q "already uploaded\|already exists" && echo "skip: already published" \
-                || (echo "$out"; exit 1))
+          # if/then rather than `A && B || C`: that form runs C when B fails, not
+          # only when A does, so a failing echo would read as a failed publish
+          # (shellcheck SC2015).
+          if out=$(cargo publish -p wickra --token "$CARGO_REGISTRY_TOKEN" 2>&1); then
+            echo "$out"
+          elif printf '%s' "$out" | grep -q "already uploaded\|already exists"; then
+            echo "skip: already published"
+          else
+            echo "$out"
+            exit 1
+          fi
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -404,7 +428,8 @@ jobs:
           fail=0
           publish_dir() {
             local dir=$1
-            local pkg=$(basename "$dir")
+            local pkg
+            pkg=$(basename "$dir")
             local pkgname="wickra-$pkg"
             local existing
             existing=$(npm view "$pkgname@$version" version 2>/dev/null)
@@ -589,9 +614,17 @@ jobs:
       - name: Publish wickra-wasm to npm (idempotent)
         working-directory: bindings/wasm/pkg
         run: |
-          out=$(npm publish --access public --provenance 2>&1) && echo "$out" \
-            || (echo "$out" | grep -q "You cannot publish over" && echo "skip: version already on npm" \
-                || (echo "$out"; exit 1))
+          # if/then rather than `A && B || C`: that form runs C when B fails, not
+          # only when A does, so a failing echo would read as a failed publish
+          # (shellcheck SC2015).
+          if out=$(npm publish --access public --provenance 2>&1); then
+            echo "$out"
+          elif printf '%s' "$out" | grep -q "You cannot publish over"; then
+            echo "skip: version already on npm"
+          else
+            echo "$out"
+            exit 1
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -1024,7 +1057,7 @@ jobs:
           # Java jar (the same file deployed to Maven Central).
           find artifacts -type f -name "*.jar" -exec cp {} release-assets/ \;
           ls -lh release-assets/
-          echo "asset-count=$(ls release-assets/ | wc -l)"
+          echo "asset-count=$(find release-assets -type f | wc -l)"
 
       - name: Create / update the draft GitHub Release with assets
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
