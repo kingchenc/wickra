@@ -254,6 +254,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **The committed napi loader is regenerated for `@napi-rs/cli` 3.8.6.** The
+  bump (#426) changed only the lockfile, and `index.js` is generated rather than
+  written: 3.8.6 emits WASI-flavour selection and a shared
+  `createLoadErrorChain` that 3.7.4 did not. The drift check added the day
+  before caught it on `main` -- the pull request itself was green because
+  Dependabot tested it against a base commit from before that check existed.
 - **The npm lockfile recorded the package's own version twice, and one of them
   was stale.** `bindings/node/package-lock.json` carries the version at the top
   level and again in the `packages[""]` entry; only the first is what `npm
