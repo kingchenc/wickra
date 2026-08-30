@@ -260,6 +260,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `createLoadErrorChain` that 3.7.4 did not. The drift check added the day
   before caught it on `main` -- the pull request itself was green because
   Dependabot tested it against a base commit from before that check existed.
+- **The npm lockfile recorded the package's own version twice, and one of them
+  was stale.** `bindings/node/package-lock.json` carries the version at the top
+  level and again in the `packages[""]` entry; only the first is what `npm
+  version` rewrites, so the second sat at 1.0.1 across two releases. It was
+  repaired by an unrelated Dependabot regeneration rather than by anything
+  watching, and `check_version_sync.py` had missed it because it treats the
+  lockfile as generated and only asserted that the version appears somewhere in
+  it. Both records are now checked exactly; the rest of the file stays a
+  presence check, because those versions belong to other people.
 
 - **`Vpin::update` could never return for a large trade size.** It distributes a
   trade's volume across buckets with `while remaining > 0.0 { ... remaining -=

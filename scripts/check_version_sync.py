@@ -75,6 +75,19 @@ TOUCHPOINTS: list[tuple[str, str, str, int]] = [
     ("bindings/java/README.md", "install snippets", r"@V@", 2),
     # Prose sentence, the supported row, and the unsupported bound.
     ("SECURITY.md", "supported version", r"@V@", 3),
+    # npm records the package's own version twice in the lockfile: once at the
+    # top level and once in the `packages[""]` entry. Only the first is what
+    # `npm version` rewrites, so the second goes stale on its own -- it sat at
+    # 1.0.1 across two releases and was repaired by an unrelated Dependabot
+    # regeneration (#426) rather than by anything watching. Both are ours and
+    # both are checked exactly; the rest of the lockfile stays a presence check
+    # in GENERATED, because those versions belong to other people.
+    (
+        "bindings/node/package-lock.json",
+        "own version, both records",
+        r'"name": "wickra",\s+"version": "@V@"',
+        2,
+    ),
 ]
 
 # Each platform package declares its own version.
