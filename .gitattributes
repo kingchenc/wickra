@@ -1,41 +1,40 @@
-# Shell scripts must keep LF line endings so they run on Linux/macOS CI and
-# local shells regardless of the committer's platform autocrlf setting.
-*.sh text eol=lf
+# One rule for the whole tree: every text file is stored with LF in the index and
+# checked out with LF everywhere, whatever the committer's core.autocrlf happens
+# to be.
+#
+# This replaced 41 lines that named file types one at a time (*.sh, *.cs, *.go,
+# *.java, *.R, a handful of individual paths). That list covered six languages
+# and was silent about the rest -- .rs, .py, .js, .ts, .md, .toml, .json, .yml
+# were all at the mercy of whoever committed them. It held only because the
+# people committing happened to be configured consistently, which is a property
+# of their machines rather than of this repository.
+#
+# It matters most for the generated files that CI checks for drift by
+# regenerating them and diffing: bindings/node/index.js and index.d.ts come back
+# from napi with CRLF on Windows, and neither was covered by the old list. A
+# CRLF-normalising commit there makes the drift check fail for a reason that has
+# nothing to do with the generator.
+* text=auto eol=lf
 
-# The cbindgen-generated C header is committed; pin it to LF so its CI drift
-# check (regenerate + `git diff`) never trips on a CRLF normalization.
-bindings/c/include/wickra.h text eol=lf
+# Binary files are stored byte for byte: never normalised, never diffed as text.
+# Git detects most of these itself; naming them makes the guarantee explicit
+# rather than dependent on content sniffing.
+*.png  binary
+*.rda  binary
+*.jpg  binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
 
-# C# sources (including the generated binding) are pinned to LF so the committed
-# files stay stable regardless of the committer's autocrlf setting.
-*.cs text eol=lf
-
-# Go sources (including the generated binding) are pinned to LF so gofmt's CI
-# check never trips on a CRLF checkout on Windows. The vendored C ABI header is
-# a committed copy of bindings/c/include/wickra.h (the parent dir is outside the
-# Go module), pinned to LF so the drift check never trips on CRLF.
-*.go text eol=lf
-go.mod text eol=lf
-go.sum text eol=lf
-bindings/go/include/wickra.h text eol=lf
-
-# Java sources (including the generated binding) are pinned to LF so the
-# committed files stay stable regardless of the committer's autocrlf setting.
-*.java text eol=lf
-
-# R binding: `R CMD check` requires LF in sources, Makevars and shell scripts.
-*.R text eol=lf
-*.Rd text eol=lf
-bindings/r/configure text eol=lf
-bindings/r/configure.win text eol=lf
-bindings/r/src/Makevars.in text eol=lf
-bindings/r/src/Makevars.win text eol=lf
-bindings/r/src/wickra.c text eol=lf
-
-# Golden fixtures are replayed byte-for-byte by every binding's parity test. Pin
-# them to LF so a Windows `core.autocrlf=true` checkout doesn't rewrite them as
-# CRLF — which silently broke the Node reader (`Number('inf\r')` is NaN, and a
-# blank "no-bar" row gained a stray `\r`), failing only on Windows runners. The
-# tolerant readers (Python `splitlines`/`float`) hid the same hazard.
-testdata/golden/** text eol=lf
-
+# Build outputs of this project. They are not committed, but a stray one must be
+# stored intact rather than mangled by line-ending normalisation.
+*.node   binary
+*.wasm   binary
+*.so     binary
+*.dylib  binary
+*.dll    binary
+*.jar    binary
+*.nupkg  binary
+*.whl    binary
+*.gz     binary
+*.zip    binary

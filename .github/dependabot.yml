@@ -29,6 +29,25 @@ updates:
         patterns: ["*"]
         exclude-patterns: ["napi", "napi-derive", "napi-build"]
 
+  # The fuzz targets are their own cargo workspace -- the root Cargo.toml
+  # excludes them -- so the cargo entry above does not reach fuzz/Cargo.lock.
+  # It pins libfuzzer-sys and arbitrary, which received no security updates
+  # while nothing watched them.
+  - package-ecosystem: cargo
+    directory: "/fuzz"
+    schedule:
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(cargo-fuzz)"
+    groups:
+      cargo-fuzz:
+        patterns: ["*"]
+
   # Node binding npm dependencies.
   - package-ecosystem: npm
     directory: "/bindings/node"

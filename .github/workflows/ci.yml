@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [main]
 
+# One run per branch. A push that supersedes an in-flight run cancels it rather
+# than letting both finish: this matrix expands to sixty-odd jobs across three
+# operating systems, so a superseded run holds runners hostage for a result
+# nobody will read. main is exempt -- its runs feed the badge and the coverage
+# baseline, and cancelling those loses history.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 # Least-privilege default for the auto-injected GITHUB_TOKEN. None of the CI
 # jobs write back to the repo — coverage uploads via CODECOV_TOKEN, everything
 # else is build/test/lint — so a read-only token is sufficient (OpenSSF
@@ -1304,7 +1313,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
           args: --config lychee.toml --no-progress --root-dir "${{ github.workspace }}" "*.md" "bindings/*/README.md"
           fail: true
