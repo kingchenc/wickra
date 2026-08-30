@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Every version declaration is checked against the others on each pull
+  request.** The version sits in 22 declarations across six package managers,
+  and the ones that go stale are never the obvious ones: `index.js` shipped
+  0.9.7 inside the v0.9.9 tag because napi only rewrites it when somebody
+  rebuilds, the Java benchmarks pom was found pinned to 0.9.6 while 1.0.0 was
+  being cut, and the C# project file sat at 0.7.9. Each of those ships a package
+  that pins a binary nobody published, and it surfaces at install time on
+  someone else's machine, after a tag that cannot be taken back.
+
+  `wickra-backtest` has had this check since it shipped; this repository, with
+  more bindings and therefore more places to miss, did not. The file list is
+  explicit rather than a grep, because `Cargo.lock` carries third-party crates
+  that occasionally sit at our version, and counts are exact: a pattern that
+  should find six platform dependencies and finds five has found the bug.
+
 - **CodSpeed measures the benchmarks on every pull request.** Performance
   regressions were the one class of defect nothing here reported: `bench.yml`
   runs on a schedule and prints numbers a person has to read, and the Python
