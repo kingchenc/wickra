@@ -531,8 +531,9 @@ jobs:
             cp ../../LICENSE-MIT ../../LICENSE-APACHE "$dir/"
           done
           for dir in . npm/*/; do
-            # shellcheck disable=SC2016 -- the ${...} below are JavaScript template
-            # literals inside a single-quoted node script, not shell expansions.
+            # The ${...} below are JavaScript template literals inside a
+            # single-quoted node script, not shell expansions.
+            # shellcheck disable=SC2016
             ( cd "$dir" && npm pack --dry-run --json ) | node -e '
               const chunks = [];
               process.stdin.on("data", c => chunks.push(c));
