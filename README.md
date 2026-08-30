@@ -523,6 +523,24 @@ A short orientation for first-time contributors:
 For larger architectural changes, open an issue first so we can sketch the
 shape together before you invest the time.
 
+Pull requests open with a short template. For a change that touches the release
+process, the bindings' shared surface, or the public API, there is a longer one
+that asks the questions such a change needs to answer — append
+`?template=detailed.md` to the pull request URL to use it. GitHub offers no
+picker for a second template, so it is unreachable unless you know it is there.
+
+## Security
+
+Please do not open a public issue for a security vulnerability. Report it
+privately through GitHub's [private vulnerability
+reporting](https://github.com/wickra-lib/wickra/security/advisories/new), or by
+email to **support@wickra.org** with a subject line starting with
+`[wickra security]`.
+
+Security fixes are applied to the latest released version only.
+[SECURITY.md](SECURITY.md) has the full policy: what to include in a report,
+what response times to expect, and which versions are supported.
+
 ## License
 
 Licensed under either of

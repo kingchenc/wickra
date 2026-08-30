@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The published crates carry their licence texts.** `cargo package` only
+  includes files inside the crate directory, so the root `LICENSE-MIT` and
+  `LICENSE-APACHE` never travelled: `wickra-core-1.0.3.crate` shipped 532 files
+  and not one of them was a licence. Each of the three crates and the Python
+  binding now has its own copy, and `cargo package --list` shows both.
+
+- **`.gitattributes` states the line-ending rule for the whole tree** — one
+  `* text=auto eol=lf` plus explicit binary exceptions, replacing 41 lines that
+  named six languages and were silent about the rest. `.rs`, `.py`, `.js`,
+  `.ts`, `.md`, `.toml` and `.yml` were unregulated; the index stayed clean only
+  because the people committing happened to be configured consistently, which is
+  a property of their machines and not of this repository. It matters most for
+  `bindings/node/index.js` and `index.d.ts`, which come back from napi with CRLF
+  on Windows and are checked for drift by regenerating and diffing. The
+  renormalisation changed no file: all 2621 tracked text files were already LF.
+
+- **`fuzz/Cargo.lock` is watched by Dependabot.** The fuzz targets are their own
+  cargo workspace, which the root entry does not reach, so `libfuzzer-sys` and
+  `arbitrary` received no updates while nothing was looking.
+
+- **A `## Security` section in the README** points at private vulnerability
+  reporting, and the pull request template names the longer template that GitHub
+  offers no picker for.
+
 - **Every version declaration is checked against the others on each pull
   request.** The version sits in 22 declarations across six package managers,
   and the ones that go stale are never the obvious ones: `index.js` shipped
@@ -104,6 +128,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`scripts/update-lockfiles.sh` no longer installs uv by itself.** It piped
+  `https://astral.sh/uv/install.sh` into a shell, which runs whatever is behind
+  that URL at that moment, with the privileges of everyone who regenerates a
+  lockfile. It now stops and says how to install uv; `WICKRA_BOOTSTRAP_UV=1`
+  opts into a bootstrap that fetches one pinned release archive and verifies its
+  SHA-256 before using it. Convenience is still there for whoever asks for it,
+  and nothing unattested runs for whoever does not.
+
+- **`ci.yml` cancels superseded runs** on every branch but `main`. The matrix
+  expands to sixty-odd jobs across three operating systems, and a superseded run
+  held runners for a result nobody would read. `main` is exempt: its runs feed
+  the badge and the coverage baseline.
+
+- **The lychee-action pin says `# v2.9.0`** instead of `# v2`. Dependabot reads
+  that comment to decide what to bump; a major-only comment gives it nothing to
+  compare against.
+
+
 - **The indicator count is no longer pushed into four other repositories.**
   `sync-about.yml` carried the number outward on every push to main and every
   tag -- into `wickra-docs`, `webpage`, the org profile and the wiki -- and also
@@ -156,6 +198,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   waits on all eight: `csharp-publish` and `java-publish` because it stages the
   files they upload, `go-mirror` because the notes claim the Go module is
   available.
+
+### Security
+
+- **GHSA-6w46-j5rx-g56g (pytest tmpdir handling) is recorded as not affecting
+  this project**, with the reasoning in `osv-scanner.toml` rather than left to
+  be rediscovered. pytest is a CI-only test dependency and is never shipped, and
+  the flaw needs a second local user on the machine, which an ephemeral
+  single-user runner does not have. It also cannot be upgraded away: pytest 9
+  requires Python 3.10, and `ci-dev-py39.txt` exists to test the 3.9 row. It
+  resolves itself when Python 3.9 support ends.
 
 ## [1.0.3] - 2026-08-28
 

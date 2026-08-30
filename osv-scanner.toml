@@ -11,3 +11,19 @@
 [[IgnoredVulns]]
 id = "GHSA-72hv-8253-57qq"
 reason = "tools.jackson.core:jackson-core 3.x is not a dependency of this project; only jackson-databind 2.17.1 is present. Not affected."
+
+# pytest tmpdir handling (CVSS 6.8, fixed in pytest 9.0.3) -- pytest through
+# 9.0.2 on UNIX uses predictable /tmp/pytest-of-{user} directories, which a
+# *second local user on the same machine* can abuse for denial of service or
+# possibly privilege escalation. Two reasons that does not apply here. pytest is
+# a test dependency: it is in .github/requirements/, never in a published wheel,
+# so no user of Wickra ever runs it. And it runs only on GitHub-hosted runners,
+# each a fresh single-user VM with no second local user to exploit it.
+#
+# It cannot simply be upgraded either: pytest 9 requires Python >= 3.10, while
+# ci-dev-py39.txt exists to test the Python 3.9 row of the matrix. Removing the
+# exposure means dropping Python 3.9 support, which is a decision about who can
+# install Wickra, not about this advisory. It resolves itself when 3.9 goes.
+[[IgnoredVulns]]
+id = "GHSA-6w46-j5rx-g56g"
+reason = "pytest is a CI-only test dependency, never shipped; the flaw needs a second local user, which a single-user ephemeral runner does not have. Pinned at 8.4.2 because pytest 9 requires Python >= 3.10 and the 3.9 matrix row needs it."

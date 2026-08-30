@@ -1,4 +1,10 @@
-<!-- Thanks for contributing to Wickra. Please fill in the sections below. -->
+<!-- Thanks for contributing to Wickra. Please fill in the sections below.
+
+     Changing the release process, the bindings' shared surface, or the public
+     API? There is a longer template that asks what such a change has to answer:
+     reopen this pull request with ?template=detailed.md appended to the URL.
+     GitHub offers no picker for a second template, so it is only reachable that
+     way. -->
 
 ## Summary
 
