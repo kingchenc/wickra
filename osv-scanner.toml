@@ -27,3 +27,24 @@ reason = "tools.jackson.core:jackson-core 3.x is not a dependency of this projec
 [[IgnoredVulns]]
 id = "GHSA-6w46-j5rx-g56g"
 reason = "pytest is a CI-only test dependency, never shipped; the flaw needs a second local user, which a single-user ephemeral runner does not have. Pinned at 8.4.2 because pytest 9 requires Python >= 3.10 and the 3.9 matrix row needs it."
+
+# Go stdlib advisories against the `go` directive. osv-scanner reads the version
+# in a go.mod as the standard library in use and reports every advisory fixed
+# after it -- 90 of them at the time of writing, all against `stdlib 1.23.99`.
+#
+# For an application that is the right reading. For a library it is not: the
+# directive is a *minimum* language version, and whoever imports the module
+# builds it with their own toolchain. Nothing in this repository ships a Go
+# binary. CI builds with `stable`, and release.yml assembles and compiles the
+# wickra-go mirror with `stable` as well, so no artefact produced here is linked
+# against a 1.23 standard library.
+#
+# The alternative is to raise the directive, which forces every consumer of the
+# Go binding onto that toolchain. That is a compatibility decision about who can
+# use the module, not a fix for anything this repository builds -- so it is left
+# as a decision rather than taken silently here.
+[[PackageOverrides]]
+ecosystem = "Go"
+name = "stdlib"
+ignore = true
+reason = "The `go` directive is a minimum language version, not the toolchain in use. CI and the release workflow build with `stable`; no artefact here links a 1.23 standard library."

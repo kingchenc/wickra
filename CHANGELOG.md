@@ -369,6 +369,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Go standard-library advisories are recorded as not applying, with the
+  reasoning.** Turning osv-scanner on surfaced 90 of them at once, all against
+  `stdlib 1.23.99` — the scanner reads the `go` directive in a `go.mod` as the
+  standard library in use. That is the right reading for an application and the
+  wrong one for a library: the directive is a *minimum* language version, and
+  whoever imports the module builds it with their own toolchain. Nothing here
+  ships a Go binary; CI and the release workflow both build the mirror with
+  `stable`.
+
+  Raising the directive would fix the report and force every consumer of the Go
+  binding onto that toolchain — a decision about who can use the module, not a
+  fix for anything this repository builds. It is left as a decision rather than
+  taken quietly.
+
 - **GHSA-6w46-j5rx-g56g (pytest tmpdir handling) is recorded as not affecting
   this project**, with the reasoning in `osv-scanner.toml` rather than left to
   be rediscovered. pytest is a CI-only test dependency and is never shipped, and

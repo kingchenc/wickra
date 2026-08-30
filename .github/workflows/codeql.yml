@@ -116,9 +116,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p bindings/go/lib/linux_amd64
-          cp target/release/libwickra.so bindings/go/lib/linux_amd64/
+          mkdir -p lib/linux_amd64
+          cp ../../target/release/libwickra.so lib/linux_amd64/
           go build ./...
+        working-directory: bindings/go
 
       # The C examples are the consumers of the header and of the hand-written
       # C++ RAII wrapper, so compiling them is what puts both in the database.
