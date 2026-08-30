@@ -129,6 +129,19 @@ jobs:
       - name: Every version declaration agrees
         run: python3 scripts/check_version_sync.py
 
+      # Each bindings/*/README.md is, or is a workflow line away from being, a
+      # published package's long description: PyPI renders the Python one, NuGet
+      # the C# one, pkg.go.dev the Go one. A link that leaves the package is
+      # dead there while resolving fine on GitHub, so nothing says so.
+      - name: Binding READMEs link only to what travels with them
+        run: python3 scripts/check_readme_links.py
+
+      # An SPDX expression in a manifest is a reference to two documents, not
+      # the documents. cargo decides what to package from git, so the copies
+      # have to be committed -- and committed copies drift.
+      - name: Every published package carries its licence texts
+        run: python3 scripts/check_license_copies.py
+
       # R is the one binding whose native half comes from a published release
       # rather than from this tree (bindings/r/configure downloads the C ABI for
       # DESCRIPTION's Version), so the pairing r-universe compiles is one our own
@@ -386,7 +399,7 @@ jobs:
         timeout-minutes: 6
 
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+        uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-llvm-cov
@@ -452,7 +465,7 @@ jobs:
         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
 
       - name: Install cargo-semver-checks
-        uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+        uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-semver-checks
@@ -472,7 +485,7 @@ jobs:
   fuzz-smoke:
     name: Fuzz (smoke)
     runs-on: ubuntu-latest
-    timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
+    timeout-minutes: 40 # backstop: 13 targets at 30 s each plus the build of all of them; caps a wedged job instead of GitHub's 6h default
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -501,7 +514,7 @@ jobs:
         # attributes the modern nightly compiler rejects, so the install
         # never gets off the ground. The prebuilt binary avoids the entire
         # transitive-dep compile.
-        uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+        uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-fuzz
@@ -513,29 +526,26 @@ jobs:
         run: cargo +nightly-2026-07-01 fuzz build --target x86_64-unknown-linux-gnu
         working-directory: fuzz
 
-      - name: Fuzz csv_reader (30 s)
-        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu csv_reader -- -max_total_time=30
+      # Every target cargo-fuzz knows about, rather than a hand-kept list of
+      # steps. Six of the thirteen were listed and the other seven had never
+      # been run: `fuzz build` proves a target compiles, which is not the same
+      # as proving it survives input. Deriving the list means a new target is
+      # fuzzed the moment it exists.
+      - name: Fuzz every target (30 s each)
         working-directory: fuzz
-
-      - name: Fuzz binance_envelope (30 s)
-        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu binance_envelope -- -max_total_time=30
-        working-directory: fuzz
-
-      - name: Fuzz indicator_update (30 s)
-        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu indicator_update -- -max_total_time=30
-        working-directory: fuzz
-
-      - name: Fuzz indicator_update_candle (30 s)
-        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu indicator_update_candle -- -max_total_time=30
-        working-directory: fuzz
-
-      - name: Fuzz tick_aggregator (30 s)
-        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu tick_aggregator -- -max_total_time=30
-        working-directory: fuzz
-
-      - name: Fuzz indicator_chain (30 s)
-        run: cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu indicator_chain -- -max_total_time=30
-        working-directory: fuzz
+        run: |
+          set -euo pipefail
+          targets=$(cargo +nightly-2026-07-01 fuzz list)
+          if [ -z "$targets" ]; then
+            echo "::error::cargo fuzz list returned nothing -- no target would be fuzzed"
+            exit 1
+          fi
+          while read -r target; do
+            [ -n "$target" ] || continue
+            echo "::group::$target"
+            cargo +nightly-2026-07-01 fuzz run --target x86_64-unknown-linux-gnu "$target" -- -max_total_time=30
+            echo "::endgroup::"
+          done <<< "$targets"
 
   python:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
@@ -662,7 +672,7 @@ jobs:
         # same taiki-e prebuilt-binary installer we already use for
         # cargo-llvm-cov and cargo-fuzz; it tracks the latest wasm-pack
         # release, which has `--features` as a top-level flag (since 0.12).
-        uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+        uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: wasm-pack
@@ -769,6 +779,22 @@ jobs:
         working-directory: bindings/node
         run: node scripts/prune-type-only-exports.mjs
 
+      # Both files are generated by napi and committed, and nothing compared
+      # the two. index.js drifted before -- it shipped 0.9.7 inside the v0.9.9
+      # tag -- because napi rewrites it only when somebody rebuilds, and a
+      # rebuild is not part of committing. One OS is enough: the output is
+      # platform-independent.
+      - name: Check the committed loader is in sync with napi
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet -- bindings/node/index.js bindings/node/index.d.ts; then
+            echo "::error::bindings/node/index.js or index.d.ts is out of sync -- run npm run build in bindings/node and commit the result"
+            git --no-pager diff -- bindings/node/index.js bindings/node/index.d.ts
+            exit 1
+          fi
+
       # The Node test process has wedged on macOS runners (the step hung for
       # 1h+ while the same tests passed in ~1.5 min elsewhere). Wrap it so a
       # hung attempt is killed after 6 min and retried once, rather than
@@ -828,7 +854,7 @@ jobs:
         timeout-minutes: 6
 
       - name: Install cbindgen
-        uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
+        uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cbindgen
@@ -916,6 +942,25 @@ jobs:
           retry_wait_seconds: 20
           command: dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
           shell: bash
+
+      # GoldenAllTests.g.cs is written by gen_golden_test.py from the catalogue
+      # and committed, and nothing compared the two: a new indicator that never
+      # had the generator re-run simply has no golden test on the C# side, and
+      # the suite stays green while covering one entry less.
+      #
+      # Its two siblings under Wickra/Generated/ cannot be checked the same way:
+      # the generator that writes them is not in this repository.
+      - name: Check the generated C# golden tests are in sync
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python bindings/csharp/gen_golden_test.py
+          if ! git diff --quiet -- bindings/csharp/Wickra.Tests/GoldenAllTests.g.cs; then
+            echo "::error::GoldenAllTests.g.cs is out of sync -- run python bindings/csharp/gen_golden_test.py and commit the result"
+            git --no-pager diff --stat -- bindings/csharp/Wickra.Tests/GoldenAllTests.g.cs
+            exit 1
+          fi
 
       - name: Build the C# examples
         shell: bash
@@ -1089,7 +1134,7 @@ jobs:
         run: cargo build -p wickra-c --release
 
       - name: Set up R
-        uses: r-lib/actions/setup-r@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2.12.1
+        uses: r-lib/actions/setup-r@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
         with:
           r-version: "release"
           use-public-rspm: true
@@ -1099,7 +1144,7 @@ jobs:
       # compiling testthat / knitr and their deps from source — the slow, flaky
       # path that previously blew past the job timeout on the ubuntu runner.
       - name: Install R dependencies (cached binaries)
-        uses: r-lib/actions/setup-r-dependencies@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2.12.1
+        uses: r-lib/actions/setup-r-dependencies@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
         with:
           working-directory: bindings/r
           extra-packages: |
@@ -1204,7 +1249,7 @@ jobs:
       - name: Set up JDK 25
         id: setup-java
         continue-on-error: true
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: temurin
           java-version: "25"
@@ -1219,7 +1264,7 @@ jobs:
 
       - name: Set up JDK 25 (retry)
         if: steps.setup-java.outcome == 'failure'
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: temurin
           java-version: "25"

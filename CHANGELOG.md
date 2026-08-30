@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Streaming and batch are compared through the C ABI.** Every indicator
+  exposes `update` and `batch`, and they must agree -- a consumer switching
+  between a live feed and a backfill gets the same numbers, or one of the two
+  paths is wrong. Node and Python assert this; C, the ABI every other binding
+  sits on, never did. `examples/c/streaming_vs_batch_test.c` checks a scalar
+  and a candle indicator, deliberately reusing the Node suite's series,
+  tolerance and NaN handling so a disagreement between languages is about the
+  library rather than about the test.
+
+- **`scripts/check_readme_links.py`** holds each `bindings/*/README.md` to
+  linking only what travels with the package. These are published long
+  descriptions -- PyPI renders the Python one, NuGet the C# one -- where a link
+  out of the package is dead while resolving fine on GitHub, so nothing says
+  so. Links that stay inside the package are fine: `man/figures/logo.png` in
+  the R binding is the R convention and ships with the package.
+
+- **`scripts/check_license_copies.py`** verifies that every published package
+  carries both licence texts byte-for-byte, deriving the list from the
+  workspace rather than a hand-kept one.
+
 - **The published crates carry their licence texts.** `cargo package` only
   includes files inside the crate directory, so the root `LICENSE-MIT` and
   `LICENSE-APACHE` never travelled: `wickra-core-1.0.3.crate` shipped 532 files
@@ -128,6 +148,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **A release is all-or-nothing: nothing is published unless everything is
+  green.** `cargo-publish` and `wasm-publish` declared no dependencies at all,
+  so crates.io could receive a version while the Python wheels were still
+  building. A wheel failing afterwards left the crate published, unwithdrawable,
+  and the release half-shipped -- with the notes claiming otherwise.
+
+  Every publish job now waits on a `gate` job, and the gate waits on all five
+  build jobs *and* on evidence that the tagged commit was green. `ci.yml` does
+  not run on tags, so the release cannot infer the tag's health from its own
+  run: the gate asks the API what the commit was graded, requires a successful
+  `ci.yml` run on that exact SHA, and refuses if any other workflow that ran on
+  it failed. Listing required workflows by name would go stale -- `codspeed.yml`
+  is path-filtered and legitimately does not run for a version bump -- so the
+  rule is about outcomes rather than about a roster.
+
+  The WASM package is built in its own `wasm-build` job for the same reason: it
+  used to be compiled inside the publish job, which put its build behind the
+  gate rather than in front of it. What is published is now the very tarball
+  that is attached to the release, so the two cannot diverge.
+
+  Six registries cannot be made atomic -- a registry can still fail mid-upload
+  after another has succeeded. What this removes is the common case, which is
+  not a registry outage but something that does not build.
+
+- **Every fuzz target is fuzzed, not six of thirteen.** The workflow listed the
+  targets to run by hand and seven had never been run: `fuzz build` proves a
+  target compiles, which is not the same as proving it survives input. The list
+  now comes from `cargo fuzz list`, so a new target is fuzzed the moment it
+  exists rather than when somebody remembers.
+
+- **The Go module is built and run before it is published.** `go-mirror`
+  assembles the tree by copying files and rewriting an import path with `sed`,
+  then pushed it to pkg.go.dev on that basis alone -- a wrong header, a missing
+  library or a botched `sed` would have surfaced on a user's machine. It now
+  compiles the assembled module and exercises one indicator end to end first.
+  The `*_test.go` files stay behind: they read `../../testdata/golden`, which
+  does not exist in a module fetched with `go get`, so shipping them meant
+  `go test` on the published module failed at `os.Open`.
+
+- **The committed napi loader and the generated C# golden tests are checked for
+  drift.** `index.js` shipped 0.9.7 inside the v0.9.9 tag because napi rewrites
+  it only when somebody rebuilds. Both are now regenerated in CI and compared.
+  `Indicators.g.cs` and `NativeMethods.g.cs` cannot be checked this way: their
+  generator is not in this repository.
+
+- **CodeQL analyses the C# and Java examples and benchmarks.** Under
+  `build-mode: manual` it sees exactly what the compiler walks, so building only
+  the test project left 11 of 23 C# files unanalysed -- including every example,
+  which is the code people copy into their own projects.
+
+- **Seven action pins moved to their newest release**, each resolved to the
+  commit rather than to the annotated tag object that a ref lookup returns.
+
 - **`scripts/update-lockfiles.sh` no longer installs uv by itself.** It piped
   `https://astral.sh/uv/install.sh` into a shell, which runs whatever is behind
   that URL at that moment, with the privileges of everyone who regenerates a
@@ -180,6 +253,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Fixed
+
+- **`Vpin::update` could never return for a large trade size.** It distributes a
+  trade's volume across buckets with `while remaining > 0.0 { ... remaining -=
+  take }`, and once the size is large enough that the bucket volume falls below
+  one ULP of it, the subtraction changes nothing: at 1.4e277 against a bucket of
+  8, `remaining` stays exactly where it was and the loop never ends. Not slow --
+  non-terminating. A single trade hung the caller for good, and 1.4e277 passes
+  `Trade::new` unchanged, so this was reachable through the ordinary validating
+  API rather than only through `new_unchecked`.
+
+  The loop is now bounded by what can still be observed. A trade is one-sided,
+  so every complete bucket it fills carries an imbalance of exactly the bucket
+  volume, and the window keeps only the last `num_buckets`; anything beyond that
+  pushes values identical to the ones it evicts. The bound keeps the remainder
+  that decides where the next bucket boundary falls, so it is exact rather than
+  an approximation — a test asserts that one 1000.5-sized trade leaves the same
+  state as 2001 trades of 0.5.
+
+  Found by `fuzz/fuzz_targets/indicator_update_trade.rs` on its first ever run.
+  It was one of seven targets that were built but never executed, which is what
+  the change to fuzzing every declared target was for.
 
 - **Every release since the .NET binding shipped attached the package to
   nuget.org but not to the release page.** `csharp-publish` packs the package,

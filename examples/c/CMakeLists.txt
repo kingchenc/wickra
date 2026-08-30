@@ -67,6 +67,7 @@ add_wickra_example(smoke smoke.c TRUE)                 # links the boundary, ass
 add_wickra_example(archetypes archetypes.c TRUE)       # one indicator per FFI archetype
 add_wickra_example(streaming streaming.c TRUE)         # multi-indicator tick stream
 add_wickra_example(cpp_smoke smoke.cpp TRUE)           # C++ RAII wrapper (wickra.hpp)
+add_wickra_example(streaming_vs_batch_test streaming_vs_batch_test.c TRUE)  # update() == batch()
 add_wickra_example(backtest backtest.c TRUE)           # indicator basket over a CSV
 add_wickra_example(multi_timeframe multi_timeframe.c TRUE)  # resample + per-TF indicators
 add_wickra_example(parallel_assets parallel_assets.c TRUE)  # serial vs OpenMP fan-out

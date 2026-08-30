@@ -116,6 +116,32 @@ impl Indicator for Vpin {
     fn update(&mut self, trade: Trade) -> Option<f64> {
         let mut remaining = trade.size;
         let buy = trade.side == Side::Buy;
+
+        // Bound the work at what can still be observed. A trade is one-sided,
+        // so every complete bucket it fills carries an imbalance of exactly
+        // `bucket_volume`, and the window keeps only the last `num_buckets`:
+        // closing more than that pushes values identical to the ones it
+        // evicts. Dropping them is exact rather than approximate, because the
+        // remainder that decides where the next bucket boundary falls is kept.
+        //
+        // Without the bound the loop does not merely do useless work. Once the
+        // size is large enough that `bucket_volume` falls below one ULP of it
+        // -- 1.4e277 against a bucket of 8 -- `remaining -= take` leaves
+        // `remaining` unchanged, so `while remaining > 0.0` never terminates.
+        // A single malformed trade hung the caller forever. Found by
+        // fuzz/fuzz_targets/indicator_update_trade.rs.
+        let capacity = self.bucket_volume - self.cur_total;
+        let window_full = self.num_buckets as f64 * self.bucket_volume;
+        if remaining.is_infinite() {
+            // Infinitely one-sided: it fills the window and leaves nothing over.
+            remaining = capacity + window_full;
+        } else if remaining > capacity {
+            let beyond = remaining - capacity;
+            if beyond / self.bucket_volume > self.num_buckets as f64 {
+                remaining = capacity + window_full + beyond % self.bucket_volume;
+            }
+        }
+
         // Distribute the trade's volume across one or more buckets.
         while remaining > 0.0 {
             let capacity = self.bucket_volume - self.cur_total;
@@ -274,5 +300,62 @@ mod tests {
         let mut b = Vpin::new(8.0, 5).unwrap();
         let streamed: Vec<_> = trades.iter().map(|t| b.update(*t)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    // The exact input libFuzzer found: a size so large that subtracting a
+    // bucket from it is below one ULP, so the distribution loop could never
+    // make progress and `update` never returned. Any assertion here is
+    // secondary to the test completing at all.
+    #[test]
+    fn enormous_size_terminates() {
+        let mut vpin = Vpin::new(8.0, 5).unwrap();
+        let value = vpin.update(trade(1.397_926_697_262_895_6e277, Side::Buy));
+        assert_eq!(
+            value,
+            Some(1.0),
+            "a one-sided flood is maximally imbalanced"
+        );
+    }
+
+    // `Trade::new` rejects a non-finite size, so this one is only reachable
+    // through `new_unchecked` -- which is what the fuzz harness uses, and what
+    // a binding that has already validated upstream may use too. The finite
+    // case above needs no such help: 1.4e277 passes the validating constructor
+    // unchanged, so the hang was reachable through the ordinary API.
+    #[test]
+    fn infinite_size_terminates() {
+        let mut vpin = Vpin::new(8.0, 5).unwrap();
+        let flood = Trade::new_unchecked(100.0, f64::INFINITY, Side::Buy, 0);
+        assert_eq!(vpin.update(flood), Some(1.0));
+    }
+
+    // Bounding the loop must not move the next bucket boundary. A size well
+    // past the window still leaves a remainder, and the bucket after it has to
+    // start where it would have without the bound.
+    #[test]
+    fn bounding_preserves_the_remainder() {
+        let mut bounded = Vpin::new(8.0, 5).unwrap();
+        bounded.update(trade(1000.5, Side::Buy));
+
+        // The same volume delivered as many small trades, which never triggers
+        // the bound, must leave the estimator in the same state.
+        let mut unbounded = Vpin::new(8.0, 5).unwrap();
+        for _ in 0..2001 {
+            unbounded.update(trade(0.5, Side::Buy));
+        }
+        assert_eq!(bounded.cur_total, unbounded.cur_total);
+        assert_eq!(
+            bounded.update(trade(1.0, Side::Sell)),
+            unbounded.update(trade(1.0, Side::Sell))
+        );
+    }
+
+    #[test]
+    fn a_size_below_the_bound_is_untouched() {
+        // 6 buckets' worth against a 5-bucket window: right at the edge, and
+        // the bound must not engage where the loop still terminates on its own.
+        let mut vpin = Vpin::new(8.0, 5).unwrap();
+        assert_eq!(vpin.update(trade(48.0, Side::Buy)), Some(1.0));
+        assert_eq!(vpin.cur_total, 0.0);
     }
 }
