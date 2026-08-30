@@ -70,6 +70,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
+          # Nothing is pushed from here any more, so the checkout's credentials
+          # would only sit in .git/config for the rest of the job.
+          persist-credentials: false
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
           repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
 
@@ -94,8 +97,15 @@ jobs:
       # Runs on main as well: with no required status checks, a pull request can
       # merge without this having run, and then nothing would notice.
       - name: Check README counter (read-only)
+        # Passed through the environment rather than interpolated into the
+        # script. The value is a digit string this workflow computed, so it is
+        # not attacker-controlled today -- but a `run:` block that expands a
+        # template is one refactor away from being one (zizmor:
+        # template-injection).
+        env:
+          N: ${{ steps.count.outputs.count }}
         run: |
-          n="${{ steps.count.outputs.count }}"
+          n="$N"
           ok=true
           if ! grep -qE "^${n} streaming-first indicators" README.md; then
             echo "::error::README.md does not say '${n} streaming-first indicators' — lib.rs exports ${n}. Re-run the indicator wiring (it bumps README.md), then push again."
