@@ -379,8 +379,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the blueprint had described as one where "a memory mistake is not possible",
   which was wrong twice over. Fixed by validating at the boundary: a Binance
   symbol is uppercase letters and digits, anything else is refused before it
-  reaches the URL. Verified that the injection no longer executes and that a
-  valid symbol still works.
+  reaches the URL — and the URL is built from a *copy* the check filled one
+  character at a time, not from `argv[1]`. Checking in place and then using the
+  original pointer anyway leaves the value that reaches the command the one that
+  came from outside, and loses the guarantee to any later edit between the check
+  and the use. Verified that the injection no longer executes, that an
+  over-long or lowercase symbol is refused, and that a valid symbol still
+  fetches.
 
 - **Go standard-library advisories are recorded as not applying, with the
   reasoning.** Turning osv-scanner on surfaced 90 of them at once, all against
