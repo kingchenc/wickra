@@ -91,12 +91,16 @@ jobs:
           distribution: temurin
           java-version: "25"
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
+      - name: Set up Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
-          config-file: .github/codeql/codeql-config.yml
+          go-version: "stable"
+          cache: false
+
+      # Staged before CodeQL autobuilds: the cgo LDFLAGS point at
+      # ${SRCDIR}/lib/<goos>_<goarch>, so without the library there the build
+      # cannot link and nothing is extracted.
 
       # Go and C/C++ both need the C ABI library present before they build:
       # the Go binding links it through cgo, and the C examples link it via
@@ -109,13 +113,6 @@ jobs:
         if: matrix.language == 'go' || matrix.language == 'c-cpp'
         run: cargo build -p wickra-c --release
 
-      - name: Set up Go
-        if: matrix.language == 'go'
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version: "stable"
-          cache: false
-
       # Staged before CodeQL autobuilds: the cgo LDFLAGS point at
       # ${SRCDIR}/lib/<goos>_<goarch>, so without the library there the build
       # cannot link and nothing is extracted.
@@ -127,6 +124,19 @@ jobs:
           mkdir -p bindings/go/lib/linux_amd64
           cp target/release/libwickra.so bindings/go/lib/linux_amd64/
 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: .github/codeql/codeql-config.yml
+
+      # The C examples consume the header and the hand-written C++ RAII
+      # wrapper, so compiling them is what puts both in the database.
+      # bindings/r/src/wickra.c is NOT covered here: it is built by the R
+      # toolchain during package build, and pulling that in would add a
+      # fragile dependency for one generated file. Said plainly rather than
+      # left to look like coverage.
       - name: Build the C and C++ examples
         if: matrix.language == 'c-cpp'
         run: |
