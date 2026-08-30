@@ -51,9 +51,16 @@ updates:
     # webpki-root-certs (CDLA-Permissive-2.0) regardless of TLS backend, and that
     # licence is not in deny.toml's allow list, so the bump cannot pass the
     # supply-chain gate.
+    # No `update-types` here, unlike the root entry. Dependabot proposed ureq
+    # 2 -> 3 three times (#425, #435, #437), the last one against a base that
+    # already carried the semver-major form of this ignore -- so that form does
+    # not match a *requirement* change the way it matches a version update.
+    # Ignoring the dependency outright is what actually holds.
+    #
+    # Nothing is lost by the blunter form: the root cargo entry keeps its
+    # `update-types`, so ureq 2.x patches still arrive from there.
     ignore:
       - dependency-name: "ureq"
-        update-types: ["version-update:semver-major"]
     groups:
       cargo-fuzz:
         patterns: ["*"]
