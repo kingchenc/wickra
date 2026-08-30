@@ -44,6 +44,16 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(cargo-fuzz)"
+    # The fuzz lockfile resolves through a path dependency on the workspace, so
+    # a proposal here can land in crates/wickra-data/Cargo.toml -- which is how
+    # #425 arrived titled "/fuzz" while changing the main tree. ureq is pinned to
+    # 2.x for the same reason as in the root entry: ureq 3 hard-depends on
+    # webpki-root-certs (CDLA-Permissive-2.0) regardless of TLS backend, and that
+    # licence is not in deny.toml's allow list, so the bump cannot pass the
+    # supply-chain gate.
+    ignore:
+      - dependency-name: "ureq"
+        update-types: ["version-update:semver-major"]
     groups:
       cargo-fuzz:
         patterns: ["*"]
