@@ -36,3 +36,13 @@ paths-ignore:
   - bindings/csharp/Wickra/Generated/Indicators.g.cs
   - bindings/csharp/Wickra/Generated/NativeMethods.g.cs
   - bindings/csharp/Wickra.Tests/GoldenAllTests.g.cs
+  # Java, same generator and the same stamp: 624 classes directly under
+  # org/wickra/ plus internal/NativeMethods.java, all emitted from the C header
+  # and all carrying "Do not edit by hand". 37,900 lines between them.
+  #
+  # Two files in the binding are written by a person and stay in the analysis:
+  # internal/WickraNative.java, which owns the FFI arena, the Cleaner and the
+  # library lookup, and every test under src/test. Those are the only places a
+  # Java memory mistake can originate here.
+  - bindings/java/src/main/java/org/wickra/*.java
+  - bindings/java/src/main/java/org/wickra/internal/NativeMethods.java

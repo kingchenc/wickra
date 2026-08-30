@@ -39,17 +39,40 @@ jobs:
             build-mode: none
           - language: javascript-typescript
             build-mode: none
-          # C# analyses without a build too. The binding is a P/Invoke surface
-          # over the C ABI: manual handle lifetimes, a Cleaner-equivalent
-          # Dispose, and native library resolution -- the places where a leak or
-          # a use-after-free would live, and the only ones CodeQL had no view of.
+          # C# and Java are compiled with an explicit command rather than read as
+          # source. `build-mode: none` was tried first and GitHub reported the
+          # result as low quality: 64% of C# calls resolved to a target against a
+          # threshold of 85%. Two causes, and the second was self-inflicted --
+          # without a build no dependency resolves, and paths-ignore keeps the
+          # excluded generated files out of the database entirely, so the
+          # hand-written code that calls into them pointed at nothing.
+          #
+          # Building fixes both at once: the generated code compiles, so the calls
+          # resolve, while paths-ignore still filters its findings out of the
+          # results. High resolution and no flood, rather than one or the other.
+          #
+          # `manual` over `autobuild`: this repository has several C# projects and
+          # two Maven trees, and guessing which to build is how a scan ends up
+          # quietly covering the wrong one.
           - language: csharp
-            build-mode: none
+            build-mode: manual
+          - language: java-kotlin
+            build-mode: manual
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # Only the Java build needs this, and it needs a newer JDK than the
+      # runner default: the binding targets java.lang.foreign and the pom sets
+      # release 22.
+      - name: Set up JDK 25
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: "25"
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
@@ -57,6 +80,24 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: .github/codeql/codeql-config.yml
+
+      # Spelled out per language rather than driven from a matrix field: a
+      # `run:` that expands a template is the shape zizmor flags, and two
+      # explicit steps read better than one indirect one.
+      #
+      # The test project is built rather than the library alone -- it pulls the
+      # library in by reference and adds the hand-written tests, which is most
+      # of what is left after the exclusions.
+      - name: Build the C# binding
+        if: matrix.language == 'csharp'
+        run: dotnet build bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
+
+      # test-compile, not compile: it builds the hand-written tests too, and
+      # they are ten of the eleven files left after the exclusions. -DskipTests
+      # because CodeQL needs the code compiled, not exercised.
+      - name: Build the Java binding
+        if: matrix.language == 'java-kotlin'
+        run: mvn -B -f bindings/java test-compile -DskipTests
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3

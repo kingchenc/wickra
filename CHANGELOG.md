@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CodeQL analyses the C# and Java bindings**, both compiled rather than read
+  as source. The first C# pass ran with `build-mode: none` and GitHub reported
+  the result as low quality: 64% of calls resolved to a target against a
+  threshold of 85%. Two causes, and the second was self-inflicted -- without a
+  build no dependency resolves, and `paths-ignore` keeps the excluded generated
+  files out of the database entirely, so the hand-written code that calls into
+  them pointed at nothing. Building fixes both: the generated code compiles so
+  the calls resolve, while `paths-ignore` still filters its findings out of the
+  results.
+
+- **CodeQL analyses the Java binding.** The binding reaches the C ABI through
+  `java.lang.foreign` -- an `Arena` per handle, a `Cleaner` to release it, and
+  manual marshalling -- and none of it had ever been read by a static analyser.
+  No build is needed; `build-mode: none` covers Java as it does C#.
+
+  624 of the 636 files are generated from the C header and carry
+  `Do not edit by hand`, so they are excluded before the language is enabled
+  rather than dismissed afterwards. What stays in the analysis is
+  `internal/WickraNative.java`, which owns the arena, the cleaner and the library
+  lookup, plus the ten hand-written tests. That is the whole surface where a
+  Java-side leak or use-after-free could originate.
+
 - **CodeQL analyses the C# binding.** The matrix covered Rust, Python and
   JavaScript/TypeScript; C# was the largest surface it had no view of, and the
   one where a memory mistake is possible at all -- `WickraHandle.cs` and
@@ -47,6 +69,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and the project ships no action of its own, so the alternatives were a
   third-party wrapper or a docker pull; a pinned download with a verified hash
   adds no supply-chain dependency at all.
+
+- The Java jar is attached to the GitHub Release. `java-publish` stages the
+  native libraries for all six platforms into the binding's resources, deploys
+  to Maven Central, and now also uploads the packaged jar, so the release page
+  carries the same file Maven Central received. The sources and javadoc jars
+  stay on Maven Central, where a build tool resolves them on demand.
 
 ### Changed
 
@@ -102,14 +130,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   waits on all eight: `csharp-publish` and `java-publish` because it stages the
   files they upload, `go-mirror` because the notes claim the Go module is
   available.
-
-### Added
-
-- The Java jar is attached to the GitHub Release. `java-publish` stages the
-  native libraries for all six platforms into the binding's resources, deploys
-  to Maven Central, and now also uploads the packaged jar, so the release page
-  carries the same file Maven Central received. The sources and javadoc jars
-  stay on Maven Central, where a build tool resolves them on demand.
 
 ## [1.0.3] - 2026-08-28
 
