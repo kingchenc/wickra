@@ -116,31 +116,43 @@ static int first_kline(const char *body, int64_t *open_time, double *close) {
     return 0;
 }
 
-/* A Binance symbol is uppercase alphanumeric and nothing else.
+/* Copy `in` into `out` if it is a plausible Binance symbol, otherwise refuse.
  *
- * It matters here because the symbol ends up inside a shell command: curl_get
- * builds `curl "<url>"` and hands it to popen. The quotes around the URL do not
- * make that safe -- a symbol containing a double quote closes them and the rest
- * is run as a command. Rejecting anything outside [A-Z0-9] at the boundary is
- * both the smaller change and the honest one for an example, which is code
- * people copy. */
-static int symbol_is_sane(const char *symbol) {
-    if (symbol[0] == '\0' || strlen(symbol) > 20) {
-        return 0;
-    }
-    for (const char *c = symbol; *c != '\0'; c++) {
+ * It matters because the symbol ends up inside a shell command: curl_get builds
+ * `curl "<url>"` and hands it to popen. The quotes around the URL do not make
+ * that safe -- a symbol containing a double quote closes them and the rest is
+ * run as a command.
+ *
+ * Checking argv[1] in place and then using argv[1] anyway is not enough: the
+ * value that reaches the command is still the one that came from outside, and a
+ * later edit between the check and the use silently loses the guarantee. What
+ * gets built into the URL is therefore a separate buffer that this function
+ * filled one character at a time, each one proven to be an uppercase letter or
+ * a digit. Nothing else can be in it, by construction rather than by review.
+ */
+static int copy_symbol(const char *in, char *out, size_t out_size) {
+    size_t n = 0;
+    for (const char *c = in; *c != '\0'; c++) {
         int upper = (*c >= 'A' && *c <= 'Z');
         int digit = (*c >= '0' && *c <= '9');
         if (!upper && !digit) {
             return 0;
         }
+        if (n + 1 >= out_size) {
+            return 0;
+        }
+        out[n++] = *c;
     }
+    if (n == 0) {
+        return 0;
+    }
+    out[n] = '\0';
     return 1;
 }
 
 int main(int argc, char **argv) {
-    const char *symbol = (argc > 1) ? argv[1] : "BTCUSDT";
-    if (!symbol_is_sane(symbol)) {
+    char symbol[21];
+    if (!copy_symbol((argc > 1) ? argv[1] : "BTCUSDT", symbol, sizeof(symbol))) {
         fprintf(stderr,
                 "symbol must be uppercase letters and digits, e.g. BTCUSDT\n");
         return 1;
