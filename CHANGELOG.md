@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`cargo-semver-checks` guards the published API.** `wickra-core`,
+  `wickra-data` and `wickra` are on crates.io, and since 1.0.0 the version
+  number is a promise: a patch release must not move the public surface. Nothing
+  checked that. The surface is 514 exported types with ten language bindings on
+  top of it -- exactly the shape where a rename slips past review and out to six
+  registries in one run that cannot be undone.
+
+  The baseline is the newest version already on crates.io, fetched by the tool.
+  The three crates are named explicitly rather than `--workspace`: the bench and
+  binding crates are unpublished, so they have no baseline and make no promise.
+
 - **actionlint checks the workflows for correctness**, which is the half zizmor
   does not cover. zizmor reads them for security -- template injection,
   over-broad tokens, unpinned actions. actionlint reads them for whether they
