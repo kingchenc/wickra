@@ -26,6 +26,7 @@ jobs:
   zizmor:
     name: Audit workflows
     runs-on: ubuntu-latest
+    timeout-minutes: 10  # backstop against a hung job, not a budget
     permissions:
       security-events: write # upload SARIF to code-scanning
       contents: read # checkout

@@ -1,0 +1,122 @@
+name: Check indicator count
+
+# The indicator count is the number of public indicator types exported from
+# crates/wickra-core/src/lib.rs -- the `pub use indicators::{ ... }` block, minus
+# the FAMILIES constant and any *Output companion structs. Public types, not
+# `mod xxx;` lines: some modules export more than one indicator (vwap.rs exposes
+# both Vwap and RollingVwap), so a mod-count under-reports.
+#
+# This workflow used to carry that number outward as well, pushing it into
+# wickra-docs, webpage, the org profile and the wiki, and writing the repo and
+# org descriptions -- all through a fine-grained personal access token with
+# write access to four repositories, Administration rights here and admin:org.
+# That token was the only repository-level secret in the organisation.
+#
+# The consumers now pull instead. wickra-docs, webpage and .github each read the
+# count and the released version from this repository on their own hourly
+# schedule, and commit into themselves with their own GITHUB_TOKEN. A schedule is
+# the only trigger that can work for them: the number changes here, so a push
+# there is not the event that makes them wrong.
+#
+# What could not be inverted stays manual, because it is settings rather than
+# files: the repo About description and homepage need Administration: write,
+# which GITHUB_TOKEN has no scope for even in its own repository, and the org
+# description needs admin:org. The wiki has no Actions at all. bump_version.py
+# prints those three when the count has actually moved, and stays quiet when it
+# has not.
+#
+# What is left here is the check. The indicator wiring bumps README.md and
+# docs/README.md inside the author's code commit, so the counter is already
+# correct by the time CI runs. If it is not, this fails loud and asks for the
+# wiring to be re-run -- it never pushes a fix-up commit.
+#
+# (An earlier version did push one, with GITHUB_TOKEN, to the PR head. Because
+# GITHUB_TOKEN pushes trigger no workflows, that commit moved the head onto a
+# commit with no CI run and hid the Codecov patch status, which is keyed to the
+# head sha. Keeping the counter in the code commit avoids that entirely.)
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Nothing is written any more, here or anywhere else.
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20  # backstop against a hung job, not a budget
+    # Read-only throughout: the job greps two files and exits. Nothing is
+    # written here or anywhere else (OpenSSF Scorecard: Token-Permissions).
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      # On PRs we check out the PR *head* commit (the author's code, not the
+      # merge ref) so the counter check validates exactly what will land. On
+      # push events we check out the default ref. No push is made, so a shallow
+      # checkout is enough.
+      #
+      # Check out by head SHA, not head ref (branch name): a fast `gh pr merge
+      # --squash --delete-branch` deletes the head branch the moment the PR
+      # merges, often before this queued read-only check reaches its checkout.
+      # Fetching the now-gone `refs/heads/<branch>` then fails the run (exit 1).
+      # The head SHA stays reachable via `refs/pull/N/head` after the branch is
+      # gone, so the checkout — and the run — survives an instant merge.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          # Nothing is pushed from here any more, so the checkout's credentials
+          # would only sit in .git/config for the rest of the job.
+          persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+          repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
+
+      - name: Count indicators
+        id: count
+        run: |
+          # Parse the `pub use indicators::{ ... }` block from lib.rs, strip
+          # the FAMILIES constant and any `*Output` companion structs, count
+          # the remaining identifiers. Pure-shell so the workflow doesn't
+          # require a python runtime.
+          n=$(sed -n '/^pub use indicators::{/,/^};/p' crates/wickra-core/src/lib.rs \
+            | tr ',{}' '\n' \
+            | sed 's/[[:space:]]//g' \
+            | grep -E '^[A-Z][A-Za-z0-9_]*$' \
+            | grep -vE '^FAMILIES$|Output$' \
+            | sort -u | wc -l)
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          echo "Indicator count: $n"
+
+      # ----- PR flow ---------------------------------------------------
+
+      # Runs on main as well: with no required status checks, a pull request can
+      # merge without this having run, and then nothing would notice.
+      - name: Check README counter (read-only)
+        # Passed through the environment rather than interpolated into the
+        # script. The value is a digit string this workflow computed, so it is
+        # not attacker-controlled today -- but a `run:` block that expands a
+        # template is one refactor away from being one (zizmor:
+        # template-injection).
+        env:
+          N: ${{ steps.count.outputs.count }}
+        run: |
+          n="$N"
+          ok=true
+          if ! grep -qE "^${n} streaming-first indicators" README.md; then
+            echo "::error::README.md does not say '${n} streaming-first indicators' — lib.rs exports ${n}. Re-run the indicator wiring (it bumps README.md), then push again."
+            ok=false
+          fi
+          if ! grep -qE "\*\*${n} indicators\*\*" docs/README.md; then
+            echo "::error::docs/README.md does not say '**${n} indicators**' — lib.rs exports ${n}. Re-run the indicator wiring (it bumps docs/README.md), then push again."
+            ok=false
+          fi
+          if [ "$ok" = "true" ]; then
+            echo "README.md + docs/README.md counter already at ${n}; nothing to do."
+          else
+            exit 1
+          fi

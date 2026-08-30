@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **The indicator count is no longer pushed into four other repositories.**
+  `sync-about.yml` carried the number outward on every push to main and every
+  tag -- into `wickra-docs`, `webpage`, the org profile and the wiki -- and also
+  wrote the repo and org descriptions. All of it went through a fine-grained
+  personal access token with write access to four repositories, `Administration:
+  write` here and `admin:org`; the only repository-level secret in the
+  organisation.
+
+  The consumers pull instead. `wickra-docs`, `webpage` and `.github` each read
+  the count and the released version from this repository hourly and commit into
+  themselves with their own `GITHUB_TOKEN`. A schedule is the only trigger that
+  can work for them: the number changes here, so a push there is not the event
+  that makes them wrong. The delay is bounded by the hour, and a documentation
+  page does not need a figure that moved in the last one.
+
+  What could not be inverted stays manual, because it is settings rather than
+  files. The About description and homepage need `Administration: write`, which
+  `GITHUB_TOKEN` has no scope for even in its own repository, and the org
+  description needs `admin:org`; the wiki has no Actions at all. `bump_version.py`
+  now prints those three -- with the live values read back and compared -- only
+  when the count has actually moved.
+
+  What remains here is the check, renamed to `check-indicator-count.yml` because
+  it no longer syncs anything. It also runs on main now, not only on pull
+  requests: with no required status checks, a pull request can merge without it
+  having run, and nothing would have noticed.
+
+- Every job in `bench.yml`, `codeql.yml`, `links.yml`, `scorecard.yml`,
+  `sync-metadata.yml` and `zizmor.yml` now declares `timeout-minutes`. Without
+  it a hung job runs to GitHub's six-hour default; the values are backstops well
+  above the observed runtimes, not budgets.
+
+
 ### Fixed
 
 - **Every release since the .NET binding shipped attached the package to
