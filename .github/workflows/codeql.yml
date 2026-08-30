@@ -47,8 +47,13 @@ jobs:
           # runtime.SetFinalizer. bindings/r/src/wickra.c is C compiled into the
           # CRAN package, and include/wickra.hpp is a hand-written RAII wrapper
           # that the C examples compile and run in CI.
+          # autobuild rather than manual: with a manual command CodeQL traced
+          # the build and then finalised an empty database. Its Go extractor
+          # runs its own build and finds the module in the subdirectory, which
+          # is what the language wants. The C ABI library is still staged in
+          # front of it, because cgo has to link.
           - language: go
-            build-mode: manual
+            build-mode: autobuild
           - language: c-cpp
             build-mode: manual
           # C# and Java are compiled with an explicit command rather than read as
@@ -111,22 +116,17 @@ jobs:
           go-version: "stable"
           cache: false
 
-      - name: Build the Go binding
+      # Staged before CodeQL autobuilds: the cgo LDFLAGS point at
+      # ${SRCDIR}/lib/<goos>_<goarch>, so without the library there the build
+      # cannot link and nothing is extracted.
+      - name: Stage the native library for cgo
         if: matrix.language == 'go'
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p lib/linux_amd64
-          cp ../../target/release/libwickra.so lib/linux_amd64/
-          go build ./...
-        working-directory: bindings/go
+          mkdir -p bindings/go/lib/linux_amd64
+          cp target/release/libwickra.so bindings/go/lib/linux_amd64/
 
-      # The C examples are the consumers of the header and of the hand-written
-      # C++ RAII wrapper, so compiling them is what puts both in the database.
-      # bindings/r/src/wickra.c is NOT covered here: it is compiled by the R
-      # toolchain during package build, and pulling that into this job would
-      # add a fragile dependency for one generated file. Said plainly rather
-      # than left to look like coverage.
       - name: Build the C and C++ examples
         if: matrix.language == 'c-cpp'
         run: |
