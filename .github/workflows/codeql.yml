@@ -39,6 +39,18 @@ jobs:
             build-mode: none
           - language: javascript-typescript
             build-mode: none
+          # Go and C/C++ were the two languages the matrix left out, and the
+          # stated reason -- "C# and Java are the two bindings where a memory
+          # mistake is possible" -- was simply wrong. bindings/go casts slice
+          # base addresses through unsafe.Pointer and hands them to C, which is
+          # undefined for an empty slice, and manages handle lifetimes with
+          # runtime.SetFinalizer. bindings/r/src/wickra.c is C compiled into the
+          # CRAN package, and include/wickra.hpp is a hand-written RAII wrapper
+          # that the C examples compile and run in CI.
+          - language: go
+            build-mode: manual
+          - language: c-cpp
+            build-mode: manual
           # C# and Java are compiled with an explicit command rather than read as
           # source. `build-mode: none` was tried first and GitHub reported the
           # result as low quality: 64% of C# calls resolved to a target against a
@@ -80,6 +92,45 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: .github/codeql/codeql-config.yml
+
+      # Go and C/C++ both need the C ABI library present before they build:
+      # the Go binding links it through cgo, and the C examples link it via
+      # CMake. One cargo build serves both.
+      - name: Install Rust toolchain
+        if: matrix.language == 'go' || matrix.language == 'c-cpp'
+        uses: ./.github/actions/setup-rust
+
+      - name: Build the C ABI library
+        if: matrix.language == 'go' || matrix.language == 'c-cpp'
+        run: cargo build -p wickra-c --release
+
+      - name: Set up Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "stable"
+          cache: false
+
+      - name: Build the Go binding
+        if: matrix.language == 'go'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p bindings/go/lib/linux_amd64
+          cp target/release/libwickra.so bindings/go/lib/linux_amd64/
+          go build ./...
+
+      # The C examples are the consumers of the header and of the hand-written
+      # C++ RAII wrapper, so compiling them is what puts both in the database.
+      # bindings/r/src/wickra.c is NOT covered here: it is compiled by the R
+      # toolchain during package build, and pulling that into this job would
+      # add a fragile dependency for one generated file. Said plainly rather
+      # than left to look like coverage.
+      - name: Build the C and C++ examples
+        if: matrix.language == 'c-cpp'
+        run: |
+          cmake -S examples/c -B examples/c/build
+          cmake --build examples/c/build --config Release
 
       # CodeQL sees exactly what the compiler walks, so anything it does not
       # build is not analysed. Building only the test project left the eleven

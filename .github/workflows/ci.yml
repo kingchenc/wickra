@@ -426,7 +426,7 @@ jobs:
   # Supply-chain audit: security advisories, license policy, banned crates,
   # and source restrictions. Configured by deny.toml at the repo root.
   supply-chain:
-    name: Supply-chain (cargo-deny)
+    name: Supply-chain (cargo-deny + osv-scanner)
     runs-on: ubuntu-latest
     timeout-minutes: 30 # backstop: cap a wedged job instead of GitHub's 6h default (headroom for slow registry/package installs)
     steps:
@@ -449,6 +449,23 @@ jobs:
   # The baseline is the newest version already on crates.io, fetched by the tool
   # itself. On a release that has not moved the API this finds nothing; the run
   # that matters is the one where it does.
+
+      # osv-scanner.toml existed and nothing ran it. The file records two
+      # advisories assessed as not affecting this project, with the reasoning
+      # next to each -- and that assessment was load-bearing for nobody,
+      # because no workflow ever consulted it. It only had an effect if
+      # OpenSSF Scorecard happened to read it out of band.
+      #
+      # cargo-deny above covers the Rust graph only. This covers the other
+      # six ecosystems -- npm, PyPI, Maven, NuGet, Go modules, R -- which had
+      # no vulnerability scanning in CI at all.
+      - name: osv-scanner
+        uses: google/osv-scanner-action/osv-scanner-action@9bb69575e74019c2ad085a1860787043adf47ccb # v2.5.1
+        with:
+          scan-args: |-
+            --recursive
+            --config=osv-scanner.toml
+            ./
   semver:
     name: Public API (cargo-semver-checks)
     runs-on: ubuntu-latest

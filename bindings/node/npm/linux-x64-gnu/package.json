@@ -4,7 +4,9 @@
   "description": "Native binding for wickra (linux x64 GNU). Installed automatically as an optional dependency of wickra on matching platforms.",
   "main": "wickra.linux-x64-gnu.node",
   "files": [
-    "wickra.linux-x64-gnu.node"
+    "wickra.linux-x64-gnu.node",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
   ],
   "license": "MIT OR Apache-2.0",
   "engines": {

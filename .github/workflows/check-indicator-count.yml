@@ -115,8 +115,16 @@ jobs:
             echo "::error::docs/README.md does not say '**${n} indicators**' — lib.rs exports ${n}. Re-run the indicator wiring (it bumps docs/README.md), then push again."
             ok=false
           fi
+          # CITATION.cff is what GitHub's citation box and Zenodo read, and
+          # nothing was watching it: it said 214 indicators across 16 families
+          # when there were 514 across 24, and named three languages of ten. A
+          # release artefact in every sense except that no tool looked at it.
+          if ! grep -qE "^[[:space:]]+${n} indicators across" CITATION.cff; then
+            echo "::error::CITATION.cff does not say '${n} indicators across' — lib.rs exports ${n}. It is what the citation box and Zenodo read."
+            ok=false
+          fi
           if [ "$ok" = "true" ]; then
-            echo "README.md + docs/README.md counter already at ${n}; nothing to do."
+            echo "README.md, docs/README.md and CITATION.cff counter already at ${n}; nothing to do."
           else
             exit 1
           fi

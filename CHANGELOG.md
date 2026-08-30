@@ -146,6 +146,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   carries the same file Maven Central received. The sources and javadoc jars
   stay on Maven Central, where a build tool resolves them on demand.
 
+- **CodeQL analyses Go and C/C++.** The matrix left out the binding that casts
+  slice base addresses through `unsafe.Pointer` and manages handle lifetimes
+  with `runtime.SetFinalizer`, and the hand-written C++ RAII wrapper that the C
+  examples compile and run in CI. The stated reason — that C# and Java were the
+  only bindings where a memory mistake is possible — was wrong.
+
+- **Every platform package is proved to have its binary before publishing.** If
+  a build artefact never arrives, `napi artifacts` leaves that directory without
+  a `.node` and the stub publishes as an empty package that installs cleanly and
+  fails at `require()`. Hard to reach, cheap to prove.
+
+- **The committed napi loader is regenerated for `@napi-rs/cli` 3.8.6.** The
+  bump (#426) changed only the lockfile, and `index.js` is generated rather than
+  written: 3.8.6 emits WASI-flavour selection and a shared
+  `createLoadErrorChain` that 3.7.4 did not. The drift check added the day
+  before caught it on `main` -- the pull request itself was green because
+  Dependabot tested it against a base commit from before that check existed.
+- **The npm lockfile recorded the package's own version twice, and one of them
+  was stale.** `bindings/node/package-lock.json` carries the version at the top
+  level and again in the `packages[""]` entry; only the first is what `npm
+  version` rewrites, so the second sat at 1.0.1 across two releases. It was
+  repaired by an unrelated Dependabot regeneration rather than by anything
+  watching, and `check_version_sync.py` had missed it because it treats the
+  lockfile as generated and only asserted that the version appears somewhere in
+  it. Both records are now checked exactly; the rest of the file stays a
+  presence check, because those versions belong to other people.
+
+- **`Vpin::update` could never return for a large trade size.** It distributes a
+  trade's volume across buckets with `while remaining > 0.0 { ... remaining -=
+  take }`, and once the size is large enough that the bucket volume falls below
+  one ULP of it, the subtraction changes nothing: at 1.4e277 against a bucket of
+  8, `remaining` stays exactly where it was and the loop never ends. Not slow --
+  non-terminating. A single trade hung the caller for good, and 1.4e277 passes
+  `Trade::new` unchanged, so this was reachable through the ordinary validating
+  API rather than only through `new_unchecked`.
+
+  The loop is now bounded by what can still be observed. A trade is one-sided,
+  so every complete bucket it fills carries an imbalance of exactly the bucket
+  volume, and the window keeps only the last `num_buckets`; anything beyond that
+  pushes values identical to the ones it evicts. The bound keeps the remainder
+  that decides where the next bucket boundary falls, so it is exact rather than
+  an approximation — a test asserts that one 1000.5-sized trade leaves the same
+  state as 2001 trades of 0.5.
+
+  Found by `fuzz/fuzz_targets/indicator_update_trade.rs` on its first ever run.
+  It was one of seven targets that were built but never executed, which is what
+  the change to fuzzing every declared target was for.
+
+- **Every release since the .NET binding shipped attached the package to
+  nuget.org but not to the release page.** `csharp-publish` packs the package,
+  pushes it, and uploads it as a build artifact -- and the staging step in
+  `github-release` listed six `find` patterns, none of which matched `*.nupkg`,
+  so the file was downloaded with the rest and then left behind. With
+  `fail_on_unmatched_files` false nothing reported it. `v1.0.3` carries 36
+  assets -- wheels, sdist, `.node` binaries, npm tarballs, `.crate` files and
+  SBOMs -- and NuGet was the one registry artefact with no counterpart there.
+  The registry was never affected: all 28 published versions are on nuget.org.
+
+- **The release could be published before NuGet, Maven Central and the Go module
+  were.** `github-release` waited on five of the eight publishing jobs, so the
+  three that ship to those three destinations could still be running -- or
+  failing -- while the release notes already told readers they were live. It now
+  waits on all eight: `csharp-publish` and `java-publish` because it stages the
+  files they upload, `go-mirror` because the notes claim the Go module is
+  available.
+
+
 ### Changed
 
 - **A release is all-or-nothing: nothing is published unless everything is
@@ -254,60 +321,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **The committed napi loader is regenerated for `@napi-rs/cli` 3.8.6.** The
-  bump (#426) changed only the lockfile, and `index.js` is generated rather than
-  written: 3.8.6 emits WASI-flavour selection and a shared
-  `createLoadErrorChain` that 3.7.4 did not. The drift check added the day
-  before caught it on `main` -- the pull request itself was green because
-  Dependabot tested it against a base commit from before that check existed.
-- **The npm lockfile recorded the package's own version twice, and one of them
-  was stale.** `bindings/node/package-lock.json` carries the version at the top
-  level and again in the `packages[""]` entry; only the first is what `npm
-  version` rewrites, so the second sat at 1.0.1 across two releases. It was
-  repaired by an unrelated Dependabot regeneration rather than by anything
-  watching, and `check_version_sync.py` had missed it because it treats the
-  lockfile as generated and only asserted that the version appears somewhere in
-  it. Both records are now checked exactly; the rest of the file stays a
-  presence check, because those versions belong to other people.
+- **A manual run of `release.yml` could publish from a branch.** The workflow
+  carries `workflow_dispatch` so a failed publish can be retried without moving
+  the tag, and the `release` environment has no deployment-branch policy, so
+  nothing stopped a dispatch from `main`: the gate would pass (main *has* a
+  green CI run), cargo, npm and PyPI would publish whatever the manifests said,
+  and `go-mirror` would replace the contents of the public `wickra-go` and tag
+  it `vmain`. The gate now refuses any ref that is not `refs/tags/v*`. The
+  blueprint's claim that "release.yml runs on `push: tags` and nothing else" —
+  which is why the environment was left unprotected — was simply wrong.
 
-- **`Vpin::update` could never return for a large trade size.** It distributes a
-  trade's volume across buckets with `while remaining > 0.0 { ... remaining -=
-  take }`, and once the size is large enough that the bucket volume falls below
-  one ULP of it, the subtraction changes nothing: at 1.4e277 against a bucket of
-  8, `remaining` stays exactly where it was and the loop never ends. Not slow --
-  non-terminating. A single trade hung the caller for good, and 1.4e277 passes
-  `Trade::new` unchanged, so this was reachable through the ordinary validating
-  API rather than only through `new_unchecked`.
+- **The seven npm packages shipped without either licence text.** Every manifest
+  declares `MIT OR Apache-2.0`, which is a reference to two documents, and
+  neither travelled. `check_license_copies.py` asserted npm was "handled at
+  publish time (see release.yml)" — true in the sibling repository it was ported
+  from, never true here. release.yml now stages the copies and proves with `npm
+  pack --dry-run` that they are actually packed, because `files` decides what npm
+  ships and a name missing from it is dropped without a word. All seven `files`
+  allowlists name them, and the script verifies both halves rather than
+  delegating to a step that might not exist.
 
-  The loop is now bounded by what can still be observed. A trade is one-sided,
-  so every complete bucket it fills carries an imbalance of exactly the bucket
-  volume, and the window keeps only the last `num_buckets`; anything beyond that
-  pushes values identical to the ones it evicts. The bound keeps the remainder
-  that decides where the next bucket boundary falls, so it is exact rather than
-  an approximation — a test asserts that one 1000.5-sized trade leaves the same
-  state as 2001 trades of 0.5.
+- **`CITATION.cff` was three hundred indicators out of date** — "214 indicators
+  across 16 families", naming three languages of ten, while the catalogue holds
+  514 across twenty-four. It is what GitHub's citation box and Zenodo read, and
+  no check had ever looked at it. `check-indicator-count.yml` now holds it to the
+  count alongside the two READMEs.
 
-  Found by `fuzz/fuzz_targets/indicator_update_trade.rs` on its first ever run.
-  It was one of seven targets that were built but never executed, which is what
-  the change to fuzzing every declared target was for.
+- **`.nupkg`, `.jar` and the C ABI archives had no build provenance.** The
+  attestation job covered crates, wheels and the sdist; npm packages carry their
+  own inline provenance. That left the two packages C# and Java consumers
+  install, and the archive people download and link against, attested nowhere —
+  while Scorecard reported Signed-Releases 10/10, because it looks for a
+  provenance file on the release rather than for coverage of its contents.
 
-- **Every release since the .NET binding shipped attached the package to
-  nuget.org but not to the release page.** `csharp-publish` packs the package,
-  pushes it, and uploads it as a build artifact -- and the staging step in
-  `github-release` listed six `find` patterns, none of which matched `*.nupkg`,
-  so the file was downloaded with the rest and then left behind. With
-  `fail_on_unmatched_files` false nothing reported it. `v1.0.3` carries 36
-  assets -- wheels, sdist, `.node` binaries, npm tarballs, `.crate` files and
-  SBOMs -- and NuGet was the one registry artefact with no counterpart there.
-  The registry was never affected: all 28 published versions are on nuget.org.
+- **`osv-scanner.toml` was executed by nothing.** The file records two advisories
+  assessed as not affecting this project, and that assessment was load-bearing
+  for no one: no workflow consulted it. `cargo-deny` covers the Rust graph only,
+  so npm, PyPI, Maven, NuGet, Go modules and R had no vulnerability scanning in
+  CI at all. osv-scanner now runs in the supply-chain job.
 
-- **The release could be published before NuGet, Maven Central and the Go module
-  were.** `github-release` waited on five of the eight publishing jobs, so the
-  three that ship to those three destinations could still be running -- or
-  failing -- while the release notes already told readers they were live. It now
-  waits on all eight: `csharp-publish` and `java-publish` because it stages the
-  files they upload, `go-mirror` because the notes claim the Go module is
-  available.
+- **Three Dependabot `ignore` entries suppressed security updates.**
+  `open-pull-requests-limit: 0` already blocks every version-update pull request
+  for the CI Python tooling, so the ignores on numpy, hypothesis and pytest had
+  exactly one remaining effect: security updates, which are exempt from the
+  limit, were suppressed too. A future advisory in any of the three would have
+  produced silence rather than a red pull request somebody decides about.
 
 ### Security
 

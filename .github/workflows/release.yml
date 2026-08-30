@@ -50,6 +50,29 @@ jobs:
       contents: read
       actions: read
     steps:
+      # workflow_dispatch exists so a release whose publish step failed can be
+      # re-run without moving the tag. It must not become a way to publish from
+      # a branch: dispatched from main, GITHUB_REF_NAME is "main", cargo/npm/PyPI
+      # would push whatever the manifests currently say, and go-mirror would
+      # replace the contents of the public wickra-go and tag it "vmain".
+      #
+      # The `release` environment carries no deployment-branch policy, so this is
+      # the only thing standing in the way. Checked here rather than on each
+      # publish job: one gate, and a job that is skipped rather than failed reads
+      # as "nothing to do" instead of "refused".
+      - name: Refuse to publish from anything but a version tag
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          case "$REF" in
+            refs/tags/v*) echo "publishing for $REF" ;;
+            *)
+              echo "::error::release.yml publishes only for a refs/tags/v* ref; got $REF"
+              exit 1
+              ;;
+          esac
+
       - name: The tagged commit must have passed CI
         env:
           GH_TOKEN: ${{ github.token }}
@@ -469,6 +492,60 @@ jobs:
       # job loudly so the release does not silently land in a half-published
       # state. Previously this loop swallowed the second-attempt failure with
       # a `::warning::` and `return 0`; that mask is removed.
+      # The SPDX expression in every manifest is a reference to two documents;
+      # none of the npm packages carried either. check_license_copies.py says
+      # npm is 'handled at publish time' -- true in wickra-backtest, which has
+      # this step, and never true here, so the assertion delegated to a
+      # mechanism that did not exist.
+      #
+      # Copying is not enough: `files` decides what npm packs, and a name
+      # missing from it is dropped without a word. `npm pack --dry-run` is
+      # asked what would actually go out, before it goes out.
+      # `napi artifacts` distributes the downloaded binaries into npm/*/ by
+      # name. If a platform's build artefact never arrived, its directory is
+      # simply left without a .node -- and the loop below would publish a stub
+      # that installs cleanly and then fails at require() on that platform.
+      # node-build uses if-no-files-found: error and gate waits on it, so this
+      # is hard to reach; it is also cheap to prove rather than assume.
+      - name: Every platform package has its binary
+        working-directory: bindings/node
+        run: |
+          set -euo pipefail
+          missing=0
+          for dir in npm/*/; do
+            pkg=$(basename "$dir")
+            if ! ls "$dir"/*.node >/dev/null 2>&1; then
+              echo "::error::wickra-$pkg has no .node binary; it would publish as an empty stub"
+              missing=1
+            else
+              echo "wickra-$pkg: $(basename "$dir"/*.node)"
+            fi
+          done
+          [ "$missing" -eq 0 ]
+
+      - name: Stage the licence texts and prove they will be packed
+        working-directory: bindings/node
+        run: |
+          set -euo pipefail
+          for dir in . npm/*/; do
+            cp ../../LICENSE-MIT ../../LICENSE-APACHE "$dir/"
+          done
+          for dir in . npm/*/; do
+            ( cd "$dir" && npm pack --dry-run --json ) | node -e '
+              const chunks = [];
+              process.stdin.on("data", c => chunks.push(c));
+              process.stdin.on("end", () => {
+                const pkg = JSON.parse(chunks.join(""))[0];
+                const names = pkg.files.map(f => f.path);
+                const missing = ["LICENSE-MIT", "LICENSE-APACHE"].filter(n => !names.includes(n));
+                if (missing.length) {
+                  console.error(`::error::${pkg.name} would publish without ${missing.join(" and ")}`);
+                  process.exit(1);
+                }
+                console.log(`${pkg.name}: licence texts present`);
+              });'
+          done
+
       - name: Publish platform packages (idempotent)
         working-directory: bindings/node
         env:
@@ -1271,11 +1348,19 @@ jobs:
   attestations:
     name: Attest build provenance
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: [cargo-publish, python-wheels, python-sdist, github-release]
+    needs: [cargo-publish, python-wheels, python-sdist, c-abi-build,
+            csharp-publish, java-publish, github-release]
     runs-on: ubuntu-latest
-    # Signed SLSA build-provenance attestations for the published crates and
-    # Python wheels/sdist. npm tarballs already carry inline Sigstore provenance
-    # from `npm publish --provenance`, so they are covered there.
+    # Signed SLSA build-provenance attestations for everything published that
+    # does not already carry provenance of its own. npm tarballs do -- `npm
+    # publish --provenance` embeds it inline -- so the node and wasm packages are
+    # covered there and are not repeated here.
+    #
+    # The .nupkg, the .jar and the C ABI archives were covered nowhere. They are
+    # the two packages C# and Java consumers install and the archive people
+    # download and link against, and Scorecard reported Signed-Releases 10/10
+    # regardless, because it looks for a provenance file on the release rather
+    # than for coverage of what the release contains.
     #
     # The job stays isolated from the *publishes*: cargo/PyPI/npm all run upstream
     # of github-release, so a Sigstore hiccup here can never block or corrupt a
@@ -1303,11 +1388,30 @@ jobs:
           pattern: wheels-*
           path: artifacts/python
           merge-multiple: true
+      - name: Download the C ABI archives
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: c-abi-*
+          path: artifacts/c-abi
+          merge-multiple: true
+      - name: Download the NuGet package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: nuget-package
+          path: artifacts/nuget
+      - name: Download the Java jar
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: java-jar
+          path: artifacts/java
       - name: Attest build provenance
         id: attest
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
+            artifacts/c-abi/*.tar.gz
+            artifacts/nuget/*.nupkg
+            artifacts/java/*.jar
             artifacts/crates/*.crate
             artifacts/python/*.whl
             artifacts/python/*.tar.gz

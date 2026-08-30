@@ -106,7 +106,8 @@ updates:
     # target Python via --python-version). Dependabot bumps the .txt directly
     # and does NOT respect those targets, so every ci-pip group PR broke the
     # 3.9 rows (dropped `==` pins / pulled py3.10-only pytest/numpy/hypothesis).
-    # Security updates are unaffected by this limit.
+    # Security updates are exempt from the limit and still arrive -- which is
+    # why there is no `ignore` list below.
     open-pull-requests-limit: 0
     cooldown:
       default-days: 7
@@ -115,25 +116,22 @@ updates:
     groups:
       ci-pip:
         patterns: ["*"]
-    ignore:
-      # numpy >=2.5 dropped support for Python < 3.12, but the CI matrix still
-      # tests 3.9/3.10/3.11. Pin numpy in the hash-locked CI tooling so a bump
-      # can't break those rows again (a 2.5.1 bump did, and was reverted). The
-      # CI tooling only needs a working numpy, not the newest.
-      - dependency-name: "numpy"
-        update-types: ["version-update:semver-minor", "version-update:semver-major"]
-      # hypothesis >=6.142 requires Python >=3.10, but ci-dev-py39.txt targets
-      # 3.9. A bump to 6.157 broke every 3.9 matrix row (pip "Ignored the
-      # following versions that require a different python version"). Freeze
-      # hypothesis so the 3.9 dev-tooling lockfile stays installable.
-      - dependency-name: "hypothesis"
-        update-types: ["version-update:semver-minor", "version-update:semver-major"]
-      # pytest >=9 requires Python >=3.10 (9.0.0 "Requires-Python >=3.10"), but
-      # ci-dev-py39.txt targets the 3.9 matrix rows. A bump to 9.x made pip fail
-      # ("No matching distribution found for pytest==9.1.1") on every 3.9 job.
-      # Freeze pytest so the 3.9 dev-tooling lockfile stays installable.
-      - dependency-name: "pytest"
-        update-types: ["version-update:semver-minor", "version-update:semver-major"]
+    # No `ignore` here, deliberately. `open-pull-requests-limit: 0` above
+    # already suppresses every version-update pull request for this ecosystem,
+    # so an ignore adds nothing there. Its only remaining effect would be on
+    # *security* updates, which are exempt from the limit and are the one thing
+    # that should still get through.
+    #
+    # Three ignores used to sit here -- numpy, hypothesis, pytest -- each added
+    # because a bump broke the 3.9 matrix rows. That reasoning is about version
+    # updates, which the limit handles. Keeping them meant a future advisory in
+    # any of the three would produce no pull request at all: silence, rather
+    # than a red one somebody decides about. A security bump that breaks the
+    # 3.9 row is a visible problem; a suppressed advisory is not.
+    #
+    # Detection no longer rests on Dependabot either: osv-scanner runs in
+    # ci.yml across every ecosystem and fails the build on a vulnerable
+    # dependency whether or not a pull request exists.
 
   # GitHub Actions — keeps the SHA-pinned actions current (Dependabot reads
   # the version comment after each pinned SHA and bumps both together).
