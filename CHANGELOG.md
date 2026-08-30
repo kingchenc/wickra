@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CodeQL analyses the Java binding.** The binding reaches the C ABI through
+  `java.lang.foreign` -- an `Arena` per handle, a `Cleaner` to release it, and
+  manual marshalling -- and none of it had ever been read by a static analyser.
+  No build is needed; `build-mode: none` covers Java as it does C#.
+
+  624 of the 636 files are generated from the C header and carry
+  `Do not edit by hand`, so they are excluded before the language is enabled
+  rather than dismissed afterwards. What stays in the analysis is
+  `internal/WickraNative.java`, which owns the arena, the cleaner and the library
+  lookup, plus the ten hand-written tests. That is the whole surface where a
+  Java-side leak or use-after-free could originate.
+
 - **CodeQL analyses the C# binding.** The matrix covered Rust, Python and
   JavaScript/TypeScript; C# was the largest surface it had no view of, and the
   one where a memory mistake is possible at all -- `WickraHandle.cs` and

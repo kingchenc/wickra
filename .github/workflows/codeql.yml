@@ -45,6 +45,13 @@ jobs:
           # a use-after-free would live, and the only ones CodeQL had no view of.
           - language: csharp
             build-mode: none
+          # Java analyses without a build as well. The binding reaches the C ABI
+          # through java.lang.foreign: an Arena per handle, a Cleaner to release
+          # it, and manual marshalling. That is where a leak or a use-after-free
+          # would come from, and 624 of the 636 files around it are generated and
+          # excluded, so what is scanned is the part a person wrote.
+          - language: java-kotlin
+            build-mode: none
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
