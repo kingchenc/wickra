@@ -69,37 +69,53 @@ jobs:
       # release 22.
       - name: Set up JDK 25
         if: matrix.language == 'java-kotlin'
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: temurin
           java-version: "25"
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: .github/codeql/codeql-config.yml
 
-      # Spelled out per language rather than driven from a matrix field: a
-      # `run:` that expands a template is the shape zizmor flags, and two
-      # explicit steps read better than one indirect one.
-      #
-      # The test project is built rather than the library alone -- it pulls the
-      # library in by reference and adds the hand-written tests, which is most
-      # of what is left after the exclusions.
-      - name: Build the C# binding
+      # CodeQL sees exactly what the compiler walks, so anything it does not
+      # build is not analysed. Building only the test project left the eleven
+      # examples and the benchmark unscanned -- 11 of 23 C# files -- and the
+      # examples are the code people copy into their own projects.
+      - name: Build the C# binding, examples and benchmarks
         if: matrix.language == 'csharp'
-        run: dotnet build bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet build bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
+          dotnet build bindings/csharp/benchmarks/Benchmarks.csproj -c Release
+          for d in streaming backtest multi_timeframe parallel_assets \
+                   strategy_rsi_mean_reversion strategy_macd_adx \
+                   strategy_bollinger_squeeze fetch_btcusdt live_binance; do
+            dotnet build "examples/csharp/$d" -c Release
+          done
 
       # test-compile, not compile: it builds the hand-written tests too, and
-      # they are ten of the eleven files left after the exclusions. -DskipTests
-      # because CodeQL needs the code compiled, not exercised.
-      - name: Build the Java binding
+      # they are ten of the eleven binding files left after the exclusions.
+      # -DskipTests because CodeQL needs the code compiled, not exercised.
+      #
+      # examples/java is a separate Maven project and was therefore never
+      # analysed. It resolves org.wickra:wickra from Maven Central rather than
+      # from this tree, so what is analysed there is the example code against
+      # the published binding -- which is exactly the pairing a reader copying
+      # those files would get.
+      - name: Build the Java binding and examples
         if: matrix.language == 'java-kotlin'
-        run: mvn -B -f bindings/java test-compile -DskipTests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mvn -B -f bindings/java test-compile -DskipTests
+          mvn -B -f examples/java test-compile -DskipTests
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
+        uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           category: "/language:${{ matrix.language }}"

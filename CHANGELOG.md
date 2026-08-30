@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Streaming and batch are compared through the C ABI.** Every indicator
+  exposes `update` and `batch`, and they must agree -- a consumer switching
+  between a live feed and a backfill gets the same numbers, or one of the two
+  paths is wrong. Node and Python assert this; C, the ABI every other binding
+  sits on, never did. `examples/c/streaming_vs_batch_test.c` checks a scalar
+  and a candle indicator, deliberately reusing the Node suite's series,
+  tolerance and NaN handling so a disagreement between languages is about the
+  library rather than about the test.
+
+- **`scripts/check_readme_links.py`** holds each `bindings/*/README.md` to
+  linking only what travels with the package. These are published long
+  descriptions -- PyPI renders the Python one, NuGet the C# one -- where a link
+  out of the package is dead while resolving fine on GitHub, so nothing says
+  so. Links that stay inside the package are fine: `man/figures/logo.png` in
+  the R binding is the R convention and ships with the package.
+
+- **`scripts/check_license_copies.py`** verifies that every published package
+  carries both licence texts byte-for-byte, deriving the list from the
+  workspace rather than a hand-kept one.
+
 - **The published crates carry their licence texts.** `cargo package` only
   includes files inside the crate directory, so the root `LICENSE-MIT` and
   `LICENSE-APACHE` never travelled: `wickra-core-1.0.3.crate` shipped 532 files
@@ -127,6 +147,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stay on Maven Central, where a build tool resolves them on demand.
 
 ### Changed
+
+- **Every fuzz target is fuzzed, not six of thirteen.** The workflow listed the
+  targets to run by hand and seven had never been run: `fuzz build` proves a
+  target compiles, which is not the same as proving it survives input. The list
+  now comes from `cargo fuzz list`, so a new target is fuzzed the moment it
+  exists rather than when somebody remembers.
+
+- **The Go module is built and run before it is published.** `go-mirror`
+  assembles the tree by copying files and rewriting an import path with `sed`,
+  then pushed it to pkg.go.dev on that basis alone -- a wrong header, a missing
+  library or a botched `sed` would have surfaced on a user's machine. It now
+  compiles the assembled module and exercises one indicator end to end first.
+  The `*_test.go` files stay behind: they read `../../testdata/golden`, which
+  does not exist in a module fetched with `go get`, so shipping them meant
+  `go test` on the published module failed at `os.Open`.
+
+- **The committed napi loader and the generated C# golden tests are checked for
+  drift.** `index.js` shipped 0.9.7 inside the v0.9.9 tag because napi rewrites
+  it only when somebody rebuilds. Both are now regenerated in CI and compared.
+  `Indicators.g.cs` and `NativeMethods.g.cs` cannot be checked this way: their
+  generator is not in this repository.
+
+- **CodeQL analyses the C# and Java examples and benchmarks.** Under
+  `build-mode: manual` it sees exactly what the compiler walks, so building only
+  the test project left 11 of 23 C# files unanalysed -- including every example,
+  which is the code people copy into their own projects.
+
+- **Seven action pins moved to their newest release**, each resolved to the
+  commit rather than to the annotated tag object that a ref lookup returns.
 
 - **`scripts/update-lockfiles.sh` no longer installs uv by itself.** It piped
   `https://astral.sh/uv/install.sh` into a shell, which runs whatever is behind
