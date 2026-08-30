@@ -60,6 +60,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   third-party wrapper or a docker pull; a pinned download with a verified hash
   adds no supply-chain dependency at all.
 
+- The Java jar is attached to the GitHub Release. `java-publish` stages the
+  native libraries for all six platforms into the binding's resources, deploys
+  to Maven Central, and now also uploads the packaged jar, so the release page
+  carries the same file Maven Central received. The sources and javadoc jars
+  stay on Maven Central, where a build tool resolves them on demand.
+
 ### Changed
 
 - **The indicator count is no longer pushed into four other repositories.**
@@ -114,14 +120,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   waits on all eight: `csharp-publish` and `java-publish` because it stages the
   files they upload, `go-mirror` because the notes claim the Go module is
   available.
-
-### Added
-
-- The Java jar is attached to the GitHub Release. `java-publish` stages the
-  native libraries for all six platforms into the binding's resources, deploys
-  to Maven Central, and now also uploads the packaged jar, so the release page
-  carries the same file Maven Central received. The sources and javadoc jars
-  stay on Maven Central, where a build tool resolves them on demand.
 
 ## [1.0.3] - 2026-08-28
 
