@@ -34,8 +34,59 @@ jobs:
   # --------------------------------------------------------------------------
   # crates.io: three crates in dependency order
   # --------------------------------------------------------------------------
+  # Nothing reaches a registry until every artefact exists and the tagged commit
+  # is known to have been green. Before this job, cargo-publish and wasm-publish
+  # declared no dependencies at all: crates.io could receive a version while the
+  # Python wheels were still building, and a wheel failing afterwards left the
+  # crate published and unwithdrawable. Six registries cannot be made atomic,
+  # but the common failure -- something does not build -- can be moved in front
+  # of the first irreversible step instead of running beside it.
+  gate:
+    name: Nothing publishes before this
+    needs: [python-wheels, python-sdist, node-build, c-abi-build, wasm-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: The tagged commit must have passed CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          # ci.yml runs on pushes to main and on pull requests, never on a tag,
+          # so this workflow cannot see the tag's health in its own run. Ask what
+          # the commit itself was graded, which is the merge commit the tag
+          # points at and therefore the state that was actually tested.
+          ci=$(gh api "repos/${REPO}/actions/workflows/ci.yml/runs?head_sha=${SHA}&per_page=1"                  -q '.workflow_runs[0].conclusion // "none"')
+          echo "ci.yml on ${SHA}: ${ci}"
+          if [ "$ci" != "success" ]; then
+            echo "::error::the tagged commit has no successful ci.yml run (${ci}); refusing to publish"
+            exit 1
+          fi
+
+          # And nothing else that did run may have failed. Listing required
+          # workflows by name would go stale -- codspeed.yml is path-filtered and
+          # legitimately does not run for a version bump -- so the rule is about
+          # outcomes rather than about a roster: whatever ran, none of it is red.
+          bad=$(gh api "repos/${REPO}/actions/runs?head_sha=${SHA}&per_page=100"                   -q '[.workflow_runs[]
+                       | select(.name != "Release")
+                       | select(.conclusion == "failure" or .conclusion == "timed_out"
+                                or .conclusion == "cancelled")
+                       | .name] | unique | join(", ")')
+          if [ -n "$bad" ]; then
+            echo "::error::the tagged commit has failing runs (${bad}); refusing to publish"
+            exit 1
+          fi
+          echo "every workflow that ran on this commit is green"
+
   cargo-publish:
     name: Publish to crates.io
+    needs: [gate]
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
     runs-on: ubuntu-latest
     # The publish jobs run with long-lived registry tokens. Binding them to a
@@ -256,7 +307,7 @@ jobs:
   python-publish:
     name: Publish to PyPI
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: [python-wheels, python-sdist]
+    needs: [gate, python-wheels, python-sdist]
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -347,7 +398,7 @@ jobs:
   node-publish:
     name: Publish to npm
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: node-build
+    needs: [gate, node-build]
     runs-on: ubuntu-latest
     environment: release
     # `id-token: write` lets npm publish embed a Sigstore provenance
@@ -524,17 +575,17 @@ jobs:
   # --------------------------------------------------------------------------
   # Note: this job's npm publish call uses `--provenance` (see below),
   # which requires the `id-token: write` permission set at the job level.
-  wasm-publish:
-    name: Publish wickra-wasm to npm
-    timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
+  # The WASM package is built here rather than inside the publish job, so a
+  # build failure lands in front of the gate instead of after crates.io has
+  # already received the version. What is published downstream is the very
+  # tarball this job packs and attaches to the release, so the two cannot
+  # diverge.
+  wasm-build:
+    name: Build wickra-wasm
+    timeout-minutes: 45 # backstop only: compiles from source; far above the ~10 min real runtime
     runs-on: ubuntu-latest
-    environment: release
-    # `id-token: write` lets npm publish embed a Sigstore provenance
-    # attestation generated from the GitHub Actions OIDC token (same
-    # mechanism as the node-publish job above).
     permissions:
       contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -546,7 +597,6 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
 
       - name: Wait before Node retry
         if: steps.setup_node.outcome == 'failure'
@@ -560,7 +610,6 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
 
       - uses: ./.github/actions/setup-rust
         with:
@@ -611,13 +660,43 @@ jobs:
           name: wasm-tarball
           path: bindings/wasm/pkg/wickra-wasm-*.tgz
 
+  wasm-publish:
+    name: Publish wickra-wasm to npm
+    needs: [gate, wasm-build]
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    environment: release
+    # `id-token: write` lets npm publish embed a Sigstore provenance
+    # attestation generated from the GitHub Actions OIDC token (same
+    # mechanism as the node-publish job above).
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Download the packed tarball
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: wasm-tarball
+          path: wasm-pkg
+
       - name: Publish wickra-wasm to npm (idempotent)
-        working-directory: bindings/wasm/pkg
         run: |
-          # if/then rather than `A && B || C`: that form runs C when B fails, not
-          # only when A does, so a failing echo would read as a failed publish
-          # (shellcheck SC2015).
-          if out=$(npm publish --access public --provenance 2>&1); then
+          set -euo pipefail
+          tarball=$(find wasm-pkg -name 'wickra-wasm-*.tgz' | head -1)
+          if [ -z "$tarball" ]; then
+            echo "::error::wasm-build produced no tarball"
+            exit 1
+          fi
+          # if/then rather than `A && B || C`: that form runs C when B fails,
+          # not only when A does, so a failing echo would read as a failed
+          # publish (shellcheck SC2015).
+          if out=$(npm publish "$tarball" --access public --provenance 2>&1); then
             echo "$out"
           elif printf '%s' "$out" | grep -q "You cannot publish over"; then
             echo "skip: version already on npm"
@@ -702,7 +781,7 @@ jobs:
   csharp-publish:
     name: Publish to NuGet
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: c-abi-build
+    needs: [gate, c-abi-build]
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -806,7 +885,7 @@ jobs:
   java-publish:
     name: Publish to Maven Central
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: c-abi-build
+    needs: [gate, c-abi-build]
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -893,7 +972,7 @@ jobs:
   go-mirror:
     name: Mirror the Go module to wickra-go
     timeout-minutes: 45 # backstop only: release build/publish jobs compile from source (vendored OpenSSL) and must not be killed mid-build; far above the ~10 min real runtime
-    needs: c-abi-build
+    needs: [gate, c-abi-build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

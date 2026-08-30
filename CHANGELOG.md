@@ -148,6 +148,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **A release is all-or-nothing: nothing is published unless everything is
+  green.** `cargo-publish` and `wasm-publish` declared no dependencies at all,
+  so crates.io could receive a version while the Python wheels were still
+  building. A wheel failing afterwards left the crate published, unwithdrawable,
+  and the release half-shipped -- with the notes claiming otherwise.
+
+  Every publish job now waits on a `gate` job, and the gate waits on all five
+  build jobs *and* on evidence that the tagged commit was green. `ci.yml` does
+  not run on tags, so the release cannot infer the tag's health from its own
+  run: the gate asks the API what the commit was graded, requires a successful
+  `ci.yml` run on that exact SHA, and refuses if any other workflow that ran on
+  it failed. Listing required workflows by name would go stale -- `codspeed.yml`
+  is path-filtered and legitimately does not run for a version bump -- so the
+  rule is about outcomes rather than about a roster.
+
+  The WASM package is built in its own `wasm-build` job for the same reason: it
+  used to be compiled inside the publish job, which put its build behind the
+  gate rather than in front of it. What is published is now the very tarball
+  that is attached to the release, so the two cannot diverge.
+
+  Six registries cannot be made atomic -- a registry can still fail mid-upload
+  after another has succeeded. What this removes is the common case, which is
+  not a registry outage but something that does not build.
+
 - **Every fuzz target is fuzzed, not six of thirteen.** The workflow listed the
   targets to run by hand and seven had never been run: `fuzz build` proves a
   target compiles, which is not the same as proving it survives input. The list
