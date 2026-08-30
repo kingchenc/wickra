@@ -75,6 +75,11 @@ TOUCHPOINTS: list[tuple[str, str, str, int]] = [
     ("bindings/java/README.md", "install snippets", r"@V@", 2),
     # Prose sentence, the supported row, and the unsupported bound.
     ("SECURITY.md", "supported version", r"@V@", 3),
+    # The citation names the release it belongs to. The bump moves the
+    # `date-released` beside it, so a stale `version` here is not merely absent
+    # -- the two lines disagree, and GitHub's citation box and Zenodo both read
+    # them. Nothing else in CI touches this file.
+    ("CITATION.cff", "citation version", r'(?m)^version: "@V@"$', 1),
     # npm records the package's own version twice in the lockfile: once at the
     # top level and once in the `packages[""]` entry. Only the first is what
     # `npm version` rewrites, so the second goes stale on its own -- it sat at

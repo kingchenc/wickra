@@ -160,21 +160,25 @@ jobs:
             dotnet build "examples/csharp/$d" -c Release
           done
 
-      # test-compile, not compile: it builds the hand-written tests too, and
-      # they are ten of the eleven binding files left after the exclusions.
-      # -DskipTests because CodeQL needs the code compiled, not exercised.
+      # -DskipTests, not -Dmaven.test.skip: the hand-written tests still
+      # compile, and they are ten of the eleven binding files left after the
+      # exclusions. CodeQL needs the code compiled, not exercised.
       #
-      # examples/java is a separate Maven project and was therefore never
-      # analysed. It resolves org.wickra:wickra from Maven Central rather than
-      # from this tree, so what is analysed there is the example code against
-      # the published binding -- which is exactly the pairing a reader copying
-      # those files would get.
+      # examples/java is a separate Maven project, so it resolves
+      # org.wickra:wickra as a normal dependency rather than through a reactor.
+      # It has to come out of the local repository, which is why the binding is
+      # installed rather than merely compiled: the version in the tree is the
+      # one being released, and it does not exist on Maven Central until the tag
+      # publishes it. Resolving from Central instead made this job fail on every
+      # version bump, on a lookup for the artefact the bump exists to create.
+      # Installing first also means the examples are analysed against the
+      # binding in this tree, which is the code under review.
       - name: Build the Java binding and examples
         if: matrix.language == 'java-kotlin'
         shell: bash
         run: |
           set -euo pipefail
-          mvn -B -f bindings/java test-compile -DskipTests
+          mvn -B -f bindings/java install -DskipTests
           mvn -B -f examples/java test-compile -DskipTests
 
       - name: Perform CodeQL analysis

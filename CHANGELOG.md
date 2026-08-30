@@ -369,6 +369,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   limit, were suppressed too. A future advisory in any of the three would have
   produced silence rather than a red pull request somebody decides about.
 
+- **Two jobs failed on every version bump, on the artefact the bump exists to
+  create.** `examples/java` and the Java benchmarks depend on
+  `org.wickra:wickra` at the version in the tree, which reaches Maven Central
+  only when the tag publishes it. CodeQL's java-kotlin build resolved that
+  dependency from Central, and osv-scanner's default enricher resolved it there
+  too — so the bump that moves those poms to the next version broke both, and
+  osv-scanner printed "0 packages affected by 0 known vulnerabilities" directly
+  above its own error. CodeQL now installs the binding into the local
+  repository first, which also means the examples are analysed against the
+  binding in this tree rather than the last published one. osv-scanner runs with
+  `--no-resolve`, which costs nothing here: every non-test dependency in all
+  three poms is `org.wickra:wickra` itself, whose own dependencies are
+  test-scoped and outside the resolver's graph either way, and lockfiles need no
+  resolution to be scanned transitively.
+
+- **Two version declarations survived a bump.** A `package-lock.json` states the
+  root package's version twice — at the top of the file and inside
+  `packages[""]` — and only the first is what a bump rewrites, so
+  `scripts/check_version_sync.py` failed this release's own pull request.
+  `CITATION.cff` was worse: its `date-released` moved to the day of the bump
+  while its `version` stayed on the previous release, so the two lines
+  contradicted each other in the file GitHub's citation box and Zenodo both
+  read — and no check here looked at it. The bump tooling now writes both
+  declarations, and `check_version_sync.py` holds the citation version too.
+
 ### Security
 
 - **Command injection in the C live-Binance example.** `examples/c/live_binance.c`
