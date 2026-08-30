@@ -60,7 +60,7 @@ jobs:
         run: cargo codspeed build -p wickra
 
       - name: Run them under instrumentation
-        uses: CodSpeedHQ/action@07725aac5ac9e687bba40b9bed8e2bd389a641c8 # v5.2.1
+        uses: CodSpeedHQ/action@373d6868929f444bc08d901fd0eb0ad52a8875ea # v5.2.1
         with:
           # Required since action v4, and it used to be inferred. `simulation`
           # counts instructions under instrumentation; `walltime` measures real
