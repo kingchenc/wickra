@@ -23,6 +23,7 @@ Run from the repository root:  python scripts/check_license_copies.py
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -110,8 +111,52 @@ def main() -> int:
         print("\ncopy LICENSE-MIT and LICENSE-APACHE from the repository root.", file=sys.stderr)
         return 1
 
-    print(f"\n{len(directories)} published packages carry both licence texts.")
+    npm_problems = check_npm()
+    if npm_problems:
+        print("\nthe npm packages would ship without their licence texts:",
+              file=sys.stderr)
+        for failure in npm_problems:
+            print(f"  {failure}", file=sys.stderr)
+        return 1
+
+    print(f"\n{len(directories)} published packages carry both licence texts, "
+          "and the npm side is staged and allow-listed.")
     return 0
+
+
+def check_npm() -> list[str]:
+    """The npm side: the staging step must exist, and `files` must name the texts."""
+    problems = []
+    release_yml = os.path.join(ROOT, ".github", "workflows", "release.yml")
+    if not os.path.isfile(release_yml):
+        return ["release.yml is missing"]
+    with open(release_yml, encoding="utf-8") as handle:
+        workflow = handle.read()
+    if "cp ../../LICENSE-MIT ../../LICENSE-APACHE" not in workflow:
+        problems.append(
+            "release.yml stages no licence copies for the npm packages -- the "
+            "delegation in this file's header would be to nothing")
+
+    manifests = [os.path.join(ROOT, "bindings", "node", "package.json")]
+    npm_dir = os.path.join(ROOT, "bindings", "node", "npm")
+    if os.path.isdir(npm_dir):
+        manifests += [os.path.join(npm_dir, name, "package.json")
+                      for name in sorted(os.listdir(npm_dir))]
+    for manifest in manifests:
+        if not os.path.isfile(manifest):
+            continue
+        with open(manifest, encoding="utf-8") as handle:
+            declared = json.load(handle)
+        listed = declared.get("files")
+        rel = os.path.relpath(manifest, ROOT).replace(os.sep, "/")
+        if listed is None:
+            continue  # no allowlist: npm packs everything, nothing can be dropped
+        absent = [n for n in LICENCES if n not in listed]
+        if absent:
+            problems.append(f"{rel}: `files` omits {' and '.join(absent)}")
+        else:
+            print(f"  {rel:<44} allow-listed")
+    return problems
 
 
 if __name__ == "__main__":
