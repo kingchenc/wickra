@@ -19,5 +19,20 @@
 # `bindings/c/src`, which is where the workspace's real raw-pointer code
 # lives. Dropping this one file of generated glue keeps the rule active
 # everywhere it can say something useful.
+#
+# The C# binding is generated the same way and for the same reason: one class
+# per catalogue entry, emitted from the C header. Indicators.g.cs and
+# NativeMethods.g.cs are 79,000 lines of P/Invoke declarations and one-line
+# delegating methods between them, and GoldenAllTests.g.cs is a test per entry.
+# Excluding them leaves exactly the part worth reading -- WickraHandle.cs and
+# WickraNative.cs, where the handle lifetime and the native library resolution
+# actually live, plus the hand-written tests and examples.
+#
+# The rule for adding to this list: a path belongs here when a generator owns
+# the file end to end and stamps it as such, never because a finding in it was
+# inconvenient.
 paths-ignore:
   - bindings/node/src/lib.rs
+  - bindings/csharp/Wickra/Generated/Indicators.g.cs
+  - bindings/csharp/Wickra/Generated/NativeMethods.g.cs
+  - bindings/csharp/Wickra.Tests/GoldenAllTests.g.cs
