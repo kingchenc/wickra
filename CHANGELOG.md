@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.4] - 2026-08-31
+## [1.0.4] - 2026-09-01
 
 ### Added
 
@@ -322,6 +322,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Fixed
+
+- **`npm publish` was handed a path npm read as a repository.** The wasm publish
+  step passed the packed tarball as a bare relative path
+  (`wasm-pkg/wickra-wasm-<version>.tgz`). npm parses an argument of that shape as
+  the `owner/repo` GitHub shorthand rather than as a file, so it ran
+  `git ls-remote ssh://git@github.com/wasm-pkg/...` and exited with code 128
+  before reaching the registry. A leading `./` marks it as a path; the step now
+  publishes `./$tarball`.
+
+  The step never ran under a tag: the job was split into build and publish in
+  `6293ffce`, after 1.0.3 had shipped, and `release.yml` runs only on `v*`. The
+  publish jobs are independent of one another, so this would have left
+  crates.io, PyPI, npm, NuGet and Maven Central published while the GitHub
+  release -- which needs all of them -- was skipped, taking the C ABI archives
+  with it.
 
 - **A manual run of `release.yml` could publish from a branch.** The workflow
   carries `workflow_dispatch` so a failed publish can be retried without moving

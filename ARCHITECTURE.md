@@ -270,7 +270,7 @@ calls).
 | change benchmark coverage | `crates/wickra/benches/indicators.rs` |
 | add a new fuzz target | `fuzz/fuzz_targets/<name>.rs` + register in `fuzz/Cargo.toml` |
 | change CI matrix | `.github/workflows/ci.yml` |
-| change release pipeline | `.github/workflows/release.yml` (irreversible on `v*` tag — test on a throwaway tag first) |
+| change release pipeline | `.github/workflows/release.yml` (irreversible on `v*` tag — test on a throwaway tag first; the publish jobs are independent, so one failing leaves the rest published) |
 
 ## What is **deliberately** not in this repo
 

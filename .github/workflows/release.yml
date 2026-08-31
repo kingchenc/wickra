@@ -776,7 +776,11 @@ jobs:
           # if/then rather than `A && B || C`: that form runs C when B fails,
           # not only when A does, so a failing echo would read as a failed
           # publish (shellcheck SC2015).
-          if out=$(npm publish "$tarball" --access public --provenance 2>&1); then
+          # "./" is load-bearing: npm reads a bare `dir/file.tgz` as the
+          # `owner/repo` GitHub shorthand and tries to clone it, rather than
+          # reading the file. Without it the step dies on `git ls-remote` with
+          # code 128, before it ever reaches the registry.
+          if out=$(npm publish "./$tarball" --access public --provenance 2>&1); then
             echo "$out"
           elif printf '%s' "$out" | grep -q "You cannot publish over"; then
             echo "skip: version already on npm"
