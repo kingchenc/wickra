@@ -50,6 +50,10 @@ on NuGet), the **Go** binding (`bindings/go`, cgo), the **R** binding
 (`bindings/r`, `.Call`) and the **Java** binding (`bindings/java`, the Java FFM
 API / Panama, on Maven Central) are all generated from `wickra.h`.
 
+R is the one binding `release.yml` does not publish: r-universe builds it from
+`main`, and `bindings/r/configure` resolves the C ABI by downloading the GitHub
+release that matches the version in `DESCRIPTION`.
+
 | Crate | Path | What it owns | Public deps |
 |---|---|---|---|
 | `wickra-core` | `crates/wickra-core` | every indicator, the `Indicator` trait, `BatchExt`, `Candle`/`Tick` types, `Error` | `thiserror`, `rayon` (parallel batch) |
