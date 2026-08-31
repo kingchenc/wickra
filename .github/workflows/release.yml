@@ -45,7 +45,9 @@ jobs:
     name: Nothing publishes before this
     needs: [python-wheels, python-sdist, node-build, c-abi-build, wasm-build]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Generous because this job waits for ci.yml to settle on the tagged commit;
+    # the wait itself is bounded to 45 minutes inside the step.
+    timeout-minutes: 60
     permissions:
       contents: read
       actions: read
@@ -85,12 +87,33 @@ jobs:
           # so this workflow cannot see the tag's health in its own run. Ask what
           # the commit itself was graded, which is the merge commit the tag
           # points at and therefore the state that was actually tested.
-          ci=$(gh api "repos/${REPO}/actions/workflows/ci.yml/runs?head_sha=${SHA}&per_page=1"                  -q '.workflow_runs[0].conclusion // "none"')
-          echo "ci.yml on ${SHA}: ${ci}"
-          if [ "$ci" != "success" ]; then
-            echo "::error::the tagged commit has no successful ci.yml run (${ci}); refusing to publish"
-            exit 1
-          fi
+          #
+          # A run that is still going carries conclusion `null`, which reads the
+          # same as one that failed -- and a tag pushed straight after its merge
+          # lands while ci.yml is still queued. Refusing there turns "tagged a
+          # minute early" into a failed release that needs a rerun, so wait for
+          # the verdict instead of treating its absence as one. A red conclusion
+          # still ends this immediately: only the undecided case waits.
+          deadline=$(( $(date +%s) + 45 * 60 ))
+          while :; do
+            ci_state=$(gh api "repos/${REPO}/actions/workflows/ci.yml/runs?head_sha=${SHA}&per_page=1"                  -q '(.workflow_runs[0] // {}) | "\(.status // "missing") \(.conclusion // "null")"')
+            ci_status=${ci_state%% *}
+            ci=${ci_state##* }
+            if [ "$ci" = "success" ]; then
+              break
+            fi
+            if [ "$ci" != "null" ]; then
+              echo "::error::ci.yml on ${SHA} is ${ci}; refusing to publish"
+              exit 1
+            fi
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::ci.yml on ${SHA} did not finish within 45 minutes (${ci_status}); refusing to publish"
+              exit 1
+            fi
+            echo "ci.yml on ${SHA}: ${ci_status} -- waiting"
+            sleep 30
+          done
+          echo "ci.yml on ${SHA}: success"
 
           # And nothing else that did run may have failed. Listing required
           # workflows by name would go stale -- codspeed.yml is path-filtered and
