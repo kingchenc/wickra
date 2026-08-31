@@ -217,6 +217,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`release.yml` runs in this shape for the first time.** The publish gate, the
+  split between building and publishing the wasm package, the provenance
+  extended to the `.nupkg`, the jar and the C ABI archives, and the npm licence
+  proof were all written after 1.0.3 had shipped. The workflow executes only on
+  a pushed `v*` tag, so none of them had ever run: they were written, linted and
+  merged with nothing able to exercise them. The one bug that survived that gap
+  is in *Fixed* below.
+
 - **A release is all-or-nothing: nothing is published unless everything is
   green.** `cargo-publish` and `wasm-publish` declared no dependencies at all,
   so crates.io could receive a version while the Python wheels were still
