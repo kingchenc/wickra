@@ -459,11 +459,29 @@ jobs:
       # cargo-deny above covers the Rust graph only. This covers the other
       # six ecosystems -- npm, PyPI, Maven, NuGet, Go modules, R -- which had
       # no vulnerability scanning in CI at all.
+      #
+      # --no-resolve turns off transitive resolution of *manifests*. The default
+      # enricher resolves each pom.xml against Maven Central, and two of ours
+      # depend on org.wickra:wickra at the version in the tree -- which does not
+      # exist there until the release publishes it. So every version bump made
+      # this job fail on a lookup for the artefact the bump exists to create,
+      # with "0 packages affected by 0 known vulnerabilities" printed directly
+      # above the error. A check that goes red for a reason other than the one
+      # it checks teaches people to ignore it.
+      #
+      # The cost here is nil rather than merely small: every non-test dependency
+      # in all three of our poms is org.wickra:wickra itself, whose own
+      # dependencies are test-scoped, and test dependencies are outside the
+      # resolver's graph anyway. Everything pinned in a lockfile -- Cargo.lock,
+      # package-lock.json, go.mod -- is still scanned in full, transitively,
+      # because a lockfile needs no resolution. wickra-backtest reached the same
+      # flag by the same route.
       - name: osv-scanner
         uses: google/osv-scanner-action/osv-scanner-action@6e4298ebc4db23e847df9b2e2de2939d6f066c67 # v2.5.1
         with:
           scan-args: |-
             --recursive
+            --no-resolve
             --config=osv-scanner.toml
             ./
   semver:
