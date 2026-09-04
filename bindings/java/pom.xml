@@ -162,6 +162,16 @@
             <configuration>
               <publishingServerId>central</publishingServerId>
               <autoPublish>true</autoPublish>
+              <!-- Wait for the deployment to be *published*, not merely
+                   validated. Without this the plugin stops at validation and
+                   prints "to finish publishing visit ...", so the job reports
+                   success while the artifact is not yet on the repository and
+                   anything that fails after validation is invisible here. It
+                   does not change whether the artifact is published;
+                   autoPublish does that. It changes only what a green job means. Note it
+                   waits for the portal's published state, not for the repo1
+                   mirror, which lags separately. -->
+              <waitUntil>published</waitUntil>
             </configuration>
           </plugin>
         </plugins>
